@@ -13,7 +13,7 @@
         MinHeight="600"
         Height="800"
         MinWidth="1000"
-        Width="1000"
+        Width="1200"
         WindowStartupLocation="CenterScreen"
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True">
