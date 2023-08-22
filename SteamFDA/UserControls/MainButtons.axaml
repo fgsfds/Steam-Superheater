@@ -39,7 +39,7 @@
                     Padding="8"
                     Background="Tomato"
                     ToolTip.Tip="This game requires running it as an admin in order to work. Press to apply 'Run as admin' to the exe automatically."
-                    IsVisible="{Binding SelectedGame.Game.DoesRequireAdmin}">
+                    IsVisible="{Binding SelectedGame.Game.DoesRequireAdmin, FallbackValue='False'}">
                 Set to run as admin
             </Button>
 
