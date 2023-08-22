@@ -1,0 +1,100 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:helpers="clr-namespace:SteamFDA.Helpers"
+             x:Class="SteamFDA.UserControls.MainLists">
+
+    <UserControl.Resources>
+
+        <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
+
+    </UserControl.Resources>
+
+    <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <ListBox ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
+                 SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
+                 Grid.Column="0"
+                 Margin="0,0,3,0"
+                 Name="GamesListBox"
+                 Padding="5"
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Border BorderBrush="Black"
+                                Background="Black"
+                                BorderThickness="1"
+                                CornerRadius="3">
+                            <Image Source="{Binding Game.Icon, Converter={StaticResource ImagePathToBitmapConverter}}"
+                                   Width="32"
+                                   Height="32"
+                                   Stretch="Fill" />
+                        </Border>
+                        <TextBlock Margin="5" Text="{Binding Game.Name}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+
+        <ListBox ItemsSource="{Binding SelectedGameFixesList}"
+                 SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
+                 Grid.Column="1"
+                 Margin="0,0,3,0"
+                 Padding="5"
+                 Name="FixesList">
+
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical" Margin="10">
+                        <TextBlock Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Center"/>
+
+                        <TextBlock Margin="0"
+                                   Text="Installed"
+                                   VerticalAlignment="Center"
+                                   FontWeight="Black"
+                                   IsVisible="{Binding IsInstalled}"/>
+
+                        <TextBlock Margin="0"
+                                   Text="Update available"
+                                   Foreground="Green"
+                                   VerticalAlignment="Center"
+                                   FontWeight="Black"
+                                   IsVisible="{Binding HasNewerVersion}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Text="{Binding SelectedFix.Description, Mode=TwoWay}"
+                       TextWrapping="Wrap"
+                       Grid.Row="0"
+                       Padding="3"/>
+
+            <TextBlock Text="{Binding Requirements, Mode=OneWay}"
+                       TextWrapping="Wrap"
+                       Margin="0,2,0,0"
+                       Grid.Row="1"
+                       Padding="3"/>
+        </Grid>
+
+    </Grid>
+
+</UserControl>

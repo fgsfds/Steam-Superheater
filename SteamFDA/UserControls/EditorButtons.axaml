@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
+             x:Class="SteamFDA.UserControls.EditorButtons">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0">
+
+            <ComboBox Margin="0,0,0,3"
+                      Width="200"
+                      VerticalAlignment="Center"
+                      ItemsSource="{Binding AvailableGamesList}"
+                      SelectedItem="{Binding SelectedAvailableGame}"/>
+
+            <Button Name="AddGame"
+                    Margin="3,0"
+                    Padding="8"
+                    Command="{Binding AddGameCommand}">
+                Add new game
+            </Button>
+
+            <Button Name="UpdateFixes"
+                    Margin="3,0"
+                    Padding="8"
+                    Command="{Binding UpdateGamesCommand}">
+                Update list
+            </Button>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Column="2">
+
+            <Button Margin="3,0"
+                    Padding="8"
+                    Command="{Binding SaveChangesCommand}">
+                Save changes
+            </Button>
+
+            <Button Margin="3,0,0,0"
+                    Padding="8"
+                    Command="{Binding OpenXmlFileCommand}">
+                Open XML...
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

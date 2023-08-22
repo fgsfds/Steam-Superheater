@@ -1,0 +1,28 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SteamFDA.UserControls.SearchBar">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="auto"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBox Text="{Binding Search, Mode=TwoWay}"
+                 Grid.Row="0"
+                 Grid.Column="0"
+                 Margin="0,0,2,0"
+                 TextWrapping="NoWrap"/>
+
+        <Button Grid.Column="1"
+                Margin="2,0,0,0"
+                MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
+                Command="{Binding ClearSearchCommand}"
+                ToolTip.Tip="Clear search bar">
+            X
+        </Button>
+
+    </Grid>
+</UserControl>

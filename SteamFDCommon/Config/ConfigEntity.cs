@@ -71,6 +71,17 @@
             }
         }
 
+        private string _theme;
+        public string Theme
+        {
+            get => _theme;
+            set
+            {
+                _theme = value;
+                Notify?.Invoke();
+            }
+        }
+
         internal ConfigEntity()
         {
             _deleteZipsAfterInstall = true;
@@ -79,6 +90,7 @@
             _lastReadNewsVersion = 0;
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
+            _theme = "System";
         }
     }
 }

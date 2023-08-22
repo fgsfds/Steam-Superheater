@@ -2,7 +2,6 @@
 using SteamFDTCommon.Entities;
 using SteamFDTCommon.Providers;
 using System.Collections.ObjectModel;
-using System.Windows;
 
 namespace SteamFDCommon.Models
 {
@@ -87,8 +86,6 @@ namespace SteamFDCommon.Models
         public async Task UploadFixesToGit()
         {
             var result = await BindingsManager.Instance.GetInstance<FixesProvider>().UploadFixesToGitAsync();
-
-            MessageBox.Show(result.ToString());
         }
 
         /// <summary>

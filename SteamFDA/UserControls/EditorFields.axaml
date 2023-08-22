@@ -1,0 +1,128 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SteamFDA.UserControls.EditorFields">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+
+        <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay}"
+                 Watermark="Name"
+                 Name="NameTextBox"
+                 Grid.Row="0"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay}"
+                 Watermark="Version"
+                 Grid.Row="1"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
+                 Watermark="Download URL"
+                 Grid.Row="2"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
+                 Watermark="Install folder"
+                 Grid.Row="3"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
+                 Watermark="Config file"
+                 Grid.Row="4"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.FilesToDelete, Mode=TwoWay}"
+                 Watermark="Files to delete"
+                 Grid.Row="5"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
+                 Watermark="Run after install"
+                 Grid.Row="6"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <Grid Grid.Row="7"
+              Grid.Column="1"
+              Margin="0,3"
+              MinHeight="60">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Text="Available fixes" HorizontalAlignment="Center"/>
+            <TextBlock Text="Dependencies" HorizontalAlignment="Center" Grid.Column="2"/>
+
+            <ListBox SelectionMode="Single"
+                     ItemsSource="{Binding AvailableDependencies}"
+                     Grid.Column="0"
+                     Grid.Row="1"
+                     Grid.RowSpan="2"
+                     Padding="5"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectedIndex="{Binding SelectedAvailableDependencyIndex}"></ListBox>
+
+            <Button Grid.Column="1"
+                    Grid.Row="1"
+                    Margin="1"
+                    ToolTip.Tip="Add dependency"
+                    IsEnabled="{Binding IsEditingAvailable}"
+                    Command="{Binding AddDependencyCommand}">
+                &gt;
+            </Button>
+
+            <Button Grid.Column="1"
+                    Grid.Row="2"
+                    Margin="1"
+                    ToolTip.Tip="Remove dependency"
+                    IsEnabled="{Binding IsEditingAvailable}"
+                    Command="{Binding RemoveDependencyCommand}">
+                &lt;
+            </Button>
+
+            <ListBox SelectionMode="Single"
+                     ItemsSource="{Binding AddedDependencies}"
+                     Grid.Column="2"
+                     Grid.Row="1"
+                     Grid.RowSpan="2"
+                     Padding="5"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     SelectedIndex="{Binding SelectedAddedDependencyIndex}"></ListBox>
+        </Grid>
+
+        <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
+                 Grid.Row="999"
+                 Grid.Column="1"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"/>
+    </Grid>
+</UserControl>

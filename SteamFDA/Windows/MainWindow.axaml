@@ -1,0 +1,40 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:SteamFDA.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:SteamFDA.Windows"
+        xmlns:pages="clr-namespace:SteamFDA.Pages"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:hlp="clr-namespace:SteamFDA.Helpers"
+        x:Class="SteamFDA.Windows.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Steam Fixes Downloader"
+        MinHeight="600"
+        Height="800"
+        MinWidth="1000"
+        Width="1000"
+        WindowStartupLocation="CenterScreen"
+        CanResize="True"
+        ExtendClientAreaToDecorationsHint="True">
+
+    <Grid RowDefinitions="15,*">
+
+        <TabControl Grid.Row="1" Margin="5">
+            <TabItem Header="Main">
+                <pages:MainPage Margin="0" />
+            </TabItem>
+            <TabItem Header="Editor" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
+                <pages:EditorPage Margin="0" />
+            </TabItem>
+            <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}">
+                <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
+            </TabItem>
+            <TabItem Header="Settings">
+                <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
+            </TabItem>
+        </TabControl>
+
+    </Grid>
+
+</Window>

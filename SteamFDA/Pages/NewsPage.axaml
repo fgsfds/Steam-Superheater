@@ -1,0 +1,66 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:helpers="clr-namespace:SteamFDA.Helpers"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SteamFDA.Pages.NewsPage">
+
+    <UserControl.Resources>
+
+        <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
+
+    </UserControl.Resources>
+
+    <Grid RowDefinitions="*,auto" Margin="5">
+
+        <ItemsControl ItemsSource="{Binding News}"
+                      Grid.Row="0">
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+
+                    <ScrollViewer>
+
+                        <Border CornerRadius="3"
+                                Padding="10"
+                                Margin="5"
+                                BorderThickness="2">
+
+                            <Border.Styles>
+                                <Style Selector="Border">
+                                    <Setter Property="BorderBrush" Value="{Binding IsNewer, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Tomato;LightGray'}"/>
+                                </Style>
+                            </Border.Styles>
+
+                            <StackPanel Orientation="Vertical">
+
+                                <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                           FontSize="10"
+                                           FontWeight="Bold"/>
+
+                                <TextBlock Text="{Binding Content}"/>
+
+                            </StackPanel>
+
+                        </Border>
+
+                    </ScrollViewer>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+
+        </ItemsControl>
+
+        <Button Grid.Row="1"
+                Margin="5"
+                Padding="5"
+                Command="{Binding MarkAllAsRead}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center">
+            Mark all as read
+        </Button>
+
+    </Grid>
+
+</UserControl>

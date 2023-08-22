@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
+    <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.4" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SteamFDCommon\SteamFDCommon.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\EditorPage.axaml.cs">
+      <DependentUpon>EditorPage.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>
