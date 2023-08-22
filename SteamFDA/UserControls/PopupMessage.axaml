@@ -38,9 +38,10 @@
                        Foreground="Tomato"
                        FontWeight="Black"
                        FontSize="25"
-                       Text="{Binding TitleMessage, FallbackValue='Error'}"/>
+                       Text="{Binding TitleText, FallbackValue='Error'}"/>
 
             <TextBlock HorizontalAlignment="Center"
+                       TextAlignment="Center"
                        Grid.Row="1"
                        Grid.ColumnSpan="2"
                        Margin="30"
@@ -49,32 +50,59 @@
                        TextWrapping="Wrap"
                        Text="{Binding MessageText, FallbackValue='MESSAGE'}"/>
 
-            <Button Grid.Row="2"
-                    Grid.Column="0"
-                    HorizontalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Margin="30"
-                    Padding="10"
-                    Width="150"
-                    Height="50"
-                    Command="{Binding OkCommand}">
-                OK
-            </Button>
+            <Grid ColumnDefinitions="*,*"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2"
+                  IsVisible="{Binding IsOkCancel}">
 
-            <Button Grid.Row="2"
-                    Grid.Column="1"
-                    HorizontalAlignment="Center"
-                    VerticalContentAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Margin="30"
-                    Padding="10"
-                    Width="150"
-                    Height="50"
-                    Background="Tomato"
-                    Command="{Binding CancelCommand}">
-                Cancel
-            </Button>
+                <Button Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Command="{Binding OkCommand}"
+                        IsEnabled="True">
+                    OK
+                </Button>
+
+                <Button Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Background="Tomato"
+                        Command="{Binding CancelCommand}">
+                    Cancel
+                </Button>
+
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2"
+                  IsVisible="{Binding IsOkOnly}">
+
+                <Button Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Background="Tomato"
+                        Command="{Binding CancelCommand}">
+                    OK
+                </Button>
+
+            </Grid>
 
         </Grid>
 

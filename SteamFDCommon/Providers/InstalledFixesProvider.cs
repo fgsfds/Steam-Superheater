@@ -103,7 +103,7 @@ namespace SteamFDTCommon.Providers
                 return e.Message;
             }
 
-            return "Success!";
+            return "Fix succesfully installed";
         }
     }
 }

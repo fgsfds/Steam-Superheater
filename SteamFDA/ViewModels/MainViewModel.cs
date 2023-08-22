@@ -112,7 +112,10 @@ namespace SteamFDA.ViewModels
             }
         }
 
-        public MainViewModel(MainModel mainModel, ConfigProvider config)
+        public MainViewModel(
+            MainModel mainModel, 
+            ConfigProvider config
+            )
         {
             _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
@@ -120,8 +123,6 @@ namespace SteamFDA.ViewModels
             FilteredGamesList = new();
 
             SetRelayCommands();
-
-            //_ = UpdateAsync(true);
         }
 
         [RelayCommand]
@@ -169,19 +170,14 @@ namespace SteamFDA.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            //            var result = MessageBox.Show(
-            //                    @"This game requires to be run as admin in order to work.
+            new PopupMessageViewModel(
+                "Run as admin required", 
+                @"This game requires to be run as admin in order to work.
 
-            //Do you want to set it to always run as admin?",
-            //                    "Run as admin required",
-            //                    MessageBoxButton.YesNo);
-
-            //            if (result == MessageBoxResult.Yes)
-            //            {
-            //                SelectedGame.Game.SetRunAsAdmin();
-
-            //                MessageBox.Show("Success");
-            //            }
+Do you want to set it to always run as admin?",
+                PopupMessageType.OkCancel,
+                SelectedGame.Game.SetRunAsAdmin
+                ).Show();
         }
 
         private void OpenConfig()
@@ -244,7 +240,7 @@ namespace SteamFDA.ViewModels
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
 
-                    //MessageBox.Show(result.ToString());
+                    new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
 
                     if (selectedFix.ConfigFile is not null &&
                         _config.OpenConfigAfterInstall)
@@ -282,6 +278,8 @@ namespace SteamFDA.ViewModels
                     }
 
                     var result = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+
+                    new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
 
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
