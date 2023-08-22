@@ -74,7 +74,8 @@ namespace SteamFDA.ViewModels
 
         public EditorViewModel(
             EditorModel editorModel,
-            ConfigProvider config)
+            ConfigProvider config
+            )
         {
             _editorModel = editorModel ?? throw new NullReferenceException(nameof(editorModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
@@ -91,7 +92,22 @@ namespace SteamFDA.ViewModels
         {
             IsInProgress = true;
 
-            await _editorModel.UpdateFixesListAsync(useCache);
+            try
+            {
+                await _editorModel.UpdateFixesListAsync(useCache);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    "File not found: " + ex.Message,
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                IsInProgress = false;
+
+                return;
+            }
 
             FillGamesList();
 
@@ -177,7 +193,7 @@ namespace SteamFDA.ViewModels
                 {
                     var result = _editorModel.SaveFixesListAsync();
 
-                    //MessageBox.Show(result);
+                    new PopupMessageViewModel("Error", result, PopupMessageType.OkOnly).Show();
                 }
                 );
 

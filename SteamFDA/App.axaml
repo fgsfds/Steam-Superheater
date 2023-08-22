@@ -6,4 +6,5 @@
     <Application.Styles>
         <FluentTheme DensityStyle="Compact"/>
     </Application.Styles>
+
 </Application>

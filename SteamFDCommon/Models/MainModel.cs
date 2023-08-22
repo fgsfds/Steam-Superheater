@@ -124,7 +124,16 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = null;
 
-            return SaveInstalledFixesXml();
+            var result = SaveInstalledFixesXml();
+
+            if (result.Item1)
+            {
+                return "Fix uninstalled successfully!";
+            }
+            else
+            {
+                return result.Item2;
+            }
         }
 
         public async Task<string> InstallFix(GameEntity game, FixEntity fix)
@@ -133,14 +142,23 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = installedFix;
 
-            return SaveInstalledFixesXml();
+            var result = SaveInstalledFixesXml();
+
+            if (result.Item1)
+            {
+                return "Fix installed successfully!";
+            }
+            else
+            {
+                return result.Item2;
+            }
         }
 
         /// <summary>
         /// Save current list of installed fixes
         /// </summary>
         /// <returns>true if successfully saved</returns>
-        private string SaveInstalledFixesXml()
+        private Tuple<bool, string> SaveInstalledFixesXml()
         {
             var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(_combinedEntitiesList);
 

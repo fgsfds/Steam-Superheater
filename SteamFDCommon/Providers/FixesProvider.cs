@@ -36,7 +36,16 @@ namespace SteamFDTCommon.Providers
 
             if (_fixesCache is null)
             {
-                await CreateFixesCacheAsync();
+                try
+                {
+                    await CreateFixesCacheAsync();
+                }
+                catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+                {
+                    _isCacheUpdating = false;
+
+                    throw;
+                }
             }
 
             var fixesList = DeserializeCachedString();
