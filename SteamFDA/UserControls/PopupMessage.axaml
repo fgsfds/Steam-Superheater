@@ -25,16 +25,15 @@
             <Border Grid.RowSpan="3"
                     Grid.ColumnSpan="2"
                     CornerRadius="10"
-                    Background="White"
                     MinHeight="300"
                     BorderThickness="1"
+                    Background="White"
                     BoxShadow="0 0 5 Gray"></Border>
 
             <TextBlock HorizontalAlignment="Center"
                        Grid.Row="0"
                        Grid.ColumnSpan="2"
                        Margin="30,30,30,0"
-                       Background="White"
                        Foreground="Tomato"
                        FontWeight="Black"
                        FontSize="25"
@@ -46,7 +45,6 @@
                        Grid.ColumnSpan="2"
                        Margin="30"
                        FontSize="15"
-                       Background="White"
                        TextWrapping="Wrap"
                        Text="{Binding MessageText, FallbackValue='MESSAGE'}"/>
 

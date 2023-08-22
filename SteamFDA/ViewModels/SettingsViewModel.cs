@@ -10,6 +10,7 @@ namespace SteamFDA.ViewModels
     internal partial class SettingsViewModel : ViewModelBase
     {
         private readonly ConfigEntity _config;
+        private readonly MainWindowViewModel _mwvm;
 
         [ObservableProperty]
         private bool _localPathTextboxChanged;
@@ -40,6 +41,7 @@ namespace SteamFDA.ViewModels
         partial void OnUseLocalRepoCheckboxChanged(bool value)
         {
             _config.UseLocalRepo = value;
+            _mwvm.IsLocalRepoWarningEnabled = value;
         }
 
         [ObservableProperty]
@@ -64,9 +66,10 @@ namespace SteamFDA.ViewModels
         public bool IsLightTheme => _config.Theme.Equals("Light");
         public bool IsDarkTheme => _config.Theme.Equals("Dark");
 
-        public SettingsViewModel(ConfigProvider config)
+        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
         {
             _config = config.Config;
+            _mwvm = mwvm;
 
             SaveLocalRepoPathCommand = new RelayCommand(
                 execute: () =>

@@ -19,28 +19,39 @@
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True">
 
-    <Grid RowDefinitions="15,*">
+    <Border BorderThickness="1"
+            BorderBrush="Gray">
 
-        <TabControl Grid.Row="1" Margin="5">
-            <TabItem Header="Main">
-                <pages:MainPage Margin="0" />
-            </TabItem>
-            <TabItem Header="Editor" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
-                <pages:EditorPage Margin="0" />
-            </TabItem>
-            <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}">
-                <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
-            </TabItem>
-            <TabItem Header="Settings">
-                <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
-            </TabItem>
-        </TabControl>
+        <Grid RowDefinitions="25,*">
 
-        <controls:PopupMessage
-            Grid.RowSpan="2"
-            DataContext="{Binding PopupDataContext}"
-            IsVisible="{Binding ShowPopup, FallbackValue='False'}"/>
+            <TextBlock Margin="5,5,0,0"
+                       Foreground="Tomato"
+                       IsVisible="{Binding IsLocalRepoWarningEnabled}">
+                Local repository is used
+            </TextBlock>
 
-    </Grid>
+            <TabControl Grid.Row="1" Margin="5">
+                <TabItem Header="Main" Margin="10,0,0,10">
+                    <pages:MainPage Margin="0" />
+                </TabItem>
+                <TabItem Header="Editor" Margin="0,0,0,10" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
+                    <pages:EditorPage Margin="0" />
+                </TabItem>
+                <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}" Margin="0,0,0,10">
+                    <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
+                </TabItem>
+                <TabItem Header="Settings" Margin="0,0,0,10">
+                    <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
+                </TabItem>
+            </TabControl>
+
+            <controls:PopupMessage
+                Grid.RowSpan="2"
+                DataContext="{Binding PopupDataContext}"
+                IsVisible="{Binding ShowPopup, FallbackValue='False'}"/>
+
+        </Grid>
+
+    </Border>
 
 </Window>
