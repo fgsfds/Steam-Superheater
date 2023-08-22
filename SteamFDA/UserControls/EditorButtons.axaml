@@ -16,9 +16,11 @@
                     HorizontalAlignment="Left"
                     Grid.Column="0">
 
-            <ComboBox Margin="0,0,0,3"
+            <ComboBox Margin="0,0,3,0"
                       Width="200"
+                      Padding="8"
                       VerticalAlignment="Center"
+                      Height="{Binding #AddGame.Bounds.Height}"
                       ItemsSource="{Binding AvailableGamesList}"
                       SelectedItem="{Binding SelectedAvailableGame}"/>
 
