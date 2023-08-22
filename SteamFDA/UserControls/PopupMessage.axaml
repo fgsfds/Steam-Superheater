@@ -12,7 +12,7 @@
 
         <Border Grid.ColumnSpan="3"
                 Grid.RowSpan="3"
-                Background="LightGray"
+                Background="Gray"
                 Opacity="50"/>
 
         <Grid Grid.Row="1"
@@ -27,7 +27,7 @@
                     CornerRadius="10"
                     MinHeight="300"
                     BorderThickness="1"
-                    Background="White"
+                    Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     BoxShadow="0 0 5 Gray"></Border>
 
             <TextBlock HorizontalAlignment="Center"

@@ -186,7 +186,7 @@ namespace SteamFDA.ViewModels
             }
 
             new PopupMessageViewModel(
-                "Run as admin required", 
+                "Admin privileges required", 
                 @"This game requires to be run as admin in order to work.
 
 Do you want to set it to always run as admin?",
@@ -299,8 +299,6 @@ Do you want to set it to always run as admin?",
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
-
-                    //MessageBox.Show(result.ToString());
                 },
                 canExecute: () =>
                 {

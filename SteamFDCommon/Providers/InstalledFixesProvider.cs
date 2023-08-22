@@ -89,7 +89,7 @@ namespace SteamFDTCommon.Providers
         /// </summary>
         /// <param name="fixesList"></param>
         /// <returns></returns>
-        public static string SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        public static Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
         {
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
 
@@ -100,10 +100,10 @@ namespace SteamFDTCommon.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return e.Message;
+                return new Tuple<bool, string>(false, e.Message);
             }
 
-            return "Fix succesfully installed";
+            return new Tuple<bool, string>(true, string.Empty);
         }
     }
 }
