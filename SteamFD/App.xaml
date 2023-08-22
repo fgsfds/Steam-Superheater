@@ -1,0 +1,15 @@
+﻿<Application x:Class="SteamFD.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:hlp="clr-namespace:SteamFD.Helpers"
+             StartupUri="MainWindow.xaml">
+
+    <Application.Resources>
+
+        <hlp:BoolToStringConverter x:Key="BoolToStringConverter"/>
+        <hlp:ReverseBool x:Key="ReverseBool"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    </Application.Resources>
+
+</Application>

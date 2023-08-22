@@ -1,0 +1,119 @@
+﻿<UserControl x:Class="SteamFD.Pages.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <StackPanel Orientation="Vertical">
+
+        <CheckBox IsChecked="{Binding DeleteArchivesCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="5">
+            Delete archive after installing a fix
+        </CheckBox>
+
+        <CheckBox IsChecked="{Binding OpenConfigCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                  Margin="5">
+            Open config after installing a fix
+        </CheckBox>
+
+        <Expander Margin="5"
+                  Header="Advanced options">
+
+            <StackPanel Orientation="Vertical">
+                <GroupBox Header="Editor"
+                          Margin="5">
+
+                    <Grid Margin="5">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <CheckBox IsChecked="{Binding ShowEditorCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="5"
+                                  Grid.ColumnSpan="2">
+                            Show Editor Tab
+                        </CheckBox>
+
+                        <TextBlock Margin="5"
+                                   Grid.Row="1">
+                            Gitlab token
+                        </TextBlock>
+
+                        <TextBox Margin="5"
+                                 Grid.Row="1"
+                                 Grid.Column="1"
+                                 IsReadOnly="True"></TextBox>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Repository"
+                          Margin="5">
+
+                    <Grid Margin="5"
+                          VerticalAlignment="Center">
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Margin="5"
+                                   Grid.Row="0"
+                                   VerticalAlignment="Center">
+                            Path to local repository
+                        </TextBlock>
+
+                        <TextBox Text="{Binding PathToLocalRepo, UpdateSourceTrigger=PropertyChanged}"
+                                 KeyDown="TextBox_KeyDown"
+                                 Name="LocalRepoTextbox"
+                                 Margin="5"
+                                 Grid.Row="0"
+                                 Grid.Column="1"/>
+                        <!--IsReadOnly="{Binding ElementName=UseLocalRepoCheckbox, Path=IsChecked, Converter={StaticResource ReverseBool}}"-->
+
+                        <Button Margin="5"
+                                Grid.Row="0"
+                                Grid.Column="2"
+                                Padding="2"
+                                Command="{Binding SaveLocalRepoPathCommand}">
+                            Save
+                        </Button>
+
+                        <Button Margin="5"
+                                Grid.Row="0"
+                                Grid.Column="3"
+                                Padding="2"
+                                IsEnabled="False"
+                                Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                            ...
+                        </Button>
+
+                        <CheckBox IsChecked="{Binding UseLocalRepoCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="5"
+                                  Grid.Row="1"
+                                  Grid.ColumnSpan="2"
+                                  Name="UseLocalRepoCheckbox">
+                            Load fixes and news from local repository (testing purposes only)
+                        </CheckBox>
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </Expander>
+    </StackPanel>
+</UserControl>
