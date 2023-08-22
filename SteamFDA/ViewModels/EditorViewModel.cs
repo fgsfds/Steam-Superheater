@@ -19,6 +19,7 @@ namespace SteamFDA.ViewModels
     {
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
+        private readonly MainWindowViewModel _mwvm;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
@@ -74,10 +75,12 @@ namespace SteamFDA.ViewModels
 
         public EditorViewModel(
             EditorModel editorModel,
-            ConfigProvider config)
+            ConfigProvider config,
+            MainWindowViewModel mwvm)
         {
             _editorModel = editorModel ?? throw new NullReferenceException(nameof(editorModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+            _mwvm = mwvm;
 
             FilteredGamesList = new();
 
@@ -176,6 +179,10 @@ namespace SteamFDA.ViewModels
                 execute: () =>
                 {
                     var result = _editorModel.SaveFixesListAsync();
+
+                    var pmvm = new PopupMessageViewModel(result);
+                    _mwvm.PopupDataContext = pmvm;
+                    pmvm.Show();
 
                     //MessageBox.Show(result);
                 }
