@@ -2,7 +2,10 @@
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Models;
 using SteamFDTCommon.Entities;
+using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
@@ -36,7 +39,14 @@ namespace SteamFDA.ViewModels
 
         private async Task UpdateAsync()
         {
-            await _newsModel.UpdateNewsListAsync();
+            try
+            {
+                await _newsModel.UpdateNewsListAsync();
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return;
+            }
 
             UpdateHeader();
         }

@@ -132,7 +132,22 @@ namespace SteamFDA.ViewModels
         {
             IsInProgress = true;
 
-            await _mainModel.UpdateGamesListAsync(useCache);
+            try
+            {
+                await _mainModel.UpdateGamesListAsync(useCache);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    "File not found: " + ex.Message,
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                IsInProgress = false;
+
+                return;
+            }
 
             FillGamesList();
 
