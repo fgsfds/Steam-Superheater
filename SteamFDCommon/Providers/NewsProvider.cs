@@ -34,7 +34,18 @@ namespace SteamFDTCommon.Providers
 
             if (_newsCache is null)
             {
-                await CreateNewsCacheAsync();
+                try
+                {
+                    await CreateNewsCacheAsync();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    _isCacheUpdating = false;
+                }
             }
 
             return _newsCache ?? throw new NullReferenceException(nameof(_newsCache));
@@ -108,6 +119,7 @@ namespace SteamFDTCommon.Providers
             {
                 using (var client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(10);
                     using var stream = await client.GetStreamAsync(Consts.GitHubRepo + Consts.NewsFile);
                     using var file = new StreamReader(stream);
                     var newsXml = await file.ReadToEndAsync();

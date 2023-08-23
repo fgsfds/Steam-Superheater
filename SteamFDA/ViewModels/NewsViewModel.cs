@@ -5,6 +5,7 @@ using SteamFDTCommon.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -45,6 +46,22 @@ namespace SteamFDA.ViewModels
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
+                new PopupMessageViewModel(
+                    "Error",
+                    "File not found: " + ex.Message,
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                return;
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    "Can't connect to GitHub repository",
+                    PopupMessageType.OkOnly
+                    ).Show();
+
                 return;
             }
 

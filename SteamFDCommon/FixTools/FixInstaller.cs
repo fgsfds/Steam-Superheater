@@ -206,6 +206,7 @@ namespace SteamFDTCommon.FixTools
             {
                 using (var client = new HttpClient())
                 {
+                    client.Timeout = TimeSpan.FromSeconds(10);
                     using var stream = await client.GetStreamAsync(url);
                     using var file = new FileStream(tempFile, FileMode.Create);
                     await stream.CopyToAsync(file);
