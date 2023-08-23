@@ -152,6 +152,13 @@ namespace SteamFDA.ViewModels
             FillGamesList();
 
             IsInProgress = false;
+
+            CheckForUpdates();
+        }
+
+        private void CheckForUpdates()
+        {
+            //var gamesWithUpdate = FilteredGamesList.Where(x => x.Fixes.Where(x => x.HasNewerVersion));
         }
 
         private void FillGamesList()
