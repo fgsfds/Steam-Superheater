@@ -277,9 +277,6 @@ Do you want to set it to always run as admin?",
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
 
-                    OnPropertyChanged(nameof(SelectedGame.HasInstalled));
-                    OnPropertyChanged(nameof(SelectedGame.HasUpdates));
-
                     FillGamesList();
 
                     new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
@@ -326,9 +323,6 @@ Do you want to set it to always run as admin?",
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
-
-                    OnPropertyChanged(nameof(SelectedGame.HasInstalled));
-                    OnPropertyChanged(nameof(SelectedGame.HasUpdates));
 
                     FillGamesList();
                 },

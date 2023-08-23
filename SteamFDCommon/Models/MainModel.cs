@@ -16,6 +16,7 @@ namespace SteamFDCommon.Models
         }
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
         /// <summary>
