@@ -4,7 +4,7 @@ using System.IO;
 
 namespace SteamFDTCommon.FixTools
 {
-    public static class FIxUninstaller
+    public static class FixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup

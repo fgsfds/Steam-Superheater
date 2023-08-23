@@ -125,7 +125,7 @@ namespace SteamFDCommon.Models
 
         public string UninstallFix(GameEntity game, FixEntity fix)
         {
-            FIxUninstaller.UninstallFix(game, fix);
+            FixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
@@ -152,6 +152,28 @@ namespace SteamFDCommon.Models
             if (result.Item1)
             {
                 return "Fix installed successfully!";
+            }
+            else
+            {
+                return result.Item2;
+            }
+        }
+
+        public async Task<string> UpdateFix(GameEntity game, FixEntity fix)
+        {
+            FixUninstaller.UninstallFix(game, fix);
+
+            fix.InstalledFix = null;
+
+            var installedFix = await FixInstaller.InstallFix(game, fix);
+
+            fix.InstalledFix = installedFix;
+
+            var result = SaveInstalledFixesXml();
+
+            if (result.Item1)
+            {
+                return "Fix updated successfully!";
             }
             else
             {

@@ -70,10 +70,9 @@
                                    IsEnabled="{Binding HasUpdates}"
                                    IsVisible="{Binding HasUpdates}"
                                    FontWeight="Black"
-                                   Foreground="Green"
+                                   Foreground="{DynamicResource SystemAccentColor}"
                                    Grid.Row="1"
                                    Grid.Column="1"/>
-
 
                     </Grid>
 

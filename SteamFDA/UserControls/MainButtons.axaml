@@ -53,8 +53,18 @@
                     Command="{Binding InstallFixCommand}"
                     Margin="3,0"
                     Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding !SelectedFixHasUpdated}"
                     Padding="8">
                 Install
+            </Button>
+
+            <Button Name="UpdateButton"
+                    Command="{Binding UpdateFixCommand}"
+                    Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding SelectedFixHasUpdated}"
+                    Padding="8">
+                Update
             </Button>
 
             <Button Name="UninstallButton"

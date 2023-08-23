@@ -28,15 +28,19 @@ namespace SteamFDA.ViewModels
 
         public List<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes;
 
+        public bool SelectedFixHasUpdated => SelectedFix?.HasNewerVersion ?? false;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Requirements))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdated))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -351,6 +355,42 @@ Do you want to set it to always run as admin?",
                 }
                 );
 
+            UpdateFixCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    if (SelectedFix is null)
+                    {
+                        throw new NullReferenceException(nameof(SelectedFix));
+                    }
+                    if (SelectedGame is null)
+                    {
+                        throw new NullReferenceException(nameof(SelectedGame));
+                    }
+
+                    IsInProgress = true;
+
+                    var selectedFix = SelectedFix;
+
+                    var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix);
+
+                    IsInProgress = false;
+
+                    InstallFixCommand.NotifyCanExecuteChanged();
+                    UninstallFixCommand.NotifyCanExecuteChanged();
+                    OpenConfigCommand.NotifyCanExecuteChanged();
+
+                    FillGamesList();
+
+                    new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
+
+                    if (selectedFix.ConfigFile is not null &&
+                        _config.OpenConfigAfterInstall)
+                    {
+                        OpenConfig();
+                    }
+                }
+                );
+
             OpenGameFolderCommand = new RelayCommand(
                 execute: () =>
                 {
@@ -433,6 +473,8 @@ Do you want to set it to always run as admin?",
         public IRelayCommand ApplyAdminCommand { get; private set; }
 
         public IRelayCommand OpenPCGamingWikiCommand { get; private set; }
+
+        public IRelayCommand UpdateFixCommand { get; private set; }
 
         #endregion Relay Commands
     }
