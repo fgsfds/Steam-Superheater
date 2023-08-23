@@ -11,6 +11,22 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
+  
+  <ItemGroup>
+    <None Remove="Resources\avatar.jpg" />
+    <None Remove="Resources\github.png" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+	  <AvaloniaResource Include="Resources\github.png" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
+    <AvaloniaResource Include="Resources\avatar.jpg" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="11.0.4" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
