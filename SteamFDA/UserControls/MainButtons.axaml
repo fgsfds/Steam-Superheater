@@ -37,7 +37,7 @@
                     Command="{Binding ApplyAdminCommand}"
                     Margin="3,0"
                     Padding="8"
-                    Background="Tomato"
+                    Background="{DynamicResource SystemAccentColor}"
                     ToolTip.Tip="This game requires running it as an admin in order to work. Press to apply 'Run as admin' to the exe automatically."
                     IsVisible="{Binding SelectedGame.Game.DoesRequireAdmin, FallbackValue='False'}">
                 Set to run as admin
@@ -52,6 +52,7 @@
             <Button Name="InstallButton"
                     Command="{Binding InstallFixCommand}"
                     Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
                     Padding="8">
                 Install
             </Button>
@@ -59,6 +60,7 @@
             <Button Name="UninstallButton"
                     Command="{Binding UninstallFixCommand}"
                     Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
                     Padding="8">
                 Uninstall
             </Button>

@@ -1,13 +1,10 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:SteamFDA.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:views="clr-namespace:SteamFDA.Windows"
         xmlns:pages="clr-namespace:SteamFDA.Pages"
         xmlns:controls="clr-namespace:SteamFDA.UserControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        xmlns:hlp="clr-namespace:SteamFDA.Helpers"
         x:Class="SteamFDA.Windows.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
         Title="Steam Fixes Downloader"
@@ -17,10 +14,21 @@
         Width="1200"
         WindowStartupLocation="CenterScreen"
         CanResize="True"
-        ExtendClientAreaToDecorationsHint="True">
+        ExtendClientAreaToDecorationsHint="True"
+        Background="{DynamicResource Background}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source='/Styles/ThemedResources.axaml'/>
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="Warning">Yellow</SolidColorBrush>
+        </ResourceDictionary>
+    </Window.Resources>
 
     <Border BorderThickness="1"
-            BorderBrush="Gray">
+            BorderBrush="DarkGray"
+            IsHitTestVisible="True">
 
         <Grid RowDefinitions="25,*">
 

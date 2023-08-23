@@ -5,11 +5,9 @@
              xmlns:helpers="clr-namespace:SteamFDA.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SteamFDA.Pages.NewsPage">
-
+    
     <UserControl.Resources>
-
         <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
-
     </UserControl.Resources>
 
     <Grid RowDefinitions="*,auto" Margin="5">
