@@ -154,8 +154,6 @@ namespace SteamFDA.ViewModels
             FillGamesList();
 
             IsInProgress = false;
-
-            CheckForUpdates();
         }
 
         private void UpdateHeader()
@@ -167,11 +165,6 @@ namespace SteamFDA.ViewModels
                 : string.Empty);
 
             OnPropertyChanged(nameof(MainTabHeader));
-        }
-
-        private void CheckForUpdates()
-        {
-            //var gamesWithUpdate = FilteredGamesList.Where(x => x.Fixes.Where(x => x.HasNewerVersion));
         }
 
         private void FillGamesList()
