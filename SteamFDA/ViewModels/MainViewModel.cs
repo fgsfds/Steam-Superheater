@@ -160,7 +160,7 @@ namespace SteamFDA.ViewModels
 
         private void UpdateHeader()
         {
-            MainTabHeader = "News" + (_mainModel.HasUpdateableGames
+            MainTabHeader = "Main" + (_mainModel.HasUpdateableGames
                 ? $" ({_mainModel.UpdateableGamesCount} {(_mainModel.UpdateableGamesCount < 2
                     ? "update"
                     : "updates")})"
