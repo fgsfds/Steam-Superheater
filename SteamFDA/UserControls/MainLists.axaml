@@ -29,18 +29,53 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal" Margin="5">
+
+                    <Grid RowDefinitions="*,auto"
+                          ColumnDefinitions="auto,auto"
+                          Margin="5">
+
                         <Border BorderBrush="Black"
                                 Background="Black"
                                 BorderThickness="1"
-                                CornerRadius="3">
+                                CornerRadius="3"
+                                Height="36"
+                                Width="36"
+                                Grid.Row="0"
+                                Grid.RowSpan="2"
+                                Grid.Column="0">
                             <Image Source="{Binding Game.Icon, Converter={StaticResource ImagePathToBitmapConverter}}"
                                    Width="32"
                                    Height="32"
                                    Stretch="Fill" />
                         </Border>
-                        <TextBlock Margin="5" Text="{Binding Game.Name}" VerticalAlignment="Center"/>
-                    </StackPanel>
+
+                        <TextBlock Margin="5,2"
+                                   Text="{Binding Game.Name}"
+                                   VerticalAlignment="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   FontWeight="Black"
+                                   IsVisible="{Binding HasInstalled}"/>
+
+                        <TextBlock Margin="5,2"
+                                   Text="{Binding Game.Name}"
+                                   VerticalAlignment="Center"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   IsVisible="{Binding !HasInstalled}"/>
+
+                        <TextBlock Margin="5,2"
+                                   Text="Update available"
+                                   VerticalAlignment="Center"
+                                   IsEnabled="{Binding HasUpdates}"
+                                   IsVisible="{Binding HasUpdates}"
+                                   FontWeight="Black"
+                                   Foreground="{DynamicResource SystemAccentColor}"
+                                   Grid.Row="1"
+                                   Grid.Column="1"/>
+
+                    </Grid>
+
                 </DataTemplate>
             </ListBox.ItemTemplate>
 

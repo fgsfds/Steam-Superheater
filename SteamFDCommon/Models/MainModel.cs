@@ -2,6 +2,7 @@
 using SteamFDTCommon.Entities;
 using SteamFDTCommon.FixTools;
 using SteamFDTCommon.Providers;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SteamFDCommon.Models
 {
@@ -13,6 +14,10 @@ namespace SteamFDCommon.Models
         {
             _combinedEntitiesList = new();
         }
+
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+
+        public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
@@ -120,7 +125,7 @@ namespace SteamFDCommon.Models
 
         public string UninstallFix(GameEntity game, FixEntity fix)
         {
-            FIxUninstaller.UninstallFix(game, fix);
+            FixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
@@ -147,6 +152,28 @@ namespace SteamFDCommon.Models
             if (result.Item1)
             {
                 return "Fix installed successfully!";
+            }
+            else
+            {
+                return result.Item2;
+            }
+        }
+
+        public async Task<string> UpdateFix(GameEntity game, FixEntity fix)
+        {
+            FixUninstaller.UninstallFix(game, fix);
+
+            fix.InstalledFix = null;
+
+            var installedFix = await FixInstaller.InstallFix(game, fix);
+
+            fix.InstalledFix = installedFix;
+
+            var result = SaveInstalledFixesXml();
+
+            if (result.Item1)
+            {
+                return "Fix updated successfully!";
             }
             else
             {

@@ -22,9 +22,13 @@ namespace SteamFDA.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
 
+        public string MainTabHeader { get; private set; } = "Main";
+
         public ObservableCollection<GameFirstCombinedEntity> FilteredGamesList { get; init; }
 
         public List<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes;
+
+        public bool SelectedFixHasUpdated => SelectedFix?.HasNewerVersion ?? false;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
@@ -32,9 +36,11 @@ namespace SteamFDA.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Requirements))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdated))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -169,6 +175,17 @@ namespace SteamFDA.ViewModels
             IsInProgress = false;
         }
 
+        private void UpdateHeader()
+        {
+            MainTabHeader = "Main" + (_mainModel.HasUpdateableGames
+                ? $" ({_mainModel.UpdateableGamesCount} {(_mainModel.UpdateableGamesCount < 2
+                    ? "update"
+                    : "updates")})"
+                : string.Empty);
+
+            OnPropertyChanged(nameof(MainTabHeader));
+        }
+
         private void FillGamesList()
         {
             var selectedGame = SelectedGame;
@@ -191,6 +208,8 @@ namespace SteamFDA.ViewModels
                     SelectedFix = selectedFix;
                 }
             }
+
+            UpdateHeader();
         }
 
         private void RequireAdmin()
@@ -270,6 +289,8 @@ Do you want to set it to always run as admin?",
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
 
+                    FillGamesList();
+
                     new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
 
                     if (selectedFix.ConfigFile is not null &&
@@ -314,6 +335,8 @@ Do you want to set it to always run as admin?",
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
+
+                    FillGamesList();
                 },
                 canExecute: () =>
                 {
@@ -329,6 +352,42 @@ Do you want to set it to always run as admin?",
                     var result = !_mainModel.DoesFixHaveInstalledDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                     return result;
+                }
+                );
+
+            UpdateFixCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    if (SelectedFix is null)
+                    {
+                        throw new NullReferenceException(nameof(SelectedFix));
+                    }
+                    if (SelectedGame is null)
+                    {
+                        throw new NullReferenceException(nameof(SelectedGame));
+                    }
+
+                    IsInProgress = true;
+
+                    var selectedFix = SelectedFix;
+
+                    var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix);
+
+                    IsInProgress = false;
+
+                    InstallFixCommand.NotifyCanExecuteChanged();
+                    UninstallFixCommand.NotifyCanExecuteChanged();
+                    OpenConfigCommand.NotifyCanExecuteChanged();
+
+                    FillGamesList();
+
+                    new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
+
+                    if (selectedFix.ConfigFile is not null &&
+                        _config.OpenConfigAfterInstall)
+                    {
+                        OpenConfig();
+                    }
                 }
                 );
 
@@ -414,6 +473,8 @@ Do you want to set it to always run as admin?",
         public IRelayCommand ApplyAdminCommand { get; private set; }
 
         public IRelayCommand OpenPCGamingWikiCommand { get; private set; }
+
+        public IRelayCommand UpdateFixCommand { get; private set; }
 
         #endregion Relay Commands
     }

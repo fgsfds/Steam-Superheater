@@ -18,6 +18,16 @@ namespace SteamFDCommon.CombinedEntities
         /// </summary>
         public List<FixEntity>? Fixes { get; set; }
 
+        /// <summary>
+        /// Does this game have installed fixes
+        /// </summary>
+        public bool HasInstalled => Fixes.Any(x => x.IsInstalled);
+
+        /// <summary>
+        /// Does this game have newer version of fixes
+        /// </summary>
+        public bool HasUpdates => Fixes.Any(x => x.HasNewerVersion);
+
         public override string ToString() => Game.Name;
 
         public GameFirstCombinedEntity(
