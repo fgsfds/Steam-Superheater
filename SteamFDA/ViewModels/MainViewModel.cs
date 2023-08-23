@@ -12,6 +12,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
@@ -147,6 +148,20 @@ namespace SteamFDA.ViewModels
                 IsInProgress = false;
 
                 return;
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    "Can't connect to GitHub repository",
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                return;
+            }
+            finally
+            {
+                IsInProgress = false;
             }
 
             FillGamesList();

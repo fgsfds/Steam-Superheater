@@ -36,16 +36,7 @@ namespace SteamFDTCommon.Providers
 
             if (_fixesCache is null)
             {
-                try
-                {
-                    await CreateFixesCacheAsync();
-                }
-                catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-                {
-                    _isCacheUpdating = false;
-
-                    throw;
-                }
+                await CreateFixesCacheAsync();
             }
 
             var fixesList = DeserializeCachedString();
@@ -88,7 +79,18 @@ namespace SteamFDTCommon.Providers
             }
             else
             {
-                fixes = await DownloadFixesXMLAsync();
+                try
+                {
+                    fixes = await DownloadFixesXMLAsync();
+                }
+                catch
+                {
+                    throw;
+                }
+                finally
+                {
+                    _isCacheUpdating = false;
+                }
             }
 
             using (StringReader fs = new(fixes))
@@ -133,20 +135,14 @@ namespace SteamFDTCommon.Providers
         /// <returns></returns>
         private async Task<string> DownloadFixesXMLAsync()
         {
-            try
+            using (var client = new HttpClient())
             {
-                using (var client = new HttpClient())
-                {
-                    using var stream = await client.GetStreamAsync(Consts.GitHubRepo + Consts.FixesFile);
-                    using var file = new StreamReader(stream);
-                    var fixesXml = await file.ReadToEndAsync();
+                client.Timeout = TimeSpan.FromSeconds(10);
+                using var stream = await client.GetStreamAsync(Consts.GitHubRepo + Consts.FixesFile);
+                using var file = new StreamReader(stream);
+                var fixesXml = await file.ReadToEndAsync();
 
-                    return fixesXml;
-                }
-            }
-            catch (Exception)
-            {
-                throw;
+                return fixesXml;
             }
         }
 
