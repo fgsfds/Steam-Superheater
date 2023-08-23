@@ -7,9 +7,7 @@
              x:Class="SteamFDA.UserControls.MainLists">
 
     <UserControl.Resources>
-
         <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
-
     </UserControl.Resources>
 
     <Grid>
@@ -26,7 +24,8 @@
                  Margin="0,0,3,0"
                  Name="GamesListBox"
                  Padding="5"
-                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                 ScrollViewer.AllowAutoHide="True">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
@@ -67,7 +66,7 @@
 
                         <TextBlock Margin="0"
                                    Text="Update available"
-                                   Foreground="Green"
+                                   Foreground="{DynamicResource SystemAccentColor}"
                                    VerticalAlignment="Center"
                                    FontWeight="Black"
                                    IsVisible="{Binding HasNewerVersion}"/>
