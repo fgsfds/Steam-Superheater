@@ -21,6 +21,8 @@ namespace SteamFDA.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
 
+        public string MainTabHeader { get; private set; } = "Main";
+
         public ObservableCollection<GameFirstCombinedEntity> FilteredGamesList { get; init; }
 
         public List<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes;
@@ -156,6 +158,17 @@ namespace SteamFDA.ViewModels
             CheckForUpdates();
         }
 
+        private void UpdateHeader()
+        {
+            MainTabHeader = "News" + (_mainModel.HasUpdateableGames
+                ? $" ({_mainModel.UpdateableGamesCount} {(_mainModel.UpdateableGamesCount < 2
+                    ? "update"
+                    : "updates")})"
+                : string.Empty);
+
+            OnPropertyChanged(nameof(MainTabHeader));
+        }
+
         private void CheckForUpdates()
         {
             //var gamesWithUpdate = FilteredGamesList.Where(x => x.Fixes.Where(x => x.HasNewerVersion));
@@ -183,6 +196,8 @@ namespace SteamFDA.ViewModels
                     SelectedFix = selectedFix;
                 }
             }
+
+            UpdateHeader();
         }
 
         private void RequireAdmin()
@@ -262,6 +277,11 @@ Do you want to set it to always run as admin?",
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
 
+                    OnPropertyChanged(nameof(SelectedGame.HasInstalled));
+                    OnPropertyChanged(nameof(SelectedGame.HasUpdates));
+
+                    FillGamesList();
+
                     new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
 
                     if (selectedFix.ConfigFile is not null &&
@@ -306,6 +326,11 @@ Do you want to set it to always run as admin?",
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
                     OpenConfigCommand.NotifyCanExecuteChanged();
+
+                    OnPropertyChanged(nameof(SelectedGame.HasInstalled));
+                    OnPropertyChanged(nameof(SelectedGame.HasUpdates));
+
+                    FillGamesList();
                 },
                 canExecute: () =>
                 {

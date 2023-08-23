@@ -31,8 +31,8 @@
             </TextBlock>
 
             <TabControl Grid.Row="1" Margin="5">
-                <TabItem Header="Main" Margin="10,0,0,10">
-                    <pages:MainPage Margin="0" />
+                <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,0,10">
+                    <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
                 <TabItem Header="Editor" Margin="0,0,0,10" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
                     <pages:EditorPage Margin="0" />

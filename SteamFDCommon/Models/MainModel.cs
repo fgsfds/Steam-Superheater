@@ -2,6 +2,7 @@
 using SteamFDTCommon.Entities;
 using SteamFDTCommon.FixTools;
 using SteamFDTCommon.Providers;
+using System.Security.Cryptography.X509Certificates;
 
 namespace SteamFDCommon.Models
 {
@@ -13,6 +14,9 @@ namespace SteamFDCommon.Models
         {
             _combinedEntitiesList = new();
         }
+
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+        public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
