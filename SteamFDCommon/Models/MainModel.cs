@@ -2,7 +2,6 @@
 using SteamFDTCommon.Entities;
 using SteamFDTCommon.FixTools;
 using SteamFDTCommon.Providers;
-using System.Security.Cryptography.X509Certificates;
 
 namespace SteamFDCommon.Models
 {

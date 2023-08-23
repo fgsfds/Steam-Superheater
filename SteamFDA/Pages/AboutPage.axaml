@@ -1,0 +1,46 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="SteamFDA.Pages.AboutPage">
+
+    <Grid ColumnDefinitions="*, auto, *" RowDefinitions="auto,auto,auto">
+
+        <StackPanel Grid.Column="1"
+                    Margin="0,30"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Center">
+
+            <TextBlock HorizontalAlignment="Center"
+                       FontWeight="Black"
+                       Foreground="{DynamicResource SystemAccentColor}"
+                       FontSize="20">
+                Steam Fixes Downloader
+            </TextBlock>
+
+            <TextBlock HorizontalAlignment="Center">
+                version 0.1
+            </TextBlock>
+
+        </StackPanel>
+
+        <Button Grid.Row="1" Grid.Column="1" Padding="5" Margin="5" HorizontalAlignment="Stretch" Button.Click="SteamClick">
+            <StackPanel Orientation="Horizontal">
+                <Border Width="64" Height="64" BorderBrush="Black" BorderThickness="1" CornerRadius="2">
+                    <Image Source="/Resources/avatar.jpg" Width="64" />
+                </Border>
+                <TextBlock VerticalAlignment="Center" Margin="10">My Steam profile</TextBlock>
+            </StackPanel>
+        </Button>
+
+        <Button Grid.Row="2" Grid.Column="1" Padding="5" Margin="5" HorizontalAlignment="Stretch" Button.Click="GitHubClick">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="/Resources/github.png" Width="64" />
+                <TextBlock VerticalAlignment="Center" Margin="10">GitHub repository</TextBlock>
+            </StackPanel>
+        </Button>
+
+    </Grid>
+
+</UserControl>

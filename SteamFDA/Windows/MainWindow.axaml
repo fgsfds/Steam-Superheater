@@ -51,6 +51,9 @@
                 <TabItem Header="Settings" Margin="0,0,0,10">
                     <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
                 </TabItem>
+                <TabItem Header="About" Margin="0,0,0,10">
+                    <pages:AboutPage Margin="0" x:Name="AboutPageTab"/>
+                </TabItem>
             </TabControl>
 
             <controls:PopupMessage
