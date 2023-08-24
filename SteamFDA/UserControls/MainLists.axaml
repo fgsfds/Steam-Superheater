@@ -10,6 +10,10 @@
         <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
     </UserControl.Resources>
 
+    <UserControl.Styles>
+        <StyleInclude Source="/Styles/UrlButton.axaml"/>
+    </UserControl.Styles>
+
     <Grid>
 
         <Grid.ColumnDefinitions>

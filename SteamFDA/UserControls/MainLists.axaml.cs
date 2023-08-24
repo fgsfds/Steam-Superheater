@@ -1,8 +1,11 @@
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Styling;
 using SteamFDTCommon.Entities;
 using System.Diagnostics;
+using System.Reflection.Emit;
 
 namespace SteamFDA.UserControls
 {
@@ -16,6 +19,8 @@ namespace SteamFDA.UserControls
 
         private void FixSelected(object sender, SelectionChangedEventArgs e)
         {
+            var style = Application.Current.Resources.TryGetValue("ResourceKey", out var value);
+
             stack.Children.Clear();
 
             if (((ListBox)sender).SelectedItem is null)
@@ -40,8 +45,7 @@ namespace SteamFDA.UserControls
                 {
                     var button = new Button
                     {
-                        Content = item,
-                        Background = new SolidColorBrush(Colors.White) { Opacity = 0 }
+                        Content = item
                     };
 
                     button.Click += ButtonClick;
