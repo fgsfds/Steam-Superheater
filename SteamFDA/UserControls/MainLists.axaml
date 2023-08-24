@@ -10,6 +10,10 @@
         <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
     </UserControl.Resources>
 
+    <UserControl.Styles>
+        <StyleInclude Source="/Styles/UrlButton.axaml"/>
+    </UserControl.Styles>
+
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -83,6 +87,7 @@
 
         <ListBox ItemsSource="{Binding SelectedGameFixesList}"
                  SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
+                 SelectionChanged="FixSelected"
                  Grid.Column="1"
                  Margin="0,0,3,0"
                  Padding="5"
@@ -117,10 +122,15 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Text="{Binding SelectedFix.Description, Mode=TwoWay}"
-                       TextWrapping="Wrap"
-                       Grid.Row="0"
-                       Padding="3"/>
+            <!--<TextBlock Text="{Binding SelectedFix.Description, Mode=TwoWay}"
+            TextWrapping="Wrap"
+            Grid.Row="0"
+            Padding="3">
+            </TextBlock>-->
+
+            <ScrollViewer Grid.Row="0">
+                <StackPanel Orientation="Vertical" Name="stack"></StackPanel>
+            </ScrollViewer>
 
             <TextBlock Text="{Binding Requirements, Mode=OneWay}"
                        TextWrapping="Wrap"

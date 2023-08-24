@@ -13,6 +13,11 @@
 
   
   <ItemGroup>
+    <AvaloniaXaml Remove="Styles\UrlButton.axaml" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <None Remove="Resources\avatar.jpg" />
     <None Remove="Resources\github.png" />
   </ItemGroup>
@@ -25,6 +30,7 @@
   
   <ItemGroup>
     <AvaloniaResource Include="Resources\avatar.jpg" />
+    <AvaloniaResource Include="Styles\UrlButton.axaml" />
   </ItemGroup>
 
   <ItemGroup>
