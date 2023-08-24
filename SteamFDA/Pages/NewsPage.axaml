@@ -5,7 +5,7 @@
              xmlns:helpers="clr-namespace:SteamFDA.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SteamFDA.Pages.NewsPage">
-    
+
     <UserControl.Resources>
         <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
     </UserControl.Resources>
@@ -20,29 +20,61 @@
 
                     <ScrollViewer>
 
-                        <Border CornerRadius="3"
-                                Padding="10"
-                                Margin="5"
-                                BorderThickness="2">
+                        <StackPanel Orientation="Vertical">
 
-                            <Border.Styles>
-                                <Style Selector="Border">
-                                    <Setter Property="BorderBrush" Value="{Binding IsNewer, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Tomato;LightGray'}"/>
-                                </Style>
-                            </Border.Styles>
+                            <!--TODO Find better solution to set different styles based on IsNewer property-->
 
-                            <StackPanel Orientation="Vertical">
+                            <Border CornerRadius="3"
+                                    Padding="10"
+                                    Margin="5"
+                                    BorderThickness="2">
 
-                                <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
-                                           FontSize="12"
-                                           FontWeight="Bold"/>
+                                <Border.Styles>
+                                    <Style Selector="Border">
+                                        <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
+                                        <Setter Property="IsVisible" Value="{Binding IsNewer}"/>
+                                    </Style>
+                                </Border.Styles>
 
-                                <TextBlock Text="{Binding Content}"
-                                           FontSize="16"/>
+                                <StackPanel Orientation="Vertical">
 
-                            </StackPanel>
+                                    <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                               FontSize="12"
+                                               FontWeight="Bold"/>
 
-                        </Border>
+                                    <TextBlock Text="{Binding Content}"
+                                               FontSize="16"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                            <Border CornerRadius="3"
+                                    Padding="10"
+                                    Margin="5"
+                                    BorderThickness="2">
+
+                                <Border.Styles>
+                                    <Style Selector="Border">
+                                        <Setter Property="BorderBrush" Value="LightGray"/>
+                                        <Setter Property="IsVisible" Value="{Binding !IsNewer}"/>
+                                    </Style>
+                                </Border.Styles>
+
+                                <StackPanel Orientation="Vertical">
+
+                                    <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                               FontSize="12"
+                                               FontWeight="Bold"/>
+
+                                    <TextBlock Text="{Binding Content}"
+                                               FontSize="16"/>
+
+                                </StackPanel>
+
+                            </Border>
+
+                        </StackPanel>
 
                     </ScrollViewer>
 
@@ -55,6 +87,7 @@
                 Margin="5"
                 Padding="8"
                 Command="{Binding MarkAllAsRead}"
+                Background="{DynamicResource SystemAccentColor}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Mark all as read
