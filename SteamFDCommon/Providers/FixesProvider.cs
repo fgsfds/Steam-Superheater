@@ -151,7 +151,7 @@ namespace SteamFDTCommon.Providers
         /// </summary>
         /// <param name="fixesList"></param>
         /// <returns></returns>
-        public static string SaveFixes(List<FixesList> fixesList)
+        public static Tuple<bool, string> SaveFixes(List<FixesList> fixesList)
         {
             XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
 
@@ -162,10 +162,10 @@ namespace SteamFDTCommon.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return e.Message;
+                return new Tuple<bool, string>(false, e.Message);
             }
 
-            return "XML saved successfully!";
+            return new Tuple<bool, string>(true, "XML saved successfully!");
         }
     }
 }

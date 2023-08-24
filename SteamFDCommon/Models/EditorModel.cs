@@ -73,7 +73,7 @@ namespace SteamFDCommon.Models
         /// Save current fixes list to XML
         /// </summary>
         /// <returns>Result message</returns>
-        public string SaveFixesListAsync()
+        public Tuple<bool, string> SaveFixesListAsync()
         {
             var result = FixesProvider.SaveFixes(_fixesList);
 

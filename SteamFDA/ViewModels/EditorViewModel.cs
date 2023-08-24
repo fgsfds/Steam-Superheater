@@ -206,7 +206,7 @@ namespace SteamFDA.ViewModels
                 {
                     var result = _editorModel.SaveFixesListAsync();
 
-                    new PopupMessageViewModel("Error", result, PopupMessageType.OkOnly).Show();
+                    new PopupMessageViewModel(result.Item1 ? "Success" : "Error", result.Item2, PopupMessageType.OkOnly).Show();
                 }
                 );
 

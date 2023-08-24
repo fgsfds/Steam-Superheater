@@ -178,7 +178,7 @@ namespace SteamFD.ViewModels
                 {
                     var result = _editorModel.SaveFixesListAsync();
 
-                    MessageBox.Show(result);
+                    MessageBox.Show(result.Item2);
                 }
                 );
 
