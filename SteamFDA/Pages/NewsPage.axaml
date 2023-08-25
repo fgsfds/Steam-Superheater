@@ -12,7 +12,8 @@
 
     <Grid RowDefinitions="*,auto" Margin="5">
 
-        <ItemsControl ItemsSource="{Binding News}"
+        <ItemsControl Name="NewsItems"
+                      ItemsSource="{Binding News}"
                       Grid.Row="0">
 
             <ItemsControl.ItemTemplate>
@@ -22,42 +23,23 @@
 
                         <StackPanel Orientation="Vertical">
 
-                            <!--TODO Find better solution to set different styles based on IsNewer property-->
-
-                            <Border CornerRadius="3"
+                            <Border Name="NewsBorder"
+                                    CornerRadius="3"
                                     Padding="10"
                                     Margin="5"
-                                    BorderThickness="2">
+                                    BorderThickness="2"
+                                    Classes.IsNew="{Binding IsNewer}">
 
                                 <Border.Styles>
-                                    <Style Selector="Border">
-                                        <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
-                                        <Setter Property="IsVisible" Value="{Binding IsNewer}"/>
+                                    <Style Selector="Border.IsNew">
+                                        <Style.Setters>
+                                            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
+                                        </Style.Setters>
                                     </Style>
-                                </Border.Styles>
-
-                                <StackPanel Orientation="Vertical">
-
-                                    <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
-                                               FontSize="12"
-                                               FontWeight="Bold"/>
-
-                                    <TextBlock Text="{Binding Content}"
-                                               FontSize="16"/>
-
-                                </StackPanel>
-
-                            </Border>
-
-                            <Border CornerRadius="3"
-                                    Padding="10"
-                                    Margin="5"
-                                    BorderThickness="2">
-
-                                <Border.Styles>
                                     <Style Selector="Border">
-                                        <Setter Property="BorderBrush" Value="LightGray"/>
-                                        <Setter Property="IsVisible" Value="{Binding !IsNewer}"/>
+                                        <Style.Setters>
+                                            <Setter Property="BorderBrush" Value="LightGray"/>
+                                        </Style.Setters>
                                     </Style>
                                 </Border.Styles>
 
