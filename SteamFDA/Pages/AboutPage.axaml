@@ -7,52 +7,6 @@
 
     <Grid ColumnDefinitions="*" RowDefinitions="auto,auto,auto">
 
-        <!--<StackPanel Margin="0,30"
-        Orientation="Vertical"
-        HorizontalAlignment="Center">
-
-        <TextBlock HorizontalAlignment="Center"
-        FontWeight="Black"
-        Foreground="{DynamicResource SystemAccentColor}"
-        FontSize="20">
-        Steam Fixes Downloader
-        </TextBlock>
-
-        <TextBlock HorizontalAlignment="Center">
-        version 0.1
-        </TextBlock>
-
-        </StackPanel>-->
-
-        <!--<Border Name="Border1"
-        Grid.Row="1"
-        BorderBrush="Gray"
-        BorderThickness="1"
-        CornerRadius="1"
-        Padding="10"
-        Margin="10"
-        Background="LightGray">
-
-        <StackPanel Orientation="Horizontal">
-        <Border Width="32" Height="32" BorderBrush="White" Background="White" BorderThickness="1" CornerRadius="2">
-        <Image Source="/Resources/github.png" Width="32" />
-        </Border>
-        <StackPanel Orientation="Vertical">
-        <TextBlock VerticalAlignment="Center" Margin="10,0">GitHub repository</TextBlock>
-        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="10">Steam Fixes Downloader is free and open source</TextBlock>
-        </StackPanel>
-        </StackPanel>
-
-        </Border>
-
-        <Button Grid.Row="1"
-        HorizontalAlignment="Stretch"
-        Button.Click="GitHubClick"
-        Margin="5"
-        Height="{Binding ElementName=Border1, Path=Bounds.Height}"
-        Width="{Binding ElementName=Border1, Path=Bounds.Width}"
-        Opacity="0"/>-->
-
         <StackPanel Orientation="Vertical"
                     HorizontalAlignment="Stretch"
                     Grid.Row="1">
@@ -63,15 +17,15 @@
                     Background="{DynamicResource ButtonBackground}">
 
                 <Grid ColumnDefinitions="auto,*">
-                    <Button IsEnabled="True" Padding="10" IsVisible="{Binding !IsUpdateAvailable, FallbackValue=True}" Grid.Column="1" HorizontalAlignment="Right">Check for updates</Button>
-                    <Button IsEnabled="True" Padding="10" IsVisible="{Binding IsUpdateAvailable, FallbackValue=False}" Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                    <Button Padding="10" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
+                    <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Image Source="/Resources/github.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader v0.1</TextBlock>
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Version 0.1</TextBlock>
                         </StackPanel>
-                        <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" IsVisible="{Binding IsInProgress, FallbackValue=False}"/>
+                        <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" IsVisible="{Binding IsInProgress}"/>
                     </StackPanel>
                 </Grid>
             </Border>
