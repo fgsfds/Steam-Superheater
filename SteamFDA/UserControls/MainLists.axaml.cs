@@ -33,9 +33,9 @@ namespace SteamFDA.UserControls
 
             foreach(var item in splitDescription )
             {
-                if (item.StartsWith("*"))
+                if (item.StartsWith("*") && item.EndsWith("*"))
                 {
-                    var text = item[1..];
+                    var text = item[1..^1];
                     stack.Children.Add((
                         new TextBlock() { Text = text, FontWeight = FontWeight.Black, TextWrapping = TextWrapping.Wrap })
                         );
