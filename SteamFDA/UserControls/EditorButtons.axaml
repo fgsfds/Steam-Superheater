@@ -16,7 +16,8 @@
                     HorizontalAlignment="Left"
                     Grid.Column="0">
 
-            <ComboBox Margin="0,0,3,0"
+            <ComboBox Name="GamesComboBox"
+                      Margin="0,0,3,0"
                       Width="200"
                       Padding="8"
                       VerticalAlignment="Center"

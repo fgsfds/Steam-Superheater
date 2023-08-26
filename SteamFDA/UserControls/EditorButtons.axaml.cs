@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Controls.Templates;
 
 namespace SteamFDA.UserControls
 {
@@ -7,6 +8,9 @@ namespace SteamFDA.UserControls
         public EditorButtons()
         {
             InitializeComponent();
+
+            //fix for inconsistent combobox width
+            GamesComboBox.ItemsPanel = new FuncTemplate<Panel>(new(() => new StackPanel()));
         }
     }
 }
