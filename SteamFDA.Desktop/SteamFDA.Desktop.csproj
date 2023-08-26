@@ -11,6 +11,10 @@
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <AssemblyName>SteamFD</AssemblyName>
+    <StartupObject>SteamFDA.Desktop.Program</StartupObject>
+    <FileVersion></FileVersion>
+    <Version>6.6.6</Version>
   </PropertyGroup>
 
   <ItemGroup>
