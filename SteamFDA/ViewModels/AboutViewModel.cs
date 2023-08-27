@@ -1,7 +1,10 @@
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Models;
 using System;
+using System.Diagnostics;
 using System.Reflection;
 
 namespace SteamFDA.ViewModels
@@ -33,22 +36,28 @@ namespace SteamFDA.ViewModels
         {
             CheckForUpdatesCommand = new RelayCommand(async () =>
             {
-                IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
+                Process.Start("Updater.exe");
+                var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+                mainWindows.Close();
 
-                var updates = await _aboutModel.CheckForUpdates(CurrentVersion);
 
-                if (updates)
-                {
-                    IsUpdateAvailable = true;
-                    OnPropertyChanged(nameof(IsUpdateAvailable));
-                    DownloadAndInstall.NotifyCanExecuteChanged();
-                }
 
-                IsInProgress = false;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
+                //IsInProgress = true;
+                //OnPropertyChanged(nameof(IsInProgress));
+                //CheckForUpdatesCommand.NotifyCanExecuteChanged();
+
+                //var updates = await _aboutModel.CheckForUpdates(CurrentVersion);
+
+                //if (updates)
+                //{
+                //    IsUpdateAvailable = true;
+                //    OnPropertyChanged(nameof(IsUpdateAvailable));
+                //    DownloadAndInstall.NotifyCanExecuteChanged();
+                //}
+
+                //IsInProgress = false;
+                //OnPropertyChanged(nameof(IsInProgress));
+                //CheckForUpdatesCommand.NotifyCanExecuteChanged();
             },
             () => IsInProgress is false
             );

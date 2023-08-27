@@ -18,18 +18,6 @@
 
   
   <ItemGroup>
-    <None Remove="Resources\avatar.jpg" />
-    <None Remove="Resources\github.png" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-	  <AvaloniaResource Include="Resources\github.png" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <AvaloniaResource Include="Resources\avatar.jpg" />
     <AvaloniaResource Include="Styles\UrlButton.axaml" />
   </ItemGroup>
 

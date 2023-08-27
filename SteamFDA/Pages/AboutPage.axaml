@@ -20,7 +20,7 @@
                     <Button Padding="10" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
                     <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Image Source="/Resources/github.png" Width="48" />
+                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader</TextBlock>
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
@@ -35,9 +35,7 @@
                     HorizontalAlignment="Stretch"
                     Button.Click="GitHubClick">
                 <StackPanel Orientation="Horizontal">
-                    <Border Width="48" Height="48" BorderBrush="White" Background="White" BorderThickness="1" CornerRadius="2">
-                        <Image Source="/Resources/github.png" Width="48" />
-                    </Border>
+                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">GitHub repository</TextBlock>
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Steam Fixes Downloader is free and open source</TextBlock>
@@ -50,12 +48,12 @@
                     HorizontalAlignment="Stretch"
                     Button.Click="SteamClick">
                 <StackPanel Orientation="Horizontal">
-                    <Border Width="48" Height="48" BorderBrush="Black" BorderThickness="1" CornerRadius="2">
-                        <Image Source="/Resources/avatar.jpg" Width="48" />
+                    <Border Width="48" Height="48" BorderBrush="{DynamicResource ButtonBackground}" BorderThickness="1" CornerRadius="2">
+                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
                     </Border>
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Dev's Steam profile</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations would be appreciated.</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations are appreciated.</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Button>

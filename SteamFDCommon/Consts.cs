@@ -22,5 +22,7 @@ namespace SteamFDCommon
         public const string AdminRegistryKey = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers";
 
         public const string BackupFolder = ".sfd";
+
+        public const string UpdateFile = ".update";
     }
 }

@@ -1,5 +1,4 @@
 ﻿using SteamFDCommon.Updater;
-using System.IO;
 
 namespace SteamFDCommon.Models
 {
@@ -26,6 +25,10 @@ namespace SteamFDCommon.Models
             return _updates.Any();
         }
 
+        /// <summary>
+        /// Download latest release from Github and create update lock file
+        /// </summary>
+        /// <returns></returns>
         public async Task DownloadLatestReleaseAndCreateLock()
         {
             var fixUrl = _updates.OrderByDescending(x => x.Version).First().DownloadUrl;
@@ -39,9 +42,7 @@ namespace SteamFDCommon.Models
 
         private void CreateUpdateLock(string fileName)
         {
-            var updateFile = ".update";
-
-            using (TextWriter tw = new StreamWriter(updateFile))
+            using (TextWriter tw = new StreamWriter(Consts.UpdateFile))
             {
                 tw.WriteLine(fileName);
             }
