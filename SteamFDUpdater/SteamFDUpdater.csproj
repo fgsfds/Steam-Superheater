@@ -16,8 +16,4 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\SteamFDCommon\SteamFDCommon.csproj" />
-  </ItemGroup>
-
 </Project>

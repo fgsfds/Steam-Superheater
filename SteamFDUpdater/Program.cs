@@ -1,5 +1,4 @@
-﻿using SteamFDCommon;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.IO.Compression;
 
 namespace SteamFDUpdater
@@ -7,12 +6,11 @@ namespace SteamFDUpdater
     internal class Program
     {
         private static string _currentDir;
+        private const string UpdateFile = ".update";
 
         private static readonly List<string> _keepFiles = new()
         {
-            Consts.ConfigFile,
-            Consts.InstalledFile,
-            Consts.UpdateFile,
+            UpdateFile,
             "Updater.exe",
             "Updater.dll",
             "Updater.deps.json",
@@ -20,28 +18,34 @@ namespace SteamFDUpdater
             "Updater.pdb"
         };
 
-        static void Main()
+        static void Main(string[] args)
         {
+            if (args.Length == 0)
+            {
+                Environment.Exit(0);
+            }
+
             _currentDir = Directory.GetCurrentDirectory();
 
             while (Process.GetProcessesByName("SteamFD").Any())
             {
                 Console.WriteLine("Waiting for SteamFD to exit...");
-                Thread.Sleep(100);
+                Thread.Sleep(1000);
                 Console.Clear();
             }
 
             if (File.Exists(".update"))
             {
-                Console.WriteLine("OK");
-
                 string zip;
 
-                using (var reader = new StreamReader(Consts.UpdateFile))
+                using (var reader = new StreamReader(UpdateFile))
                 {
                     zip = reader.ReadToEnd().Trim();
                     _keepFiles.Add(zip);
                 }
+
+                var files = args.First().Split(';');
+                _keepFiles.AddRange(files);
 
                 if (File.Exists(zip))
                 {
@@ -50,12 +54,8 @@ namespace SteamFDUpdater
                     ZipFile.ExtractToDirectory(zip, _currentDir, true);
 
                     File.Delete(zip);
-                    File.Delete(Consts.UpdateFile);
+                    File.Delete(UpdateFile);
                 }
-            }
-            else
-            {
-                Console.WriteLine("Not OK");
             }
         }
 

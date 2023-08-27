@@ -11,7 +11,6 @@ namespace SteamFDCommon.DI
             container.Register<EditorModel>(Lifestyle.Singleton);
             container.Register<MainModel>(Lifestyle.Singleton);
             container.Register<NewsModel>(Lifestyle.Singleton);
-            container.Register<AboutModel>(Lifestyle.Singleton);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.IO;
 using Avalonia;
 using SteamFDCommon;
+using SteamFDCommon.Updater;
 
 namespace SteamFDA.Desktop;
 
@@ -18,7 +19,9 @@ class Program
     {
         if (File.Exists(Consts.UpdateFile))
         {
+            var updateInstaller = new UpdateInstaller();
 
+            updateInstaller.InstallUpdate();
         }
         else
         {

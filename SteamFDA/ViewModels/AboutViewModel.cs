@@ -2,7 +2,9 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SteamFDCommon;
 using SteamFDCommon.Models;
+using SteamFDCommon.Updater;
 using System;
 using System.Diagnostics;
 using System.Reflection;
@@ -11,7 +13,7 @@ namespace SteamFDA.ViewModels
 {
     public class AboutViewModel : ObservableObject
     {
-        private readonly AboutModel _aboutModel;
+        private readonly UpdateInstaller _updateInstaller;
 
         public bool IsUpdateAvailable { get; set; }
 
@@ -19,9 +21,9 @@ namespace SteamFDA.ViewModels
 
         public Version CurrentVersion { get; set; }
 
-        public AboutViewModel(AboutModel aboutModel)
+        public AboutViewModel(UpdateInstaller updateInstaller)
         {
-            _aboutModel = aboutModel ?? throw new NullReferenceException(nameof(aboutModel));
+            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
 
             CurrentVersion = Assembly.GetEntryAssembly().GetName().Version;
 
@@ -40,7 +42,7 @@ namespace SteamFDA.ViewModels
                 OnPropertyChanged(nameof(IsInProgress));
                 CheckForUpdatesCommand.NotifyCanExecuteChanged();
 
-                var updates = await _aboutModel.CheckForUpdates(CurrentVersion);
+                var updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
 
                 if (updates)
                 {
@@ -62,15 +64,12 @@ namespace SteamFDA.ViewModels
                 OnPropertyChanged(nameof(IsInProgress));
                 DownloadAndInstall.NotifyCanExecuteChanged();
 
-                await _aboutModel.DownloadLatestReleaseAndCreateLock();
+                await _updateInstaller.DownloadLatestReleaseAndCreateLock();
 
-                Process.Start("Updater.exe");
+                _updateInstaller.InstallUpdate();
+
                 var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
                 mainWindows.Close();
-
-                IsInProgress = false;
-                OnPropertyChanged(nameof(IsInProgress));
-                DownloadAndInstall.NotifyCanExecuteChanged();
             },
             () => IsUpdateAvailable is true
             );

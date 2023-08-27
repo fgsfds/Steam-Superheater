@@ -1,23 +1,16 @@
-﻿using SteamFDCommon.Updater;
-using static System.Net.Mime.MediaTypeNames;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace SteamFDCommon.Models
+namespace SteamFDCommon.Updater
 {
-    public class AboutModel
+    public class UpdateInstaller
     {
         private readonly List<UpdateEntity> _updates;
 
-        public AboutModel()
+        public UpdateInstaller()
         {
             _updates = new();
         }
 
-        /// <summary>
-        /// Fill the list of newer releases and return true if there are newer versions
-        /// </summary>
-        /// <param name="currentVersion">Current app version</param>
-        /// <returns>true if there are newer versions</returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
             _updates.Clear();
@@ -40,6 +33,11 @@ namespace SteamFDCommon.Models
             await ZipTools.DownloadFileAsync(fixUrl, fileName);
 
             CreateUpdateLock(fileName);
+        }
+
+        public void InstallUpdate()
+        {
+            Process.Start("Updater.exe", $"{Consts.ConfigFile};{Consts.InstalledFile}");
         }
 
         private void CreateUpdateLock(string fileName)
