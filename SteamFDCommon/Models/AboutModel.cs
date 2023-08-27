@@ -1,4 +1,6 @@
 ﻿using SteamFDCommon.Updater;
+using static System.Net.Mime.MediaTypeNames;
+using System.Diagnostics;
 
 namespace SteamFDCommon.Models
 {

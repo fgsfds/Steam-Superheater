@@ -36,28 +36,22 @@ namespace SteamFDA.ViewModels
         {
             CheckForUpdatesCommand = new RelayCommand(async () =>
             {
-                Process.Start("Updater.exe");
-                var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
-                mainWindows.Close();
+                IsInProgress = true;
+                OnPropertyChanged(nameof(IsInProgress));
+                CheckForUpdatesCommand.NotifyCanExecuteChanged();
 
+                var updates = await _aboutModel.CheckForUpdates(CurrentVersion);
 
+                if (updates)
+                {
+                    IsUpdateAvailable = true;
+                    OnPropertyChanged(nameof(IsUpdateAvailable));
+                    DownloadAndInstall.NotifyCanExecuteChanged();
+                }
 
-                //IsInProgress = true;
-                //OnPropertyChanged(nameof(IsInProgress));
-                //CheckForUpdatesCommand.NotifyCanExecuteChanged();
-
-                //var updates = await _aboutModel.CheckForUpdates(CurrentVersion);
-
-                //if (updates)
-                //{
-                //    IsUpdateAvailable = true;
-                //    OnPropertyChanged(nameof(IsUpdateAvailable));
-                //    DownloadAndInstall.NotifyCanExecuteChanged();
-                //}
-
-                //IsInProgress = false;
-                //OnPropertyChanged(nameof(IsInProgress));
-                //CheckForUpdatesCommand.NotifyCanExecuteChanged();
+                IsInProgress = false;
+                OnPropertyChanged(nameof(IsInProgress));
+                CheckForUpdatesCommand.NotifyCanExecuteChanged();
             },
             () => IsInProgress is false
             );
@@ -69,6 +63,10 @@ namespace SteamFDA.ViewModels
                 DownloadAndInstall.NotifyCanExecuteChanged();
 
                 await _aboutModel.DownloadLatestReleaseAndCreateLock();
+
+                Process.Start("Updater.exe");
+                var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+                mainWindows.Close();
 
                 IsInProgress = false;
                 OnPropertyChanged(nameof(IsInProgress));
