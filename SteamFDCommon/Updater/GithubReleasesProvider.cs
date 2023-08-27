@@ -4,22 +4,29 @@ namespace SteamFDCommon.Updater
 {
     public class GithubReleasesProvider
     {
-        public static async Task ReadReleasesAsync(Version currentVersion)
+        /// <summary>
+        /// Return a list of releases from github repo that have higher version than the current
+        /// </summary>
+        /// <param name="currentVersion">current release version</param>
+        public static async Task<IEnumerable<UpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
         {
-            GithubReleaseEntity.Root latestVersion;
-            IEnumerable<GithubReleaseEntity.Root> newVersions;
-
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("fgsfds");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("SteamFD");
 
                 var a = await client.GetStringAsync("https://api.github.com/repos/fgsfds/Test-Repo/releases");
 
                 var cc = JsonConvert.DeserializeObject<List<GithubReleaseEntity.Root>>(a);
 
-                latestVersion = cc.Last();
+                var updates = cc.ConvertAll(x => new UpdateEntity(
+                    new Version(x.tag_name),
+                    x.body,
+                    new Uri(x.assets.First().browser_download_url)
+                    ));
 
-                newVersions = cc.Where(x => new Version(x.tag_name) > currentVersion);
+                var newVersions = updates.Where(x => x.Version > currentVersion);
+
+                return newVersions;
             }
         }
     }

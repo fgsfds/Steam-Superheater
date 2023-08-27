@@ -22,8 +22,8 @@
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Image Source="/Resources/github.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader v0.1</TextBlock>
-                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Version 0.1</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
                         </StackPanel>
                         <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" IsVisible="{Binding IsInProgress}"/>
                     </StackPanel>
