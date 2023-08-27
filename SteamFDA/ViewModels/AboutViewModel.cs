@@ -1,11 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Models;
-using SteamFDCommon.Updater;
 using System;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
@@ -17,8 +14,6 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
-        public IRelayCommand CheckForUpdatesCommand { get; set; }
-
         public Version CurrentVersion { get; set; }
 
         public AboutViewModel(AboutModel aboutModel)
@@ -27,9 +22,15 @@ namespace SteamFDA.ViewModels
 
             CurrentVersion = Assembly.GetEntryAssembly().GetName().Version;
 
-            IsUpdateAvailable = false;
-            IsInProgress = false;
+            SetRelayCommands();
+        }
 
+        public IRelayCommand CheckForUpdatesCommand { get; set; }
+
+        public IRelayCommand DownloadAndInstall { get; set; }
+
+        private void SetRelayCommands()
+        {
             CheckForUpdatesCommand = new RelayCommand(async () =>
             {
                 IsInProgress = true;
@@ -42,6 +43,7 @@ namespace SteamFDA.ViewModels
                 {
                     IsUpdateAvailable = true;
                     OnPropertyChanged(nameof(IsUpdateAvailable));
+                    DownloadAndInstall.NotifyCanExecuteChanged();
                 }
 
                 IsInProgress = false;
@@ -49,6 +51,21 @@ namespace SteamFDA.ViewModels
                 CheckForUpdatesCommand.NotifyCanExecuteChanged();
             },
             () => IsInProgress is false
+            );
+
+            DownloadAndInstall = new RelayCommand(async () =>
+            {
+                IsInProgress = true;
+                OnPropertyChanged(nameof(IsInProgress));
+                DownloadAndInstall.NotifyCanExecuteChanged();
+
+                await _aboutModel.DownloadLatestReleaseAndCreateLock();
+
+                IsInProgress = false;
+                OnPropertyChanged(nameof(IsInProgress));
+                DownloadAndInstall.NotifyCanExecuteChanged();
+            },
+            () => IsUpdateAvailable is true
             );
         }
     }

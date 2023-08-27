@@ -1,8 +1,5 @@
-﻿using SteamFDCommon.DI;
-using SteamFDCommon.Updater;
-using SteamFDTCommon.Entities;
-using SteamFDTCommon.Providers;
-using System.Collections.ObjectModel;
+﻿using SteamFDCommon.Updater;
+using System.IO;
 
 namespace SteamFDCommon.Models
 {
@@ -27,6 +24,27 @@ namespace SteamFDCommon.Models
             _updates.AddRange(await GithubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
 
             return _updates.Any();
+        }
+
+        public async Task DownloadLatestReleaseAndCreateLock()
+        {
+            var fixUrl = _updates.OrderByDescending(x => x.Version).First().DownloadUrl;
+
+            var fileName = Path.GetFileName(fixUrl.ToString());
+
+            await ZipTools.DownloadFileAsync(fixUrl, fileName);
+
+            CreateUpdateLock(fileName);
+        }
+
+        private void CreateUpdateLock(string fileName)
+        {
+            var updateFile = ".update";
+
+            using (TextWriter tw = new StreamWriter(updateFile))
+            {
+                tw.WriteLine(fileName);
+            }
         }
     }
 }

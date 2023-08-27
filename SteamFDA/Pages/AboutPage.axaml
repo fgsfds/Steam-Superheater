@@ -18,7 +18,7 @@
 
                 <Grid ColumnDefinitions="auto,*">
                     <Button Padding="10" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
-                    <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                    <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Image Source="/Resources/github.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
