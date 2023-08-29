@@ -2,7 +2,6 @@
 using System.IO;
 using Avalonia;
 using SteamFDCommon;
-using SteamFDCommon.Updater;
 
 namespace SteamFDA.Desktop;
 

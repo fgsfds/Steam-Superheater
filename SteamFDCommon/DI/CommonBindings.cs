@@ -1,6 +1,5 @@
 ﻿using SimpleInjector;
 using SteamFDCommon.Config;
-using SteamFDCommon.Updater;
 using SteamFDTCommon.Providers;
 
 namespace SteamFDCommon.DI

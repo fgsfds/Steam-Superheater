@@ -8,13 +8,13 @@ namespace SteamFDA.Pages
 {
     public partial class AboutPage : UserControl
     {
-        private readonly AboutViewModel _svm;
+        private readonly AboutViewModel _avm;
 
         public AboutPage()
         {
-            _svm = BindingsManager.Instance.GetInstance<AboutViewModel>();
+            _avm = BindingsManager.Instance.GetInstance<AboutViewModel>();
 
-            DataContext = _svm;
+            DataContext = _avm;
 
             InitializeComponent();
         }

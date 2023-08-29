@@ -3,10 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon;
-using SteamFDCommon.Models;
-using SteamFDCommon.Updater;
 using System;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace SteamFDA.ViewModels
@@ -18,8 +15,6 @@ namespace SteamFDA.ViewModels
         public bool IsUpdateAvailable { get; set; }
 
         public bool IsInProgress { get; set; }
-
-        public bool IsReadyToInstall { get; set; }
 
         public Version CurrentVersion { get; set; }
 
@@ -54,7 +49,7 @@ namespace SteamFDA.ViewModels
                 {
                     new PopupMessageViewModel(
                         "Error",
-                        "Cannot retreive latest releases from GitHub: " + ex.Message,
+                        "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
                         PopupMessageType.OkOnly
                         ).Show();
                 }
@@ -83,8 +78,7 @@ namespace SteamFDA.ViewModels
 
                 UpdateInstaller.InstallUpdate();
 
-                var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
-                mainWindows.Close();
+                ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.Close();
             },
             () => IsUpdateAvailable is true
             );

@@ -1,10 +1,12 @@
 ﻿using SteamFDCommon.Config;
+using SteamFDCommon.Entities;
+using SteamFDCommon.Providers;
 using SteamFDTCommon.Entities;
 using SteamFDTCommon.FixTools;
 using SteamFDTCommon.Providers;
 using System.Diagnostics;
 
-namespace SteamFDCommon.Updater
+namespace SteamFDCommon
 {
     public class UpdateInstaller
     {
@@ -45,6 +47,11 @@ namespace SteamFDCommon.Updater
             Process.Start("Updater.exe", $"{Consts.ConfigFile};{Consts.InstalledFile}");
         }
 
+        /// <summary>
+        /// First, check updater, then check if there are updates for SFD
+        /// </summary>
+        /// <param name="currentVersion">Current SFD verson</param>
+        /// <returns></returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
             await CheckUpdater();

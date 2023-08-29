@@ -1,8 +1,9 @@
 ﻿using Newtonsoft.Json;
+using SteamFDCommon.Entities;
 
-namespace SteamFDCommon.Updater
+namespace SteamFDCommon.Providers
 {
-    public class GithubReleasesProvider
+    public static class GithubReleasesProvider
     {
         /// <summary>
         /// Return a list of releases from github repo that have higher version than the current

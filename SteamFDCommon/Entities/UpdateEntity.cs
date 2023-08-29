@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SteamFDCommon.Updater
+namespace SteamFDCommon.Entities
 {
     public class UpdateEntity
     {
