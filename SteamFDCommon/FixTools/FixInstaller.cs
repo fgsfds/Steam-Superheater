@@ -16,7 +16,7 @@ namespace SteamFDTCommon.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix)
+        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, bool doBackup)
         {
             var url = fix.Url;
 
@@ -44,11 +44,14 @@ namespace SteamFDTCommon.FixTools
 
             var filesToDelete = GetListOfFilesToDelete(gameInstallPath, fix.FilesToDelete);
 
-            BackupFiles(
-                files.Concat(filesToDelete).ToList(),
-                gameInstallPath,
-                Path.GetFileNameWithoutExtension(zipName)
-                );
+            if (doBackup)
+            {
+                BackupFiles(
+                    files.Concat(filesToDelete).ToList(),
+                    gameInstallPath,
+                    Path.GetFileNameWithoutExtension(zipName)
+                    );
+            }
 
             await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, unpackToPath, true));
 

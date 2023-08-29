@@ -14,7 +14,7 @@ namespace SteamFDCommon.Updater
             {
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("SteamFD");
 
-                var a = await client.GetStringAsync("https://api.github.com/repos/fgsfds/Test-Repo/releases");
+                var a = await client.GetStringAsync(Consts.GitHubReleases);
 
                 var cc = JsonConvert.DeserializeObject<List<GithubReleaseEntity.Root>>(a);
 

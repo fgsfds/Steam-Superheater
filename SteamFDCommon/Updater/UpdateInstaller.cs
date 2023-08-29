@@ -84,7 +84,7 @@ namespace SteamFDCommon.Updater
         /// <returns></returns>
         private async Task<bool> DownloadAndInstallUpdater(FixEntity updater)
         {
-            _ = await FixInstaller.InstallFix(new GameEntity(0, "", Directory.GetCurrentDirectory()), updater);
+            _ = await FixInstaller.InstallFix(new GameEntity(0, "", Directory.GetCurrentDirectory()), updater, false);
 
             _configProvider.Config.InstalledUpdater = updater.Version;
 

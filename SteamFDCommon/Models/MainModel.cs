@@ -142,7 +142,7 @@ namespace SteamFDCommon.Models
 
         public async Task<string> InstallFix(GameEntity game, FixEntity fix)
         {
-            var installedFix = await FixInstaller.InstallFix(game, fix);
+            var installedFix = await FixInstaller.InstallFix(game, fix, true);
 
             fix.InstalledFix = installedFix;
 
@@ -164,7 +164,7 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = null;
 
-            var installedFix = await FixInstaller.InstallFix(game, fix);
+            var installedFix = await FixInstaller.InstallFix(game, fix, true);
 
             fix.InstalledFix = installedFix;
 

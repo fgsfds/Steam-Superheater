@@ -44,7 +44,20 @@ namespace SteamFDA.ViewModels
                 OnPropertyChanged(nameof(IsInProgress));
                 CheckForUpdatesCommand.NotifyCanExecuteChanged();
 
-                var updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
+                bool updates = false;
+
+                try
+                {
+                    updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
+                }
+                catch (Exception ex)
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        "Cannot retreive latest releases from GitHub: " + ex.Message,
+                        PopupMessageType.OkOnly
+                        ).Show();
+                }
 
                 if (updates)
                 {
