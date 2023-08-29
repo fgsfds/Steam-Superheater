@@ -12,16 +12,13 @@ class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    //public static void Main(string[] args) => BuildAvaloniaApp()
-    //    .StartWithClassicDesktopLifetime(args);
-
     public static void Main(string[] args)
     {
         if (File.Exists(Consts.UpdateFile))
         {
-            //var updateInstaller = new UpdateInstaller();
+            UpdateInstaller.InstallUpdate();
 
-            //updateInstaller.InstallUpdate();
+            Environment.Exit(0);
         }
         else
         {

@@ -22,6 +22,29 @@ namespace SteamFDCommon.Updater
             _configProvider = configProvider ?? throw new NullReferenceException(nameof(configProvider));
         }
 
+        /// <summary>
+        /// Download latest release from Github and create update lock file
+        /// </summary>
+        /// <returns></returns>
+        public async Task DownloadLatestReleaseAndCreateLock()
+        {
+            var fixUrl = _updates.OrderByDescending(x => x.Version).First().DownloadUrl;
+
+            var fileName = Path.GetFileName(fixUrl.ToString());
+
+            await ZipTools.DownloadFileAsync(fixUrl, fileName);
+
+            CreateUpdateLock(fileName);
+        }
+
+        /// <summary>
+        /// Start updater
+        /// </summary>
+        public static void InstallUpdate()
+        {
+            Process.Start("Updater.exe", $"{Consts.ConfigFile};{Consts.InstalledFile}");
+        }
+
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
             await CheckUpdater();
@@ -33,6 +56,10 @@ namespace SteamFDCommon.Updater
             return _updates.Any();
         }
 
+        /// <summary>
+        /// Check if updater exists and is up to date
+        /// </summary>
+        /// <returns></returns>
         private async Task<bool> CheckUpdater()
         {
             var fixes = await _fixesProvider.GetCachedFixesListAsync();
@@ -50,6 +77,11 @@ namespace SteamFDCommon.Updater
             return true;
         }
 
+        /// <summary>
+        /// Download and install the latest version of updater
+        /// </summary>
+        /// <param name="updater"></param>
+        /// <returns></returns>
         private async Task<bool> DownloadAndInstallUpdater(FixEntity updater)
         {
             _ = await FixInstaller.InstallFix(new GameEntity(0, "", Directory.GetCurrentDirectory()), updater);
@@ -57,26 +89,6 @@ namespace SteamFDCommon.Updater
             _configProvider.Config.InstalledUpdater = updater.Version;
 
             return true;
-        }
-
-        /// <summary>
-        /// Download latest release from Github and create update lock file
-        /// </summary>
-        /// <returns></returns>
-        public async Task DownloadLatestReleaseAndCreateLock()
-        {
-            var fixUrl = _updates.OrderByDescending(x => x.Version).First().DownloadUrl;
-
-            var fileName = Path.GetFileName(fixUrl.ToString());
-
-            await ZipTools.DownloadFileAsync(fixUrl, fileName);
-
-            CreateUpdateLock(fileName);
-        }
-
-        public void InstallUpdate()
-        {
-            Process.Start("Updater.exe", $"{Consts.ConfigFile};{Consts.InstalledFile}");
         }
 
         private void CreateUpdateLock(string fileName)

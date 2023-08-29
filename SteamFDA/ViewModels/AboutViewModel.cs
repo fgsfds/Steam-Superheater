@@ -68,7 +68,7 @@ namespace SteamFDA.ViewModels
 
                 await _updateInstaller.DownloadLatestReleaseAndCreateLock();
 
-                _updateInstaller.InstallUpdate();
+                UpdateInstaller.InstallUpdate();
 
                 var mainWindows = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
                 mainWindows.Close();
