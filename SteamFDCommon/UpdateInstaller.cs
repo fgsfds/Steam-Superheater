@@ -44,7 +44,7 @@ namespace SteamFDCommon
         /// </summary>
         public static void InstallUpdate()
         {
-            Process.Start("Updater.exe", $"{Consts.ConfigFile};{Consts.InstalledFile}");
+            Process.Start(Consts.UpdaterExe, $"{Consts.ConfigFile};{Consts.InstalledFile}");
         }
 
         /// <summary>
@@ -73,7 +73,7 @@ namespace SteamFDCommon
             var updater = fixes.Where(x => x.GameId == 0).First().Fixes.Where(x => x.Guid == Consts.UpdaterGuid).First();
             var currentVersion = _configProvider.Config.InstalledUpdater;
 
-            if (!File.Exists("Updater.exe") ||
+            if (!File.Exists(Consts.UpdaterExe) ||
                 !File.Exists("Updater.dll") ||
                 updater.Version > currentVersion)
             {

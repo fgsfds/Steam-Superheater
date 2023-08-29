@@ -5,7 +5,7 @@ namespace SteamFDUpdater
 {
     internal class Program
     {
-        private static string _currentDir;
+        private static string CurrentDir => Directory.GetCurrentDirectory();
         private const string UpdateFile = ".update";
 
         private static readonly List<string> _keepFiles = new()
@@ -14,8 +14,7 @@ namespace SteamFDUpdater
             "Updater.exe",
             "Updater.dll",
             "Updater.deps.json",
-            "Updater.runtimeconfig.json",
-            "Updater.pdb"
+            "Updater.runtimeconfig.json"
         };
 
         static void Main(string[] args)
@@ -25,8 +24,6 @@ namespace SteamFDUpdater
                 Environment.Exit(0);
             }
 
-            _currentDir = Directory.GetCurrentDirectory();
-
             while (Process.GetProcessesByName("SteamFD").Any())
             {
                 Console.WriteLine("Waiting for SteamFD to exit...");
@@ -34,7 +31,7 @@ namespace SteamFDUpdater
                 Console.Clear();
             }
 
-            if (File.Exists(".update"))
+            if (File.Exists(UpdateFile))
             {
                 string zip;
 
@@ -51,7 +48,7 @@ namespace SteamFDUpdater
                 {
                     RemoveOldFiles();
 
-                    ZipFile.ExtractToDirectory(zip, _currentDir, true);
+                    ZipFile.ExtractToDirectory(zip, CurrentDir, true);
 
                     File.Delete(zip);
                     File.Delete(UpdateFile);
@@ -61,7 +58,7 @@ namespace SteamFDUpdater
 
         private static void RemoveOldFiles()
         {
-            var files = Directory.GetFiles(_currentDir);
+            var files = Directory.GetFiles(CurrentDir);
 
             foreach (var file in files)
             {
