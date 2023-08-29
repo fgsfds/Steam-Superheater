@@ -28,5 +28,10 @@ namespace SteamFDA.Pages
         {
             Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Fixes-Downloader");
         }
+
+        private void GitHubIssuesClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Fixes-Downloader/issues/new");
+        }
     }
 }

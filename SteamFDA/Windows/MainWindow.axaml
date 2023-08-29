@@ -38,16 +38,16 @@
             </TextBlock>
 
             <TabControl Grid.Row="1" Margin="5">
-                <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,0,10">
+                <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
-                <TabItem Header="Editor" Margin="0,0,0,10" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
+                <TabItem Header="Editor" Margin="0,0,10,10" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
                     <pages:EditorPage Margin="0" />
                 </TabItem>
-                <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}" Margin="0,0,0,10">
+                <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}" Margin="0,0,10,10">
                     <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
                 </TabItem>
-                <TabItem Header="Settings" Margin="0,0,0,10">
+                <TabItem Header="Settings" Margin="0,0,10,10">
                     <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
                 </TabItem>
                 <TabItem Header="About" Margin="0,0,0,10">

@@ -26,6 +26,7 @@
                     Grid.ColumnSpan="2"
                     CornerRadius="10"
                     MinHeight="300"
+                    BorderBrush="{DynamicResource SystemAccentColor}"
                     BorderThickness="1"
                     Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     BoxShadow="{DynamicResource Shadow}"></Border>
@@ -35,7 +36,7 @@
                        Grid.ColumnSpan="2"
                        Margin="30,30,30,0"
                        Foreground="{DynamicResource SystemAccentColor} "
-                       FontWeight="Black"
+                       FontWeight="Bold"
                        FontSize="25"
                        Text="{Binding TitleText, FallbackValue='Error'}"/>
 

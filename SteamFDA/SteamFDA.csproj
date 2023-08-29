@@ -18,6 +18,12 @@
 
   
   <ItemGroup>
+    <None Remove="Assets\issues.png" />
+    <None Remove="Assets\logo.png" />
+  </ItemGroup>
+
+  
+  <ItemGroup>
     <AvaloniaResource Include="Styles\UrlButton.axaml" />
   </ItemGroup>
 

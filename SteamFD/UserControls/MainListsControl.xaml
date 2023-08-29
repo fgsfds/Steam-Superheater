@@ -78,7 +78,7 @@
                         <TextBlock Margin="0"
                                    Text="Update available"
                                    VerticalAlignment="Center"
-                                   FontWeight="Black"
+                                   FontWeight="Bold"
                                    Visibility="{Binding HasNewerVersion, Converter={StaticResource BooleanToVisibilityConverter }}"/>
                     </StackPanel>
                 </DataTemplate>

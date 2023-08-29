@@ -5,31 +5,48 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SteamFDA.Pages.AboutPage">
 
-    <Grid ColumnDefinitions="*" RowDefinitions="auto,auto,auto">
+    <Grid ColumnDefinitions="*">
 
         <StackPanel Orientation="Vertical"
                     HorizontalAlignment="Stretch"
                     Grid.Row="1">
 
+            <!--Version-->
             <Border Padding="10"
                     Margin="10"
+                    CornerRadius="3"
                     HorizontalAlignment="Stretch"
                     Background="{DynamicResource ButtonBackground}">
 
-                <Grid ColumnDefinitions="auto,*">
-                    <Button Padding="10" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
-                    <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                <Grid ColumnDefinitions="auto,*, auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
+                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/logo.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader</TextBlock>
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
                         </StackPanel>
-                        <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" IsVisible="{Binding IsInProgress}"/>
                     </StackPanel>
+                    <ProgressBar Grid.Column="1" IsIndeterminate="True" IsVisible="{Binding IsInProgress}" Margin="30,0"/>
+                    <Button Padding="10" Margin="10,0" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
+                    <Button Padding="10" Margin="10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
                 </Grid>
             </Border>
 
+            <!--Steam-->
+            <Button Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Button.Click="SteamClick">
+                <StackPanel Orientation="Horizontal">
+                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Dev's Steam profile</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations are appreciated.</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
+
+            <!--Github-->
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
@@ -43,17 +60,15 @@
                 </StackPanel>
             </Button>
 
+            <!--Issues-->
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
-                    Button.Click="SteamClick">
+                    Button.Click="GitHubIssuesClick">
                 <StackPanel Orientation="Horizontal">
-                    <Border Width="48" Height="48" BorderBrush="{DynamicResource ButtonBackground}" BorderThickness="1" CornerRadius="2">
-                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
-                    </Border>
+                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Dev's Steam profile</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations are appreciated.</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Button>

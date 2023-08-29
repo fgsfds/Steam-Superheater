@@ -37,7 +37,7 @@ namespace SteamFDA.UserControls
                 {
                     var text = item[1..^1];
                     stack.Children.Add((
-                        new TextBlock() { Text = text, FontWeight = FontWeight.Black, TextWrapping = TextWrapping.Wrap })
+                        new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap })
                         );
                     continue;
                 }
