@@ -3,7 +3,7 @@ using Microsoft.Win32;
 using SteamFDCommon;
 using SteamFDTools;
 
-namespace SteamFDTCommon.Entities
+namespace SteamFDCommon.Entities
 {
     public class GameEntity : ObservableObject
     {

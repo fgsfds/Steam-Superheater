@@ -1,11 +1,11 @@
 ﻿using SteamFDCommon;
 using SteamFDCommon.Config;
-using SteamFDTCommon.Entities;
+using SteamFDCommon.Entities;
 using System.IO;
 using System.Net.Http;
 using System.Xml.Serialization;
 
-namespace SteamFDTCommon.Providers
+namespace SteamFDCommon.Providers
 {
     public class FixesProvider
     {

@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
 
-namespace SteamFDTCommon.Entities
+namespace SteamFDCommon.Entities
 {
     /// <summary>
     /// Entity containing game information and a list of fixes for it

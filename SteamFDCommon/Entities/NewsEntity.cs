@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace SteamFDTCommon.Entities
+namespace SteamFDCommon.Entities
 {
     public partial class NewsEntity : ObservableObject
     {

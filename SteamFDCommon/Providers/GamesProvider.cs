@@ -1,7 +1,7 @@
-﻿using SteamFDTCommon.Entities;
+﻿using SteamFDCommon.Entities;
 using SteamFDTools;
 
-namespace SteamFDTCommon.Providers
+namespace SteamFDCommon.Providers
 {
     public class GamesProvider
     {

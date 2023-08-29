@@ -1,7 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Models;
-using SteamFDTCommon.Entities;
+using SteamFDCommon.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

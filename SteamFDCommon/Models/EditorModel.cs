@@ -1,6 +1,6 @@
 ﻿using SteamFDCommon.DI;
-using SteamFDTCommon.Entities;
-using SteamFDTCommon.Providers;
+using SteamFDCommon.Entities;
+using SteamFDCommon.Providers;
 using System.Collections.ObjectModel;
 
 namespace SteamFDCommon.Models

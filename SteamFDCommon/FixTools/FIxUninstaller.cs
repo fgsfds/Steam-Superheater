@@ -1,8 +1,8 @@
 ﻿using SteamFDCommon;
-using SteamFDTCommon.Entities;
+using SteamFDCommon.Entities;
 using System.IO;
 
-namespace SteamFDTCommon.FixTools
+namespace SteamFDCommon.FixTools
 {
     public static class FixUninstaller
     {

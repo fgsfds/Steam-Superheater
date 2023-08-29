@@ -1,9 +1,9 @@
 ﻿using SteamFDCommon;
-using SteamFDTCommon.Entities;
+using SteamFDCommon.Entities;
 using System.IO;
 using System.Xml.Serialization;
 
-namespace SteamFDTCommon.Providers
+namespace SteamFDCommon.Providers
 {
     public class InstalledFixesProvider
     {

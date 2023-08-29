@@ -1,6 +1,6 @@
 ﻿using SteamFDCommon.Config;
-using SteamFDTCommon.Entities;
-using SteamFDTCommon.Providers;
+using SteamFDCommon.Entities;
+using SteamFDCommon.Providers;
 
 namespace SteamFDCommon.Models
 {

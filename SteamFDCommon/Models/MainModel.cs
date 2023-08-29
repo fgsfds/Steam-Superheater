@@ -1,7 +1,7 @@
 ﻿using SteamFDCommon.CombinedEntities;
-using SteamFDTCommon.Entities;
-using SteamFDTCommon.FixTools;
-using SteamFDTCommon.Providers;
+using SteamFDCommon.Entities;
+using SteamFDCommon.FixTools;
+using SteamFDCommon.Providers;
 
 namespace SteamFDCommon.Models
 {

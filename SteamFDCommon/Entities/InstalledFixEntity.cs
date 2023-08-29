@@ -1,4 +1,4 @@
-﻿namespace SteamFDTCommon.Entities
+﻿namespace SteamFDCommon.Entities
 {
     public class InstalledFixEntity
     {
