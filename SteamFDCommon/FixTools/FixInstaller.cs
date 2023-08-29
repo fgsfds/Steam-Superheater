@@ -3,9 +3,7 @@ using SteamFDCommon.Config;
 using SteamFDCommon.DI;
 using SteamFDTCommon.Entities;
 using System.Diagnostics;
-using System.IO;
 using System.IO.Compression;
-using System.Net.Http;
 
 namespace SteamFDTCommon.FixTools
 {
@@ -18,7 +16,7 @@ namespace SteamFDTCommon.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix)
+        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, bool doBackup)
         {
             var url = fix.Url;
 
@@ -39,18 +37,21 @@ namespace SteamFDTCommon.FixTools
 
             if (!File.Exists(zipPath))
             {
-                await DownloadFileAsync(new Uri(url), zipPath);
+                await ZipTools.DownloadFileAsync(new Uri(url), zipPath);
             }
 
             var files = GetListOfFilesInArchive(zipPath, fix.InstallFolder, unpackToPath);
 
             var filesToDelete = GetListOfFilesToDelete(gameInstallPath, fix.FilesToDelete);
 
-            BackupFiles(
-                files.Concat(filesToDelete).ToList(),
-                gameInstallPath,
-                Path.GetFileNameWithoutExtension(zipName)
-                );
+            if (doBackup)
+            {
+                BackupFiles(
+                    files.Concat(filesToDelete).ToList(),
+                    gameInstallPath,
+                    Path.GetFileNameWithoutExtension(zipName)
+                    );
+            }
 
             await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, unpackToPath, true));
 
@@ -153,12 +154,12 @@ namespace SteamFDTCommon.FixTools
         }
 
         /// <summary>
-        /// Get list of files in the archive
+        /// Get list of files and new folders in the archive
         /// </summary>
         /// <param name="zipPath">Path to ZIP</param>
         /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
         /// <param name="unpackToPath">Full path </param>
-        /// <returns>List of files in the archive</returns>
+        /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
         private static List<string> GetListOfFilesInArchive(string zipPath, string? fixInstallFolder, string unpackToPath)
         {
             List<string> files = new();
@@ -186,38 +187,6 @@ namespace SteamFDTCommon.FixTools
             }
 
             return files;
-        }
-
-        /// <summary>
-        /// Download ZIP
-        /// </summary>
-        /// <param name="url">ZIP URL</param>
-        /// <param name="filePath">Path to ZIP</param>
-        private static async Task DownloadFileAsync(Uri url, string filePath)
-        {
-            var tempFile = filePath + ".temp";
-
-            if (File.Exists(tempFile))
-            {
-                File.Delete(tempFile);
-            }
-
-            try
-            {
-                using (var client = new HttpClient())
-                {
-                    client.Timeout = TimeSpan.FromSeconds(10);
-                    using var stream = await client.GetStreamAsync(url);
-                    using var file = new FileStream(tempFile, FileMode.Create);
-                    await stream.CopyToAsync(file);
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-
-            File.Move(tempFile, filePath);
         }
     }
 }

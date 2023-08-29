@@ -5,41 +5,60 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="SteamFDA.Pages.AboutPage">
 
-    <Grid ColumnDefinitions="*, auto, *" RowDefinitions="auto,auto,auto">
+    <Grid ColumnDefinitions="*" RowDefinitions="auto,auto,auto">
 
-        <StackPanel Grid.Column="1"
-                    Margin="0,30"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center">
+        <StackPanel Orientation="Vertical"
+                    HorizontalAlignment="Stretch"
+                    Grid.Row="1">
 
-            <TextBlock HorizontalAlignment="Center"
-                       FontWeight="Black"
-                       Foreground="{DynamicResource SystemAccentColor}"
-                       FontSize="20">
-                Steam Fixes Downloader
-            </TextBlock>
+            <Border Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Background="{DynamicResource ButtonBackground}">
 
-            <TextBlock HorizontalAlignment="Center">
-                version 0.1
-            </TextBlock>
+                <Grid ColumnDefinitions="auto,*">
+                    <Button Padding="10" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
+                    <Button Padding="10" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="1" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                    <StackPanel Grid.Column="0" Orientation="Horizontal">
+                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
+                        <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
+                        </StackPanel>
+                        <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" IsVisible="{Binding IsInProgress}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Button Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Button.Click="GitHubClick">
+                <StackPanel Orientation="Horizontal">
+                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">GitHub repository</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Steam Fixes Downloader is free and open source</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
+
+            <Button Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Button.Click="SteamClick">
+                <StackPanel Orientation="Horizontal">
+                    <Border Width="48" Height="48" BorderBrush="{DynamicResource ButtonBackground}" BorderThickness="1" CornerRadius="2">
+                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
+                    </Border>
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Dev's Steam profile</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations are appreciated.</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
 
         </StackPanel>
-
-        <Button Grid.Row="1" Grid.Column="1" Padding="5" Margin="5" HorizontalAlignment="Stretch" Button.Click="SteamClick">
-            <StackPanel Orientation="Horizontal">
-                <Border Width="64" Height="64" BorderBrush="Black" BorderThickness="1" CornerRadius="2">
-                    <Image Source="/Resources/avatar.jpg" Width="64" />
-                </Border>
-                <TextBlock VerticalAlignment="Center" Margin="10">My Steam profile</TextBlock>
-            </StackPanel>
-        </Button>
-
-        <Button Grid.Row="2" Grid.Column="1" Padding="5" Margin="5" HorizontalAlignment="Stretch" Button.Click="GitHubClick">
-            <StackPanel Orientation="Horizontal">
-                <Image Source="/Resources/github.png" Width="64" />
-                <TextBlock VerticalAlignment="Center" Margin="10">GitHub repository</TextBlock>
-            </StackPanel>
-        </Button>
 
     </Grid>
 

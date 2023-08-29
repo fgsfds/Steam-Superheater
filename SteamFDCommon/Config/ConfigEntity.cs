@@ -82,6 +82,17 @@
             }
         }
 
+        private int _installedUpdater;
+        public int InstalledUpdater
+        {
+            get => _installedUpdater;
+            set
+            {
+                _installedUpdater = value;
+                Notify?.Invoke();
+            }
+        }
+
         internal ConfigEntity()
         {
             _deleteZipsAfterInstall = true;
@@ -91,6 +102,7 @@
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
             _theme = "System";
+            _installedUpdater = 0;
         }
     }
 }

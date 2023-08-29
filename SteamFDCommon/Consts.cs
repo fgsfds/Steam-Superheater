@@ -17,10 +17,18 @@ namespace SteamFDCommon
 
         public const string GitHubRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/";
 
+        public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Fixes-Downloader/releases";
+
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
 
         public const string AdminRegistryKey = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers";
 
         public const string BackupFolder = ".sfd";
+
+        public const string UpdateFile = ".update";
+
+        public const string UpdaterExe = "Updater.exe";
+
+        public static readonly Guid UpdaterGuid = new("92ef702d-04b0-42ff-8632-6a81285123e2");
     }
 }

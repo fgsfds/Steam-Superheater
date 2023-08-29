@@ -1,6 +1,7 @@
 ﻿using System;
-
+using System.IO;
 using Avalonia;
+using SteamFDCommon;
 
 namespace SteamFDA.Desktop;
 
@@ -10,14 +11,26 @@ class Program
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args) => BuildAvaloniaApp()
-        .StartWithClassicDesktopLifetime(args);
+    public static void Main(string[] args)
+    {
+        if (File.Exists(Consts.UpdateFile))
+        {
+            UpdateInstaller.InstallUpdate();
+
+            Environment.Exit(0);
+        }
+        else
+        {
+            BuildAvaloniaApp()
+                .StartWithClassicDesktopLifetime(args);
+        }
+    }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .WithInterFont()
+            //.WithInterFont()
             .LogToTrace();
 
 }

@@ -1,14 +1,21 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using System;
+using SteamFDA.ViewModels;
+using SteamFDCommon.DI;
 using System.Diagnostics;
 
 namespace SteamFDA.Pages
 {
     public partial class AboutPage : UserControl
     {
+        private readonly AboutViewModel _avm;
+
         public AboutPage()
         {
+            _avm = BindingsManager.Instance.GetInstance<AboutViewModel>();
+
+            DataContext = _avm;
+
             InitializeComponent();
         }
 

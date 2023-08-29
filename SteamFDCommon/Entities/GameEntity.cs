@@ -2,7 +2,6 @@
 using Microsoft.Win32;
 using SteamFDCommon;
 using SteamFDTools;
-using System.IO;
 
 namespace SteamFDTCommon.Entities
 {

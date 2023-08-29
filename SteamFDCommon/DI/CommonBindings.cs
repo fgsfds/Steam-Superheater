@@ -13,6 +13,7 @@ namespace SteamFDCommon.DI
             container.Register<NewsProvider>(Lifestyle.Singleton);
             container.Register<FixesProvider>(Lifestyle.Singleton);
             container.Register<InstalledFixesProvider>(Lifestyle.Singleton);
+            container.Register<UpdateInstaller>(Lifestyle.Singleton);
         }
     }
 }
