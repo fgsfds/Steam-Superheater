@@ -24,5 +24,7 @@ namespace SteamFDCommon
         public const string BackupFolder = ".sfd";
 
         public const string UpdateFile = ".update";
+
+        public static readonly Guid UpdaterGuid = new("92ef702d-04b0-42ff-8632-6a81285123e2");
     }
 }

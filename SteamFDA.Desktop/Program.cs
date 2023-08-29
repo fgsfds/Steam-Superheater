@@ -19,9 +19,9 @@ class Program
     {
         if (File.Exists(Consts.UpdateFile))
         {
-            var updateInstaller = new UpdateInstaller();
+            //var updateInstaller = new UpdateInstaller();
 
-            updateInstaller.InstallUpdate();
+            //updateInstaller.InstallUpdate();
         }
         else
         {

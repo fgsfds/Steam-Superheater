@@ -19,6 +19,8 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
+        public bool IsReadyToInstall { get; set; }
+
         public Version CurrentVersion { get; set; }
 
         public AboutViewModel(UpdateInstaller updateInstaller)

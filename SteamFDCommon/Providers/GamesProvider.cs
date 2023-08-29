@@ -1,6 +1,5 @@
 ﻿using SteamFDTCommon.Entities;
 using SteamFDTools;
-using System.IO;
 
 namespace SteamFDTCommon.Providers
 {

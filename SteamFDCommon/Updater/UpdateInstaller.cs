@@ -1,23 +1,62 @@
-﻿using System.Diagnostics;
+﻿using SteamFDCommon.Config;
+using SteamFDTCommon.Entities;
+using SteamFDTCommon.FixTools;
+using SteamFDTCommon.Providers;
+using System.Diagnostics;
 
 namespace SteamFDCommon.Updater
 {
     public class UpdateInstaller
     {
         private readonly List<UpdateEntity> _updates;
+        private readonly FixesProvider _fixesProvider;
+        private readonly ConfigProvider _configProvider;
 
-        public UpdateInstaller()
+        public UpdateInstaller(
+            FixesProvider fixesProvider,
+            ConfigProvider configProvider
+            )
         {
             _updates = new();
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _configProvider = configProvider ?? throw new NullReferenceException(nameof(configProvider));
         }
 
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
+            await CheckUpdater();
+
             _updates.Clear();
 
             _updates.AddRange(await GithubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
 
             return _updates.Any();
+        }
+
+        private async Task<bool> CheckUpdater()
+        {
+            var fixes = await _fixesProvider.GetCachedFixesListAsync();
+            var updater = fixes.Where(x => x.GameId == 0).First().Fixes.Where(x => x.Guid == Consts.UpdaterGuid).First();
+            var currentVersion = _configProvider.Config.InstalledUpdater;
+
+            if (!File.Exists("Updater.exe") ||
+                !File.Exists("Updater.dll") ||
+                updater.Version > currentVersion)
+            {
+                var result = await DownloadAndInstallUpdater(updater);
+                return result;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> DownloadAndInstallUpdater(FixEntity updater)
+        {
+            _ = await FixInstaller.InstallFix(new GameEntity(0, "", Directory.GetCurrentDirectory()), updater);
+
+            _configProvider.Config.InstalledUpdater = updater.Version;
+
+            return true;
         }
 
         /// <summary>
