@@ -7,7 +7,7 @@ namespace SteamFDCommon.Models
 {
     public class EditorModel
     {
-        private readonly List<FixesList> _fixesList;
+        private readonly SortedList<string, FixesList> _fixesList;
 
         public EditorModel()
         {
@@ -26,7 +26,10 @@ namespace SteamFDCommon.Models
 
             fixes = fixes.OrderBy(x => x.GameName).ToList();
 
-            _fixesList.AddRange(fixes);
+            foreach (var fix in fixes)
+            {
+                _fixesList.Add(fix.GameName, fix);
+            }
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace SteamFDCommon.Models
         {
             List<FixesList> result = new();
 
-            result = _fixesList.Where(x => x.Fixes.Count > 0).ToList();
+            result = _fixesList.Select(x => x.Value).Where(x => x.Fixes.Count > 0).ToList();
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -58,7 +61,7 @@ namespace SteamFDCommon.Models
 
             foreach (var game in installedGames)
             {
-                if (_fixesList.Any(x => x.GameId == game.Id))
+                if (_fixesList.Any(x => x.Value.GameId == game.Id))
                 {
                     continue;
                 }
@@ -75,7 +78,7 @@ namespace SteamFDCommon.Models
         /// <returns>Result message</returns>
         public Tuple<bool, string> SaveFixesListAsync()
         {
-            var result = FixesProvider.SaveFixes(_fixesList);
+            var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
 
             return result;
         }
@@ -101,16 +104,16 @@ namespace SteamFDCommon.Models
                 return new List<FixEntity>();
             }
 
-            var allGameFixes = _fixesList.Where(x => x.GameId == fixesList.GameId).FirstOrDefault();
+            var allGameFixes = _fixesList.Where(x => x.Value.GameId == fixesList.GameId).FirstOrDefault();
 
-            if (allGameFixes is null)
+            if (allGameFixes.Value is null)
             {
                 return new List<FixEntity>();
             }
 
             var allGameDeps = fixEntity.Dependencies;
 
-            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            var deps = allGameFixes.Value.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
 
             return deps;
         }
@@ -172,7 +175,7 @@ namespace SteamFDCommon.Models
 
             newFix.Fixes.Add(new FixEntity());
 
-            _fixesList.Add(newFix);
+            _fixesList.Add(newFix.GameName, newFix);
 
             return newFix;
         }
