@@ -72,6 +72,7 @@ namespace SteamFDCommon.Providers
 
                 if (!File.Exists(file))
                 {
+                    _isCacheUpdating = false;
                     throw new FileNotFoundException(file);
                 }
 
