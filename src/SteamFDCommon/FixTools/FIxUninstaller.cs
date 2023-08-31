@@ -63,7 +63,7 @@ namespace SteamFDCommon.FixTools
 
                 var pathTo = Path.Combine(gameDir, relativePath);
 
-                File.Move(file, pathTo);
+                File.Move(file, pathTo, true);
             }
 
             Directory.Delete(fixFolderPath, true);

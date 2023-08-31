@@ -27,7 +27,9 @@ namespace SteamFDCommon.FixTools
 
             var zipName = Path.GetFileName(url);
 
-            var zipPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+            var zipPath = _config.UseLocalRepo
+                ? Path.Combine(_config.LocalRepoPath, zipName)
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
 
             var gameInstallPath = game.InstallDir;
 
@@ -55,7 +57,8 @@ namespace SteamFDCommon.FixTools
 
             await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, unpackToPath, true));
 
-            if (_config.DeleteZipsAfterInstall)
+            if (_config.DeleteZipsAfterInstall &&
+                !_config.UseLocalRepo)
             {
                 File.Delete(zipPath);
             }
