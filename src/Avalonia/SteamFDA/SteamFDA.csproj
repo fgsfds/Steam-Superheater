@@ -36,7 +36,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SteamFDCommon\SteamFDCommon.csproj" />
+    <ProjectReference Include="..\..\SteamFDCommon\SteamFDCommon.csproj" />
   </ItemGroup>
 
   <ItemGroup>
