@@ -1,9 +1,14 @@
+using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon;
 using SteamFDCommon.Config;
 using System.Diagnostics;
+using System.Linq;
 
 namespace SteamFDA.ViewModels
 {
@@ -118,6 +123,29 @@ namespace SteamFDA.ViewModels
                 }
                 );
 
+            OpenFolderPickerCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    var window = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+
+                    var topLevel = TopLevel.GetTopLevel(window);
+
+                    // Start async operation to open the dialog.
+                    var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+                    {
+                        Title = "Choose local repo folder",
+                        AllowMultiple = false
+                    });
+
+                    PathToLocalRepo = files.First().Path.LocalPath;
+                    _config.LocalRepoPath = PathToLocalRepo;
+
+                    OnPropertyChanged(nameof(PathToLocalRepo));
+                    LocalPathTextboxChanged = false;
+                    SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+                }
+                );
+
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
             ShowEditorCheckbox = _config.ShowEditorTab;
@@ -134,5 +162,7 @@ namespace SteamFDA.ViewModels
         public IRelayCommand SetDarkTheme { get; private set; }
 
         public IRelayCommand OpenConfigXML { get; private set; }
+
+        public IRelayCommand OpenFolderPickerCommand { get; private set; }
     }
 }

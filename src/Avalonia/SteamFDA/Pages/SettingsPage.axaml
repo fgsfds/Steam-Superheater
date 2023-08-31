@@ -105,30 +105,12 @@
 
                     </Grid>
 
-                    <Grid ColumnDefinitions="auto,*,auto" RowDefinitions="*,*,*">
+                    <Grid ColumnDefinitions="auto,*,auto,auto" RowDefinitions="*,*,*">
 
                         <TextBlock Grid.Column="0"
                                    VerticalAlignment="Center"
                                    Margin="5">
-                            GitHub Token
-                        </TextBlock>
-
-                        <TextBox Grid.Column="1"
-                                 VerticalAlignment="Center"
-                                 Margin="5"/>
-
-                        <Button Grid.Column="2">
-                            Save
-                        </Button>
-
-                    </Grid>
-
-                    <Grid ColumnDefinitions="auto,*,auto" RowDefinitions="*,*,*">
-
-                        <TextBlock Grid.Column="0"
-                                   VerticalAlignment="Center"
-                                   Margin="5">
-                            Path to local folder
+                            Path to local repository
                         </TextBlock>
 
                         <TextBox Text="{Binding PathToLocalRepo}"
@@ -136,8 +118,14 @@
                                  VerticalAlignment="Center"
                                  Margin="5"/>
 
+                        <Button Command="{Binding OpenFolderPickerCommand}"
+                                Grid.Column="2"
+                                Margin="0,0,5,0">
+                            ...
+                        </Button>
+
                         <Button Command="{Binding SaveLocalRepoPathCommand}"
-                                Grid.Column="2">
+                                Grid.Column="3">
                             Save
                         </Button>
 
@@ -155,7 +143,7 @@
                         <TextBlock Grid.Column="1"
                                    VerticalAlignment="Center"
                                    Margin="5">
-                            Load fixes and news from local folder (testing purposes only)
+                            Load fixes and news from local repository (testing purposes only)
                         </TextBlock>
 
                     </Grid>
