@@ -94,9 +94,16 @@ namespace SteamFDCommon.Providers
 
             List<NewsEntity>? newsList;
 
-            using (StringReader fs = new(news))
+            try
             {
-                newsList = xmlSerializer.Deserialize(fs) as List<NewsEntity>;
+                using (StringReader fs = new(news))
+                {
+                    newsList = xmlSerializer.Deserialize(fs) as List<NewsEntity>;
+                }
+            }
+            catch
+            {
+                newsList = new();
             }
 
             if (newsList is null)
