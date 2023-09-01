@@ -29,6 +29,8 @@ namespace SteamFDA.ViewModels
 
         public ObservableCollection<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes;
 
+        public ObservableCollection<GameEntity> AvailableGamesList { get; set; }
+
         public int SelectedFixIndex { get; set; } = -1;
 
         public bool IsEditingAvailable => SelectedFix is not null;
@@ -67,8 +69,6 @@ namespace SteamFDA.ViewModels
             FillGamesList();
         }
 
-        public List<GameEntity> AvailableGamesList => _editorModel.GetListOfGamesAvailableToAdd();
-
         public List<FixEntity> AvailableDependencies => _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
 
         public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
@@ -82,6 +82,7 @@ namespace SteamFDA.ViewModels
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
             FilteredGamesList = new();
+            AvailableGamesList = new();
 
             SetRelayCommands();
         }
@@ -133,6 +134,7 @@ namespace SteamFDA.ViewModels
             var selectedFix = SelectedFix;
 
             FilteredGamesList.Clear();
+            AvailableGamesList.Clear();
 
             var gamesList = _editorModel.GetFilteredFixesList(Search);
 
@@ -149,6 +151,8 @@ namespace SteamFDA.ViewModels
                     SelectedFix = selectedFix;
                 }
             }
+
+            AvailableGamesList.AddRange(_editorModel.GetListOfGamesAvailableToAdd());
         }
 
         #region Relay Commands
