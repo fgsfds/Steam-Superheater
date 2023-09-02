@@ -277,13 +277,11 @@ Do you want to set it to always run as admin?",
                         throw new NullReferenceException(nameof(SelectedFix));
                     }
 
-                    IsInProgress = true;
-
                     var selectedFix = SelectedFix;
 
-                    var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix);
+                    ZipTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
-                    IsInProgress = false;
+                    var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix);
 
                     InstallFixCommand.NotifyCanExecuteChanged();
                     UninstallFixCommand.NotifyCanExecuteChanged();
@@ -298,6 +296,10 @@ Do you want to set it to always run as admin?",
                     {
                         OpenConfig();
                     }
+
+                    ZipTools.Progress.ProgressChanged -= Progress_ProgressChanged;
+                    ProgressBarValue = 0;
+                    OnPropertyChanged(nameof(ProgressBarValue));
                 },
                 canExecute: () =>
                 {
@@ -407,7 +409,13 @@ Do you want to set it to always run as admin?",
                 canExecute: () => SelectedGame is not null
                 );
 
-            UpdateGamesCommand = new AsyncRelayCommand(async () => await UpdateAsync(false), () => IsInProgress == false);
+            UpdateGamesCommand = new AsyncRelayCommand(
+               execute: async () =>
+               {
+                   await UpdateAsync(false);
+               }, 
+               canExecute: () => IsInProgress == false
+               );
 
             ClearSearchCommand = new RelayCommand(
                 execute: () =>
@@ -457,6 +465,14 @@ Do you want to set it to always run as admin?",
                 canExecute: () => SelectedGame is not null
                 );
         }
+
+        private void Progress_ProgressChanged(object? sender, float e)
+        {
+            ProgressBarValue = e;
+            OnPropertyChanged(nameof(ProgressBarValue));
+        }
+
+        public float ProgressBarValue { get; set; }
 
         public IRelayCommand OpenGameFolderCommand { get; private set; }
 

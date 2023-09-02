@@ -6,6 +6,7 @@
              x:Class="SteamFDA.UserControls.ProgressBar">
 
     <ProgressBar Height="15"
-                 IsIndeterminate="{Binding IsInProgress}"/>
+                 IsIndeterminate="{Binding IsInProgress}"
+                 Value="{Binding ProgressBarValue}"/>
 
 </UserControl>
