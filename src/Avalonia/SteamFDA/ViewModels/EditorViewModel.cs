@@ -13,9 +13,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using System.Xml.Serialization;
-using System.Net;
-using SteamFDCommon.CombinedEntities;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
@@ -324,13 +321,7 @@ namespace SteamFDA.ViewModels
                     var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
                     var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
 
-                    var newFix = new FixesList(
-                        fixesList.GameId, 
-                        fixesList.GameName, 
-                        new(new List<FixEntity>() { fix })
-                        );
-
-                    var result = await _editorModel.UploadFixAsync(newFix);
+                    var result = await _editorModel.UploadFixAsync(fixesList, fix);
 
                     if (result)
                     {
@@ -349,7 +340,7 @@ namespace SteamFDA.ViewModels
                         .Show();
                     }
                 },
-                 canExecute: () => SelectedFix is not null
+                 canExecute: () => SelectedFix is not null && !string.IsNullOrEmpty(SelectedFix.Url)
                 );
 
             OpenFilePickerCommand = new RelayCommand(

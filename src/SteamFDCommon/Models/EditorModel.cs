@@ -177,8 +177,14 @@ namespace SteamFDCommon.Models
             return newFix;
         }
 
-        public async Task<bool> UploadFixAsync(FixesList newFix)
+        public async Task<bool> UploadFixAsync(FixesList fixesList, FixEntity fix)
         {
+            var newFix = new FixesList(
+                fixesList.GameId,
+                fixesList.GameName,
+                new(new List<FixEntity>() { fix })
+                );
+
             var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
 
             var guid = newFix.Fixes.First().Guid;
@@ -192,20 +198,32 @@ namespace SteamFDCommon.Models
                 }
             }
 
+            string? fileToUpload = null;
+
+            if (!newFix.Fixes[0].Url.StartsWith("http"))
+            {
+                fileToUpload = fix.Url;
+
+                newFix.Fixes[0].Url = Path.GetFileName(fileToUpload);
+            }
+
             XmlSerializer xmlSerializer = new(typeof(FixesList));
+
+            List<object> filesToUpload = new();
 
             using (MemoryStream fs = new())
             {
                 xmlSerializer.Serialize(fs, newFix);
 
-                var client = new FtpClient("31.31.198.106", "u2220544_Upload", "YdBunW64d447Pby");
+                filesToUpload.Add(new Tuple<string, MemoryStream>("fix.xml", fs));
 
-                client.CreateDirectory(guid.ToString());
+                if (fileToUpload is not null)
+                {
+                    filesToUpload.Add(fileToUpload);
+                }
 
-                client.UploadStream(fs, $"{guid}/fix.xml");
+                return FixUploader.UploadFiles(guid.ToString(), filesToUpload);
             }
-
-            return true;
         }
     }
 }
