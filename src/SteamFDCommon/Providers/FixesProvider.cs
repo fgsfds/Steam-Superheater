@@ -1,8 +1,5 @@
-﻿using SteamFDCommon;
-using SteamFDCommon.Config;
+﻿using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
-using System.IO;
-using System.Net.Http;
 using System.Xml.Serialization;
 
 namespace SteamFDCommon.Providers
@@ -13,9 +10,10 @@ namespace SteamFDCommon.Providers
 
         private readonly ConfigEntity _config;
 
-        //private List<FixesList>? _fixesCache;
-
-        private string? _fixesCache;
+        //cached fixes from online or local repo
+        private List<FixesList>? _fixesCache;
+        //cached fixes from online repo only. used to check if the fix already exists in the repo before uploading.
+        private List<FixesList>? _onlineFixes;
 
         public FixesProvider(ConfigProvider config)
         {
@@ -23,7 +21,7 @@ namespace SteamFDCommon.Providers
         }
 
         /// <summary>
-        /// Get cached fixes list or create new cache if it wasn't created yet
+        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
@@ -39,9 +37,7 @@ namespace SteamFDCommon.Providers
                 await CreateFixesCacheAsync();
             }
 
-            var fixesList = DeserializeCachedString();
-
-            return fixesList;
+            return _fixesCache;
         }
 
         /// <summary>
@@ -51,8 +47,29 @@ namespace SteamFDCommon.Providers
         public async Task<List<FixesList>> GetNewFixesListAsync()
         {
             _fixesCache = null;
+            _onlineFixes = null;
 
             return await GetCachedFixesListAsync();
+        }
+
+        /// <summary>
+        /// Get cached fixes list from online repo or create new cache if it wasn't created yet
+        /// </summary>
+        /// <returns></returns>
+        /// <exception cref="NullReferenceException"></exception>
+        public async Task<List<FixesList>> GetOnlineFixesListAsync()
+        {
+            while (_isCacheUpdating)
+            {
+                await Task.Delay(100);
+            }
+
+            if (_onlineFixes is null)
+            {
+                await CreateFixesCacheAsync();
+            }
+
+            return _onlineFixes;
         }
 
         /// <summary>
@@ -65,6 +82,7 @@ namespace SteamFDCommon.Providers
             _isCacheUpdating = true;
 
             string? fixes;
+            string? onlineFixes;
 
             if (_config.UseLocalRepo)
             {
@@ -77,12 +95,13 @@ namespace SteamFDCommon.Providers
                 }
 
                 fixes = File.ReadAllText(file);
+                onlineFixes = await DownloadFixesXMLAsync();
             }
             else
             {
                 try
                 {
-                    fixes = await DownloadFixesXMLAsync();
+                    fixes = onlineFixes = await DownloadFixesXMLAsync();
                 }
                 catch
                 {
@@ -96,28 +115,24 @@ namespace SteamFDCommon.Providers
 
             using (StringReader fs = new(fixes))
             {
-                _fixesCache = fs.ReadToEnd();
+                _fixesCache = DeserializeCachedString(fs.ReadToEnd());
+            }
+
+            using (StringReader fs = new(onlineFixes))
+            {
+                _onlineFixes = DeserializeCachedString(fs.ReadToEnd());
             }
 
             _isCacheUpdating = false;
         }
 
-        public async Task<bool> UploadFixesToGitAsync()
-        {
-            //await GitUploader.UpdateFileInRepo(FixesXmlFile);
-
-            //File.Delete(FixesXmlFile);
-
-            return true;
-        }
-
-        private List<FixesList> DeserializeCachedString()
+        private List<FixesList> DeserializeCachedString(string fixes)
         {
             List<FixesList>? fixesDatabase;
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
 
-            using (TextReader reader = new StringReader(_fixesCache))
+            using (TextReader reader = new StringReader(fixes))
             {
                 fixesDatabase = xmlSerializer.Deserialize(reader) as List<FixesList>;
             }

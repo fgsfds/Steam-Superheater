@@ -1,16 +1,21 @@
-﻿using SteamFDCommon.DI;
+﻿using FluentFTP;
+using SteamFDCommon.DI;
 using SteamFDCommon.Entities;
 using SteamFDCommon.Providers;
 using System.Collections.ObjectModel;
+using System.Net;
+using System.Xml.Serialization;
 
 namespace SteamFDCommon.Models
 {
     public class EditorModel
     {
         private readonly SortedList<string, FixesList> _fixesList;
+        private readonly FixesProvider _fixesProvider;
 
-        public EditorModel()
+        public EditorModel(FixesProvider fixesProvider)
         {
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
             _fixesList = new();
         }
 
@@ -81,14 +86,6 @@ namespace SteamFDCommon.Models
             var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
 
             return result;
-        }
-
-        /// <summary>
-        /// Upload current fixes.xml to Git repo
-        /// </summary>
-        public async Task UploadFixesToGit()
-        {
-            var result = await BindingsManager.Instance.GetInstance<FixesProvider>().UploadFixesToGitAsync();
         }
 
         /// <summary>
@@ -178,6 +175,37 @@ namespace SteamFDCommon.Models
             _fixesList.Add(newFix.GameName, newFix);
 
             return newFix;
+        }
+
+        public async Task<bool> UploadFixAsync(FixesList newFix)
+        {
+            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
+
+            var guid = newFix.Fixes.First().Guid;
+
+            foreach (var onlineFix in onlineFixes)
+            {
+                //if fix already exists in the repo, don't upload it
+                if (onlineFix.Fixes.Any(x => x.Guid == guid))
+                {
+                    return false;
+                }
+            }
+
+            XmlSerializer xmlSerializer = new(typeof(FixesList));
+
+            using (MemoryStream fs = new())
+            {
+                xmlSerializer.Serialize(fs, newFix);
+
+                var client = new FtpClient("31.31.198.106", "u2220544_Upload", "YdBunW64d447Pby");
+
+                client.CreateDirectory(guid.ToString());
+
+                client.UploadStream(fs, $"{guid}/fix.xml");
+            }
+
+            return true;
         }
     }
 }

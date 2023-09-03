@@ -13,6 +13,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
+using System.Net;
+using SteamFDCommon.CombinedEntities;
 
 namespace SteamFDA.ViewModels
 {
@@ -51,6 +54,7 @@ namespace SteamFDA.ViewModels
         [NotifyCanExecuteChangedFor(nameof(RemovePatchCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -214,13 +218,6 @@ namespace SteamFDA.ViewModels
                 }
                 );
 
-            UploadChangesCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    await _editorModel.UploadFixesToGit();
-                }
-                );
-
             OpenXmlFileCommand = new RelayCommand(
                 execute: () =>
                 {
@@ -316,6 +313,40 @@ namespace SteamFDA.ViewModels
                 },
                 canExecute: () => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1
                 );
+
+            UploadFixCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
+                    var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
+
+                    var newFix = new FixesList(
+                        fixesList.GameId, 
+                        fixesList.GameName, 
+                        new(new List<FixEntity>() { fix })
+                        );
+
+                    var result = await _editorModel.UploadFixAsync(newFix);
+
+                    if (result)
+                    {
+                        new PopupMessageViewModel(
+                            "Success",
+                            $"Fix successfully uploaded.{Environment.NewLine}It will be added to the database after developer's review.{Environment.NewLine}{Environment.NewLine}Thank you.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+                    }
+                    else
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+                    }
+                },
+                 canExecute: () => SelectedFix is not null
+                );
         }
 
         public IRelayCommand ClearSearchCommand { get; private set; }
@@ -341,6 +372,8 @@ namespace SteamFDA.ViewModels
         public IRelayCommand MoveFixDownCommand { get; private set; }
 
         public IRelayCommand UpdateGamesCommand { get; private set; }
+
+        public IRelayCommand UploadFixCommand { get; private set; }
 
         #endregion Relay Commands
     }
