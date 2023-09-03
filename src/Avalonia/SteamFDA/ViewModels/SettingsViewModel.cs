@@ -137,7 +137,12 @@ namespace SteamFDA.ViewModels
                         AllowMultiple = false
                     });
 
-                    PathToLocalRepo = files.First().Path.LocalPath;
+                    if (!files.Any())
+                    {
+                        return;
+                    }
+
+                    PathToLocalRepo = files[0].Path.LocalPath;
                     _config.LocalRepoPath = PathToLocalRepo;
 
                     OnPropertyChanged(nameof(PathToLocalRepo));

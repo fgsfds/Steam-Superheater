@@ -374,6 +374,11 @@ namespace SteamFDA.ViewModels
                         FileTypeFilter = new List<FilePickerFileType>() { zipType }
                     });
 
+                    if (!files.Any())
+                    {
+                        return;
+                    }
+
                     SelectedFix.Url = files[0].Path.LocalPath.ToString();
                     OnPropertyChanged(nameof(SelectedFix));
                 }
