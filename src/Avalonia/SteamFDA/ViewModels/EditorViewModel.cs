@@ -16,6 +16,10 @@ using System.Threading.Tasks;
 using System.Xml.Serialization;
 using System.Net;
 using SteamFDCommon.CombinedEntities;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using Avalonia;
 
 namespace SteamFDA.ViewModels
 {
@@ -347,6 +351,33 @@ namespace SteamFDA.ViewModels
                 },
                  canExecute: () => SelectedFix is not null
                 );
+
+            OpenFilePickerCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
+
+                    var window = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+
+                    var topLevel = TopLevel.GetTopLevel(window);
+
+                    var zipType = new FilePickerFileType("Zip")
+                    {
+                        Patterns = new[] { "*.zip" },
+                        MimeTypes = new[] { "application/zip" }
+                    };
+
+                    var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    {
+                        Title = "Choose fix file",
+                        AllowMultiple = false,
+                        FileTypeFilter = new List<FilePickerFileType>() { zipType }
+                    });
+
+                    SelectedFix.Url = files[0].Path.LocalPath.ToString();
+                    OnPropertyChanged(nameof(SelectedFix));
+                }
+                );
         }
 
         public IRelayCommand ClearSearchCommand { get; private set; }
@@ -374,6 +405,8 @@ namespace SteamFDA.ViewModels
         public IRelayCommand UpdateGamesCommand { get; private set; }
 
         public IRelayCommand UploadFixCommand { get; private set; }
+
+        public IRelayCommand OpenFilePickerCommand { get; private set; }
 
         #endregion Relay Commands
     }

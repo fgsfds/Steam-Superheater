@@ -33,11 +33,22 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
-                 Watermark="Download URL"
-                 Grid.Row="2"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+        <Grid ColumnDefinitions="*, auto"
+              Grid.Row="2"
+              Margin="0,3">
+
+            <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
+                     Watermark="Link to file"
+                     IsReadOnly="{Binding !IsEditingAvailable}"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Command="{Binding OpenFilePickerCommand}"
+                    IsEnabled="{Binding IsEditingAvailable}">
+                ...
+            </Button>
+
+        </Grid>
 
         <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
                  Watermark="Install folder"
