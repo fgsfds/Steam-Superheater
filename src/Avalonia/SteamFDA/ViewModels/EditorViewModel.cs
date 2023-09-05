@@ -360,7 +360,30 @@ namespace SteamFDA.ViewModels
                     {
                         new PopupMessageViewModel(
                             "Error",
-                            $"Name, Version and Link to download are required to upload a fix.",
+                            $"Name, Version and Link to file are required to upload a fix.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
+                    if (!Url.StartsWith("http") &&
+                        !File.Exists(Url))
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"{Url} doesn't exist.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
+                    if (new FileInfo(Url).Length > 1e+8)
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
                             PopupMessageType.OkOnly)
                         .Show();
 

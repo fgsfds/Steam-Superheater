@@ -28,10 +28,10 @@
                  Margin="0,3"/>
 
         <TextBox Text="{Binding Version, Mode=TwoWay}"
-				 Name="VersionTextBox"
+                 Name="VersionTextBox"
                  Watermark="Version (required)"
                  TextChanging="VersionTextBoxChanging"
-				 TextChanged="VersionTextBoxChanged"
+                 TextChanged="VersionTextBoxChanged"
                  Grid.Row="1"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
