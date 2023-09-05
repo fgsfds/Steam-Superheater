@@ -20,15 +20,18 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
-        <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay}"
-                 Watermark="Name"
+        <TextBox Text="{Binding Name, Mode=TwoWay}"
+                 Watermark="Name (required)"
                  Name="NameTextBox"
                  Grid.Row="0"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay}"
-                 Watermark="Version"
+        <TextBox Text="{Binding Version, Mode=TwoWay}"
+				 Name="VersionTextBox"
+                 Watermark="Version (required)"
+                 TextChanging="VersionTextBoxChanging"
+				 TextChanged="VersionTextBoxChanged"
                  Grid.Row="1"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
@@ -37,8 +40,8 @@
               Grid.Row="2"
               Margin="0,3">
 
-            <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
-                     Watermark="Link to file"
+            <TextBox Text="{Binding Url, Mode=TwoWay}"
+                     Watermark="Link to file (required)"
                      IsReadOnly="{Binding !IsEditingAvailable}"/>
 
             <Button Grid.Column="1"

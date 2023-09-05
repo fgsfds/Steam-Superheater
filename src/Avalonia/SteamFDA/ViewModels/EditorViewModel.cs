@@ -52,6 +52,9 @@ namespace SteamFDA.ViewModels
         [NotifyPropertyChangedFor(nameof(AvailableDependencies))]
         [NotifyPropertyChangedFor(nameof(AddedDependencies))]
         [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
+        [NotifyPropertyChangedFor(nameof(Name))]
+        [NotifyPropertyChangedFor(nameof(Version))]
+        [NotifyPropertyChangedFor(nameof(Url))]
         [NotifyCanExecuteChangedFor(nameof(RemovePatchCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
@@ -77,6 +80,39 @@ namespace SteamFDA.ViewModels
         public List<FixEntity> AvailableDependencies => _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
 
         public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+
+        public string? Name
+        {
+            get => SelectedFix?.Name;
+            set
+            {
+                SelectedFix.Name = value;
+                OnPropertyChanged(nameof(Name));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        public int? Version
+        {
+            get => SelectedFix?.Version;
+            set
+            {
+                SelectedFix.Version = value ?? 0;
+                OnPropertyChanged(nameof(Version));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        public string? Url
+        {
+            get => SelectedFix?.Url;
+            set
+            {
+                SelectedFix.Url = value;
+                OnPropertyChanged(nameof(Url));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
 
         public EditorViewModel(
             EditorModel editorModel,
@@ -318,6 +354,19 @@ namespace SteamFDA.ViewModels
             UploadFixCommand = new RelayCommand(
                 execute: async () =>
                 {
+                    if (string.IsNullOrEmpty(Name) ||
+                        string.IsNullOrEmpty(Url) ||
+                        Version < 1)
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Name, Version and Link to download are required to upload a fix.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
                     var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
                     var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
 
@@ -340,7 +389,7 @@ namespace SteamFDA.ViewModels
                         .Show();
                     }
                 },
-                 canExecute: () => SelectedFix is not null && !string.IsNullOrEmpty(SelectedFix.Url)
+                 canExecute: () => SelectedFix is not null && !string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(Name) && Version > 0
                 );
 
             OpenFilePickerCommand = new RelayCommand(
@@ -370,8 +419,8 @@ namespace SteamFDA.ViewModels
                         return;
                     }
 
-                    SelectedFix.Url = files[0].Path.LocalPath.ToString();
-                    OnPropertyChanged(nameof(SelectedFix));
+                    Url = files[0].Path.LocalPath.ToString();
+                    OnPropertyChanged(nameof(Url));
                 }
                 );
         }
@@ -385,8 +434,6 @@ namespace SteamFDA.ViewModels
         public IRelayCommand SaveChangesCommand { get; private set; }
 
         public IRelayCommand OpenXmlFileCommand { get; private set; }
-
-        public IRelayCommand UploadChangesCommand { get; private set; }
 
         public IRelayCommand AddDependencyCommand { get; private set; }
 

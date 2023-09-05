@@ -1,9 +1,7 @@
-﻿using FluentFTP;
-using SteamFDCommon.DI;
+﻿using SteamFDCommon.DI;
 using SteamFDCommon.Entities;
 using SteamFDCommon.Providers;
 using System.Collections.ObjectModel;
-using System.Net;
 using System.Xml.Serialization;
 
 namespace SteamFDCommon.Models

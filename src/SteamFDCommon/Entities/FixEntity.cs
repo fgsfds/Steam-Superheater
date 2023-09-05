@@ -76,9 +76,7 @@ namespace SteamFDCommon.Entities
         /// Download URL
         /// If doesn't start with 'http', ZIP will be downloaded from the default repo
         /// </summary>
-        //public string Url { get; set; }
-        [ObservableProperty]
-        private string _url;
+        public string Url { get; set; }
 
         /// <summary>
         /// Fix description

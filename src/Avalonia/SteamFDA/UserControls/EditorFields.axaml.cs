@@ -8,5 +8,25 @@ namespace SteamFDA.UserControls
         {
             InitializeComponent();
         }
+
+        private void VersionTextBoxChanging(object sender, TextChangingEventArgs e)
+        {
+            if (VersionTextBox.Text == "")
+            {
+                VersionTextBox.Text = "0";
+            }
+            else
+            {
+                VersionTextBox.Text = ((TextBox)sender).Text;
+            }
+        }
+
+        private void VersionTextBoxChanged(object sender, TextChangedEventArgs e)
+        {
+            if (VersionTextBox.Text == "0")
+            {
+                VersionTextBox.SelectAll();
+            }
+        }
     }
 }
