@@ -8,11 +8,11 @@ namespace SteamFDA.DI
         public static void Load(Container container)
         {
             container.Register<MainWindowViewModel>(Lifestyle.Singleton);
-            container.Register<MainViewModel>(Lifestyle.Transient);
-            container.Register<EditorViewModel>(Lifestyle.Transient);
-            container.Register<NewsViewModel>(Lifestyle.Transient);
-            container.Register<SettingsViewModel>(Lifestyle.Transient);
-            container.Register<AboutViewModel>(Lifestyle.Transient);
+            container.Register<MainViewModel>(Lifestyle.Singleton);
+            container.Register<EditorViewModel>(Lifestyle.Singleton);
+            container.Register<NewsViewModel>(Lifestyle.Singleton);
+            container.Register<SettingsViewModel>(Lifestyle.Singleton);
+            container.Register<AboutViewModel>(Lifestyle.Singleton);
         }
     }
 }

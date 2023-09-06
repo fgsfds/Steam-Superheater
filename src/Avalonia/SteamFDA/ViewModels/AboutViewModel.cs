@@ -22,7 +22,7 @@ namespace SteamFDA.ViewModels
         {
             _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
 
-            CurrentVersion = Assembly.GetEntryAssembly().GetName().Version;
+            CurrentVersion = Consts.CurrentVersion;
 
             SetRelayCommands();
         }

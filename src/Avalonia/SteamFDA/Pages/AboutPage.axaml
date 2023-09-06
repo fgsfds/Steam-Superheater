@@ -65,12 +65,14 @@
                     Margin="10"
                     HorizontalAlignment="Stretch"
                     Button.Click="GitHubIssuesClick">
+
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
                     </StackPanel>
                 </StackPanel>
+
             </Button>
 
         </StackPanel>

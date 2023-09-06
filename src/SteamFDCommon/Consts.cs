@@ -1,5 +1,6 @@
 ﻿using SteamFDCommon.Config;
 using SteamFDCommon.DI;
+using System.Reflection;
 
 namespace SteamFDCommon
 {
@@ -30,5 +31,7 @@ namespace SteamFDCommon
         public const string UpdaterExe = "Updater.exe";
 
         public static readonly Guid UpdaterGuid = new("92ef702d-04b0-42ff-8632-6a81285123e2");
+
+        public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
     }
 }

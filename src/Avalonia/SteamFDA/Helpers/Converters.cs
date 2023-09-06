@@ -8,6 +8,7 @@ namespace SteamFDA.Helpers
 {
     /// <summary>
     /// Converts bool to one of two strings
+    /// Strings separated by ;
     /// </summary>
     public class BoolToStringConverter : IValueConverter
     {
@@ -69,7 +70,7 @@ namespace SteamFDA.Helpers
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            throw new NotSupportedException("ConvertBack method for ImagePathToBitmapConverter is not implemented.");
         }
     }
 }

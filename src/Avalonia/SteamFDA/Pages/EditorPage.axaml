@@ -19,9 +19,9 @@
 
         <usc:EditorLists Grid.Row="1" Margin="5"/>
 
-        <usc:ProgressBar Grid.Row="3" Margin="5"/>
-
         <usc:EditorButtons Grid.Row="2" Margin="5"/>
+
+        <usc:ProgressBar Grid.Row="3" Margin="5"/>
 
     </Grid>
 </UserControl>
