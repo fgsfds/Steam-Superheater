@@ -22,21 +22,26 @@ namespace SteamFDA.ViewModels
         public NewsViewModel(NewsModel newsModel)
         {
             _newsModel = newsModel;
-
-            MarkAllAsRead = new RelayCommand(
-                execute: () =>
-                {
-                    _newsModel.MarkAllAsRead();
-                    UpdateHeader();
-                    OnPropertyChanged(nameof(News));
-                    OnPropertyChanged(nameof(NewsTabHeader));
-                },
-                canExecute: () => _newsModel.HasUnreadNews
-                );
         }
+
+
+        #region Relay Commands
 
         [RelayCommand]
         async Task InitializeAsync() => await UpdateAsync();
+
+        [RelayCommand(CanExecute=(nameof(MarkAllAsReadCanExecute)))]
+        private void MarkAllAsRead()
+        {
+            _newsModel.MarkAllAsRead();
+            UpdateHeader();
+            OnPropertyChanged(nameof(News));
+            OnPropertyChanged(nameof(NewsTabHeader));
+        }
+        private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
+
+        #endregion Relay Commands
+
 
         private async Task UpdateAsync()
         {
@@ -74,9 +79,7 @@ namespace SteamFDA.ViewModels
 
             OnPropertyChanged(nameof(NewsTabHeader));
 
-            MarkAllAsRead.NotifyCanExecuteChanged();
+            MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
-
-        public IRelayCommand MarkAllAsRead { get; private set; }
     }
 }

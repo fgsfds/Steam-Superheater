@@ -4,11 +4,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon;
 using System;
-using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
-    public class AboutViewModel : ObservableObject
+    public partial class AboutViewModel : ObservableObject
     {
         private readonly UpdateInstaller _updateInstaller;
 
@@ -16,72 +16,67 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
-        public Version CurrentVersion { get; set; }
+        public Version CurrentVersion => Consts.CurrentVersion;
 
         public AboutViewModel(UpdateInstaller updateInstaller)
         {
             _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
-
-            CurrentVersion = Consts.CurrentVersion;
-
-            SetRelayCommands();
         }
 
-        public IRelayCommand CheckForUpdatesCommand { get; set; }
 
-        public IRelayCommand DownloadAndInstall { get; set; }
+        #region Relay Commands
 
-        private void SetRelayCommands()
+        [RelayCommand(CanExecute=(nameof(CheckForUpdatesCanExecute)))]
+        private async Task CheckForUpdates()
         {
-            CheckForUpdatesCommand = new RelayCommand(async () =>
+            IsInProgress = true;
+            OnPropertyChanged(nameof(IsInProgress));
+            CheckForUpdatesCommand.NotifyCanExecuteChanged();
+
+            bool updates = false;
+
+            try
             {
-                IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
-
-                bool updates = false;
-
-                try
-                {
-                    updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
-                }
-                catch (Exception ex)
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
-                        PopupMessageType.OkOnly
-                        ).Show();
-                }
-
-                if (updates)
-                {
-                    IsUpdateAvailable = true;
-                    OnPropertyChanged(nameof(IsUpdateAvailable));
-                    DownloadAndInstall.NotifyCanExecuteChanged();
-                }
-
-                IsInProgress = false;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
-            },
-            () => IsInProgress is false
-            );
-
-            DownloadAndInstall = new RelayCommand(async () =>
+                updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
+            }
+            catch (Exception ex)
             {
-                IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                DownloadAndInstall.NotifyCanExecuteChanged();
+                new PopupMessageViewModel(
+                    "Error",
+                    "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
+                    PopupMessageType.OkOnly
+                    ).Show();
+            }
 
-                await _updateInstaller.DownloadLatestReleaseAndCreateLock();
+            if (updates)
+            {
+                IsUpdateAvailable = true;
+                OnPropertyChanged(nameof(IsUpdateAvailable));
+                DownloadAndInstallCommand.NotifyCanExecuteChanged();
+            }
 
-                UpdateInstaller.InstallUpdate();
-
-                ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.Close();
-            },
-            () => IsUpdateAvailable is true
-            );
+            IsInProgress = false;
+            OnPropertyChanged(nameof(IsInProgress));
+            CheckForUpdatesCommand.NotifyCanExecuteChanged();
         }
+        private bool CheckForUpdatesCanExecute() => IsInProgress is false;
+
+
+        [RelayCommand(CanExecute=(nameof(DownloadAndInstallCanExecute)))]
+        private async Task DownloadAndInstall()
+        {
+            IsInProgress = true;
+            OnPropertyChanged(nameof(IsInProgress));
+            DownloadAndInstallCommand.NotifyCanExecuteChanged();
+
+            await _updateInstaller.DownloadLatestReleaseAndCreateLock();
+
+            UpdateInstaller.InstallUpdate();
+
+            ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.Close();
+        }
+        private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
+
+        #endregion Relay Commands
     }
 }

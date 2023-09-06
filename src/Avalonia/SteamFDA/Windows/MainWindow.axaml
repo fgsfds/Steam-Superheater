@@ -58,7 +58,7 @@
             <controls:PopupMessage
                 Grid.RowSpan="2"
                 DataContext="{Binding PopupDataContext}"
-                IsVisible="{Binding ShowPopup, FallbackValue='False'}"/>
+                IsVisible="{Binding IsPopupVisible, FallbackValue='False'}"/>
 
         </Grid>
 

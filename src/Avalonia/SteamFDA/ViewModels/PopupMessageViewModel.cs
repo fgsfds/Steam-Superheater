@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.DI;
 using System;
 
@@ -7,9 +8,9 @@ namespace SteamFDA.ViewModels
     public partial class PopupMessageViewModel : ObservableObject
     {
         private readonly MainWindowViewModel _mwvm;
+        private readonly Action? _okAction;
 
-        [ObservableProperty]
-        private bool _showPopup;
+        public bool IsPopupVisible { get; set; }
 
         public bool IsOkCancel { get; init; }
 
@@ -19,35 +20,23 @@ namespace SteamFDA.ViewModels
 
         public string MessageText { get; init; }
 
-        public void CancelCommand()
-        {
-            ShowPopup = false;
-        }
-
-        public Action? OkCommand
-        {
-            get;
-            init;
-        }
-
         /// <summary>
-        /// Show popup window
+        /// Create new Popup window
         /// </summary>
-        public void Show()
-        {
-            ShowPopup = true;
-        }
-
+        /// <param name="title">Title text</param>
+        /// <param name="message">Message Text</param>
+        /// <param name="type">PopupMessageType</param>
+        /// <param name="okAction">Action delegate for OK button</param>
         public PopupMessageViewModel(
             string title,
             string message,
             PopupMessageType type,
-            Action? okCommand = null
+            Action? okAction = null
             )
         {
             TitleText = title;
-
             MessageText = message;
+            _okAction = okAction;
 
             switch (type)
             {
@@ -59,14 +48,38 @@ namespace SteamFDA.ViewModels
                     break;
             }
 
-            OkCommand = () =>
-            {
-                okCommand?.Invoke();
-                ShowPopup = false;
-            };
-
             _mwvm = BindingsManager.Instance.GetInstance<MainWindowViewModel>();
             _mwvm.PopupDataContext = this;
+        }
+
+
+        #region Relay Commands
+
+        [RelayCommand]
+        private void Cancel()
+        {
+            IsPopupVisible = false;
+            OnPropertyChanged(nameof(IsPopupVisible));
+        }
+
+        [RelayCommand]
+        private void Ok()
+        {
+            _okAction?.Invoke();
+            IsPopupVisible = false;
+            OnPropertyChanged(nameof(IsPopupVisible));
+        }
+
+        #endregion Relay Commands
+
+
+        /// <summary>
+        /// Show popup window
+        /// </summary>
+        public void Show()
+        {
+            IsPopupVisible = true;
+            OnPropertyChanged(nameof(IsPopupVisible));
         }
     }
 

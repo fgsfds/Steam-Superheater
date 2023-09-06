@@ -5,7 +5,7 @@ namespace SteamFDA.ViewModels
     public partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
-        public PopupMessageViewModel _popupDataContext;
+        public PopupMessageViewModel? _popupDataContext;
 
         [ObservableProperty]
         public bool _isLocalRepoWarningEnabled;

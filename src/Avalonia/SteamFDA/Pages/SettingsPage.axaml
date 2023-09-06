@@ -47,7 +47,7 @@
 
             </Grid>
 
-            <!--Themme selection-->
+            <!--Theme selection-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                 <StackPanel Orientation="Horizontal" Margin="5">
@@ -59,21 +59,21 @@
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetDefaultTheme}"
+                                 Command="{Binding SetDefaultThemeCommand}"
                                  IsChecked="{Binding IsDefaultTheme}">
                         System
                     </RadioButton>
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetLightTheme}"
+                                 Command="{Binding SetLightThemeCommand}"
                                  IsChecked="{Binding IsLightTheme}">
                         Light
                     </RadioButton>
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetDarkTheme}"
+                                 Command="{Binding SetDarkThemeCommand}"
                                  IsChecked="{Binding IsDarkTheme}">
                         Dark
                     </RadioButton>
@@ -163,7 +163,7 @@
                 Margin="5"
                 Padding="8"
                 HorizontalAlignment="Right"
-                Command="{Binding OpenConfigXML}">
+                Command="{Binding OpenConfigXMLCommand}">
             Open config XML...
         </Button>
 

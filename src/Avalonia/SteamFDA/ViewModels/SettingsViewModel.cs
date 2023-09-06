@@ -9,16 +9,19 @@ using SteamFDCommon;
 using SteamFDCommon.Config;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
-    internal partial class SettingsViewModel : ViewModelBase
+    internal partial class SettingsViewModel : ObservableObject
     {
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
 
-        [ObservableProperty]
-        private bool _localPathTextboxChanged;
+        public bool LocalPathTextboxChanged;
+        public bool IsDefaultTheme => _config.Theme.Equals("System");
+        public bool IsLightTheme => _config.Theme.Equals("Light");
+        public bool IsDarkTheme => _config.Theme.Equals("Dark");
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -58,98 +61,21 @@ namespace SteamFDA.ViewModels
             if (value.Equals(configValue))
             {
                 LocalPathTextboxChanged = false;
+                OnPropertyChanged(nameof(LocalPathTextboxChanged));
             }
             else
             {
                 LocalPathTextboxChanged = true;
+                OnPropertyChanged(nameof(LocalPathTextboxChanged));
             }
 
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
-        public bool IsDefaultTheme => _config.Theme.Equals("System");
-        public bool IsLightTheme => _config.Theme.Equals("Light");
-        public bool IsDarkTheme => _config.Theme.Equals("Dark");
-
         public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
         {
             _config = config.Config;
-            _mwvm = mwvm;
-
-            SaveLocalRepoPathCommand = new RelayCommand(
-                execute: () =>
-                {
-                    _config.LocalRepoPath = PathToLocalRepo;
-
-                    LocalPathTextboxChanged = false;
-                    SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
-                },
-                canExecute: () => LocalPathTextboxChanged is true
-                );
-
-            SetDefaultTheme = new RelayCommand(
-                execute: () =>
-                {
-                    App.Current.RequestedThemeVariant = ThemeVariant.Default;
-                    _config.Theme = "System";
-                }
-                );
-
-            SetLightTheme = new RelayCommand(
-                execute: () =>
-                {
-                    App.Current.RequestedThemeVariant = ThemeVariant.Light;
-                    _config.Theme = "Light";
-                }
-                );
-
-            SetDarkTheme = new RelayCommand(
-                execute: () =>
-                {
-                    App.Current.RequestedThemeVariant = ThemeVariant.Dark;
-                    _config.Theme = "Dark";
-                }
-                );
-
-            OpenConfigXML = new RelayCommand(
-                execute: () =>
-                {
-                    using Process process = new();
-
-                    Process.Start(
-                        "explorer.exe",
-                        Consts.ConfigFile
-                        );
-                }
-                );
-
-            OpenFolderPickerCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    var window = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
-
-                    var topLevel = TopLevel.GetTopLevel(window);
-
-                    // Start async operation to open the dialog.
-                    var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-                    {
-                        Title = "Choose local repo folder",
-                        AllowMultiple = false
-                    });
-
-                    if (!files.Any())
-                    {
-                        return;
-                    }
-
-                    PathToLocalRepo = files[0].Path.LocalPath;
-                    _config.LocalRepoPath = PathToLocalRepo;
-
-                    OnPropertyChanged(nameof(PathToLocalRepo));
-                    LocalPathTextboxChanged = false;
-                    SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
-                }
-                );
+            _mwvm = mwvm;            
 
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
@@ -158,16 +84,73 @@ namespace SteamFDA.ViewModels
             PathToLocalRepo = _config.LocalRepoPath;
         }
 
-        public IRelayCommand SaveLocalRepoPathCommand { get; private set; }
 
-        public IRelayCommand SetDefaultTheme { get; private set; }
+        #region Relay Commands
 
-        public IRelayCommand SetLightTheme { get; private set; }
+        [RelayCommand(CanExecute = (nameof(SaveLocalRepoPathCanExecute)))]
+        private void SaveLocalRepoPath()
+        {
+            _config.LocalRepoPath = PathToLocalRepo;
 
-        public IRelayCommand SetDarkTheme { get; private set; }
+            LocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+        }
+        private bool SaveLocalRepoPathCanExecute() => LocalPathTextboxChanged is true;
 
-        public IRelayCommand OpenConfigXML { get; private set; }
+        [RelayCommand]
+        private void SetDefaultTheme()
+        {
+            Application.Current.RequestedThemeVariant = ThemeVariant.Default;
+            _config.Theme = "System";
+        }
 
-        public IRelayCommand OpenFolderPickerCommand { get; private set; }
+        [RelayCommand]
+        private void SetLightTheme()
+        {
+            Application.Current.RequestedThemeVariant = ThemeVariant.Light;
+            _config.Theme = "Light";
+        }
+
+        [RelayCommand]
+        private void SetDarkTheme()
+        {
+            Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
+            _config.Theme = "Dark";
+        }
+
+        [RelayCommand]
+        private void OpenConfigXML()
+        {
+            Process.Start("explorer.exe", Consts.ConfigFile);
+        }
+
+        [RelayCommand]
+        private async Task OpenFolderPicker()
+        {
+            var topLevel = TopLevel.GetTopLevel(((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow);
+
+            // Start async operation to open the dialog.
+            var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = "Choose local repo folder",
+                AllowMultiple = false
+            });
+
+            if (!files.Any())
+            {
+                return;
+            }
+
+            PathToLocalRepo = files[0].Path.LocalPath;
+            _config.LocalRepoPath = PathToLocalRepo;
+            OnPropertyChanged(nameof(PathToLocalRepo));
+
+            LocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+        }
+
+        #endregion Relay Commands
     }
 }
