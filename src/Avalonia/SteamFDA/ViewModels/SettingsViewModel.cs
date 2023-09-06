@@ -1,12 +1,12 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
+using SteamFDA.Helpers;
 using SteamFDCommon.Config;
+using SteamFDCommon.Helpers;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -75,7 +75,7 @@ namespace SteamFDA.ViewModels
         public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
         {
             _config = config.Config;
-            _mwvm = mwvm;            
+            _mwvm = mwvm;
 
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
@@ -128,7 +128,7 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var topLevel = TopLevel.GetTopLevel(((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow);
+            var topLevel = TopLevel.GetTopLevel(FdaProperties.MainWindow);
 
             // Start async operation to open the dialog.
             var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions

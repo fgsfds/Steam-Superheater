@@ -15,7 +15,7 @@
         <ScrollViewer Grid.Row="0">
 
             <ItemsControl Name="NewsItems"
-                          ItemsSource="{Binding News}">
+                          ItemsSource="{Binding NewsList}">
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>

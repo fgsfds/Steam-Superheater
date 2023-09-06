@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
 using SteamFDCommon.Config;
 using SteamFDCommon.Helpers;
 using SteamFDCommon.Models;
@@ -13,10 +12,9 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
-using Avalonia;
+using SteamFDA.Helpers;
 
 namespace SteamFDA.ViewModels
 {
@@ -420,7 +418,7 @@ namespace SteamFDA.ViewModels
                 {
                     if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
 
-                    var window = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+                    var window = FdaProperties.MainWindow;
 
                     var topLevel = TopLevel.GetTopLevel(window);
 

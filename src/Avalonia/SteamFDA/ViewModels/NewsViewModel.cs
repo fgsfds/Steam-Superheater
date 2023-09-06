@@ -3,11 +3,11 @@ using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Models;
 using SteamFDCommon.Entities;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using SteamFDCommon.Helpers;
 
 namespace SteamFDA.ViewModels
 {
@@ -15,12 +15,13 @@ namespace SteamFDA.ViewModels
     {
         private readonly NewsModel _newsModel;
 
-        public List<NewsEntity> News => _newsModel.News;
+        public ObservableCollection<NewsEntity> NewsList { get; set; }
 
-        public string NewsTabHeader { get; private set; } = "News";
+        public string NewsTabHeader { get; private set; }
 
         public NewsViewModel(NewsModel newsModel)
         {
+            NewsList = new();
             _newsModel = newsModel;
         }
 
@@ -30,13 +31,11 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         async Task InitializeAsync() => await UpdateAsync();
 
-        [RelayCommand(CanExecute=(nameof(MarkAllAsReadCanExecute)))]
+        [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private void MarkAllAsRead()
         {
             _newsModel.MarkAllAsRead();
-            UpdateHeader();
-            OnPropertyChanged(nameof(News));
-            OnPropertyChanged(nameof(NewsTabHeader));
+            FillNewsList();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 
@@ -70,15 +69,21 @@ namespace SteamFDA.ViewModels
                 return;
             }
 
+            FillNewsList();
             UpdateHeader();
+        }
+
+        private void FillNewsList()
+        {
+            NewsList.Clear();
+            NewsList.AddRange(_newsModel.News);
+            MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
 
         private void UpdateHeader()
         {
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
-
             OnPropertyChanged(nameof(NewsTabHeader));
-
             MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
     }

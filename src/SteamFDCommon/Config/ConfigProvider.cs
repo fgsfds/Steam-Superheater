@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Xml.Serialization;
+using SteamFDCommon.Helpers;
 
 namespace SteamFDCommon.Config
 {

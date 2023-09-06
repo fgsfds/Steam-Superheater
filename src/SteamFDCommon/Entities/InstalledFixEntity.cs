@@ -30,6 +30,9 @@
             FilesList = list;
         }
 
+        /// <summary>
+        /// Serializer constructor
+        /// </summary>
         private InstalledFixEntity()
         {
         }

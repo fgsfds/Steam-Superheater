@@ -1,8 +1,8 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SteamFDA.Helpers;
 using SteamFDCommon;
+using SteamFDCommon.Helpers;
 using System;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
-        public Version CurrentVersion => Consts.CurrentVersion;
+        public Version CurrentVersion => CommonProperties.CurrentVersion;
 
         public AboutViewModel(UpdateInstaller updateInstaller)
         {
@@ -26,7 +26,7 @@ namespace SteamFDA.ViewModels
 
         #region Relay Commands
 
-        [RelayCommand(CanExecute=(nameof(CheckForUpdatesCanExecute)))]
+        [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
         private async Task CheckForUpdates()
         {
             IsInProgress = true;
@@ -62,7 +62,7 @@ namespace SteamFDA.ViewModels
         private bool CheckForUpdatesCanExecute() => IsInProgress is false;
 
 
-        [RelayCommand(CanExecute=(nameof(DownloadAndInstallCanExecute)))]
+        [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
         private async Task DownloadAndInstall()
         {
             IsInProgress = true;
@@ -73,7 +73,7 @@ namespace SteamFDA.ViewModels
 
             UpdateInstaller.InstallUpdate();
 
-            ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.Close();
+            FdaProperties.MainWindow.Close();
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 

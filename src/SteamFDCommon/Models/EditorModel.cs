@@ -220,7 +220,7 @@ namespace SteamFDCommon.Models
                     filesToUpload.Add(fileToUpload);
                 }
 
-                return FixUploader.UploadFiles(guid.ToString(), filesToUpload);
+                return FixUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
             }
         }
     }
