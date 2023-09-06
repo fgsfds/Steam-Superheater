@@ -20,7 +20,7 @@ using Avalonia;
 
 namespace SteamFDA.ViewModels
 {
-    public partial class EditorViewModel : ObservableObject
+    internal partial class EditorViewModel : ObservableObject
     {
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;

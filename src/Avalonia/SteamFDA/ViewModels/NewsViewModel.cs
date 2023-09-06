@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
-    public partial class NewsViewModel : ObservableObject
+    internal partial class NewsViewModel : ObservableObject
     {
         private readonly NewsModel _newsModel;
 

@@ -5,7 +5,7 @@ using System;
 
 namespace SteamFDA.ViewModels
 {
-    public partial class PopupMessageViewModel : ObservableObject
+    internal partial class PopupMessageViewModel : ObservableObject
     {
         private readonly MainWindowViewModel _mwvm;
         private readonly Action? _okAction;

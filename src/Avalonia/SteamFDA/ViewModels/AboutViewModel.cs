@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
-    public partial class AboutViewModel : ObservableObject
+    internal partial class AboutViewModel : ObservableObject
     {
         private readonly UpdateInstaller _updateInstaller;
 
