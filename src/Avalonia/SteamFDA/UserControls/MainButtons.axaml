@@ -53,7 +53,7 @@
                     Command="{Binding InstallFixCommand}"
                     Margin="3,0"
                     Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding !SelectedFixHasUpdated}"
+                    IsVisible="{Binding !SelectedFixHasUpdate}"
                     Padding="8">
                 Install
             </Button>
@@ -62,7 +62,7 @@
                     Command="{Binding UpdateFixCommand}"
                     Margin="3,0"
                     Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding SelectedFixHasUpdated}"
+                    IsVisible="{Binding SelectedFixHasUpdate}"
                     Padding="8">
                 Update
             </Button>

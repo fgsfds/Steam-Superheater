@@ -2,10 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Styling;
 using SteamFDCommon.Entities;
 using System.Diagnostics;
-using System.Reflection.Emit;
 
 namespace SteamFDA.UserControls
 {
@@ -16,7 +14,7 @@ namespace SteamFDA.UserControls
             InitializeComponent();
         }
 
-
+        //formatting description text
         private void FixSelected(object sender, SelectionChangedEventArgs e)
         {
             var style = Application.Current.Resources.TryGetValue("ResourceKey", out var value);
@@ -32,7 +30,7 @@ namespace SteamFDA.UserControls
 
             var splitDescription = description.Split('\n');
 
-            foreach(var item in splitDescription )
+            foreach (var item in splitDescription)
             {
                 if (item.StartsWith("*") && item.EndsWith("*"))
                 {
