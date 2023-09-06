@@ -17,7 +17,7 @@ namespace SteamFDCommon
 
         public const string GitHubRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/";
 
-        public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Fixes-Downloader/releases";
+        public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
 

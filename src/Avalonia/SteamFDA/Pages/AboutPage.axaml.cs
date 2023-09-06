@@ -26,12 +26,12 @@ namespace SteamFDA.Pages
 
         private void GitHubClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Fixes-Downloader");
+            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater");
         }
 
         private void GitHubIssuesClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Fixes-Downloader/issues/new");
+            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/issues/new");
         }
     }
 }

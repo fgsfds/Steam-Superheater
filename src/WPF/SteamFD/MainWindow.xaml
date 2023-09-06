@@ -7,7 +7,7 @@
         xmlns:pgs="clr-namespace:SteamFD.Pages"
         xmlns:hlp="clr-namespace:SteamFD.Helpers"
         mc:Ignorable="d"
-        Title="Steam Fixes Downloader"
+        Title="Steam Superheater"
         MinHeight="600"
         Height="800"
         MinWidth="1000"

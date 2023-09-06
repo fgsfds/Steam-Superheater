@@ -22,7 +22,7 @@
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/logo.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Fixes Downloader</TextBlock>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Superheater</TextBlock>
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
                         </StackPanel>
                     </StackPanel>
@@ -55,7 +55,7 @@
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">GitHub repository</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Steam Fixes Downloader is free and open source</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Steam Superheater is free and open source</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Button>

@@ -7,7 +7,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SteamFDA.Windows.MainWindow"
         Icon="/Assets/avalonia-logo.ico"
-        Title="Steam Fixes Downloader"
+        Title="Steam Superheater"
         MinHeight="600"
         Height="800"
         MinWidth="1000"
