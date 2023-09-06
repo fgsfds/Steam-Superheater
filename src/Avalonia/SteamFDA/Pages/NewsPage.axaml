@@ -12,14 +12,13 @@
 
     <Grid RowDefinitions="*,auto" Margin="5">
 
-        <ItemsControl Name="NewsItems"
-                      ItemsSource="{Binding News}"
-                      Grid.Row="0">
+        <ScrollViewer Grid.Row="0">
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+            <ItemsControl Name="NewsItems"
+                          ItemsSource="{Binding News}">
 
-                    <ScrollViewer>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
 
                         <StackPanel Orientation="Vertical">
 
@@ -58,12 +57,12 @@
 
                         </StackPanel>
 
-                    </ScrollViewer>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-        </ItemsControl>
+        </ScrollViewer>
 
         <Button Grid.Row="1"
                 Margin="5"
