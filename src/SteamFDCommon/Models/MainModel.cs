@@ -57,7 +57,8 @@ namespace SteamFDCommon.Models
         /// <returns>List of dependencies</returns>
         public List<FixEntity> GetDependenciesForAFix(GameFirstCombinedEntity entity, FixEntity fix)
         {
-            if (fix?.Dependencies is null)
+            if (fix?.Dependencies is null ||
+                fix.Dependencies.Count == 0)
             {
                 return new List<FixEntity>();
             }
