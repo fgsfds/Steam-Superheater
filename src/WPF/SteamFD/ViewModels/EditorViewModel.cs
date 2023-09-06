@@ -182,13 +182,6 @@ namespace SteamFD.ViewModels
                 }
                 );
 
-            UploadChangesCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    await _editorModel.UploadFixesToGit();
-                }
-                );
-
             OpenXmlFileCommand = new RelayCommand(
                 execute: () =>
                 {

@@ -2,15 +2,18 @@
 using SteamFDCommon.Entities;
 using SteamFDCommon.Providers;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace SteamFDCommon.Models
 {
     public class EditorModel
     {
         private readonly SortedList<string, FixesList> _fixesList;
+        private readonly FixesProvider _fixesProvider;
 
-        public EditorModel()
+        public EditorModel(FixesProvider fixesProvider)
         {
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
             _fixesList = new();
         }
 
@@ -81,14 +84,6 @@ namespace SteamFDCommon.Models
             var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
 
             return result;
-        }
-
-        /// <summary>
-        /// Upload current fixes.xml to Git repo
-        /// </summary>
-        public async Task UploadFixesToGit()
-        {
-            var result = await BindingsManager.Instance.GetInstance<FixesProvider>().UploadFixesToGitAsync();
         }
 
         /// <summary>
@@ -178,6 +173,55 @@ namespace SteamFDCommon.Models
             _fixesList.Add(newFix.GameName, newFix);
 
             return newFix;
+        }
+
+        public async Task<bool> UploadFixAsync(FixesList fixesList, FixEntity fix)
+        {
+            var newFix = new FixesList(
+                fixesList.GameId,
+                fixesList.GameName,
+                new(new List<FixEntity>() { fix })
+                );
+
+            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
+
+            var guid = newFix.Fixes.First().Guid;
+
+            foreach (var onlineFix in onlineFixes)
+            {
+                //if fix already exists in the repo, don't upload it
+                if (onlineFix.Fixes.Any(x => x.Guid == guid))
+                {
+                    return false;
+                }
+            }
+
+            string? fileToUpload = null;
+
+            if (!newFix.Fixes[0].Url.StartsWith("http"))
+            {
+                fileToUpload = fix.Url;
+
+                newFix.Fixes[0].Url = Path.GetFileName(fileToUpload);
+            }
+
+            XmlSerializer xmlSerializer = new(typeof(FixesList));
+
+            List<object> filesToUpload = new();
+
+            using (MemoryStream fs = new())
+            {
+                xmlSerializer.Serialize(fs, newFix);
+
+                filesToUpload.Add(new Tuple<string, MemoryStream>("fix.xml", fs));
+
+                if (fileToUpload is not null)
+                {
+                    filesToUpload.Add(fileToUpload);
+                }
+
+                return FixUploader.UploadFiles(guid.ToString(), filesToUpload);
+            }
         }
     }
 }

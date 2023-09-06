@@ -13,6 +13,10 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls;
+using Avalonia.Platform.Storage;
+using Avalonia;
 
 namespace SteamFDA.ViewModels
 {
@@ -48,9 +52,13 @@ namespace SteamFDA.ViewModels
         [NotifyPropertyChangedFor(nameof(AvailableDependencies))]
         [NotifyPropertyChangedFor(nameof(AddedDependencies))]
         [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
+        [NotifyPropertyChangedFor(nameof(Name))]
+        [NotifyPropertyChangedFor(nameof(Version))]
+        [NotifyPropertyChangedFor(nameof(Url))]
         [NotifyCanExecuteChangedFor(nameof(RemovePatchCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -72,6 +80,39 @@ namespace SteamFDA.ViewModels
         public List<FixEntity> AvailableDependencies => _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
 
         public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+
+        public string? Name
+        {
+            get => SelectedFix?.Name;
+            set
+            {
+                SelectedFix.Name = value;
+                OnPropertyChanged(nameof(Name));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        public int? Version
+        {
+            get => SelectedFix?.Version;
+            set
+            {
+                SelectedFix.Version = value ?? 0;
+                OnPropertyChanged(nameof(Version));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
+
+        public string? Url
+        {
+            get => SelectedFix?.Url;
+            set
+            {
+                SelectedFix.Url = value;
+                OnPropertyChanged(nameof(Url));
+                UploadFixCommand.NotifyCanExecuteChanged();
+            }
+        }
 
         public EditorViewModel(
             EditorModel editorModel,
@@ -214,13 +255,6 @@ namespace SteamFDA.ViewModels
                 }
                 );
 
-            UploadChangesCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    await _editorModel.UploadFixesToGit();
-                }
-                );
-
             OpenXmlFileCommand = new RelayCommand(
                 execute: () =>
                 {
@@ -316,6 +350,102 @@ namespace SteamFDA.ViewModels
                 },
                 canExecute: () => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1
                 );
+
+            UploadFixCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    if (string.IsNullOrEmpty(Name) ||
+                        string.IsNullOrEmpty(Url) ||
+                        Version < 1)
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Name, Version and Link to file are required to upload a fix.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
+                    if (!Url.StartsWith("http") &&
+                        !File.Exists(Url))
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"{Url} doesn't exist.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
+                    if (new FileInfo(Url).Length > 1e+8)
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+
+                        return;
+                    }
+
+                    var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
+                    var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
+
+                    var result = await _editorModel.UploadFixAsync(fixesList, fix);
+
+                    if (result)
+                    {
+                        new PopupMessageViewModel(
+                            "Success",
+                            $"Fix successfully uploaded.{Environment.NewLine}It will be added to the database after developer's review.{Environment.NewLine}{Environment.NewLine}Thank you.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+                    }
+                    else
+                    {
+                        new PopupMessageViewModel(
+                            "Error",
+                            $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                            PopupMessageType.OkOnly)
+                        .Show();
+                    }
+                },
+                 canExecute: () => SelectedFix is not null && !string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(Name) && Version > 0
+                );
+
+            OpenFilePickerCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
+
+                    var window = ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+
+                    var topLevel = TopLevel.GetTopLevel(window);
+
+                    var zipType = new FilePickerFileType("Zip")
+                    {
+                        Patterns = new[] { "*.zip" },
+                        MimeTypes = new[] { "application/zip" }
+                    };
+
+                    var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+                    {
+                        Title = "Choose fix file",
+                        AllowMultiple = false,
+                        FileTypeFilter = new List<FilePickerFileType>() { zipType }
+                    });
+
+                    if (!files.Any())
+                    {
+                        return;
+                    }
+
+                    Url = files[0].Path.LocalPath.ToString();
+                    OnPropertyChanged(nameof(Url));
+                }
+                );
         }
 
         public IRelayCommand ClearSearchCommand { get; private set; }
@@ -328,8 +458,6 @@ namespace SteamFDA.ViewModels
 
         public IRelayCommand OpenXmlFileCommand { get; private set; }
 
-        public IRelayCommand UploadChangesCommand { get; private set; }
-
         public IRelayCommand AddDependencyCommand { get; private set; }
 
         public IRelayCommand RemoveDependencyCommand { get; private set; }
@@ -341,6 +469,10 @@ namespace SteamFDA.ViewModels
         public IRelayCommand MoveFixDownCommand { get; private set; }
 
         public IRelayCommand UpdateGamesCommand { get; private set; }
+
+        public IRelayCommand UploadFixCommand { get; private set; }
+
+        public IRelayCommand OpenFilePickerCommand { get; private set; }
 
         #endregion Relay Commands
     }
