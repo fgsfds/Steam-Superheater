@@ -1,14 +1,14 @@
-using Avalonia;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SteamFDA.Helpers;
 using SteamFDCommon;
+using SteamFDCommon.Helpers;
 using System;
-using System.Reflection;
+using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
 {
-    public class AboutViewModel : ObservableObject
+    internal partial class AboutViewModel : ObservableObject
     {
         private readonly UpdateInstaller _updateInstaller;
 
@@ -16,72 +16,72 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
-        public Version CurrentVersion { get; set; }
+        public Version CurrentVersion => CommonProperties.CurrentVersion;
 
         public AboutViewModel(UpdateInstaller updateInstaller)
         {
             _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
-
-            CurrentVersion = Assembly.GetEntryAssembly().GetName().Version;
-
-            SetRelayCommands();
         }
 
-        public IRelayCommand CheckForUpdatesCommand { get; set; }
 
-        public IRelayCommand DownloadAndInstall { get; set; }
+        #region Relay Commands
 
-        private void SetRelayCommands()
+        /// <summary>
+        /// Check for SSH updates
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
+        private async Task CheckForUpdates()
         {
-            CheckForUpdatesCommand = new RelayCommand(async () =>
+            IsInProgress = true;
+            OnPropertyChanged(nameof(IsInProgress));
+            CheckForUpdatesCommand.NotifyCanExecuteChanged();
+
+            bool updates = false;
+
+            try
             {
-                IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
-
-                bool updates = false;
-
-                try
-                {
-                    updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
-                }
-                catch (Exception ex)
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
-                        PopupMessageType.OkOnly
-                        ).Show();
-                }
-
-                if (updates)
-                {
-                    IsUpdateAvailable = true;
-                    OnPropertyChanged(nameof(IsUpdateAvailable));
-                    DownloadAndInstall.NotifyCanExecuteChanged();
-                }
-
-                IsInProgress = false;
-                OnPropertyChanged(nameof(IsInProgress));
-                CheckForUpdatesCommand.NotifyCanExecuteChanged();
-            },
-            () => IsInProgress is false
-            );
-
-            DownloadAndInstall = new RelayCommand(async () =>
+                updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
+            }
+            catch (Exception ex)
             {
-                IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                DownloadAndInstall.NotifyCanExecuteChanged();
+                new PopupMessageViewModel(
+                    "Error",
+                    "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
+                    PopupMessageType.OkOnly
+                    ).Show();
+            }
 
-                await _updateInstaller.DownloadLatestReleaseAndCreateLock();
+            if (updates)
+            {
+                IsUpdateAvailable = true;
+                OnPropertyChanged(nameof(IsUpdateAvailable));
+                DownloadAndInstallCommand.NotifyCanExecuteChanged();
+            }
 
-                UpdateInstaller.InstallUpdate();
-
-                ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow.Close();
-            },
-            () => IsUpdateAvailable is true
-            );
+            IsInProgress = false;
+            OnPropertyChanged(nameof(IsInProgress));
+            CheckForUpdatesCommand.NotifyCanExecuteChanged();
         }
+        private bool CheckForUpdatesCanExecute() => IsInProgress is false;
+
+        /// <summary>
+        /// Download and install SSH update
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
+        private async Task DownloadAndInstall()
+        {
+            IsInProgress = true;
+            OnPropertyChanged(nameof(IsInProgress));
+            DownloadAndInstallCommand.NotifyCanExecuteChanged();
+
+            await _updateInstaller.DownloadLatestReleaseAndCreateLock();
+
+            UpdateInstaller.InstallUpdate();
+
+            FdaProperties.MainWindow.Close();
+        }
+        private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
+
+        #endregion Relay Commands
     }
 }

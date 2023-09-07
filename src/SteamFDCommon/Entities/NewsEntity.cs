@@ -22,8 +22,7 @@ namespace SteamFDCommon.Entities
         /// <summary>
         /// Is newer than the last read version
         /// </summary>
-        [ObservableProperty]
-        private bool _isNewer;
+        public bool IsNewer { get; set; }
 
         /// <summary>
         /// Serializer constructor

@@ -1,6 +1,6 @@
-﻿using SteamFDCommon;
-using SteamFDCommon.Config;
+﻿using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
+using SteamFDCommon.Helpers;
 using System.IO;
 using System.Net.Http;
 using System.Xml.Serialization;
@@ -75,8 +75,7 @@ namespace SteamFDCommon.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(Consts.
-                    LocalRepo, Consts.NewsFile);
+                var file = Path.Combine(CommonProperties.LocalRepo, Consts.NewsFile);
 
                 if (!File.Exists(file))
                 {
@@ -127,7 +126,7 @@ namespace SteamFDCommon.Providers
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(10);
-                    using var stream = await client.GetStreamAsync(Consts.GitHubRepo + Consts.NewsFile);
+                    using var stream = await client.GetStreamAsync(Consts.MainFixesRepo + Consts.NewsFile);
                     using var file = new StreamReader(stream);
                     var newsXml = await file.ReadToEndAsync();
 

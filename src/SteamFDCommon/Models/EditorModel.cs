@@ -175,6 +175,12 @@ namespace SteamFDCommon.Models
             return newFix;
         }
 
+        /// <summary>
+        /// Upload fix to ftp
+        /// </summary>
+        /// <param name="fixesList">Fixes list entity</param>
+        /// <param name="fix">New fix</param>
+        /// <returns>true if uploaded successfully</returns>
         public async Task<bool> UploadFixAsync(FixesList fixesList, FixEntity fix)
         {
             var newFix = new FixesList(
@@ -220,7 +226,7 @@ namespace SteamFDCommon.Models
                     filesToUpload.Add(fileToUpload);
                 }
 
-                return FixUploader.UploadFiles(guid.ToString(), filesToUpload);
+                return FixUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
             }
         }
     }

@@ -5,6 +5,7 @@ using SteamFDCommon.Entities;
 using SteamFDCommon.FixTools;
 using SteamFDCommon.Providers;
 using System.Diagnostics;
+using SteamFDCommon.Helpers;
 
 namespace SteamFDCommon
 {
@@ -70,7 +71,7 @@ namespace SteamFDCommon
         private async Task<bool> CheckUpdater()
         {
             var fixes = await _fixesProvider.GetCachedFixesListAsync();
-            var updater = fixes.Where(x => x.GameId == 0).First().Fixes.Where(x => x.Guid == Consts.UpdaterGuid).First();
+            var updater = fixes.Where(x => x.GameId == 0).First().Fixes.Where(x => x.Guid == CommonProperties.UpdaterGuid).First();
             var currentVersion = _configProvider.Config.InstalledUpdater;
 
             if (!File.Exists(Consts.UpdaterExe) ||
@@ -98,6 +99,10 @@ namespace SteamFDCommon
             return true;
         }
 
+        /// <summary>
+        /// Create update lock file
+        /// </summary>
+        /// <param name="fileName">update file</param>
         private void CreateUpdateLock(string fileName)
         {
             using (TextWriter tw = new StreamWriter(Consts.UpdateFile))

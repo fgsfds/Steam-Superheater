@@ -4,7 +4,18 @@ namespace SteamFDCommon
 {
     public static class FixUploader
     {
-        public static bool UploadFiles(string folder, List<object> files)
+        private const string FtpAddress = "31.31.198.106";
+        private const string FtpUser = "u2220544_Upload";
+        private const string FtpPassword = "YdBunW64d447Pby";
+
+        /// <summary>
+        /// Upload fix to ftp
+        /// </summary>
+        /// <param name="folder">Destination folder on ftp server</param>
+        /// <param name="files">List of paths to files or tuples with file name and memory stream</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
+        public static bool UploadFilesToFtp(string folder, List<object> files)
         {
             List<string> filesList = new();
             List<Tuple<string, MemoryStream>> filesStream = new();
@@ -26,7 +37,7 @@ namespace SteamFDCommon
                 }
             }
 
-            var client = new FtpClient("31.31.198.106", "u2220544_Upload", "YdBunW64d447Pby");
+            var client = new FtpClient(FtpAddress, FtpUser, FtpPassword);
 
             client.CreateDirectory(folder);
 

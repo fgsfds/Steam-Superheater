@@ -1,7 +1,4 @@
-﻿using SteamFDCommon.Config;
-using SteamFDCommon.DI;
-
-namespace SteamFDCommon
+﻿namespace SteamFDCommon.Helpers
 {
     public class Consts
     {
@@ -13,9 +10,7 @@ namespace SteamFDCommon
 
         public const string InstalledFile = "installed.xml";
 
-        public static string LocalRepo => BindingsManager.Instance.GetInstance<ConfigProvider>().Config.LocalRepoPath;
-
-        public const string GitHubRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/";
+        public const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/";
 
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
@@ -28,7 +23,5 @@ namespace SteamFDCommon
         public const string UpdateFile = ".update";
 
         public const string UpdaterExe = "Updater.exe";
-
-        public static readonly Guid UpdaterGuid = new("92ef702d-04b0-42ff-8632-6a81285123e2");
     }
 }

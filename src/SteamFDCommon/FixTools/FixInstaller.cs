@@ -1,7 +1,7 @@
-﻿using SteamFDCommon;
-using SteamFDCommon.Config;
+﻿using SteamFDCommon.Config;
 using SteamFDCommon.DI;
 using SteamFDCommon.Entities;
+using SteamFDCommon.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
 
@@ -22,7 +22,7 @@ namespace SteamFDCommon.FixTools
 
             if (!url.StartsWith("http"))
             {
-                url = Consts.GitHubRepo + url;
+                url = Consts.MainFixesRepo + url;
             }
 
             var zipName = Path.GetFileName(url);
@@ -145,6 +145,11 @@ namespace SteamFDCommon.FixTools
                     var to = Path.Combine(fixFolderPath, file);
 
                     var dir = Path.GetDirectoryName(to);
+
+                    if (dir is null)
+                    {
+                        throw new NullReferenceException(nameof(dir));
+                    }
 
                     if (!Directory.Exists(dir))
                     {

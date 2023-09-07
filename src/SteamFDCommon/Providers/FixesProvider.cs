@@ -1,5 +1,6 @@
 ﻿using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
+using SteamFDCommon.Helpers;
 using System.Xml.Serialization;
 
 namespace SteamFDCommon.Providers
@@ -86,7 +87,7 @@ namespace SteamFDCommon.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(Consts.LocalRepo, Consts.FixesFile);
+                var file = Path.Combine(CommonProperties.LocalRepo, Consts.FixesFile);
 
                 if (!File.Exists(file))
                 {
@@ -154,7 +155,7 @@ namespace SteamFDCommon.Providers
             using (var client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
-                using var stream = await client.GetStreamAsync(Consts.GitHubRepo + Consts.FixesFile);
+                using var stream = await client.GetStreamAsync(Consts.MainFixesRepo + Consts.FixesFile);
                 using var file = new StreamReader(stream);
                 var fixesXml = await file.ReadToEndAsync();
 
@@ -173,7 +174,7 @@ namespace SteamFDCommon.Providers
 
             try
             {
-                using FileStream fs = new(Path.Combine(Consts.LocalRepo, Consts.FixesFile), FileMode.Create);
+                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepo, Consts.FixesFile), FileMode.Create);
                 xmlSerializer.Serialize(fs, fixesList);
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)

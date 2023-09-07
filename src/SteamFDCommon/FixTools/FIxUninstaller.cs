@@ -1,5 +1,5 @@
-﻿using SteamFDCommon;
-using SteamFDCommon.Entities;
+﻿using SteamFDCommon.Entities;
+using SteamFDCommon.Helpers;
 using System.IO;
 
 namespace SteamFDCommon.FixTools
@@ -13,6 +13,11 @@ namespace SteamFDCommon.FixTools
         /// <param name="fix">Fix entity</param>
         public static void UninstallFix(GameEntity game, FixEntity fix)
         {
+            if (fix.InstalledFix is null)
+            {
+                throw new NullReferenceException(nameof(fix.InstalledFix));
+            }
+
             foreach (var file in fix.InstalledFix.FilesList)
             {
                 var fullPath = Path.Combine(game.InstallDir, file);

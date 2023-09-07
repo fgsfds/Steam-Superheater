@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
-using SteamFDCommon;
+using SteamFDCommon.Helpers;
 using SteamFDTools;
 
 namespace SteamFDCommon.Entities

@@ -2,10 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Avalonia.Styling;
 using SteamFDCommon.Entities;
 using System.Diagnostics;
-using System.Reflection.Emit;
 
 namespace SteamFDA.UserControls
 {
@@ -16,7 +14,7 @@ namespace SteamFDA.UserControls
             InitializeComponent();
         }
 
-
+        //formatting description text
         private void FixSelected(object sender, SelectionChangedEventArgs e)
         {
             var style = Application.Current.Resources.TryGetValue("ResourceKey", out var value);
@@ -27,18 +25,18 @@ namespace SteamFDA.UserControls
             {
                 return;
             }
+
             var description = ((FixEntity)((ListBox)sender).SelectedItem).Description;
 
             var splitDescription = description.Split('\n');
 
-            foreach(var item in splitDescription )
+            foreach (var item in splitDescription)
             {
                 if (item.StartsWith("*") && item.EndsWith("*"))
                 {
                     var text = item[1..^1];
-                    stack.Children.Add((
-                        new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap })
-                        );
+                    stack.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap });
+
                     continue;
                 }
                 else if (item.StartsWith("http"))
@@ -48,19 +46,18 @@ namespace SteamFDA.UserControls
                         Content = item
                     };
 
-                    button.Click += ButtonClick;
+                    button.Click += UrlButtonClick;
 
                     stack.Children.Add(button);
+
                     continue;
                 }
 
-
-
-                stack.Children.Add((new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap }));
+                stack.Children.Add(new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap });
             }
         }
 
-        private void ButtonClick(object sender, RoutedEventArgs e)
+        private void UrlButtonClick(object sender, RoutedEventArgs e)
         {
             var url = ((Button)sender).Content.ToString();
 

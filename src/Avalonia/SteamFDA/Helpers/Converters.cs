@@ -8,8 +8,9 @@ namespace SteamFDA.Helpers
 {
     /// <summary>
     /// Converts bool to one of two strings
+    /// Strings separated by ;
     /// </summary>
-    public class BoolToStringConverter : IValueConverter
+    internal class BoolToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -26,7 +27,7 @@ namespace SteamFDA.Helpers
     /// <summary>
     /// Reverses bool value
     /// </summary>
-    public class ReverseBool : IValueConverter
+    internal class ReverseBool : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -42,7 +43,7 @@ namespace SteamFDA.Helpers
     /// <summary>
     /// Converts bool to color from a string of two colors separated by ;
     /// </summary>
-    public class BoolToColorConverter : IValueConverter
+    internal class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -60,7 +61,7 @@ namespace SteamFDA.Helpers
     /// <summary>
     /// Converts path to image to Bitmap
     /// </summary>
-    public class ImagePathToBitmapConverter : IValueConverter
+    internal class ImagePathToBitmapConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -69,7 +70,7 @@ namespace SteamFDA.Helpers
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotSupportedException();
+            throw new NotSupportedException("ConvertBack method for ImagePathToBitmapConverter is not implemented.");
         }
     }
 }

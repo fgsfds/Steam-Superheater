@@ -2,6 +2,7 @@
 using System.IO;
 using Avalonia;
 using SteamFDCommon;
+using SteamFDCommon.Helpers;
 
 namespace SteamFDA.Desktop;
 

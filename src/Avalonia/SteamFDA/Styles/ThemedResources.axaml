@@ -6,12 +6,12 @@
             <SolidColorBrush x:Key='Background'>#202020</SolidColorBrush>
             <SolidColorBrush x:Key='PopupBackground'>Black</SolidColorBrush>
             <SolidColorBrush x:Key='WindowBorder'>Black</SolidColorBrush>
-            <BoxShadow x:Key='Shadow'>0 0 5 Black</BoxShadow>
+            <BoxShadows x:Key='Shadow'>0 0 5 Black</BoxShadows>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Light'>
             <SolidColorBrush x:Key='PopupBackground'>DarkGray</SolidColorBrush>
-			<SolidColorBrush x:Key='WindowBorder'>DarkGray</SolidColorBrush>
-            <BoxShadow x:Key='Shadow'>0 0 5 DarkGray</BoxShadow>
+            <SolidColorBrush x:Key='WindowBorder'>DarkGray</SolidColorBrush>
+            <BoxShadows x:Key='Shadow'>0 0 5 DarkGray</BoxShadows>
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
 

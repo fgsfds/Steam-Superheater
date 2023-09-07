@@ -15,7 +15,7 @@
         <ScrollViewer Grid.Row="0">
 
             <ItemsControl Name="NewsItems"
-                          ItemsSource="{Binding News}">
+                          ItemsSource="{Binding NewsList}">
 
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
@@ -67,7 +67,7 @@
         <Button Grid.Row="1"
                 Margin="5"
                 Padding="8"
-                Command="{Binding MarkAllAsRead}"
+                Command="{Binding MarkAllAsReadCommand}"
                 Background="{DynamicResource SystemAccentColor}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">

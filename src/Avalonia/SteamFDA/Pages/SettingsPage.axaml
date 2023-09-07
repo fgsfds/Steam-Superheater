@@ -11,6 +11,7 @@
 
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
+            <!--Delete archive switch-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                 <ToggleSwitch IsChecked="{Binding DeleteArchivesCheckbox}"
@@ -28,6 +29,7 @@
 
             </Grid>
 
+            <!--Open config switch-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                 <ToggleSwitch IsChecked="{Binding OpenConfigCheckbox}"
@@ -45,6 +47,7 @@
 
             </Grid>
 
+            <!--Theme selection-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                 <StackPanel Orientation="Horizontal" Margin="5">
@@ -56,21 +59,21 @@
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetDefaultTheme}"
+                                 Command="{Binding SetDefaultThemeCommand}"
                                  IsChecked="{Binding IsDefaultTheme}">
                         System
                     </RadioButton>
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetLightTheme}"
+                                 Command="{Binding SetLightThemeCommand}"
                                  IsChecked="{Binding IsLightTheme}">
                         Light
                     </RadioButton>
 
                     <RadioButton GroupName="theme"
                                  Margin="5"
-                                 Command="{Binding SetDarkTheme}"
+                                 Command="{Binding SetDarkThemeCommand}"
                                  IsChecked="{Binding IsDarkTheme}">
                         Dark
                     </RadioButton>
@@ -79,6 +82,7 @@
 
             </Grid>
 
+            <!--Advanced settings-->
             <Expander Header="Advanced settings"
                       Grid.Row="2"
                       Grid.Column="0"
@@ -88,6 +92,7 @@
 
                 <StackPanel Orientation="Vertical">
 
+                    <!--Show editor switch-->
                     <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                         <ToggleSwitch IsChecked="{Binding ShowEditorCheckbox}"
@@ -105,6 +110,7 @@
 
                     </Grid>
 
+                    <!--Path to local repo-->
                     <Grid ColumnDefinitions="auto,*,auto,auto" RowDefinitions="*,*,*">
 
                         <TextBlock Grid.Column="0"
@@ -131,6 +137,7 @@
 
                     </Grid>
 
+                    <!--Local repo switch-->
                     <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 
                         <ToggleSwitch IsChecked="{Binding UseLocalRepoCheckbox}"
@@ -156,7 +163,7 @@
                 Margin="5"
                 Padding="8"
                 HorizontalAlignment="Right"
-                Command="{Binding OpenConfigXML}">
+                Command="{Binding OpenConfigXMLCommand}">
             Open config XML...
         </Button>
 

@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
 using SteamFDCommon.CombinedEntities;
 using SteamFDCommon.Config;
 using SteamFDCommon.Helpers;

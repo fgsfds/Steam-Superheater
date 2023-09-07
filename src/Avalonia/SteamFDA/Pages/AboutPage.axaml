@@ -28,7 +28,7 @@
                     </StackPanel>
                     <ProgressBar Grid.Column="1" IsIndeterminate="True" IsVisible="{Binding IsInProgress}" Margin="30,0"/>
                     <Button Padding="10" Margin="10,0" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
-                    <Button Padding="10" Margin="10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding DownloadAndInstall}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                    <Button Padding="10" Margin="10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding DownloadAndInstallCommand}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
                 </Grid>
             </Border>
 
@@ -65,12 +65,14 @@
                     Margin="10"
                     HorizontalAlignment="Stretch"
                     Button.Click="GitHubIssuesClick">
+
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
                     </StackPanel>
                 </StackPanel>
+
             </Button>
 
         </StackPanel>

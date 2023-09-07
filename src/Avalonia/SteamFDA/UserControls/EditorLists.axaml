@@ -95,7 +95,7 @@
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding AddNewPatchCommand}">
+                    Command="{Binding AddNewFixCommand}">
                 Add new fix
             </Button>
 
@@ -106,7 +106,7 @@
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding RemovePatchCommand}">
+                    Command="{Binding RemoveFixCommand}">
                 Delete fix
             </Button>
 

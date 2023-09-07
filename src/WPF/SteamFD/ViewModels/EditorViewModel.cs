@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
 using SteamFDCommon.Config;
 using SteamFDCommon.Helpers;
 using SteamFDCommon.Models;
@@ -179,6 +178,13 @@ namespace SteamFD.ViewModels
                     var result = _editorModel.SaveFixesListAsync();
 
                     MessageBox.Show(result.Item2);
+                }
+                );
+
+            UploadChangesCommand = new RelayCommand(
+                execute: async () =>
+                {
+                    await _editorModel.UploadFixesToGit();
                 }
                 );
 
