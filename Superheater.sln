@@ -3,19 +3,19 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamFD", "src\WPF\SteamFD\SteamFD.csproj", "{1D180688-35C6-4058-9ECA-466F3C256393}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater", "src\WPF\Superheater\Superheater.csproj", "{1D180688-35C6-4058-9ECA-466F3C256393}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamFDA", "src\Avalonia\SteamFDA\SteamFDA.csproj", "{F168094A-678F-4CE3-8AFC-2483812FE8DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater.Avalonia.Core", "src\Avalonia\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj", "{F168094A-678F-4CE3-8AFC-2483812FE8DC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamFDA.Desktop", "src\Avalonia\SteamFDA.Desktop\SteamFDA.Desktop.csproj", "{28228407-76F8-44DD-8FC9-395239090645}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater.Desktop", "src\Avalonia\Superheater.Desktop\Superheater.Desktop.csproj", "{28228407-76F8-44DD-8FC9-395239090645}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamFDUpdater", "src\SteamFDUpdater\SteamFDUpdater.csproj", "{AF8DB376-4503-4669-ABAE-5C97BBE3AB68}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Updater", "src\Updater\Updater.csproj", "{AF8DB376-4503-4669-ABAE-5C97BBE3AB68}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{5F8C9EF1-29BD-4487-8BBB-A2CB626662CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia", "Avalonia", "{7D1B7241-B52F-41F4-8622-FF9018555C70}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamFDCommon", "src\SteamFDCommon\SteamFDCommon.csproj", "{7DB7C42D-1741-4BF0-871C-0237A00A56BD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common.csproj", "{7DB7C42D-1741-4BF0-871C-0237A00A56BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

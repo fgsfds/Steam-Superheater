@@ -181,13 +181,6 @@ namespace SteamFD.ViewModels
                 }
                 );
 
-            UploadChangesCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    await _editorModel.UploadFixesToGit();
-                }
-                );
-
             OpenXmlFileCommand = new RelayCommand(
                 execute: () =>
                 {
@@ -286,8 +279,6 @@ namespace SteamFD.ViewModels
         public IRelayCommand SaveChangesCommand { get; private set; }
 
         public IRelayCommand OpenXmlFileCommand { get; private set; }
-
-        public IRelayCommand UploadChangesCommand { get; private set; }
 
         public IRelayCommand AddDependencyCommand { get; private set; }
 

@@ -11,11 +11,11 @@
     <SelfContained>false</SelfContained>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <AssemblyName>Superheater</AssemblyName>
     <StartupObject>SteamFDA.Desktop.Program</StartupObject>
     <Version>0.2.0</Version>
     <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AssemblyName>Superheater</AssemblyName>
   </PropertyGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
@@ -32,6 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SteamFDA\SteamFDA.csproj" />
+    <ProjectReference Include="..\..\Common\Common.csproj" />
+    <ProjectReference Include="..\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj" />
   </ItemGroup>
 </Project>
