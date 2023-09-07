@@ -1,9 +1,7 @@
 ﻿using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
 using SteamFDCommon.Providers;
-using SteamFDCommon.Entities;
 using SteamFDCommon.FixTools;
-using SteamFDCommon.Providers;
 using System.Diagnostics;
 using SteamFDCommon.Helpers;
 
