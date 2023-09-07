@@ -6,7 +6,7 @@
         xmlns:controls="clr-namespace:SteamFDA.UserControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="SteamFDA.Windows.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/icon.ico"
         Title="Steam Superheater"
         MinHeight="600"
         Height="800"

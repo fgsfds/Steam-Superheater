@@ -18,6 +18,7 @@
 
   
   <ItemGroup>
+    <None Remove="Assets\icon.ico" />
     <None Remove="Assets\issues.png" />
     <None Remove="Assets\logo.png" />
   </ItemGroup>
