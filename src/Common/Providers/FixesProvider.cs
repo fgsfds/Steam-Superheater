@@ -1,6 +1,7 @@
 ﻿using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
 using SteamFDCommon.Helpers;
+using System.Collections.Immutable;
 using System.Xml.Serialization;
 
 namespace SteamFDCommon.Providers
@@ -11,10 +12,10 @@ namespace SteamFDCommon.Providers
 
         private readonly ConfigEntity _config;
 
-        //cached fixes from online or local repo
-        private List<FixesList>? _fixesCache;
+        //cached fixes string from online or local repo
+        private string? _fixesCachedString;
         //cached fixes from online repo only. used to check if the fix already exists in the repo before uploading.
-        private List<FixesList>? _onlineFixes;
+        private ImmutableList<FixesList>? _onlineFixes;
 
         public FixesProvider(ConfigProvider config)
         {
@@ -33,12 +34,15 @@ namespace SteamFDCommon.Providers
                 await Task.Delay(100);
             }
 
-            if (_fixesCache is null)
+            if (_fixesCachedString is null)
             {
                 await CreateFixesCacheAsync();
             }
 
-            return _fixesCache;
+            using (StringReader fs = new(_fixesCachedString))
+            {
+                return DeserializeCachedString(fs.ReadToEnd());
+            }
         }
 
         /// <summary>
@@ -47,7 +51,7 @@ namespace SteamFDCommon.Providers
         /// <returns></returns>
         public async Task<List<FixesList>> GetNewFixesListAsync()
         {
-            _fixesCache = null;
+            _fixesCachedString = null;
             _onlineFixes = null;
 
             return await GetCachedFixesListAsync();
@@ -58,7 +62,7 @@ namespace SteamFDCommon.Providers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task<List<FixesList>> GetOnlineFixesListAsync()
+        public async Task<ImmutableList<FixesList>> GetOnlineFixesListAsync()
         {
             while (_isCacheUpdating)
             {
@@ -82,8 +86,7 @@ namespace SteamFDCommon.Providers
         {
             _isCacheUpdating = true;
 
-            string? fixes;
-            string? onlineFixes;
+            string? fixes = null;
 
             if (_config.UseLocalRepo)
             {
@@ -95,14 +98,14 @@ namespace SteamFDCommon.Providers
                     throw new FileNotFoundException(file);
                 }
 
-                fixes = File.ReadAllText(file);
-                onlineFixes = await DownloadFixesXMLAsync();
+                _fixesCachedString = File.ReadAllText(file);
+                fixes = await DownloadFixesXMLAsync();
             }
             else
             {
                 try
                 {
-                    fixes = onlineFixes = await DownloadFixesXMLAsync();
+                    fixes = await DownloadFixesXMLAsync();
                 }
                 catch
                 {
@@ -114,14 +117,13 @@ namespace SteamFDCommon.Providers
                 }
             }
 
+            _fixesCachedString = fixes;
+
             using (StringReader fs = new(fixes))
             {
-                _fixesCache = DeserializeCachedString(fs.ReadToEnd());
-            }
+                var list = DeserializeCachedString(fs.ReadToEnd());
 
-            using (StringReader fs = new(onlineFixes))
-            {
-                _onlineFixes = DeserializeCachedString(fs.ReadToEnd());
+                _onlineFixes = ImmutableList.CreateRange(list);
             }
 
             _isCacheUpdating = false;
