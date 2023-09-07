@@ -36,6 +36,7 @@ namespace SteamFDA.ViewModels
         {
             _newsModel.MarkAllAsRead();
             FillNewsList();
+            UpdateHeader();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 

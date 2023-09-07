@@ -23,10 +23,6 @@ namespace SteamFDA.ViewModels
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
-        private bool _isInProgress;
-
         public ObservableCollection<FixesList> FilteredGamesList { get; init; }
 
         public ObservableCollection<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes;
@@ -37,13 +33,45 @@ namespace SteamFDA.ViewModels
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
+        public List<FixEntity> AvailableDependencies
+        {
+            get
+            {
+                if (SelectedGame is null ||
+                    SelectedFix is null)
+                {
+                    return new();
+                }
+
+                return _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
+            }
+        }
+
+        public List<FixEntity> AddedDependencies
+        {
+            get
+            {
+                if (SelectedGame is null ||
+                    SelectedFix is null)
+                {
+                    return new();
+                }
+
+                return _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+            }
+        }
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
+        private bool _isInProgress;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddGameCommand))]
         public GameEntity _selectedAvailableGame;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixes))]
-        [NotifyCanExecuteChangedFor(nameof(AddNewPatchCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AddNewFixCommand))]
         private FixesList? _selectedGame;
 
         [ObservableProperty]
@@ -53,7 +81,7 @@ namespace SteamFDA.ViewModels
         [NotifyPropertyChangedFor(nameof(Name))]
         [NotifyPropertyChangedFor(nameof(Version))]
         [NotifyPropertyChangedFor(nameof(Url))]
-        [NotifyCanExecuteChangedFor(nameof(RemovePatchCommand))]
+        [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
@@ -75,38 +103,58 @@ namespace SteamFDA.ViewModels
             FillGamesList();
         }
 
-        public List<FixEntity> AvailableDependencies => _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
-
-        public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
-
-        public string? Name
+        /// <summary>
+        /// Name of the fix
+        /// </summary>
+        public string Name
         {
-            get => SelectedFix?.Name;
+            get => SelectedFix?.Name ?? string.Empty;
             set
             {
-                SelectedFix.Name = value;
+                if (SelectedFix is null)
+                {
+                    throw new NullReferenceException(nameof(SelectedGameFixes));
+                }
+
+                SelectedFix.Name = value ?? string.Empty;
                 OnPropertyChanged(nameof(Name));
                 UploadFixCommand.NotifyCanExecuteChanged();
             }
         }
 
+        /// <summary>
+        /// Version of the fix
+        /// </summary>
         public int? Version
         {
             get => SelectedFix?.Version;
             set
             {
+                if (SelectedFix is null)
+                {
+                    throw new NullReferenceException(nameof(SelectedGameFixes));
+                }
+
                 SelectedFix.Version = value ?? 0;
                 OnPropertyChanged(nameof(Version));
                 UploadFixCommand.NotifyCanExecuteChanged();
             }
         }
 
-        public string? Url
+        /// <summary>
+        /// Link to fix file
+        /// </summary>
+        public string Url
         {
-            get => SelectedFix?.Url;
+            get => SelectedFix?.Url ?? string.Empty;
             set
             {
-                SelectedFix.Url = value;
+                if (SelectedFix is null)
+                {
+                    throw new NullReferenceException(nameof(SelectedGameFixes));
+                }
+
+                SelectedFix.Url = value ?? string.Empty;
                 OnPropertyChanged(nameof(Url));
                 UploadFixCommand.NotifyCanExecuteChanged();
             }
@@ -122,13 +170,272 @@ namespace SteamFDA.ViewModels
 
             FilteredGamesList = new();
             AvailableGamesList = new();
-
-            SetRelayCommands();
         }
 
+
+        #region Relay Commands
+
+        /// <summary>
+        /// VM initialization
+        /// </summary>
         [RelayCommand]
         async Task InitializeAsync() => await UpdateAsync(true);
 
+        /// <summary>
+        /// Update games list
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
+        private async Task UpdateGames() => await UpdateAsync(false);
+        private bool UpdateGamesCanExecute() => IsInProgress is false;
+
+        /// <summary>
+        /// Add new fix for a game
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
+        private void AddNewFix()
+        {
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            FixEntity newFix = new();
+
+            SelectedGame.Fixes.Add(newFix);
+
+            OnPropertyChanged(nameof(SelectedGameFixes));
+
+            SelectedFix = newFix;
+        }
+        private bool AddNewFixCanExecute() => SelectedGame is not null;
+
+        /// <summary>
+        /// Remove fix from a game
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(RemoveFixCanExecute))]
+        private void RemoveFix()
+        {
+            if (SelectedGameFixes is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGameFixes));
+            }
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+
+            SelectedGameFixes.Remove(SelectedFix);
+        }
+        private bool RemoveFixCanExecute() => SelectedFix is not null;
+
+        /// <summary>
+        /// Clear search bar
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(ClearSearchCanExecute))]
+        private void ClearSearch() => Search = string.Empty;
+        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
+
+        /// <summary>
+        /// Save fixes.xml
+        /// </summary>
+        [RelayCommand]
+        private void SaveChanges()
+        {
+            var result = _editorModel.SaveFixesListAsync();
+
+            new PopupMessageViewModel(result.Item1 ? "Success" : "Error", result.Item2, PopupMessageType.OkOnly).Show();
+        }
+
+        /// <summary>
+        /// Open fixes.xml file
+        /// </summary>
+        [RelayCommand]
+        private void OpenXmlFile() => Process.Start("explorer.exe", Path.Combine(_config.LocalRepoPath, Consts.FixesFile));
+
+        /// <summary>
+        /// Add dependency for a fix
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(AddDependencyCanExecute))]
+        private void AddDependency()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+            if (SelectedGameFixes is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGameFixes));
+            }
+
+            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
+            OnPropertyChanged(nameof(AvailableDependencies));
+            OnPropertyChanged(nameof(AddedDependencies));
+        }
+        private bool AddDependencyCanExecute() => SelectedAvailableDependencyIndex > -1;
+
+        /// <summary>
+        /// Remove dependence from a fix
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(RemoveDependencyCanExecute))]
+        private void RemoveDependency()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+            if (SelectedGameFixes is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGameFixes));
+            }
+
+            _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
+            OnPropertyChanged(nameof(AvailableDependencies));
+            OnPropertyChanged(nameof(AddedDependencies));
+        }
+        private bool RemoveDependencyCanExecute() => SelectedAddedDependencyIndex > -1;
+
+        /// <summary>
+        /// Add new game
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(AddGameCanExecute))]
+        private void AddGame()
+        {
+            var game = SelectedAvailableGame;
+
+            var newFix = _editorModel.AddNewFix(game);
+
+            FillGamesList();
+
+            SelectedGame = newFix;
+
+            OnPropertyChanged(nameof(AvailableGamesList));
+        }
+        private bool AddGameCanExecute() => SelectedAvailableGame is not null;
+
+        /// <summary>
+        /// Move fix up in the list
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(MoveFixUpCanExecute))]
+        private void MoveFixUp()
+        {
+            if (SelectedGameFixes is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGameFixes));
+            }
+
+            var newIndex = SelectedFixIndex - 1;
+
+            SelectedGameFixes.Move(SelectedFixIndex, newIndex);
+            SelectedFixIndex = newIndex;
+
+            OnPropertyChanged(nameof(SelectedFixIndex));
+            MoveFixDownCommand.NotifyCanExecuteChanged();
+            MoveFixUpCommand.NotifyCanExecuteChanged();
+        }
+        private bool MoveFixUpCanExecute() => SelectedFix is not null && SelectedFixIndex > 0;
+
+        /// <summary>
+        /// Move fix down in the list
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(MoveFixDownCanExecute))]
+        private void MoveFixDown()
+        {
+            if (SelectedGameFixes is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGameFixes));
+            }
+
+            var newIndex = SelectedFixIndex + 1;
+
+            SelectedGameFixes.Move(SelectedFixIndex, newIndex);
+            SelectedFixIndex = newIndex;
+
+            OnPropertyChanged(nameof(SelectedFixIndex));
+            MoveFixDownCommand.NotifyCanExecuteChanged();
+            MoveFixUpCommand.NotifyCanExecuteChanged();
+        }
+        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1;
+
+        /// <summary>
+        /// Upload fix to ftp
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
+        private async Task UploadFix()
+        {
+            if (!ChecksBeforeUpload())
+            {
+                return;
+            }
+
+            var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
+            var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
+
+            var result = await _editorModel.UploadFixAsync(fixesList, fix);
+
+            if (result)
+            {
+                new PopupMessageViewModel(
+                    "Success",
+                    $"Fix successfully uploaded.{Environment.NewLine}It will be added to the database after developer's review.{Environment.NewLine}{Environment.NewLine}Thank you.",
+                    PopupMessageType.OkOnly)
+                .Show();
+            }
+            else
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                    PopupMessageType.OkOnly)
+                .Show();
+            }
+        }
+        private bool UploadFixCanExecute() => SelectedFix is not null && !string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(Name) && Version > 0;
+
+        /// <summary>
+        /// Open fix file picker
+        /// </summary>
+        [RelayCommand]
+        private async Task OpenFilePicker()
+        {
+            if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
+
+            var window = FdaProperties.MainWindow;
+
+            var topLevel = TopLevel.GetTopLevel(window);
+
+            if (topLevel is null)
+            {
+                throw new NullReferenceException(nameof(topLevel));
+            }
+
+            var zipType = new FilePickerFileType("Zip")
+            {
+                Patterns = new[] { "*.zip" },
+                MimeTypes = new[] { "application/zip" }
+            };
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Choose fix file",
+                AllowMultiple = false,
+                FileTypeFilter = new List<FilePickerFileType>() { zipType }
+            });
+
+            if (!files.Any())
+            {
+                return;
+            }
+
+            Url = files[0].Path.LocalPath.ToString();
+            OnPropertyChanged(nameof(Url));
+        }
+
+        #endregion Relay Commands
+
+        /// <summary>
+        /// Update games list
+        /// </summary>
+        /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
             IsInProgress = true;
@@ -163,10 +470,11 @@ namespace SteamFDA.ViewModels
             }
 
             FillGamesList();
-
-            IsInProgress = false;
         }
 
+        /// <summary>
+        /// Fill games and available games lists based on a search bar
+        /// </summary>
         private void FillGamesList()
         {
             var selectedGame = SelectedGame;
@@ -194,284 +502,48 @@ namespace SteamFDA.ViewModels
             AvailableGamesList.AddRange(_editorModel.GetListOfGamesAvailableToAdd());
         }
 
-        #region Relay Commands
-
-        private void SetRelayCommands()
+        /// <summary>
+        /// Check if the file can be uploaded
+        /// </summary>
+        private bool ChecksBeforeUpload()
         {
-            UpdateGamesCommand = new AsyncRelayCommand(async () => await UpdateAsync(false), () => IsInProgress == false);
+            if (string.IsNullOrEmpty(Name) ||
+                string.IsNullOrEmpty(Url) ||
+                Version < 1)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    $"Name, Version and Link to file are required to upload a fix.",
+                    PopupMessageType.OkOnly)
+                .Show();
 
-            AddNewPatchCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
+                return false;
+            }
 
-                    FixEntity newFix = new();
+            if (!Url.StartsWith("http") &&
+                !File.Exists(Url))
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    $"{Url} doesn't exist.",
+                    PopupMessageType.OkOnly)
+                .Show();
 
-                    SelectedGame.Fixes.Add(newFix);
+                return false;
+            }
 
-                    OnPropertyChanged(nameof(SelectedGameFixes));
+            if (new FileInfo(Url).Length > 1e+8)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
+                    PopupMessageType.OkOnly)
+                .Show();
 
-                    SelectedFix = newFix;
-                },
-                canExecute: () => SelectedGame is not null
-                );
+                return false;
+            }
 
-            RemovePatchCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedGameFixes is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGameFixes));
-                    }
-                    if (SelectedFix is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedFix));
-                    }
-
-                    SelectedGameFixes.Remove(SelectedFix);
-                },
-                canExecute: () => SelectedFix is not null
-                );
-
-            ClearSearchCommand = new RelayCommand(
-                execute: () =>
-                {
-                    Search = string.Empty;
-                },
-                canExecute: () => !string.IsNullOrEmpty(Search)
-                );
-
-            SaveChangesCommand = new RelayCommand(
-                execute: () =>
-                {
-                    var result = _editorModel.SaveFixesListAsync();
-
-                    new PopupMessageViewModel(result.Item1 ? "Success" : "Error", result.Item2, PopupMessageType.OkOnly).Show();
-                }
-                );
-
-            OpenXmlFileCommand = new RelayCommand(
-                execute: () =>
-                {
-                    using Process process = new();
-
-                    Process.Start(
-                        "explorer.exe",
-                        Path.Combine(_config.LocalRepoPath, Consts.FixesFile)
-                        );
-                }
-                );
-
-            AddDependencyCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedFix is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedFix));
-                    }
-                    if (SelectedGameFixes is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGameFixes));
-                    }
-
-                    _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
-                    OnPropertyChanged(nameof(AvailableDependencies));
-                    OnPropertyChanged(nameof(AddedDependencies));
-                    OnPropertyChanged(nameof(FilteredGamesList));
-                },
-                canExecute: () => SelectedAvailableDependencyIndex > -1
-                );
-
-            RemoveDependencyCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedFix is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedFix));
-                    }
-                    if (SelectedGameFixes is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGameFixes));
-                    }
-
-                    _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
-                    OnPropertyChanged(nameof(AvailableDependencies));
-                    OnPropertyChanged(nameof(AddedDependencies));
-                    OnPropertyChanged(nameof(FilteredGamesList));
-                },
-                canExecute: () => SelectedAddedDependencyIndex > -1
-                );
-
-            AddGameCommand = new RelayCommand(
-                execute: () =>
-                {
-                    var game = SelectedAvailableGame;
-
-                    var newFix = _editorModel.AddNewFix(game);
-
-                    FillGamesList();
-
-                    SelectedGame = newFix;
-
-                    OnPropertyChanged(nameof(AvailableGamesList));
-                },
-                canExecute: () => SelectedAvailableGame is not null
-                );
-
-            MoveFixUpCommand = new RelayCommand(
-                execute: () =>
-                {
-                    var newIndex = SelectedFixIndex - 1;
-
-                    SelectedGameFixes.Move(SelectedFixIndex, newIndex);
-                    SelectedFixIndex = newIndex;
-                    OnPropertyChanged(nameof(SelectedFixIndex));
-                    MoveFixDownCommand.NotifyCanExecuteChanged();
-                    MoveFixUpCommand.NotifyCanExecuteChanged();
-                },
-                canExecute: () => SelectedFix is not null && SelectedFixIndex > 0
-                );
-
-            MoveFixDownCommand = new RelayCommand(
-                execute: () =>
-                {
-                    var newIndex = SelectedFixIndex + 1;
-
-                    SelectedGameFixes.Move(SelectedFixIndex, newIndex);
-                    SelectedFixIndex = newIndex;
-                    OnPropertyChanged(nameof(SelectedFixIndex));
-                    MoveFixDownCommand.NotifyCanExecuteChanged();
-                    MoveFixUpCommand.NotifyCanExecuteChanged();
-                },
-                canExecute: () => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1
-                );
-
-            UploadFixCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    if (string.IsNullOrEmpty(Name) ||
-                        string.IsNullOrEmpty(Url) ||
-                        Version < 1)
-                    {
-                        new PopupMessageViewModel(
-                            "Error",
-                            $"Name, Version and Link to file are required to upload a fix.",
-                            PopupMessageType.OkOnly)
-                        .Show();
-
-                        return;
-                    }
-
-                    if (!Url.StartsWith("http") &&
-                        !File.Exists(Url))
-                    {
-                        new PopupMessageViewModel(
-                            "Error",
-                            $"{Url} doesn't exist.",
-                            PopupMessageType.OkOnly)
-                        .Show();
-
-                        return;
-                    }
-
-                    if (new FileInfo(Url).Length > 1e+8)
-                    {
-                        new PopupMessageViewModel(
-                            "Error",
-                            $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
-                            PopupMessageType.OkOnly)
-                        .Show();
-
-                        return;
-                    }
-
-                    var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
-                    var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
-
-                    var result = await _editorModel.UploadFixAsync(fixesList, fix);
-
-                    if (result)
-                    {
-                        new PopupMessageViewModel(
-                            "Success",
-                            $"Fix successfully uploaded.{Environment.NewLine}It will be added to the database after developer's review.{Environment.NewLine}{Environment.NewLine}Thank you.",
-                            PopupMessageType.OkOnly)
-                        .Show();
-                    }
-                    else
-                    {
-                        new PopupMessageViewModel(
-                            "Error",
-                            $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
-                            PopupMessageType.OkOnly)
-                        .Show();
-                    }
-                },
-                 canExecute: () => SelectedFix is not null && !string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(Name) && Version > 0
-                );
-
-            OpenFilePickerCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
-
-                    var window = FdaProperties.MainWindow;
-
-                    var topLevel = TopLevel.GetTopLevel(window);
-
-                    var zipType = new FilePickerFileType("Zip")
-                    {
-                        Patterns = new[] { "*.zip" },
-                        MimeTypes = new[] { "application/zip" }
-                    };
-
-                    var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-                    {
-                        Title = "Choose fix file",
-                        AllowMultiple = false,
-                        FileTypeFilter = new List<FilePickerFileType>() { zipType }
-                    });
-
-                    if (!files.Any())
-                    {
-                        return;
-                    }
-
-                    Url = files[0].Path.LocalPath.ToString();
-                    OnPropertyChanged(nameof(Url));
-                }
-                );
+            return true;
         }
-
-        public IRelayCommand ClearSearchCommand { get; private set; }
-
-        public IRelayCommand AddNewPatchCommand { get; private set; }
-
-        public IRelayCommand RemovePatchCommand { get; private set; }
-
-        public IRelayCommand SaveChangesCommand { get; private set; }
-
-        public IRelayCommand OpenXmlFileCommand { get; private set; }
-
-        public IRelayCommand AddDependencyCommand { get; private set; }
-
-        public IRelayCommand RemoveDependencyCommand { get; private set; }
-
-        public IRelayCommand AddGameCommand { get; private set; }
-
-        public IRelayCommand MoveFixUpCommand { get; private set; }
-
-        public IRelayCommand MoveFixDownCommand { get; private set; }
-
-        public IRelayCommand UpdateGamesCommand { get; private set; }
-
-        public IRelayCommand UploadFixCommand { get; private set; }
-
-        public IRelayCommand OpenFilePickerCommand { get; private set; }
-
-        #endregion Relay Commands
     }
 }

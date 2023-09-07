@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using SteamFDA.Helpers;
 using SteamFDCommon.Config;
 using SteamFDCommon.Helpers;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -101,6 +102,11 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         private void SetDefaultTheme()
         {
+            if (Application.Current is null)
+            {
+                throw new NullReferenceException(nameof(Application.Current));
+            }
+
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
             _config.Theme = "System";
         }
@@ -108,6 +114,11 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         private void SetLightTheme()
         {
+            if (Application.Current is null)
+            {
+                throw new NullReferenceException(nameof(Application.Current));
+            }
+
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
             _config.Theme = "Light";
         }
@@ -115,6 +126,11 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         private void SetDarkTheme()
         {
+            if (Application.Current is null)
+            {
+                throw new NullReferenceException(nameof(Application.Current));
+            }
+
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
             _config.Theme = "Dark";
         }
@@ -130,7 +146,11 @@ namespace SteamFDA.ViewModels
         {
             var topLevel = TopLevel.GetTopLevel(FdaProperties.MainWindow);
 
-            // Start async operation to open the dialog.
+            if (topLevel is null)
+            {
+                throw new NullReferenceException(nameof(topLevel));
+            }
+
             var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Choose local repo folder",

@@ -99,6 +99,10 @@ namespace SteamFDCommon
             return true;
         }
 
+        /// <summary>
+        /// Create update lock file
+        /// </summary>
+        /// <param name="fileName">update file</param>
         private void CreateUpdateLock(string fileName)
         {
             using (TextWriter tw = new StreamWriter(Consts.UpdateFile))

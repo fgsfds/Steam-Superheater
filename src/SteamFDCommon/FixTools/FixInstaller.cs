@@ -146,6 +146,11 @@ namespace SteamFDCommon.FixTools
 
                     var dir = Path.GetDirectoryName(to);
 
+                    if (dir is null)
+                    {
+                        throw new NullReferenceException(nameof(dir));
+                    }
+
                     if (!Directory.Exists(dir))
                     {
                         Directory.CreateDirectory(dir);

@@ -9,14 +9,14 @@ namespace SteamFDCommon.Models
     {
         private readonly List<GameFirstCombinedEntity> _combinedEntitiesList;
 
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+
+        public bool HasUpdateableGames => UpdateableGamesCount > 0;
+
         public MainModel()
         {
             _combinedEntitiesList = new();
         }
-
-        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
-
-        public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
@@ -123,6 +123,12 @@ namespace SteamFDCommon.Models
             return false;
         }
 
+        /// <summary>
+        /// Uninstall fix
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix to delete</param>
+        /// <returns>Result message</returns>
         public string UninstallFix(GameEntity game, FixEntity fix)
         {
             FixUninstaller.UninstallFix(game, fix);
@@ -141,6 +147,12 @@ namespace SteamFDCommon.Models
             }
         }
 
+        /// <summary>
+        /// Install fix
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix to install</param>
+        /// <returns>Result message</returns>
         public async Task<string> InstallFix(GameEntity game, FixEntity fix)
         {
             var installedFix = await FixInstaller.InstallFix(game, fix, true);
@@ -159,6 +171,12 @@ namespace SteamFDCommon.Models
             }
         }
 
+        /// <summary>
+        /// Update fix
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix to deleteupdateparam>
+        /// <returns>Result message</returns>
         public async Task<string> UpdateFix(GameEntity game, FixEntity fix)
         {
             FixUninstaller.UninstallFix(game, fix);

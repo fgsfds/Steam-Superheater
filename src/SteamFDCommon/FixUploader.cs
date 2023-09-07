@@ -8,6 +8,13 @@ namespace SteamFDCommon
         private const string FtpUser = "u2220544_Upload";
         private const string FtpPassword = "YdBunW64d447Pby";
 
+        /// <summary>
+        /// Upload fix to ftp
+        /// </summary>
+        /// <param name="folder">Destination folder on ftp server</param>
+        /// <param name="files">List of paths to files or tuples with file name and memory stream</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public static bool UploadFilesToFtp(string folder, List<object> files)
         {
             List<string> filesList = new();

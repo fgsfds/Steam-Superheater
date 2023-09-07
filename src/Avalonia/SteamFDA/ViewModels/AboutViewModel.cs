@@ -26,6 +26,9 @@ namespace SteamFDA.ViewModels
 
         #region Relay Commands
 
+        /// <summary>
+        /// Check for SSH updates
+        /// </summary>
         [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
         private async Task CheckForUpdates()
         {
@@ -61,7 +64,9 @@ namespace SteamFDA.ViewModels
         }
         private bool CheckForUpdatesCanExecute() => IsInProgress is false;
 
-
+        /// <summary>
+        /// Download and install SSH update
+        /// </summary>
         [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
         private async Task DownloadAndInstall()
         {
