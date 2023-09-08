@@ -1,4 +1,4 @@
-![Screenshot_8](https://github.com/fgsfds/Steam-Fixes-Downloader/assets/4870330/8813fe96-0404-4a01-b4d5-210bbd59a315)
+![Untitled-1](https://github.com/fgsfds/Steam-Superheater/assets/4870330/d154b8ec-01f0-4151-b1ae-bcddf4eeeb8b)
 
 **Steam Superheater** is an app which main purpose is to easily download and install fixes for Steam games that have problems running on modern systems.
 
