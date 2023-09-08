@@ -9,11 +9,9 @@ namespace SteamFDCommon.Models
     public class EditorModel
     {
         private readonly SortedList<string, FixesList> _fixesList;
-        private readonly FixesProvider _fixesProvider;
 
-        public EditorModel(FixesProvider fixesProvider)
+        public EditorModel()
         {
-            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
             _fixesList = new();
         }
 
@@ -181,7 +179,7 @@ namespace SteamFDCommon.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public async Task<bool> UploadFixAsync(FixesList fixesList, FixEntity fix)
+        public bool UploadFix(FixesList fixesList, FixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
@@ -189,18 +187,7 @@ namespace SteamFDCommon.Models
                 new(new List<FixEntity>() { fix })
                 );
 
-            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
-
             var guid = newFix.Fixes.First().Guid;
-
-            foreach (var onlineFix in onlineFixes)
-            {
-                //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Any(x => x.Guid == guid))
-                {
-                    return false;
-                }
-            }
 
             string? fileToUpload = null;
 

@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using SteamFDA.Helpers;
+using SteamFDCommon.Providers;
 
 namespace SteamFDA.ViewModels
 {
@@ -22,6 +23,7 @@ namespace SteamFDA.ViewModels
     {
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
+        private readonly FixesProvider _fixesProvider;
 
         public ObservableCollection<FixesList> FilteredGamesList { get; init; }
 
@@ -162,11 +164,13 @@ namespace SteamFDA.ViewModels
 
         public EditorViewModel(
             EditorModel editorModel,
-            ConfigProvider config
+            ConfigProvider config,
+            FixesProvider fixesProvider
             )
         {
             _editorModel = editorModel ?? throw new NullReferenceException(nameof(editorModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
 
             FilteredGamesList = new();
             AvailableGamesList = new();
@@ -362,7 +366,9 @@ namespace SteamFDA.ViewModels
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
         private async Task UploadFix()
         {
-            if (!ChecksBeforeUpload())
+            var check = await ChecksBeforeUploadAsync();
+
+            if (!check)
             {
                 return;
             }
@@ -370,7 +376,7 @@ namespace SteamFDA.ViewModels
             var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
             var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
 
-            var result = await _editorModel.UploadFixAsync(fixesList, fix);
+            var result = _editorModel.UploadFix(fixesList, fix);
 
             if (result)
             {
@@ -384,7 +390,7 @@ namespace SteamFDA.ViewModels
             {
                 new PopupMessageViewModel(
                     "Error",
-                    $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                    $"Can't upload fix.",
                     PopupMessageType.OkOnly)
                 .Show();
             }
@@ -505,8 +511,25 @@ namespace SteamFDA.ViewModels
         /// <summary>
         /// Check if the file can be uploaded
         /// </summary>
-        private bool ChecksBeforeUpload()
+        private async Task<bool> ChecksBeforeUploadAsync()
         {
+            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
+
+            foreach (var onlineFix in onlineFixes)
+            {
+                //if fix already exists in the repo, don't upload it
+                if (onlineFix.Fixes.Any(x => x.Guid == SelectedFix.Guid))
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                        PopupMessageType.OkOnly)
+                    .Show();
+
+                    return false;
+                }
+            }
+
             if (string.IsNullOrEmpty(Name) ||
                 string.IsNullOrEmpty(Url) ||
                 Version < 1)
@@ -520,27 +543,29 @@ namespace SteamFDA.ViewModels
                 return false;
             }
 
-            if (!Url.StartsWith("http") &&
-                !File.Exists(Url))
+            if (!Url.StartsWith("http"))
             {
-                new PopupMessageViewModel(
-                    "Error",
-                    $"{Url} doesn't exist.",
-                    PopupMessageType.OkOnly)
-                .Show();
+                if (!File.Exists(Url))
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        $"{Url} doesn't exist.",
+                        PopupMessageType.OkOnly)
+                        .Show();
 
-                return false;
-            }
+                    return false;
+                }
 
-            if (new FileInfo(Url).Length > 1e+8)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
-                    PopupMessageType.OkOnly)
-                .Show();
+                else if (new FileInfo(Url).Length > 1e+8)
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
+                        PopupMessageType.OkOnly)
+                        .Show();
 
-                return false;
+                    return false;
+                }
             }
 
             return true;

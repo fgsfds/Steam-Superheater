@@ -86,7 +86,20 @@ namespace SteamFDCommon.Providers
         {
             _isCacheUpdating = true;
 
-            string? fixes = null;
+            string? onlineFixes = null;
+
+            try
+            {
+                onlineFixes = await DownloadFixesXMLAsync();
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _isCacheUpdating = false;
+            }
 
             if (_config.UseLocalRepo)
             {
@@ -99,27 +112,13 @@ namespace SteamFDCommon.Providers
                 }
 
                 _fixesCachedString = File.ReadAllText(file);
-                fixes = await DownloadFixesXMLAsync();
             }
             else
             {
-                try
-                {
-                    fixes = await DownloadFixesXMLAsync();
-                }
-                catch
-                {
-                    throw;
-                }
-                finally
-                {
-                    _isCacheUpdating = false;
-                }
+                _fixesCachedString = onlineFixes;
             }
 
-            _fixesCachedString = fixes;
-
-            using (StringReader fs = new(fixes))
+            using (StringReader fs = new(onlineFixes))
             {
                 var list = DeserializeCachedString(fs.ReadToEnd());
 
