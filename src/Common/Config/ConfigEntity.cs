@@ -2,8 +2,11 @@
 {
     public class ConfigEntity
     {
-        public delegate void ConfigParameterChanged();
-        public event ConfigParameterChanged Notify;
+        public delegate void ConfigChanged();
+        public event ConfigChanged NotifyConfigChanged;
+
+        public delegate void ParameterChanged(string parameterName);
+        public event ParameterChanged NotifyParameterChanged;
 
         private bool _deleteZipsAfterInstall;
         public bool DeleteZipsAfterInstall
@@ -11,8 +14,12 @@
             get => _deleteZipsAfterInstall;
             set
             {
-                _deleteZipsAfterInstall = value;
-                Notify?.Invoke();
+                if (_deleteZipsAfterInstall != value)
+                {
+                    _deleteZipsAfterInstall = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(DeleteZipsAfterInstall));
+                }
             }
         }
 
@@ -22,8 +29,12 @@
             get => _openConfigAfterInstall;
             set
             {
-                _openConfigAfterInstall = value;
-                Notify?.Invoke();
+                if (_openConfigAfterInstall != value)
+                {
+                    _openConfigAfterInstall = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(OpenConfigAfterInstall));
+                }
             }
         }
 
@@ -33,8 +44,12 @@
             get => _showEditorTab;
             set
             {
-                _showEditorTab = value;
-                Notify?.Invoke();
+                if (_showEditorTab != value)
+                {
+                    _showEditorTab = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(ShowEditorTab));
+                }
             }
         }
 
@@ -44,8 +59,12 @@
             get => _lastReadNewsVersion;
             set
             {
-                _lastReadNewsVersion = value;
-                Notify?.Invoke();
+                if (_lastReadNewsVersion != value)
+                {
+                    _lastReadNewsVersion = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsVersion));
+                }
             }
         }
 
@@ -55,8 +74,12 @@
             get => _useLocalRepo;
             set
             {
-                _useLocalRepo = value;
-                Notify?.Invoke();
+                if (_useLocalRepo != value)
+                {
+                    _useLocalRepo = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(UseLocalRepo));
+                }
             }
         }
 
@@ -66,8 +89,12 @@
             get => _localRepoPath;
             set
             {
-                _localRepoPath = value;
-                Notify?.Invoke();
+                if (_localRepoPath != value)
+                {
+                    _localRepoPath = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(LocalRepoPath));
+                }
             }
         }
 
@@ -77,8 +104,12 @@
             get => _theme;
             set
             {
-                _theme = value;
-                Notify?.Invoke();
+                if (_theme != value)
+                {
+                    _theme = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(Theme));
+                }
             }
         }
 
@@ -88,8 +119,12 @@
             get => _installedUpdater;
             set
             {
-                _installedUpdater = value;
-                Notify?.Invoke();
+                if (_installedUpdater != value)
+                {
+                    _installedUpdater = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(InstalledUpdater));
+                }
             }
         }
 
@@ -99,8 +134,12 @@
             get => _showUninstalledGames;
             set
             {
-                _showUninstalledGames = value;
-                Notify?.Invoke();
+                if (_showUninstalledGames != value)
+                {
+                    _showUninstalledGames = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(ShowUninstalledGames));
+                }
             }
         }
 

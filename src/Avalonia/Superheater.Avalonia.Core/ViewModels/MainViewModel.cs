@@ -146,6 +146,8 @@ namespace SteamFDA.ViewModels
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
             FilteredGamesList = new();
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
 
@@ -535,6 +537,14 @@ Do you want to set it to always run as admin?",
         {
             ProgressBarValue = e;
             OnPropertyChanged(nameof(ProgressBarValue));
+        }
+
+        private void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
+            {
+                FillGamesList();
+            }
         }
     }
 }
