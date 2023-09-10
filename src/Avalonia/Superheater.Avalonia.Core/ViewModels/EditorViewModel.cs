@@ -405,9 +405,7 @@ namespace SteamFDA.ViewModels
         {
             if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
 
-            var window = FdaProperties.MainWindow;
-
-            var topLevel = TopLevel.GetTopLevel(window);
+            var topLevel = FdaProperties.TopLevel;
 
             if (topLevel is null)
             {

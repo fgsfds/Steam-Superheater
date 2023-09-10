@@ -171,6 +171,17 @@ namespace SteamFDCommon.Providers
         /// <returns></returns>
         public static Tuple<bool, string> SaveFixes(List<FixesList> fixesList)
         {
+            foreach (var fixes in fixesList)
+            {
+                foreach(var fix in fixes.Fixes)
+                {
+                    if (!fix.Url.StartsWith("http"))
+                    {
+                        fix.Url = Path.Combine(Consts.MainFixesRepo + fix.Url);
+                    }
+                }
+            }
+
             XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
 
             try

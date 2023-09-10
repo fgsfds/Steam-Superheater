@@ -20,10 +20,10 @@ namespace SteamFDCommon.FixTools
         {
             var url = fix.Url;
 
-            if (!url.StartsWith("http"))
-            {
-                url = Consts.MainFixesRepo + url;
-            }
+            //if (!url.StartsWith("http"))
+            //{
+            //    url = Consts.MainFixesRepo + url;
+            //}
 
             var zipName = Path.GetFileName(url);
 

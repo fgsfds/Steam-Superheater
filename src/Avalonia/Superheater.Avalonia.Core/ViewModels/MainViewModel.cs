@@ -14,6 +14,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using SteamFDA.Helpers;
 
 namespace SteamFDA.ViewModels
 {
@@ -381,6 +382,20 @@ namespace SteamFDA.ViewModels
         }
         private bool OpenPCGamingWikiCanExecute() => SelectedGame is not null;
 
+        /// <summary>
+        /// Open PCGW page for selected game
+        /// </summary>
+        [RelayCommand]
+        private async Task UrlCopyToClipboardAsync()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            await FdaProperties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
+        }
+
         #endregion Relay Commands
 
 
@@ -457,7 +472,7 @@ namespace SteamFDA.ViewModels
             FilteredGamesList.AddRange(gamesList);
 
             UpdateHeader();
-            
+
             if (selectedGame is not null && FilteredGamesList.Contains(selectedGame))
             {
                 SelectedGame = selectedGame;

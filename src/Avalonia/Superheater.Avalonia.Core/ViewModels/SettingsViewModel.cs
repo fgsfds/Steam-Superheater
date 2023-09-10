@@ -144,7 +144,7 @@ namespace SteamFDA.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var topLevel = TopLevel.GetTopLevel(FdaProperties.MainWindow);
+            var topLevel = FdaProperties.TopLevel;
 
             if (topLevel is null)
             {

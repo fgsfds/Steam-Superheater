@@ -7,5 +7,7 @@ namespace SteamFDA.Helpers
     internal static class FdaProperties
     {
         public static Window MainWindow => ((IClassicDesktopStyleApplicationLifetime)Application.Current.ApplicationLifetime).MainWindow;
+
+        public static TopLevel TopLevel => TopLevel.GetTopLevel(MainWindow);
     }
 }

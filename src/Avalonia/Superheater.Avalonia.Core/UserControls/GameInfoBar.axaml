@@ -20,7 +20,14 @@
 
         <TextBlock Text="{Binding SelectedFix.Url}"
                    HorizontalAlignment="Right"
-                   Grid.Column="2"/>
+                   Grid.Column="2">
 
+            <TextBlock.ContextMenu>
+                <ContextMenu IsEnabled="True">
+                    <MenuItem Header="Copy to clipboard" Command="{Binding UrlCopyToClipboardCommand}" IsEnabled="True"/>
+                </ContextMenu>
+            </TextBlock.ContextMenu>
+
+        </TextBlock>
     </Grid>
 </UserControl>
