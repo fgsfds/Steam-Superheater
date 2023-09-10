@@ -24,7 +24,7 @@ namespace SteamFDCommon.Models
         {
             _fixesList.Clear();
 
-            var fixes = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+            var fixes = await CombinedEntitiesProvider.GetFixesListAsync(useCache);
 
             fixes = fixes.OrderBy(x => x.GameName).ToList();
 
@@ -93,7 +93,7 @@ namespace SteamFDCommon.Models
 
             foreach (var fix in _fixesList)
             {
-                if (fix.Value.GameName.Equals("!Software"))
+                if (fix.Value.GameId == 0)
                 {
                     continue;
                 }

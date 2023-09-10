@@ -32,6 +32,7 @@
                  ScrollViewer.AllowAutoHide="True">
 
             <ListBox.ItemTemplate>
+
                 <DataTemplate>
 
                     <Grid RowDefinitions="*,auto"
@@ -46,19 +47,26 @@
                                 Width="36"
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
-                                Grid.Column="0">
+                                Grid.Column="0"
+                                IsVisible="{Binding IsGameInstalled}">
                             <Image Source="{Binding Game.Icon, Converter={StaticResource ImagePathToBitmapConverter}}"
                                    Width="32"
                                    Height="32"
                                    Stretch="Fill" />
                         </Border>
 
-                        <TextBlock Text="{Binding Game.Name}"
+                        <TextBlock Text="{Binding GameName}"
                                    Grid.Row="0"
                                    Grid.Column="1"
-                                   Classes.IsInstalled="{Binding HasInstalled}">
+                                   Classes.IsInstalled="{Binding HasInstalledFixes}"
+                                   Classes.IsGameUninstalled="{Binding !IsGameInstalled}">
 
                             <TextBlock.Styles>
+                                <Style Selector="TextBlock.IsGameUninstalled">
+                                    <Style.Setters>
+                                        <Setter Property="Foreground" Value="Gray"/>
+                                    </Style.Setters>
+                                </Style>
                                 <Style Selector="TextBlock.IsInstalled">
                                     <Style.Setters>
                                         <Setter Property="FontWeight" Value="Bold"/>

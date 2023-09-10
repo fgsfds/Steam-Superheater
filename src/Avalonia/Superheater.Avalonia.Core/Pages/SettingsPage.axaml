@@ -47,6 +47,24 @@
 
             </Grid>
 
+            <!--Show uninstalled games-->
+            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+
+                <ToggleSwitch IsChecked="{Binding ShowUninstalledGamesCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Show uninstalled games in the list
+                </TextBlock>
+
+            </Grid>
+
             <!--Theme selection-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 

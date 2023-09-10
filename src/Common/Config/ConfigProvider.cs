@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 using SteamFDCommon.Helpers;
 
 namespace SteamFDCommon.Config
@@ -15,7 +14,7 @@ namespace SteamFDCommon.Config
         {
             Config = ReadConfigFromXml();
 
-            Config.Notify += SaveConfigXml;
+            Config.NotifyConfigChanged += SaveConfigXml;
         }
 
         /// <summary>
