@@ -31,12 +31,12 @@ namespace SteamFDA.ViewModels
         /// <summary>
         /// List of games
         /// </summary>
-        public ObservableCollection<GameFirstCombinedEntity> FilteredGamesList { get; init; }
+        public ObservableCollection<FixFirstCombinedEntity> FilteredGamesList { get; init; }
 
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes;
+        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
 
         /// <summary>
         /// Does selected fix has any updates
@@ -65,10 +65,11 @@ namespace SteamFDA.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
-        private GameFirstCombinedEntity? _selectedGame;
-        partial void OnSelectedGameChanged(GameFirstCombinedEntity? value)
+        private FixFirstCombinedEntity? _selectedGame;
+        partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
         {
-            if (value is not null &&
+            if (value?.Game is not null &&
+                value is not null &&
                 value.Game.DoesRequireAdmin)
             {
                 RequireAdmin();
@@ -361,7 +362,7 @@ namespace SteamFDA.ViewModels
 
             SelectedGame.Game.SetRunAsAdmin();
         }
-        private bool ApplyAdminCanExecute() => SelectedGame is not null && SelectedGame.Game.DoesRequireAdmin;
+        private bool ApplyAdminCanExecute() => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin;
 
         /// <summary>
         /// Open PCGW page for selected game

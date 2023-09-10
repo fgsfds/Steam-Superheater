@@ -7,7 +7,7 @@ namespace SteamFDCommon.Models
 {
     public class MainModel
     {
-        private readonly List<GameFirstCombinedEntity> _combinedEntitiesList;
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
@@ -26,7 +26,7 @@ namespace SteamFDCommon.Models
         {
             _combinedEntitiesList.Clear();
 
-            var games = await CombinedEntitiesProvider.GetGameFirstEntitiesListAsync(useCache);
+            var games = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync1(useCache);
 
             _combinedEntitiesList.AddRange(games);
         }
@@ -35,11 +35,11 @@ namespace SteamFDCommon.Models
         /// Get list of games optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public List<GameFirstCombinedEntity> GetFilteredGamesList(string? search = null)
+        public List<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
         {
-            List<GameFirstCombinedEntity> result = new();
+            List<FixFirstCombinedEntity> result = new();
 
-            result = _combinedEntitiesList.Where(x => x.Fixes?.Count > 0).ToList();
+            result = _combinedEntitiesList.Where(x => x.FixesList.Fixes?.Count > 0).ToList();
 
             if (!string.IsNullOrEmpty(search))
             {
@@ -55,7 +55,7 @@ namespace SteamFDCommon.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>List of dependencies</returns>
-        public List<FixEntity> GetDependenciesForAFix(GameFirstCombinedEntity entity, FixEntity fix)
+        public List<FixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, FixEntity fix)
         {
             if (fix?.Dependencies is null ||
                 fix.Dependencies.Count == 0)
@@ -63,11 +63,11 @@ namespace SteamFDCommon.Models
                 return new List<FixEntity>();
             }
 
-            var allGameFixes = _combinedEntitiesList.Where(x => x.Game.Name == entity.Game.Name).First().Fixes;
+            var allGameFixes = _combinedEntitiesList.Where(x => x.Game.Name == entity.Game.Name).First().FixesList;
 
             var allGameDeps = fix.Dependencies;
 
-            var deps = allGameFixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
 
             return deps;
         }
@@ -78,7 +78,7 @@ namespace SteamFDCommon.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveUninstalledDependencies(GameFirstCombinedEntity entity, FixEntity fix)
+        public bool DoesFixHaveUninstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 

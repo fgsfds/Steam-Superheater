@@ -53,7 +53,7 @@
                                    Stretch="Fill" />
                         </Border>
 
-                        <TextBlock Text="{Binding Game.Name}"
+                        <TextBlock Text="{Binding GameName}"
                                    Grid.Row="0"
                                    Grid.Column="1"
                                    Classes.IsInstalled="{Binding HasInstalled}">
