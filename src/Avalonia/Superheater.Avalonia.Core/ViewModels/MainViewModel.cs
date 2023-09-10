@@ -204,13 +204,9 @@ namespace SteamFDA.ViewModels
         }
         private bool InstallFixCanExecute()
         {
-            if (SelectedFix is null || SelectedFix.IsInstalled || _lockButtons)
+            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || _lockButtons)
             {
                 return false;
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
             }
 
             var result = !_mainModel.DoesFixHaveUninstalledDependencies(SelectedGame, SelectedFix);
@@ -227,10 +223,6 @@ namespace SteamFDA.ViewModels
             if (SelectedFix is null)
             {
                 throw new NullReferenceException(nameof(SelectedFix));
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
             }
 
             IsInProgress = true;
@@ -251,13 +243,9 @@ namespace SteamFDA.ViewModels
         }
         private bool UninstallFixCanExecute()
         {
-            if (SelectedFix is null || !SelectedFix.IsInstalled || _lockButtons)
+            if (SelectedFix is null || !SelectedFix.IsInstalled || SelectedGameFixesList is null || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || _lockButtons)
             {
                 return false;
-            }
-            if (SelectedGameFixesList is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixesList));
             }
 
             var result = !_mainModel.DoesFixHaveInstalledDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
@@ -308,7 +296,7 @@ namespace SteamFDA.ViewModels
                 OpenConfig();
             }
         }
-        public bool UpdateFixCanExecute() => !_lockButtons;
+        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
         /// <summary>
         /// Open selected game install folder
@@ -326,7 +314,7 @@ namespace SteamFDA.ViewModels
                 SelectedGame.Game.InstallDir
                 );
         }
-        private bool OpenGameFolderCanExecute() => SelectedGame is not null;
+        private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
 
         /// <summary>
         /// Update games list
@@ -347,7 +335,7 @@ namespace SteamFDA.ViewModels
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
-        private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled;
+        private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
 
         /// <summary>
         /// Apply admin rights for selected game

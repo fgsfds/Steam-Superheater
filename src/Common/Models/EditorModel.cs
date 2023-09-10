@@ -93,7 +93,7 @@ namespace SteamFDCommon.Models
 
             foreach (var fix in _fixesList)
             {
-                if (fix.Value.GameName.Equals("!Software"))
+                if (fix.Value.GameId == 0)
                 {
                     continue;
                 }

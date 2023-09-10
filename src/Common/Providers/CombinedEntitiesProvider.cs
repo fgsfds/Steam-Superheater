@@ -7,54 +7,9 @@ namespace SteamFDCommon.Providers
 {
     public static class CombinedEntitiesProvider
     {
-        //public static async Task<List<GameFirstCombinedEntity>> GetGameFirstEntitiesListAsync(bool useCache)
-        //{
-        //    List<GameEntity> games;
-        //    List<FixesList> fixes;
-        //    List<InstalledFixEntity> installed;
-
-        //    if (useCache)
-        //    {
-        //        games = BindingsManager.Instance.GetInstance<GamesProvider>().GetCachedGamesList();
-        //        fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetCachedFixesListAsync();
-        //        installed = BindingsManager.Instance.GetInstance<InstalledFixesProvider>().GetCachedInstalledFixesList();
-        //    }
-        //    else
-        //    {
-        //        games = BindingsManager.Instance.GetInstance<GamesProvider>().GetNewGamesList();
-        //        fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetNewFixesListAsync();
-        //        installed = BindingsManager.Instance.GetInstance<InstalledFixesProvider>().GetNewInstalledFixesList();
-        //    }
-
-        //    List<GameFirstCombinedEntity> result = new();
-
-        //    foreach (var game in games)
-        //    {
-        //        var fixesList = fixes.Where(x => x.GameId == game.Id).FirstOrDefault()?.Fixes;
-
-        //        if (fixesList is null)
-        //        {
-        //            continue;
-        //        }
-
-        //        var installedFix = installed.Where(f => f.GameId == game.Id).ToList();
-
-        //        result.Add(
-        //            new GameFirstCombinedEntity(
-        //                game,
-        //                fixesList,
-        //                installedFix
-        //                )
-        //            );
-        //    }
-
-        //    return result;
-        //}
-
         /// <summary>
-        /// Get list of entities
+        /// Get list of fix entities with installed fixes
         /// </summary>
-        /// <returns></returns>
         public static async Task<List<FixesList>> GetFixesListAsync(bool useCache)
         {
             List<FixesList> fixes;
@@ -80,10 +35,9 @@ namespace SteamFDCommon.Providers
         }
 
         /// <summary>
-        /// Get list of entities
+        /// Get list of combined entities with fixes list being main entity
         /// </summary>
-        /// <returns></returns>
-        public static async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync1(bool useCache)
+        public static async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
             List<FixesList> fixes;
             List<GameEntity> games;
@@ -106,7 +60,7 @@ namespace SteamFDCommon.Providers
 
             foreach (var fix in fixes)
             {
-                if (fix.GameName.Equals("!Software"))
+                if (fix.GameId == 0)
                 {
                     continue;
                 }
@@ -124,30 +78,27 @@ namespace SteamFDCommon.Providers
 
         public static List<InstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
-            return new();
+            List<InstalledFixEntity> result = new();
 
-            //List<InstalledFixEntity> result = new();
+            foreach (var combined in combinedList)
+            {
+                if (!combined.FixesList.Fixes.Any(x => x.IsInstalled))
+                {
+                    continue;
+                }
 
-            //foreach (var combined in combinedList)
-            //{
-            //    if (combined.Fixes is null ||
-            //        !combined.Fixes.Any(x => x.IsInstalled))
-            //    {
-            //        continue;
-            //    }
+                foreach (var fix in combined.FixesList.Fixes)
+                {
+                    if (fix.InstalledFix is null)
+                    {
+                        continue;
+                    }
 
-            //    foreach (var fix in combined.Fixes)
-            //    {
-            //        if (fix.InstalledFix is null)
-            //        {
-            //            continue;
-            //        }
+                    result.Add(fix.InstalledFix);
+                }
+            }
 
-            //        result.Add(fix.InstalledFix);
-            //    }
-            //}
-
-            //return result;
+            return result;
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SteamFDCommon.Models
         {
             _combinedEntitiesList.Clear();
 
-            var games = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync1(useCache);
+            var games = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
 
             _combinedEntitiesList.AddRange(games);
         }
@@ -43,7 +43,7 @@ namespace SteamFDCommon.Models
 
             if (!string.IsNullOrEmpty(search))
             {
-                result = result.Where(x => x.Game.Name.ToLower().Contains(search.ToLower())).ToList();
+                result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
             }
 
             return result;
@@ -63,7 +63,7 @@ namespace SteamFDCommon.Models
                 return new List<FixEntity>();
             }
 
-            var allGameFixes = _combinedEntitiesList.Where(x => x.Game.Name == entity.Game.Name).First().FixesList;
+            var allGameFixes = _combinedEntitiesList.Where(x => x.GameName == entity.GameName).First().FixesList;
 
             var allGameDeps = fix.Dependencies;
 
