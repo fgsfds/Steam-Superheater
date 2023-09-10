@@ -1,4 +1,5 @@
 ﻿using SteamFDCommon.CombinedEntities;
+using SteamFDCommon.Config;
 using SteamFDCommon.Entities;
 using SteamFDCommon.FixTools;
 using SteamFDCommon.Providers;
@@ -8,14 +9,16 @@ namespace SteamFDCommon.Models
     public class MainModel
     {
         private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
+        private readonly ConfigEntity _config;
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
-        public MainModel()
+        public MainModel(ConfigProvider configProvider)
         {
             _combinedEntitiesList = new();
+            _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
         }
 
         /// <summary>
@@ -37,9 +40,14 @@ namespace SteamFDCommon.Models
         /// <param name="search">Search string</param>
         public List<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
         {
-            List<FixFirstCombinedEntity> result = new();
+            List<FixFirstCombinedEntity> result = _combinedEntitiesList;
 
-            result = _combinedEntitiesList.Where(x => x.FixesList.Fixes?.Count > 0).ToList();
+            //result = _combinedEntitiesList.Where(x => x.FixesList.Fixes?.Count > 0).ToList();
+
+            if (!_config.ShowUninstalledGames)
+            {
+                result = result.Where(x => x.IsGameInstalled).ToList();
+            }
 
             if (!string.IsNullOrEmpty(search))
             {

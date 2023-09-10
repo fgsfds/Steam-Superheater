@@ -93,6 +93,17 @@
             }
         }
 
+        private bool _showUninstalledGames;
+        public bool ShowUninstalledGames
+        {
+            get => _showUninstalledGames;
+            set
+            {
+                _showUninstalledGames = value;
+                Notify?.Invoke();
+            }
+        }
+
         internal ConfigEntity()
         {
             _deleteZipsAfterInstall = true;
@@ -103,6 +114,7 @@
             _localRepoPath = "LocalRepo";
             _theme = "System";
             _installedUpdater = 0;
+            _showUninstalledGames = true;
         }
     }
 }

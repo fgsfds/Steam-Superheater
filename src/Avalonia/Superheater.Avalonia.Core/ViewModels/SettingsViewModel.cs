@@ -54,6 +54,13 @@ namespace SteamFDA.ViewModels
         }
 
         [ObservableProperty]
+        private bool _showUninstalledGamesCheckbox;
+        partial void OnShowUninstalledGamesCheckboxChanged(bool value)
+        {
+            _config.ShowUninstalledGames = value;
+        }
+
+        [ObservableProperty]
         private string _pathToLocalRepo;
         partial void OnPathToLocalRepoChanged(string value)
         {
@@ -83,6 +90,7 @@ namespace SteamFDA.ViewModels
             ShowEditorCheckbox = _config.ShowEditorTab;
             UseLocalRepoCheckbox = _config.UseLocalRepo;
             PathToLocalRepo = _config.LocalRepoPath;
+            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
         }
 
 
