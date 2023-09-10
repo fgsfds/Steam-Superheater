@@ -1,5 +1,6 @@
 ﻿using SteamFDCommon.DI;
 using SteamFDCommon.Entities;
+using SteamFDCommon.Helpers;
 using SteamFDCommon.Providers;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
@@ -81,7 +82,33 @@ namespace SteamFDCommon.Models
         {
             var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
 
+            CreateReadme();
+
             return result;
+        }
+
+        private void CreateReadme()
+        {
+            string result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
+
+            foreach (var fix in _fixesList)
+            {
+                if (fix.Value.GameName.Equals("!Software"))
+                {
+                    continue;
+                }
+
+                result += fix.Value.GameName + Environment.NewLine;
+
+                foreach (var f in fix.Value.Fixes)
+                {
+                    result += "- " + f.Name + Environment.NewLine;
+                }
+
+                result += Environment.NewLine;
+            }
+
+            File.WriteAllText(Path.Combine(CommonProperties.LocalRepo, "README.md"), result);
         }
 
         /// <summary>
