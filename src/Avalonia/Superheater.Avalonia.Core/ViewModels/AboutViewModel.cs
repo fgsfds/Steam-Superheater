@@ -16,6 +16,8 @@ namespace SteamFDA.ViewModels
 
         public bool IsInProgress { get; set; }
 
+        public string CheckForUpdatesText { get; set; }
+
         public Version CurrentVersion => CommonProperties.CurrentVersion;
 
         public AboutViewModel(UpdateInstaller updateInstaller)
@@ -40,6 +42,8 @@ namespace SteamFDA.ViewModels
 
             try
             {
+                CheckForUpdatesText = "Checking...";
+                OnPropertyChanged(nameof(CheckForUpdatesText));
                 updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
             }
             catch (Exception ex)
@@ -56,6 +60,11 @@ namespace SteamFDA.ViewModels
                 IsUpdateAvailable = true;
                 OnPropertyChanged(nameof(IsUpdateAvailable));
                 DownloadAndInstallCommand.NotifyCanExecuteChanged();
+            }
+            else
+            {
+                CheckForUpdatesText = "Already up-to-date";
+                OnPropertyChanged(nameof(CheckForUpdatesText));
             }
 
             IsInProgress = false;
