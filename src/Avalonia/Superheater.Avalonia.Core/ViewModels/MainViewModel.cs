@@ -367,7 +367,7 @@ namespace SteamFDA.ViewModels
 
             Process.Start(new ProcessStartInfo
             {
-                FileName = Consts.PCGamingWikiUrl + SelectedGame.Game.Id,
+                FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
                 UseShellExecute = true
             });
         }

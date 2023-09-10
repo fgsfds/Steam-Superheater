@@ -29,6 +29,11 @@ namespace SteamFDCommon.CombinedEntities
         public string GameName => Game is not null ? Game.Name : FixesList.GameName;
 
         /// <summary>
+        /// Id of the game
+        /// </summary>
+        public int GameId => Game is not null ? Game.Id : FixesList.GameId;
+
+        /// <summary>
         /// Does this game have installed fixes
         /// </summary>
         public bool HasInstalledFixes => FixesList.Fixes.Any(x => x.IsInstalled);
