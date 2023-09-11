@@ -6,7 +6,6 @@
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SelfContained>true</SelfContained>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -16,20 +15,5 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DebugType>full</DebugType>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <BeautySharedRuntimeMode>False</BeautySharedRuntimeMode>
-    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) == 'True'">../libs</BeautyLibsDir>
-    <BeautyLibsDir Condition="$(BeautySharedRuntimeMode) != 'True'">./libs</BeautyLibsDir>
-    <DisableBeauty>False</DisableBeauty>
-    <BeautyOnPublishOnly>False</BeautyOnPublishOnly>
-    <BeautyEnableDebugging>False</BeautyEnableDebugging>
-    <BeautyUsePatch>True</BeautyUsePatch>
-    <BeautyLogLevel>Info</BeautyLogLevel>
-  </PropertyGroup>
-
-  <ItemGroup>
-    <PackageReference Include="nulastudio.NetBeauty" Version="2.1.3.3" />
-  </ItemGroup>
 
 </Project>
