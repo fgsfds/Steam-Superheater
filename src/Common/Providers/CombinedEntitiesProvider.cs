@@ -60,11 +60,6 @@ namespace SteamFDCommon.Providers
 
             foreach (var fix in fixes)
             {
-                if (fix.GameId == 0)
-                {
-                    continue;
-                }
-
                 var game = games.Where(x => x.Id == fix.GameId).FirstOrDefault();
                 var inst = installed.Where(x => x.GameId == fix.GameId);
 

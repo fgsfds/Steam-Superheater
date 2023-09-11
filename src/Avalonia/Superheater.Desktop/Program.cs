@@ -2,6 +2,7 @@
 using System.IO;
 using Avalonia;
 using SteamFDCommon;
+using SteamFDCommon.Helpers;
 
 namespace SteamFDA.Desktop;
 
@@ -15,7 +16,7 @@ class Program
     {
         var dir = Directory.GetCurrentDirectory();
 
-        if (File.Exists(Path.Combine(dir, ".update")))
+        if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
         {
             UpdateInstaller.InstallUpdate();
         }
@@ -41,12 +42,12 @@ class Program
 
         foreach (var file in files)
         {
-            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(".update"))
+            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(Consts.UpdateFile))
             {
                 File.Delete(file);
             }
 
-            var updateDir = Path.Combine(Directory.GetCurrentDirectory(), "update");
+            var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
 
             if (Directory.Exists(updateDir))
             {

@@ -93,11 +93,6 @@ namespace SteamFDCommon.Models
 
             foreach (var fix in _fixesList)
             {
-                if (fix.Value.GameId == 0)
-                {
-                    continue;
-                }
-
                 result += fix.Value.GameName + Environment.NewLine;
 
                 foreach (var f in fix.Value.Fixes)

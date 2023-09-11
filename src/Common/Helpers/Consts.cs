@@ -22,6 +22,6 @@
 
         public const string UpdateFile = ".update";
 
-        public const string UpdaterExe = "Updater.exe";
+        public const string UpdateFolder = "update";
     }
 }

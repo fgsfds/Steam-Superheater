@@ -31,11 +31,11 @@ namespace SteamFDCommon
 
             await ZipTools.DownloadFileAsync(fixUrl, fileName);
 
-            ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), "update"), true);
+            ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 
             File.Delete(fileName);
 
-            File.Create(".update").Dispose();
+            File.Create(Consts.UpdateFile).Dispose();
         }
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace SteamFDCommon
         public static void InstallUpdate()
         {
             var dir = Directory.GetCurrentDirectory();
-            var updateDir = Path.Combine(dir, "update");
+            var updateDir = Path.Combine(dir, Consts.UpdateFolder);
             var oldExe = Path.Combine(dir, CommonProperties.ExecutableName);
             var newExe = Path.Combine(updateDir, CommonProperties.ExecutableName);
 
@@ -54,8 +54,8 @@ namespace SteamFDCommon
             //moving new file
             File.Move(newExe, oldExe, true);
 
-            File.Delete(Path.Combine(dir, ".update"));
-            Directory.Delete(Path.Combine(dir, "update"), true);
+            File.Delete(Path.Combine(dir, Consts.UpdateFile));
+            Directory.Delete(Path.Combine(dir, Consts.UpdateFolder), true);
 
             var exeName = Path.Combine(Directory.GetCurrentDirectory(), CommonProperties.ExecutableName);
             System.Diagnostics.Process.Start(exeName);
