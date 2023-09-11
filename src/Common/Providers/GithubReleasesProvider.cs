@@ -23,7 +23,7 @@ namespace SteamFDCommon.Providers
                 var updates = cc.ConvertAll(x => new UpdateEntity(
                     new Version(x.tag_name),
                     x.body,
-                    new Uri(x.assets.First().browser_download_url)
+                    new Uri(x.assets.Where(x => x.name.EndsWith("win-x64.zip")).FirstOrDefault().browser_download_url)
                     ));
 
                 var newVersions = updates.Where(x => x.Version > currentVersion);

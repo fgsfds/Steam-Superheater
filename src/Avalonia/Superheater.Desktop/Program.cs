@@ -2,7 +2,6 @@
 using System.IO;
 using Avalonia;
 using SteamFDCommon;
-using SteamFDCommon.Helpers;
 
 namespace SteamFDA.Desktop;
 
@@ -14,14 +13,16 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        if (File.Exists(Consts.UpdateFile))
+        var dir = Directory.GetCurrentDirectory();
+
+        if (File.Exists(Path.Combine(dir, ".update")))
         {
             UpdateInstaller.InstallUpdate();
-
-            Environment.Exit(0);
         }
         else
         {
+            Cleanup();
+
             BuildAvaloniaApp()
                 .StartWithClassicDesktopLifetime(args);
         }
@@ -33,5 +34,25 @@ class Program
             .UsePlatformDetect()
             //.WithInterFont()
             .LogToTrace();
+
+    private static void Cleanup()
+    {
+        var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+
+        foreach (var file in files)
+        {
+            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(".update"))
+            {
+                File.Delete(file);
+            }
+
+            var updateDir = Path.Combine(Directory.GetCurrentDirectory(), "update");
+
+            if (Directory.Exists(updateDir))
+            {
+                Directory.Delete(updateDir, true);
+            }
+        }
+    }
 
 }

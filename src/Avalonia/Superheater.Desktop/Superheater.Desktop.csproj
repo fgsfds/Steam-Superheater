@@ -1,22 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
+    <AssemblyName>Superheater</AssemblyName>
+    <Version>0.3.0</Version>
     <OutputType>WinExe</OutputType>
-    <!--If you are willing to use Windows/MacOS native APIs you will need to create 3 projects.
-    One for Windows with net7.0-windows TFM, one for MacOS with net7.0-macos and one with net7.0 TFM for Linux.-->
     <TargetFramework>net6.0</TargetFramework>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Configurations>Debug;Release</Configurations>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <StartupObject>SteamFDA.Desktop.Program</StartupObject>
-    <Version>0.2.2</Version>
     <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
-    <AssemblyName>Superheater</AssemblyName>
   </PropertyGroup>
+	
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
@@ -29,4 +29,8 @@
     <ProjectReference Include="..\..\Common\Common.csproj" />
     <ProjectReference Include="..\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj" />
   </ItemGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="del &quot;$(TargetDir)hostfxr.dll.bak&quot; /q" />
+  </Target>
 </Project>

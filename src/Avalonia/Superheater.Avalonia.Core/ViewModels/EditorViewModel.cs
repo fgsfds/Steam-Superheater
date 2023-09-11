@@ -12,7 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using SteamFDA.Helpers;
 using SteamFDCommon.Providers;
@@ -183,7 +182,7 @@ namespace SteamFDA.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        async Task InitializeAsync() => await UpdateAsync(true);
+        private async Task InitializeAsync() => await UpdateAsync(true);
 
         /// <summary>
         /// Update games list

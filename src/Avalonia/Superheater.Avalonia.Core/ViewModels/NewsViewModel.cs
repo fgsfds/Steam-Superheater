@@ -29,7 +29,7 @@ namespace SteamFDA.ViewModels
         #region Relay Commands
 
         [RelayCommand]
-        async Task InitializeAsync() => await UpdateAsync();
+        private async Task InitializeAsync() => await UpdateAsync();
 
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private void MarkAllAsRead()
