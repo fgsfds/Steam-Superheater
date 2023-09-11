@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDA.Helpers;
 using SteamFDCommon;
 using SteamFDCommon.Helpers;
 using System;
@@ -83,11 +82,9 @@ namespace SteamFDA.ViewModels
             OnPropertyChanged(nameof(IsInProgress));
             DownloadAndInstallCommand.NotifyCanExecuteChanged();
 
-            await _updateInstaller.DownloadLatestReleaseAndCreateLock();
+            await _updateInstaller.DownloadAndUnpackLatestRelease();
 
             UpdateInstaller.InstallUpdate();
-
-            FdaProperties.MainWindow.Close();
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 
