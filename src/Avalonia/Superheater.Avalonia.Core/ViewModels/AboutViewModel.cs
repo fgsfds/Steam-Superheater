@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon;
 using SteamFDCommon.Helpers;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
@@ -10,6 +11,8 @@ namespace SteamFDA.ViewModels
     internal partial class AboutViewModel : ObservableObject
     {
         private readonly UpdateInstaller _updateInstaller;
+
+        public string AboutTabHeader { get; private set; } = "About";
 
         public bool IsUpdateAvailable { get; set; }
 
@@ -26,6 +29,12 @@ namespace SteamFDA.ViewModels
 
 
         #region Relay Commands
+
+        /// <summary>
+        /// VM initialization
+        /// </summary>
+        [RelayCommand]
+        private async Task InitializeAsync() => await CheckForUpdates();
 
         /// <summary>
         /// Check for SSH updates
@@ -59,6 +68,8 @@ namespace SteamFDA.ViewModels
                 IsUpdateAvailable = true;
                 OnPropertyChanged(nameof(IsUpdateAvailable));
                 DownloadAndInstallCommand.NotifyCanExecuteChanged();
+
+                UpdateHeader();
             }
             else
             {
@@ -89,5 +100,17 @@ namespace SteamFDA.ViewModels
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 
         #endregion Relay Commands
+
+        /// <summary>
+        /// Update tab header
+        /// </summary>
+        private void UpdateHeader()
+        {
+            AboutTabHeader = "About" + (IsUpdateAvailable
+                ? " (Update available)"
+                : string.Empty);
+
+            OnPropertyChanged(nameof(AboutTabHeader));
+        }
     }
 }

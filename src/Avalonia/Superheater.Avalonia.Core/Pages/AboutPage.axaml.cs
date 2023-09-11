@@ -17,6 +17,8 @@ namespace SteamFDA.Pages
             DataContext = _avm;
 
             InitializeComponent();
+
+            _avm.InitializeCommand.Execute(null);
         }
 
         private void SteamClick(object sender, RoutedEventArgs e)
@@ -32,6 +34,11 @@ namespace SteamFDA.Pages
         private void GitHubIssuesClick(object sender, RoutedEventArgs e)
         {
             Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/issues/new");
+        }
+
+        private void ShowChangelogClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/releases");
         }
     }
 }

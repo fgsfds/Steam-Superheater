@@ -18,7 +18,7 @@
                     HorizontalAlignment="Stretch"
                     Background="{DynamicResource ButtonBackground}">
 
-                <Grid ColumnDefinitions="auto,*, auto">
+                <Grid ColumnDefinitions="auto,*, auto, auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
                         <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/logo.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -29,6 +29,7 @@
                     <ProgressBar Grid.Column="1" IsIndeterminate="True" IsVisible="{Binding IsInProgress}" Margin="30,0"/>
                     <Button Content="{Binding CheckForUpdatesText}" Padding="10" Margin="10,0" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
                     <Button Padding="10" Margin="10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding DownloadAndInstallCommand}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
+                    <Button Padding="10" Margin="0,0,10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="3" HorizontalAlignment="Right" Button.Click="ShowChangelogClick">Changelog...</Button>
                 </Grid>
             </Border>
 
