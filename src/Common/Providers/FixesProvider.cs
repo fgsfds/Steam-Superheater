@@ -184,6 +184,11 @@ namespace SteamFDCommon.Providers
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
 
+            if (!Directory.Exists(CommonProperties.LocalRepo))
+            {
+                Directory.CreateDirectory(CommonProperties.LocalRepo);
+            }
+
             try
             {
                 using FileStream fs = new(Path.Combine(CommonProperties.LocalRepo, Consts.FixesFile), FileMode.Create);
