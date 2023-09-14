@@ -28,7 +28,7 @@ namespace SteamFDCommon.FixTools
             var zipName = Path.GetFileName(url);
 
             var zipPath = _config.UseLocalRepo
-                ? Path.Combine(_config.LocalRepoPath, zipName)
+                ? Path.Combine(_config.LocalRepoPath, "fixes", zipName)
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
 
             var gameInstallPath = game.InstallDir;

@@ -177,7 +177,7 @@ namespace SteamFDCommon.Providers
                 {
                     if (!fix.Url.StartsWith("http"))
                     {
-                        fix.Url = Path.Combine(Consts.MainFixesRepo + fix.Url);
+                        fix.Url = Path.Combine(Consts.MainFixesRepo + "fixes/" + fix.Url);
                     }
                 }
             }
