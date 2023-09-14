@@ -246,7 +246,11 @@ namespace SteamFDA.ViewModels
         {
             var result = _editorModel.SaveFixesListAsync();
 
-            new PopupMessageViewModel(result.Item1 ? "Success" : "Error", result.Item2, PopupMessageType.OkOnly).Show();
+            new PopupMessageViewModel(
+                result.Item1 ? "Success" : "Error",
+                result.Item2, 
+                PopupMessageType.OkOnly)
+                .Show();
         }
 
         /// <summary>
@@ -381,7 +385,10 @@ namespace SteamFDA.ViewModels
             {
                 new PopupMessageViewModel(
                     "Success",
-                    $"Fix successfully uploaded.{Environment.NewLine}It will be added to the database after developer's review.{Environment.NewLine}{Environment.NewLine}Thank you.",
+                    @$"Fix successfully uploaded.
+It will be added to the database after developer's review.
+
+Thank you.",
                     PopupMessageType.OkOnly)
                 .Show();
             }
@@ -519,7 +526,9 @@ namespace SteamFDA.ViewModels
                 {
                     new PopupMessageViewModel(
                         "Error",
-                        $"Can't upload fix.{Environment.NewLine}This fix already exists in the database.",
+                        @$"Can't upload fix.
+
+This fix already exists in the database.",
                         PopupMessageType.OkOnly)
                     .Show();
 
@@ -557,7 +566,9 @@ namespace SteamFDA.ViewModels
                 {
                     new PopupMessageViewModel(
                         "Error",
-                        $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to some file hosting.",
+                        @$"Can't upload file larger than 100Mb.
+
+Please, upload it to file hosting.",
                         PopupMessageType.OkOnly)
                         .Show();
 

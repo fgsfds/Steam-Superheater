@@ -58,7 +58,9 @@ namespace SteamFDA.ViewModels
             {
                 new PopupMessageViewModel(
                     "Error",
-                    "Cannot retreive latest releases from GitHub:" + Environment.NewLine + ex.Message,
+                    @$"Cannot retrieve latest releases from GitHub:
+                    
+{ex.Message}",
                     PopupMessageType.OkOnly
                     ).Show();
             }

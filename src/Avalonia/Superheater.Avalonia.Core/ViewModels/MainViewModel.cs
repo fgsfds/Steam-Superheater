@@ -192,7 +192,11 @@ namespace SteamFDA.ViewModels
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
+            new PopupMessageViewModel(
+                "Result", 
+                result,
+                PopupMessageType.OkOnly)
+                .Show();
 
             if (selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
@@ -241,7 +245,11 @@ namespace SteamFDA.ViewModels
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
+            new PopupMessageViewModel(
+                "Result", 
+                result, 
+                PopupMessageType.OkOnly)
+                .Show();
         }
         private bool UninstallFixCanExecute()
         {
@@ -290,7 +298,11 @@ namespace SteamFDA.ViewModels
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            new PopupMessageViewModel("Result", result, PopupMessageType.OkOnly).Show();
+            new PopupMessageViewModel(
+                "Result", 
+                result, 
+                PopupMessageType.OkOnly)
+                .Show();
 
             if (selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
