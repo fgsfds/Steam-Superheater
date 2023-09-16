@@ -29,7 +29,7 @@ namespace SteamFDCommon
                 File.Delete(fileName);
             }
 
-            await ZipTools.DownloadFileAsync(fixUrl, fileName);
+            await FileTools.DownloadFileAsync(fixUrl, fileName);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SteamFDA.Helpers;
+using SteamFDCommon.FixTools;
 
 namespace SteamFDA.ViewModels
 {
@@ -180,7 +181,7 @@ namespace SteamFDA.ViewModels
 
             var selectedFix = SelectedFix;
 
-            ZipTools.Progress.ProgressChanged += Progress_ProgressChanged;
+            FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
             var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix);
 
@@ -204,7 +205,7 @@ namespace SteamFDA.ViewModels
                 OpenConfigXml();
             }
 
-            ZipTools.Progress.ProgressChanged -= Progress_ProgressChanged;
+            FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
             ProgressBarValue = 0;
             OnPropertyChanged(nameof(ProgressBarValue));
         }

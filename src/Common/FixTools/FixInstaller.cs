@@ -20,11 +20,6 @@ namespace SteamFDCommon.FixTools
         {
             var url = fix.Url;
 
-            //if (!url.StartsWith("http"))
-            //{
-            //    url = Consts.MainFixesRepo + url;
-            //}
-
             var zipName = Path.GetFileName(url);
 
             var zipPath = _config.UseLocalRepo
@@ -39,7 +34,7 @@ namespace SteamFDCommon.FixTools
 
             if (!File.Exists(zipPath))
             {
-                await ZipTools.DownloadFileAsync(new Uri(url), zipPath);
+                await FileTools.DownloadFileAsync(new Uri(url), zipPath);
             }
 
             var files = GetListOfFilesInArchive(zipPath, fix.InstallFolder, unpackToPath);
@@ -55,7 +50,7 @@ namespace SteamFDCommon.FixTools
                     );
             }
 
-            await Task.Run(() => ZipFile.ExtractToDirectory(zipPath, unpackToPath, true));
+            await FileTools.UnpackZipAsync(zipPath, unpackToPath);
 
             if (_config.DeleteZipsAfterInstall &&
                 !_config.UseLocalRepo)
