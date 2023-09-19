@@ -17,11 +17,12 @@ namespace SteamFDA.ViewModels
 
         public ObservableCollection<NewsEntity> NewsList { get; set; }
 
-        public string NewsTabHeader { get; private set; } = "News";
+        public string NewsTabHeader { get; private set; }
 
         public NewsViewModel(NewsModel newsModel)
         {
-            NewsList = new();
+            NewsList = [];
+            NewsTabHeader = "News";
             _newsModel = newsModel;
         }
 

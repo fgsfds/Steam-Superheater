@@ -25,7 +25,7 @@ namespace SteamFDA.ViewModels
         private readonly ConfigEntity _config;
         private bool _lockButtons;
 
-        public string MainTabHeader { get; private set; } = "Main";
+        public string MainTabHeader { get; private set; }
 
         public float ProgressBarValue { get; set; }
 
@@ -111,7 +111,7 @@ namespace SteamFDA.ViewModels
 
                 if (SelectedFix?.Dependencies is not null)
                 {
-                    var dependsBy = _mainModel.GetDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
+                    var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                     if (dependsBy.Any())
                     {
@@ -146,7 +146,9 @@ namespace SteamFDA.ViewModels
             _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
-            FilteredGamesList = new();
+            MainTabHeader = "Main";
+            FilteredGamesList = [];
+            _search = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
@@ -167,6 +169,10 @@ namespace SteamFDA.ViewModels
         private async Task InstallFix()
         {
             if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+            if (SelectedGame.Game is null)
             {
                 throw new NullReferenceException(nameof(SelectedGame));
             }
@@ -259,7 +265,7 @@ namespace SteamFDA.ViewModels
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveInstalledDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
+            var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
             return result;
         }
@@ -397,7 +403,7 @@ namespace SteamFDA.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            await FdaProperties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
+            await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
         }
 
         #endregion Relay Commands

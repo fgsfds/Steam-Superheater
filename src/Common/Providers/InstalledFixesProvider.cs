@@ -1,4 +1,5 @@
-﻿using SteamFDCommon.Entities;
+﻿using SteamFDCommon.CombinedEntities;
+using SteamFDCommon.Entities;
 using SteamFDCommon.Helpers;
 using System.IO;
 using System.Xml.Serialization;
@@ -43,6 +44,42 @@ namespace SteamFDCommon.Providers
         }
 
         /// <summary>
+        /// Save installed fixes to XML
+        /// </summary>
+        /// <param name="fixesList">List of installed fix entities</param>
+        /// <returns>result, message</returns>
+        public static Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        {
+            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
+
+            try
+            {
+                using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
+                xmlSerializer.Serialize(fs, fixesList);
+            }
+            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                return new Tuple<bool, string>(false, e.Message);
+            }
+
+            return new Tuple<bool, string>(true, string.Empty);
+        }
+
+        /// <summary>
+        /// Save list of installed fixes from combined entities list
+        /// </summary>
+        /// <param name="combinedEntitiesList">List of combined entities</param>
+        /// <returns>result, message</returns>
+        public static Tuple<bool, string> SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
+        {
+            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
+
+            var result = SaveInstalledFixes(installedFixes);
+
+            return result;
+        }
+
+        /// <summary>
         /// Create new cache of installed fixes
         /// </summary>
         /// <exception cref="NullReferenceException"></exception>
@@ -82,28 +119,6 @@ namespace SteamFDCommon.Providers
             var fixesDatabase = new List<InstalledFixEntity>();
 
             SaveInstalledFixes(fixesDatabase);
-        }
-
-        /// <summary>
-        /// Save installed fixes to XML
-        /// </summary>
-        /// <param name="fixesList"></param>
-        /// <returns></returns>
-        public static Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
-        {
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
-
-            try
-            {
-                using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
-                xmlSerializer.Serialize(fs, fixesList);
-            }
-            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
-            {
-                return new Tuple<bool, string>(false, e.Message);
-            }
-
-            return new Tuple<bool, string>(true, string.Empty);
         }
     }
 }

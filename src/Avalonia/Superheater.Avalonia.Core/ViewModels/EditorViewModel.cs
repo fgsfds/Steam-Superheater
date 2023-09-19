@@ -411,7 +411,7 @@ Thank you.",
         {
             if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
 
-            var topLevel = FdaProperties.TopLevel;
+            var topLevel = Properties.TopLevel;
 
             if (topLevel is null)
             {

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon;
 using SteamFDCommon.Helpers;
 using System;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace SteamFDA.ViewModels
@@ -12,7 +11,7 @@ namespace SteamFDA.ViewModels
     {
         private readonly UpdateInstaller _updateInstaller;
 
-        public string AboutTabHeader { get; private set; } = "About";
+        public string AboutTabHeader { get; private set; }
 
         public bool IsUpdateAvailable { get; set; }
 
@@ -25,6 +24,8 @@ namespace SteamFDA.ViewModels
         public AboutViewModel(UpdateInstaller updateInstaller)
         {
             _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
+            AboutTabHeader = "About";
+            CheckForUpdatesText = string.Empty;
         }
 
 

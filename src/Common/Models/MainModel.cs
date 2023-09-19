@@ -102,10 +102,10 @@ namespace SteamFDCommon.Models
         /// <summary>
         /// Get list of fixes that depend on a selected fix
         /// </summary>
-        /// <param name="fixes">List of fix entites</param>
+        /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
-        /// <returns>List of dependant fixes</returns>
-        public List<FixEntity> GetDependantFixes(List<FixEntity> fixes, Guid guid)
+        /// <returns>List of dependent fixes</returns>
+        public List<FixEntity> GetDependentFixes(List<FixEntity> fixes, Guid guid)
         {
             var result = fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
 
@@ -113,14 +113,14 @@ namespace SteamFDCommon.Models
         }
 
         /// <summary>
-        /// Does fix have dependant fixes that are currently installed
+        /// Does fix have dependent fixes that are currently installed
         /// </summary>
-        /// <param name="fixes">List of fix entites</param>
+        /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
-        /// <returns>true if there are installed dependant fixes</returns>
-        public bool DoesFixHaveInstalledDependantFixes(List<FixEntity> fixes, Guid guid)
+        /// <returns>true if there are installed dependent fixes</returns>
+        public bool DoesFixHaveInstalledDependentFixes(List<FixEntity> fixes, Guid guid)
         {
-            var deps = GetDependantFixes(fixes, guid);
+            var deps = GetDependentFixes(fixes, guid);
 
             if (deps.Any() &&
                 deps.Where(x => x.IsInstalled).Any())
@@ -143,7 +143,7 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = null;
 
-            var result = SaveInstalledFixesXml();
+            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
@@ -167,7 +167,7 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = SaveInstalledFixesXml();
+            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
@@ -183,7 +183,7 @@ namespace SteamFDCommon.Models
         /// Update fix
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to deleteupdateparam>
+        /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
         public async Task<string> UpdateFix(GameEntity game, FixEntity fix)
         {
@@ -195,7 +195,7 @@ namespace SteamFDCommon.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = SaveInstalledFixesXml();
+            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
@@ -205,19 +205,6 @@ namespace SteamFDCommon.Models
             {
                 return result.Item2;
             }
-        }
-
-        /// <summary>
-        /// Save current list of installed fixes
-        /// </summary>
-        /// <returns>true if successfully saved</returns>
-        private Tuple<bool, string> SaveInstalledFixesXml()
-        {
-            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(_combinedEntitiesList);
-
-            var result = InstalledFixesProvider.SaveInstalledFixes(installedFixes);
-
-            return result;
         }
     }
 }

@@ -18,53 +18,59 @@ namespace SteamFDCommon.FixTools
         /// <param name="fix">Fix entity</param>
         public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, bool doBackup)
         {
-            var url = fix.Url;
+            var zipName = Path.GetFileName(fix.Url);
 
-            var zipName = Path.GetFileName(url);
-
-            var zipPath = _config.UseLocalRepo
+            var zipFullPath = _config.UseLocalRepo
                 ? Path.Combine(_config.LocalRepoPath, "fixes", zipName)
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
 
-            var gameInstallPath = game.InstallDir;
-
             var unpackToPath = fix.InstallFolder is null
-                                  ? gameInstallPath
-                                  : Path.Combine(gameInstallPath, fix.InstallFolder);
+                                  ? game.InstallDir
+                                  : Path.Combine(game.InstallDir, fix.InstallFolder);
 
-            if (!File.Exists(zipPath))
+            if (!File.Exists(zipFullPath))
             {
-                await FileTools.DownloadFileAsync(new Uri(url), zipPath);
+                await FileTools.DownloadFileAsync(new Uri(fix.Url), zipFullPath);
             }
 
-            var files = GetListOfFilesInArchive(zipPath, fix.InstallFolder, unpackToPath);
+            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath);
 
-            var filesToDelete = GetListOfFilesToDelete(gameInstallPath, fix.FilesToDelete);
+            var filesToDelete = GetListOfFilesToDelete(game.InstallDir, fix.FilesToDelete);
 
-            if (doBackup)
-            {
-                BackupFiles(
-                    files.Concat(filesToDelete).ToList(),
-                    gameInstallPath,
-                    Path.GetFileNameWithoutExtension(zipName)
-                    );
-            }
+            BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName));
 
-            await FileTools.UnpackZipAsync(zipPath, unpackToPath);
+            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath);
 
             if (_config.DeleteZipsAfterInstall &&
                 !_config.UseLocalRepo)
             {
-                File.Delete(zipPath);
+                File.Delete(zipFullPath);
             }
 
             if (fix.RunAfterInstall is not null)
             {
-                var path = Path.Combine(gameInstallPath, fix.RunAfterInstall);
+                RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
+            }
 
-                var currentDir = Directory.GetCurrentDirectory();
+            InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, filesInArchive);
 
-                Directory.SetCurrentDirectory(gameInstallPath);
+            return installedFix;
+        }
+
+        /// <summary>
+        /// Run or open whatever is in RunAfterInstall parameter
+        /// </summary>
+        /// <param name="gameInstallPath">Path to the game folder</param>
+        /// <param name="runAfterInstall">File to open</param>
+        private static void RunAfterInstall(string gameInstallPath, string runAfterInstall)
+        {
+            var previousDir = Directory.GetCurrentDirectory();
+
+            Directory.SetCurrentDirectory(gameInstallPath);
+
+            try
+            {
+                var path = Path.Combine(gameInstallPath, runAfterInstall);
 
                 Process proc = new()
                 {
@@ -72,21 +78,19 @@ namespace SteamFDCommon.FixTools
                 };
 
                 proc.Start();
-                await proc.WaitForExitAsync();
-
-                Directory.SetCurrentDirectory(currentDir);
+                //await proc.WaitForExitAsync();
             }
-
-            InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, files);
-
-            return installedFix;
+            finally
+            {
+                Directory.SetCurrentDirectory(previousDir);
+            }
         }
 
         /// <summary>
         /// Get list of files that fill be deleted before the fix is installed
         /// </summary>
         /// <param name="gameInstallPath">Path to the game folder</param>
-        /// <param name="filesToDelete">Files that need to be deleted, relative paths searated by ;</param>
+        /// <param name="filesToDelete">Files that need to be deleted, relative paths separated by ;</param>
         /// <returns>List of relative paths to deleted files</returns>
         private static List<string> GetListOfFilesToDelete(string gameInstallPath, string? filesToDelete)
         {
@@ -117,7 +121,7 @@ namespace SteamFDCommon.FixTools
         /// <param name="gameDir">Game install folder</param>
         /// <param name="backupFolder">Name of the backup folder</param>
         private static void BackupFiles(
-            List<string> files,
+            IEnumerable<string> files,
             string gameDir,
             string backupFolder
             )

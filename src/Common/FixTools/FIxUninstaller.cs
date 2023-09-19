@@ -18,9 +18,23 @@ namespace SteamFDCommon.FixTools
                 throw new NullReferenceException(nameof(fix.InstalledFix));
             }
 
-            foreach (var file in fix.InstalledFix.FilesList)
+            DeleteFiles(game.InstallDir, fix.InstalledFix.FilesList);
+
+            RestoreBackup(game.InstallDir, fix);
+
+            DeleteBackupFolderIfEmpty(game.InstallDir);
+        }
+
+        /// <summary>
+        /// Delete files from game install directory
+        /// </summary>
+        /// <param name="gameInstallDir">Game install folder</param>
+        /// <param name="fixFiles">Files to delete</param>
+        private static void DeleteFiles(string gameInstallDir, List<string> fixFiles)
+        {
+            foreach (var file in fixFiles)
             {
-                var fullPath = Path.Combine(game.InstallDir, file);
+                var fullPath = Path.Combine(gameInstallDir, file);
 
                 if (!file.EndsWith(@"/") &&
                     File.Exists(fullPath))
@@ -32,26 +46,17 @@ namespace SteamFDCommon.FixTools
                     Directory.Delete(fullPath, true);
                 }
             }
-
-            RestoreBackup(game.InstallDir, Path.GetFileNameWithoutExtension(fix.Url));
-
-            var backupFolder = Path.Combine(game.InstallDir, Consts.BackupFolder);
-
-            if (Directory.Exists(backupFolder) &&
-                !Directory.GetFiles(backupFolder).Any() &&
-                !Directory.GetDirectories(backupFolder).Any())
-            {
-                Directory.Delete(backupFolder);
-            }
         }
 
         /// <summary>
         /// Restore backed up files
         /// </summary>
         /// <param name="gameDir">Game install folder</param>
-        /// <param name="fixName">The name of the backup's fix</param>
-        private static void RestoreBackup(string gameDir, string fixName)
+        /// <param name="fix">Installed fix</param>
+        private static void RestoreBackup(string gameDir, FixEntity fix)
         {
+            var fixName = Path.GetFileNameWithoutExtension(fix.Url);
+
             var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName);
             fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
 
@@ -72,6 +77,22 @@ namespace SteamFDCommon.FixTools
             }
 
             Directory.Delete(fixFolderPath, true);
+        }
+
+        /// <summary>
+        /// Delete backup folder if it's empty
+        /// </summary>
+        /// <param name="gameInstallDir">Game install folder</param>
+        private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
+        {
+            var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
+
+            if (Directory.Exists(backupFolder) &&
+                !Directory.GetFiles(backupFolder).Any() &&
+                !Directory.GetDirectories(backupFolder).Any())
+            {
+                Directory.Delete(backupFolder);
+            }
         }
     }
 }
