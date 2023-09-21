@@ -59,7 +59,7 @@ namespace SteamFDCommon
         }
 
         /// <summary>
-        /// Unpack fix variant from zip archive
+        /// Unpack fix from zip archive
         /// </summary>
         /// <param name="pathToZip">Absolute path to zip file</param>
         /// <param name="unpackTo">Directory to unpack zip to</param>
