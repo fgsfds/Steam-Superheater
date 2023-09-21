@@ -129,14 +129,10 @@
 
         </ListBox>
 
-        <Grid Grid.Column="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
+        <Grid Grid.Column="2" RowDefinitions="*,auto,auto">
 
             <ScrollViewer Grid.Row="0">
-                <StackPanel Orientation="Vertical" Name="stack"></StackPanel>
+                <StackPanel Orientation="Vertical" Name="DescriptionBox"></StackPanel>
             </ScrollViewer>
 
             <TextBlock Text="{Binding Requirements, Mode=OneWay}"
@@ -144,6 +140,27 @@
                        Margin="0,2,0,0"
                        Grid.Row="1"
                        Padding="3"/>
+
+            <Grid ColumnDefinitions="auto,*"
+                  Grid.Row="2"
+                  Margin="0,2,0,0"
+                  IsVisible="{Binding FixHasVariants}">
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="0,0,2,0">
+                    Variants:
+                </TextBlock>
+
+                <ComboBox Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          Margin="0,2,0,0"
+                          ItemsSource="{Binding FixVariants}"
+                          SelectedItem="{Binding SelectedFixVariant}"/>
+
+            </Grid>
+
+
         </Grid>
 
     </Grid>

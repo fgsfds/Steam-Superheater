@@ -14,6 +14,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -59,25 +60,31 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <TextBox Text="{Binding FixVariants, Mode=TwoWay}"
+                 Watermark="Variants"
+                 Grid.Row="4"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
         <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
                  Watermark="Config file"
-                 Grid.Row="4"
+                 Grid.Row="5"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <TextBox Text="{Binding SelectedFix.FilesToDelete, Mode=TwoWay}"
                  Watermark="Files to delete"
-                 Grid.Row="5"
+                 Grid.Row="6"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
                  Watermark="Run after install"
-                 Grid.Row="6"
+                 Grid.Row="7"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <Grid Grid.Row="7"
+        <Grid Grid.Row="8"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">

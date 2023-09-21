@@ -40,6 +40,23 @@ namespace SteamFDA.ViewModels
         public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
 
         /// <summary>
+        /// List of selected fix's variants
+        /// </summary>
+        public List<string>? FixVariants => SelectedFix?.Variants;
+
+        /// <summary>
+        /// Selected fix variant
+        /// </summary>
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+        private string? _selectedFixVariant;
+
+        /// <summary>
+        /// Does selected fix has variants
+        /// </summary>
+        public bool FixHasVariants => FixVariants is not null && FixVariants.Any();
+
+        /// <summary>
         /// Does selected fix has any updates
         /// </summary>
         public bool SelectedFixHasUpdate => SelectedFix?.HasNewerVersion ?? false;
@@ -55,6 +72,8 @@ namespace SteamFDA.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Requirements))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
+        [NotifyPropertyChangedFor(nameof(FixVariants))]
+        [NotifyPropertyChangedFor(nameof(FixHasVariants))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -217,7 +236,7 @@ namespace SteamFDA.ViewModels
         }
         private bool InstallFixCanExecute()
         {
-            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || _lockButtons)
+            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null ||_lockButtons)
             {
                 return false;
             }
