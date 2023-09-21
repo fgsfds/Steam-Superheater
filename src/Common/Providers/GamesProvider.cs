@@ -110,6 +110,11 @@ namespace SteamFDCommon.Providers
 
             if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(name))
             {
+                if (!dir.EndsWith("\\")) 
+                {
+                    dir += "\\";
+                }
+
                 return new GameEntity(id, name, dir);
             }
 

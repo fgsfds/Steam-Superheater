@@ -30,6 +30,12 @@ namespace SteamFDA.ViewModels
 
         public ObservableCollection<GameEntity> AvailableGamesList { get; set; }
 
+        public string FixVariants
+        {
+            get => SelectedFix?.Variants is null ? string.Empty : string.Join(";", SelectedFix.Variants);
+            set => SelectedFix.Variants = value.Split(";").ToList();
+        }
+
         public int SelectedFixIndex { get; set; } = -1;
 
         public bool IsEditingAvailable => SelectedFix is not null;
@@ -82,6 +88,7 @@ namespace SteamFDA.ViewModels
         [NotifyPropertyChangedFor(nameof(Name))]
         [NotifyPropertyChangedFor(nameof(Version))]
         [NotifyPropertyChangedFor(nameof(Url))]
+        [NotifyPropertyChangedFor(nameof(FixVariants))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]

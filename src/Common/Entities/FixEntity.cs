@@ -83,6 +83,12 @@ namespace SteamFDCommon.Entities
         public string Description { get; set; }
 
         /// <summary>
+        /// List of fix's variants
+        /// Names of folders in inside a fix's archive, separated by ;
+        /// </summary>
+        public List<string>? Variants { get; set; }
+
+        /// <summary>
         /// Folder to unpack ZIP
         /// Relative to the game folder
         /// </summary>

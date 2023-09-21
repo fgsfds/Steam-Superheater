@@ -19,7 +19,7 @@ namespace SteamFDA.UserControls
         {
             var style = Application.Current.Resources.TryGetValue("ResourceKey", out var value);
 
-            stack.Children.Clear();
+            DescriptionBox.Children.Clear();
 
             if (((ListBox)sender).SelectedItem is null)
             {
@@ -35,7 +35,7 @@ namespace SteamFDA.UserControls
                 if (item.StartsWith("*") && item.EndsWith("*"))
                 {
                     var text = item[1..^1];
-                    stack.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap });
+                    DescriptionBox.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap });
 
                     continue;
                 }
@@ -48,12 +48,12 @@ namespace SteamFDA.UserControls
 
                     button.Click += UrlButtonClick;
 
-                    stack.Children.Add(button);
+                    DescriptionBox.Children.Add(button);
 
                     continue;
                 }
 
-                stack.Children.Add(new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap });
+                DescriptionBox.Children.Add(new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap });
             }
         }
 

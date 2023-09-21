@@ -16,7 +16,7 @@ namespace SteamFDCommon.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, bool doBackup)
+        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
             var zipName = Path.GetFileName(fix.Url);
 
@@ -26,20 +26,20 @@ namespace SteamFDCommon.FixTools
 
             var unpackToPath = fix.InstallFolder is null
                                   ? game.InstallDir
-                                  : Path.Combine(game.InstallDir, fix.InstallFolder);
+                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + "\\";
 
             if (!File.Exists(zipFullPath))
             {
                 await FileTools.DownloadFileAsync(new Uri(fix.Url), zipFullPath);
             }
 
-            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath);
+            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
 
             var filesToDelete = GetListOfFilesToDelete(game.InstallDir, fix.FilesToDelete);
 
             BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName));
 
-            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath);
+            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
 
             if (_config.DeleteZipsAfterInstall &&
                 !_config.UseLocalRepo)
@@ -167,7 +167,7 @@ namespace SteamFDCommon.FixTools
         /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
         /// <param name="unpackToPath">Full path </param>
         /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
-        private static List<string> GetListOfFilesInArchive(string zipPath, string? fixInstallFolder, string unpackToPath)
+        private static List<string> GetListOfFilesInArchive(string zipPath, string? fixInstallFolder, string unpackToPath, string? variant)
         {
             List<string> files = new();
 
@@ -175,9 +175,28 @@ namespace SteamFDCommon.FixTools
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
                 {
+                    string path = entry.FullName;
+
+                    if (variant is not null)
+                    {
+                        if (entry.FullName.StartsWith(variant+"/"))
+                        {
+                            path = entry.FullName.Replace(variant + "/", string.Empty);
+
+                            if (string.IsNullOrEmpty(path))
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+                    }
+
                     var fullName = Path.Combine(
                         fixInstallFolder is null ? string.Empty : fixInstallFolder,
-                        entry.FullName)
+                        path)
                         .Replace("/", "\\");
 
                     //if it's a file, add it to the list

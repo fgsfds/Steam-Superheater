@@ -59,24 +59,38 @@ namespace SteamFDCommon
         }
 
         /// <summary>
-        /// Unpack zip archive
+        /// Unpack fix from zip archive
         /// </summary>
         /// <param name="pathToZip">Absolute path to zip file</param>
         /// <param name="unpackTo">Directory to unpack zip to</param>
-        public static async Task UnpackZipAsync(string pathToZip, string unpackTo)
+        /// <param name="variant">Fix variant</param>
+        public static async Task UnpackZipAsync(string pathToZip, string unpackTo, string? variant)
         {
             IProgress<float> progress = Progress;
 
             using (var zip = ZipFile.OpenRead(pathToZip))
             {
-                var count = zip.Entries.Count;
+                var count = variant is null
+                    ? zip.Entries.Count
+                    : zip.Entries.Where(x => x.FullName.StartsWith(variant)).Count();
+
                 var i = 1f;
 
                 await Task.Run(() =>
                 {
                     foreach (var zipEntry in zip.Entries)
                     {
-                        var fullName = Path.Combine(unpackTo, zipEntry.FullName);
+                        if (variant is not null &&
+                        !zipEntry.FullName.StartsWith(variant))
+                        {
+                            continue;
+                        }
+
+                        var fullName = variant is null
+                            ? Path.Combine(unpackTo, zipEntry.FullName)
+                            : Path.Combine(unpackTo, zipEntry.FullName.Replace(variant + "/", string.Empty));
+
+                        var aa = Path.GetFileName(fullName);
 
                         if (Path.GetFileName(fullName).Length == 0)
                         {
@@ -88,7 +102,7 @@ namespace SteamFDCommon
                             zipEntry.ExtractToFile(fullName, true);
                         }
 
-                        progress.Report(i / zip.Entries.Count * 100);
+                        progress.Report(i / count * 100);
 
                         i++;
                     }

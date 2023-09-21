@@ -161,9 +161,9 @@ namespace SteamFDCommon.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
         /// <returns>Result message</returns>
-        public async Task<string> InstallFix(GameEntity game, FixEntity fix)
+        public async Task<string> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
-            var installedFix = await FixInstaller.InstallFix(game, fix, true);
+            var installedFix = await FixInstaller.InstallFix(game, fix, variant);
 
             fix.InstalledFix = installedFix;
 
@@ -185,13 +185,13 @@ namespace SteamFDCommon.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<string> UpdateFix(GameEntity game, FixEntity fix)
+        public async Task<string> UpdateFix(GameEntity game, FixEntity fix, string? variant)
         {
             FixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
-            var installedFix = await FixInstaller.InstallFix(game, fix, true);
+            var installedFix = await FixInstaller.InstallFix(game, fix, variant);
 
             fix.InstalledFix = installedFix;
 
