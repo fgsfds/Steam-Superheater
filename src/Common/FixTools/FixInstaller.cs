@@ -26,7 +26,7 @@ namespace SteamFDCommon.FixTools
 
             var unpackToPath = fix.InstallFolder is null
                                   ? game.InstallDir
-                                  : Path.Combine(game.InstallDir, fix.InstallFolder, "\\");
+                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + "\\";
 
             if (!File.Exists(zipFullPath))
             {
