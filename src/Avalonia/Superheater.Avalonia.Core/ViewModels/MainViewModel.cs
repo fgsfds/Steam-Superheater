@@ -208,7 +208,7 @@ namespace SteamFDA.ViewModels
 
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
-            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix);
+            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
 
             FillGamesList();
 
@@ -313,7 +313,7 @@ namespace SteamFDA.ViewModels
 
             var selectedFix = SelectedFix;
 
-            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix);
+            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
 
             FillGamesList();
 

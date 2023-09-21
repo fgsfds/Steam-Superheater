@@ -45,7 +45,7 @@ namespace SteamFDCommon.Entities
                     return false;
                 }
 
-                var data = Registry.GetValue(Consts.AdminRegistryKey, $"{InstallDir}\\{GameExecutable}", null);
+                var data = Registry.GetValue(Consts.AdminRegistryKey, $"{InstallDir}{GameExecutable}", null);
 
                 if (data is not null &&
                     data.Equals("~ RUNASADMIN"))
@@ -73,7 +73,7 @@ namespace SteamFDCommon.Entities
         /// </summary>
         public void SetRunAsAdmin()
         {
-            Registry.SetValue(Consts.AdminRegistryKey, $"{InstallDir}\\{GameExecutable}", "~ RUNASADMIN");
+            Registry.SetValue(Consts.AdminRegistryKey, $"{InstallDir}{GameExecutable}", "~ RUNASADMIN");
             OnPropertyChanged(nameof(DoesRequireAdmin));
         }
 

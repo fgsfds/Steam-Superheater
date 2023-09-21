@@ -149,7 +149,7 @@
                 <TextBlock Grid.Column="0"
                            VerticalAlignment="Center"
                            Margin="0,0,2,0">
-                    Variants:
+                    Variant:
                 </TextBlock>
 
                 <ComboBox Grid.Column="1"
