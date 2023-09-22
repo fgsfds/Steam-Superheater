@@ -1,0 +1,43 @@
+"AppState"
+{
+	"appid"		"2280"
+	"universe"		"1"
+	"LauncherPath"		"D:\\Games\\[Steam]\\steam.exe"
+	"name"		"DOOM (1993)"
+	"StateFlags"		"4"
+	"installdir"		"Ultimate Doom"
+	"LastUpdated"		"1691671869"
+	"SizeOnDisk"		"455495300"
+	"StagingSize"		"0"
+	"buildid"		"5619887"
+	"LastOwner"		"76561198002389520"
+	"UpdateResult"		"0"
+	"BytesToDownload"		"1291072"
+	"BytesDownloaded"		"1291072"
+	"BytesToStage"		"3200819"
+	"BytesStaged"		"3200819"
+	"TargetBuildID"		"5619887"
+	"AutoUpdateBehavior"		"0"
+	"AllowOtherDownloadsWhileRunning"		"0"
+	"ScheduledAutoUpdate"		"0"
+	"InstalledDepots"
+	{
+		"2281"
+		{
+			"manifest"		"4486750217790005770"
+			"size"		"455495300"
+		}
+	}
+	"SharedDepots"
+	{
+		"228988"		"228980"
+	}
+	"UserConfig"
+	{
+		"language"		"english"
+	}
+	"MountedConfig"
+	{
+		"language"		"english"
+	}
+}
