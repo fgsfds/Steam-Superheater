@@ -61,9 +61,6 @@ namespace SteamFDA.UserControls
         {
             var url = ((Button)sender).Content.ToString();
 
-            url = url.Replace("&", "^&");
-            url = url.Replace("?", "%3F");
-
             Process.Start("explorer.exe", url);
         }
     }
