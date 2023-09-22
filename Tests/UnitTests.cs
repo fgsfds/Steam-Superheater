@@ -1,3 +1,4 @@
+using SteamFDCommon.DI;
 using SteamFDCommon.Entities;
 using SteamFDCommon.Providers;
 using System.Reflection;
@@ -7,6 +8,15 @@ namespace Tests
     [TestClass]
     public class UnitTests
     {
+        public UnitTests()
+        {
+            var container = BindingsManager.Instance;
+            container.Options.EnableAutoVerification = false;
+            container.Options.ResolveUnregisteredConcreteTypes = true;
+
+            CommonBindings.Load(container);
+        }
+
         [TestMethod]
         public async Task GetNewerReleasesTest()
         {
@@ -38,7 +48,15 @@ namespace Tests
             Assert.IsTrue(result.Id.Equals(2280));
             Assert.IsTrue(result.InstallDir.Equals("Resources\\common\\Ultimate Doom\\"));
             Assert.IsTrue(result.Icon.Equals("d:\\games\\[steam]\\appcache\\librarycache\\2280_icon.jpg"));
+        }
 
+        [TestMethod]
+        public async Task GetFixesFromGithubAsync()
+        {
+            var fixesProvider = BindingsManager.Instance.GetInstance<FixesProvider>();
+            var fixes = await fixesProvider.GetNewFixesListAsync();
+
+            var result = fixes.Any(x => x.GameId == 108710);
         }
     }
 }
