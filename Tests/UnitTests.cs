@@ -38,16 +38,21 @@ namespace Tests
         [TestMethod]
         public void GetGameEntityFromAcf()
         {
-            var result = (GameEntity)typeof(GamesProvider)
-                .GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance)
-                .Invoke(new GamesProvider(), new object[] { "Resources\\test_manifest.acf" });
+            var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            Assert.IsNotNull(method);
+
+            var result = method.Invoke(new GamesProvider(), new object[] { "Resources\\test_manifest.acf" });
 
             Assert.IsNotNull(result);
+            Assert.IsInstanceOfType(result, typeof(GameEntity));
 
-            Assert.IsTrue(result.Name.Equals("DOOM (1993)"));
-            Assert.IsTrue(result.Id.Equals(2280));
-            Assert.IsTrue(result.InstallDir.Equals("Resources\\common\\Ultimate Doom\\"));
-            Assert.IsTrue(result.Icon.Equals("d:\\games\\[steam]\\appcache\\librarycache\\2280_icon.jpg"));
+            var gameEntity = (GameEntity)result;
+
+            Assert.IsTrue(gameEntity.Name.Equals("DOOM (1993)"));
+            Assert.IsTrue(gameEntity.Id.Equals(2280));
+            Assert.IsTrue(gameEntity.InstallDir.Equals("Resources\\common\\Ultimate Doom\\"));
+            Assert.IsTrue(gameEntity.Icon.Equals("d:\\games\\[steam]\\appcache\\librarycache\\2280_icon.jpg"));
         }
 
         [TestMethod]
