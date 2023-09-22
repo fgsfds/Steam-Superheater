@@ -8,7 +8,7 @@ namespace Tests
     [TestClass]
     public class UnitTests
     {
-        public UnitTests()
+        static UnitTests()
         {
             var container = BindingsManager.Instance;
             container.Options.EnableAutoVerification = false;
