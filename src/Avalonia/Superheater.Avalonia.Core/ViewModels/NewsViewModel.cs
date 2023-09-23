@@ -21,7 +21,7 @@ namespace SteamFDA.ViewModels
 
         public NewsViewModel(NewsModel newsModel)
         {
-            NewsList = [];
+            NewsList = new();
             NewsTabHeader = "News";
             _newsModel = newsModel;
         }

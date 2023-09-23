@@ -166,7 +166,7 @@ namespace SteamFDA.ViewModels
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
             MainTabHeader = "Main";
-            FilteredGamesList = [];
+            FilteredGamesList = new();
             _search = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
