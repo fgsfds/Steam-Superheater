@@ -11,12 +11,16 @@
 
   <ItemGroup>
     <None Remove="Resources\test_fix.zip" />
+    <None Remove="Resources\test_fix_variant.zip" />
     <None Remove="Resources\test_game.zip" />
     <None Remove="Resources\test_manifest.acf" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="Resources\test_fix.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\test_fix_variant.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_game.zip">

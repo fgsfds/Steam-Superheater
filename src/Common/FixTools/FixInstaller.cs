@@ -205,7 +205,7 @@ namespace SteamFDCommon.FixTools
                         files.Add(fullName);
                     }
                     //if it's a directory and it doesn't already exist, add it to the list
-                    else if (!Directory.Exists(Path.Combine(unpackToPath, entry.FullName)))
+                    else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
                     {
                         files.Add(fullName);
                     }

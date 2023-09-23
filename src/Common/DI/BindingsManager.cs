@@ -21,5 +21,10 @@ namespace SteamFDCommon.DI
                 return _instance;
             }
         }
+
+        public static void Reset()
+        {
+            _instance = null;
+        }
     }
 }
