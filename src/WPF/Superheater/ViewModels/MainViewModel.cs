@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using SteamFDCommon;
 using SteamFDCommon.CombinedEntities;
 using SteamFDCommon.Config;
 using SteamFDCommon.Helpers;
@@ -11,29 +12,71 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace SteamFD.ViewModels
 {
-    public partial class MainViewModel : ObservableObject
+    internal partial class MainViewModel : ObservableObject
     {
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
+        private bool _lockButtons;
 
+        public string MainTabHeader { get; private set; }
+
+        public float ProgressBarValue { get; set; }
+
+        /// <summary>
+        /// List of games
+        /// </summary>
         public ObservableCollection<FixFirstCombinedEntity> FilteredGamesList { get; init; }
 
+        /// <summary>
+        /// List of fixes for selected game
+        /// </summary>
         public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
+
+        /// <summary>
+        /// List of selected fix's variants
+        /// </summary>
+        public List<string>? FixVariants => SelectedFix?.Variants;
+
+        /// <summary>
+        /// Selected fix variant
+        /// </summary>
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+        private string? _selectedFixVariant;
+
+        /// <summary>
+        /// Does selected fix has variants
+        /// </summary>
+        public bool FixHasVariants => FixVariants is not null && FixVariants.Any();
+
+        /// <summary>
+        /// Does selected fix has any updates
+        /// </summary>
+        public bool SelectedFixHasUpdate => SelectedFix?.HasNewerVersion ?? false;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
+        partial void OnIsInProgressChanged(bool value)
+        {
+            _lockButtons = value;
+        }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(Requirements))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
+        [NotifyPropertyChangedFor(nameof(FixVariants))]
+        [NotifyPropertyChangedFor(nameof(FixHasVariants))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -44,7 +87,8 @@ namespace SteamFD.ViewModels
         private FixFirstCombinedEntity? _selectedGame;
         partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
         {
-            if (value?.Game is not null && 
+            if (value?.Game is not null &&
+                value is not null &&
                 value.Game.DoesRequireAdmin)
             {
                 RequireAdmin();
@@ -112,32 +156,335 @@ namespace SteamFD.ViewModels
             }
         }
 
-        public MainViewModel(MainModel mainModel, ConfigProvider config)
+        public MainViewModel(
+            MainModel mainModel,
+            ConfigProvider config
+            )
         {
             _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
+            MainTabHeader = "Main";
             FilteredGamesList = new();
+            _search = string.Empty;
 
-            SetRelayCommands();
-
-            //_ = UpdateAsync(true);
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
-        [RelayCommand]
-        async Task InitializeAsync() => await UpdateAsync(true);
 
+        #region Relay Commands
+
+        /// <summary>
+        /// VM initialization
+        /// </summary>
+        [RelayCommand]
+        private async Task InitializeAsync() => await UpdateAsync(true);
+
+        /// <summary>
+        /// Install selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(InstallFixCanExecute)))]
+        private async Task InstallFix()
+        {
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+            if (SelectedGame.Game is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+
+            _lockButtons = true;
+
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            var selectedFix = SelectedFix;
+
+            FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
+
+            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+
+            FillGamesList();
+
+            _lockButtons = false;
+
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            MessageBox.Show(
+                result,
+                "Result",
+                MessageBoxButton.OK);
+
+            if (selectedFix.ConfigFile is not null &&
+                _config.OpenConfigAfterInstall)
+            {
+                OpenConfigXml();
+            }
+
+            FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
+            ProgressBarValue = 0;
+            OnPropertyChanged(nameof(ProgressBarValue));
+        }
+        private bool InstallFixCanExecute()
+        {
+            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null || _lockButtons)
+            {
+                return false;
+            }
+
+            var result = !_mainModel.DoesFixHaveUninstalledDependencies(SelectedGame, SelectedFix);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Uninstall selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
+        private void UninstallFix()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+
+            IsInProgress = true;
+
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            var result = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+
+            FillGamesList();
+
+            IsInProgress = false;
+
+            InstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            MessageBox.Show(
+                result,
+                "Result",
+                MessageBoxButton.OK);
+        }
+        private bool UninstallFixCanExecute()
+        {
+            if (SelectedFix is null || !SelectedFix.IsInstalled || SelectedGameFixesList is null || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || _lockButtons)
+            {
+                return false;
+            }
+
+            var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Update selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
+        private async Task UpdateFix()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedFix));
+            }
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            IsInProgress = true;
+
+            InstallFixCommand.NotifyCanExecuteChanged();
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            var selectedFix = SelectedFix;
+
+            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+
+            FillGamesList();
+
+            IsInProgress = false;
+
+            InstallFixCommand.NotifyCanExecuteChanged();
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            MessageBox.Show(
+                result,
+                "Result",
+                MessageBoxButton.OK);
+
+            if (selectedFix.ConfigFile is not null &&
+                _config.OpenConfigAfterInstall)
+            {
+                OpenConfig();
+            }
+        }
+        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
+
+        /// <summary>
+        /// Open selected game install folder
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
+        private void OpenGameFolder()
+        {
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            Process.Start(
+                "explorer.exe",
+                SelectedGame.Game.InstallDir
+                );
+        }
+        private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
+
+        /// <summary>
+        /// Update games list
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
+        private async Task UpdateGames() => await UpdateAsync(false);
+        private bool UpdateGamesCanExecute() => !_lockButtons;
+
+        /// <summary>
+        /// Clear search bar
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(ClearSearchCanExecute)))]
+        private void ClearSearch() => Search = string.Empty;
+        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
+
+        /// <summary>
+        /// Open config file for selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
+        private void OpenConfig() => OpenConfigXml();
+        private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
+
+        /// <summary>
+        /// Apply admin rights for selected game
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
+        private void ApplyAdmin()
+        {
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            SelectedGame.Game.SetRunAsAdmin();
+        }
+        private bool ApplyAdminCanExecute() => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin;
+
+        /// <summary>
+        /// Open PCGW page for selected game
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
+        private void OpenPCGamingWiki()
+        {
+            if (SelectedGame is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+        private bool OpenPCGamingWikiCanExecute() => SelectedGame is not null;
+
+        /// <summary>
+        /// Open PCGW page for selected game
+        /// </summary>
+        [RelayCommand]
+        private async Task UrlCopyToClipboardAsync()
+        {
+            if (SelectedFix is null)
+            {
+                throw new NullReferenceException(nameof(SelectedGame));
+            }
+
+            Clipboard.SetText(SelectedFix.Url);
+        }
+
+        #endregion Relay Commands
+
+
+        /// <summary>
+        /// Update games list
+        /// </summary>
+        /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
             IsInProgress = true;
 
-            await _mainModel.UpdateGamesListAsync(useCache);
+            try
+            {
+                await _mainModel.UpdateGamesListAsync(useCache);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+
+                MessageBox.Show(
+                    "File not found: " + ex.Message,
+                    "Error",
+                    MessageBoxButton.OK);
+
+                IsInProgress = false;
+
+                return;
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+
+                MessageBox.Show(
+                    "Can't connect to GitHub repository",
+                    "Error",
+                    MessageBoxButton.OK);
+
+                return;
+            }
+            finally
+            {
+                IsInProgress = false;
+            }
 
             FillGamesList();
 
             IsInProgress = false;
         }
 
+        /// <summary>
+        /// Update tab header
+        /// </summary>
+        private void UpdateHeader()
+        {
+            MainTabHeader = "Main" + (_mainModel.HasUpdateableGames
+                ? $" ({_mainModel.UpdateableGamesCount} {(_mainModel.UpdateableGamesCount < 2
+                    ? "update"
+                    : "updates")})"
+                : string.Empty);
+
+            OnPropertyChanged(nameof(MainTabHeader));
+        }
+
+        /// <summary>
+        /// Fill games and available games lists based on a search bar
+        /// </summary>
         private void FillGamesList()
         {
             var selectedGame = SelectedGame;
@@ -148,6 +495,8 @@ namespace SteamFD.ViewModels
             var gamesList = _mainModel.GetFilteredGamesList(Search);
 
             FilteredGamesList.AddRange(gamesList);
+
+            UpdateHeader();
 
             if (selectedGame is not null && FilteredGamesList.Contains(selectedGame))
             {
@@ -162,6 +511,10 @@ namespace SteamFD.ViewModels
             }
         }
 
+        /// <summary>
+        /// Show popup with admin right requirement
+        /// </summary>
+        /// <exception cref="NullReferenceException"></exception>
         private void RequireAdmin()
         {
             if (SelectedGame is null)
@@ -184,7 +537,10 @@ Do you want to set it to always run as admin?",
             }
         }
 
-        private void OpenConfig()
+        /// <summary>
+        /// Open config file for selected fix
+        /// </summary>
+        private void OpenConfigXml()
         {
             if (SelectedFix?.ConfigFile is null)
             {
@@ -216,180 +572,18 @@ Do you want to set it to always run as admin?",
             process.Start();
         }
 
-        #region Relay Commands
-
-        private void SetRelayCommands()
+        private void Progress_ProgressChanged(object? sender, float e)
         {
-            InstallFixCommand = new RelayCommand(
-                execute: async () =>
-                {
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-                    if (SelectedFix is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedFix));
-                    }
-
-                    IsInProgress = true;
-
-                    var selectedFix = SelectedFix;
-
-                    var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, null);
-
-                    IsInProgress = false;
-
-                    InstallFixCommand.NotifyCanExecuteChanged();
-                    UninstallFixCommand.NotifyCanExecuteChanged();
-                    OpenConfigCommand.NotifyCanExecuteChanged();
-
-                    MessageBox.Show(result.ToString());
-
-                    if (selectedFix.ConfigFile is not null &&
-                        _config.OpenConfigAfterInstall)
-                    {
-                        OpenConfig();
-                    }
-                },
-                canExecute: () =>
-                {
-                    if (SelectedFix is null || SelectedFix.IsInstalled)
-                    {
-                        return false;
-                    }
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-
-                    var result = !_mainModel.DoesFixHaveUninstalledDependencies(SelectedGame, SelectedFix);
-
-                    return result;
-                }
-                );
-
-            UninstallFixCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedFix is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedFix));
-                    }
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-
-                    var result = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
-
-                    InstallFixCommand.NotifyCanExecuteChanged();
-                    UninstallFixCommand.NotifyCanExecuteChanged();
-                    OpenConfigCommand.NotifyCanExecuteChanged();
-
-                    MessageBox.Show(result.ToString());
-                },
-                canExecute: () =>
-                {
-                    if (SelectedFix is null || !SelectedFix.IsInstalled)
-                    {
-                        return false;
-                    }
-                    if (SelectedGameFixesList is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGameFixesList));
-                    }
-
-                    var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
-
-                    return result;
-                }
-                );
-
-            OpenGameFolderCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-
-                    Process.Start(
-                        "explorer.exe",
-                        SelectedGame.Game.InstallDir
-                        );
-                },
-                canExecute: () => SelectedGame is not null
-                );
-
-            UpdateGamesCommand = new AsyncRelayCommand(async () => await UpdateAsync(false), () => IsInProgress == false);
-
-            ClearSearchCommand = new RelayCommand(
-                execute: () =>
-                {
-                    Search = string.Empty;
-                },
-                canExecute: () => !string.IsNullOrEmpty(Search)
-                );
-
-            OpenConfigCommand = new RelayCommand(
-                execute: () =>
-                {
-                    OpenConfig();
-                },
-                canExecute: () => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled
-                );
-
-            ApplyAdminCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-
-                    SelectedGame.Game.SetRunAsAdmin();
-
-                    MessageBox.Show("Success");
-                },
-                canExecute: () => SelectedGame is not null && SelectedGame.Game.DoesRequireAdmin
-                );
-
-            OpenPCGamingWikiCommand = new RelayCommand(
-                execute: () =>
-                {
-                    if (SelectedGame is null)
-                    {
-                        throw new NullReferenceException(nameof(SelectedGame));
-                    }
-
-                    Process.Start(new ProcessStartInfo
-                    {
-                        FileName = Consts.PCGamingWikiUrl + SelectedGame.Game.Id,
-                        UseShellExecute = true
-                    });
-                },
-                canExecute: () => SelectedGame is not null
-                );
+            ProgressBarValue = e;
+            OnPropertyChanged(nameof(ProgressBarValue));
         }
 
-        public IRelayCommand OpenGameFolderCommand { get; private set; }
-
-        public IRelayCommand ClearSearchCommand { get; private set; }
-
-        public IRelayCommand UninstallFixCommand { get; private set; }
-
-        public IRelayCommand InstallFixCommand { get; private set; }
-
-        public IRelayCommand UpdateGamesCommand { get; private set; }
-
-        public IRelayCommand OpenConfigCommand { get; private set; }
-
-        public IRelayCommand ApplyAdminCommand { get; private set; }
-
-        public IRelayCommand OpenPCGamingWikiCommand { get; private set; }
-
-        #endregion Relay Commands
-
+        private void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
+            {
+                FillGamesList();
+            }
+        }
     }
 }

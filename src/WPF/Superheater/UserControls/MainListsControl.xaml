@@ -90,6 +90,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
             <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
@@ -104,7 +105,29 @@
                      AcceptsReturn="True"
                      Margin="0,2,0,0"
                      Grid.Row="1"/>
-        </Grid>
 
+            <Grid Grid.Row="3"
+                  Margin="0,2,0,0"
+                  Visibility="{Binding FixHasVariants, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="0,0,2,0">
+                    Variant:
+                </TextBlock>
+
+                <ComboBox Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          Margin="0,2,0,0"
+                          ItemsSource="{Binding FixVariants}"
+                          SelectedItem="{Binding SelectedFixVariant}"/>
+
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>
