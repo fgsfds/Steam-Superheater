@@ -21,9 +21,9 @@ namespace SteamFD.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
 
-        public ObservableCollection<GameFirstCombinedEntity> FilteredGamesList { get; init; }
+        public ObservableCollection<FixFirstCombinedEntity> FilteredGamesList { get; init; }
 
-        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes;
+        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
@@ -41,10 +41,10 @@ namespace SteamFD.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
-        private GameFirstCombinedEntity? _selectedGame;
-        partial void OnSelectedGameChanged(GameFirstCombinedEntity? value)
+        private FixFirstCombinedEntity? _selectedGame;
+        partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
         {
-            if (value is not null &&
+            if (value?.Game is not null && 
                 value.Game.DoesRequireAdmin)
             {
                 RequireAdmin();
@@ -85,7 +85,7 @@ namespace SteamFD.ViewModels
 
                 if (SelectedFix?.Dependencies is not null)
                 {
-                    var dependsBy = _mainModel.GetDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
+                    var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                     if (dependsBy.Any())
                     {
@@ -236,7 +236,7 @@ Do you want to set it to always run as admin?",
 
                     var selectedFix = SelectedFix;
 
-                    var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix);
+                    var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, null);
 
                     IsInProgress = false;
 
@@ -300,7 +300,7 @@ Do you want to set it to always run as admin?",
                         throw new NullReferenceException(nameof(SelectedGameFixesList));
                     }
 
-                    var result = !_mainModel.DoesFixHaveInstalledDependantFixes(SelectedGameFixesList, SelectedFix.Guid);
+                    var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                     return result;
                 }
