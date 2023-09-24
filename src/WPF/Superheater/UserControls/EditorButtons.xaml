@@ -45,6 +45,13 @@
 
             <Button Margin="5"
                     Padding="3"
+                    Command="{Binding UploadFixCommand}"
+                    Background="Tomato">
+                Upload fix
+            </Button>
+
+            <Button Margin="5"
+                    Padding="3"
                     Command="{Binding SaveChangesCommand}">
                 Save changes
             </Button>

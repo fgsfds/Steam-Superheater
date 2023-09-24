@@ -16,6 +16,8 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -30,7 +32,7 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Name="NameTextBox"
                  Grid.Row="0"
                  Grid.Column="1"
@@ -44,7 +46,7 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Text="{Binding Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Grid.Row="1"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
@@ -57,11 +59,28 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
-                 Grid.Row="2"
-                 Grid.Column="1"
-                 IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
-                 Margin="0,3"/>
+        <Grid Grid.Row="2"
+              Grid.Column="1"
+              Margin="0,3">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox Grid.Column="0"
+                     Text="{Binding Url, Mode=TwoWay}"
+                     HorizontalAlignment="Stretch"
+                     IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Command="{Binding OpenFilePickerCommand}"
+                    MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+                ...
+            </Button>
+
+        </Grid>
 
         <TextBlock Text="Folder"
                    Grid.Row="3"
@@ -76,47 +95,60 @@
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
                  Margin="0,3"/>
 
-        <TextBlock Text="Config"
+        <TextBlock Text="Variants"
                    Grid.Row="4"
                    Grid.Column="0"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
+        <TextBox Text="{Binding FixVariants, Mode=TwoWay}"
                  Grid.Row="4"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
                  Margin="0,3"/>
 
-        <TextBlock Text="Delete"
+        <TextBlock Text="Config"
                    Grid.Row="5"
                    Grid.Column="0"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.FilesToDelete, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
                  Grid.Row="5"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
                  Margin="0,3"/>
 
-        <TextBlock Text="Post inst."
+        <TextBlock Text="Delete"
                    Grid.Row="6"
                    Grid.Column="0"
                    HorizontalAlignment="Right"
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFix.FilesToDelete, Mode=TwoWay}"
                  Grid.Row="6"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
                  Margin="0,3"/>
 
+        <TextBlock Text="Post inst."
+                   Grid.Row="7"
+                   Grid.Column="0"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Center"
+                   Margin="3"/>
 
-        <Grid Grid.Row="7"
+        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
+                 Grid.Row="7"
+                 Grid.Column="1"
+                 IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
+                 Margin="0,3"/>
+
+
+        <Grid Grid.Row="8"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">
@@ -155,6 +187,7 @@
                     Grid.Row="2"
                     Margin="1"
                     ToolTip="Remove dependency"
+                    MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                     IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding RemoveDependencyCommand}">
                 &lt;
@@ -165,6 +198,7 @@
                      Grid.Column="2"
                      Grid.Row="1"
                      Grid.RowSpan="2"
+                     MinWidth="{Binding ActualHeight, RelativeSource={RelativeSource Self}}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      SelectedIndex="{Binding SelectedAddedDependencyIndex}"></ListBox>
         </Grid>

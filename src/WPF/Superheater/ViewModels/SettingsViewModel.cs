@@ -101,32 +101,39 @@ namespace SteamFD.ViewModels
         [RelayCommand]
         private void OpenFolderPicker()
         {
-            var dialog = new Microsoft.Win32.SaveFileDialog();
-            dialog.Title = "Select a Directory";
-            dialog.Filter = "Directory|*.this.directory";
-            dialog.FileName = "select";
-            string? path = null;
-            if (dialog.ShowDialog() == true)
+            var dialog = new Microsoft.Win32.SaveFileDialog
             {
-                path = dialog.FileName;
-                path = path.Replace("\\select.this.directory", "");
-                path = path.Replace(".this.directory", "");
-                if (!System.IO.Directory.Exists(path))
-                {
-                    System.IO.Directory.CreateDirectory(path);
-                }
+                Title = "Select a Directory",
+                Filter = "Directory|*.this.directory",
+                FileName = "select"
+            };
+
+            if (dialog.ShowDialog() is not true)
+            {
+                return;
             }
 
-            if (path is not null)
-            {
-                PathToLocalRepo = path;
-                _config.LocalRepoPath = PathToLocalRepo;
-                OnPropertyChanged(nameof(PathToLocalRepo));
+            var path = dialog.FileName;
 
-                LocalPathTextboxChanged = false;
-                OnPropertyChanged(nameof(LocalPathTextboxChanged));
-                SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+            if (path is null)
+            {
+                return;
             }
+
+            path = path.Replace("\\select.this.directory", "");
+            path = path.Replace(".this.directory", "");
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
+
+            PathToLocalRepo = path;
+            _config.LocalRepoPath = PathToLocalRepo;
+            OnPropertyChanged(nameof(PathToLocalRepo));
+
+            LocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
     }
 }
