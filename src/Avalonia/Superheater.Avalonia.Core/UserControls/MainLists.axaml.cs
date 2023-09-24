@@ -3,6 +3,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using SteamFDCommon.Entities;
+using System;
 using System.Diagnostics;
 
 namespace SteamFDA.UserControls
@@ -59,9 +60,12 @@ namespace SteamFDA.UserControls
 
         private void UrlButtonClick(object sender, RoutedEventArgs e)
         {
-            var url = ((Button)sender).Content.ToString();
+            var url = ((Button)sender)?.Content?.ToString() ?? throw new NullReferenceException();
 
-            Process.Start("explorer.exe", url);
+            Process.Start(new ProcessStartInfo(url)
+            {
+                UseShellExecute = true
+            });
         }
     }
 }
