@@ -105,7 +105,7 @@ namespace SteamFD.ViewModels
             dialog.Title = "Select a Directory";
             dialog.Filter = "Directory|*.this.directory";
             dialog.FileName = "select";
-            string path = null;
+            string? path = null;
             if (dialog.ShowDialog() == true)
             {
                 path = dialog.FileName;
