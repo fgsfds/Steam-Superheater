@@ -24,8 +24,8 @@
     </Window.Resources>
 
     <TabControl Name="TabC">
-        <TabItem Header="Main">
-            <pgs:MainPage/>
+        <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}">
+            <pgs:MainPage x:Name="MainPageTab"/>
         </TabItem>
         <TabItem Header="Editor"
                  Visibility="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
