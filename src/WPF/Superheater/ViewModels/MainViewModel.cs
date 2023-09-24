@@ -411,7 +411,7 @@ namespace SteamFD.ViewModels
         /// Open PCGW page for selected game
         /// </summary>
         [RelayCommand]
-        private async Task UrlCopyToClipboardAsync()
+        private void UrlCopyToClipboard()
         {
             if (SelectedFix is null)
             {
