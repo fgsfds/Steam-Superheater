@@ -15,7 +15,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using SteamFDA.Helpers;
-using SteamFDCommon.FixTools;
 
 namespace SteamFDA.ViewModels
 {
@@ -219,7 +218,7 @@ namespace SteamFDA.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                "Result", 
+                "Result",
                 result,
                 PopupMessageType.OkOnly)
                 .Show();
@@ -236,7 +235,7 @@ namespace SteamFDA.ViewModels
         }
         private bool InstallFixCanExecute()
         {
-            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null ||_lockButtons)
+            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null || _lockButtons)
             {
                 return false;
             }
@@ -272,8 +271,8 @@ namespace SteamFDA.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                "Result", 
-                result, 
+                "Result",
+                result,
                 PopupMessageType.OkOnly)
                 .Show();
         }
@@ -325,8 +324,8 @@ namespace SteamFDA.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                "Result", 
-                result, 
+                "Result",
+                result,
                 PopupMessageType.OkOnly)
                 .Show();
 
