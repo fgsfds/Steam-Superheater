@@ -36,6 +36,9 @@
         <TabItem Header="Settings">
             <pgs:SettingsPage x:Name="SettingsPageTab"/>
         </TabItem>
+        <TabItem Header="About">
+            <pgs:AboutPage/>
+        </TabItem>
     </TabControl>
 
 

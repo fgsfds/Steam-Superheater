@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
+    <Version>0.4.0</Version>
     <TargetFramework>net6.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>enable</Nullable>
@@ -12,6 +13,7 @@
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -38,6 +40,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\avatar.jpg" />
+    <None Remove="Assets\github.png" />
+    <None Remove="Assets\icon.ico" />
+    <None Remove="Assets\issues.png" />
+    <None Remove="Assets\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="SimpleInjector" Version="5.4.1" />
   </ItemGroup>
 
@@ -46,6 +60,18 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\avatar.jpg" />
+    <Resource Include="Assets\github.png" />
+    <Resource Include="Assets\icon.ico" />
+    <Resource Include="Assets\issues.png" />
+    <Resource Include="Assets\logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\AboutPage.axaml.cs">
+      <SubType>Code</SubType>
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
