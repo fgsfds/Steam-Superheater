@@ -72,6 +72,7 @@
                  SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
                  Grid.Column="1"
                  Margin="0,0,3,0"
+                 SelectionChanged="FixSelected"
                  Name="FixesList">
 
             <ListBox.ItemContainerStyle>
@@ -109,11 +110,9 @@
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
-                     IsReadOnly="True"
-                     TextWrapping="Wrap"
-                     AcceptsReturn="True"
-                     Grid.Row="0"/>
+            <ScrollViewer Grid.Row="0">
+                <StackPanel Orientation="Vertical" Name="DescriptionBox"></StackPanel>
+            </ScrollViewer>
 
             <TextBox Text="{Binding Requirements, Mode=OneWay}"
                      IsReadOnly="True"
