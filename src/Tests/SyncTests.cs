@@ -102,7 +102,8 @@ namespace Tests
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = "test_fix.zip",
                 InstallFolder = "install folder",
-                FilesToDelete = "install folder\\file to delete.txt;install folder\\subfolder\\file to delete in subfolder.txt;file to delete in parent folder.txt"
+                FilesToDelete = "install folder\\file to delete.txt;install folder\\subfolder\\file to delete in subfolder.txt;file to delete in parent folder.txt",
+                FilesToBackup = "install folder\\file to backup.txt"
             };
 
             var installedFix = await FixInstaller.InstallFix(gameEntity, fixEntity, variant);
@@ -112,6 +113,9 @@ namespace Tests
             CheckNewFiles();
 
             fixEntity.InstalledFix = installedFix;
+
+            //modify backed up file
+            File.WriteAllText("game\\install folder\\file to backup.txt", "22");
 
             FixUninstaller.UninstallFix(gameEntity, fixEntity);
 
@@ -142,6 +146,13 @@ namespace Tests
 
             var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
             Assert.IsTrue(fileToDeleteParentExists);
+
+            //check backed up files
+            var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
+            Assert.IsTrue(fileToBackupExists);
+
+            var fi3 = new FileInfo("game\\install folder\\file to backup.txt").Length;
+            Assert.IsTrue(fi3 == 1);
         }
 
         private static void CheckNewFiles()
@@ -168,6 +179,13 @@ namespace Tests
 
             var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
             Assert.IsFalse(fileToDeleteParentExists);
+
+            //check backed up files
+            var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
+            Assert.IsTrue(fileToBackupExists);
+
+            var backedUpFileExists = File.Exists("game\\.sfd\\test_fix\\install folder\\file to backup.txt");
+            Assert.IsTrue(backedUpFileExists);
 
             //check installed.xml
             using (var md5 = MD5.Create())

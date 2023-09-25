@@ -108,6 +108,12 @@ namespace SteamFDCommon.Entities
         public string? FilesToDelete { get; set; }
 
         /// <summary>
+        /// List of files that will be backed up before the fix is installed, and the original file will remain
+        /// Paths are relative to the game folder, separated by ;
+        /// </summary>
+        public string? FilesToBackup { get; set; }
+
+        /// <summary>
         /// File that will be run after the fix is installed
         /// Path is relative to the game folder
         /// </summary>
@@ -138,6 +144,7 @@ namespace SteamFDCommon.Entities
             InstallFolder = null;
             ConfigFile = null;
             FilesToDelete = null;
+            FilesToBackup = null;
             RunAfterInstall = null;
             Dependencies = new();
         }

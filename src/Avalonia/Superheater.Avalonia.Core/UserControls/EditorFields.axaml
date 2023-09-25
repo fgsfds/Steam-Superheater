@@ -15,6 +15,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -78,13 +79,19 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
-                 Watermark="Run after install"
+        <TextBox Text="{Binding SelectedFix.FilesToBackup, Mode=TwoWay}"
+                 Watermark="Files to backup"
                  Grid.Row="7"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <Grid Grid.Row="8"
+        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
+                 Watermark="Run after install"
+                 Grid.Row="8"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <Grid Grid.Row="9"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">

@@ -35,9 +35,13 @@ namespace SteamFDCommon.FixTools
 
             var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
 
-            var filesToDelete = GetListOfFilesToDelete(game.InstallDir, fix.FilesToDelete);
+            var filesToDelete = ParseListOfFiles(game.InstallDir, fix.FilesToDelete);
 
-            BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName));
+            BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName), true, true);
+
+            var filesToBackup = ParseListOfFiles(game.InstallDir, fix.FilesToBackup);
+
+            BackupFiles(filesToBackup, game.InstallDir, Path.GetFileNameWithoutExtension(zipName), false, false);
 
             await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
 
@@ -87,21 +91,21 @@ namespace SteamFDCommon.FixTools
         }
 
         /// <summary>
-        /// Get list of files that fill be deleted before the fix is installed
+        /// Parse list of files separated by ;
         /// </summary>
         /// <param name="gameInstallPath">Path to the game folder</param>
-        /// <param name="filesToDelete">Files that need to be deleted, relative paths separated by ;</param>
+        /// <param name="stringToParst">List of files separated by ;</param>
         /// <returns>List of relative paths to deleted files</returns>
-        private static List<string> GetListOfFilesToDelete(string gameInstallPath, string? filesToDelete)
+        private static List<string> ParseListOfFiles(string gameInstallPath, string? stringToParst)
         {
             List<string> result = new();
 
-            if (filesToDelete is null)
+            if (stringToParst is null)
             {
                 return result;
             }
 
-            var filesToDeleteSplit = filesToDelete.Split(";");
+            var filesToDeleteSplit = stringToParst.Split(";");
 
             foreach (var file in filesToDeleteSplit)
             {
@@ -120,16 +124,25 @@ namespace SteamFDCommon.FixTools
         /// <param name="files">List of files to backup</param>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="backupFolder">Name of the backup folder</param>
+        /// <param name="deleteOriginal">Will original file be deleted</param>
         private static void BackupFiles(
             IEnumerable<string> files,
             string gameDir,
-            string backupFolder
+            string backupFolder,
+            bool deleteOriginal,
+            bool deleteBackupFolder
             )
         {
+            if (files is null ||
+                !files.Any())
+            {
+                return;
+            }
+
             var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
             fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
 
-            if (Directory.Exists(fixFolderPath))
+            if (deleteBackupFolder && Directory.Exists(fixFolderPath))
             {
                 Directory.Delete(fixFolderPath, true);
             }
@@ -155,7 +168,14 @@ namespace SteamFDCommon.FixTools
                         Directory.CreateDirectory(dir);
                     }
 
-                    File.Move(from, to);
+                    if (deleteOriginal)
+                    {
+                        File.Move(from, to);
+                    }
+                    else
+                    {
+                        File.Copy(from, to);
+                    }
                 }
             }
         }
