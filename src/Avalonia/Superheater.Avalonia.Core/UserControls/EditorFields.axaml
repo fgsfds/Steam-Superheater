@@ -56,7 +56,7 @@
         </Grid>
 
         <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
-                 Watermark="Install folder"
+                 Watermark="Unpack archive to"
                  Grid.Row="3"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>

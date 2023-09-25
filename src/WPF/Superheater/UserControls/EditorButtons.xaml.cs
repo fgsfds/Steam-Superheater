@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,6 +24,11 @@ namespace SteamFD.UserControls
         public EditorButtons()
         {
             InitializeComponent();
+        }
+
+        private void HowToSubmitButtonClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/wiki/How-to-submit-fixes");
         }
     }
 }

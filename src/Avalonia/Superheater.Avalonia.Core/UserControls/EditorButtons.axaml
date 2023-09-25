@@ -47,6 +47,13 @@
 
             <Button Margin="3,0"
                     Padding="8"
+                    Button.Click="HowToSubmitButtonClick"
+                    Background="{DynamicResource SystemAccentColor}">
+                How to submit fixes...
+            </Button>
+
+            <Button Margin="3,0"
+                    Padding="8"
                     Command="{Binding UploadFixCommand}"
                     Background="{DynamicResource SystemAccentColor}">
                 Upload fix

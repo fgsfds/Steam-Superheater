@@ -45,6 +45,13 @@
 
             <Button Margin="5"
                     Padding="3"
+                    Click="HowToSubmitButtonClick"
+                    Background="Tomato">
+                How to submit fixes...
+            </Button>
+
+            <Button Margin="5"
+                    Padding="3"
                     Command="{Binding UploadFixCommand}"
                     Background="Tomato">
                 Upload fix
