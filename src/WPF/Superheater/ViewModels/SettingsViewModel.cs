@@ -1,6 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using SteamFDCommon.Config;
+using SteamFDCommon.Helpers;
+using System.Diagnostics;
+using System.Threading.Tasks;
+using System;
+using System.Windows.Controls;
 
 namespace SteamFD.ViewModels
 {
@@ -40,6 +45,13 @@ namespace SteamFD.ViewModels
         }
 
         [ObservableProperty]
+        private bool _showUninstalledGamesCheckbox;
+        partial void OnShowUninstalledGamesCheckboxChanged(bool value)
+        {
+            _config.ShowUninstalledGames = value;
+        }
+
+        [ObservableProperty]
         private string _pathToLocalRepo;
         partial void OnPathToLocalRepoChanged(string value)
         {
@@ -61,17 +73,6 @@ namespace SteamFD.ViewModels
         {
             _config = config.Config;
 
-            SaveLocalRepoPathCommand = new RelayCommand(
-                execute: () =>
-                {
-                    _config.LocalRepoPath = PathToLocalRepo;
-
-                    LocalPathTextboxChanged = false;
-                    SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
-                },
-                canExecute: () => LocalPathTextboxChanged is true
-                );
-
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
             ShowEditorCheckbox = _config.ShowEditorTab;
@@ -79,6 +80,60 @@ namespace SteamFD.ViewModels
             PathToLocalRepo = _config.LocalRepoPath;
         }
 
-        public IRelayCommand SaveLocalRepoPathCommand { get; private set; }
+
+        [RelayCommand(CanExecute = (nameof(SaveLocalRepoPathCanExecute)))]
+        private void SaveLocalRepoPath()
+        {
+            _config.LocalRepoPath = PathToLocalRepo;
+
+            LocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+        }
+        private bool SaveLocalRepoPathCanExecute() => LocalPathTextboxChanged is true;
+
+        [RelayCommand]
+        private void OpenConfigXML()
+        {
+            Process.Start("explorer.exe", Consts.ConfigFile);
+        }
+
+        [RelayCommand]
+        private void OpenFolderPicker()
+        {
+            var dialog = new Microsoft.Win32.SaveFileDialog
+            {
+                Title = "Select a Directory",
+                Filter = "Directory|*.this.directory",
+                FileName = "select"
+            };
+
+            if (dialog.ShowDialog() is not true)
+            {
+                return;
+            }
+
+            var path = dialog.FileName;
+
+            if (path is null)
+            {
+                return;
+            }
+
+            path = path.Replace("\\select.this.directory", "");
+            path = path.Replace(".this.directory", "");
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+            }
+
+            PathToLocalRepo = path;
+            _config.LocalRepoPath = PathToLocalRepo;
+            OnPropertyChanged(nameof(PathToLocalRepo));
+
+            LocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+        }
     }
 }

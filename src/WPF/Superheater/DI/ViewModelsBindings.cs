@@ -11,6 +11,7 @@ namespace SteamFD.DI
             container.Register<EditorViewModel>(Lifestyle.Transient);
             container.Register<NewsViewModel>(Lifestyle.Transient);
             container.Register<SettingsViewModel>(Lifestyle.Transient);
+            container.Register<AboutViewModel>(Lifestyle.Transient);
         }
     }
 }

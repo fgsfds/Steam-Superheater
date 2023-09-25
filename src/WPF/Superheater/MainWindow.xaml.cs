@@ -1,4 +1,5 @@
 ﻿using SteamFD.DI;
+using SteamFDCommon.Config;
 using SteamFDCommon.DI;
 using System;
 using System.Windows;
@@ -10,6 +11,8 @@ namespace SteamFD
     /// </summary>
     public partial class MainWindow : Window
     {
+        private ConfigEntity _config;
+
         public MainWindow()
         {
             Dispatcher.UnhandledException += OnDispatcherUnhandledException;
@@ -20,6 +23,11 @@ namespace SteamFD
             ModelsBindings.Load(container);
             ViewModelsBindings.Load(container);
             CommonBindings.Load(container);
+
+            _config = container.GetInstance<ConfigProvider>().Config;
+            _config.NotifyParameterChanged += OnUseLocalRepoChanged;
+
+            UpdateHeader();
 
             InitializeComponent();
 
@@ -38,6 +46,26 @@ namespace SteamFD
                 e.Handled = true;
 
                 Environment.Exit(-1);
+            }
+        }
+
+        private void OnUseLocalRepoChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(ConfigEntity.UseLocalRepo)))
+            {
+                UpdateHeader();
+            }
+        }
+
+        private void UpdateHeader()
+        {
+            if (_config.UseLocalRepo)
+            {
+                Title = "Steam Superheater (local repository)";
+            }
+            else
+            {
+                Title = "Steam Superheater";
             }
         }
     }

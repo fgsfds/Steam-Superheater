@@ -7,7 +7,6 @@
         xmlns:pgs="clr-namespace:SteamFD.Pages"
         xmlns:hlp="clr-namespace:SteamFD.Helpers"
         mc:Ignorable="d"
-        Title="Steam Superheater"
         MinHeight="600"
         Height="800"
         MinWidth="1000"
@@ -24,8 +23,8 @@
     </Window.Resources>
 
     <TabControl Name="TabC">
-        <TabItem Header="Main">
-            <pgs:MainPage/>
+        <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}">
+            <pgs:MainPage x:Name="MainPageTab"/>
         </TabItem>
         <TabItem Header="Editor"
                  Visibility="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolToVis}}">
@@ -36,6 +35,9 @@
         </TabItem>
         <TabItem Header="Settings">
             <pgs:SettingsPage x:Name="SettingsPageTab"/>
+        </TabItem>
+        <TabItem Header="About">
+            <pgs:AboutPage/>
         </TabItem>
     </TabControl>
 

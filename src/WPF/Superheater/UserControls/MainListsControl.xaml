@@ -11,14 +11,25 @@
         <DataTemplate x:Key="MainGamesList">
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Border BorderBrush="Black"
+                        Background="Black"
                         BorderThickness="1"
-                        CornerRadius="3">
+                        CornerRadius="3"
+                        Height="36"
+                        Width="36">
                     <Image Source="{Binding Game.Icon}"
-                           Width="24"
-                           Height="24"
+                           Width="32"
+                           Height="32"
                            Stretch="Fill" />
                 </Border>
-                <TextBlock Margin="5" Text="{Binding Game.Name}" VerticalAlignment="Center"/>
+                <StackPanel Orientation="Vertical" Margin="5" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding GameName}" VerticalAlignment="Center"/>
+                    <TextBlock Text="Update available" VerticalAlignment="Center" Foreground="Red" Visibility="{Binding HasUpdates, Converter={StaticResource BooleanToVisibilityConverter }}"/>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+        <DataTemplate x:Key="UninstalledGamesList">
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <TextBlock Margin="5" Text="{Binding GameName}" Foreground="Gray" VerticalAlignment="Center"/>
             </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
@@ -41,12 +52,17 @@
 
             <ListBox.ItemContainerStyle>
                 <Style TargetType="{x:Type ListBoxItem}">
-                    <Setter Property="ContentTemplate" Value="{StaticResource MainGamesList}" />
-                    <!--<Style.Triggers>
-                    <DataTrigger Binding="{Binding DataContext.IsEditorMode, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="True">
-                    <Setter Property="ContentTemplate" Value="{StaticResource EditorGamesList}" />
-                    </DataTrigger>
-                    </Style.Triggers>-->
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsGameInstalled}" Value="True">
+                            <Setter Property="ContentTemplate" Value="{StaticResource MainGamesList}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding HasInstalledFixes}" Value="True">
+                            <Setter Property="FontWeight" Value="Bold" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsGameInstalled}" Value="False">
+                            <Setter Property="ContentTemplate" Value="{StaticResource UninstalledGamesList}" />
+                        </DataTrigger>
+                    </Style.Triggers>
                 </Style>
             </ListBox.ItemContainerStyle>
 
@@ -56,6 +72,7 @@
                  SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
                  Grid.Column="1"
                  Margin="0,0,3,0"
+                 SelectionChanged="FixSelected"
                  Name="FixesList">
 
             <ListBox.ItemContainerStyle>
@@ -90,13 +107,12 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
-                     IsReadOnly="True"
-                     TextWrapping="Wrap"
-                     AcceptsReturn="True"
-                     Grid.Row="0"/>
+            <ScrollViewer Grid.Row="0">
+                <StackPanel Orientation="Vertical" Name="DescriptionBox"></StackPanel>
+            </ScrollViewer>
 
             <TextBox Text="{Binding Requirements, Mode=OneWay}"
                      IsReadOnly="True"
@@ -104,7 +120,29 @@
                      AcceptsReturn="True"
                      Margin="0,2,0,0"
                      Grid.Row="1"/>
-        </Grid>
 
+            <Grid Grid.Row="3"
+                  Margin="0,2,0,0"
+                  Visibility="{Binding FixHasVariants, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="0,0,2,0">
+                    Variant:
+                </TextBlock>
+
+                <ComboBox Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          Margin="0,2,0,0"
+                          ItemsSource="{Binding FixVariants}"
+                          SelectedItem="{Binding SelectedFixVariant}"/>
+
+            </Grid>
+        </Grid>
     </Grid>
 </UserControl>

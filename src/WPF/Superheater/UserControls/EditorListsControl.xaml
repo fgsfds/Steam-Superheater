@@ -97,8 +97,8 @@
                     Name="AddNewPatchButton"
                     Margin="3,3,3,0"
                     Padding="3"
-                    Command="{Binding AddNewPatchCommand}">
-                Add new patch
+                    Command="{Binding AddNewFixCommand}">
+                Add new fix
             </Button>
 
             <Button  Grid.Column="1"
@@ -106,8 +106,8 @@
                     Name="RemovePatchButton"
                     Margin="3,3,3,0"
                     Padding="3"
-                    Command="{Binding RemovePatchCommand}">
-                Delete patch
+                    Command="{Binding RemoveFixCommand}">
+                Delete fix
             </Button>
 
         </Grid>

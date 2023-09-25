@@ -6,57 +6,34 @@
              mc:Ignorable="d"
              d:DesignHeight="450" d:DesignWidth="800">
 
-    <StackPanel Orientation="Vertical">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
 
-        <CheckBox IsChecked="{Binding DeleteArchivesCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Margin="5">
-            Delete archive after installing a fix
-        </CheckBox>
+        <StackPanel Grid.Row="0"
+                    Orientation="Vertical">
 
-        <CheckBox IsChecked="{Binding OpenConfigCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                  Margin="5">
-            Open config after installing a fix
-        </CheckBox>
+            <CheckBox IsChecked="{Binding DeleteArchivesCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="5">
+                Delete archive after installing a fix
+            </CheckBox>
 
-        <Expander Margin="5"
-                  Header="Advanced options">
+            <CheckBox IsChecked="{Binding OpenConfigCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="5">
+                Open config after installing a fix
+            </CheckBox>
 
-            <StackPanel Orientation="Vertical">
-                <GroupBox Header="Editor"
-                          Margin="5">
+            <CheckBox IsChecked="{Binding ShowUninstalledGamesCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      Margin="5">
+                Show uninstalled games in the list
+            </CheckBox>
 
-                    <Grid Margin="5">
+            <Expander Margin="5"
+                      Header="Advanced options">
 
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
-
-                        <CheckBox IsChecked="{Binding ShowEditorCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Margin="5"
-                                  Grid.ColumnSpan="2">
-                            Show Editor Tab
-                        </CheckBox>
-
-                        <TextBlock Margin="5"
-                                   Grid.Row="1">
-                            Gitlab token
-                        </TextBlock>
-
-                        <TextBox Margin="5"
-                                 Grid.Row="1"
-                                 Grid.Column="1"
-                                 IsReadOnly="True"></TextBox>
-                    </Grid>
-                </GroupBox>
-
-                <GroupBox Header="Repository"
-                          Margin="5">
+                <StackPanel Orientation="Vertical">
 
                     <Grid Margin="5"
                           VerticalAlignment="Center">
@@ -73,8 +50,15 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
+                        <CheckBox IsChecked="{Binding ShowEditorCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                  Margin="5"
+                                  Grid.Row="0"
+                                  Grid.ColumnSpan="2">
+                            Show Editor Tab
+                        </CheckBox>
+
                         <TextBlock Margin="5"
-                                   Grid.Row="0"
+                                   Grid.Row="1"
                                    VerticalAlignment="Center">
                             Path to local repository
                         </TextBlock>
@@ -83,12 +67,11 @@
                                  KeyDown="TextBox_KeyDown"
                                  Name="LocalRepoTextbox"
                                  Margin="5"
-                                 Grid.Row="0"
+                                 Grid.Row="1"
                                  Grid.Column="1"/>
-                        <!--IsReadOnly="{Binding ElementName=UseLocalRepoCheckbox, Path=IsChecked, Converter={StaticResource ReverseBool}}"-->
 
                         <Button Margin="5"
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.Column="2"
                                 Padding="2"
                                 Command="{Binding SaveLocalRepoPathCommand}">
@@ -96,24 +79,40 @@
                         </Button>
 
                         <Button Margin="5"
-                                Grid.Row="0"
+                                Grid.Row="1"
                                 Grid.Column="3"
                                 Padding="2"
-                                IsEnabled="False"
+                                Command="{Binding OpenFolderPickerCommand}"
                                 Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
                             ...
                         </Button>
 
                         <CheckBox IsChecked="{Binding UseLocalRepoCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                   Margin="5"
-                                  Grid.Row="1"
+                                  Grid.Row="2"
                                   Grid.ColumnSpan="2"
                                   Name="UseLocalRepoCheckbox">
                             Load fixes and news from local repository (testing purposes only)
                         </CheckBox>
+
                     </Grid>
-                </GroupBox>
-            </StackPanel>
-        </Expander>
-    </StackPanel>
+                </StackPanel>
+            </Expander>
+        </StackPanel>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="1"
+                    Margin="5"
+                    Padding="5"
+                    Command="{Binding OpenConfigXMLCommand}">
+                Open config XML...
+            </Button>
+
+        </Grid>
+    </Grid>
 </UserControl>

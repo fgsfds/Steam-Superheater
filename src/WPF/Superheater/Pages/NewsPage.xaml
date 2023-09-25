@@ -13,63 +13,67 @@
             <RowDefinition Height="auto"/>
         </Grid.RowDefinitions>
 
-        <ItemsControl ItemsSource="{Binding News}"
-                      Grid.Row="0">
+        <ScrollViewer>
 
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
+            <ItemsControl ItemsSource="{Binding NewsList}"
+                          Grid.Row="0">
 
-                    <DataTemplate.Resources>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="FontSize" Value="18"/>
-                            <Setter Property="HorizontalAlignment" Value="Left"/>
-                        </Style>
-                    </DataTemplate.Resources>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
 
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="auto"/>
-                        </Grid.RowDefinitions>
+                        <DataTemplate.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                            </Style>
+                        </DataTemplate.Resources>
 
-                        <Border CornerRadius="3"
-                                Padding="10"
-                                Margin="5">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
 
-                            <Border.Style>
-                                <Style TargetType="{x:Type Border}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding IsNewer}" Value="False">
-                                            <Setter Property="BorderBrush" Value="LightGray"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding IsNewer}" Value="True">
-                                            <Setter Property="BorderBrush" Value="Tomato"/>
-                                            <Setter Property="BorderThickness" Value="2"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Border.Style>
+                            <Border CornerRadius="3"
+                                    Padding="10"
+                                    Margin="5">
 
-                            <StackPanel Orientation="Vertical">
-                                <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
-                                           FontSize="13"
-                                           FontWeight="Bold"></TextBlock>
-                                <TextBlock Text="{Binding Content}"></TextBlock>
-                            </StackPanel>
+                                <Border.Style>
+                                    <Style TargetType="{x:Type Border}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsNewer}" Value="False">
+                                                <Setter Property="BorderBrush" Value="LightGray"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsNewer}" Value="True">
+                                                <Setter Property="BorderBrush" Value="Tomato"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
 
-                        </Border>
+                                <StackPanel Orientation="Vertical">
+                                    <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                               FontSize="13"
+                                               FontWeight="Bold"></TextBlock>
+                                    <TextBlock Text="{Binding Content}"></TextBlock>
+                                </StackPanel>
 
-                    </Grid>
+                            </Border>
 
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+                        </Grid>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </ScrollViewer>
 
         <Button Grid.Row="1"
                 Margin="5"
                 Padding="3"
-                Command="{Binding MarkAllAsRead}">
+                Command="{Binding MarkAllAsReadCommand}">
             Mark all as read
         </Button>
 
