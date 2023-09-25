@@ -38,21 +38,6 @@
             }
         }
 
-        private bool _showEditorTab;
-        public bool ShowEditorTab
-        {
-            get => _showEditorTab;
-            set
-            {
-                if (_showEditorTab != value)
-                {
-                    _showEditorTab = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(ShowEditorTab));
-                }
-            }
-        }
-
         private int _lastReadNewsVersion;
         public int LastReadNewsVersion
         {
@@ -147,7 +132,6 @@
         {
             _deleteZipsAfterInstall = true;
             _openConfigAfterInstall = false;
-            _showEditorTab = false;
             _lastReadNewsVersion = 0;
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";

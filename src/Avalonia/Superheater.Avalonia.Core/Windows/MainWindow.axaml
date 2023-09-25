@@ -41,7 +41,7 @@
                 <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
-                <TabItem Header="Editor" Margin="0,0,10,10" IsVisible="{Binding ElementName=SettingsPageTab, Path=DataContext.ShowEditorCheckbox}">
+                <TabItem Header="Editor" Margin="0,0,10,10">
                     <pages:EditorPage Margin="0" />
                 </TabItem>
                 <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}" Margin="0,0,10,10">

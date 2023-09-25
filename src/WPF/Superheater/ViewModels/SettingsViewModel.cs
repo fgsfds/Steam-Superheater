@@ -31,13 +31,6 @@ namespace Superheater.ViewModels
         }
 
         [ObservableProperty]
-        private bool _showEditorCheckbox;
-        partial void OnShowEditorCheckboxChanged(bool value)
-        {
-            _config.ShowEditorTab = value;
-        }
-
-        [ObservableProperty]
         private bool _useLocalRepoCheckbox;
         partial void OnUseLocalRepoCheckboxChanged(bool value)
         {
@@ -75,7 +68,6 @@ namespace Superheater.ViewModels
 
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
-            ShowEditorCheckbox = _config.ShowEditorTab;
             UseLocalRepoCheckbox = _config.UseLocalRepo;
             PathToLocalRepo = _config.LocalRepoPath;
         }

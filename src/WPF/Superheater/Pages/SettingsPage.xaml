@@ -50,13 +50,6 @@
                             <RowDefinition Height="auto"/>
                         </Grid.RowDefinitions>
 
-                        <CheckBox IsChecked="{Binding ShowEditorCheckbox, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  Margin="5"
-                                  Grid.Row="0"
-                                  Grid.ColumnSpan="2">
-                            Show Editor Tab
-                        </CheckBox>
-
                         <TextBlock Margin="5"
                                    Grid.Row="1"
                                    VerticalAlignment="Center">

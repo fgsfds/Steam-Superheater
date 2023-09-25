@@ -110,24 +110,6 @@
 
                 <StackPanel Orientation="Vertical">
 
-                    <!--Show editor switch-->
-                    <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
-
-                        <ToggleSwitch IsChecked="{Binding ShowEditorCheckbox}"
-                                      Grid.Column="0"
-                                      VerticalAlignment="Center"
-                                      OnContent=""
-                                      OffContent=""
-                                      Margin="5"/>
-
-                        <TextBlock Grid.Column="1"
-                                   VerticalAlignment="Center"
-                                   Margin="5">
-                            Show Editor Tab
-                        </TextBlock>
-
-                    </Grid>
-
                     <!--Path to local repo-->
                     <Grid ColumnDefinitions="auto,*,auto,auto" RowDefinitions="*,*,*">
 
