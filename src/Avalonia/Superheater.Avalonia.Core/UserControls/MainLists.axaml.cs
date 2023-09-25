@@ -2,11 +2,11 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using SteamFDCommon.Entities;
+using Common.Entities;
 using System;
 using System.Diagnostics;
 
-namespace SteamFDA.UserControls
+namespace Superheater.Avalonia.Core.UserControls
 {
     public partial class MainLists : UserControl
     {

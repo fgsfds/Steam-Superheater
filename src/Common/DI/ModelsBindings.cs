@@ -1,8 +1,8 @@
 ﻿using SimpleInjector;
-using SteamFDCommon.Models;
+using Common.Models;
 using Container = SimpleInjector.Container;
 
-namespace SteamFDCommon.DI
+namespace Common.DI
 {
     public static class ModelsBindings
     {

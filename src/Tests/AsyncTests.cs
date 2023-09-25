@@ -1,5 +1,5 @@
-using SteamFDCommon.Entities;
-using SteamFDCommon.Providers;
+using Common.Entities;
+using Common.Providers;
 using System.Reflection;
 
 namespace Tests

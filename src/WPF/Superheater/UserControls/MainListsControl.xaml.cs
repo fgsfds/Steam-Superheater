@@ -1,4 +1,4 @@
-﻿using SteamFDCommon.Entities;
+﻿using Common.Entities;
 using System.Diagnostics;
 using System.Windows;
 using System;
@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Reflection.Emit;
 using System.Windows.Media;
 
-namespace SteamFD.UserControls
+namespace Superheater.UserControls
 {
     /// <summary>
     /// Interaction logic for ListsControl.xaml

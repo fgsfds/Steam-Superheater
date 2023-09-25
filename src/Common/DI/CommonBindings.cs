@@ -1,8 +1,8 @@
 ﻿using SimpleInjector;
-using SteamFDCommon.Config;
-using SteamFDCommon.Providers;
+using Common.Config;
+using Common.Providers;
 
-namespace SteamFDCommon.DI
+namespace Common.DI
 {
     public static class CommonBindings
     {

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="SteamFD.UserControls.GameInfoBar"
+﻿<UserControl x:Class="Superheater.UserControls.GameInfoBar"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"

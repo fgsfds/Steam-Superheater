@@ -1,4 +1,4 @@
-﻿namespace SteamFDCommon.Config
+﻿namespace Common.Config
 {
     public class ConfigEntity
     {

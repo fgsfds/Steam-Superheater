@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SteamFD.UserControls
+namespace Superheater.UserControls
 {
     /// <summary>
     /// Interaction logic for EditorButtons.xaml

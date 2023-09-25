@@ -1,4 +1,4 @@
-﻿namespace SteamFDCommon.Helpers
+﻿namespace Common.Helpers
 {
     public class Consts
     {

@@ -1,10 +1,10 @@
-﻿using SteamFDCommon.Config;
-using SteamFDCommon.Entities;
-using SteamFDCommon.Helpers;
+﻿using Common.Config;
+using Common.Entities;
+using Common.Helpers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
 
-namespace SteamFDCommon.Providers
+namespace Common.Providers
 {
     public class FixesProvider
     {

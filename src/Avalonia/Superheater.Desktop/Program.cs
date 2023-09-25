@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
 using Avalonia;
-using SteamFDCommon;
-using SteamFDCommon.Helpers;
+using Common;
+using Common.Helpers;
+using Superheater.Avalonia.Core;
 
-namespace SteamFDA.Desktop;
+namespace Superheater.Desktop;
 
 class Program
 {

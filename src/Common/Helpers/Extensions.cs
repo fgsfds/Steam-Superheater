@@ -1,6 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace SteamFDCommon.Helpers
+namespace Common.Helpers
 {
     public static class Extensions
     {

@@ -1,10 +1,10 @@
-﻿using SteamFDCommon.CombinedEntities;
-using SteamFDCommon.Config;
-using SteamFDCommon.Entities;
-using SteamFDCommon.FixTools;
-using SteamFDCommon.Providers;
+﻿using Common.CombinedEntities;
+using Common.Config;
+using Common.Entities;
+using Common.FixTools;
+using Common.Providers;
 
-namespace SteamFDCommon.Models
+namespace Common.Models
 {
     public class MainModel
     {

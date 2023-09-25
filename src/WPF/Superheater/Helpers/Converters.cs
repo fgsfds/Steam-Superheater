@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Data;
 
-namespace SteamFD.Helpers
+namespace Superheater.Helpers
 {
     public class BoolToStringConverter : IValueConverter
     {

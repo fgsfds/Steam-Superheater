@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 
-namespace SteamFDTools
+namespace Common
 {
     public static class SteamTools
     {

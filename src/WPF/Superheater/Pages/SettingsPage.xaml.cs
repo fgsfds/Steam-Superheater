@@ -1,9 +1,9 @@
-﻿using SteamFD.ViewModels;
-using SteamFDCommon.DI;
+﻿using Superheater.ViewModels;
+using Common.DI;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace SteamFD.Pages
+namespace Superheater.Pages
 {
     /// <summary>
     /// Interaction logic for SettingsPage.xaml

@@ -1,7 +1,7 @@
 ﻿using SimpleInjector;
-using SteamFDA.ViewModels;
+using Superheater.Avalonia.Core.ViewModels;
 
-namespace SteamFDA.DI
+namespace Superheater.Avalonia.Core.DI
 {
     public static class ViewModelsBindings
     {

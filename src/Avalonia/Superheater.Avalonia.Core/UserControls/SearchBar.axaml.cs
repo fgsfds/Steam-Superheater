@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace SteamFDA.UserControls
+namespace Superheater.Avalonia.Core.UserControls
 {
     public partial class SearchBar : UserControl
     {

@@ -1,8 +1,8 @@
-﻿using SteamFDCommon.Config;
-using SteamFDCommon.Entities;
-using SteamFDCommon.Providers;
+﻿using Common.Config;
+using Common.Entities;
+using Common.Providers;
 
-namespace SteamFDCommon.Models
+namespace Common.Models
 {
     public class NewsModel
     {

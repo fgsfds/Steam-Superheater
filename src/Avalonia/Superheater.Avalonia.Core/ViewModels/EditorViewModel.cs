@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon.Config;
-using SteamFDCommon.Helpers;
-using SteamFDCommon.Models;
-using SteamFDCommon.Entities;
+using Common.Config;
+using Common.Helpers;
+using Common.Models;
+using Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,10 +13,10 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
-using SteamFDA.Helpers;
-using SteamFDCommon.Providers;
+using Superheater.Avalonia.Core.Helpers;
+using Common.Providers;
 
-namespace SteamFDA.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels
 {
     internal partial class EditorViewModel : ObservableObject
     {

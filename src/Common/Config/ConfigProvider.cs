@@ -1,7 +1,7 @@
 ﻿using System.Xml.Serialization;
-using SteamFDCommon.Helpers;
+using Common.Helpers;
 
-namespace SteamFDCommon.Config
+namespace Common.Config
 {
     public class ConfigProvider
     {

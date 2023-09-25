@@ -1,7 +1,7 @@
-﻿using SteamFDCommon.Entities;
-using SteamFDTools;
+﻿using Common.Entities;
+using Common;
 
-namespace SteamFDCommon.Providers
+namespace Common.Providers
 {
     public class GamesProvider
     {

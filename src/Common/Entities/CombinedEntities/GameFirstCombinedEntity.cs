@@ -1,7 +1,7 @@
-﻿using SteamFDCommon.Entities;
+﻿using Common.Entities;
 using System.Collections.ObjectModel;
 
-namespace SteamFDCommon.CombinedEntities
+namespace Common.CombinedEntities
 {
     /// <summary>
     /// Object that combines game and its fixes

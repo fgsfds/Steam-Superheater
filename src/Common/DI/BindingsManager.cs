@@ -1,6 +1,6 @@
 ﻿using SimpleInjector;
 
-namespace SteamFDCommon.DI
+namespace Common.DI
 {
     public static class BindingsManager
     {

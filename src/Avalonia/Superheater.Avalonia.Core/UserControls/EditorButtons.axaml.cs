@@ -3,7 +3,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using System.Diagnostics;
 
-namespace SteamFDA.UserControls
+namespace Superheater.Avalonia.Core.UserControls
 {
     public partial class EditorButtons : UserControl
     {

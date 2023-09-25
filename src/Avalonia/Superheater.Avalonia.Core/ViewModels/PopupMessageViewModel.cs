@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon.DI;
+using Common.DI;
 using System;
 
-namespace SteamFDA.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels
 {
     internal partial class PopupMessageViewModel : ObservableObject
     {

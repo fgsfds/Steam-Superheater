@@ -1,6 +1,6 @@
 ﻿using System.IO.Compression;
 
-namespace SteamFDCommon
+namespace Common
 {
     public class FileTools
     {

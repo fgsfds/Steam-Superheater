@@ -1,10 +1,10 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using SteamFDA.ViewModels;
-using SteamFDCommon.DI;
+using Superheater.Avalonia.Core.ViewModels;
+using Common.DI;
 using System.Diagnostics;
 
-namespace SteamFDA.Pages
+namespace Superheater.Avalonia.Core.Pages
 {
     public partial class AboutPage : UserControl
     {

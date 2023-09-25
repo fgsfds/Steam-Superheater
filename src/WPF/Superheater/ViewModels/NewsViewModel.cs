@@ -1,16 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon.Models;
-using SteamFDCommon.Entities;
+using Common.Models;
+using Common.Entities;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System;
 using System.Windows;
 using System.IO;
 using System.Net.Http;
-using SteamFDCommon.Helpers;
+using Common.Helpers;
 
-namespace SteamFD.ViewModels
+namespace Superheater.ViewModels
 {
     public partial class NewsViewModel : ObservableObject
     {

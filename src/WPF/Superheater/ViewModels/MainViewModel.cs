@@ -1,11 +1,11 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
-using SteamFDCommon.CombinedEntities;
-using SteamFDCommon.Config;
-using SteamFDCommon.Helpers;
-using SteamFDCommon.Models;
-using SteamFDCommon.Entities;
+using Common;
+using Common.CombinedEntities;
+using Common.Config;
+using Common.Helpers;
+using Common.Models;
+using Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -16,7 +16,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace SteamFD.ViewModels
+namespace Superheater.ViewModels
 {
     internal partial class MainViewModel : ObservableObject
     {

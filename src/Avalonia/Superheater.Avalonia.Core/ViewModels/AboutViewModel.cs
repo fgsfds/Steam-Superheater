@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon;
-using SteamFDCommon.Helpers;
+using Common;
+using Common.Helpers;
 using System;
 using System.Threading.Tasks;
 
-namespace SteamFDA.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels
 {
     internal partial class AboutViewModel : ObservableObject
     {

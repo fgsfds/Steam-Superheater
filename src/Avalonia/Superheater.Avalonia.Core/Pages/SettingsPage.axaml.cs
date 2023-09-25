@@ -1,8 +1,8 @@
 using Avalonia.Controls;
-using SteamFDA.ViewModels;
-using SteamFDCommon.DI;
+using Superheater.Avalonia.Core.ViewModels;
+using Common.DI;
 
-namespace SteamFDA.Pages
+namespace Superheater.Avalonia.Core.Pages
 {
     public partial class SettingsPage : UserControl
     {

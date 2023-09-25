@@ -4,15 +4,15 @@ using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDA.Helpers;
-using SteamFDCommon.Config;
-using SteamFDCommon.Helpers;
+using Superheater.Avalonia.Core.Helpers;
+using Common.Config;
+using Common.Helpers;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SteamFDA.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels
 {
     internal partial class SettingsViewModel : ObservableObject
     {

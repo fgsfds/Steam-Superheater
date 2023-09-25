@@ -1,10 +1,10 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ucs="clr-namespace:SteamFDA.UserControls"
+             xmlns:ucs="clr-namespace:Superheater.Avalonia.Core.UserControls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="SteamFDA.UserControls.EditorLists">
+             x:Class="Superheater.Avalonia.Core.UserControls.EditorLists">
 
     <Grid>
 

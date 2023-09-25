@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SteamFixesDownloader
+namespace Superheater
 {
     /// <summary>
     /// Interaction logic for App.xaml

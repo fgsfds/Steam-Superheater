@@ -1,9 +1,9 @@
-﻿using SteamFDCommon.Entities;
-using SteamFDCommon.Providers;
-using SteamFDCommon.Helpers;
+﻿using Common.Entities;
+using Common.Providers;
+using Common.Helpers;
 using System.IO.Compression;
 
-namespace SteamFDCommon
+namespace Common
 {
     public class UpdateInstaller
     {

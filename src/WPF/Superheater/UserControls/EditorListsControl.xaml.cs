@@ -1,6 +1,6 @@
 ﻿using System.Windows.Controls;
 
-namespace SteamFD.UserControls
+namespace Superheater.UserControls
 {
     /// <summary>
     /// Interaction logic for ListsControl.xaml

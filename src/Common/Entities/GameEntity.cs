@@ -1,9 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
-using SteamFDCommon.Helpers;
-using SteamFDTools;
+using Common.Helpers;
+using Common;
 
-namespace SteamFDCommon.Entities
+namespace Common.Entities
 {
     public class GameEntity : ObservableObject
     {

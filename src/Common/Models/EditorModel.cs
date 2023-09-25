@@ -1,11 +1,11 @@
-﻿using SteamFDCommon.DI;
-using SteamFDCommon.Entities;
-using SteamFDCommon.Helpers;
-using SteamFDCommon.Providers;
+﻿using Common.DI;
+using Common.Entities;
+using Common.Helpers;
+using Common.Providers;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
-namespace SteamFDCommon.Models
+namespace Common.Models
 {
     public class EditorModel
     {

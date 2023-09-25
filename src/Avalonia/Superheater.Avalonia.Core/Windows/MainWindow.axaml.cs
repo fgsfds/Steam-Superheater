@@ -1,8 +1,8 @@
 ﻿using Avalonia.Controls;
-using SteamFDA.ViewModels;
-using SteamFDCommon.DI;
+using Superheater.Avalonia.Core.ViewModels;
+using Common.DI;
 
-namespace SteamFDA.Windows;
+namespace Superheater.Avalonia.Core.Windows;
 
 public partial class MainWindow : Window
 {

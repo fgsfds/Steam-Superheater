@@ -3,14 +3,14 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using SteamFDA.DI;
-using SteamFDA.Pages;
-using SteamFDA.Windows;
-using SteamFDCommon.Config;
-using SteamFDCommon.DI;
+using Superheater.Avalonia.Core.DI;
+using Superheater.Avalonia.Core.Pages;
+using Superheater.Avalonia.Core.Windows;
+using Common.Config;
+using Common.DI;
 using System;
 
-namespace SteamFDA;
+namespace Superheater.Avalonia.Core;
 
 public partial class App : Application
 {

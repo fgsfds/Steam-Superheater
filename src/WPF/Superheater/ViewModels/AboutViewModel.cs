@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using SteamFDCommon.Helpers;
+using Common.Helpers;
 using System;
 
-namespace SteamFD.ViewModels
+namespace Superheater.ViewModels
 {
     internal partial class AboutViewModel : ObservableObject
     {

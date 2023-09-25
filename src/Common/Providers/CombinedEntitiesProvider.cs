@@ -1,9 +1,9 @@
-﻿using SteamFDCommon.CombinedEntities;
-using SteamFDCommon.DI;
-using SteamFDCommon.Entities;
+﻿using Common.CombinedEntities;
+using Common.DI;
+using Common.Entities;
 using System.Collections.ObjectModel;
 
-namespace SteamFDCommon.Providers
+namespace Common.Providers
 {
     public static class CombinedEntitiesProvider
     {

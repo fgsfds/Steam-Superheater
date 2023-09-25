@@ -1,11 +1,11 @@
-﻿using SteamFDCommon.Config;
-using SteamFDCommon.DI;
-using SteamFDCommon.Entities;
-using SteamFDCommon.Helpers;
+﻿using Common.Config;
+using Common.DI;
+using Common.Entities;
+using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
 
-namespace SteamFDCommon.FixTools
+namespace Common.FixTools
 {
     public static class FixInstaller
     {

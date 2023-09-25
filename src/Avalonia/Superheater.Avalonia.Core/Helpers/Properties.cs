@@ -2,7 +2,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 
-namespace SteamFDA.Helpers
+namespace Superheater.Avalonia.Core.Helpers
 {
     internal static class Properties
     {

@@ -4,7 +4,7 @@ using Avalonia.Media.Imaging;
 using System;
 using System.Globalization;
 
-namespace SteamFDA.Helpers
+namespace Superheater.Avalonia.Core.Helpers
 {
     /// <summary>
     /// Converts bool to one of two strings

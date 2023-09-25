@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using SteamFDCommon.Entities;
-using SteamFDCommon.Helpers;
+using Common.Entities;
+using Common.Helpers;
 
-namespace SteamFDCommon.Providers
+namespace Common.Providers
 {
     public static class GithubReleasesProvider
     {
@@ -14,7 +14,7 @@ namespace SteamFDCommon.Providers
         {
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("SteamFD");
+                client.DefaultRequestHeaders.UserAgent.ParseAdd("Superheater");
 
                 var a = await client.GetStringAsync(Consts.GitHubReleases);
 

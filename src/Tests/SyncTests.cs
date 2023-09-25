@@ -1,7 +1,7 @@
-using SteamFDCommon.DI;
-using SteamFDCommon.Entities;
-using SteamFDCommon.FixTools;
-using SteamFDCommon.Providers;
+using Common.DI;
+using Common.Entities;
+using Common.FixTools;
+using Common.Providers;
 using System.IO.Compression;
 using System.Security.Cryptography;
 

@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon.Models;
-using SteamFDCommon.Entities;
+using Common.Models;
+using Common.Entities;
 using System;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
-using SteamFDCommon.Helpers;
+using Common.Helpers;
 
-namespace SteamFDA.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels
 {
     internal partial class NewsViewModel : ObservableObject
     {

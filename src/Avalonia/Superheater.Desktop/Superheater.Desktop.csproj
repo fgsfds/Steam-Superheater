@@ -12,7 +12,7 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Configurations>Debug;Release</Configurations>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
-    <StartupObject>SteamFDA.Desktop.Program</StartupObject>
+    <StartupObject>Superheater.Desktop.Program</StartupObject>
     <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>

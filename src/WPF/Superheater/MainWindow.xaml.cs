@@ -1,10 +1,10 @@
-﻿using SteamFD.DI;
-using SteamFDCommon.Config;
-using SteamFDCommon.DI;
+﻿using Superheater.DI;
+using Common.Config;
+using Common.DI;
 using System;
 using System.Windows;
 
-namespace SteamFD
+namespace Superheater
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml

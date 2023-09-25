@@ -1,13 +1,13 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using SteamFDCommon.Config;
-using SteamFDCommon.Helpers;
+using Common.Config;
+using Common.Helpers;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System;
 using System.Windows.Controls;
 
-namespace SteamFD.ViewModels
+namespace Superheater.ViewModels
 {
     public partial class SettingsViewModel : ObservableObject
     {

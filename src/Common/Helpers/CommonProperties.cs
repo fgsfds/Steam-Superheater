@@ -1,8 +1,8 @@
-﻿using SteamFDCommon.Config;
-using SteamFDCommon.DI;
+﻿using Common.Config;
+using Common.DI;
 using System.Reflection;
 
-namespace SteamFDCommon.Helpers
+namespace Common.Helpers
 {
     public class CommonProperties
     {

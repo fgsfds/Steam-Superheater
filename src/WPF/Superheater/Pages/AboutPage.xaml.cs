@@ -1,10 +1,10 @@
-﻿using SteamFD.ViewModels;
-using SteamFDCommon.DI;
+﻿using Superheater.ViewModels;
+using Common.DI;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace SteamFD.Pages
+namespace Superheater.Pages
 {
     /// <summary>
     /// Interaction logic for AboutPage.xaml

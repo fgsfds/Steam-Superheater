@@ -1,7 +1,7 @@
 ﻿using SimpleInjector;
-using SteamFD.ViewModels;
+using Superheater.ViewModels;
 
-namespace SteamFD.DI
+namespace Superheater.DI
 {
     public static class ViewModelsBindings
     {

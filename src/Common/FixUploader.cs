@@ -1,6 +1,6 @@
 ﻿using FluentFTP;
 
-namespace SteamFDCommon
+namespace Common
 {
     public static class FixUploader
     {
