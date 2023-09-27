@@ -24,6 +24,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
 
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+
         public ObservableCollection<FixesList> FilteredGamesList { get; init; }
 
         public ObservableCollection<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes;

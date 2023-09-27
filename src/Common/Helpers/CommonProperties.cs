@@ -11,5 +11,7 @@ namespace Common.Helpers
         public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
 
         public static string ExecutableName => System.Diagnostics.Process.GetCurrentProcess().MainModule.ModuleName;
+
+        public static bool IsDeveloperMode { get; set; }
     }
 }

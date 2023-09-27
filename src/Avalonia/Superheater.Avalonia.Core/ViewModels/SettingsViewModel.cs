@@ -19,6 +19,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
 
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+
         public bool LocalPathTextboxChanged;
         public bool IsDefaultTheme => _config.Theme.Equals("System");
         public bool IsLightTheme => _config.Theme.Equals("Light");

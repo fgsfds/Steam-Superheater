@@ -61,13 +61,15 @@
 
             <Button Margin="3,0"
                     Padding="8"
-                    Command="{Binding SaveChangesCommand}">
+                    Command="{Binding SaveChangesCommand}"
+                    IsVisible="{Binding IsDeveloperMode}">
                 Save changes
             </Button>
 
             <Button Margin="3,0,0,0"
                     Padding="8"
-                    Command="{Binding OpenXmlFileCommand}">
+                    Command="{Binding OpenXmlFileCommand}"
+                    IsVisible="{Binding IsDeveloperMode}">
                 Open XML...
             </Button>
 

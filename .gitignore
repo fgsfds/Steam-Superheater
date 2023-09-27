@@ -454,3 +454,4 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 /config.xml
 /installed.xml
+/src/Avalonia/Superheater.Desktop/Properties/launchSettings.json

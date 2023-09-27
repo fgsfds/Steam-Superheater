@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Avalonia;
 using Common;
 using Common.Helpers;
@@ -15,6 +16,11 @@ class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        if (args.Contains("-dev"))
+        {
+            CommonProperties.IsDeveloperMode = true;
+        }
+
         var dir = Directory.GetCurrentDirectory();
 
         if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
