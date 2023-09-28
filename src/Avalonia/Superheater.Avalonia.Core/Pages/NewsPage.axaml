@@ -20,40 +20,40 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
+
                         <StackPanel Orientation="Vertical">
 
-                            <Border Name="NewsBorder"
-                                    CornerRadius="3"
-                                    Padding="10"
-                                    Margin="5"
-                                    BorderThickness="2"
-                                    Classes.IsNew="{Binding IsNewer}">
+                            <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="2"
+                                      IsExpanded="{Binding IsNewer}"
+                                      IsVisible="{Binding IsNewer}"
+                                      Classes.IsNew="{Binding IsNewer}">
 
-                                <Border.Styles>
-                                    <Style Selector="Border.IsNew">
-                                        <Style.Setters>
-                                            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
-                                        </Style.Setters>
+                                <Expander.Styles>
+                                    <Style Selector="Expander /template/ ToggleButton">
+                                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
                                     </Style>
-                                    <Style Selector="Border">
-                                        <Style.Setters>
-                                            <Setter Property="BorderBrush" Value="LightGray"/>
-                                        </Style.Setters>
+                                    <Style Selector=":pointerover /template/ Border#ToggleButtonBackground">
+                                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
                                     </Style>
-                                </Border.Styles>
+                                    <Style Selector=":pressed /template/ Border#ToggleButtonBackground">
+                                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                    </Style>
+                                </Expander.Styles>
 
-                                <StackPanel Orientation="Vertical">
+                                <TextBlock Text="{Binding Content}"
+                                           FontSize="16"/>
+                            </Expander>
 
-                                    <TextBlock Text="{Binding Date, StringFormat=dd.MM.yyyy}"
-                                               FontSize="12"
-                                               FontWeight="Bold"/>
+                            <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
+                                      HorizontalAlignment="Stretch"
+                                      Margin="2"
+                                      IsVisible="{Binding !IsNewer}">
 
-                                    <TextBlock Text="{Binding Content}"
-                                               FontSize="16"/>
-
-                                </StackPanel>
-
-                            </Border>
+                                <TextBlock Text="{Binding Content}"
+                                           FontSize="16"/>
+                            </Expander>
 
                         </StackPanel>
 
