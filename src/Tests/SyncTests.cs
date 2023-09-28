@@ -77,6 +77,43 @@ namespace Tests
         [TestMethod]
         public async Task InstallUninstallFixVariantTest() => await InstallUninstallFixAsync("variant1");
 
+        [TestMethod]
+        public async Task InstallFixInANewFolder()
+        {
+            string gameFolder = PrepareGameFolder();
+
+            File.Copy($"..\\Resources\\test_fix.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
+
+            GameEntity gameEntity = new(
+                1,
+                "test game",
+                gameFolder
+            );
+
+            FixEntity fixEntity = new()
+            {
+                Name = "test fix",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = "test_fix.zip",
+                InstallFolder = "new folder"
+            };
+
+            var installedFix = await FixInstaller.InstallFix(gameEntity, fixEntity, null);
+
+            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+
+            var exeExists = File.Exists("game\\new folder\\start game.exe");
+            Assert.IsTrue(exeExists);
+
+            fixEntity.InstalledFix = installedFix;
+
+            FixUninstaller.UninstallFix(gameEntity, fixEntity);
+
+            var newDirExists = Directory.Exists("game\\new folder");
+            Assert.IsFalse(newDirExists);
+        }
+
         #endregion Tests
 
         #region Private Methods

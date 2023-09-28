@@ -18,6 +18,8 @@ namespace Common.FixTools
         /// <param name="fix">Fix entity</param>
         public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
+            Logger.Log($"Starting {fix.Name} fix installation...");
+
             var zipName = Path.GetFileName(fix.Url);
 
             var zipFullPath = _config.UseLocalRepo
@@ -57,6 +59,8 @@ namespace Common.FixTools
             }
 
             InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, filesInArchive);
+
+            Logger.Log($"{fix.Name} fix installed");
 
             return installedFix;
         }
@@ -228,6 +232,12 @@ namespace Common.FixTools
                     else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
                     {
                         files.Add(fullName);
+                    }
+
+                    //if directory that the archive will be extracted to doesn't exist, add it to the list too
+                    if (!Directory.Exists(unpackToPath))
+                    {
+                        files.Add(unpackToPath);
                     }
                 }
             }

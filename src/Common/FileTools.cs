@@ -90,7 +90,10 @@ namespace Common
                             ? Path.Combine(unpackTo, zipEntry.FullName)
                             : Path.Combine(unpackTo, zipEntry.FullName.Replace(variant + "/", string.Empty));
 
-                        var aa = Path.GetFileName(fullName);
+                        if (!Directory.Exists(Path.GetDirectoryName(fullName)))
+                        {
+                            Directory.CreateDirectory(Path.GetDirectoryName(fullName));
+                        }
 
                         if (Path.GetFileName(fullName).Length == 0)
                         {

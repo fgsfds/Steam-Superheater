@@ -20,7 +20,7 @@ namespace Common.Entities
         /// <summary>
         /// Game install directory
         /// </summary>
-        public string InstallDir { get; init; }
+        public string InstallDir { get; set; }
 
         /// <summary>
         /// Game icon
