@@ -226,7 +226,7 @@ namespace Common.FixTools
                         .Replace('/', Path.DirectorySeparatorChar);
 
                     //if it's a file, add it to the list
-                    if (!fullName.EndsWith("\\") ||
+                    if (!fullName.EndsWith("\\") &&
                         !fullName.EndsWith("/"))
                     {
                         files.Add(fullName);
