@@ -6,7 +6,7 @@ using Common.Providers;
 
 namespace Common.Models
 {
-    public class MainModel
+    public sealed class MainModel
     {
         private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
         private readonly ConfigEntity _config;

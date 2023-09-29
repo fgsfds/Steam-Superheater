@@ -11,7 +11,7 @@ namespace Tests
     /// Tests that use instance data and should be run in single thread
     /// </summary>
     [TestClass]
-    public class SyncTests
+    public sealed class SyncTests
     {
         private const string TestTempFolder = "test_temp";
         private static readonly object LockObject = new();

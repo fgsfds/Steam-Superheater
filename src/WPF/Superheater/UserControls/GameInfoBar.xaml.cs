@@ -18,7 +18,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for GameInfoBar.xaml
     /// </summary>
-    public partial class GameInfoBar : UserControl
+    public sealed partial class GameInfoBar : UserControl
     {
         public GameInfoBar()
         {

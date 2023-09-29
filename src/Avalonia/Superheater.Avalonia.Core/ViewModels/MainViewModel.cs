@@ -18,7 +18,7 @@ using Superheater.Avalonia.Core.Helpers;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class MainViewModel : ObservableObject
+    internal sealed partial class MainViewModel : ObservableObject
     {
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;

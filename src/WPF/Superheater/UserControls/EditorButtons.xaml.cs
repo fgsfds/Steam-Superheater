@@ -19,7 +19,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for EditorButtons.xaml
     /// </summary>
-    public partial class EditorButtons : UserControl
+    public sealed partial class EditorButtons : UserControl
     {
         public EditorButtons()
         {

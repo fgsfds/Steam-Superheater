@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
-    public partial class MainLists : UserControl
+    public sealed partial class MainLists : UserControl
     {
         public MainLists()
         {

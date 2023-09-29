@@ -18,7 +18,7 @@ using Common.Providers;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class EditorViewModel : ObservableObject
+    internal sealed partial class EditorViewModel : ObservableObject
     {
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;

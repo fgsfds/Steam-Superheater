@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Common.Entities
 {
-    internal class GithubReleaseEntity
+    internal sealed class GithubReleaseEntity
     {
-        public class Root
+        public sealed class Root
         {
             public string url { get; set; }
             public string assets_url { get; set; }
@@ -30,7 +30,7 @@ namespace Common.Entities
             public string body { get; set; }
         }
 
-        public class Author
+        public sealed class Author
         {
             public string login { get; set; }
             public int id { get; set; }
@@ -52,7 +52,7 @@ namespace Common.Entities
             public bool site_admin { get; set; }
         }
 
-        public class Asset
+        public sealed class Asset
         {
             public string url { get; set; }
             public int id { get; set; }
@@ -69,7 +69,7 @@ namespace Common.Entities
             public string browser_download_url { get; set; }
         }
 
-        public class Uploader
+        public sealed class Uploader
         {
             public string login { get; set; }
             public int id { get; set; }

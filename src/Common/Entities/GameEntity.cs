@@ -5,7 +5,7 @@ using Common;
 
 namespace Common.Entities
 {
-    public class GameEntity : ObservableObject
+    public sealed class GameEntity : ObservableObject
     {
         /// <summary>
         /// Steam game ID

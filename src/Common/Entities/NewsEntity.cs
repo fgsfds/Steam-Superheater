@@ -2,7 +2,7 @@
 
 namespace Common.Entities
 {
-    public partial class NewsEntity : ObservableObject
+    public sealed partial class NewsEntity : ObservableObject
     {
         /// <summary>
         /// Version of the news article

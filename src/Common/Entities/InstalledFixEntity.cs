@@ -1,6 +1,6 @@
 ﻿namespace Common.Entities
 {
-    public class InstalledFixEntity
+    public sealed class InstalledFixEntity
     {
         /// <summary>
         /// Steam game ID

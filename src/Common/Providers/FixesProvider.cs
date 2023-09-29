@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public class FixesProvider
+    public sealed class FixesProvider
     {
         private bool _isCacheUpdating;
 

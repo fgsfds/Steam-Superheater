@@ -11,7 +11,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for ListsControl.xaml
     /// </summary>
-    public partial class MainListsControl : UserControl
+    public sealed partial class MainListsControl : UserControl
     {
         public MainListsControl()
         {

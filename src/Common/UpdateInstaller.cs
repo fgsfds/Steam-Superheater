@@ -5,7 +5,7 @@ using System.IO.Compression;
 
 namespace Common
 {
-    public class UpdateInstaller
+    public sealed class UpdateInstaller
     {
         private readonly List<UpdateEntity> _updates;
 

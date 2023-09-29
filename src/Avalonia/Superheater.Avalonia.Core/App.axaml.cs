@@ -12,7 +12,7 @@ using System;
 
 namespace Superheater.Avalonia.Core;
 
-public partial class App : Application
+public sealed partial class App : Application
 {
     public override void Initialize()
     {

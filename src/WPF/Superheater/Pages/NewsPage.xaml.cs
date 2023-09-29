@@ -7,7 +7,7 @@ namespace Superheater.Pages
     /// <summary>
     /// Interaction logic for NewsControl.xaml
     /// </summary>
-    public partial class NewsPage : UserControl
+    public sealed partial class NewsPage : UserControl
     {
         private readonly NewsViewModel _nvm;
 

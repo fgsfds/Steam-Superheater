@@ -10,7 +10,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// Converts bool to one of two strings
     /// Strings separated by ;
     /// </summary>
-    internal class BoolToStringConverter : IValueConverter
+    internal sealed class BoolToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -27,7 +27,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// <summary>
     /// Reverses bool value
     /// </summary>
-    internal class ReverseBool : IValueConverter
+    internal sealed class ReverseBool : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -43,7 +43,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// <summary>
     /// Converts bool to color from a string of two colors separated by ;
     /// </summary>
-    internal class BoolToColorConverter : IValueConverter
+    internal sealed class BoolToColorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -61,7 +61,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// <summary>
     /// Converts path to image to Bitmap
     /// </summary>
-    internal class ImagePathToBitmapConverter : IValueConverter
+    internal sealed class ImagePathToBitmapConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

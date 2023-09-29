@@ -3,7 +3,7 @@ using Common;
 
 namespace Common.Providers
 {
-    public class GamesProvider
+    public sealed class GamesProvider
     {
         private bool _isCacheUpdating;
 

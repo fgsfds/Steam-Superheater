@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public class NewsProvider
+    public sealed class NewsProvider
     {
         private bool _isCacheUpdating;
 

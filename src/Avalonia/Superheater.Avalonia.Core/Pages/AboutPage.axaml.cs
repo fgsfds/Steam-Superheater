@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.Pages
 {
-    public partial class AboutPage : UserControl
+    public sealed partial class AboutPage : UserControl
     {
         private readonly AboutViewModel _avm;
 

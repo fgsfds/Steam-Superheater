@@ -4,7 +4,7 @@ using Common.DI;
 
 namespace Superheater.Avalonia.Core.Pages
 {
-    public partial class NewsPage : UserControl
+    public sealed partial class NewsPage : UserControl
     {
         private readonly NewsViewModel _nvm;
 

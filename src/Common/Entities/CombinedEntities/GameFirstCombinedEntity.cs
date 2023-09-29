@@ -6,7 +6,7 @@ namespace Common.CombinedEntities
     /// <summary>
     /// Object that combines game and its fixes
     /// </summary>
-    public class GameFirstCombinedEntity
+    public sealed class GameFirstCombinedEntity
     {
         /// <summary>
         /// Game entity

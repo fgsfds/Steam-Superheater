@@ -18,7 +18,7 @@ using System.Windows;
 
 namespace Superheater.ViewModels
 {
-    internal partial class MainViewModel : ObservableObject
+    internal sealed partial class MainViewModel : ObservableObject
     {
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;

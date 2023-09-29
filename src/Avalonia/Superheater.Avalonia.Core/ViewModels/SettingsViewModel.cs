@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class SettingsViewModel : ObservableObject
+    internal sealed partial class SettingsViewModel : ObservableObject
     {
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;

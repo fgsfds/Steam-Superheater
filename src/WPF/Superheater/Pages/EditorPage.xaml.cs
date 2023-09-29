@@ -7,7 +7,7 @@ namespace Superheater.Pages
     /// <summary>
     /// Interaction logic for EditorControl.xaml
     /// </summary>
-    public partial class EditorPage : UserControl
+    public sealed partial class EditorPage : UserControl
     {
         private readonly EditorViewModel _evm;
 

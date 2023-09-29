@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace Superheater.ViewModels
 {
-    public partial class SettingsViewModel : ObservableObject
+    public sealed partial class SettingsViewModel : ObservableObject
     {
         private readonly ConfigEntity _config;
 

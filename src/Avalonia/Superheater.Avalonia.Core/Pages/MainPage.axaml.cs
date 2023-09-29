@@ -4,7 +4,7 @@ using Common.DI;
 
 namespace Superheater.Avalonia.Core.Pages
 {
-    public partial class MainPage : UserControl
+    public sealed partial class MainPage : UserControl
     {
         private readonly MainViewModel _mvm;
 

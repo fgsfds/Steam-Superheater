@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Common.Entities
 {
-    public class UpdateEntity
+    public sealed class UpdateEntity
     {
         public Version Version { get; set; }
 

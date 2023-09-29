@@ -1,6 +1,6 @@
 ﻿namespace Common.Helpers
 {
-    public class Consts
+    public sealed class Consts
     {
         public const string ConfigFile = "config.xml";
 

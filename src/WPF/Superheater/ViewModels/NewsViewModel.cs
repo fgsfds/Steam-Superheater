@@ -12,7 +12,7 @@ using Common.Helpers;
 
 namespace Superheater.ViewModels
 {
-    public partial class NewsViewModel : ObservableObject
+    public sealed partial class NewsViewModel : ObservableObject
     {
         private readonly NewsModel _newsModel;
 

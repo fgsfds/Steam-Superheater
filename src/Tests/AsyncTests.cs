@@ -8,7 +8,7 @@ namespace Tests
     /// Tests that can be run in parallel
     /// </summary>
     [TestClass]
-    public class AsyncTests
+    public sealed class AsyncTests
     {
         [TestMethod]
         public async Task GetNewerReleasesTest()

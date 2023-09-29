@@ -7,7 +7,7 @@ using System.Xml.Serialization;
 
 namespace Common.Models
 {
-    public class EditorModel
+    public sealed class EditorModel
     {
         private readonly SortedList<string, FixesList> _fixesList;
 

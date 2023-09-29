@@ -2,7 +2,7 @@
 
 namespace Common
 {
-    public class FileTools
+    public sealed class FileTools
     {
         /// <summary>
         /// Operation progress

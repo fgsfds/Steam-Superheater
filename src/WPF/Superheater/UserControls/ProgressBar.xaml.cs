@@ -18,7 +18,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for ProgressBar.xaml
     /// </summary>
-    public partial class ProgressBar : UserControl
+    public sealed partial class ProgressBar : UserControl
     {
         public ProgressBar()
         {

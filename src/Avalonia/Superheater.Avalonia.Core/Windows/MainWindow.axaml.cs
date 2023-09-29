@@ -4,7 +4,7 @@ using Common.DI;
 
 namespace Superheater.Avalonia.Core.Windows;
 
-public partial class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     private readonly MainWindowViewModel _mwvm;
 

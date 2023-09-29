@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Common.Helpers
 {
-    public class CommonProperties
+    public sealed class CommonProperties
     {
         public static string LocalRepo => BindingsManager.Instance.GetInstance<ConfigProvider>().Config.LocalRepoPath;
 

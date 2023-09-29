@@ -5,7 +5,7 @@ using System;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class PopupMessageViewModel : ObservableObject
+    internal sealed partial class PopupMessageViewModel : ObservableObject
     {
         private readonly MainWindowViewModel _mwvm;
         private readonly Action? _okAction;

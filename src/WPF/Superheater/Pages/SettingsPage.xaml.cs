@@ -8,7 +8,7 @@ namespace Superheater.Pages
     /// <summary>
     /// Interaction logic for SettingsPage.xaml
     /// </summary>
-    public partial class SettingsPage : UserControl
+    public sealed partial class SettingsPage : UserControl
     {
         private readonly SettingsViewModel _svm;
 

@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
-    public partial class EditorButtons : UserControl
+    public sealed partial class EditorButtons : UserControl
     {
         public EditorButtons()
         {

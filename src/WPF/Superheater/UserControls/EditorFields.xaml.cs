@@ -18,7 +18,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for EditorFields.xaml
     /// </summary>
-    public partial class EditorFields : UserControl
+    public sealed partial class EditorFields : UserControl
     {
         public EditorFields()
         {

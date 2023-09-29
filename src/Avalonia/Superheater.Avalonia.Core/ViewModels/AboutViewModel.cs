@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class AboutViewModel : ObservableObject
+    internal sealed partial class AboutViewModel : ObservableObject
     {
         private readonly UpdateInstaller _updateInstaller;
 

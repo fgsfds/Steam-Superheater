@@ -4,7 +4,7 @@ using Common.Providers;
 
 namespace Common.Models
 {
-    public class NewsModel
+    public sealed class NewsModel
     {
         private readonly ConfigEntity _config;
         private readonly NewsProvider _newsProvider;

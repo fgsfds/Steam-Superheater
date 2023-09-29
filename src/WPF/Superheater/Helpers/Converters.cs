@@ -3,7 +3,7 @@ using System.Windows.Data;
 
 namespace Superheater.Helpers
 {
-    public class BoolToStringConverter : IValueConverter
+    public sealed class BoolToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -17,7 +17,7 @@ namespace Superheater.Helpers
         }
     }
 
-    public class ReverseBool : IValueConverter
+    public sealed class ReverseBool : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

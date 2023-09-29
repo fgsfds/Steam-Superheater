@@ -2,7 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class MainWindowViewModel : ObservableObject
+    internal sealed partial class MainWindowViewModel : ObservableObject
     {
         [ObservableProperty]
         public PopupMessageViewModel? _popupDataContext;

@@ -4,7 +4,7 @@ using System;
 
 namespace Superheater.ViewModels
 {
-    internal partial class AboutViewModel : ObservableObject
+    internal sealed partial class AboutViewModel : ObservableObject
     {
         public Version CurrentVersion => CommonProperties.CurrentVersion;
     }

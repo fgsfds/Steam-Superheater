@@ -1,6 +1,6 @@
 ﻿namespace Common.Config
 {
-    public class ConfigEntity
+    public sealed class ConfigEntity
     {
         public delegate void ConfigChanged();
         public event ConfigChanged NotifyConfigChanged;

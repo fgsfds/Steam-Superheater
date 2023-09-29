@@ -3,7 +3,7 @@ using Common.Helpers;
 
 namespace Common.Config
 {
-    public class ConfigProvider
+    public sealed class ConfigProvider
     {
         /// <summary>
         /// Current config

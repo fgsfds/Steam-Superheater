@@ -2,7 +2,7 @@ using Avalonia.Controls;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
-    public partial class EditorFields : UserControl
+    public sealed partial class EditorFields : UserControl
     {
         public EditorFields()
         {

@@ -7,7 +7,7 @@ namespace Superheater.Pages
     /// <summary>
     /// Interaction logic for MainForm.xaml
     /// </summary>
-    public partial class MainPage : UserControl
+    public sealed partial class MainPage : UserControl
     {
         private readonly MainViewModel _mvm;
 

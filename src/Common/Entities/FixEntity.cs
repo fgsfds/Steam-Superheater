@@ -6,7 +6,7 @@ namespace Common.Entities
     /// <summary>
     /// Entity containing game information and a list of fixes for it
     /// </summary>
-    public class FixesList
+    public sealed class FixesList
     {
         /// <summary>
         /// Steam ID of the game
@@ -45,7 +45,7 @@ namespace Common.Entities
     /// <summary>
     /// Fix entity
     /// </summary>
-    public partial class FixEntity : ObservableObject
+    public sealed partial class FixEntity : ObservableObject
     {
         /// <summary>
         /// Fix title

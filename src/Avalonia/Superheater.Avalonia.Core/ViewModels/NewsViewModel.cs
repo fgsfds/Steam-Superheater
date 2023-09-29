@@ -11,7 +11,7 @@ using Common.Helpers;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal partial class NewsViewModel : ObservableObject
+    internal sealed partial class NewsViewModel : ObservableObject
     {
         private readonly NewsModel _newsModel;
 

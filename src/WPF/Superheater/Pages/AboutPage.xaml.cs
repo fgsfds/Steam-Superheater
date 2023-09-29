@@ -9,7 +9,7 @@ namespace Superheater.Pages
     /// <summary>
     /// Interaction logic for AboutPage.xaml
     /// </summary>
-    public partial class AboutPage : UserControl
+    public sealed partial class AboutPage : UserControl
     {
         private readonly AboutViewModel _avm;
 

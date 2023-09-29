@@ -18,7 +18,7 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for MainButtons.xaml
     /// </summary>
-    public partial class MainButtons : UserControl
+    public sealed partial class MainButtons : UserControl
     {
         public MainButtons()
         {

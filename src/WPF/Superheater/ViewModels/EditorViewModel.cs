@@ -17,7 +17,7 @@ using System.Windows;
 
 namespace Superheater.ViewModels
 {
-    public partial class EditorViewModel : ObservableObject
+    public sealed partial class EditorViewModel : ObservableObject
     {
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;

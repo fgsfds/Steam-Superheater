@@ -6,7 +6,7 @@ namespace Common.CombinedEntities
     /// <summary>
     /// Object that combines fixes list with installed game
     /// </summary>
-    public class FixFirstCombinedEntity
+    public sealed class FixFirstCombinedEntity
     {
         /// <summary>
         /// List of fixes
