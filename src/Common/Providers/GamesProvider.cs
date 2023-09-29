@@ -110,9 +110,10 @@ namespace Common.Providers
 
             if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(name))
             {
-                if (!dir.EndsWith("\\")) 
+                if (!dir.EndsWith("\\") ||
+                    !dir.EndsWith("/")) 
                 {
-                    dir += "\\";
+                    dir += Path.DirectorySeparatorChar;
                 }
 
                 return new GameEntity(id, name, dir);

@@ -3,6 +3,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using System;
 using System.Globalization;
+using System.IO;
 
 namespace Superheater.Avalonia.Core.Helpers
 {
@@ -65,6 +66,11 @@ namespace Superheater.Avalonia.Core.Helpers
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (!File.Exists((string)value))
+            {
+                return null;
+            }
+
             return new Bitmap((string)value);
         }
 

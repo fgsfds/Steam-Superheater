@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using Common.Helpers;
 using Common;
+using System.Runtime.InteropServices;
 
 namespace Common.Entities
 {
@@ -25,7 +26,10 @@ namespace Common.Entities
         /// <summary>
         /// Game icon
         /// </summary>
-        public string Icon => Path.Combine(SteamTools.SteamInstallPath, @$"appcache\librarycache\{Id}_icon.jpg");
+        public string Icon => Path.Combine(
+            SteamTools.SteamInstallPath,
+            @$"appcache{Path.DirectorySeparatorChar}librarycache{Path.DirectorySeparatorChar}{Id}_icon.jpg"
+            );
 
         /// <summary>
         /// Game executable
@@ -40,6 +44,11 @@ namespace Common.Entities
         {
             get
             {
+                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return false;
+                }
+
                 if (!_gamesThatRequireAdmin.ContainsKey(Id))
                 {
                     return false;
@@ -73,6 +82,11 @@ namespace Common.Entities
         /// </summary>
         public void SetRunAsAdmin()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
             Registry.SetValue(Consts.AdminRegistryKey, $"{InstallDir}{GameExecutable}", "~ RUNASADMIN");
             OnPropertyChanged(nameof(DoesRequireAdmin));
         }

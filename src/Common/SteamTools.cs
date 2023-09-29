@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Common
 {
@@ -9,7 +10,14 @@ namespace Common
 
         static SteamTools()
         {
-            SteamInstallPath = GetSteamInstallPath();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                SteamInstallPath = GetSteamInstallPathWindows();
+            }
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                SteamInstallPath = "/home/deck/.local/share/Steam";
+            }
         }
 
         /// <summary>
@@ -38,8 +46,13 @@ namespace Common
         /// Get Steam install path
         /// </summary>
         /// <returns></returns>
-        private static string? GetSteamInstallPath()
+        private static string? GetSteamInstallPathWindows()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return null;
+            }
+
             var path = (string?)Registry
                 .GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam", "SteamPath", null);
 
@@ -70,6 +83,11 @@ namespace Common
             }
 
             var libraryfolders = Path.Combine(steamInstallPath, "steamapps", "libraryfolders.vdf");
+
+            if (!File.Exists(libraryfolders)) 
+            {
+                return new();
+            }
 
             var lines = File.ReadAllLines(libraryfolders);
 
