@@ -38,7 +38,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
+        public List<FixEntity>? SelectedGameFixesList =>
+            SelectedGame?.FixesList.Fixes
+            .Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToList();
 
         /// <summary>
         /// List of selected fix's variants
