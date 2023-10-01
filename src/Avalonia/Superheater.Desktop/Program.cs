@@ -37,7 +37,11 @@ sealed class Program
             }
             catch (Exception ex)
             {
+                Logger.Log(Environment.OSVersion.ToString());
+                Logger.Log(CommonProperties.CurrentVersion.ToString());
                 Logger.Log(ex.ToString());
+
+                Logger.UploadLog();
             }
         }
     }
@@ -68,5 +72,4 @@ sealed class Program
             }
         }
     }
-
 }

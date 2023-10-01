@@ -18,8 +18,6 @@ namespace Common.FixTools
         /// <param name="fix">Fix entity</param>
         public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
-            Logger.Log($"Starting {fix.Name} fix installation...");
-
             var zipName = Path.GetFileName(fix.Url);
 
             var zipFullPath = _config.UseLocalRepo
@@ -59,8 +57,6 @@ namespace Common.FixTools
             }
 
             InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, filesInArchive);
-
-            Logger.Log($"{fix.Name} fix installed");
 
             return installedFix;
         }

@@ -235,7 +235,7 @@ namespace Common.Models
                     filesToUpload.Add(fileToUpload);
                 }
 
-                return FixUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
+                return FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
             }
         }
     }
