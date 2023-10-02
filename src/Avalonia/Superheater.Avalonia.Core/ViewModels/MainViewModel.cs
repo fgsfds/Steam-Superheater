@@ -47,6 +47,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         public List<string>? FixVariants => SelectedFix?.Variants;
 
+        public bool IsSteamGameMode => CommonProperties.IsSteamGameMode;
+
         /// <summary>
         /// Selected fix variant
         /// </summary>

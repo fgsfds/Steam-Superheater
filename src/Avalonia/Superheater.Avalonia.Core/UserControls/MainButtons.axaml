@@ -17,7 +17,8 @@
 
             <Button Command="{Binding OpenGameFolderCommand}"
                     Margin="0,0,3,0"
-                    Padding="8">
+                    Padding="8"
+                    IsVisible="{Binding !IsSteamGameMode}">
                 Open game folder...
             </Button>
 
