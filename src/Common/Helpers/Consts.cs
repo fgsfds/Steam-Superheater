@@ -10,8 +10,6 @@
 
         public const string InstalledFile = "installed.xml";
 
-        public const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/";
-
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
@@ -23,5 +21,8 @@
         public const string UpdateFile = ".update";
 
         public const string UpdateFolder = "update";
+
+
+        internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
     }
 }

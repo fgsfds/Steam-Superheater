@@ -8,22 +8,31 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using Common.Helpers;
+using Superheater.Avalonia.Core.Helpers;
+using Common.Config;
+using System.Threading;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class NewsViewModel : ObservableObject
     {
+        private bool IsDeveloperMode => Properties.IsDeveloperMode;
         private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public ObservableCollection<NewsEntity> NewsList { get; set; }
 
         public string NewsTabHeader { get; private set; }
 
-        public NewsViewModel(NewsModel newsModel)
+        public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
         {
+            _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
             NewsList = new();
             NewsTabHeader = "News";
             _newsModel = newsModel;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
 
@@ -87,6 +96,18 @@ namespace Superheater.Avalonia.Core.ViewModels
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
             OnPropertyChanged(nameof(NewsTabHeader));
             MarkAllAsReadCommand.NotifyCanExecuteChanged();
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                await _locker.WaitAsync();
+                await UpdateAsync();
+                _locker.Release();
+            }
         }
     }
 }

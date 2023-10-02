@@ -31,11 +31,10 @@
 
         <Grid RowDefinitions="25,*">
 
-            <TextBlock Margin="5,5,0,0"
+            <TextBlock Margin="10,5,0,0"
                        Foreground="Tomato"
-                       IsVisible="{Binding IsLocalRepoWarningEnabled}">
-                Local repository is used
-            </TextBlock>
+                       IsVisible="{Binding IsDeveloperMode}"
+                       Text="{Binding RepositoryMessage}"/>
 
             <TabControl Grid.Row="1" Margin="5">
                 <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,10,10">

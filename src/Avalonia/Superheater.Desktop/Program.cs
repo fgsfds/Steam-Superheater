@@ -5,6 +5,7 @@ using Avalonia;
 using Common;
 using Common.Helpers;
 using Superheater.Avalonia.Core;
+using Superheater.Avalonia.Core.Helpers;
 
 namespace Superheater.Desktop;
 
@@ -18,7 +19,7 @@ sealed class Program
     {
         if (args.Contains("-dev"))
         {
-            CommonProperties.IsDeveloperMode = true;
+            Properties.IsDeveloperMode = true;
         }
 
         var dir = Directory.GetCurrentDirectory();

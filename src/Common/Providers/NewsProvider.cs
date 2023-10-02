@@ -27,7 +27,7 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(CommonProperties.LocalRepo, Consts.NewsFile);
+                var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.NewsFile);
 
                 if (!File.Exists(file))
                 {
@@ -79,7 +79,7 @@ namespace Common.Providers
                 using (var client = new HttpClient())
                 {
                     client.Timeout = TimeSpan.FromSeconds(10);
-                    using var stream = await client.GetStreamAsync(Consts.MainFixesRepo + Consts.NewsFile);
+                    using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
                     using var file = new StreamReader(stream);
                     var newsXml = await file.ReadToEndAsync();
 

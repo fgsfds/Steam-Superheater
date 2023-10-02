@@ -103,7 +103,7 @@ namespace Common.Models
                 result += Environment.NewLine;
             }
 
-            File.WriteAllText(Path.Combine(CommonProperties.LocalRepo, "README.md"), result);
+            File.WriteAllText(Path.Combine(CommonProperties.LocalRepoPath, "README.md"), result);
         }
 
         /// <summary>

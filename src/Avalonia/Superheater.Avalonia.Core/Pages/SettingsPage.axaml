@@ -112,6 +112,24 @@
 
                 <StackPanel Orientation="Vertical">
 
+                    <!--Test branch switch-->
+                    <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+
+                        <ToggleSwitch IsChecked="{Binding UseTestRepoBranchCheckbox}"
+                                      Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      OnContent=""
+                                      OffContent=""
+                                      Margin="5"/>
+
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            Use fixes repository test branch
+                        </TextBlock>
+
+                    </Grid>
+
                     <!--Path to local repo-->
                     <Grid ColumnDefinitions="auto,*,auto,auto" RowDefinitions="*,*,*">
 
