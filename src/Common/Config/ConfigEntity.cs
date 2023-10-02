@@ -128,6 +128,21 @@
             }
         }
 
+        private bool _useTestRepoBranch;
+        public bool UseTestRepoBranch
+        {
+            get => _useTestRepoBranch;
+            set
+            {
+                if (_useTestRepoBranch != value)
+                {
+                    _useTestRepoBranch = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(UseTestRepoBranch));
+                }
+            }
+        }
+
         internal ConfigEntity()
         {
             _deleteZipsAfterInstall = true;

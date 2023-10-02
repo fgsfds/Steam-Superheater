@@ -11,6 +11,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -19,7 +20,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
 
-        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool LocalPathTextboxChanged;
         public bool IsDefaultTheme => _config.Theme.Equals("System");
@@ -45,7 +46,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         partial void OnUseLocalRepoCheckboxChanged(bool value)
         {
             _config.UseLocalRepo = value;
-            _mwvm.IsLocalRepoWarningEnabled = value;
+        }
+
+        [ObservableProperty]
+        private bool _useTestRepoBranchCheckbox;
+        partial void OnUseTestRepoBranchCheckboxChanged(bool value)
+        {
+            _config.UseTestRepoBranch = value;
         }
 
         [ObservableProperty]
@@ -85,6 +92,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             UseLocalRepoCheckbox = _config.UseLocalRepo;
             PathToLocalRepo = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
+            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
         }
 
 

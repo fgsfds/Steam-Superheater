@@ -103,7 +103,7 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(CommonProperties.LocalRepo, Consts.FixesFile);
+                var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile);
 
                 if (!File.Exists(file))
                 {
@@ -156,7 +156,7 @@ namespace Common.Providers
             using (var client = new HttpClient())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
-                using var stream = await client.GetStreamAsync(Consts.MainFixesRepo + Consts.FixesFile);
+                using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.FixesFile);
                 using var file = new StreamReader(stream);
                 var fixesXml = await file.ReadToEndAsync();
 
@@ -177,21 +177,21 @@ namespace Common.Providers
                 {
                     if (!fix.Url.StartsWith("http"))
                     {
-                        fix.Url = Path.Combine(Consts.MainFixesRepo + "fixes/" + fix.Url);
+                        fix.Url = Path.Combine(CommonProperties.CurrentFixesRepo + "fixes/" + fix.Url);
                     }
                 }
             }
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
 
-            if (!Directory.Exists(CommonProperties.LocalRepo))
+            if (!Directory.Exists(CommonProperties.LocalRepoPath))
             {
-                Directory.CreateDirectory(CommonProperties.LocalRepo);
+                Directory.CreateDirectory(CommonProperties.LocalRepoPath);
             }
 
             try
             {
-                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepo, Consts.FixesFile), FileMode.Create);
+                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
                 xmlSerializer.Serialize(fs, fixesList);
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
