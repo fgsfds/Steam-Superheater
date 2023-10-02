@@ -15,6 +15,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsUpdateAvailable { get; set; }
 
+        public bool IsAutoUpdateAvailable => OSEnumHelper.GetCurrentOS() is OSEnum.Windows && !IsUpdateAvailable;
+
         public bool IsInProgress { get; set; }
 
         public string CheckForUpdatesText { get; set; }
@@ -43,6 +45,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
         private async Task CheckForUpdates()
         {
+            if (!IsAutoUpdateAvailable)
+            {
+                return;
+            }
+
             IsInProgress = true;
             OnPropertyChanged(nameof(IsInProgress));
             CheckForUpdatesCommand.NotifyCanExecuteChanged();
