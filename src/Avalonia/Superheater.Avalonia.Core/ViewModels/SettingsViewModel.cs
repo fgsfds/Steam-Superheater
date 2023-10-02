@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -11,7 +10,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Runtime.CompilerServices;
+using System.Threading;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -19,6 +18,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 

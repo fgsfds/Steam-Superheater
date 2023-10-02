@@ -15,6 +15,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
+using System.Threading;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -23,6 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
         private bool _lockButtons;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public string MainTabHeader { get; private set; }
 
@@ -576,11 +578,21 @@ Do you want to set it to always run as admin?",
             OnPropertyChanged(nameof(ProgressBarValue));
         }
 
-        private void NotifyParameterChanged(string parameterName)
+        private async void NotifyParameterChanged(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
                 FillGamesList();
+            }
+
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+
+                await _locker.WaitAsync();
+                await UpdateAsync(false);
+                _locker.Release();
             }
         }
     }

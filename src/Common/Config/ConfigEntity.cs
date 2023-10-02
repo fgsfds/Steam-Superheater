@@ -153,6 +153,7 @@
             _theme = "System";
             _installedUpdater = 0;
             _showUninstalledGames = true;
+            _useTestRepoBranch = false;
         }
     }
 }

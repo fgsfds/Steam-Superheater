@@ -55,8 +55,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async Task UpdateAsync()
         {
-            await _locker.WaitAsync();
-
             try
             {
                 await _newsModel.UpdateNewsListAsync();
@@ -69,7 +67,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                     PopupMessageType.OkOnly
                     ).Show();
 
-                _locker.Release();
                 return;
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
@@ -80,14 +77,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     PopupMessageType.OkOnly
                     ).Show();
 
-                _locker.Release();
                 return;
             }
 
             FillNewsList();
             UpdateHeader();
-
-            _locker.Release();
         }
 
         private void FillNewsList()
@@ -110,7 +104,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
+                await _locker.WaitAsync();
                 await UpdateAsync();
+                _locker.Release();
             }
         }
     }

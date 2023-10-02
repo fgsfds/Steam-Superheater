@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Providers;
+using System.Threading;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -23,6 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
@@ -182,6 +184,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             FilteredGamesList = new();
             AvailableGamesList = new();
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
 
@@ -586,6 +590,19 @@ Please, upload it to file hosting.",
             }
 
             return true;
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+
+                await _locker.WaitAsync();
+                await UpdateAsync(false);
+                _locker.Release();
+            }
         }
     }
 }
