@@ -10,7 +10,7 @@
         <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
     </UserControl.Resources>
 
-    <Grid RowDefinitions="*,auto" Margin="5">
+    <Grid RowDefinitions="*,auto,auto" Margin="5">
 
         <ScrollViewer Grid.Row="0">
 
@@ -72,6 +72,16 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Mark all as read
+        </Button>
+
+        <Button Grid.Row="2"
+                Margin="5"
+                Padding="8"
+                IsVisible="{Binding IsDeveloperMode}"
+                Command="{Binding InitializeCommand}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center">
+            Update News
         </Button>
 
     </Grid>

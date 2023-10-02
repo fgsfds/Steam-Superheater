@@ -33,7 +33,7 @@ namespace Common.Models
         {
             _news.Clear();
 
-            var news = await _newsProvider.GetCachedNewsList();
+            var news = await _newsProvider.GetNewsListAsync();
 
             _news.AddRange(news);
 
