@@ -263,7 +263,12 @@ namespace Superheater.ViewModels
         /// Open fixes.xml file
         /// </summary>
         [RelayCommand]
-        private void OpenXmlFile() => Process.Start("explorer.exe", Path.Combine(_config.LocalRepoPath, Consts.FixesFile));
+        private void OpenXmlFile() =>
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(_config.LocalRepoPath, Consts.FixesFile),
+                UseShellExecute = true
+            }); 
 
         /// <summary>
         /// Add dependency for a fix

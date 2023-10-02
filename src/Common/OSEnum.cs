@@ -27,7 +27,7 @@ namespace Common
             {
                 return OSEnum.Windows;
             }
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return OSEnum.Linux;
             }

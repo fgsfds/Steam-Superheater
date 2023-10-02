@@ -68,26 +68,14 @@ namespace Common.FixTools
         /// <param name="runAfterInstall">File to open</param>
         private static void RunAfterInstall(string gameInstallPath, string runAfterInstall)
         {
-            var previousDir = Directory.GetCurrentDirectory();
+            var path = Path.Combine(gameInstallPath, runAfterInstall);
 
-            Directory.SetCurrentDirectory(gameInstallPath);
-
-            try
+            Process.Start(new ProcessStartInfo
             {
-                var path = Path.Combine(gameInstallPath, runAfterInstall);
-
-                Process proc = new()
-                {
-                    StartInfo = new ProcessStartInfo(path)
-                };
-
-                proc.Start();
-                //await proc.WaitForExitAsync();
-            }
-            finally
-            {
-                Directory.SetCurrentDirectory(previousDir);
-            }
+                FileName = path,
+                UseShellExecute = true,
+                WorkingDirectory = gameInstallPath
+            });
         }
 
         /// <summary>

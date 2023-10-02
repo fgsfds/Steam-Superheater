@@ -352,10 +352,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            Process.Start(
-                "explorer.exe",
-                SelectedGame.Game.InstallDir
-                );
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = SelectedGame.Game.InstallDir,
+                UseShellExecute = true
+            });
         }
         private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
 
@@ -553,25 +554,16 @@ Do you want to set it to always run as admin?",
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            using Process process = new();
-
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
 
-            if (SelectedFix.ConfigFile.EndsWith(".exe"))
+            var workingDir = SelectedFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
+
+            Process.Start(new ProcessStartInfo
             {
-                var dir = Path.GetDirectoryName(pathToConfig) ?? throw new NullReferenceException("dir");
-
-                Directory.SetCurrentDirectory(dir);
-
-                process.StartInfo.FileName = pathToConfig;
-            }
-            else
-            {
-                process.StartInfo.FileName = "explorer.exe";
-                process.StartInfo.Arguments = Path.Combine(pathToConfig);
-            }
-
-            process.Start();
+                FileName = Path.Combine(pathToConfig),
+                UseShellExecute = true,
+                WorkingDirectory = workingDir
+            });
         }
 
         private void Progress_ProgressChanged(object? sender, float e)

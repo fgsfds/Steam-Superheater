@@ -4,6 +4,8 @@ using Common;
 using Common.Helpers;
 using System;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -14,8 +16,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string AboutTabHeader { get; private set; }
 
         public bool IsUpdateAvailable { get; set; }
-
-        public bool IsAutoUpdateAvailable => OSEnumHelper.GetCurrentOS() is OSEnum.Windows && !IsUpdateAvailable;
 
         public bool IsInProgress { get; set; }
 
@@ -45,11 +45,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
         private async Task CheckForUpdates()
         {
-            if (!IsAutoUpdateAvailable)
-            {
-                return;
-            }
-
             IsInProgress = true;
             OnPropertyChanged(nameof(IsInProgress));
             CheckForUpdatesCommand.NotifyCanExecuteChanged();
@@ -99,13 +94,30 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
         private async Task DownloadAndInstall()
         {
-            IsInProgress = true;
-            OnPropertyChanged(nameof(IsInProgress));
-            DownloadAndInstallCommand.NotifyCanExecuteChanged();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IsInProgress = true;
+                OnPropertyChanged(nameof(IsInProgress));
+                DownloadAndInstallCommand.NotifyCanExecuteChanged();
 
-            await _updateInstaller.DownloadAndUnpackLatestRelease();
+                await _updateInstaller.DownloadAndUnpackLatestRelease();
 
-            UpdateInstaller.InstallUpdate();
+                UpdateInstaller.InstallUpdate();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                throw new Exception("Can't identify platform");
+            }
+
+            
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 
