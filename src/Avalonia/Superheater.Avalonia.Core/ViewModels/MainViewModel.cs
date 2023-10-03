@@ -38,12 +38,34 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
+        public List<FixEntity>? SelectedGameFixesList
+        {
+            get
+            {
+                var list = SelectedGame?.FixesList.Fixes.ToList();
+
+                if (list is null)
+                {
+                    return new();
+                }
+
+                if (_config.ShowUnsupportedFixes)
+                {
+                    return list;
+                }
+                else
+                {
+                    return list.Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToList();
+                }
+            }
+        }
 
         /// <summary>
         /// List of selected fix's variants
         /// </summary>
         public List<string>? FixVariants => SelectedFix?.Variants;
+
+        public bool IsSteamGameMode => CommonProperties.IsSteamGameMode;
 
         /// <summary>
         /// Selected fix variant
@@ -350,10 +372,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            Process.Start(
-                "explorer.exe",
-                SelectedGame.Game.InstallDir
-                );
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = SelectedGame.Game.InstallDir,
+                UseShellExecute = true
+            });
         }
         private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
 
@@ -425,6 +448,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
         }
+
+        /// <summary>
+        /// Close app
+        /// </summary>
+        [RelayCommand]
+        private void CloseApp() => Environment.Exit(0);
 
         #endregion Relay Commands
 
@@ -551,25 +580,16 @@ Do you want to set it to always run as admin?",
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            using Process process = new();
-
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
 
-            if (SelectedFix.ConfigFile.EndsWith(".exe"))
+            var workingDir = SelectedFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
+
+            Process.Start(new ProcessStartInfo
             {
-                var dir = Path.GetDirectoryName(pathToConfig) ?? throw new NullReferenceException("dir");
-
-                Directory.SetCurrentDirectory(dir);
-
-                process.StartInfo.FileName = pathToConfig;
-            }
-            else
-            {
-                process.StartInfo.FileName = "explorer.exe";
-                process.StartInfo.Arguments = Path.Combine(pathToConfig);
-            }
-
-            process.Start();
+                FileName = Path.Combine(pathToConfig),
+                UseShellExecute = true,
+                WorkingDirectory = workingDir
+            });
         }
 
         private void Progress_ProgressChanged(object? sender, float e)
@@ -589,7 +609,6 @@ Do you want to set it to always run as admin?",
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-
                 await _locker.WaitAsync();
                 await UpdateAsync(false);
                 _locker.Release();

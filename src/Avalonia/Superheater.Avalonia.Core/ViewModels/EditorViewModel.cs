@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Providers;
+using Common;
 using System.Threading;
 
 namespace Superheater.Avalonia.Core.ViewModels
@@ -72,6 +73,38 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsWindowsChecked
+        {
+            get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
+            set
+            {
+                if (value)
+                {
+                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows);
+                }
+                else
+                {
+                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Windows);
+                }
+            }
+        }
+
+        public bool IsLinuxChecked
+        {
+            get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
+            set
+            {
+                if (value)
+                {
+                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux);
+                }
+                else
+                {
+                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Linux);
+                }
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
@@ -93,6 +126,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(Version))]
         [NotifyPropertyChangedFor(nameof(Url))]
         [NotifyPropertyChangedFor(nameof(FixVariants))]
+        [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
+        [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
@@ -270,7 +305,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Open fixes.xml file
         /// </summary>
         [RelayCommand]
-        private void OpenXmlFile() => Process.Start("explorer.exe", Path.Combine(_config.LocalRepoPath, Consts.FixesFile));
+        private void OpenXmlFile() =>
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Path.Combine(_config.LocalRepoPath, Consts.FixesFile),
+                UseShellExecute = true
+            });
 
         /// <summary>
         /// Add dependency for a fix

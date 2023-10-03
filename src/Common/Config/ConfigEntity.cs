@@ -143,6 +143,21 @@
             }
         }
 
+        private bool _showUnsupportedFixes;
+        public bool ShowUnsupportedFixes
+        {
+            get => _showUnsupportedFixes;
+            set
+            {
+                if (_showUnsupportedFixes != value)
+                {
+                    _showUnsupportedFixes = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(ShowUnsupportedFixes));
+                }
+            }
+        }
+
         internal ConfigEntity()
         {
             _deleteZipsAfterInstall = true;
@@ -154,6 +169,7 @@
             _installedUpdater = 0;
             _showUninstalledGames = true;
             _useTestRepoBranch = false;
+            _showUnsupportedFixes = false;
         }
     }
 }

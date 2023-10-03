@@ -9,7 +9,7 @@ namespace Superheater
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public sealed partial class MainWindow : Window
+    public partial class MainWindow : Window
     {
         private ConfigEntity _config;
 

@@ -63,6 +63,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
+        private bool _showUnsupportedFixesCheckbox;
+        partial void OnShowUnsupportedFixesCheckboxChanged(bool value)
+        {
+            _config.ShowUnsupportedFixes = value;
+        }
+
+        [ObservableProperty]
         private string _pathToLocalRepo;
         partial void OnPathToLocalRepoChanged(string value)
         {
@@ -93,6 +100,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             PathToLocalRepo = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
+            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
         }
 
 
@@ -148,7 +156,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void OpenConfigXML()
         {
-            Process.Start("explorer.exe", Consts.ConfigFile);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Consts.ConfigFile,
+                UseShellExecute = true
+            });
         }
 
         [RelayCommand]

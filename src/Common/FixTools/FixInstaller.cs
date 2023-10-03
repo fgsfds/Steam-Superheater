@@ -26,7 +26,7 @@ namespace Common.FixTools
 
             var unpackToPath = fix.InstallFolder is null
                                   ? game.InstallDir
-                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + "\\";
+                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
 
             if (!File.Exists(zipFullPath))
             {
@@ -68,26 +68,14 @@ namespace Common.FixTools
         /// <param name="runAfterInstall">File to open</param>
         private static void RunAfterInstall(string gameInstallPath, string runAfterInstall)
         {
-            var previousDir = Directory.GetCurrentDirectory();
+            var path = Path.Combine(gameInstallPath, runAfterInstall);
 
-            Directory.SetCurrentDirectory(gameInstallPath);
-
-            try
+            Process.Start(new ProcessStartInfo
             {
-                var path = Path.Combine(gameInstallPath, runAfterInstall);
-
-                Process proc = new()
-                {
-                    StartInfo = new ProcessStartInfo(path)
-                };
-
-                proc.Start();
-                //await proc.WaitForExitAsync();
-            }
-            finally
-            {
-                Directory.SetCurrentDirectory(previousDir);
-            }
+                FileName = path,
+                UseShellExecute = true,
+                WorkingDirectory = gameInstallPath
+            });
         }
 
         /// <summary>
@@ -191,6 +179,12 @@ namespace Common.FixTools
         {
             List<string> files = new();
 
+            //if directory that the archive will be extracted to doesn't exist, add it to the list too
+            if (!Directory.Exists(unpackToPath))
+            {
+                files.Add(unpackToPath);
+            }
+
             using (ZipArchive archive = ZipFile.OpenRead(zipPath))
             {
                 foreach (ZipArchiveEntry entry in archive.Entries)
@@ -217,10 +211,11 @@ namespace Common.FixTools
                     var fullName = Path.Combine(
                         fixInstallFolder is null ? string.Empty : fixInstallFolder,
                         path)
-                        .Replace("/", "\\");
+                        .Replace('/', Path.DirectorySeparatorChar);
 
                     //if it's a file, add it to the list
-                    if (!fullName.EndsWith("\\"))
+                    if (!fullName.EndsWith("\\") &&
+                        !fullName.EndsWith("/"))
                     {
                         files.Add(fullName);
                     }
@@ -228,12 +223,6 @@ namespace Common.FixTools
                     else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
                     {
                         files.Add(fullName);
-                    }
-
-                    //if directory that the archive will be extracted to doesn't exist, add it to the list too
-                    if (!Directory.Exists(unpackToPath))
-                    {
-                        files.Add(unpackToPath);
                     }
                 }
             }

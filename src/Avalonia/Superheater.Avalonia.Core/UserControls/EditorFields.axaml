@@ -16,12 +16,14 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <!--Name-->
         <TextBox Text="{Binding Name, Mode=TwoWay}"
                  Watermark="Name (required)"
                  Name="NameTextBox"
@@ -29,6 +31,7 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Version-->
         <TextBox Text="{Binding Version, Mode=TwoWay}"
                  Name="VersionTextBox"
                  Watermark="Version (required)"
@@ -38,6 +41,8 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+
+        <!--Link to file-->
         <Grid ColumnDefinitions="*, auto"
               Grid.Row="2"
               Margin="0,3">
@@ -55,43 +60,75 @@
 
         </Grid>
 
+        <!--Install folder-->
         <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
                  Watermark="Unpack archive to"
                  Grid.Row="3"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Variants-->
         <TextBox Text="{Binding FixVariants, Mode=TwoWay}"
                  Watermark="Variants"
                  Grid.Row="4"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Config-->
         <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
                  Watermark="Config file"
                  Grid.Row="5"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Files to delete-->
         <TextBox Text="{Binding SelectedFix.FilesToDelete, Mode=TwoWay}"
                  Watermark="Files to delete"
                  Grid.Row="6"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Files to backup-->
         <TextBox Text="{Binding SelectedFix.FilesToBackup, Mode=TwoWay}"
                  Watermark="Files to backup"
                  Grid.Row="7"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Run after install-->
         <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
                  Watermark="Run after install"
                  Grid.Row="8"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <Grid Grid.Row="9"
+        <!--Supported OSes-->
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="9"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+
+            <TextBlock Margin="10,0"
+                       VerticalAlignment="Center">
+                Supported OSes:
+            </TextBlock>
+
+            <CheckBox Margin="10,0"
+                      IsChecked="{Binding IsWindowsChecked}"
+                      IsEnabled="{Binding IsEditingAvailable}">
+                Windows
+            </CheckBox>
+
+            <CheckBox Margin="10,0"
+                      IsChecked="{Binding IsLinuxChecked}"
+                      IsEnabled="{Binding IsEditingAvailable}">
+                Linux
+            </CheckBox>
+
+        </StackPanel>
+
+        <!--Dependencies-->
+        <Grid Grid.Row="10"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">
@@ -146,6 +183,7 @@
                      SelectedIndex="{Binding SelectedAddedDependencyIndex}"></ListBox>
         </Grid>
 
+        <!--Description-->
         <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
                  Grid.Row="999"
                  Grid.Column="1"

@@ -23,22 +23,38 @@ namespace Superheater.Avalonia.Core.Pages
 
         private void SteamClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://steamcommunity.com/id/hasnogames/");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://steamcommunity.com/id/hasnogames/",
+                UseShellExecute = true
+            });
         }
 
         private void GitHubClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/fgsfds/Steam-Superheater",
+                UseShellExecute = true
+            });
         }
 
         private void GitHubIssuesClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/issues/new");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/fgsfds/Steam-Superheater/issues/new",
+                UseShellExecute = true
+            });
         }
 
         private void ShowChangelogClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/releases");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
+                UseShellExecute = true
+            });
         }
     }
 }

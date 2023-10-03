@@ -4,6 +4,8 @@ using Common;
 using Common.Helpers;
 using System;
 using System.Threading.Tasks;
+using System.Runtime.InteropServices;
+using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -92,13 +94,30 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
         private async Task DownloadAndInstall()
         {
-            IsInProgress = true;
-            OnPropertyChanged(nameof(IsInProgress));
-            DownloadAndInstallCommand.NotifyCanExecuteChanged();
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                IsInProgress = true;
+                OnPropertyChanged(nameof(IsInProgress));
+                DownloadAndInstallCommand.NotifyCanExecuteChanged();
 
-            await _updateInstaller.DownloadAndUnpackLatestRelease();
+                await _updateInstaller.DownloadAndUnpackLatestRelease();
 
-            UpdateInstaller.InstallUpdate();
+                UpdateInstaller.InstallUpdate();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                throw new Exception("Can't identify platform");
+            }
+
+            
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Xml.Serialization;
 
 namespace Common.Entities
 {
@@ -19,7 +20,7 @@ namespace Common.Entities
         public string GameName { get; init; }
 
         /// <summary>
-        /// List of fixes 
+        /// List of fixes
         /// </summary>
         public ObservableCollection<FixEntity> Fixes { get; init; }
 
@@ -125,6 +126,11 @@ namespace Common.Entities
         public List<Guid> Dependencies { get; set; }
 
         /// <summary>
+        /// Supported OSes
+        /// </summary>
+        public OSEnum SupportedOSes { get; set; }
+
+        /// <summary>
         /// Is fix installed
         /// </summary>
         public bool IsInstalled => InstalledFix is not null;
@@ -147,6 +153,7 @@ namespace Common.Entities
             FilesToBackup = null;
             RunAfterInstall = null;
             Dependencies = new();
+            SupportedOSes = 0;
         }
 
         public override string ToString() => Name;

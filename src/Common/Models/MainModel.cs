@@ -42,8 +42,6 @@ namespace Common.Models
         {
             List<FixFirstCombinedEntity> result = _combinedEntitiesList;
 
-            //result = _combinedEntitiesList.Where(x => x.FixesList.Fixes?.Count > 0).ToList();
-
             if (!_config.ShowUninstalledGames)
             {
                 result = result.Where(x => x.IsGameInstalled).ToList();

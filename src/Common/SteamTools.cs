@@ -1,5 +1,5 @@
 ﻿using Microsoft.Win32;
-using System.IO;
+using System.Runtime.InteropServices;
 
 namespace Common
 {
@@ -40,18 +40,40 @@ namespace Common
         /// <returns></returns>
         private static string? GetSteamInstallPath()
         {
-            var path = (string?)Registry
+            string? result;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                var path = (string?)Registry
                 .GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam", "SteamPath", null);
 
-            if (path is null)
+                if (path is null)
+                {
+                    Logger.Log($"Can't find Steam install folder");
+                    return null;
+                }
+
+                result = path.Replace("/", "\\");
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                return null;
-                //throw new Exception("Steam install folder can't be found.");
+                var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+                result = Path.Combine(home, ".local/share/Steam");
+            }
+            else
+            {
+                throw new Exception("Can't identify platform");
             }
 
-            var fixedPath = path.Replace("/", "\\");
+            if (!Directory.Exists(result))
+            {
+                Logger.Log($"Steam install folder {result} doesn't exist");
+                return null;
+            }
 
-            return fixedPath;
+            Logger.Log($"Steam install folder is {result}");
+            return result;
         }
 
         /// <summary>
@@ -70,6 +92,11 @@ namespace Common
             }
 
             var libraryfolders = Path.Combine(steamInstallPath, "steamapps", "libraryfolders.vdf");
+
+            if (!File.Exists(libraryfolders)) 
+            {
+                return new();
+            }
 
             var lines = File.ReadAllLines(libraryfolders);
 

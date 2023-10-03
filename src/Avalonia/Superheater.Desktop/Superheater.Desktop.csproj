@@ -10,12 +10,16 @@
     <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Configurations>Debug;Release</Configurations>
+    <Configurations>Debug;Release;Debug-Linux</Configurations>
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <StartupObject>Superheater.Desktop.Program</StartupObject>
     <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)'=='Debug-Linux' ">
+		<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+	</PropertyGroup>
 	
   <ItemGroup>
     <Content Include="icon.ico" />

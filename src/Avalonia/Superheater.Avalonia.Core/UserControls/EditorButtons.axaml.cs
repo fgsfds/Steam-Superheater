@@ -17,7 +17,11 @@ namespace Superheater.Avalonia.Core.UserControls
 
         private void HowToSubmitButtonClick(object sender, RoutedEventArgs e)
         {
-            Process.Start("explorer.exe", "https://github.com/fgsfds/Steam-Superheater/wiki/How-to-submit-fixes");
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/fgsfds/Steam-Superheater/wiki/How-to-submit-fixes",
+                UseShellExecute = true
+            });
         }
     }
 }

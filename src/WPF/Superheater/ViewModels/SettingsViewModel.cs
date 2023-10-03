@@ -87,7 +87,11 @@ namespace Superheater.ViewModels
         [RelayCommand]
         private void OpenConfigXML()
         {
-            Process.Start("explorer.exe", Consts.ConfigFile);
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Consts.ConfigFile,
+                UseShellExecute = true
+            });
         }
 
         [RelayCommand]
