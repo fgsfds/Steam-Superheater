@@ -83,6 +83,24 @@
 
             </Grid>
 
+            <!--Unsupported fixes-->
+            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+
+                <ToggleSwitch IsChecked="{Binding ShowUnsupportedFixesCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Show fixes that are not supported by the current OS
+                </TextBlock>
+
+            </Grid>
+
             <!--Theme selection-->
             <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
 

@@ -38,9 +38,27 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public List<FixEntity>? SelectedGameFixesList =>
-            SelectedGame?.FixesList.Fixes
-            .Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToList();
+        public List<FixEntity>? SelectedGameFixesList
+        {
+            get
+            {
+                var list = SelectedGame?.FixesList.Fixes.ToList();
+
+                if (list is null)
+                {
+                    return new();
+                }
+
+                if (_config.ShowUnsupportedFixes)
+                {
+                    return list;
+                }
+                else
+                {
+                    return list.Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToList();
+                }
+            }
+        }
 
         /// <summary>
         /// List of selected fix's variants
@@ -591,7 +609,6 @@ Do you want to set it to always run as admin?",
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-
                 await _locker.WaitAsync();
                 await UpdateAsync(false);
                 _locker.Release();
