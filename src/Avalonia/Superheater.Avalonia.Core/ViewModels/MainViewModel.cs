@@ -431,6 +431,12 @@ namespace Superheater.Avalonia.Core.ViewModels
             await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
         }
 
+        /// <summary>
+        /// Close app
+        /// </summary>
+        [RelayCommand]
+        private void CloseApp() => Environment.Exit(0);
+
         #endregion Relay Commands
 
 

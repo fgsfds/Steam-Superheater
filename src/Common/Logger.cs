@@ -6,6 +6,11 @@
 
         private static object _lock = new();
 
+        static Logger()
+        {
+            File.WriteAllText(_logFile, string.Empty);
+        }
+
         /// <summary>
         /// Add message to the log file
         /// </summary>

@@ -53,7 +53,7 @@ namespace Common.Helpers
 
                 proc.WaitForExit();
 
-                Logger.Log($"DESKTOP_SESSION result {result}");
+                Logger.Log($"DESKTOP_SESSION result {result[..2]}");
 
                 if (result.StartsWith("gamescope-wayland"))
                 {

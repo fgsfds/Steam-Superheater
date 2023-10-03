@@ -83,6 +83,14 @@
                 Open config...
             </Button>
 
+            <Button Command="{Binding CloseAppCommand}"
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding IsSteamGameMode}"
+                    Margin="3,0,0,0"
+                    Padding="8">
+                Close
+            </Button>
+
         </StackPanel>
 
     </Grid>
