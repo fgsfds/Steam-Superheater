@@ -31,6 +31,11 @@ namespace Common
                 using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
                 using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception("Error while downloading a file: " + response.StatusCode.ToString());
+                }
+
                 using var source = await response.Content.ReadAsStreamAsync();
                 var contentLength = response.Content.Headers.ContentLength;
 
@@ -56,6 +61,7 @@ namespace Common
             }
 
             File.Move(tempFile, filePath);
+            return;
         }
 
         /// <summary>

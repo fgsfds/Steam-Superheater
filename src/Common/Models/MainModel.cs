@@ -161,7 +161,16 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<string> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
-            InstalledFixEntity? installedFix = await FixInstaller.InstallFix(game, fix, variant);
+            InstalledFixEntity? installedFix;
+
+            try
+            {
+                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+            }
+            catch (Exception ex)
+            {
+                return "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message;
+            }
 
             fix.InstalledFix = installedFix;
 
@@ -189,7 +198,16 @@ namespace Common.Models
 
             fix.InstalledFix = null;
 
-            var installedFix = await FixInstaller.InstallFix(game, fix, variant);
+            InstalledFixEntity? installedFix;
+
+            try
+            {
+                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+            }
+            catch (Exception ex)
+            {
+                return "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message;
+            }
 
             fix.InstalledFix = installedFix;
 
