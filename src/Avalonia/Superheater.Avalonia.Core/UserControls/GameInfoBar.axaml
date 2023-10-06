@@ -18,7 +18,7 @@
             <TextBlock Text="{Binding SelectedGame.Game.InstallDir}" Margin="5,0"/>
         </StackPanel>
 
-        <TextBlock Text="{Binding SelectedFix.Url}"
+        <TextBlock Text="{Binding SelectedFixUrl}"
                    HorizontalAlignment="Right"
                    Grid.Column="2">
 

@@ -177,7 +177,7 @@ namespace Common.Providers
                 {
                     if (!fix.Url.StartsWith("http"))
                     {
-                        fix.Url = Path.Combine(CommonProperties.CurrentFixesRepo + "fixes/" + fix.Url);
+                        fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
                     }
                 }
             }

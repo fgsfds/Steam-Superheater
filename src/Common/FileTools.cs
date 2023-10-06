@@ -33,6 +33,8 @@ namespace Common
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    file.Dispose();
+                    File.Delete(tempFile);
                     throw new Exception("Error while downloading a file: " + response.StatusCode.ToString());
                 }
 

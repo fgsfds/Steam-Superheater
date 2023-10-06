@@ -30,7 +30,14 @@ namespace Common.FixTools
 
             if (!File.Exists(zipFullPath))
             {
-                await FileTools.DownloadFileAsync(new Uri(fix.Url), zipFullPath);
+                var url = fix.Url;
+
+                if (_config.UseTestRepoBranch) 
+                {
+                    url = url.Replace("/master/", "/test/");
+                }
+
+                await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
             }
 
             var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);

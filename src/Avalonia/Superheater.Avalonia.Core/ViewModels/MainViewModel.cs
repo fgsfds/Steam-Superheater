@@ -97,6 +97,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
         [NotifyPropertyChangedFor(nameof(FixVariants))]
         [NotifyPropertyChangedFor(nameof(FixHasVariants))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -125,6 +126,21 @@ namespace Superheater.Avalonia.Core.ViewModels
         partial void OnSearchChanged(string value)
         {
             FillGamesList();
+        }
+
+        private string SelectedFixUrl
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return string.Empty;
+                }
+
+                return !_config.UseTestRepoBranch
+                    ? SelectedFix.Url
+                    : SelectedFix.Url.Replace("/master/", "/test/");
+            }
         }
 
         public string Requirements
@@ -446,7 +462,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFix.Url);
+            await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFixUrl);
         }
 
         /// <summary>
