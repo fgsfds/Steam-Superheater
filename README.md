@@ -66,11 +66,9 @@ After review, user-submitted fixes will be added to the public database.
 
 ## How to use
 
-<b>Currently, Superheater only works on 64-bit Windows. Linux and Deck support is planned.</b>
-
 Download latest release for you platform from <a href="https://github.com/fgsfds/Steam-Superheater/releases">release page</a>
 
-Unpack zip archive anywhere and run <b>Superheater.exe</b>
+Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b> 
 
 ### Links
 
