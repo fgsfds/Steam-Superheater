@@ -1,5 +1,4 @@
 ﻿using Common.Entities;
-using System.Collections.ObjectModel;
 
 namespace Common.CombinedEntities
 {

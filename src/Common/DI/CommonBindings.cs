@@ -1,6 +1,5 @@
 ﻿using SimpleInjector;
-using Common.Config;
-using Common.Providers;
+using Common.FixTools;
 
 namespace Common.DI
 {
@@ -8,12 +7,9 @@ namespace Common.DI
     {
         public static void Load(Container container)
         {
-            container.Register<ConfigProvider>(Lifestyle.Singleton);
-            container.Register<GamesProvider>(Lifestyle.Singleton);
-            container.Register<NewsProvider>(Lifestyle.Singleton);
-            container.Register<FixesProvider>(Lifestyle.Singleton);
-            container.Register<InstalledFixesProvider>(Lifestyle.Singleton);
             container.Register<UpdateInstaller>(Lifestyle.Singleton);
+            container.Register<FixInstaller>(Lifestyle.Singleton);
+            container.Register<FixUninstaller>(Lifestyle.Singleton);
         }
     }
 }

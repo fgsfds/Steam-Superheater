@@ -53,7 +53,7 @@ namespace Common
                     return null;
                 }
 
-                result = path.Replace("/", "\\");
+                result = path.Replace('/', Path.DirectorySeparatorChar);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

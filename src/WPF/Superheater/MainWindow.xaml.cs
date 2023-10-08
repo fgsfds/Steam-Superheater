@@ -9,9 +9,9 @@ namespace Superheater
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public sealed partial class MainWindow : Window
     {
-        private ConfigEntity _config;
+        private readonly ConfigEntity _config;
 
         public MainWindow()
         {
@@ -23,6 +23,7 @@ namespace Superheater
             ModelsBindings.Load(container);
             ViewModelsBindings.Load(container);
             CommonBindings.Load(container);
+            ProvidersBindings.Load(container);
 
             _config = container.GetInstance<ConfigProvider>().Config;
             _config.NotifyParameterChanged += OnUseLocalRepoChanged;

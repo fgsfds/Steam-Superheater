@@ -10,15 +10,29 @@ namespace Common.Models
     {
         private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
         private readonly ConfigEntity _config;
+        private readonly InstalledFixesProvider _installedFixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly FixInstaller _fixInstaller;
+        private readonly FixUninstaller _fixUninstaller;
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
-        public MainModel(ConfigProvider configProvider)
+        public MainModel(
+            ConfigProvider configProvider,
+            InstalledFixesProvider installedFixesProvider,
+            CombinedEntitiesProvider combinedEntitiesProvider,
+            FixInstaller fixInstaller,
+            FixUninstaller fixUninstaller
+            )
         {
             _combinedEntitiesList = new();
             _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
+            _installedFixesProvider = installedFixesProvider ?? throw new NullReferenceException(nameof(installedFixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+            _fixInstaller = fixInstaller ?? throw new NullReferenceException(nameof(fixInstaller));
+            _fixUninstaller = fixUninstaller ?? throw new NullReferenceException(nameof(fixUninstaller));
         }
 
         /// <summary>
@@ -29,7 +43,7 @@ namespace Common.Models
         {
             _combinedEntitiesList.Clear();
 
-            var games = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+            var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
 
             _combinedEntitiesList.AddRange(games);
         }
@@ -137,11 +151,11 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public string UninstallFix(GameEntity game, FixEntity fix)
         {
-            FixUninstaller.UninstallFix(game, fix);
+            _fixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
@@ -165,7 +179,7 @@ namespace Common.Models
 
             try
             {
-                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+                installedFix = await _fixInstaller.InstallFix(game, fix, variant);
             }
             catch (Exception ex)
             {
@@ -174,7 +188,7 @@ namespace Common.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
@@ -194,7 +208,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<string> UpdateFix(GameEntity game, FixEntity fix, string? variant)
         {
-            FixUninstaller.UninstallFix(game, fix);
+            _fixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
@@ -202,7 +216,7 @@ namespace Common.Models
 
             try
             {
-                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+                installedFix = await _fixInstaller.InstallFix(game, fix, variant);
             }
             catch (Exception ex)
             {
@@ -211,7 +225,7 @@ namespace Common.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {

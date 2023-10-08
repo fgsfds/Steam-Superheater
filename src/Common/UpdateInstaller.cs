@@ -15,6 +15,20 @@ namespace Common
         }
 
         /// <summary>
+        /// Check github for releases with version higher than current
+        /// </summary>
+        /// <param name="currentVersion">Current SFD version</param>
+        /// <returns></returns>
+        public async Task<bool> CheckForUpdates(Version currentVersion)
+        {
+            _updates.Clear();
+
+            _updates.AddRange(await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
+
+            return _updates.Any();
+        }
+
+        /// <summary>
         /// Download latest release from Github and create update lock file
         /// </summary>
         /// <returns></returns>
@@ -60,20 +74,6 @@ namespace Common
             var exeName = Path.Combine(Directory.GetCurrentDirectory(), CommonProperties.ExecutableName);
             System.Diagnostics.Process.Start(exeName);
             Environment.Exit(0);
-        }
-
-        /// <summary>
-        /// Check github for releases with version higher than current
-        /// </summary>
-        /// <param name="currentVersion">Current SFD verson</param>
-        /// <returns></returns>
-        public async Task<bool> CheckForUpdates(Version currentVersion)
-        {
-            _updates.Clear();
-
-            _updates.AddRange(await GithubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
-
-            return _updates.Any();
         }
     }
 }

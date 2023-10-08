@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Common.Providers
 {
-    public static class GithubReleasesProvider
+    internal static class GitHubReleasesProvider
     {
         /// <summary>
         /// Return a list of releases from github repo that have higher version than the current

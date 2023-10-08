@@ -13,7 +13,7 @@ namespace Tests
         [TestMethod]
         public async Task GetNewerReleasesTest()
         {
-            var releases = await GithubReleasesProvider.GetNewerReleasesListAsync(new Version("0.0.0"));
+            var releases = await GitHubReleasesProvider.GetNewerReleasesListAsync(new Version("0.0.0"));
             var firstRelease = releases.Last();
 
             var versionActual = firstRelease.Version;

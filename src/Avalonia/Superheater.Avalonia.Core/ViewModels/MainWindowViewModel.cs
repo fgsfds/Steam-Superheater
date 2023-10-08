@@ -18,7 +18,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             UpdateRepoMessage();
         }
 
-        public bool IsSteamGameMode => CommonProperties.IsSteamGameMode;
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 

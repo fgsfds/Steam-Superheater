@@ -2,13 +2,13 @@
 {
     public static class Logger
     {
-        private static string _logFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+        private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
 
-        private static object _lock = new();
+        private static readonly object _lock = new();
 
         static Logger()
         {
-            File.WriteAllText(_logFile, string.Empty);
+            File.WriteAllText(LogFile, string.Empty);
         }
 
         /// <summary>
@@ -21,7 +21,7 @@
             {
                 message = $"[{DateTime.Now}] {message}";
 
-                File.AppendAllText(_logFile, message + Environment.NewLine);
+                File.AppendAllText(LogFile, message + Environment.NewLine);
             }
         }
 
@@ -30,7 +30,7 @@
         /// </summary>
         public static void UploadLog()
         {
-            FilesUploader.UploadFileToFtp("crashlogs", _logFile, DateTime.Now.ToString());
+            FilesUploader.UploadFileToFtp("crashlogs", LogFile, DateTime.Now.ToString());
         }
     }
 }

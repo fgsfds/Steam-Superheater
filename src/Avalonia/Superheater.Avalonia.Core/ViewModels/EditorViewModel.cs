@@ -147,7 +147,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _search;
         partial void OnSearchChanged(string value)
         {
-            FillGamesList();
+            FillGamesListAsync();
         }
 
         /// <summary>
@@ -364,7 +364,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var newFix = _editorModel.AddNewFix(game);
 
-            FillGamesList();
+            FillGamesListAsync();
 
             SelectedGame = newFix;
 
@@ -532,13 +532,13 @@ Thank you.",
                 IsInProgress = false;
             }
 
-            FillGamesList();
+            FillGamesListAsync();
         }
 
         /// <summary>
         /// Fill games and available games lists based on a search bar
         /// </summary>
-        private void FillGamesList()
+        private async Task FillGamesListAsync()
         {
             var selectedGame = SelectedGame;
             var selectedFix = SelectedFix;
@@ -562,7 +562,7 @@ Thank you.",
                 }
             }
 
-            AvailableGamesList.AddRange(_editorModel.GetListOfGamesAvailableToAdd());
+            AvailableGamesList.AddRange(await _editorModel.GetListOfGamesAvailableToAddAsync());
         }
 
         /// <summary>

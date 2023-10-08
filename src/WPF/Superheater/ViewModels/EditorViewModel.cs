@@ -509,7 +509,7 @@ Thank you.",
                 }
             }
 
-            AvailableGamesList.AddRange(_editorModel.GetListOfGamesAvailableToAdd());
+            AvailableGamesList.AddRange(_editorModel.GetListOfGamesAvailableToAddAsync());
         }
 
         /// <summary>

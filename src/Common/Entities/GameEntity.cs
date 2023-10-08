@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Win32;
 using Common.Helpers;
-using Common;
 using System.Runtime.InteropServices;
 
 namespace Common.Entities

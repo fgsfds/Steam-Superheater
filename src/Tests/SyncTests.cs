@@ -65,7 +65,7 @@ namespace Tests
         public async Task GetFixesFromGithubTest()
         {
             var fixesProvider = BindingsManager.Instance.GetInstance<FixesProvider>();
-            var fixes = await fixesProvider.GetNewFixesListAsync();
+            var fixes = await fixesProvider.GetNewListAsync();
 
             //Looking for Alan Wake fixes list
             var result = fixes.Any(x => x.GameId == 108710);

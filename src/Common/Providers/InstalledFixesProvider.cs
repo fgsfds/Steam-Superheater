@@ -1,6 +1,7 @@
 ﻿using Common.CombinedEntities;
 using Common.Entities;
 using Common.Helpers;
+using System.Collections.Immutable;
 using System.IO;
 using System.Xml.Serialization;
 
@@ -8,47 +9,54 @@ namespace Common.Providers
 {
     public sealed class InstalledFixesProvider
     {
-        private bool _isCacheUpdating;
-
-        private List<InstalledFixEntity>? _installedFixesCache;
-
-        /// <summary>
-        /// Get cached installed fixes list or create new cache if it wasn't created yet
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        public List<InstalledFixEntity> GetCachedInstalledFixesList()
-        {
-            while (_isCacheUpdating)
-            {
-                Thread.Sleep(100);
-            }
-
-            if (_installedFixesCache is null)
-            {
-                CreateInstalledFixesCache();
-            }
-
-            return _installedFixesCache ?? throw new NullReferenceException(nameof(_installedFixesCache));
-        }
-
         /// <summary>
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public List<InstalledFixEntity> GetNewInstalledFixesList()
+        public ImmutableList<InstalledFixEntity> GetInstalledFixes()
         {
-            _installedFixesCache = null;
+            if (!File.Exists(Consts.InstalledFile))
+            {
+                MakeEmptyFixesXml();
+            }
 
-            return GetCachedInstalledFixesList();
+            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
+
+            List<InstalledFixEntity>? fixesDatabase;
+
+            using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
+            {
+                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity>;
+            }
+
+            if (fixesDatabase is null)
+            {
+                throw new NullReferenceException(nameof(fixesDatabase));
+            }
+
+            return fixesDatabase.ToImmutableList();
+        }
+
+        /// <summary>
+        /// Save list of installed fixes from combined entities list
+        /// </summary>
+        /// <param name="combinedEntitiesList">List of combined entities</param>
+        /// <returns>result, error message</returns>
+        public Tuple<bool, string> SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
+        {
+            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
+
+            var result = SaveInstalledFixes(installedFixes);
+
+            return result;
         }
 
         /// <summary>
         /// Save installed fixes to XML
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
-        /// <returns>result, message</returns>
-        public static Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        /// <returns>result, error message</returns>
+        public Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
         {
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
 
@@ -66,59 +74,8 @@ namespace Common.Providers
         }
 
         /// <summary>
-        /// Save list of installed fixes from combined entities list
-        /// </summary>
-        /// <param name="combinedEntitiesList">List of combined entities</param>
-        /// <returns>result, message</returns>
-        public static Tuple<bool, string> SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
-        {
-            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
-
-            var result = SaveInstalledFixes(installedFixes);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Create new cache of installed fixes
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        private void CreateInstalledFixesCache()
-        {
-            _isCacheUpdating = true;
-
-            if (!File.Exists(Consts.InstalledFile))
-            {
-                MakeEmptyFixesXml();
-            }
-
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
-
-            List<InstalledFixEntity>? fixesDatabase;
-
-            using (FileStream fs = new(Consts.InstalledFile, FileMode.OpenOrCreate))
-            {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity>;
-            }
-
-            if (fixesDatabase is null)
-            {
-                throw new NullReferenceException(nameof(fixesDatabase));
-            }
-
-            _installedFixesCache = fixesDatabase;
-
-            _isCacheUpdating = false;
-        }
-
-        /// <summary>
         /// Create empty installed fixes XML
         /// </summary>
-        private void MakeEmptyFixesXml()
-        {
-            var fixesDatabase = new List<InstalledFixEntity>();
-
-            SaveInstalledFixes(fixesDatabase);
-        }
+        private void MakeEmptyFixesXml() => SaveInstalledFixes(new List<InstalledFixEntity>());
     }
 }

@@ -9,13 +9,8 @@ namespace Common.Providers
     public sealed class FixesProvider
     {
         private bool _isCacheUpdating;
-
-        private readonly ConfigEntity _config;
-
-        //cached fixes string from online or local repo
         private string? _fixesCachedString;
-        //cached fixes from online repo only. used to check if the fix already exists in the repo before uploading.
-        private ImmutableList<FixesList>? _onlineFixes;
+        private readonly ConfigEntity _config;
 
         public FixesProvider(ConfigProvider config)
         {
@@ -27,7 +22,7 @@ namespace Common.Providers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task<List<FixesList>> GetCachedFixesListAsync()
+        public async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
             while (_isCacheUpdating)
             {
@@ -39,9 +34,14 @@ namespace Common.Providers
                 await CreateFixesCacheAsync();
             }
 
+            if (_fixesCachedString is null)
+            {
+                throw new Exception("Can't create fixes cache");
+            }
+
             using (StringReader fs = new(_fixesCachedString))
             {
-                return DeserializeCachedString(fs.ReadToEnd());
+                return DeserializeCachedString(fs.ReadToEnd()).ToImmutableList();
             }
         }
 
@@ -49,12 +49,11 @@ namespace Common.Providers
         /// Remove current cache, then create new one and return fixes list
         /// </summary>
         /// <returns></returns>
-        public async Task<List<FixesList>> GetNewFixesListAsync()
+        public async Task<ImmutableList<FixesList>> GetNewListAsync()
         {
             _fixesCachedString = null;
-            _onlineFixes = null;
 
-            return await GetCachedFixesListAsync();
+            return await GetCachedListAsync();
         }
 
         /// <summary>
@@ -64,17 +63,54 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<FixesList>> GetOnlineFixesListAsync()
         {
-            while (_isCacheUpdating)
+            if (_config.UseLocalRepo)
             {
-                await Task.Delay(100);
+                var xmlString = await DownloadFixesXMLAsync();
+
+                return DeserializeCachedString(xmlString).ToImmutableList();
+            }
+            else
+            {
+                return await GetCachedListAsync();
+            }
+        }
+
+        /// <summary>
+        /// Save list of fixes to XML
+        /// </summary>
+        /// <param name="fixesList"></param>
+        /// <returns></returns>
+        public Tuple<bool, string> SaveFixes(List<FixesList> fixesList)
+        {
+            foreach (var fixes in fixesList)
+            {
+                foreach (var fix in fixes.Fixes)
+                {
+                    if (!fix.Url.StartsWith("http"))
+                    {
+                        fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
+                    }
+                }
             }
 
-            if (_onlineFixes is null)
+            XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
+
+            if (!Directory.Exists(CommonProperties.LocalRepoPath))
             {
-                await CreateFixesCacheAsync();
+                Directory.CreateDirectory(CommonProperties.LocalRepoPath);
             }
 
-            return _onlineFixes;
+            try
+            {
+                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
+                xmlSerializer.Serialize(fs, fixesList);
+            }
+            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            {
+                return new Tuple<bool, string>(false, e.Message);
+            }
+
+            return new Tuple<bool, string>(true, "XML saved successfully!");
         }
 
         /// <summary>
@@ -85,21 +121,6 @@ namespace Common.Providers
         private async Task CreateFixesCacheAsync()
         {
             _isCacheUpdating = true;
-
-            string? onlineFixes = null;
-
-            try
-            {
-                onlineFixes = await DownloadFixesXMLAsync();
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                _isCacheUpdating = false;
-            }
 
             if (_config.UseLocalRepo)
             {
@@ -115,14 +136,7 @@ namespace Common.Providers
             }
             else
             {
-                _fixesCachedString = onlineFixes;
-            }
-
-            using (StringReader fs = new(onlineFixes))
-            {
-                var list = DeserializeCachedString(fs.ReadToEnd());
-
-                _onlineFixes = ImmutableList.CreateRange(list);
+                _fixesCachedString = await DownloadFixesXMLAsync();
             }
 
             _isCacheUpdating = false;
@@ -162,44 +176,6 @@ namespace Common.Providers
 
                 return fixesXml;
             }
-        }
-
-        /// <summary>
-        /// Save list of fixes to XML
-        /// </summary>
-        /// <param name="fixesList"></param>
-        /// <returns></returns>
-        public static Tuple<bool, string> SaveFixes(List<FixesList> fixesList)
-        {
-            foreach (var fixes in fixesList)
-            {
-                foreach(var fix in fixes.Fixes)
-                {
-                    if (!fix.Url.StartsWith("http"))
-                    {
-                        fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
-                    }
-                }
-            }
-
-            XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
-
-            if (!Directory.Exists(CommonProperties.LocalRepoPath))
-            {
-                Directory.CreateDirectory(CommonProperties.LocalRepoPath);
-            }
-
-            try
-            {
-                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
-                xmlSerializer.Serialize(fs, fixesList);
-            }
-            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
-            {
-                return new Tuple<bool, string>(false, e.Message);
-            }
-
-            return new Tuple<bool, string>(true, "XML saved successfully!");
         }
     }
 }

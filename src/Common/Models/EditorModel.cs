@@ -3,6 +3,7 @@ using Common.Entities;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
 using System.Xml.Serialization;
 
 namespace Common.Models
@@ -11,9 +12,20 @@ namespace Common.Models
     {
         private readonly SortedList<string, FixesList> _fixesList;
 
-        public EditorModel()
+        private readonly FixesProvider _fixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly GamesProvider _gamesProvider;
+
+        public EditorModel(
+            FixesProvider fixesProvider,
+            CombinedEntitiesProvider combinedEntitiesProvider,
+            GamesProvider gamesProvider
+            )
         {
             _fixesList = new();
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
         }
 
         /// <summary>
@@ -24,7 +36,7 @@ namespace Common.Models
         {
             _fixesList.Clear();
 
-            var fixes = await CombinedEntitiesProvider.GetFixesListAsync(useCache);
+            var fixes = await _combinedEntitiesProvider.GetFixesListAsync(useCache);
 
             fixes = fixes.OrderBy(x => x.GameName).ToList();
 
@@ -55,11 +67,11 @@ namespace Common.Models
         /// <summary>
         /// Get list of games that can be added to the fixes list
         /// </summary>
-        public List<GameEntity> GetListOfGamesAvailableToAdd()
+        public async Task<List<GameEntity>> GetListOfGamesAvailableToAddAsync()
         {
             List<GameEntity> result = new();
 
-            var installedGames = BindingsManager.Instance.GetInstance<GamesProvider>().GetCachedGamesList();
+            var installedGames = await _gamesProvider.GetCachedListAsync();
 
             foreach (var game in installedGames)
             {
@@ -80,7 +92,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Tuple<bool, string> SaveFixesListAsync()
         {
-            var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
+            var result = _fixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
 
             CreateReadme();
 

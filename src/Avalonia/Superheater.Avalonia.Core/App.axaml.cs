@@ -23,6 +23,7 @@ public sealed partial class App : Application
         ModelsBindings.Load(container);
         ViewModelsBindings.Load(container);
         CommonBindings.Load(container);
+        ProvidersBindings.Load(container);
 
         AvaloniaXamlLoader.Load(this);
     }
