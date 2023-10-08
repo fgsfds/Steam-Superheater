@@ -86,6 +86,4 @@ Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b>
 
 <a href="https://github.com/robinrodricks/FluentFTP">FluentFTP</a>
 
-<a href="https://github.com/JamesNK/Newtonsoft.Json">Newtonsoft.Json</a> 
-
 <a href="https://github.com/simpleinjector/SimpleInjector">SimpleInjector</a> 

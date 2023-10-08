@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using Common.Entities;
+﻿using Common.Entities;
 using Common.Helpers;
+using System.Text.Json;
 
 namespace Common.Providers
 {
@@ -18,7 +18,7 @@ namespace Common.Providers
 
                 var a = await client.GetStringAsync(Consts.GitHubReleases);
 
-                var cc = JsonConvert.DeserializeObject<List<GithubReleaseEntity.Root>>(a);
+                var cc = JsonSerializer.Deserialize<List<GitHubRelease>>(a);
 
                 var updates = cc.ConvertAll(x => new UpdateEntity(
                     new Version(x.tag_name),
