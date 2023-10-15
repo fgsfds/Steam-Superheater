@@ -2,7 +2,6 @@
 using Common.Entities;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.Reflection.Emit;
 using System.Xml.Serialization;
 
 namespace Common.Providers
@@ -87,12 +86,8 @@ namespace Common.Providers
             {
                 foreach (var fix in fixes.Fixes)
                 {
-                    if (string.IsNullOrEmpty(fix.Url))
-                    {
-                        fix.Url = "empty.zip";
-                    }
-
-                    if (!fix.Url.StartsWith("http"))
+                    if (!string.IsNullOrEmpty(fix.Url) &&
+                        !fix.Url.StartsWith("http"))
                     {
                         fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
                     }

@@ -6,7 +6,6 @@ using Common.Models;
 using Common.Entities;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -241,7 +240,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             new PopupMessageViewModel(
                 result.Item1 ? "Success" : "Error",
-                result.Item2, 
+                result.Item2,
                 PopupMessageType.OkOnly)
                 .Show();
         }
@@ -488,9 +487,7 @@ Thank you.",
         /// </summary>
         private async Task<bool> ChecksBeforeUploadAsync()
         {
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
-
-            if (string.IsNullOrEmpty(SelectedFix.Name) ||
+            if (string.IsNullOrEmpty(SelectedFix?.Name) ||
                 SelectedFix.Version < 1)
             {
                 new PopupMessageViewModel(
@@ -502,8 +499,8 @@ Thank you.",
                 return false;
             }
 
-            if (!SelectedFix.Url.StartsWith("http") &&
-                !string.IsNullOrEmpty(SelectedFix.Url))
+            if (!string.IsNullOrEmpty(SelectedFix.Url) &&
+                !SelectedFix.Url.StartsWith("http"))
             {
                 if (!File.Exists(SelectedFix.Url))
                 {

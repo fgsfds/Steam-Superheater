@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
 
 namespace Common.Entities
 {
@@ -75,7 +74,7 @@ namespace Common.Entities
         /// <summary>
         /// Download URL
         /// </summary>
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         /// <summary>
         /// Fix description
@@ -143,7 +142,7 @@ namespace Common.Entities
         {
             Name = string.Empty;
             Version = 1;
-            Url = string.Empty;
+            Url = null;
             Description = string.Empty;
             Guid = Guid.NewGuid();
             InstallFolder = null;

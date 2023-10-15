@@ -132,7 +132,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             get
             {
-                if (SelectedFix is null)
+                if (string.IsNullOrEmpty(SelectedFix?.Url))
                 {
                     return string.Empty;
                 }

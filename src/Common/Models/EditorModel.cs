@@ -2,7 +2,6 @@
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Xml.Serialization;
 
 namespace Common.Models
@@ -191,7 +190,10 @@ namespace Common.Models
 
             string? fileToUpload = null;
 
-            if (!newFix.Fixes[0].Url.StartsWith("http"))
+            var url = newFix.Fixes[0].Url;
+
+            if (!string.IsNullOrEmpty(url) &&
+                !url.StartsWith("http"))
             {
                 fileToUpload = fix.Url;
 

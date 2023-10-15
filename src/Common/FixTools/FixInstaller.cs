@@ -1,8 +1,6 @@
 ﻿using Common.Config;
-using Common.DI;
 using Common.Entities;
 using Common.Helpers;
-using Common.Providers;
 using System.Diagnostics;
 using System.IO.Compression;
 
@@ -24,40 +22,58 @@ namespace Common.FixTools
         /// <param name="fix">Fix entity</param>
         public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
-            var zipName = Path.GetFileName(fix.Url);
+            string backupFolder = fix.Name.Replace(' ', '_');
 
-            var zipFullPath = _configEntity.UseLocalRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", zipName)
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+            string? zipName = null;
+            string? zipFullPath = null;
+            string? unpackToPath = null;
+            List<string> filesInArchive = new();
 
-            var unpackToPath = fix.InstallFolder is null
-                                  ? game.InstallDir
-                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
-
-            if (!File.Exists(zipFullPath))
+            if (!string.IsNullOrEmpty(fix.Url))
             {
-                var url = fix.Url;
+                zipName = Path.GetFileName(fix.Url);
 
-                if (_configEntity.UseTestRepoBranch) 
+                backupFolder = Path.GetFileNameWithoutExtension(zipName);
+
+                zipFullPath = _configEntity.UseLocalRepo
+                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", zipName)
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+
+                unpackToPath = fix.InstallFolder is null
+                    ? game.InstallDir
+                    : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+
+                if (!File.Exists(zipFullPath))
                 {
-                    url = url.Replace("/master/", "/test/");
+                    var url = fix.Url;
+
+                    if (_configEntity.UseTestRepoBranch)
+                    {
+                        url = url.Replace("/master/", "/test/");
+                    }
+
+                    await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
                 }
 
-                await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
+                filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
+
+                BackupFiles(filesInArchive, game.InstallDir, backupFolder, true, true);
             }
 
-            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
+            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolder, true, true);
 
-            BackupFiles(filesInArchive.Concat(fix.FilesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName), true, true);
+            BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolder, false, false);
 
-            BackupFiles(fix.FilesToBackup, game.InstallDir, Path.GetFileNameWithoutExtension(zipName), false, false);
-
-            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
-
-            if (_configEntity.DeleteZipsAfterInstall &&
-                !_configEntity.UseLocalRepo)
+            if (zipFullPath is not null &&
+                unpackToPath is not null)
             {
-                File.Delete(zipFullPath);
+                await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
+
+                if (_configEntity.DeleteZipsAfterInstall &&
+                    !_configEntity.UseLocalRepo)
+                {
+                    File.Delete(zipFullPath);
+                }
             }
 
             if (fix.RunAfterInstall is not null)
@@ -95,7 +111,7 @@ namespace Common.FixTools
         /// <param name="backupFolder">Name of the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
         private void BackupFiles(
-            IEnumerable<string> files,
+            IEnumerable<string>? files,
             string gameDir,
             string backupFolder,
             bool deleteOriginal,
@@ -174,7 +190,7 @@ namespace Common.FixTools
 
                     if (variant is not null)
                     {
-                        if (entry.FullName.StartsWith(variant+"/"))
+                        if (entry.FullName.StartsWith(variant + "/"))
                         {
                             path = entry.FullName.Replace(variant + "/", string.Empty);
 

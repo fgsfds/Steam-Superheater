@@ -1,6 +1,5 @@
 ﻿using Common.Entities;
 using Common.Helpers;
-using System.IO;
 
 namespace Common.FixTools
 {
@@ -13,10 +12,7 @@ namespace Common.FixTools
         /// <param name="fix">Fix entity</param>
         public void UninstallFix(GameEntity game, FixEntity fix)
         {
-            if (fix.InstalledFix is null)
-            {
-                throw new NullReferenceException(nameof(fix.InstalledFix));
-            }
+            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
 
             DeleteFiles(game.InstallDir, fix.InstalledFix.FilesList);
 
@@ -55,9 +51,14 @@ namespace Common.FixTools
         /// <param name="fix">Installed fix</param>
         private void RestoreBackup(string gameDir, FixEntity fix)
         {
-            var fixName = Path.GetFileNameWithoutExtension(fix.Url);
+            string backupFolder = fix.Name.Replace(' ', '_');
 
-            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName);
+            if (!string.IsNullOrEmpty(fix.Url))
+            {
+                backupFolder = Path.GetFileNameWithoutExtension(fix.Url);
+            }
+
+            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
             fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
 
             if (!Directory.Exists(fixFolderPath))
