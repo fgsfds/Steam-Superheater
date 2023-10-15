@@ -8,12 +8,13 @@ namespace Common.Models
 {
     public sealed class MainModel
     {
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
         private readonly ConfigEntity _config;
         private readonly InstalledFixesProvider _installedFixesProvider;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
         private readonly FixInstaller _fixInstaller;
         private readonly FixUninstaller _fixUninstaller;
+
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 

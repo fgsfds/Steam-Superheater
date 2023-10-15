@@ -1,6 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Providers;
+using System.Collections.Immutable;
 
 namespace Common.Models
 {
@@ -9,14 +10,11 @@ namespace Common.Models
         private readonly ConfigEntity _config;
         private readonly NewsProvider _newsProvider;
 
-        private readonly List<NewsEntity> _news;
-        private int _lastReadVersion;
-
-        public int UnreadNewsCount => _news.Where(x => x.IsNewer).Count();
+        public int UnreadNewsCount => News?.Where(x => x.IsNewer)?.Count() ?? 0;
 
         public bool HasUnreadNews => UnreadNewsCount > 0;
 
-        public List<NewsEntity> News => _news;
+        public ImmutableList<NewsEntity> News;
 
         public NewsModel(
             ConfigProvider config,
@@ -24,42 +22,35 @@ namespace Common.Models
         {
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
             _newsProvider = news ?? throw new NullReferenceException(nameof(news));
-
-            _lastReadVersion = _config.LastReadNewsVersion;
-            _news = new();
         }
 
         public async Task UpdateNewsListAsync()
         {
-            _news.Clear();
-
-            var news = await _newsProvider.GetNewsListAsync();
-
-            _news.AddRange(news);
+            News = await _newsProvider.GetNewsListAsync();
 
             UpdateReadStatusOfExistingNews();
         }
 
-        public void MarkAllAsRead()
+        public async Task MarkAllAsReadAsync()
         {
             UpdateConfigLastReadVersion();
 
-            UpdateReadStatusOfExistingNews();
+            await UpdateNewsListAsync();
         }
 
         private void UpdateReadStatusOfExistingNews()
         {
-            foreach (var item in _news)
+            foreach (var item in News)
             {
-                item.IsNewer = item.Version > _lastReadVersion;
+                item.IsNewer = item.Version > _config.LastReadNewsVersion;
             }
         }
 
         private void UpdateConfigLastReadVersion()
         {
-            _lastReadVersion = _news.Max(x => x.Version);
+            var lastReadVersion = News.Max(x => x.Version);
 
-            _config.LastReadNewsVersion = _lastReadVersion;
+            _config.LastReadNewsVersion = lastReadVersion;
         }
     }
 }

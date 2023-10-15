@@ -23,5 +23,13 @@ namespace Common.Helpers
 
             return collection;
         }
+
+        public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
+        {
+            var element = list[oldIndex];
+            list.RemoveAt(oldIndex);
+
+            list.Insert(newIndex, element);
+        }
     }
 }

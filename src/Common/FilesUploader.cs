@@ -2,7 +2,7 @@
 
 namespace Common
 {
-    public static class FilesUploader
+    internal static class FilesUploader
     {
         private const string FtpAddress = "31.31.198.106";
         private const string FtpUser = "u2220544_Upload";

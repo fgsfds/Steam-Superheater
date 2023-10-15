@@ -48,13 +48,9 @@ namespace Common.FixTools
 
             var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
 
-            var filesToDelete = ParseListOfFiles(game.InstallDir, fix.FilesToDelete);
+            BackupFiles(filesInArchive.Concat(fix.FilesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName), true, true);
 
-            BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName), true, true);
-
-            var filesToBackup = ParseListOfFiles(game.InstallDir, fix.FilesToBackup);
-
-            BackupFiles(filesToBackup, game.InstallDir, Path.GetFileNameWithoutExtension(zipName), false, false);
+            BackupFiles(fix.FilesToBackup, game.InstallDir, Path.GetFileNameWithoutExtension(zipName), false, false);
 
             await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
 
@@ -89,34 +85,6 @@ namespace Common.FixTools
                 UseShellExecute = true,
                 WorkingDirectory = gameInstallPath
             });
-        }
-
-        /// <summary>
-        /// Parse list of files separated by ;
-        /// </summary>
-        /// <param name="gameInstallPath">Path to the game folder</param>
-        /// <param name="stringToParst">List of files separated by ;</param>
-        /// <returns>List of relative paths to deleted files</returns>
-        private List<string> ParseListOfFiles(string gameInstallPath, string? stringToParst)
-        {
-            List<string> result = new();
-
-            if (stringToParst is null)
-            {
-                return result;
-            }
-
-            var filesToDeleteSplit = stringToParst.Split(";");
-
-            foreach (var file in filesToDeleteSplit)
-            {
-                if (File.Exists(Path.Combine(gameInstallPath, file)))
-                {
-                    result.Add(file);
-                }
-            }
-
-            return result;
         }
 
         /// <summary>

@@ -49,7 +49,7 @@ namespace Superheater.ViewModels
                     return new();
                 }
 
-                return _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
+                return _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
             }
         }
 

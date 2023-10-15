@@ -21,12 +21,12 @@ namespace Common.Entities
         /// <summary>
         /// List of fixes
         /// </summary>
-        public ObservableCollection<FixEntity> Fixes { get; init; }
+        public List<FixEntity> Fixes { get; init; }
 
         public FixesList(
             int gameId,
             string gameName,
-            ObservableCollection<FixEntity> fixes
+            List<FixEntity> fixes
             )
         {
             GameId = gameId;
@@ -105,13 +105,13 @@ namespace Common.Entities
         /// List of files that will be backed up and deleted before the fix is installed
         /// Paths are relative to the game folder, separated by ;
         /// </summary>
-        public string? FilesToDelete { get; set; }
+        public List<string>? FilesToDelete { get; set; }
 
         /// <summary>
         /// List of files that will be backed up before the fix is installed, and the original file will remain
         /// Paths are relative to the game folder, separated by ;
         /// </summary>
-        public string? FilesToBackup { get; set; }
+        public List<string>? FilesToBackup { get; set; }
 
         /// <summary>
         /// File that will be run after the fix is installed

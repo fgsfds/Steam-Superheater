@@ -17,11 +17,27 @@ using Superheater.Avalonia.Core.Helpers;
 using Common.Providers;
 using Common;
 using System.Threading;
+using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class EditorViewModel : ObservableObject
     {
+        public EditorViewModel(
+            EditorModel editorModel,
+            ConfigProvider config,
+            FixesProvider fixesProvider
+            )
+        {
+            _editorModel = editorModel ?? throw new NullReferenceException(nameof(editorModel));
+            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+
+            _search = string.Empty;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
+
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
@@ -29,47 +45,48 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
-        public ObservableCollection<FixesList> FilteredGamesList { get; init; }
+        public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(Search);
 
-        public ObservableCollection<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes;
+        public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ObservableCollection<GameEntity> AvailableGamesList { get; set; }
+        public ImmutableList<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes.ToImmutableList();
+
+        public List<FixEntity> AvailableDependencies => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+
+        public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+
+        public bool IsEditingAvailable => SelectedFix is not null;
 
         public string FixVariants
         {
             get => SelectedFix?.Variants is null ? string.Empty : string.Join(";", SelectedFix.Variants);
-            set => SelectedFix.Variants = value.Split(";").ToList();
-        }
-
-        public int SelectedFixIndex { get; set; } = -1;
-
-        public bool IsEditingAvailable => SelectedFix is not null;
-
-        public List<FixEntity> AvailableDependencies
-        {
-            get
+            set
             {
-                if (SelectedGame is null ||
-                    SelectedFix is null)
-                {
-                    return new();
-                }
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                return _editorModel.GetListOfDependenciesAvailableToAdd(SelectedGame, SelectedFix);
+                SelectedFix.Variants = value.Split(";").ToList();
             }
         }
 
-        public List<FixEntity> AddedDependencies
+        public string FilesToDelete
         {
-            get
+            get => SelectedFix?.FilesToDelete is null ? string.Empty : string.Join(";", SelectedFix.FilesToDelete);
+            set
             {
-                if (SelectedGame is null ||
-                    SelectedFix is null)
-                {
-                    return new();
-                }
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                return _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+                SelectedFix.FilesToDelete = value.Split(";").ToList();
+            }
+        }
+
+        public string FilesToBackup
+        {
+            get => SelectedFix?.FilesToBackup is null ? string.Empty : string.Join(";", SelectedFix.FilesToBackup);
+            set
+            {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+                SelectedFix.FilesToBackup = value.Split(";").ToList();
             }
         }
 
@@ -78,6 +95,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
             set
             {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
                 if (value)
                 {
                     SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows);
@@ -94,6 +113,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
             set
             {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
                 if (value)
                 {
                     SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux);
@@ -106,12 +127,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
-        private bool _isInProgress;
-
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(AddGameCommand))]
-        public GameEntity _selectedAvailableGame;
+        [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
+        public GameEntity? _selectedAvailableGame;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixes))]
@@ -122,10 +139,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(AvailableDependencies))]
         [NotifyPropertyChangedFor(nameof(AddedDependencies))]
         [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
-        [NotifyPropertyChangedFor(nameof(Name))]
-        [NotifyPropertyChangedFor(nameof(Version))]
-        [NotifyPropertyChangedFor(nameof(Url))]
         [NotifyPropertyChangedFor(nameof(FixVariants))]
+        [NotifyPropertyChangedFor(nameof(FilesToDelete))]
+        [NotifyPropertyChangedFor(nameof(FilesToBackup))]
         [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
@@ -133,6 +149,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         private FixEntity? _selectedFix;
+
+        [ObservableProperty]
+        public int _selectedFixIndex;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
+        private bool _isInProgress;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
@@ -145,83 +168,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
         private string _search;
-        partial void OnSearchChanged(string value)
-        {
-            FillGamesListAsync();
-        }
-
-        /// <summary>
-        /// Name of the fix
-        /// </summary>
-        public string Name
-        {
-            get => SelectedFix?.Name ?? string.Empty;
-            set
-            {
-                if (SelectedFix is null)
-                {
-                    throw new NullReferenceException(nameof(SelectedGameFixes));
-                }
-
-                SelectedFix.Name = value ?? string.Empty;
-                OnPropertyChanged(nameof(Name));
-                UploadFixCommand.NotifyCanExecuteChanged();
-            }
-        }
-
-        /// <summary>
-        /// Version of the fix
-        /// </summary>
-        public int? Version
-        {
-            get => SelectedFix?.Version;
-            set
-            {
-                if (SelectedFix is null)
-                {
-                    throw new NullReferenceException(nameof(SelectedGameFixes));
-                }
-
-                SelectedFix.Version = value ?? 0;
-                OnPropertyChanged(nameof(Version));
-                UploadFixCommand.NotifyCanExecuteChanged();
-            }
-        }
-
-        /// <summary>
-        /// Link to fix file
-        /// </summary>
-        public string Url
-        {
-            get => SelectedFix?.Url ?? string.Empty;
-            set
-            {
-                if (SelectedFix is null)
-                {
-                    throw new NullReferenceException(nameof(SelectedGameFixes));
-                }
-
-                SelectedFix.Url = value ?? string.Empty;
-                OnPropertyChanged(nameof(Url));
-                UploadFixCommand.NotifyCanExecuteChanged();
-            }
-        }
-
-        public EditorViewModel(
-            EditorModel editorModel,
-            ConfigProvider config,
-            FixesProvider fixesProvider
-            )
-        {
-            _editorModel = editorModel ?? throw new NullReferenceException(nameof(editorModel));
-            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
-            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
-
-            FilteredGamesList = new();
-            AvailableGamesList = new();
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
+        partial void OnSearchChanged(string value) => FillGamesList();
 
 
         #region Relay Commands
@@ -232,6 +179,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task InitializeAsync() => await UpdateAsync(true);
 
+
         /// <summary>
         /// Update games list
         /// </summary>
@@ -239,16 +187,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task UpdateGames() => await UpdateAsync(false);
         private bool UpdateGamesCanExecute() => IsInProgress is false;
 
+
         /// <summary>
         /// Add new fix for a game
         /// </summary>
         [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
         private void AddNewFix()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
             FixEntity newFix = new();
 
@@ -260,24 +206,22 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool AddNewFixCanExecute() => SelectedGame is not null;
 
+
         /// <summary>
         /// Remove fix from a game
         /// </summary>
         [RelayCommand(CanExecute = nameof(RemoveFixCanExecute))]
         private void RemoveFix()
         {
-            if (SelectedGameFixes is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixes));
-            }
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            SelectedGameFixes.Remove(SelectedFix);
+            SelectedGame.Fixes.Remove(SelectedFix);
+
+            OnPropertyChanged(nameof(SelectedGameFixes));
         }
         private bool RemoveFixCanExecute() => SelectedFix is not null;
+
 
         /// <summary>
         /// Clear search bar
@@ -285,6 +229,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(ClearSearchCanExecute))]
         private void ClearSearch() => Search = string.Empty;
         private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
+
 
         /// <summary>
         /// Save fixes.xml
@@ -301,6 +246,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 .Show();
         }
 
+
         /// <summary>
         /// Open fixes.xml file
         /// </summary>
@@ -312,20 +258,14 @@ namespace Superheater.Avalonia.Core.ViewModels
                 UseShellExecute = true
             });
 
+
         /// <summary>
         /// Add dependency for a fix
         /// </summary>
         [RelayCommand(CanExecute = nameof(AddDependencyCanExecute))]
         private void AddDependency()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
-            if (SelectedGameFixes is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixes));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
             OnPropertyChanged(nameof(AvailableDependencies));
@@ -333,20 +273,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool AddDependencyCanExecute() => SelectedAvailableDependencyIndex > -1;
 
+
         /// <summary>
         /// Remove dependence from a fix
         /// </summary>
         [RelayCommand(CanExecute = nameof(RemoveDependencyCanExecute))]
         private void RemoveDependency()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
-            if (SelectedGameFixes is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixes));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
             OnPropertyChanged(nameof(AvailableDependencies));
@@ -354,23 +288,23 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool RemoveDependencyCanExecute() => SelectedAddedDependencyIndex > -1;
 
+
         /// <summary>
         /// Add new game
         /// </summary>
-        [RelayCommand(CanExecute = nameof(AddGameCanExecute))]
-        private void AddGame()
+        [RelayCommand(CanExecute = nameof(AddNewGameCanExecute))]
+        private void AddNewGame()
         {
-            var game = SelectedAvailableGame;
+            if (SelectedAvailableGame is null) throw new NullReferenceException(nameof(SelectedAvailableGame));
 
-            var newFix = _editorModel.AddNewFix(game);
+            var newFix = _editorModel.AddNewGame(SelectedAvailableGame);
 
-            FillGamesListAsync();
+            FillGamesList();
 
             SelectedGame = newFix;
-
-            OnPropertyChanged(nameof(AvailableGamesList));
         }
-        private bool AddGameCanExecute() => SelectedAvailableGame is not null;
+        private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
+
 
         /// <summary>
         /// Move fix up in the list
@@ -378,21 +312,16 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixUpCanExecute))]
         private void MoveFixUp()
         {
-            if (SelectedGameFixes is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixes));
-            }
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            var newIndex = SelectedFixIndex - 1;
+            _editorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
-            SelectedGameFixes.Move(SelectedFixIndex, newIndex);
-            SelectedFixIndex = newIndex;
-
-            OnPropertyChanged(nameof(SelectedFixIndex));
+            OnPropertyChanged(nameof(SelectedGameFixes));
             MoveFixDownCommand.NotifyCanExecuteChanged();
             MoveFixUpCommand.NotifyCanExecuteChanged();
         }
         private bool MoveFixUpCanExecute() => SelectedFix is not null && SelectedFixIndex > 0;
+
 
         /// <summary>
         /// Move fix down in the list
@@ -400,21 +329,16 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixDownCanExecute))]
         private void MoveFixDown()
         {
-            if (SelectedGameFixes is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGameFixes));
-            }
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            var newIndex = SelectedFixIndex + 1;
+            _editorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
-            SelectedGameFixes.Move(SelectedFixIndex, newIndex);
-            SelectedFixIndex = newIndex;
-
-            OnPropertyChanged(nameof(SelectedFixIndex));
+            OnPropertyChanged(nameof(SelectedGameFixes));
             MoveFixDownCommand.NotifyCanExecuteChanged();
             MoveFixUpCommand.NotifyCanExecuteChanged();
         }
         private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1;
+
 
         /// <summary>
         /// Upload fix to ftp
@@ -422,9 +346,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
         private async Task UploadFix()
         {
-            var check = await ChecksBeforeUploadAsync();
-
-            if (!check)
+            if (!await ChecksBeforeUploadAsync())
             {
                 return;
             }
@@ -454,7 +376,8 @@ Thank you.",
                 .Show();
             }
         }
-        private bool UploadFixCanExecute() => SelectedFix is not null && !string.IsNullOrEmpty(Url) && !string.IsNullOrEmpty(Name) && Version > 0;
+        private bool UploadFixCanExecute() => SelectedFix is not null;
+
 
         /// <summary>
         /// Open fix file picker
@@ -462,7 +385,7 @@ Thank you.",
         [RelayCommand]
         private async Task OpenFilePicker()
         {
-            if (SelectedFix is null) { throw new NullReferenceException(nameof(SelectedFix)); }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             var topLevel = Properties.TopLevel;
 
@@ -489,11 +412,12 @@ Thank you.",
                 return;
             }
 
-            Url = files[0].Path.LocalPath.ToString();
-            OnPropertyChanged(nameof(Url));
+            SelectedFix.Url = files[0].Path.LocalPath.ToString();
+            OnPropertyChanged(nameof(SelectedFix.Url));
         }
 
         #endregion Relay Commands
+
 
         /// <summary>
         /// Update games list
@@ -505,7 +429,7 @@ Thank you.",
 
             try
             {
-                await _editorModel.UpdateFixesListAsync(useCache);
+                await _editorModel.UpdateListsAsync(useCache);
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
@@ -532,37 +456,31 @@ Thank you.",
                 IsInProgress = false;
             }
 
-            FillGamesListAsync();
+            FillGamesList();
         }
 
         /// <summary>
         /// Fill games and available games lists based on a search bar
         /// </summary>
-        private async Task FillGamesListAsync()
+        private void FillGamesList()
         {
-            var selectedGame = SelectedGame;
-            var selectedFix = SelectedFix;
+            var selectedGameId = SelectedGame?.GameId;
+            var selectedFixGuid = SelectedFix?.Guid;
 
-            FilteredGamesList.Clear();
-            AvailableGamesList.Clear();
+            OnPropertyChanged(nameof(FilteredGamesList));
+            OnPropertyChanged(nameof(AvailableGamesList));
 
-            var gamesList = _editorModel.GetFilteredFixesList(Search);
-
-            FilteredGamesList.AddRange(gamesList);
-
-            if (selectedGame is not null && FilteredGamesList.Contains(selectedGame))
+            if (selectedGameId is not null && FilteredGamesList.Any(x => x.GameId == selectedGameId))
             {
-                SelectedGame = selectedGame;
+                SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
-                if (selectedFix is not null &&
+                if (selectedFixGuid is not null &&
                     SelectedGameFixes is not null &&
-                    SelectedGameFixes.Contains(selectedFix))
+                    SelectedGameFixes.Any(x => x.Guid == selectedFixGuid))
                 {
-                    SelectedFix = selectedFix;
+                    SelectedFix = SelectedGameFixes.First(x => x.Guid == selectedFixGuid);
                 }
             }
-
-            AvailableGamesList.AddRange(await _editorModel.GetListOfGamesAvailableToAddAsync());
         }
 
         /// <summary>
@@ -570,6 +488,48 @@ Thank you.",
         /// </summary>
         private async Task<bool> ChecksBeforeUploadAsync()
         {
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+            if (string.IsNullOrEmpty(SelectedFix.Name) ||
+                SelectedFix.Version < 1)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    $"Name and Version are required to upload a fix.",
+                    PopupMessageType.OkOnly)
+                .Show();
+
+                return false;
+            }
+
+            if (!SelectedFix.Url.StartsWith("http") &&
+                !string.IsNullOrEmpty(SelectedFix.Url))
+            {
+                if (!File.Exists(SelectedFix.Url))
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        $"{SelectedFix.Url} doesn't exist.",
+                        PopupMessageType.OkOnly)
+                        .Show();
+
+                    return false;
+                }
+
+                else if (new FileInfo(SelectedFix.Url).Length > 1e+8)
+                {
+                    new PopupMessageViewModel(
+                        "Error",
+                        @$"Can't upload file larger than 100Mb.
+
+Please, upload it to file hosting.",
+                        PopupMessageType.OkOnly)
+                        .Show();
+
+                    return false;
+                }
+            }
+
             var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
 
             foreach (var onlineFix in onlineFixes)
@@ -584,46 +544,6 @@ Thank you.",
 This fix already exists in the database.",
                         PopupMessageType.OkOnly)
                     .Show();
-
-                    return false;
-                }
-            }
-
-            if (string.IsNullOrEmpty(Name) ||
-                string.IsNullOrEmpty(Url) ||
-                Version < 1)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    $"Name, Version and Link to file are required to upload a fix.",
-                    PopupMessageType.OkOnly)
-                .Show();
-
-                return false;
-            }
-
-            if (!Url.StartsWith("http"))
-            {
-                if (!File.Exists(Url))
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        $"{Url} doesn't exist.",
-                        PopupMessageType.OkOnly)
-                        .Show();
-
-                    return false;
-                }
-
-                else if (new FileInfo(Url).Length > 1e+8)
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        @$"Can't upload file larger than 100Mb.
-
-Please, upload it to file hosting.",
-                        PopupMessageType.OkOnly)
-                        .Show();
 
                     return false;
                 }

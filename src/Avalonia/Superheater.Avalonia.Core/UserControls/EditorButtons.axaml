@@ -28,7 +28,7 @@
             <Button Name="AddGame"
                     Margin="3,0"
                     Padding="8"
-                    Command="{Binding AddGameCommand}">
+                    Command="{Binding AddNewGameCommand}">
                 Add new game
             </Button>
 

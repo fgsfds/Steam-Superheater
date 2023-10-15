@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Common
 {
-    public static class SteamTools
+    internal static class SteamTools
     {
         public static string? SteamInstallPath { get; }
 
