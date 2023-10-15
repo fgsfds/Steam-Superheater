@@ -4,7 +4,7 @@
     {
         public const string ConfigFile = "config.xml";
 
-        public const string FixesFile = "fixes.xml";
+        public const string FixesFile = "fixes_v2.xml";
 
         public const string NewsFile = "news.xml";
 
