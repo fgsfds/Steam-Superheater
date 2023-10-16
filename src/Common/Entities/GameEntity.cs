@@ -25,7 +25,9 @@ namespace Common.Entities
         /// <summary>
         /// Game icon
         /// </summary>
-        public string Icon => Path.Combine(
+        public string Icon => SteamTools.SteamInstallPath is null 
+            ? string.Empty
+            : Path.Combine(
             SteamTools.SteamInstallPath,
             @$"appcache{Path.DirectorySeparatorChar}librarycache{Path.DirectorySeparatorChar}{Id}_icon.jpg"
             );

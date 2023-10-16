@@ -275,7 +275,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool InstallFixCanExecute()
         {
-            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null || _lockButtons)
+            if (SelectedGame is null ||
+                SelectedFix is null ||
+                SelectedFix.IsInstalled ||
+                !SelectedGame.IsGameInstalled ||
+                (FixHasVariants && SelectedFixVariant is null) ||
+                _lockButtons)
             {
                 return false;
             }
@@ -291,10 +296,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
         private void UninstallFix()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             IsInProgress = true;
 
@@ -334,14 +337,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
         private async Task UpdateFix()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             IsInProgress = true;
 
@@ -383,10 +380,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
         private void OpenGameFolder()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             Process.Start(new ProcessStartInfo
             {
@@ -423,10 +417,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
         private void ApplyAdmin()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             SelectedGame.Game.SetRunAsAdmin();
         }
@@ -462,7 +453,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new NullReferenceException(nameof(SelectedGame));
             }
 
-            await Properties.TopLevel.Clipboard.SetTextAsync(SelectedFixUrl);
+            var clipboard = Properties.TopLevel.Clipboard ?? throw new Exception("Error while getting clipboard implementation");
+
+            await clipboard.SetTextAsync(SelectedFixUrl);
         }
 
         /// <summary>
@@ -567,10 +560,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <exception cref="NullReferenceException"></exception>
         private void RequireAdmin()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             new PopupMessageViewModel(
                 "Admin privileges required",
@@ -587,14 +577,8 @@ Do you want to set it to always run as admin?",
         /// </summary>
         private void OpenConfigXml()
         {
-            if (SelectedFix?.ConfigFile is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedFix?.ConfigFile is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
 

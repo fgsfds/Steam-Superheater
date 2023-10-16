@@ -41,7 +41,7 @@ namespace Common.Providers
 
             foreach (var fix in fixes)
             {
-                result.Add(new FixesList(fix.GameId, fix.GameName, new List<FixEntity>(fix.Fixes)));
+                result.Add(new FixesList(fix.GameId, fix.GameName, fix.Fixes));
             }
 
             return result;

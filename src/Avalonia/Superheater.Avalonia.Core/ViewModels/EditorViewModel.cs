@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Superheater.Avalonia.Core.Helpers;
@@ -50,9 +49,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes.ToImmutableList();
 
-        public List<FixEntity> AvailableDependencies => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<FixEntity> AvailableDependencies => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public List<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+        public ImmutableList<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
@@ -195,9 +194,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            FixEntity newFix = new();
-
-            SelectedGame.Fixes.Add(newFix);
+            var newFix = _editorModel.AddNewFix(SelectedGame);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
 
@@ -215,7 +212,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            SelectedGame.Fixes.Remove(SelectedFix);
+            _editorModel.RemoveFix(SelectedGame, SelectedFix);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
         }
@@ -267,6 +264,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
+
             OnPropertyChanged(nameof(AvailableDependencies));
             OnPropertyChanged(nameof(AddedDependencies));
         }
@@ -282,6 +280,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
+
             OnPropertyChanged(nameof(AvailableDependencies));
             OnPropertyChanged(nameof(AddedDependencies));
         }
@@ -345,8 +344,18 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
         private async Task UploadFix()
         {
-            if (!await ChecksBeforeUploadAsync())
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+            var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
+
+            if (!canUpload.Item1)
             {
+                new PopupMessageViewModel(
+                    "Error",
+                    canUpload.Item2,
+                    PopupMessageType.OkOnly)
+                    .Show();
+
                 return;
             }
 
@@ -355,14 +364,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var result = _editorModel.UploadFix(fixesList, fix);
 
-            if (result)
+            if (result.Item1)
             {
                 new PopupMessageViewModel(
                     "Success",
-                    @$"Fix successfully uploaded.
-It will be added to the database after developer's review.
-
-Thank you.",
+                    result.Item2,
                     PopupMessageType.OkOnly)
                 .Show();
             }
@@ -370,7 +376,7 @@ Thank you.",
             {
                 new PopupMessageViewModel(
                     "Error",
-                    $"Can't upload fix.",
+                    result.Item2,
                     PopupMessageType.OkOnly)
                 .Show();
             }
@@ -426,36 +432,20 @@ Thank you.",
         {
             IsInProgress = true;
 
-            try
-            {
-                await _editorModel.UpdateListsAsync(useCache);
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    "File not found: " + ex.Message,
-                    PopupMessageType.OkOnly
-                    ).Show();
-
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    "Can't connect to GitHub repository",
-                    PopupMessageType.OkOnly
-                    ).Show();
-
-                return;
-            }
-            finally
-            {
-                IsInProgress = false;
-            }
+            var result = await _editorModel.UpdateListsAsync(useCache);
 
             FillGamesList();
+
+            if (!result.Item1)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    result.Item2,
+                    PopupMessageType.OkOnly
+                    ).Show();
+            }
+
+            IsInProgress = false;
         }
 
         /// <summary>
@@ -480,73 +470,6 @@ Thank you.",
                     SelectedFix = SelectedGameFixes.First(x => x.Guid == selectedFixGuid);
                 }
             }
-        }
-
-        /// <summary>
-        /// Check if the file can be uploaded
-        /// </summary>
-        private async Task<bool> ChecksBeforeUploadAsync()
-        {
-            if (string.IsNullOrEmpty(SelectedFix?.Name) ||
-                SelectedFix.Version < 1)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    $"Name and Version are required to upload a fix.",
-                    PopupMessageType.OkOnly)
-                .Show();
-
-                return false;
-            }
-
-            if (!string.IsNullOrEmpty(SelectedFix.Url) &&
-                !SelectedFix.Url.StartsWith("http"))
-            {
-                if (!File.Exists(SelectedFix.Url))
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        $"{SelectedFix.Url} doesn't exist.",
-                        PopupMessageType.OkOnly)
-                        .Show();
-
-                    return false;
-                }
-
-                else if (new FileInfo(SelectedFix.Url).Length > 1e+8)
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        @$"Can't upload file larger than 100Mb.
-
-Please, upload it to file hosting.",
-                        PopupMessageType.OkOnly)
-                        .Show();
-
-                    return false;
-                }
-            }
-
-            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
-
-            foreach (var onlineFix in onlineFixes)
-            {
-                //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Any(x => x.Guid == SelectedFix.Guid))
-                {
-                    new PopupMessageViewModel(
-                        "Error",
-                        @$"Can't upload fix.
-
-This fix already exists in the database.",
-                        PopupMessageType.OkOnly)
-                    .Show();
-
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         private async void NotifyParameterChanged(string parameterName)

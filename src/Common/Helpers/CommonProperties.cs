@@ -28,9 +28,9 @@ namespace Common.Helpers
             }
         }
 
-        public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
+        public static Version CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version ?? new Version("999");
 
-        public static string ExecutableName => Process.GetCurrentProcess().MainModule.ModuleName;
+        public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
 
         public static bool IsInSteamDeckGameMode { get; }
 
@@ -47,7 +47,7 @@ namespace Common.Helpers
                     CreateNoWindow = true
                 };
 
-                var proc = Process.Start(processInfo);
+                var proc = Process.Start(processInfo) ?? throw new Exception("Error starting process"); 
 
                 var result = proc.StandardOutput.ReadToEnd();
 

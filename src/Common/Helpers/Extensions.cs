@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 namespace Common.Helpers
 {
@@ -30,6 +31,16 @@ namespace Common.Helpers
             list.RemoveAt(oldIndex);
 
             list.Insert(newIndex, element);
+        }
+
+        public static ImmutableList<T> Move<T>(this ImmutableList<T> list, int oldIndex, int newIndex)
+        {
+            var element = list[oldIndex];
+
+            var newList = list.RemoveAt(oldIndex);
+            newList = list.Insert(newIndex, element);
+
+            return newList;
         }
     }
 }

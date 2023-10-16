@@ -100,7 +100,7 @@ namespace Common
 
                         if (!Directory.Exists(Path.GetDirectoryName(fullName)))
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(fullName));
+                            Directory.CreateDirectory(Path.GetDirectoryName(fullName) ?? throw new Exception());
                         }
 
                         if (Path.GetFileName(fullName).Length == 0)

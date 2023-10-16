@@ -42,29 +42,17 @@ namespace Common.Providers
 
             XmlSerializer xmlSerializer = new(typeof(List<NewsEntity>));
 
-            ImmutableList<NewsEntity>? newsList;
-
-            try
+            using (StringReader fs = new(news))
             {
-                using (StringReader fs = new(news))
+                if (xmlSerializer.Deserialize(fs) is not List<NewsEntity> list)
                 {
-                    newsList = (xmlSerializer.Deserialize(fs) as List<NewsEntity>).ToImmutableList();
+                    Logger.Log("Error while deserializing news...");
+
+                    return ImmutableList.Create<NewsEntity>();
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Error while deserializing news...");
-                Logger.Log(ex.Message);
 
-                return ImmutableList.Create<NewsEntity>();
+                return list.OrderByDescending(x => x.Date).ToImmutableList();
             }
-
-            if (newsList is null)
-            {
-                throw new NullReferenceException(nameof(newsList));
-            }
-
-            return newsList.OrderByDescending(x => x.Version).ToImmutableList();
         }
 
         /// <summary>
