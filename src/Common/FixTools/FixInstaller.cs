@@ -60,7 +60,7 @@ namespace Common.FixTools
                 BackupFiles(filesInArchive, game.InstallDir, backupFolder, true, true);
             }
 
-            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolder, true, true);
+            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolder, true, false);
 
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolder, false, false);
 
