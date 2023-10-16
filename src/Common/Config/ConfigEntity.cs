@@ -38,17 +38,17 @@
             }
         }
 
-        private int _lastReadNewsVersion;
-        public int LastReadNewsVersion
+        private DateTime _lastReadNewsDate;
+        public DateTime LastReadNewsDate
         {
-            get => _lastReadNewsVersion;
+            get => _lastReadNewsDate;
             set
             {
-                if (_lastReadNewsVersion != value)
+                if (_lastReadNewsDate != value)
                 {
-                    _lastReadNewsVersion = value;
+                    _lastReadNewsDate = value;
                     NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsVersion));
+                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsDate));
                 }
             }
         }
@@ -162,7 +162,7 @@
         {
             _deleteZipsAfterInstall = true;
             _openConfigAfterInstall = false;
-            _lastReadNewsVersion = 0;
+            _lastReadNewsDate = DateTime.MinValue;
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
             _theme = "System";

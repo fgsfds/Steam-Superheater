@@ -3,8 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Common.Models;
 using Common.Entities;
 using System;
-using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Config;
@@ -42,7 +40,19 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private async Task MarkAllAsReadAsync()
         {
-            await _newsModel.MarkAllAsReadAsync();
+            var result = await _newsModel.MarkAllAsReadAsync();
+
+            if (!result.Item1)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    result.Item2,
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                return;
+            }
+
             OnNewsChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
@@ -52,25 +62,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async Task UpdateAsync()
         {
-            try
-            {
-                await _newsModel.UpdateNewsListAsync();
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    "File not found: " + ex.Message,
-                    PopupMessageType.OkOnly
-                    ).Show();
+            var result = await _newsModel.UpdateNewsListAsync();
 
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            if (!result.Item1)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    "Can't connect to GitHub repository",
+                    result.Item2,
                     PopupMessageType.OkOnly
                     ).Show();
 

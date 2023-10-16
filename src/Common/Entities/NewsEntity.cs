@@ -5,11 +5,6 @@ namespace Common.Entities
     public sealed partial class NewsEntity : ObservableObject
     {
         /// <summary>
-        /// Version of the news article
-        /// </summary>
-        public int Version { get; set; }
-
-        /// <summary>
         /// Date of the news article
         /// </summary>
         public DateTime Date { get; set; }

@@ -24,16 +24,21 @@ namespace Common.FixTools
         {
             string backupFolder = fix.Name.Replace(' ', '_');
 
-            string? zipName = null;
             string? zipFullPath = null;
             string? unpackToPath = null;
             List<string> filesInArchive = new();
 
+            var fixFolderPath = Path.Combine(game.InstallDir, Consts.BackupFolder, backupFolder);
+            fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
+
+            if (Directory.Exists(fixFolderPath))
+            {
+                Directory.Delete(fixFolderPath, true);
+            }
+
             if (!string.IsNullOrEmpty(fix.Url))
             {
-                zipName = Path.GetFileName(fix.Url);
-
-                backupFolder = Path.GetFileNameWithoutExtension(zipName);
+                var zipName = Path.GetFileName(fix.Url);
 
                 zipFullPath = _configEntity.UseLocalRepo
                     ? Path.Combine(_configEntity.LocalRepoPath, "fixes", zipName)
@@ -57,12 +62,12 @@ namespace Common.FixTools
 
                 filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
 
-                BackupFiles(filesInArchive, game.InstallDir, backupFolder, true, true);
+                BackupFiles(filesInArchive, game.InstallDir, fixFolderPath, true);
             }
 
-            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolder, true, false);
+            BackupFiles(fix.FilesToDelete, game.InstallDir, fixFolderPath, true);
 
-            BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolder, false, false);
+            BackupFiles(fix.FilesToBackup, game.InstallDir, fixFolderPath, false);
 
             if (zipFullPath is not null &&
                 unpackToPath is not null)
@@ -113,24 +118,14 @@ namespace Common.FixTools
         private void BackupFiles(
             IEnumerable<string>? files,
             string gameDir,
-            string backupFolder,
-            bool deleteOriginal,
-            bool deleteBackupFolder
+            string fixFolderPath,
+            bool deleteOriginal
             )
         {
-            if (files is null ||
-                !files.Any())
+            if (files is null || !files.Any())
             {
                 return;
-            }
-
-            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
-            fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
-
-            if (deleteBackupFolder && Directory.Exists(fixFolderPath))
-            {
-                Directory.Delete(fixFolderPath, true);
-            }
+            }            
 
             foreach (var file in files)
             {

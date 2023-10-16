@@ -24,33 +24,52 @@ namespace Common.Models
             _newsProvider = news ?? throw new NullReferenceException(nameof(news));
         }
 
-        public async Task UpdateNewsListAsync()
+        public async Task<Tuple<bool, string>> UpdateNewsListAsync()
         {
-            News = await _newsProvider.GetNewsListAsync();
+            try
+            {
+                News = await _newsProvider.GetNewsListAsync();
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new(false, "File not found: " + ex.Message);
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                return new(false, "Can't connect to GitHub repository");
+            }
 
             UpdateReadStatusOfExistingNews();
+
+            return new(true, string.Empty);
         }
 
-        public async Task MarkAllAsReadAsync()
+        public async Task<Tuple<bool, string>> MarkAllAsReadAsync()
         {
-            UpdateConfigLastReadVersion();
+            var result = await UpdateNewsListAsync();
 
-            await UpdateNewsListAsync();
+            if (result.Item1)
+            {
+                UpdateConfigLastReadVersion();
+                UpdateReadStatusOfExistingNews();
+            }
+
+            return result;
         }
 
         private void UpdateReadStatusOfExistingNews()
         {
             foreach (var item in News)
             {
-                item.IsNewer = item.Version > _config.LastReadNewsVersion;
+                item.IsNewer = item.Date > _config.LastReadNewsDate;
             }
         }
 
         private void UpdateConfigLastReadVersion()
         {
-            var lastReadVersion = News.Max(x => x.Version);
+            var lastReadDate = News.Max(x => x.Date);
 
-            _config.LastReadNewsVersion = lastReadVersion;
+            _config.LastReadNewsDate = lastReadDate;
         }
     }
 }
