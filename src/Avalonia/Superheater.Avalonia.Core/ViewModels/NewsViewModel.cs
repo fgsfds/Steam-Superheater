@@ -16,6 +16,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
         {
             _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
+
             NewsTabHeader = "News";
             _newsModel = newsModel;
 

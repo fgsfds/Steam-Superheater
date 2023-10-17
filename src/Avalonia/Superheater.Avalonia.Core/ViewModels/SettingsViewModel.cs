@@ -36,9 +36,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool LocalPathTextboxChanged;
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
-        public bool IsDefaultTheme => _config.Theme.Equals("System");
-        public bool IsLightTheme => _config.Theme.Equals("Light");
-        public bool IsDarkTheme => _config.Theme.Equals("Dark");
+        public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
+        public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
+        public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -125,7 +125,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
-            _config.Theme = "System";
+            _config.Theme = ThemeEnum.System;
         }
 
         [RelayCommand]
@@ -137,7 +137,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
-            _config.Theme = "Light";
+            _config.Theme = ThemeEnum.Light;
         }
 
         [RelayCommand]
@@ -149,7 +149,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-            _config.Theme = "Dark";
+            _config.Theme = ThemeEnum.Dark;
         }
 
         [RelayCommand]

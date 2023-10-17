@@ -1,4 +1,6 @@
-﻿namespace Common.Config
+﻿using Common.Helpers;
+
+namespace Common.Config
 {
     public sealed class ConfigEntity
     {
@@ -83,8 +85,8 @@
             }
         }
 
-        private string _theme;
-        public string Theme
+        private ThemeEnum _theme;
+        public ThemeEnum Theme
         {
             get => _theme;
             set
@@ -165,7 +167,7 @@
             _lastReadNewsDate = DateTime.MinValue;
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
-            _theme = "System";
+            _theme = ThemeEnum.System;
             _installedUpdater = 0;
             _showUninstalledGames = true;
             _useTestRepoBranch = false;

@@ -9,17 +9,25 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class AboutViewModel(UpdateInstaller updateInstaller) : ObservableObject
+    internal sealed partial class AboutViewModel : ObservableObject
     {
-        private readonly UpdateInstaller _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
+        public AboutViewModel(UpdateInstaller updateInstaller)
+        {
+            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
 
-        public string AboutTabHeader { get; private set; } = "About";
+            AboutTabHeader = "About";
+            CheckForUpdatesText = string.Empty;
+        }
+
+        private readonly UpdateInstaller _updateInstaller;
+
+        public string AboutTabHeader { get; private set; }
 
         public bool IsUpdateAvailable { get; set; }
 
         public bool IsInProgress { get; set; }
 
-        public string CheckForUpdatesText { get; set; } = string.Empty;
+        public string CheckForUpdatesText { get; set; }
 
         public Version CurrentVersion => CommonProperties.CurrentVersion;
 
