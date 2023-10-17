@@ -15,7 +15,7 @@ namespace Common
         }
 
         /// <summary>
-        /// Check github for releases with version higher than current
+        /// Check GitHub for releases with version higher than current
         /// </summary>
         /// <param name="currentVersion">Current SFD version</param>
         /// <returns></returns>

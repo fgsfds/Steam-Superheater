@@ -5,38 +5,32 @@ namespace Common.Providers
 {
     public sealed class GamesProvider
     {
-        private bool _isCacheUpdating;
         private ImmutableList<GameEntity>? _gamesCache;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         /// <inheritdoc/>
         public async Task<ImmutableList<GameEntity>> GetCachedListAsync()
         {
-            while (_isCacheUpdating)
-            {
-                await Task.Delay(100);
-            }
+            await _locker.WaitAsync();
 
-            return _gamesCache ?? await GetNewListAsync();
+            var result = _gamesCache ?? await CreateCacheAsync();
+
+            _locker.Release();
+
+            return result;
         }
 
         /// <inheritdoc/>
         public async Task<ImmutableList<GameEntity>> GetNewListAsync()
         {
-            while (_isCacheUpdating)
-            {
-                await Task.Delay(100);
-            }
+            _gamesCache = null;
 
-            _gamesCache = await CreateCacheAsync();
-
-            return _gamesCache;
+            return await GetCachedListAsync();
         }
 
         /// <inheritdoc/>
         private async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
-            _isCacheUpdating = true;
-
             List<GameEntity> result = new();
 
             await Task.Run(() =>
@@ -57,8 +51,6 @@ namespace Common.Providers
             });
 
             _gamesCache = result.OrderBy(x => x.Name).ToImmutableList();
-
-            _isCacheUpdating = false;
 
             return _gamesCache;
         }

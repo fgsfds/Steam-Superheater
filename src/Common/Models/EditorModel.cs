@@ -61,7 +61,8 @@ namespace Common.Models
         {
             List<FixesList> result = new();
 
-            result = _fixesList.Select(x => x.Value).Where(x => x.Fixes.Count > 0).ToList();
+            //result = _fixesList.Select(x => x.Value).Where(x => x.Fixes.Count > 0).ToList();
+            result = _fixesList.Select(x => x.Value).ToList();
 
             if (!string.IsNullOrEmpty(search))
             {

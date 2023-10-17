@@ -364,22 +364,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var result = _editorModel.UploadFix(fixesList, fix);
 
-            if (result.Item1)
-            {
-                new PopupMessageViewModel(
-                    "Success",
+            new PopupMessageViewModel(
+                    result.Item1 ? "Success" : "Error",
                     result.Item2,
                     PopupMessageType.OkOnly)
                 .Show();
-            }
-            else
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    result.Item2,
-                    PopupMessageType.OkOnly)
-                .Show();
-            }
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
 
@@ -393,11 +382,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             var topLevel = Properties.TopLevel;
-
-            if (topLevel is null)
-            {
-                throw new NullReferenceException(nameof(topLevel));
-            }
 
             var zipType = new FilePickerFileType("Zip")
             {

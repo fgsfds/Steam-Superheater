@@ -83,7 +83,7 @@ namespace Common.Entities
 
         /// <summary>
         /// List of fix's variants
-        /// Names of folders in inside a fix's archive, separated by ;
+        /// Names of folders inside a fix's archive, separated by ;
         /// </summary>
         public List<string>? Variants { get; set; }
 

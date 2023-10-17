@@ -8,9 +8,9 @@ namespace Common.Providers
 {
     public sealed class FixesProvider
     {
-        private bool _isCacheUpdating;
         private string? _fixesCachedString;
         private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public FixesProvider(ConfigProvider config)
         {
@@ -24,15 +24,14 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
-            while (_isCacheUpdating)
-            {
-                await Task.Delay(100);
-            }
+            await _locker.WaitAsync();
 
             if (_fixesCachedString is null)
             {
                 await CreateFixesCacheAsync();
             }
+
+            _locker.Release();
 
             if (_fixesCachedString is null)
             {
@@ -121,15 +120,12 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         private async Task CreateFixesCacheAsync()
         {
-            _isCacheUpdating = true;
-
             if (_config.UseLocalRepo)
             {
                 var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile);
 
                 if (!File.Exists(file))
                 {
-                    _isCacheUpdating = false;
                     throw new FileNotFoundException(file);
                 }
 
@@ -139,8 +135,6 @@ namespace Common.Providers
             {
                 _fixesCachedString = await DownloadFixesXMLAsync();
             }
-
-            _isCacheUpdating = false;
         }
 
         private List<FixesList> DeserializeCachedString(string fixes)
