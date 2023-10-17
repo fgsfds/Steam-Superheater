@@ -1,73 +1,64 @@
-﻿//using Microsoft.Win32;
-//using System;
-//using System.Collections.Generic;
-//using System.Linq;
-//using System.Runtime.InteropServices;
-//using System.Text;
-//using System.Threading.Tasks;
+﻿using Common.Entities;
+using Microsoft.Win32;
+using System.Runtime.InteropServices;
 
-//namespace Common.Helpers
-//{
-//    public class GameEntityHelper
-//    {
+namespace Common.Helpers
+{
+    public static class GameEntityHelper
+    {
+        /// <summary>
+        /// Does the game require admin rights
+        /// </summary>
+        public static bool DoesRequireAdmin(this GameEntity game)
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return false;
+            }
 
-//        /// <summary>
-//        /// Pairs 'game id - game exe'
-//        /// Only used for games that require admin rights
-//        /// </summary>
-//        private readonly Dictionary<int, string> _gamesThatRequireAdmin = new()
-//        {
-//            {13530, "PrinceOfPersia.exe" },
-//            {13500, "PrinceOfPersia.exe" }
-//        };
+            if (!_gamesThatRequireAdmin.ContainsKey(game.Id))
+            {
+                return false;
+            }
 
-//        /// <summary>
-//        /// Game executable
-//        /// Only defined if the game requires admin rights, otherwise is null
-//        /// </summary>
-//        public string? GameExecutable => _gamesThatRequireAdmin.ContainsKey(Id) ? _gamesThatRequireAdmin[Id] : null;
+            var data = Registry.GetValue(Consts.AdminRegistryKey, $"{game.InstallDir}{GetGameExecutable(game.Id)}", null);
 
-//        /// <summary>
-//        /// Does the game require admin rights
-//        /// </summary>
-//        public bool DoesRequireAdmin
-//        {
-//            get
-//            {
-//                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-//                {
-//                    return false;
-//                }
+            if (data is not null &&
+                data.Equals("~ RUNASADMIN"))
+            {
+                return false;
+            }
 
-//                if (!_gamesThatRequireAdmin.ContainsKey(Id))
-//                {
-//                    return false;
-//                }
+            return true;
+        }
 
-//                var data = Registry.GetValue(Consts.AdminRegistryKey, $"{InstallDir}{GameExecutable}", null);
+        /// <summary>
+        /// Add value the the registry to always run the game as admin
+        /// </summary>
+        public static void SetRunAsAdmin(this GameEntity game)
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
 
-//                if (data is not null &&
-//                    data.Equals("~ RUNASADMIN"))
-//                {
-//                    return false;
-//                }
+            Registry.SetValue(Consts.AdminRegistryKey, $"{game.InstallDir}{GetGameExecutable(game.Id)}", "~ RUNASADMIN");
+        }
 
-//                return true;
-//            }
-//        }
+        /// <summary>
+        /// Pairs 'game id - game exe'
+        /// Only used for games that require admin rights
+        /// </summary>
+        private static readonly Dictionary<int, string> _gamesThatRequireAdmin = new()
+        {
+            {13530, "PrinceOfPersia.exe" },
+            {13500, "PrinceOfPersia.exe" }
+        };
 
-//        /// <summary>
-//        /// Add value the the registry to always run the game as admin
-//        /// </summary>
-//        public void SetRunAsAdmin()
-//        {
-//            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-//            {
-//                return;
-//            }
-
-//            Registry.SetValue(Consts.AdminRegistryKey, $"{InstallDir}{GameExecutable}", "~ RUNASADMIN");
-//            OnPropertyChanged(nameof(DoesRequireAdmin));
-//        }
-//    }
-//}
+        /// <summary>
+        /// Game executable
+        /// Only defined if the game requires admin rights, otherwise is null
+        /// </summary>
+        private static string? GetGameExecutable(int id) => _gamesThatRequireAdmin.ContainsKey(id) ? _gamesThatRequireAdmin[key: id] : null;
+    }
+}

@@ -58,6 +58,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string Requirements => GetRequirementsString();
 
+        public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
+
         /// <summary>
         /// List of games
         /// </summary>
@@ -75,6 +77,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
+        [NotifyPropertyChangedFor(nameof(SelectedGameRequireAdmin))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
@@ -82,7 +85,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
         {
             if (value?.Game is not null &&
-                value.Game.DoesRequireAdmin)
+                value.Game.DoesRequireAdmin())
             {
                 RequireAdmin();
             }
@@ -126,12 +129,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task InitializeAsync() => await UpdateAsync(true);
 
+
         /// <summary>
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
         private async Task UpdateGames() => await UpdateAsync(false);
         private bool UpdateGamesCanExecute() => !_lockButtons;
+
 
         /// <summary>
         /// Install selected fix
@@ -209,6 +214,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             return result;
         }
 
+
         /// <summary>
         /// Uninstall selected fix
         /// </summary>
@@ -254,6 +260,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             return result;
         }
 
+
         /// <summary>
         /// Update selected fix
         /// </summary>
@@ -298,6 +305,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
+
         /// <summary>
         /// Open selected game install folder
         /// </summary>
@@ -314,6 +322,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
 
+
         /// <summary>
         /// Clear search bar
         /// </summary>
@@ -321,12 +330,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void ClearSearch() => Search = string.Empty;
         private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
 
+
         /// <summary>
         /// Open config file for selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
         private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
+
 
         /// <summary>
         /// Apply admin rights for selected game
@@ -337,8 +348,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             SelectedGame.Game.SetRunAsAdmin();
+
+            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
         }
-        private bool ApplyAdminCanExecute() => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin;
+        private bool ApplyAdminCanExecute() => SelectedGameRequireAdmin;
+
 
         /// <summary>
         /// Open PCGW page for selected game
@@ -356,6 +370,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool OpenPCGamingWikiCanExecute() => SelectedGame is not null;
 
+
         /// <summary>
         /// Open PCGW page for selected game
         /// </summary>
@@ -368,6 +383,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             await clipboard.SetTextAsync(SelectedFixUrl);
         }
+
 
         /// <summary>
         /// Close app
@@ -457,6 +473,8 @@ Do you want to set it to always run as admin?",
                 PopupMessageType.OkCancel,
                 SelectedGame.Game.SetRunAsAdmin
                 ).Show();
+
+            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
         }
 
         /// <summary>

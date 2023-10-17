@@ -7,6 +7,29 @@ namespace Common.CombinedEntities
     /// </summary>
     public sealed class FixFirstCombinedEntity
     {
+        public FixFirstCombinedEntity(
+            FixesList fixesList,
+            GameEntity? game,
+            IEnumerable<InstalledFixEntity>? installedFixes
+            )
+        {
+            FixesList = fixesList;
+            Game = game;
+
+            if (installedFixes is not null)
+            {
+                foreach (var installedFix in installedFixes)
+                {
+                    var fix = FixesList.Fixes.Where(x => x.Guid == installedFix.Guid).FirstOrDefault();
+
+                    if (fix is not null)
+                    {
+                        fix.InstalledFix = installedFix;
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// List of fixes
         /// </summary>
@@ -43,28 +66,5 @@ namespace Common.CombinedEntities
         public bool HasUpdates => FixesList.Fixes.Any(x => x.HasNewerVersion);
 
         public override string ToString() => GameName;
-
-        public FixFirstCombinedEntity(
-            FixesList fixesList,
-            GameEntity? game,
-            IEnumerable<InstalledFixEntity>? installedFixes
-            )
-        {
-            FixesList = fixesList;
-            Game = game;
-
-            if (installedFixes is not null)
-            {
-                foreach (var installedFix in installedFixes)
-                {
-                    var fix = FixesList.Fixes.Where(x => x.Guid == installedFix.Guid).FirstOrDefault();
-
-                    if (fix is not null)
-                    {
-                        fix.InstalledFix = installedFix;
-                    }
-                }
-            }
-        }
     }
 }

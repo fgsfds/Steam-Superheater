@@ -2,6 +2,14 @@
 {
     public sealed class InstalledFixEntity
     {
+        public InstalledFixEntity(int id, Guid guid, int version, List<string> list)
+        {
+            GameId = id;
+            Guid = guid;
+            Version = version;
+            FilesList = list;
+        }
+
         /// <summary>
         /// Steam game ID
         /// </summary>
@@ -21,14 +29,6 @@
         /// Paths to files relative to the game folder
         /// </summary>
         public List<string> FilesList { get; init; }
-
-        public InstalledFixEntity(int id, Guid guid, int version, List<string> list)
-        {
-            GameId = id;
-            Guid = guid;
-            Version = version;
-            FilesList = list;
-        }
 
         /// <summary>
         /// Serializer constructor

@@ -4,6 +4,20 @@ namespace Common.Config
 {
     public sealed class ConfigEntity
     {
+        internal ConfigEntity()
+        {
+            _deleteZipsAfterInstall = true;
+            _openConfigAfterInstall = false;
+            _lastReadNewsDate = DateTime.MinValue;
+            _useLocalRepo = false;
+            _localRepoPath = "LocalRepo";
+            _theme = ThemeEnum.System;
+            _installedUpdater = 0;
+            _showUninstalledGames = true;
+            _useTestRepoBranch = false;
+            _showUnsupportedFixes = false;
+        }
+
         public delegate void ConfigChanged();
         public event ConfigChanged NotifyConfigChanged;
 
@@ -158,20 +172,6 @@ namespace Common.Config
                     NotifyParameterChanged?.Invoke(nameof(ShowUnsupportedFixes));
                 }
             }
-        }
-
-        internal ConfigEntity()
-        {
-            _deleteZipsAfterInstall = true;
-            _openConfigAfterInstall = false;
-            _lastReadNewsDate = DateTime.MinValue;
-            _useLocalRepo = false;
-            _localRepoPath = "LocalRepo";
-            _theme = ThemeEnum.System;
-            _installedUpdater = 0;
-            _showUninstalledGames = true;
-            _useTestRepoBranch = false;
-            _showUnsupportedFixes = false;
         }
     }
 }

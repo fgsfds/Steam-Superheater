@@ -7,6 +7,17 @@ namespace Common.Entities
     /// </summary>
     public sealed class FixesList
     {
+        public FixesList(
+            int gameId,
+            string gameName,
+            List<FixEntity> fixes
+            )
+        {
+            GameId = gameId;
+            GameName = gameName;
+            Fixes = fixes;
+        }
+
         /// <summary>
         /// Steam ID of the game
         /// </summary>
@@ -22,17 +33,6 @@ namespace Common.Entities
         /// </summary>
         public List<FixEntity> Fixes { get; init; }
 
-        public FixesList(
-            int gameId,
-            string gameName,
-            List<FixEntity> fixes
-            )
-        {
-            GameId = gameId;
-            GameName = gameName;
-            Fixes = fixes;
-        }
-
         /// <summary>
         /// Serializer constructor
         /// </summary>
@@ -46,6 +46,22 @@ namespace Common.Entities
     /// </summary>
     public sealed partial class FixEntity : ObservableObject
     {
+        public FixEntity()
+        {
+            Name = string.Empty;
+            Version = 1;
+            Url = null;
+            Description = string.Empty;
+            Guid = Guid.NewGuid();
+            InstallFolder = null;
+            ConfigFile = null;
+            FilesToDelete = null;
+            FilesToBackup = null;
+            RunAfterInstall = null;
+            Dependencies = new();
+            SupportedOSes = 0;
+        }
+
         /// <summary>
         /// Fix title
         /// </summary>
@@ -137,22 +153,6 @@ namespace Common.Entities
         /// Is there a newer version of the fix
         /// </summary>
         public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
-
-        public FixEntity()
-        {
-            Name = string.Empty;
-            Version = 1;
-            Url = null;
-            Description = string.Empty;
-            Guid = Guid.NewGuid();
-            InstallFolder = null;
-            ConfigFile = null;
-            FilesToDelete = null;
-            FilesToBackup = null;
-            RunAfterInstall = null;
-            Dependencies = new();
-            SupportedOSes = 0;
-        }
 
         public override string ToString() => Name;
     }
