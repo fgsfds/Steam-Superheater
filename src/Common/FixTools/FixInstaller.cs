@@ -6,7 +6,7 @@ using System.IO.Compression;
 
 namespace Common.FixTools
 {
-    public class FixInstaller
+    public sealed class FixInstaller
     {
         private readonly ConfigEntity _configEntity;
 

@@ -3,7 +3,7 @@ using Common.Helpers;
 
 namespace Common.FixTools
 {
-    public class FixUninstaller
+    public sealed class FixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup

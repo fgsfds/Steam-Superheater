@@ -5,9 +5,9 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for ListsControl.xaml
     /// </summary>
-    public sealed partial class EditorListsControl : UserControl
+    public sealed partial class EditorLists : UserControl
     {
-        public EditorListsControl()
+        public EditorLists()
         {
             InitializeComponent();
         }
