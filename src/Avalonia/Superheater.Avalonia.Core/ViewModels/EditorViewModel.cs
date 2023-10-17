@@ -182,7 +182,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
-        private async Task UpdateGames() => await UpdateAsync(false);
+        private async Task UpdateGamesAsync() => await UpdateAsync(false);
         private bool UpdateGamesCanExecute() => IsInProgress is false;
 
 
@@ -343,7 +343,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Upload fix to ftp
         /// </summary>
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
-        private async Task UploadFix()
+        private async Task UploadFixAsync()
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -378,7 +378,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Open fix file picker
         /// </summary>
         [RelayCommand]
-        private async Task OpenFilePicker()
+        private async Task OpenFilePickerAsync()
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 

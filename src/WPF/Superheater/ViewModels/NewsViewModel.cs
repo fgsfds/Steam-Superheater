@@ -5,25 +5,32 @@ using Common.Entities;
 using System.Threading.Tasks;
 using System;
 using System.Windows;
-using System.IO;
-using System.Net.Http;
 using System.Collections.Immutable;
+using Common.Config;
+using System.Threading;
 
 namespace Superheater.ViewModels
 {
-    public sealed partial class NewsViewModel : ObservableObject
+    internal sealed partial class NewsViewModel : ObservableObject
     {
+        public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
+        {
+            _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
+
+            NewsTabHeader = "News";
+            _newsModel = newsModel;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
+
         private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public ImmutableList<NewsEntity> NewsList => _newsModel.News;
 
         public string NewsTabHeader { get; private set; }
 
-        public NewsViewModel(NewsModel newsModel)
-        {
-            NewsTabHeader = "News";
-            _newsModel = newsModel;
-        }
 
         #region Relay Commands
 
@@ -33,7 +40,19 @@ namespace Superheater.ViewModels
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private async Task MarkAllAsReadAsync()
         {
-            await _newsModel.MarkAllAsReadAsync();
+            var result = await _newsModel.MarkAllAsReadAsync();
+
+            if (!result.Item1)
+            {
+                MessageBox.Show(
+                    result.Item2,
+                    "Error",
+                    MessageBoxButton.OK
+                    );
+
+                return;
+            }
+
             OnNewsChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
@@ -43,27 +62,16 @@ namespace Superheater.ViewModels
 
         private async Task UpdateAsync()
         {
-            try
-            {
-                await _newsModel.UpdateNewsListAsync();
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            var result = await _newsModel.UpdateNewsListAsync();
+
+            if (!result.Item1)
             {
                 MessageBox.Show(
-                    "File not found: " + ex.Message,
+                    result.Item2,
                     "Error",
                     MessageBoxButton.OK
                     );
 
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
-            {
-                MessageBox.Show(
-                    "Can't connect to GitHub repository",
-                    "Error",
-                    MessageBoxButton.OK
-                    );
 
                 return;
             }
@@ -77,6 +85,18 @@ namespace Superheater.ViewModels
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
             OnPropertyChanged(nameof(NewsTabHeader));
             MarkAllAsReadCommand.NotifyCanExecuteChanged();
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                await _locker.WaitAsync();
+                await UpdateAsync();
+                _locker.Release();
+            }
         }
     }
 }
