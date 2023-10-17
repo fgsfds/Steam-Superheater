@@ -28,6 +28,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
 
             MainTabHeader = "Main";
+            LaunchGameButtonText = "Launch game...";
             _search = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
@@ -41,6 +42,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string MainTabHeader { get; private set; }
 
         public float ProgressBarValue { get; set; }
+
+        public string LaunchGameButtonText { get; private set; }
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
@@ -78,6 +81,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
         [NotifyPropertyChangedFor(nameof(SelectedGameRequireAdmin))]
+        [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
@@ -382,6 +386,52 @@ namespace Superheater.Avalonia.Core.ViewModels
             var clipboard = Properties.TopLevel.Clipboard ?? throw new Exception("Error while getting clipboard implementation");
 
             await clipboard.SetTextAsync(SelectedFixUrl);
+        }
+
+
+        /// <summary>
+        /// Launch/install game
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(LaunchGameCanExecute)))]
+        private void LaunchGame()
+        {
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
+            
+            if (SelectedGame.IsGameInstalled)
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = $"steam://rungameid/{SelectedGame.GameId}",
+                    UseShellExecute = true
+                });
+            }
+            else
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = $"steam://install/{SelectedGame.GameId}",
+                    UseShellExecute = true
+                });
+            }
+        }
+        private bool LaunchGameCanExecute()
+        {
+            if (SelectedGame is null)
+            {
+                return false;
+            }
+
+            if (SelectedGame.IsGameInstalled)
+            {
+                LaunchGameButtonText = "Launch game...";
+            }
+            else
+            {
+                LaunchGameButtonText = "Install game...";
+            }
+
+            OnPropertyChanged(nameof(LaunchGameButtonText));
+            return true;
         }
 
 

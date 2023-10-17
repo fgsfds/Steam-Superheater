@@ -17,6 +17,12 @@
                     HorizontalAlignment="Left"
                     Grid.Column="0">
 
+            <Button Command="{Binding LaunchGameCommand}"
+                    Content="{Binding LaunchGameButtonText}"
+                    Padding="8"
+                    Background="Tomato">
+            </Button>
+
             <Button Command="{Binding OpenGameFolderCommand}"
                     Margin="3,0"
                     Padding="3">
@@ -30,7 +36,7 @@
             </Button>
 
             <Button Command="{Binding UpdateGamesCommand}"
-                    Margin="0,0,3,0"
+                    Margin="3,0"
                     Padding="3">
                 Update list
             </Button>

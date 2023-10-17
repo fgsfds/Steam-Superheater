@@ -15,8 +15,17 @@
                     HorizontalAlignment="Left"
                     Grid.Column="0">
 
-            <Button Command="{Binding OpenGameFolderCommand}"
+            <Button Command="{Binding LaunchGameCommand}"
+                    Content="{Binding LaunchGameButtonText}"
                     Margin="0,0,3,0"
+                    Padding="8"
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding !IsSteamGameMode}">
+                Launch game...
+            </Button>
+
+            <Button Command="{Binding OpenGameFolderCommand}"
+                    Margin="3,0"
                     Padding="8"
                     IsVisible="{Binding !IsSteamGameMode}">
                 Open game folder...
