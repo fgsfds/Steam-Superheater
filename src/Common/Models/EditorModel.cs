@@ -26,7 +26,7 @@ namespace Common.Models
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
         private readonly GamesProvider _gamesProvider;
 
-        private readonly SortedList<string, FixesList> _fixesList;
+        private readonly List<FixesList> _fixesList;
         private readonly List<GameEntity> _availableGamesList;
 
         /// <summary>
@@ -59,17 +59,14 @@ namespace Common.Models
         /// <param name="search">Search string</param>
         public ImmutableList<FixesList> GetFilteredGamesList(string? search = null)
         {
-            List<FixesList> result = new();
-
-            //result = _fixesList.Select(x => x.Value).Where(x => x.Fixes.Count > 0).ToList();
-            result = _fixesList.Select(x => x.Value).ToList();
-
             if (!string.IsNullOrEmpty(search))
             {
-                result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
+                return _fixesList.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
             }
-
-            return result.ToImmutableList();
+            else
+            {
+                return _fixesList.ToImmutableList();
+            }
         }
 
         /// <summary>
@@ -87,7 +84,10 @@ namespace Common.Models
         {
             var newFix = new FixesList(game.Id, game.Name, new() { new() });
 
-            _fixesList.Add(newFix.GameName, newFix);
+            _fixesList.Add(newFix);
+            var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
+            _fixesList.Clear();
+            _fixesList.AddRange(newFixesList);
 
             _availableGamesList.Remove(game);
 
@@ -113,7 +113,15 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void RemoveFix(FixesList game, FixEntity fix) => game.Fixes.Remove(fix);
+        public void RemoveFix(FixesList game, FixEntity fix)
+        {
+            game.Fixes.Remove(fix);
+
+            if (game.Fixes.Count == 0)
+            {
+                
+            }
+        }
 
         /// <summary>
         /// Save current fixes list to XML
@@ -121,7 +129,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Tuple<bool, string> SaveFixesListAsync()
         {
-            var result = _fixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
+            var result = _fixesProvider.SaveFixes(_fixesList);
 
             CreateReadme();
 
@@ -142,16 +150,16 @@ namespace Common.Models
                 return ImmutableList.Create<FixEntity>();
             }
 
-            var allGameFixes = _fixesList.Where(x => x.Value.GameId == fixesList.GameId).FirstOrDefault();
+            var allGameFixes = _fixesList.Where(x => x.GameId == fixesList.GameId).FirstOrDefault();
 
-            if (allGameFixes.Value is null)
+            if (allGameFixes is null)
             {
                 return ImmutableList.Create<FixEntity>();
             }
 
             var allGameDeps = fixEntity.Dependencies;
 
-            var deps = allGameFixes.Value.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
 
             return deps.ToImmutableList();
         }
@@ -311,7 +319,7 @@ Thank you.");
 
             foreach (var fix in fixes)
             {
-                _fixesList.Add(fix.GameName, fix);
+                _fixesList.Add(fix);
             }
         }
 
@@ -328,7 +336,7 @@ Thank you.");
 
             foreach (var game in installedGames)
             {
-                if (!_fixesList.Any(x => x.Value.GameId == game.Id))
+                if (!_fixesList.Any(x => x.GameId == game.Id))
                 {
                     _availableGamesList.Add(game);
                 }
@@ -341,9 +349,9 @@ Thank you.");
 
             foreach (var fix in _fixesList)
             {
-                result += fix.Value.GameName + Environment.NewLine;
+                result += fix.GameName + Environment.NewLine;
 
-                foreach (var f in fix.Value.Fixes)
+                foreach (var f in fix.Fixes)
                 {
                     result += "- " + f.Name + Environment.NewLine;
                 }

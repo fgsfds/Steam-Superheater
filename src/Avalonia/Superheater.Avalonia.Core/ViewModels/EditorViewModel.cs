@@ -295,11 +295,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedAvailableGame is null) throw new NullReferenceException(nameof(SelectedAvailableGame));
 
-            var newFix = _editorModel.AddNewGame(SelectedAvailableGame);
+            FixesList? newGame = _editorModel.AddNewGame(SelectedAvailableGame);
 
             FillGamesList();
 
-            SelectedGame = newFix;
+            SelectedGame = newGame;
+            SelectedFix = newGame.Fixes.First();
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
 
