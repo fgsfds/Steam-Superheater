@@ -9,18 +9,6 @@ namespace Common.Models
 {
     public sealed class MainModel
     {
-        private readonly ConfigEntity _config;
-        private readonly InstalledFixesProvider _installedFixesProvider;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly FixInstaller _fixInstaller;
-        private readonly FixUninstaller _fixUninstaller;
-
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
-
-        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
-
-        public bool HasUpdateableGames => UpdateableGamesCount > 0;
-
         public MainModel(
             ConfigProvider configProvider,
             InstalledFixesProvider installedFixesProvider,
@@ -36,6 +24,18 @@ namespace Common.Models
             _fixInstaller = fixInstaller ?? throw new NullReferenceException(nameof(fixInstaller));
             _fixUninstaller = fixUninstaller ?? throw new NullReferenceException(nameof(fixUninstaller));
         }
+
+        private readonly ConfigEntity _config;
+        private readonly InstalledFixesProvider _installedFixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly FixInstaller _fixInstaller;
+        private readonly FixUninstaller _fixUninstaller;
+
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
+
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+
+        public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
@@ -138,12 +138,12 @@ namespace Common.Models
         }
 
         /// <summary>
-        /// Does fix have dependencies that are currently installed
+        /// Does fix have dependencies that are currently not installed
         /// </summary>
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveUninstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
+        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
@@ -162,12 +162,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid)
-        {
-            var result = fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
-
-            return result;
-        }
+        public List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid) => fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
 
         /// <summary>
         /// Does fix have dependent fixes that are currently installed

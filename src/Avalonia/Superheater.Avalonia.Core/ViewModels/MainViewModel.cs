@@ -146,8 +146,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            var selectedFix = SelectedFix;
-
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
             var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
@@ -175,7 +173,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            if (selectedFix.ConfigFile is not null &&
+            if (SelectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
                 new PopupMessageViewModel(
@@ -206,7 +204,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveUninstalledDependencies(SelectedGame, SelectedFix);
+            var result = !_mainModel.DoesFixHaveNotInstalledDependencies(SelectedGame, SelectedFix);
 
             return result;
         }

@@ -9,26 +9,19 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class AboutViewModel : ObservableObject
+    internal sealed partial class AboutViewModel(UpdateInstaller updateInstaller) : ObservableObject
     {
-        private readonly UpdateInstaller _updateInstaller;
+        private readonly UpdateInstaller _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
 
-        public string AboutTabHeader { get; private set; }
+        public string AboutTabHeader { get; private set; } = "About";
 
         public bool IsUpdateAvailable { get; set; }
 
         public bool IsInProgress { get; set; }
 
-        public string CheckForUpdatesText { get; set; }
+        public string CheckForUpdatesText { get; set; } = string.Empty;
 
         public Version CurrentVersion => CommonProperties.CurrentVersion;
-
-        public AboutViewModel(UpdateInstaller updateInstaller)
-        {
-            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
-            AboutTabHeader = "About";
-            CheckForUpdatesText = string.Empty;
-        }
 
 
         #region Relay Commands
@@ -117,7 +110,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new Exception("Can't identify platform");
             }
 
-            
+
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 

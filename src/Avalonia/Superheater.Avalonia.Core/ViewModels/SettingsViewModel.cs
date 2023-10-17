@@ -16,13 +16,26 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class SettingsViewModel : ObservableObject
     {
+        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
+        {
+            _config = config.Config;
+            _mwvm = mwvm;
+
+            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
+            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
+            UseLocalRepoCheckbox = _config.UseLocalRepo;
+            PathToLocalRepo = _config.LocalRepoPath;
+            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
+            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
+            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+        }
+
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
-
         public bool LocalPathTextboxChanged;
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
         public bool IsDefaultTheme => _config.Theme.Equals("System");
         public bool IsLightTheme => _config.Theme.Equals("Light");
         public bool IsDarkTheme => _config.Theme.Equals("Dark");
@@ -87,20 +100,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
-        }
-
-        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
-        {
-            _config = config.Config;
-            _mwvm = mwvm;
-
-            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
-            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
-            UseLocalRepoCheckbox = _config.UseLocalRepo;
-            PathToLocalRepo = _config.LocalRepoPath;
-            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
-            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
-            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
         }
 
 

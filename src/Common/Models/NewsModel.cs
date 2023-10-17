@@ -7,6 +7,15 @@ namespace Common.Models
 {
     public sealed class NewsModel
     {
+        public NewsModel(
+            ConfigProvider config,
+            NewsProvider news
+            )
+        {
+            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+            _newsProvider = news ?? throw new NullReferenceException(nameof(news));
+        }
+
         private readonly ConfigEntity _config;
         private readonly NewsProvider _newsProvider;
 
@@ -15,14 +24,6 @@ namespace Common.Models
         public bool HasUnreadNews => UnreadNewsCount > 0;
 
         public ImmutableList<NewsEntity> News;
-
-        public NewsModel(
-            ConfigProvider config,
-            NewsProvider news)
-        {
-            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
-            _newsProvider = news ?? throw new NullReferenceException(nameof(news));
-        }
 
         public async Task<Tuple<bool, string>> UpdateNewsListAsync()
         {

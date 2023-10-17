@@ -8,13 +8,6 @@ namespace Common.Models
 {
     public sealed class EditorModel
     {
-        private readonly FixesProvider _fixesProvider;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly GamesProvider _gamesProvider;
-
-        private readonly SortedList<string, FixesList> _fixesList;
-        private readonly List<GameEntity> _availableGamesList;
-
         public EditorModel(
             FixesProvider fixesProvider,
             CombinedEntitiesProvider combinedEntitiesProvider,
@@ -28,6 +21,13 @@ namespace Common.Models
             _fixesList = new();
             _availableGamesList = new();
         }
+
+        private readonly FixesProvider _fixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly GamesProvider _gamesProvider;
+
+        private readonly SortedList<string, FixesList> _fixesList;
+        private readonly List<GameEntity> _availableGamesList;
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo

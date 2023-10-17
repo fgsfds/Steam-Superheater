@@ -13,15 +13,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class NewsViewModel : ObservableObject
     {
-        private bool IsDeveloperMode => Properties.IsDeveloperMode;
-        private readonly NewsModel _newsModel;
-        private readonly ConfigEntity _config;
-        private readonly SemaphoreSlim _locker = new(1, 1);
-
-        public ImmutableList<NewsEntity> NewsList => _newsModel.News;
-
-        public string NewsTabHeader { get; private set; }
-
         public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
         {
             _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
@@ -30,6 +21,15 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
+
+        private bool IsDeveloperMode => Properties.IsDeveloperMode;
+        private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
+
+        public ImmutableList<NewsEntity> NewsList => _newsModel.News;
+
+        public string NewsTabHeader { get; private set; }
 
 
         #region Relay Commands
