@@ -20,7 +20,7 @@
 
         <usc:SearchBar Grid.Row="0" Margin="5"/>
 
-        <usc:EditorListsControl Grid.Row="1" Margin="5"/>
+        <usc:EditorLists Grid.Row="1" Margin="5"/>
 
         <usc:ProgressBar Grid.Row="3" Margin="5"/>
 

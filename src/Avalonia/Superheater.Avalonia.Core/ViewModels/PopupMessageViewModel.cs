@@ -7,19 +7,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class PopupMessageViewModel : ObservableObject
     {
-        private readonly MainWindowViewModel _mwvm;
-        private readonly Action? _okAction;
-
-        public bool IsPopupVisible { get; set; }
-
-        public bool IsOkCancel { get; init; }
-
-        public bool IsOkOnly { get; init; }
-
-        public string TitleText { get; init; }
-
-        public string MessageText { get; init; }
-
         /// <summary>
         /// Create new Popup window
         /// </summary>
@@ -51,6 +38,19 @@ namespace Superheater.Avalonia.Core.ViewModels
             _mwvm = BindingsManager.Instance.GetInstance<MainWindowViewModel>();
             _mwvm.PopupDataContext = this;
         }
+
+        private readonly MainWindowViewModel _mwvm;
+        private readonly Action? _okAction;
+
+        public bool IsPopupVisible { get; set; }
+
+        public bool IsOkCancel { get; init; }
+
+        public bool IsOkOnly { get; init; }
+
+        public string TitleText { get; init; }
+
+        public string MessageText { get; init; }
 
 
         #region Relay Commands

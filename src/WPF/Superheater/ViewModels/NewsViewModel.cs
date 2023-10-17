@@ -3,29 +3,34 @@ using CommunityToolkit.Mvvm.Input;
 using Common.Models;
 using Common.Entities;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
 using System;
 using System.Windows;
-using System.IO;
-using System.Net.Http;
-using Common.Helpers;
+using System.Collections.Immutable;
+using Common.Config;
+using System.Threading;
 
 namespace Superheater.ViewModels
 {
-    public sealed partial class NewsViewModel : ObservableObject
+    internal sealed partial class NewsViewModel : ObservableObject
     {
-        private readonly NewsModel _newsModel;
+        public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
+        {
+            _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
 
-        public ObservableCollection<NewsEntity> NewsList { get; set; }
+            NewsTabHeader = "News";
+            _newsModel = newsModel;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
+
+        private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
+
+        public ImmutableList<NewsEntity> NewsList => _newsModel.News;
 
         public string NewsTabHeader { get; private set; }
 
-        public NewsViewModel(NewsModel newsModel)
-        {
-            NewsList = new();
-            NewsTabHeader = "News";
-            _newsModel = newsModel;
-        }
 
         #region Relay Commands
 
@@ -33,11 +38,22 @@ namespace Superheater.ViewModels
         private async Task InitializeAsync() => await UpdateAsync();
 
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
-        private void MarkAllAsRead()
+        private async Task MarkAllAsReadAsync()
         {
-            _newsModel.MarkAllAsRead();
-            FillNewsList();
-            UpdateHeader();
+            var result = await _newsModel.MarkAllAsReadAsync();
+
+            if (!result.Item1)
+            {
+                MessageBox.Show(
+                    result.Item2,
+                    "Error",
+                    MessageBoxButton.OK
+                    );
+
+                return;
+            }
+
+            OnNewsChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 
@@ -46,47 +62,41 @@ namespace Superheater.ViewModels
 
         private async Task UpdateAsync()
         {
-            try
-            {
-                await _newsModel.UpdateNewsListAsync();
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            var result = await _newsModel.UpdateNewsListAsync();
+
+            if (!result.Item1)
             {
                 MessageBox.Show(
-                    "File not found: " + ex.Message,
+                    result.Item2,
                     "Error",
                     MessageBoxButton.OK
                     );
 
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
-            {
-                MessageBox.Show(
-                    "Can't connect to GitHub repository",
-                    "Error",
-                    MessageBoxButton.OK
-                    );
 
                 return;
             }
 
-            FillNewsList();
-            UpdateHeader();
+            OnNewsChanged();
         }
 
-        private void FillNewsList()
+        private void OnNewsChanged()
         {
-            NewsList.Clear();
-            NewsList.AddRange(_newsModel.News);
-            MarkAllAsReadCommand.NotifyCanExecuteChanged();
-        }
-
-        private void UpdateHeader()
-        {
+            OnPropertyChanged(nameof(NewsList));
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
             OnPropertyChanged(nameof(NewsTabHeader));
             MarkAllAsReadCommand.NotifyCanExecuteChanged();
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                await _locker.WaitAsync();
+                await UpdateAsync();
+                _locker.Release();
+            }
         }
     }
 }

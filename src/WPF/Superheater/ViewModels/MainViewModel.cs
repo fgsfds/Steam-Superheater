@@ -7,51 +7,42 @@ using Common.Helpers;
 using Common.Models;
 using Common.Entities;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
-using Common.FixTools;
-using System.Windows.Shapes;
-using Path = System.IO.Path;
+using System.Collections.Immutable;
+using System.Threading;
 
 namespace Superheater.ViewModels
 {
     internal sealed partial class MainViewModel : ObservableObject
     {
+        public MainViewModel(
+            MainModel mainModel,
+            ConfigProvider config
+            )
+        {
+            _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
+            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+
+            MainTabHeader = "Main";
+            _search = string.Empty;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
+
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
         private bool _lockButtons;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public string MainTabHeader { get; private set; }
 
         public float ProgressBarValue { get; set; }
 
-        /// <summary>
-        /// List of games
-        /// </summary>
-        public ObservableCollection<FixFirstCombinedEntity> FilteredGamesList { get; init; }
-
-        /// <summary>
-        /// List of fixes for selected game
-        /// </summary>
-        public List<FixEntity>? SelectedGameFixesList => SelectedGame?.FixesList.Fixes.ToList();
-
-        /// <summary>
-        /// List of selected fix's variants
-        /// </summary>
-        public List<string>? FixVariants => SelectedFix?.Variants;
-
-        /// <summary>
-        /// Selected fix variant
-        /// </summary>
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
-        private string? _selectedFixVariant;
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         /// <summary>
         /// Does selected fix has variants
@@ -63,27 +54,30 @@ namespace Superheater.ViewModels
         /// </summary>
         public bool SelectedFixHasUpdate => SelectedFix?.HasNewerVersion ?? false;
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
-        private bool _isInProgress;
-        partial void OnIsInProgressChanged(bool value)
-        {
-            _lockButtons = value;
-        }
+        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Requirements))]
-        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
-        [NotifyPropertyChangedFor(nameof(FixVariants))]
-        [NotifyPropertyChangedFor(nameof(FixHasVariants))]
-        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
-        [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
-        [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
-        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
-        private FixEntity? _selectedFix;
+        public string Requirements => GetRequirementsString();
+
+        public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
+
+        /// <summary>
+        /// List of games
+        /// </summary>
+        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search);
+
+        /// <summary>
+        /// List of fixes for selected game
+        /// </summary>
+        public ImmutableList<FixEntity>? SelectedGameFixesList => _mainModel.GetFixesForSelectedGame(SelectedGame);
+
+        /// <summary>
+        /// List of selected fix's variants
+        /// </summary>
+        public ImmutableList<string>? FixVariants => SelectedFix?.Variants?.ToImmutableList();
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
+        [NotifyPropertyChangedFor(nameof(SelectedGameRequireAdmin))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
@@ -91,88 +85,40 @@ namespace Superheater.ViewModels
         partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
         {
             if (value?.Game is not null &&
-                value is not null &&
-                value.Game.DoesRequireAdmin)
+                value.Game.DoesRequireAdmin())
             {
                 RequireAdmin();
             }
         }
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(Requirements))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
+        [NotifyPropertyChangedFor(nameof(FixVariants))]
+        [NotifyPropertyChangedFor(nameof(FixHasVariants))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
+        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
+        private FixEntity? _selectedFix;
+
+        /// <summary>
+        /// Selected fix variant
+        /// </summary>
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+        private string? _selectedFixVariant;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
+        private bool _isInProgress;
+        partial void OnIsInProgressChanged(bool value) => _lockButtons = value;
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
         private string _search;
-        partial void OnSearchChanged(string value)
-        {
-            FillGamesList();
-        }
-
-        public string Requirements
-        {
-            get
-            {
-                if (SelectedGameFixesList is null ||
-                    SelectedFix is null ||
-                    SelectedGame is null)
-                {
-                    return string.Empty;
-                }
-
-                var dependsOn = _mainModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
-
-                string? requires = null;
-
-                if (dependsOn.Any())
-                {
-                    requires = "REQUIRES: ";
-
-                    requires += string.Join(", ", dependsOn.Select(x => x.Name));
-                }
-
-                string? required = null;
-
-                if (SelectedFix?.Dependencies is not null)
-                {
-                    var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
-
-                    if (dependsBy.Any())
-                    {
-                        required = "REQUIRED BY: ";
-
-                        required += string.Join(", ", dependsBy.Select(x => x.Name));
-                    }
-                }
-
-                if (requires is not null && required is not null)
-                {
-                    return requires + Environment.NewLine + required;
-                }
-                else if (requires is not null)
-                {
-                    return requires;
-                }
-                else if (required is not null)
-                {
-                    return required;
-                }
-
-                return string.Empty;
-            }
-        }
-
-        public MainViewModel(
-            MainModel mainModel,
-            ConfigProvider config
-            )
-        {
-            _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
-            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
-
-            MainTabHeader = "Main";
-            FilteredGamesList = new();
-            _search = string.Empty;
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
+        partial void OnSearchChanged(string value) => FillGamesList();
 
 
         #region Relay Commands
@@ -183,30 +129,27 @@ namespace Superheater.ViewModels
         [RelayCommand]
         private async Task InitializeAsync() => await UpdateAsync(true);
 
+
+        /// <summary>
+        /// Update games list
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
+        private async Task UpdateGames() => await UpdateAsync(false);
+        private bool UpdateGamesCanExecute() => !_lockButtons;
+
+
         /// <summary>
         /// Install selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(InstallFixCanExecute)))]
         private async Task InstallFix()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
-            if (SelectedGame.Game is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
             _lockButtons = true;
 
             UpdateGamesCommand.NotifyCanExecuteChanged();
-
-            var selectedFix = SelectedFix;
 
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
@@ -220,32 +163,56 @@ namespace Superheater.ViewModels
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            MessageBox.Show(
-                result,
-                "Result",
-                MessageBoxButton.OK);
-
-            if (selectedFix.ConfigFile is not null &&
-                _config.OpenConfigAfterInstall)
-            {
-                OpenConfigXml();
-            }
-
             FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
             ProgressBarValue = 0;
             OnPropertyChanged(nameof(ProgressBarValue));
+
+            if (!result.Item1)
+            {
+                MessageBox.Show(
+                    result.Item2,
+                    "Error",
+                    MessageBoxButton.OK
+                    );
+
+                return;
+            }
+
+            if (SelectedFix.ConfigFile is not null &&
+                _config.OpenConfigAfterInstall)
+            {
+                MessageBox.Show(
+                    result.Item2,
+                    "Success",
+                    MessageBoxButton.OK
+                    );
+            }
+            else
+            {
+                MessageBox.Show(
+                    result.Item2,
+                    "Success",
+                    MessageBoxButton.OK
+                    );
+            }
         }
         private bool InstallFixCanExecute()
         {
-            if (SelectedFix is null || SelectedFix.IsInstalled || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || FixHasVariants && SelectedFixVariant is null || _lockButtons)
+            if (SelectedGame is null ||
+                SelectedFix is null ||
+                SelectedFix.IsInstalled ||
+                !SelectedGame.IsGameInstalled ||
+                (FixHasVariants && SelectedFixVariant is null) ||
+                _lockButtons)
             {
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveUninstalledDependencies(SelectedGame, SelectedFix);
+            var result = !_mainModel.DoesFixHaveNotInstalledDependencies(SelectedGame, SelectedFix);
 
             return result;
         }
+
 
         /// <summary>
         /// Uninstall selected fix
@@ -253,10 +220,8 @@ namespace Superheater.ViewModels
         [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
         private void UninstallFix()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             IsInProgress = true;
 
@@ -273,13 +238,18 @@ namespace Superheater.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             MessageBox.Show(
-                result,
-                "Result",
-                MessageBoxButton.OK);
+                result.Item2,
+                result.Item1 ? "Success" : "Error",
+                MessageBoxButton.OK
+                );
         }
         private bool UninstallFixCanExecute()
         {
-            if (SelectedFix is null || !SelectedFix.IsInstalled || SelectedGameFixesList is null || (SelectedGame is not null && !SelectedGame.IsGameInstalled) || _lockButtons)
+            if (SelectedFix is null ||
+                !SelectedFix.IsInstalled ||
+                SelectedGameFixesList is null ||
+                (SelectedGame is not null && !SelectedGame.IsGameInstalled) ||
+                _lockButtons)
             {
                 return false;
             }
@@ -289,20 +259,15 @@ namespace Superheater.ViewModels
             return result;
         }
 
+
         /// <summary>
         /// Update selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
         private async Task UpdateFix()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedFix));
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             IsInProgress = true;
 
@@ -325,11 +290,13 @@ namespace Superheater.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             MessageBox.Show(
-                result,
-                "Result",
-                MessageBoxButton.OK);
+                result.Item2,
+                result.Item1 ? "Success" : "Error",
+                MessageBoxButton.OK
+                );
 
-            if (selectedFix.ConfigFile is not null &&
+            if (result.Item1 &&
+                selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
                 OpenConfig();
@@ -337,16 +304,14 @@ namespace Superheater.ViewModels
         }
         public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
+
         /// <summary>
         /// Open selected game install folder
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
         private void OpenGameFolder()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             Process.Start(new ProcessStartInfo
             {
@@ -356,12 +321,6 @@ namespace Superheater.ViewModels
         }
         private bool OpenGameFolderCanExecute() => SelectedGame is not null && SelectedGame.IsGameInstalled;
 
-        /// <summary>
-        /// Update games list
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
-        private async Task UpdateGames() => await UpdateAsync(false);
-        private bool UpdateGamesCanExecute() => !_lockButtons;
 
         /// <summary>
         /// Clear search bar
@@ -370,6 +329,7 @@ namespace Superheater.ViewModels
         private void ClearSearch() => Search = string.Empty;
         private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
 
+
         /// <summary>
         /// Open config file for selected fix
         /// </summary>
@@ -377,20 +337,21 @@ namespace Superheater.ViewModels
         private void OpenConfig() => OpenConfigXml();
         private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
 
+
         /// <summary>
         /// Apply admin rights for selected game
         /// </summary>
         [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
         private void ApplyAdmin()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             SelectedGame.Game.SetRunAsAdmin();
+
+            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
         }
-        private bool ApplyAdminCanExecute() => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin;
+        private bool ApplyAdminCanExecute() => SelectedGameRequireAdmin;
+
 
         /// <summary>
         /// Open PCGW page for selected game
@@ -398,10 +359,7 @@ namespace Superheater.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
         private void OpenPCGamingWiki()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
             Process.Start(new ProcessStartInfo
             {
@@ -411,19 +369,24 @@ namespace Superheater.ViewModels
         }
         private bool OpenPCGamingWikiCanExecute() => SelectedGame is not null;
 
+
         /// <summary>
         /// Open PCGW page for selected game
         /// </summary>
         [RelayCommand]
         private void UrlCopyToClipboard()
         {
-            if (SelectedFix is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedGame));
 
             Clipboard.SetText(SelectedFix.Url);
         }
+
+
+        /// <summary>
+        /// Close app
+        /// </summary>
+        [RelayCommand]
+        private void CloseApp() => Environment.Exit(0);
 
         #endregion Relay Commands
 
@@ -436,38 +399,19 @@ namespace Superheater.ViewModels
         {
             IsInProgress = true;
 
-            try
-            {
-                await _mainModel.UpdateGamesListAsync(useCache);
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-
-                MessageBox.Show(
-                    "File not found: " + ex.Message,
-                    "Error",
-                    MessageBoxButton.OK);
-
-                IsInProgress = false;
-
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
-            {
-
-                MessageBox.Show(
-                    "Can't connect to GitHub repository",
-                    "Error",
-                    MessageBoxButton.OK);
-
-                return;
-            }
-            finally
-            {
-                IsInProgress = false;
-            }
+            var result = await _mainModel.UpdateGamesListAsync(useCache);
 
             FillGamesList();
+
+            if (!result.Item1)
+            {
+
+                MessageBox.Show(
+                    result.Item2,
+                    "Error",
+                    MessageBoxButton.OK
+                    );
+            }
 
             IsInProgress = false;
         }
@@ -491,26 +435,22 @@ namespace Superheater.ViewModels
         /// </summary>
         private void FillGamesList()
         {
-            var selectedGame = SelectedGame;
-            var selectedFix = SelectedFix;
+            var selectedGameId = SelectedGame?.GameId;
+            var selectedFixGuid = SelectedFix?.Guid;
 
-            FilteredGamesList.Clear();
-
-            var gamesList = _mainModel.GetFilteredGamesList(Search);
-
-            FilteredGamesList.AddRange(gamesList);
+            OnPropertyChanged(nameof(FilteredGamesList));
 
             UpdateHeader();
 
-            if (selectedGame is not null && FilteredGamesList.Contains(selectedGame))
+            if (selectedGameId is not null && FilteredGamesList.Any(x => x.GameId == selectedGameId))
             {
-                SelectedGame = selectedGame;
+                SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
-                if (selectedFix is not null &&
+                if (selectedFixGuid is not null &&
                     SelectedGameFixesList is not null &&
-                    SelectedGameFixesList.Contains(selectedFix))
+                    SelectedGameFixesList.Any(x => x.Guid == selectedFixGuid))
                 {
-                    SelectedFix = selectedFix;
+                    SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
                 }
             }
         }
@@ -521,24 +461,17 @@ namespace Superheater.ViewModels
         /// <exception cref="NullReferenceException"></exception>
         private void RequireAdmin()
         {
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            var result = MessageBox.Show(
-                    @"This game requires to be run as admin in order to work.
+            MessageBox.Show(
+                @"This game requires to be run as admin in order to work.
 
 Do you want to set it to always run as admin?",
-                    "Run as admin required",
-                    MessageBoxButton.YesNo);
+                "Admin privileges required",
+                MessageBoxButton.OK
+                );
 
-            if (result == MessageBoxResult.Yes)
-            {
-                SelectedGame.Game.SetRunAsAdmin();
-
-                MessageBox.Show("Success");
-            }
+            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
         }
 
         /// <summary>
@@ -546,14 +479,8 @@ Do you want to set it to always run as admin?",
         /// </summary>
         private void OpenConfigXml()
         {
-            if (SelectedFix?.ConfigFile is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
-            if (SelectedGame is null)
-            {
-                throw new NullReferenceException(nameof(SelectedGame));
-            }
+            if (SelectedFix?.ConfigFile is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
 
@@ -573,12 +500,76 @@ Do you want to set it to always run as admin?",
             OnPropertyChanged(nameof(ProgressBarValue));
         }
 
-        private void NotifyParameterChanged(string parameterName)
+        private async void NotifyParameterChanged(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
                 FillGamesList();
             }
+
+            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)))
+            {
+                OnPropertyChanged(nameof(SelectedGameFixesList));
+            }
+
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                await _locker.WaitAsync();
+                await UpdateAsync(false);
+                _locker.Release();
+            }
+        }
+
+        private string GetRequirementsString()
+        {
+            if (SelectedGameFixesList is null ||
+                SelectedFix is null ||
+                SelectedGame is null)
+            {
+                return string.Empty;
+            }
+
+            var dependsOn = _mainModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+
+            string? requires = null;
+
+            if (dependsOn.Any())
+            {
+                requires = "REQUIRES: ";
+
+                requires += string.Join(", ", dependsOn.Select(x => x.Name));
+            }
+
+            string? required = null;
+
+            if (SelectedFix?.Dependencies is not null)
+            {
+                var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+
+                if (dependsBy.Any())
+                {
+                    required = "REQUIRED BY: ";
+
+                    required += string.Join(", ", dependsBy.Select(x => x.Name));
+                }
+            }
+
+            if (requires is not null && required is not null)
+            {
+                return requires + Environment.NewLine + required;
+            }
+            else if (requires is not null)
+            {
+                return requires;
+            }
+            else if (required is not null)
+            {
+                return required;
+            }
+
+            return string.Empty;
         }
     }
 }

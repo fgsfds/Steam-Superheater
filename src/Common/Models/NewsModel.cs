@@ -1,65 +1,76 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Providers;
+using System.Collections.Immutable;
 
 namespace Common.Models
 {
     public sealed class NewsModel
     {
-        private readonly ConfigEntity _config;
-        private readonly NewsProvider _newsProvider;
-
-        private readonly List<NewsEntity> _news;
-        private int _lastReadVersion;
-
-        public int UnreadNewsCount => _news.Where(x => x.IsNewer).Count();
-
-        public bool HasUnreadNews => UnreadNewsCount > 0;
-
-        public List<NewsEntity> News => _news;
-
         public NewsModel(
             ConfigProvider config,
-            NewsProvider news)
+            NewsProvider news
+            )
         {
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
             _newsProvider = news ?? throw new NullReferenceException(nameof(news));
-
-            _lastReadVersion = _config.LastReadNewsVersion;
-            _news = new();
         }
 
-        public async Task UpdateNewsListAsync()
+        private readonly ConfigEntity _config;
+        private readonly NewsProvider _newsProvider;
+
+        public int UnreadNewsCount => News?.Where(x => x.IsNewer)?.Count() ?? 0;
+
+        public bool HasUnreadNews => UnreadNewsCount > 0;
+
+        public ImmutableList<NewsEntity> News;
+
+        public async Task<Tuple<bool, string>> UpdateNewsListAsync()
         {
-            _news.Clear();
-
-            var news = await _newsProvider.GetNewsListAsync();
-
-            _news.AddRange(news);
+            try
+            {
+                News = await _newsProvider.GetNewsListAsync();
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new(false, "File not found: " + ex.Message);
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                return new(false, "Can't connect to GitHub repository");
+            }
 
             UpdateReadStatusOfExistingNews();
+
+            return new(true, string.Empty);
         }
 
-        public void MarkAllAsRead()
+        public async Task<Tuple<bool, string>> MarkAllAsReadAsync()
         {
-            UpdateConfigLastReadVersion();
+            var result = await UpdateNewsListAsync();
 
-            UpdateReadStatusOfExistingNews();
+            if (result.Item1)
+            {
+                UpdateConfigLastReadVersion();
+                UpdateReadStatusOfExistingNews();
+            }
+
+            return result;
         }
 
         private void UpdateReadStatusOfExistingNews()
         {
-            foreach (var item in _news)
+            foreach (var item in News)
             {
-                item.IsNewer = item.Version > _lastReadVersion;
+                item.IsNewer = item.Date > _config.LastReadNewsDate;
             }
         }
 
         private void UpdateConfigLastReadVersion()
         {
-            _lastReadVersion = _news.Max(x => x.Version);
+            var lastReadDate = News.Max(x => x.Date);
 
-            _config.LastReadNewsVersion = _lastReadVersion;
+            _config.LastReadNewsDate = lastReadDate;
         }
     }
 }

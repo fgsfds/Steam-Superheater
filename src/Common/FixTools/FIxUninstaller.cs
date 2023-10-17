@@ -1,22 +1,18 @@
 ﻿using Common.Entities;
 using Common.Helpers;
-using System.IO;
 
 namespace Common.FixTools
 {
-    public static class FixUninstaller
+    public sealed class FixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static void UninstallFix(GameEntity game, FixEntity fix)
+        public void UninstallFix(GameEntity game, FixEntity fix)
         {
-            if (fix.InstalledFix is null)
-            {
-                throw new NullReferenceException(nameof(fix.InstalledFix));
-            }
+            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
 
             DeleteFiles(game.InstallDir, fix.InstalledFix.FilesList);
 
@@ -30,7 +26,7 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameInstallDir">Game install folder</param>
         /// <param name="fixFiles">Files to delete</param>
-        private static void DeleteFiles(string gameInstallDir, List<string> fixFiles)
+        private void DeleteFiles(string gameInstallDir, List<string> fixFiles)
         {
             foreach (var file in fixFiles)
             {
@@ -53,11 +49,16 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="fix">Installed fix</param>
-        private static void RestoreBackup(string gameDir, FixEntity fix)
+        private void RestoreBackup(string gameDir, FixEntity fix)
         {
-            var fixName = Path.GetFileNameWithoutExtension(fix.Url);
+            string backupFolder = fix.Name.Replace(' ', '_');
 
-            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName);
+            if (!string.IsNullOrEmpty(fix.Url))
+            {
+                backupFolder = Path.GetFileNameWithoutExtension(fix.Url);
+            }
+
+            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
             fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
 
             if (!Directory.Exists(fixFolderPath))
@@ -83,7 +84,7 @@ namespace Common.FixTools
         /// Delete backup folder if it's empty
         /// </summary>
         /// <param name="gameInstallDir">Game install folder</param>
-        private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
+        private void DeleteBackupFolderIfEmpty(string gameInstallDir)
         {
             var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
 

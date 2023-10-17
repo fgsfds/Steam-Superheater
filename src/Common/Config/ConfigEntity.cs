@@ -1,7 +1,23 @@
-﻿namespace Common.Config
+﻿using Common.Helpers;
+
+namespace Common.Config
 {
     public sealed class ConfigEntity
     {
+        internal ConfigEntity()
+        {
+            _deleteZipsAfterInstall = true;
+            _openConfigAfterInstall = false;
+            _lastReadNewsDate = DateTime.MinValue;
+            _useLocalRepo = false;
+            _localRepoPath = "LocalRepo";
+            _theme = ThemeEnum.System;
+            _installedUpdater = 0;
+            _showUninstalledGames = true;
+            _useTestRepoBranch = false;
+            _showUnsupportedFixes = false;
+        }
+
         public delegate void ConfigChanged();
         public event ConfigChanged NotifyConfigChanged;
 
@@ -38,17 +54,17 @@
             }
         }
 
-        private int _lastReadNewsVersion;
-        public int LastReadNewsVersion
+        private DateTime _lastReadNewsDate;
+        public DateTime LastReadNewsDate
         {
-            get => _lastReadNewsVersion;
+            get => _lastReadNewsDate;
             set
             {
-                if (_lastReadNewsVersion != value)
+                if (_lastReadNewsDate != value)
                 {
-                    _lastReadNewsVersion = value;
+                    _lastReadNewsDate = value;
                     NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsVersion));
+                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsDate));
                 }
             }
         }
@@ -83,8 +99,8 @@
             }
         }
 
-        private string _theme;
-        public string Theme
+        private ThemeEnum _theme;
+        public ThemeEnum Theme
         {
             get => _theme;
             set
@@ -156,20 +172,6 @@
                     NotifyParameterChanged?.Invoke(nameof(ShowUnsupportedFixes));
                 }
             }
-        }
-
-        internal ConfigEntity()
-        {
-            _deleteZipsAfterInstall = true;
-            _openConfigAfterInstall = false;
-            _lastReadNewsVersion = 0;
-            _useLocalRepo = false;
-            _localRepoPath = "LocalRepo";
-            _theme = "System";
-            _installedUpdater = 0;
-            _showUninstalledGames = true;
-            _useTestRepoBranch = false;
-            _showUnsupportedFixes = false;
         }
     }
 }

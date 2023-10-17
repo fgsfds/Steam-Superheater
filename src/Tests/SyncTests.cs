@@ -32,11 +32,13 @@ namespace Tests
             container.Options.ResolveUnregisteredConcreteTypes = true;
 
             CommonBindings.Load(container);
+            ProvidersBindings.Load(container);
 
             if (Directory.Exists(TestTempFolder))
             {
                 Directory.Delete(TestTempFolder, true);
             }
+
             Directory.CreateDirectory(TestTempFolder);
 
             Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), TestTempFolder));
@@ -65,7 +67,7 @@ namespace Tests
         public async Task GetFixesFromGithubTest()
         {
             var fixesProvider = BindingsManager.Instance.GetInstance<FixesProvider>();
-            var fixes = await fixesProvider.GetNewFixesListAsync();
+            var fixes = await fixesProvider.GetNewListAsync();
 
             //Looking for Alan Wake fixes list
             var result = fixes.Any(x => x.GameId == 108710);
@@ -99,16 +101,20 @@ namespace Tests
                 InstallFolder = "new folder"
             };
 
-            var installedFix = await FixInstaller.InstallFix(gameEntity, fixEntity, null);
+            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+            var fixUninstaller = BindingsManager.Instance.GetInstance<FixUninstaller>();
+            var installedProvider = BindingsManager.Instance.GetInstance<InstalledFixesProvider>();
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, null);
+
+            installedProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
             Assert.IsTrue(exeExists);
 
             fixEntity.InstalledFix = installedFix;
 
-            FixUninstaller.UninstallFix(gameEntity, fixEntity);
+            fixUninstaller.UninstallFix(gameEntity, fixEntity);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -139,13 +145,17 @@ namespace Tests
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = "test_fix.zip",
                 InstallFolder = "install folder",
-                FilesToDelete = "install folder\\file to delete.txt;install folder\\subfolder\\file to delete in subfolder.txt;file to delete in parent folder.txt",
-                FilesToBackup = "install folder\\file to backup.txt"
+                FilesToDelete = new() { "install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt" },
+                FilesToBackup = new() { "install folder\\file to backup.txt" }
             };
 
-            var installedFix = await FixInstaller.InstallFix(gameEntity, fixEntity, variant);
+            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+            var fixUninstaller = BindingsManager.Instance.GetInstance<FixUninstaller>();
+            var installedProvider = BindingsManager.Instance.GetInstance<InstalledFixesProvider>();
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, variant);
+
+            installedProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 
             CheckNewFiles();
 
@@ -154,7 +164,7 @@ namespace Tests
             //modify backed up file
             File.WriteAllText("game\\install folder\\file to backup.txt", "22");
 
-            FixUninstaller.UninstallFix(gameEntity, fixEntity);
+            fixUninstaller.UninstallFix(gameEntity, fixEntity);
 
             CheckOriginalFiles();
         }

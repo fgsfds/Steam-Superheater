@@ -3,37 +3,34 @@ using CommunityToolkit.Mvvm.Input;
 using Common.Models;
 using Common.Entities;
 using System;
-using System.IO;
-using System.Net.Http;
 using System.Threading.Tasks;
-using System.Collections.ObjectModel;
-using Common.Helpers;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Config;
 using System.Threading;
+using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class NewsViewModel : ObservableObject
     {
-        private bool IsDeveloperMode => Properties.IsDeveloperMode;
-        private readonly NewsModel _newsModel;
-        private readonly ConfigEntity _config;
-        private readonly SemaphoreSlim _locker = new(1, 1);
-
-        public ObservableCollection<NewsEntity> NewsList { get; set; }
-
-        public string NewsTabHeader { get; private set; }
-
         public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
         {
             _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
-            NewsList = new();
+
             NewsTabHeader = "News";
             _newsModel = newsModel;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
+
+        private bool IsDeveloperMode => Properties.IsDeveloperMode;
+        private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly SemaphoreSlim _locker = new(1, 1);
+
+        public ImmutableList<NewsEntity> NewsList => _newsModel.News;
+
+        public string NewsTabHeader { get; private set; }
 
 
         #region Relay Commands
@@ -42,11 +39,22 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task InitializeAsync() => await UpdateAsync();
 
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
-        private void MarkAllAsRead()
+        private async Task MarkAllAsReadAsync()
         {
-            _newsModel.MarkAllAsRead();
-            FillNewsList();
-            UpdateHeader();
+            var result = await _newsModel.MarkAllAsReadAsync();
+
+            if (!result.Item1)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    result.Item2,
+                    PopupMessageType.OkOnly
+                    ).Show();
+
+                return;
+            }
+
+            OnNewsChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 
@@ -55,44 +63,25 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async Task UpdateAsync()
         {
-            try
-            {
-                await _newsModel.UpdateNewsListAsync();
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    "File not found: " + ex.Message,
-                    PopupMessageType.OkOnly
-                    ).Show();
+            var result = await _newsModel.UpdateNewsListAsync();
 
-                return;
-            }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            if (!result.Item1)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    "Can't connect to GitHub repository",
+                    result.Item2,
                     PopupMessageType.OkOnly
                     ).Show();
 
                 return;
             }
 
-            FillNewsList();
-            UpdateHeader();
+            OnNewsChanged();
         }
 
-        private void FillNewsList()
+        private void OnNewsChanged()
         {
-            NewsList.Clear();
-            NewsList.AddRange(_newsModel.News);
-            MarkAllAsReadCommand.NotifyCanExecuteChanged();
-        }
-
-        private void UpdateHeader()
-        {
+            OnPropertyChanged(nameof(NewsList));
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
             OnPropertyChanged(nameof(NewsTabHeader));
             MarkAllAsReadCommand.NotifyCanExecuteChanged();

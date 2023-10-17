@@ -1,14 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace Common.Entities
+﻿namespace Common.Entities
 {
-    public sealed partial class NewsEntity : ObservableObject
+    public sealed partial class NewsEntity
     {
-        /// <summary>
-        /// Version of the news article
-        /// </summary>
-        public int Version { get; set; }
-
         /// <summary>
         /// Date of the news article
         /// </summary>

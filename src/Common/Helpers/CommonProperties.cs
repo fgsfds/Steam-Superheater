@@ -13,14 +13,10 @@ namespace Common.Helpers
         static CommonProperties()
         {
             _config = BindingsManager.Instance.GetInstance<ConfigProvider>().Config;
-            IsSteamGameMode = CheckDeckGameMode();
+            IsInSteamDeckGameMode = CheckDeckGameMode();
         }
 
         public static string LocalRepoPath => _config.LocalRepoPath;
-
-        public static Version CurrentVersion => Assembly.GetEntryAssembly().GetName().Version;
-
-        public static string ExecutableName => Process.GetCurrentProcess().MainModule.ModuleName;
 
         public static string CurrentFixesRepo
         {
@@ -32,7 +28,11 @@ namespace Common.Helpers
             }
         }
 
-        public static bool IsSteamGameMode { get; }
+        public static Version CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version ?? new Version("999");
+
+        public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
+
+        public static bool IsInSteamDeckGameMode { get; }
 
         private static bool CheckDeckGameMode()
         {
@@ -47,7 +47,7 @@ namespace Common.Helpers
                     CreateNoWindow = true
                 };
 
-                var proc = Process.Start(processInfo);
+                var proc = Process.Start(processInfo) ?? throw new Exception("Error starting process"); 
 
                 var result = proc.StandardOutput.ReadToEnd();
 

@@ -3,42 +3,101 @@ using Common.Config;
 using Common.Entities;
 using Common.FixTools;
 using Common.Providers;
+using System.Collections.Immutable;
 
 namespace Common.Models
 {
     public sealed class MainModel
     {
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
+        public MainModel(
+            ConfigProvider configProvider,
+            InstalledFixesProvider installedFixesProvider,
+            CombinedEntitiesProvider combinedEntitiesProvider,
+            FixInstaller fixInstaller,
+            FixUninstaller fixUninstaller
+            )
+        {
+            _combinedEntitiesList = new();
+            _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
+            _installedFixesProvider = installedFixesProvider ?? throw new NullReferenceException(nameof(installedFixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+            _fixInstaller = fixInstaller ?? throw new NullReferenceException(nameof(fixInstaller));
+            _fixUninstaller = fixUninstaller ?? throw new NullReferenceException(nameof(fixUninstaller));
+        }
+
         private readonly ConfigEntity _config;
+        private readonly InstalledFixesProvider _installedFixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly FixInstaller _fixInstaller;
+        private readonly FixUninstaller _fixUninstaller;
+
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
-        public MainModel(ConfigProvider configProvider)
-        {
-            _combinedEntitiesList = new();
-            _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
-        }
-
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
         /// </summary>
         /// <param name="useCache">Is cache used</param>
-        public async Task UpdateGamesListAsync(bool useCache)
+        public async Task<Tuple<bool, string>> UpdateGamesListAsync(bool useCache)
         {
             _combinedEntitiesList.Clear();
 
-            var games = await CombinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+            try
+            {
+                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+                _combinedEntitiesList.AddRange(games);
 
-            _combinedEntitiesList.AddRange(games);
+                return new(true, string.Empty);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new(false, "File not found: " + ex.Message);
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+                return new(false, "Can't connect to GitHub repository");
+            }
+        }
+
+        public ImmutableList<FixEntity> GetFixesForSelectedGame(FixFirstCombinedEntity? game)
+        {
+            if (game is null)
+            {
+                return ImmutableList.Create<FixEntity>();
+            }
+
+            var list = game.FixesList.Fixes.ToImmutableList();
+
+            if (_config.ShowUnsupportedFixes)
+            {
+                return list;
+            }
+            else
+            {
+                return list.Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToImmutableList();
+            }
+        }
+
+        public string GetSelectedFixUrl(FixEntity? fix)
+        {
+            if (string.IsNullOrEmpty(fix?.Url))
+            {
+                return string.Empty;
+            }
+
+            return !_config.UseTestRepoBranch
+                ? fix.Url
+                : fix.Url.Replace("/master/", "/test/");
         }
 
         /// <summary>
         /// Get list of games optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public List<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
+        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
         {
             List<FixFirstCombinedEntity> result = _combinedEntitiesList;
 
@@ -52,7 +111,7 @@ namespace Common.Models
                 result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
             }
 
-            return result;
+            return result.Where(x => x.FixesList.Fixes.Count > 0).ToImmutableList();
         }
 
         /// <summary>
@@ -79,12 +138,12 @@ namespace Common.Models
         }
 
         /// <summary>
-        /// Does fix have dependencies that are currently installed
+        /// Does fix have dependencies that are currently not installed
         /// </summary>
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveUninstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
+        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
@@ -103,12 +162,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public List<FixEntity> GetDependentFixes(List<FixEntity> fixes, Guid guid)
-        {
-            var result = fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
-
-            return result;
-        }
+        public List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid) => fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
 
         /// <summary>
         /// Does fix have dependent fixes that are currently installed
@@ -116,7 +170,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>true if there are installed dependent fixes</returns>
-        public bool DoesFixHaveInstalledDependentFixes(List<FixEntity> fixes, Guid guid)
+        public bool DoesFixHaveInstalledDependentFixes(IEnumerable<FixEntity> fixes, Guid guid)
         {
             var deps = GetDependentFixes(fixes, guid);
 
@@ -135,21 +189,21 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to delete</param>
         /// <returns>Result message</returns>
-        public string UninstallFix(GameEntity game, FixEntity fix)
+        public Tuple<bool, string> UninstallFix(GameEntity game, FixEntity fix)
         {
-            FixUninstaller.UninstallFix(game, fix);
+            _fixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
-                return "Fix uninstalled successfully!";
+                return new(true, "Fix uninstalled successfully!");
             }
             else
             {
-                return result.Item2;
+                return new (false, result.Item2);
             }
         }
 
@@ -159,30 +213,30 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
         /// <returns>Result message</returns>
-        public async Task<string> InstallFix(GameEntity game, FixEntity fix, string? variant)
+        public async Task<Tuple<bool, string>> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
             InstalledFixEntity? installedFix;
 
             try
             {
-                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+                installedFix = await _fixInstaller.InstallFix(game, fix, variant);
             }
             catch (Exception ex)
             {
-                return "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message;
+                return new(false, "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
-                return "Fix installed successfully!";
+                return new(true, "Fix installed successfully!");
             }
             else
             {
-                return result.Item2;
+                return new(false, result.Item2);
             }
         }
 
@@ -192,9 +246,9 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<string> UpdateFix(GameEntity game, FixEntity fix, string? variant)
+        public async Task<Tuple<bool, string>> UpdateFix(GameEntity game, FixEntity fix, string? variant)
         {
-            FixUninstaller.UninstallFix(game, fix);
+            _fixUninstaller.UninstallFix(game, fix);
 
             fix.InstalledFix = null;
 
@@ -202,24 +256,24 @@ namespace Common.Models
 
             try
             {
-                installedFix = await FixInstaller.InstallFix(game, fix, variant);
+                installedFix = await _fixInstaller.InstallFix(game, fix, variant);
             }
             catch (Exception ex)
             {
-                return "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message;
+                return new(false, "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.Item1)
             {
-                return "Fix updated successfully!";
+                return new(true, "Fix updated successfully!");
             }
             else
             {
-                return result.Item2;
+                return new(false, result.Item2);
             }
         }
     }

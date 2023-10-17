@@ -5,3 +5,13 @@ dotnet_diagnostic.CA1822.severity = none
 
 # IDE0063: Use simple 'using' statement
 dotnet_diagnostic.IDE0063.severity = none
+
+# IDE0305: Simplify collection initialization
+dotnet_diagnostic.IDE0305.severity = none
+
+# CS8618: Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+dotnet_diagnostic.CS8618.severity = suggestion
+
+# CA1806: Do not ignore method results
+dotnet_diagnostic.CA1806.severity = warning
+dotnet_code_quality.CA1806.additional_use_results_methods = M:System.Collections.Immutable.ImmutableList`1.Add(`0)

@@ -32,7 +32,7 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Name="NameTextBox"
                  Grid.Row="0"
                  Grid.Column="1"
@@ -46,7 +46,7 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Grid.Row="1"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"
@@ -69,7 +69,7 @@
             </Grid.ColumnDefinitions>
 
             <TextBox Grid.Column="0"
-                     Text="{Binding Url, Mode=TwoWay}"
+                     Text="{Binding SelectedFix.Url, Mode=TwoWay}"
                      HorizontalAlignment="Stretch"
                      IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"/>
 

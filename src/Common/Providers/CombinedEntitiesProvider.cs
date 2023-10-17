@@ -1,34 +1,47 @@
 ﻿using Common.CombinedEntities;
-using Common.DI;
 using Common.Entities;
+using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 
 namespace Common.Providers
 {
-    public static class CombinedEntitiesProvider
+    public sealed class CombinedEntitiesProvider
     {
+        private readonly FixesProvider _fixesProvider;
+        private readonly GamesProvider _gamesProvider;
+        private readonly InstalledFixesProvider _installedFixesProvide;
+
+        public CombinedEntitiesProvider(
+            FixesProvider fixesProvider,
+            GamesProvider gamesProvider,
+            InstalledFixesProvider installedFixesProvider
+            )
+        {
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+            _installedFixesProvide = installedFixesProvider ?? throw new NullReferenceException(nameof(installedFixesProvider));
+        }
         /// <summary>
         /// Get list of fix entities with installed fixes
         /// </summary>
-        public static async Task<List<FixesList>> GetFixesListAsync(bool useCache)
+        public async Task<List<FixesList>> GetFixesListAsync(bool useCache)
         {
-            List<FixesList> fixes;
+            ImmutableList<FixesList> fixes;
 
             if (useCache)
             {
-                fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetCachedFixesListAsync();
+                fixes = await _fixesProvider.GetCachedListAsync();
             }
             else
             {
-                fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetNewFixesListAsync();
+                fixes = await _fixesProvider.GetNewListAsync();
             }
-
 
             List<FixesList> result = new();
 
             foreach (var fix in fixes)
             {
-                result.Add(new FixesList(fix.GameId, fix.GameName, new ObservableCollection<FixEntity>(fix.Fixes)));
+                result.Add(new FixesList(fix.GameId, fix.GameName, fix.Fixes));
             }
 
             return result;
@@ -37,24 +50,24 @@ namespace Common.Providers
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>
-        public static async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
+        public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            List<FixesList> fixes;
-            List<GameEntity> games;
-            List<InstalledFixEntity> installed;
+            ImmutableList<FixesList> fixes;
+            ImmutableList<GameEntity> games;
+            ImmutableList<InstalledFixEntity> installed;
 
             if (useCache)
             {
-                fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetCachedFixesListAsync();
-                games = BindingsManager.Instance.GetInstance<GamesProvider>().GetCachedGamesList();
-                installed = BindingsManager.Instance.GetInstance<InstalledFixesProvider>().GetCachedInstalledFixesList();
+                fixes = await _fixesProvider.GetCachedListAsync();
+                games = await _gamesProvider.GetCachedListAsync();
             }
             else
             {
-                fixes = await BindingsManager.Instance.GetInstance<FixesProvider>().GetNewFixesListAsync();
-                games = BindingsManager.Instance.GetInstance<GamesProvider>().GetNewGamesList();
-                installed = BindingsManager.Instance.GetInstance<InstalledFixesProvider>().GetNewInstalledFixesList();
+                fixes = await _fixesProvider.GetNewListAsync();
+                games = await _gamesProvider.GetNewListAsync();
             }
+
+            installed = _installedFixesProvide.GetInstalledFixes();
 
             List<FixFirstCombinedEntity> result = new();
 

@@ -13,12 +13,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public MainWindowViewModel(ConfigProvider configProvider)
         {
             _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
+            _repositoryMessage = string.Empty;
+
             _config.NotifyParameterChanged += NotifyParameterChanged;
 
             UpdateRepoMessage();
         }
 
-        public bool IsSteamGameMode => CommonProperties.IsSteamGameMode;
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 

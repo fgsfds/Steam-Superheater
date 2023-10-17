@@ -1,5 +1,4 @@
 ﻿using Common.Config;
-using Common.DI;
 using Common.Entities;
 using Common.Helpers;
 using System.Diagnostics;
@@ -7,55 +6,79 @@ using System.IO.Compression;
 
 namespace Common.FixTools
 {
-    public static class FixInstaller
+    public sealed class FixInstaller
     {
-        private static readonly ConfigEntity _config = BindingsManager.Instance.GetInstance<ConfigProvider>().Config;
+        private readonly ConfigEntity _configEntity;
+
+        public FixInstaller(ConfigProvider config)
+        {
+            _configEntity = config.Config ?? throw new NullReferenceException(nameof(config));
+        }
 
         /// <summary>
         /// Install fix: download ZIP, backup and delete files if needed, run post install events
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
+        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
-            var zipName = Path.GetFileName(fix.Url);
+            string backupFolder = fix.Name.Replace(' ', '_');
 
-            var zipFullPath = _config.UseLocalRepo
-                ? Path.Combine(_config.LocalRepoPath, "fixes", zipName)
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+            string? zipFullPath = null;
+            string? unpackToPath = null;
+            List<string> filesInArchive = new();
 
-            var unpackToPath = fix.InstallFolder is null
-                                  ? game.InstallDir
-                                  : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+            var fixFolderPath = Path.Combine(game.InstallDir, Consts.BackupFolder, backupFolder);
+            fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
 
-            if (!File.Exists(zipFullPath))
+            if (Directory.Exists(fixFolderPath))
             {
-                var url = fix.Url;
-
-                if (_config.UseTestRepoBranch) 
-                {
-                    url = url.Replace("/master/", "/test/");
-                }
-
-                await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
+                Directory.Delete(fixFolderPath, true);
             }
 
-            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
-
-            var filesToDelete = ParseListOfFiles(game.InstallDir, fix.FilesToDelete);
-
-            BackupFiles(filesInArchive.Concat(filesToDelete), game.InstallDir, Path.GetFileNameWithoutExtension(zipName), true, true);
-
-            var filesToBackup = ParseListOfFiles(game.InstallDir, fix.FilesToBackup);
-
-            BackupFiles(filesToBackup, game.InstallDir, Path.GetFileNameWithoutExtension(zipName), false, false);
-
-            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
-
-            if (_config.DeleteZipsAfterInstall &&
-                !_config.UseLocalRepo)
+            if (!string.IsNullOrEmpty(fix.Url))
             {
-                File.Delete(zipFullPath);
+                var zipName = Path.GetFileName(fix.Url);
+
+                zipFullPath = _configEntity.UseLocalRepo
+                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", zipName)
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+
+                unpackToPath = fix.InstallFolder is null
+                    ? game.InstallDir
+                    : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+
+                if (!File.Exists(zipFullPath))
+                {
+                    var url = fix.Url;
+
+                    if (_configEntity.UseTestRepoBranch)
+                    {
+                        url = url.Replace("/master/", "/test/");
+                    }
+
+                    await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
+                }
+
+                filesInArchive = GetListOfFilesInArchive(zipFullPath, fix.InstallFolder, unpackToPath, variant);
+
+                BackupFiles(filesInArchive, game.InstallDir, fixFolderPath, true);
+            }
+
+            BackupFiles(fix.FilesToDelete, game.InstallDir, fixFolderPath, true);
+
+            BackupFiles(fix.FilesToBackup, game.InstallDir, fixFolderPath, false);
+
+            if (zipFullPath is not null &&
+                unpackToPath is not null)
+            {
+                await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
+
+                if (_configEntity.DeleteZipsAfterInstall &&
+                    !_configEntity.UseLocalRepo)
+                {
+                    File.Delete(zipFullPath);
+                }
             }
 
             if (fix.RunAfterInstall is not null)
@@ -73,7 +96,7 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameInstallPath">Path to the game folder</param>
         /// <param name="runAfterInstall">File to open</param>
-        private static void RunAfterInstall(string gameInstallPath, string runAfterInstall)
+        private void RunAfterInstall(string gameInstallPath, string runAfterInstall)
         {
             var path = Path.Combine(gameInstallPath, runAfterInstall);
 
@@ -86,61 +109,23 @@ namespace Common.FixTools
         }
 
         /// <summary>
-        /// Parse list of files separated by ;
-        /// </summary>
-        /// <param name="gameInstallPath">Path to the game folder</param>
-        /// <param name="stringToParst">List of files separated by ;</param>
-        /// <returns>List of relative paths to deleted files</returns>
-        private static List<string> ParseListOfFiles(string gameInstallPath, string? stringToParst)
-        {
-            List<string> result = new();
-
-            if (stringToParst is null)
-            {
-                return result;
-            }
-
-            var filesToDeleteSplit = stringToParst.Split(";");
-
-            foreach (var file in filesToDeleteSplit)
-            {
-                if (File.Exists(Path.Combine(gameInstallPath, file)))
-                {
-                    result.Add(file);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
         /// Backup files
         /// </summary>
         /// <param name="files">List of files to backup</param>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="backupFolder">Name of the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
-        private static void BackupFiles(
-            IEnumerable<string> files,
+        private void BackupFiles(
+            IEnumerable<string>? files,
             string gameDir,
-            string backupFolder,
-            bool deleteOriginal,
-            bool deleteBackupFolder
+            string fixFolderPath,
+            bool deleteOriginal
             )
         {
-            if (files is null ||
-                !files.Any())
+            if (files is null || !files.Any())
             {
                 return;
-            }
-
-            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
-            fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
-
-            if (deleteBackupFolder && Directory.Exists(fixFolderPath))
-            {
-                Directory.Delete(fixFolderPath, true);
-            }
+            }            
 
             foreach (var file in files)
             {
@@ -182,7 +167,7 @@ namespace Common.FixTools
         /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
         /// <param name="unpackToPath">Full path </param>
         /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
-        private static List<string> GetListOfFilesInArchive(string zipPath, string? fixInstallFolder, string unpackToPath, string? variant)
+        private List<string> GetListOfFilesInArchive(string zipPath, string? fixInstallFolder, string unpackToPath, string? variant)
         {
             List<string> files = new();
 
@@ -200,7 +185,7 @@ namespace Common.FixTools
 
                     if (variant is not null)
                     {
-                        if (entry.FullName.StartsWith(variant+"/"))
+                        if (entry.FullName.StartsWith(variant + "/"))
                         {
                             path = entry.FullName.Replace(variant + "/", string.Empty);
 

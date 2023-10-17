@@ -9,6 +9,7 @@ using Superheater.Avalonia.Core.Windows;
 using Common.Config;
 using Common.DI;
 using System;
+using Common.Helpers;
 
 namespace Superheater.Avalonia.Core;
 
@@ -23,6 +24,7 @@ public sealed partial class App : Application
         ModelsBindings.Load(container);
         ViewModelsBindings.Load(container);
         CommonBindings.Load(container);
+        ProvidersBindings.Load(container);
 
         AvaloniaXamlLoader.Load(this);
     }
@@ -33,10 +35,10 @@ public sealed partial class App : Application
 
         var themeEnum = theme switch
         {
-            "System" => ThemeVariant.Default,
-            "Light" => ThemeVariant.Light,
-            "Dark" => ThemeVariant.Dark,
-            _ => throw new ArgumentOutOfRangeException(theme)
+            ThemeEnum.System => ThemeVariant.Default,
+            ThemeEnum.Light => ThemeVariant.Light,
+            ThemeEnum.Dark => ThemeVariant.Dark,
+            _ => throw new ArgumentOutOfRangeException(theme.ToString())
         }; ;
 
         RequestedThemeVariant = themeEnum;

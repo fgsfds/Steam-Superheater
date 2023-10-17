@@ -1,8 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Helpers;
-using System.IO;
-using System.Net.Http;
+using System.Collections.Immutable;
 using System.Xml.Serialization;
 
 namespace Common.Providers
@@ -21,7 +20,7 @@ namespace Common.Providers
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task<List<NewsEntity>> GetNewsListAsync()
+        public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
             string? news;
 
@@ -43,29 +42,17 @@ namespace Common.Providers
 
             XmlSerializer xmlSerializer = new(typeof(List<NewsEntity>));
 
-            List<NewsEntity>? newsList;
-
-            try
+            using (StringReader fs = new(news))
             {
-                using (StringReader fs = new(news))
+                if (xmlSerializer.Deserialize(fs) is not List<NewsEntity> list)
                 {
-                    newsList = xmlSerializer.Deserialize(fs) as List<NewsEntity>;
+                    Logger.Log("Error while deserializing news...");
+
+                    return ImmutableList.Create<NewsEntity>();
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Log("Error while deserializing news...");
-                Logger.Log(ex.Message);
 
-                return new();
+                return list.OrderByDescending(x => x.Date).ToImmutableList();
             }
-
-            if (newsList is null)
-            {
-                throw new NullReferenceException(nameof(newsList));
-            }
-
-            return newsList.OrderByDescending(x => x.Version).ToList();
         }
 
         /// <summary>

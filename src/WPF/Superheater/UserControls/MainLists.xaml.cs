@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Windows;
 using System;
 using System.Windows.Controls;
-using System.Reflection.Emit;
 using System.Windows.Media;
 
 namespace Superheater.UserControls
@@ -11,13 +10,11 @@ namespace Superheater.UserControls
     /// <summary>
     /// Interaction logic for ListsControl.xaml
     /// </summary>
-    public sealed partial class MainListsControl : UserControl
+    public sealed partial class MainLists : UserControl
     {
-        public MainListsControl()
+        public MainLists()
         {
             InitializeComponent();
-
-            //FixesList.ItemContainerStyle = this.FindResource("ListBoxStyleOrange") as Style;
         }
 
         private void GamesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -31,12 +28,12 @@ namespace Superheater.UserControls
         {
             DescriptionBox.Children.Clear();
 
-            if (((ListBox)sender).SelectedItem is null)
+            if (((ListBox)sender).SelectedItem is not FixEntity fixEntity)
             {
                 return;
             }
 
-            var description = ((FixEntity)((ListBox)sender).SelectedItem).Description;
+            var description = fixEntity.Description;
 
             var splitDescription = description.Split('\n');
 
@@ -60,11 +57,11 @@ namespace Superheater.UserControls
                         Foreground = new SolidColorBrush(Colors.Blue),
                     };
 
-                button.Click += UrlButtonClick;
+                    button.Click += UrlButtonClick;
 
-                DescriptionBox.Children.Add(button);
+                    DescriptionBox.Children.Add(button);
 
-                continue;
+                    continue;
                 }
 
                 DescriptionBox.Children.Add(new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap });

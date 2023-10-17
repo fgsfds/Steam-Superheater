@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Common
 {
-    public static class SteamTools
+    internal static class SteamTools
     {
         public static string? SteamInstallPath { get; }
 
@@ -53,7 +53,7 @@ namespace Common
                     return null;
                 }
 
-                result = path.Replace("/", "\\");
+                result = path.Replace('/', Path.DirectorySeparatorChar);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {

@@ -11,6 +11,14 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class AboutViewModel : ObservableObject
     {
+        public AboutViewModel(UpdateInstaller updateInstaller)
+        {
+            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
+
+            AboutTabHeader = "About";
+            CheckForUpdatesText = string.Empty;
+        }
+
         private readonly UpdateInstaller _updateInstaller;
 
         public string AboutTabHeader { get; private set; }
@@ -22,13 +30,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string CheckForUpdatesText { get; set; }
 
         public Version CurrentVersion => CommonProperties.CurrentVersion;
-
-        public AboutViewModel(UpdateInstaller updateInstaller)
-        {
-            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
-            AboutTabHeader = "About";
-            CheckForUpdatesText = string.Empty;
-        }
 
 
         #region Relay Commands
@@ -117,7 +118,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 throw new Exception("Can't identify platform");
             }
 
-            
+
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 

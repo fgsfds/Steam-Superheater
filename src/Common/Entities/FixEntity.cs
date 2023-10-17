@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System.Collections.ObjectModel;
-using System.Xml.Serialization;
 
 namespace Common.Entities
 {
@@ -9,6 +7,17 @@ namespace Common.Entities
     /// </summary>
     public sealed class FixesList
     {
+        public FixesList(
+            int gameId,
+            string gameName,
+            List<FixEntity> fixes
+            )
+        {
+            GameId = gameId;
+            GameName = gameName;
+            Fixes = fixes;
+        }
+
         /// <summary>
         /// Steam ID of the game
         /// </summary>
@@ -22,18 +31,7 @@ namespace Common.Entities
         /// <summary>
         /// List of fixes
         /// </summary>
-        public ObservableCollection<FixEntity> Fixes { get; init; }
-
-        public FixesList(
-            int gameId,
-            string gameName,
-            ObservableCollection<FixEntity> fixes
-            )
-        {
-            GameId = gameId;
-            GameName = gameName;
-            Fixes = fixes;
-        }
+        public List<FixEntity> Fixes { get; init; }
 
         /// <summary>
         /// Serializer constructor
@@ -48,6 +46,22 @@ namespace Common.Entities
     /// </summary>
     public sealed partial class FixEntity : ObservableObject
     {
+        public FixEntity()
+        {
+            Name = string.Empty;
+            Version = 1;
+            Url = null;
+            Description = string.Empty;
+            Guid = Guid.NewGuid();
+            InstallFolder = null;
+            ConfigFile = null;
+            FilesToDelete = null;
+            FilesToBackup = null;
+            RunAfterInstall = null;
+            Dependencies = new();
+            SupportedOSes = 0;
+        }
+
         /// <summary>
         /// Fix title
         /// </summary>
@@ -76,7 +90,7 @@ namespace Common.Entities
         /// <summary>
         /// Download URL
         /// </summary>
-        public string Url { get; set; }
+        public string? Url { get; set; }
 
         /// <summary>
         /// Fix description
@@ -85,7 +99,7 @@ namespace Common.Entities
 
         /// <summary>
         /// List of fix's variants
-        /// Names of folders in inside a fix's archive, separated by ;
+        /// Names of folders inside a fix's archive, separated by ;
         /// </summary>
         public List<string>? Variants { get; set; }
 
@@ -106,13 +120,13 @@ namespace Common.Entities
         /// List of files that will be backed up and deleted before the fix is installed
         /// Paths are relative to the game folder, separated by ;
         /// </summary>
-        public string? FilesToDelete { get; set; }
+        public List<string>? FilesToDelete { get; set; }
 
         /// <summary>
         /// List of files that will be backed up before the fix is installed, and the original file will remain
         /// Paths are relative to the game folder, separated by ;
         /// </summary>
-        public string? FilesToBackup { get; set; }
+        public List<string>? FilesToBackup { get; set; }
 
         /// <summary>
         /// File that will be run after the fix is installed
@@ -139,22 +153,6 @@ namespace Common.Entities
         /// Is there a newer version of the fix
         /// </summary>
         public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
-
-        public FixEntity()
-        {
-            Name = string.Empty;
-            Version = 1;
-            Url = string.Empty;
-            Description = string.Empty;
-            Guid = Guid.NewGuid();
-            InstallFolder = null;
-            ConfigFile = null;
-            FilesToDelete = null;
-            FilesToBackup = null;
-            RunAfterInstall = null;
-            Dependencies = new();
-            SupportedOSes = 0;
-        }
 
         public override string ToString() => Name;
     }

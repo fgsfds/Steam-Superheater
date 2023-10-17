@@ -7,6 +7,7 @@ using System.IO;
 
 namespace Superheater.Avalonia.Core.Helpers
 {
+#pragma warning disable CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
     /// <summary>
     /// Converts bool to one of two strings
     /// Strings separated by ;
@@ -64,7 +65,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// </summary>
     internal sealed class ImagePathToBitmapConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!File.Exists((string)value))
             {
@@ -79,4 +80,5 @@ namespace Superheater.Avalonia.Core.Helpers
             throw new NotSupportedException("ConvertBack method for ImagePathToBitmapConverter is not implemented.");
         }
     }
+#pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).
 }

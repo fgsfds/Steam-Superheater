@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
@@ -18,16 +17,14 @@ namespace Superheater.Avalonia.Core.UserControls
         //formatting description text
         private void FixSelected(object sender, SelectionChangedEventArgs e)
         {
-            var style = Application.Current.Resources.TryGetValue("ResourceKey", out var value);
-
             DescriptionBox.Children.Clear();
 
-            if (((ListBox)sender).SelectedItem is null)
+            if (((ListBox)sender).SelectedItem is not FixEntity fixEntity)
             {
                 return;
             }
 
-            var description = ((FixEntity)((ListBox)sender).SelectedItem).Description;
+            var description = fixEntity.Description;
 
             var splitDescription = description.Split('\n');
 
@@ -58,9 +55,14 @@ namespace Superheater.Avalonia.Core.UserControls
             }
         }
 
-        private void UrlButtonClick(object sender, RoutedEventArgs e)
+        private void UrlButtonClick(object? sender, RoutedEventArgs e)
         {
-            var url = ((Button)sender)?.Content?.ToString() ?? throw new NullReferenceException();
+            if (sender is not Button button)
+            {
+                throw new Exception("Sender is not a button");
+            }
+
+            var url = button.Content?.ToString() ?? throw new NullReferenceException(nameof(button.Content));
 
             Process.Start(new ProcessStartInfo(url)
             {

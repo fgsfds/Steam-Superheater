@@ -1,82 +1,67 @@
 ﻿using Common.Entities;
-using Common;
+using System.Collections.Immutable;
 
 namespace Common.Providers
 {
     public sealed class GamesProvider
     {
-        private bool _isCacheUpdating;
+        private ImmutableList<GameEntity>? _gamesCache;
+        private readonly SemaphoreSlim _locker = new(1, 1);
 
-        private List<GameEntity>? _gamesCache;
-
-        /// <summary>
-        /// Get cached games list or create new cache if it wasn't created yet
-        /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        public List<GameEntity> GetCachedGamesList()
+        /// <inheritdoc/>
+        public async Task<ImmutableList<GameEntity>> GetCachedListAsync()
         {
-            while (_isCacheUpdating)
-            {
-                Thread.Sleep(100);
-            }
+            await _locker.WaitAsync();
 
-            if (_gamesCache is null)
-            {
-                CreateGamesCache();
-            }
+            var result = _gamesCache ?? await CreateCacheAsync();
 
-            return _gamesCache ?? throw new NullReferenceException(nameof(_gamesCache));
+            _locker.Release();
+
+            return result;
         }
 
-        /// <summary>
-        /// Remove current cache, then create new one and return games list
-        /// </summary>
-        /// <returns></returns>
-        public List<GameEntity> GetNewGamesList()
+        /// <inheritdoc/>
+        public async Task<ImmutableList<GameEntity>> GetNewListAsync()
         {
             _gamesCache = null;
 
-            return GetCachedGamesList();
+            return await GetCachedListAsync();
         }
 
-        /// <summary>
-        /// Create new cache of installed games
-        /// </summary>
-        /// <returns></returns>
-        private void CreateGamesCache()
+        /// <inheritdoc/>
+        private async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
-            _isCacheUpdating = true;
-
             List<GameEntity> result = new();
 
-            var files = SteamTools.GetAcfsList();
-
-            foreach (var file in files)
+            await Task.Run(() =>
             {
-                var games = GetGameEntityFromAcf(file);
+                var files = SteamTools.GetAcfsList();
 
-                if (games is null)
+                foreach (var file in files)
                 {
-                    continue;
+                    var games = GetGameEntityFromAcf(file);
+
+                    if (games is null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(games);
                 }
+            });
 
-                result.Add(games);
-            }
+            _gamesCache = result.OrderBy(x => x.Name).ToImmutableList();
 
-            _gamesCache = result.OrderBy(x => x.Name).ToList();
-
-            _isCacheUpdating = false;
+            return _gamesCache;
         }
 
         /// <summary>
         /// Parse ACF file to GameEntity
         /// </summary>
-        /// <param name="file"></param>
-        /// <returns></returns>
+        /// <param name="file">Path to ACF file</param>
         private GameEntity? GetGameEntityFromAcf(string file)
         {
-            var libraryFolder = Path.GetDirectoryName(file);
+            var libraryFolder = Path.GetDirectoryName(file) ?? throw new Exception("Can't find install dir");
 
             var lines = File.ReadAllLines(file);
 
@@ -111,7 +96,7 @@ namespace Common.Providers
             if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(name))
             {
                 if (!dir.EndsWith("\\") &&
-                    !dir.EndsWith("/")) 
+                    !dir.EndsWith("/"))
                 {
                     dir += Path.DirectorySeparatorChar;
                 }

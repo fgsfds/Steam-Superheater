@@ -4,7 +4,7 @@
     {
         public const string ConfigFile = "config.xml";
 
-        public const string FixesFile = "fixes.xml";
+        public const string FixesFile = "fixes_v2.xml";
 
         public const string NewsFile = "news.xml";
 
@@ -21,7 +21,6 @@
         public const string UpdateFile = ".update";
 
         public const string UpdateFolder = "update";
-
 
         internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
     }

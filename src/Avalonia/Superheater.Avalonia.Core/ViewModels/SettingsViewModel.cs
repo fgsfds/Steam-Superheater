@@ -16,16 +16,29 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class SettingsViewModel : ObservableObject
     {
+        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
+        {
+            _config = config.Config;
+            _mwvm = mwvm;
+
+            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
+            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
+            UseLocalRepoCheckbox = _config.UseLocalRepo;
+            PathToLocalRepo = _config.LocalRepoPath;
+            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
+            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
+            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+        }
+
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
-
         public bool LocalPathTextboxChanged;
-        public bool IsDefaultTheme => _config.Theme.Equals("System");
-        public bool IsLightTheme => _config.Theme.Equals("Light");
-        public bool IsDarkTheme => _config.Theme.Equals("Dark");
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
+        public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
+        public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -89,20 +102,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
-        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
-        {
-            _config = config.Config;
-            _mwvm = mwvm;
-
-            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
-            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
-            UseLocalRepoCheckbox = _config.UseLocalRepo;
-            PathToLocalRepo = _config.LocalRepoPath;
-            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
-            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
-            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
-        }
-
 
         #region Relay Commands
 
@@ -126,7 +125,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
-            _config.Theme = "System";
+            _config.Theme = ThemeEnum.System;
         }
 
         [RelayCommand]
@@ -138,7 +137,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
-            _config.Theme = "Light";
+            _config.Theme = ThemeEnum.Light;
         }
 
         [RelayCommand]
@@ -150,7 +149,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
-            _config.Theme = "Dark";
+            _config.Theme = ThemeEnum.Dark;
         }
 
         [RelayCommand]

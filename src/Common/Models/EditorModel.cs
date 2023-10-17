@@ -1,36 +1,55 @@
-﻿using Common.DI;
-using Common.Entities;
+﻿using Common.Entities;
 using Common.Helpers;
 using Common.Providers;
-using System.Collections.ObjectModel;
+using System.Collections.Immutable;
 using System.Xml.Serialization;
 
 namespace Common.Models
 {
     public sealed class EditorModel
     {
-        private readonly SortedList<string, FixesList> _fixesList;
-
-        public EditorModel()
+        public EditorModel(
+            FixesProvider fixesProvider,
+            CombinedEntitiesProvider combinedEntitiesProvider,
+            GamesProvider gamesProvider
+            )
         {
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+
             _fixesList = new();
+            _availableGamesList = new();
         }
+
+        private readonly FixesProvider _fixesProvider;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly GamesProvider _gamesProvider;
+
+        private readonly List<FixesList> _fixesList;
+        private readonly List<GameEntity> _availableGamesList;
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
         /// </summary>
         /// <param name="useCache">Is cache used</param>
-        public async Task UpdateFixesListAsync(bool useCache)
+        public async Task<Tuple<bool, string>> UpdateListsAsync(bool useCache)
         {
-            _fixesList.Clear();
-
-            var fixes = await CombinedEntitiesProvider.GetFixesListAsync(useCache);
-
-            fixes = fixes.OrderBy(x => x.GameName).ToList();
-
-            foreach (var fix in fixes)
+            try
             {
-                _fixesList.Add(fix.GameName, fix);
+                await GetListOfFixesAsync(useCache);
+                await GetListOfAvailableGamesAsync(useCache);
+
+                return new(true, string.Empty);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                return new(false, $"File not found: {ex.Message}");
+            }
+            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            {
+
+                return new(false, "Can't connect to GitHub repository");
             }
         }
 
@@ -38,40 +57,70 @@ namespace Common.Models
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public List<FixesList> GetFilteredFixesList(string? search = null)
+        public ImmutableList<FixesList> GetFilteredGamesList(string? search = null)
         {
-            List<FixesList> result = new();
-
-            result = _fixesList.Select(x => x.Value).Where(x => x.Fixes.Count > 0).ToList();
-
             if (!string.IsNullOrEmpty(search))
             {
-                result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
+                return _fixesList.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
             }
-
-            return result;
+            else
+            {
+                return _fixesList.ToImmutableList();
+            }
         }
 
         /// <summary>
-        /// Get list of games that can be added to the fixes list
+        /// Get list of fixes optionally filtered by a search string
         /// </summary>
-        public List<GameEntity> GetListOfGamesAvailableToAdd()
+        /// <param name="search">Search string</param>
+        public ImmutableList<GameEntity> GetAvailableGamesList() => _availableGamesList.ToImmutableList();
+
+        /// <summary>
+        /// Add new game with empty fix
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <returns>New fixes list</returns>
+        public FixesList AddNewGame(GameEntity game)
         {
-            List<GameEntity> result = new();
+            var newFix = new FixesList(game.Id, game.Name, new() { new() });
 
-            var installedGames = BindingsManager.Instance.GetInstance<GamesProvider>().GetCachedGamesList();
+            _fixesList.Add(newFix);
+            var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
+            _fixesList.Clear();
+            _fixesList.AddRange(newFixesList);
 
-            foreach (var game in installedGames)
+            _availableGamesList.Remove(game);
+
+            return newFix;
+        }
+
+        /// <summary>
+        /// Add new fix for a game
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <returns>New fix entity</returns>
+        public FixEntity AddNewFix(FixesList game)
+        {
+            FixEntity newFix = new();
+
+            game.Fixes.Add(newFix);
+
+            return newFix;
+        }
+
+        /// <summary>
+        /// Remove fix from a game
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix entity</param>
+        public void RemoveFix(FixesList game, FixEntity fix)
+        {
+            game.Fixes.Remove(fix);
+
+            if (game.Fixes.Count == 0)
             {
-                if (_fixesList.Any(x => x.Value.GameId == game.Id))
-                {
-                    continue;
-                }
-
-                result.Add(game);
+                
             }
-
-            return result;
         }
 
         /// <summary>
@@ -80,30 +129,11 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Tuple<bool, string> SaveFixesListAsync()
         {
-            var result = FixesProvider.SaveFixes(_fixesList.Select(x => x.Value).ToList());
+            var result = _fixesProvider.SaveFixes(_fixesList);
 
             CreateReadme();
 
             return result;
-        }
-
-        private void CreateReadme()
-        {
-            string result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
-
-            foreach (var fix in _fixesList)
-            {
-                result += fix.Value.GameName + Environment.NewLine;
-
-                foreach (var f in fix.Value.Fixes)
-                {
-                    result += "- " + f.Name + Environment.NewLine;
-                }
-
-                result += Environment.NewLine;
-            }
-
-            File.WriteAllText(Path.Combine(CommonProperties.LocalRepoPath, "README.md"), result);
         }
 
         /// <summary>
@@ -112,25 +142,26 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of dependencies</returns>
-        public List<FixEntity> GetDependenciesForAFix(FixesList fixesList, FixEntity fixEntity)
+        public ImmutableList<FixEntity> GetDependenciesForAFix(FixesList? fixesList, FixEntity? fixEntity)
         {
-            if (fixEntity?.Dependencies is null)
+            if (fixEntity?.Dependencies is null ||
+                fixesList is null)
             {
-                return new List<FixEntity>();
+                return ImmutableList.Create<FixEntity>();
             }
 
-            var allGameFixes = _fixesList.Where(x => x.Value.GameId == fixesList.GameId).FirstOrDefault();
+            var allGameFixes = _fixesList.Where(x => x.GameId == fixesList.GameId).FirstOrDefault();
 
-            if (allGameFixes.Value is null)
+            if (allGameFixes is null)
             {
-                return new List<FixEntity>();
+                return ImmutableList.Create<FixEntity>();
             }
 
             var allGameDeps = fixEntity.Dependencies;
 
-            var deps = allGameFixes.Value.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
 
-            return deps;
+            return deps.ToImmutableList();
         }
 
         /// <summary>
@@ -139,12 +170,12 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of fixes</returns>
-        public List<FixEntity> GetListOfDependenciesAvailableToAdd(FixesList fixesList, FixEntity fixEntity)
+        public ImmutableList<FixEntity> GetListOfAvailableDependencies(FixesList? fixesList, FixEntity? fixEntity)
         {
             if (fixesList is null ||
                 fixEntity is null)
             {
-                return new List<FixEntity>();
+                return ImmutableList.Create<FixEntity>();
             }
 
             List<FixEntity> result = new();
@@ -167,32 +198,7 @@ namespace Common.Models
                 }
             }
 
-            return result;
-        }
-
-        public void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
-        {
-            addTo.Dependencies.Add(dependency.Guid);
-        }
-
-        public void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
-        {
-            addTo.Dependencies.Remove(dependency.Guid);
-        }
-
-        /// <summary>
-        /// Add new fixes list for a game
-        /// </summary>
-        /// <param name="game">Game entity</param>
-        public FixesList AddNewFix(GameEntity game)
-        {
-            var newFix = new FixesList(game.Id, game.Name, new ObservableCollection<FixEntity>());
-
-            newFix.Fixes.Add(new FixEntity());
-
-            _fixesList.Add(newFix.GameName, newFix);
-
-            return newFix;
+            return result.ToImmutableList();
         }
 
         /// <summary>
@@ -201,19 +207,22 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public bool UploadFix(FixesList fixesList, FixEntity fix)
+        public Tuple<bool, string> UploadFix(FixesList fixesList, FixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
                 fixesList.GameName,
-                new(new List<FixEntity>() { fix })
+                new List<FixEntity>() { fix }
                 );
 
             var guid = newFix.Fixes.First().Guid;
 
             string? fileToUpload = null;
 
-            if (!newFix.Fixes[0].Url.StartsWith("http"))
+            var url = newFix.Fixes[0].Url;
+
+            if (!string.IsNullOrEmpty(url) &&
+                !url.StartsWith("http"))
             {
                 fileToUpload = fix.Url;
 
@@ -235,8 +244,122 @@ namespace Common.Models
                     filesToUpload.Add(fileToUpload);
                 }
 
-                return FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
+                var result = FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
+
+                if (result)
+                {
+                    return new(true, @$"Fix successfully uploaded.
+It will be added to the database after developer's review.
+
+Thank you.");
+                }
+                else
+                {
+                    return new(false, "Can't upload fix.");
+                }
             }
+        }
+
+        /// <summary>
+        /// Check if the file can be uploaded
+        /// </summary>
+        public async Task<Tuple<bool, string>> CheckFixBeforeUploadAsync(FixEntity fix)
+        {
+            if (string.IsNullOrEmpty(fix?.Name) ||
+                fix.Version < 1)
+            {
+                return new(false, "Name and Version are required to upload a fix.");
+            }
+
+            if (!string.IsNullOrEmpty(fix.Url) &&
+                !fix.Url.StartsWith("http"))
+            {
+                if (!File.Exists(fix.Url))
+                {
+                    return new(false, $"{fix.Url} doesn't exist.");
+                }
+
+                else if (new FileInfo(fix.Url).Length > 1e+8)
+                {
+                    return new(false, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
+                }
+            }
+
+            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
+
+            foreach (var onlineFix in onlineFixes)
+            {
+                //if fix already exists in the repo, don't upload it
+                if (onlineFix.Fixes.Any(x => x.Guid == fix.Guid))
+                {
+                    return new(false, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+                }
+            }
+
+            return new(true, string.Empty);
+        }
+
+        public void AddDependencyForFix(FixEntity addTo, FixEntity dependency) => addTo.Dependencies.Add(dependency.Guid);
+
+        public void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency) => addTo.Dependencies.Remove(dependency.Guid);
+
+        public void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
+
+        public void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+
+
+
+        private async Task GetListOfFixesAsync(bool useCache)
+        {
+            _fixesList.Clear();
+
+            var fixes = await _combinedEntitiesProvider.GetFixesListAsync(useCache);
+
+            fixes = fixes.OrderBy(x => x.GameName).ToList();
+
+            foreach (var fix in fixes)
+            {
+                _fixesList.Add(fix);
+            }
+        }
+
+        /// <summary>
+        /// Get list of games that can be added to the fixes list
+        /// </summary>
+        private async Task GetListOfAvailableGamesAsync(bool useCache)
+        {
+            _availableGamesList.Clear();
+
+            var installedGames = useCache
+                ? await _gamesProvider.GetCachedListAsync()
+                : await _gamesProvider.GetNewListAsync();
+
+            foreach (var game in installedGames)
+            {
+                if (!_fixesList.Any(x => x.GameId == game.Id))
+                {
+                    _availableGamesList.Add(game);
+                }
+            }
+        }
+
+        private void CreateReadme()
+        {
+            string result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
+
+            foreach (var fix in _fixesList)
+            {
+                result += fix.GameName + Environment.NewLine;
+
+                foreach (var f in fix.Fixes)
+                {
+                    result += "- " + f.Name + Environment.NewLine;
+                }
+
+                result += Environment.NewLine;
+            }
+
+            File.WriteAllText(Path.Combine(CommonProperties.LocalRepoPath, "README.md"), result);
         }
     }
 }
