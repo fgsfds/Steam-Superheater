@@ -33,8 +33,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Avalonia" Version="11.0.4" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.4" />
+    <PackageReference Include="Avalonia" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
 
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
