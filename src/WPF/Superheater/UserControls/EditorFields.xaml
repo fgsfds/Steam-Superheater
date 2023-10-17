@@ -46,7 +46,7 @@
                    VerticalAlignment="Center"
                    Margin="3"/>
 
-        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                  Grid.Row="1"
                  Grid.Column="1"
                  IsReadOnly="{Binding IsEditingAvailable, Converter={StaticResource ReverseBool}}"

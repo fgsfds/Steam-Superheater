@@ -184,12 +184,11 @@ namespace Common.Models
 
             foreach (var fix in fixesList.Fixes)
             {
-
                 if (
                     //don't add itself
                     fix.Guid != fixEntity.Guid &&
-                    //don't add fixes that depend of it
-                    !fix.Dependencies.Any(x => x == fixEntity.Guid) &&
+                    //don't add fixes that depend on it
+                    (fix.Dependencies is not null && !fix.Dependencies.Any(x => x == fixEntity.Guid)) &&
                     //don't add fixes that are already dependencies
                     !fixDependencies.Where(x => x.Guid == fix.Guid).Any()
                     )
@@ -299,9 +298,17 @@ Thank you.");
             return new(true, string.Empty);
         }
 
-        public void AddDependencyForFix(FixEntity addTo, FixEntity dependency) => addTo.Dependencies.Add(dependency.Guid);
+        public void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
+        {
+            addTo.Dependencies ??= new();
+            addTo.Dependencies.Add(dependency.Guid);
+        }
 
-        public void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency) => addTo.Dependencies.Remove(dependency.Guid);
+        public void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
+        {
+            addTo.Dependencies ??= new();
+            addTo.Dependencies.Remove(dependency.Guid);
+        }
 
         public void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 

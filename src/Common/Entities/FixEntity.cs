@@ -50,16 +50,16 @@ namespace Common.Entities
         {
             Name = string.Empty;
             Version = 1;
-            Url = null;
-            Description = string.Empty;
             Guid = Guid.NewGuid();
+            SupportedOSes = OSEnum.Windows;
+            Url = null;
+            Description = null;
             InstallFolder = null;
             ConfigFile = null;
             FilesToDelete = null;
             FilesToBackup = null;
             RunAfterInstall = null;
-            Dependencies = new();
-            SupportedOSes = 0;
+            Dependencies = null;
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace Common.Entities
         /// <summary>
         /// Fix description
         /// </summary>
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// List of fix's variants
@@ -137,7 +137,7 @@ namespace Common.Entities
         /// <summary>
         /// List of fixes GUIDs that are required for this fix
         /// </summary>
-        public List<Guid> Dependencies { get; set; }
+        public List<Guid>? Dependencies { get; set; }
 
         /// <summary>
         /// Supported OSes

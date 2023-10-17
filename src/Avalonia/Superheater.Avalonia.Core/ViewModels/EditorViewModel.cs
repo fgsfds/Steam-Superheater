@@ -124,6 +124,24 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string SelectedFixUrl
+        {
+            get => SelectedFix?.Url ?? string.Empty;
+            set
+            {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    SelectedFix.Url = null;
+                }
+                else
+                {
+                    SelectedFix.Url = value;
+                }
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
         public GameEntity? _selectedAvailableGame;
@@ -142,6 +160,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(FilesToBackup))]
         [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
@@ -403,7 +422,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             SelectedFix.Url = files[0].Path.LocalPath.ToString();
-            OnPropertyChanged(nameof(SelectedFix.Url));
+            OnPropertyChanged(nameof(SelectedFixUrl));
         }
 
         #endregion Relay Commands

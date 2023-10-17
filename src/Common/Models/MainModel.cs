@@ -162,7 +162,8 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid) => fixes.Where(x => x.Dependencies.Contains(guid)).ToList();
+        public List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid)
+            => fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid)).ToList();
 
         /// <summary>
         /// Does fix have dependent fixes that are currently installed

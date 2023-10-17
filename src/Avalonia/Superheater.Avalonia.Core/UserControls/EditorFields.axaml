@@ -47,7 +47,7 @@
               Grid.Row="2"
               Margin="0,3">
 
-            <TextBox Text="{Binding SelectedFix.Url, Mode=TwoWay}"
+            <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
                      Watermark="Link to file"
                      IsReadOnly="{Binding !IsEditingAvailable}"/>
 

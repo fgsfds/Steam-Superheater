@@ -90,6 +90,41 @@ namespace Common.Providers
                     {
                         fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
                     }
+
+                    if (fix.FilesToDelete is null || !fix.FilesToDelete.Any())
+                    {
+                        fix.FilesToDelete = null;
+                    }
+
+                    if (fix.Variants is null || !fix.Variants.Any())
+                    {
+                        fix.Variants = null;
+                    }
+
+                    if (fix.Dependencies is null || !fix.Dependencies.Any())
+                    {
+                        fix.Dependencies = null;
+                    }
+
+                    if (fix.FilesToBackup is null || !fix.FilesToBackup.Any())
+                    {
+                        fix.FilesToBackup = null;
+                    }
+
+                    if (fix.Url is null || string.IsNullOrEmpty(fix.Url))
+                    {
+                        fix.Url = null;
+                    }
+
+                    if (fix.Description is null || string.IsNullOrEmpty(fix.Description))
+                    {
+                        fix.Description = null;
+                    }
+
+                    if (fix.InstallFolder is null || string.IsNullOrEmpty(fix.InstallFolder))
+                    {
+                        fix.InstallFolder = null;
+                    }
                 }
             }
 

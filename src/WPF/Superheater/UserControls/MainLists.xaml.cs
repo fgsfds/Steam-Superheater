@@ -35,6 +35,11 @@ namespace Superheater.UserControls
 
             var description = fixEntity.Description;
 
+            if (description is null)
+            {
+                return;
+            }
+
             var splitDescription = description.Split('\n');
 
             foreach (var item in splitDescription)
