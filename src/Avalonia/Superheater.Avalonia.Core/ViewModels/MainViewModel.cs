@@ -450,6 +450,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
+            await _locker.WaitAsync();
             IsInProgress = true;
 
             var result = await _mainModel.UpdateGamesListAsync(useCache);
@@ -466,6 +467,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             IsInProgress = false;
+            _locker.Release();
         }
 
         /// <summary>
@@ -563,19 +565,15 @@ Do you want to set it to always run as admin?",
             if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
                 parameterName.Equals(nameof(_config.HiddenTags)))
             {
-                await _locker.WaitAsync();
                 await UpdateAsync(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
-                _locker.Release();
             }
 
             if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await _locker.WaitAsync();
                 await UpdateAsync(false);
-                _locker.Release();
             }
         }
 

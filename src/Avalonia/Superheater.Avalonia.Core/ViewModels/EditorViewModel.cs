@@ -446,6 +446,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
+            await _locker.WaitAsync();
             IsInProgress = true;
 
             var result = await _editorModel.UpdateListsAsync(useCache);
@@ -462,6 +463,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             IsInProgress = false;
+            _locker.Release();
         }
 
         /// <summary>
@@ -494,10 +496,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-
-                await _locker.WaitAsync();
                 await UpdateAsync(false);
-                _locker.Release();
             }
         }
     }
