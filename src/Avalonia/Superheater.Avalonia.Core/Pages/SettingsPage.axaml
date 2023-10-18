@@ -110,9 +110,38 @@
                     Hidden tags
                 </TextBlock>
 
-                <TextBox Grid.Column="1"
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Grid.Column="1"
                          Margin="5"
-                         Text="{Binding HiddenTagsTextBox}"></TextBox>
+                         ItemsSource="{Binding HiddenTagsList}">
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="5">
+
+                                <TextBlock Text="{Binding}"
+                                           VerticalAlignment="Center"
+                                           Margin="5"/>
+
+                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveTagCommand}"
+                                        CommandParameter="{Binding}"
+                                        Width="{Binding $self.Bounds.Height}"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        IsEnabled="True">x</Button>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
 
             </Grid>
 

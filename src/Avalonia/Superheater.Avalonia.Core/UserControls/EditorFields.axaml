@@ -54,6 +54,8 @@
 
             <Button Grid.Column="1"
                     Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     Command="{Binding OpenFilePickerCommand}"
                     IsEnabled="{Binding IsEditingAvailable}">
                 ...
@@ -167,6 +169,8 @@
                     Grid.Row="1"
                     Margin="1"
                     ToolTip.Tip="Add dependency"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding AddDependencyCommand}">
                 &gt;
@@ -176,6 +180,8 @@
                     Grid.Row="2"
                     Margin="1"
                     ToolTip.Tip="Remove dependency"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding RemoveDependencyCommand}">
                 &lt;

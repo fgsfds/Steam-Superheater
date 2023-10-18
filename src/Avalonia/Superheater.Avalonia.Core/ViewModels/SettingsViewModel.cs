@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -28,7 +29,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
-            HiddenTagsTextBox = string.Join(';', _config.HiddenTags);
         }
 
         private readonly ConfigEntity _config;
@@ -40,6 +40,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
         public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
         public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
+
+        public ImmutableList<string> HiddenTagsList => _config.HiddenTags.ToImmutableList();
+
+        public string SelectedHiddenTag
+        {
+            get;
+            set;
+        }
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -101,15 +109,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
-        }
-
-        [ObservableProperty]
-        private string _hiddenTagsTextBox;
-        partial void OnHiddenTagsTextBoxChanged(string value)
-        {
-            var tags = value.Split(';').ToList();
-
-            _config.HiddenTags = tags;
         }
 
 
@@ -200,6 +199,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             LocalPathTextboxChanged = false;
             OnPropertyChanged(nameof(LocalPathTextboxChanged));
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
+        }
+
+
+        [RelayCommand]
+        private void RemoveTag(string value)
+        {
+            var tags = HiddenTagsList.Remove(value);
+            _config.HiddenTags = tags.ToList();
+            OnPropertyChanged(nameof(HiddenTagsList));
         }
 
         #endregion Relay Commands
