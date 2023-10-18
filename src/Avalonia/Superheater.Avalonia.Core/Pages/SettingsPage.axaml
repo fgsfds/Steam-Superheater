@@ -135,7 +135,10 @@
                                         Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
-                                        IsEnabled="True">x</Button>
+                                        IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                        ToolTip.Tip="Unhide tag">
+                                    x
+                                </Button>
 
                             </StackPanel>
                         </DataTemplate>

@@ -29,6 +29,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
         private readonly ConfigEntity _config;
@@ -211,5 +213,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         #endregion Relay Commands
+
+
+        private void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.HiddenTags)))
+            {
+                OnPropertyChanged(nameof(HiddenTagsList));
+            }
+        }
     }
 }

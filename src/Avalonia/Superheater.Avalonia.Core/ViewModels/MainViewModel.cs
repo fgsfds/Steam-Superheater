@@ -78,6 +78,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         public ImmutableList<string>? FixVariants => SelectedFix?.Variants?.ToImmutableList();
 
+        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.ToImmutableList();
+
+        public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
+
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
         [NotifyPropertyChangedFor(nameof(SelectedGameRequireAdmin))]
@@ -101,6 +105,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(FixVariants))]
         [NotifyPropertyChangedFor(nameof(FixHasVariants))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -440,6 +446,20 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand]
         private void CloseApp() => Environment.Exit(0);
+
+
+        /// <summary>
+        /// Close app
+        /// </summary>
+        [RelayCommand]
+        private void HideTag(string value)
+        {
+            var tags = _config.HiddenTags.ToList();
+            tags.Add(value);
+            tags = tags.OrderBy(x => x).ToList();
+
+            _config.HiddenTags = tags;
+        }
 
         #endregion Relay Commands
 
