@@ -111,6 +111,11 @@ namespace Common.Providers
                         fix.FilesToBackup = null;
                     }
 
+                    if (fix.Tags is null || !fix.Tags.Any())
+                    {
+                        fix.Tags = null;
+                    }
+
                     if (fix.Url is null || string.IsNullOrEmpty(fix.Url))
                     {
                         fix.Url = null;

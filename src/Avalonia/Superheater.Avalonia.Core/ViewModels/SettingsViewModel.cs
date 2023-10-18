@@ -102,6 +102,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
+        [ObservableProperty]
+        private string _hiddenTagsTextBox;
+        partial void OnHiddenTagsTextBoxChanged(string value)
+        {
+            var tags = value.Split(';').ToList();
+
+            _config.HiddenTags = tags;
+        }
+
 
         #region Relay Commands
 

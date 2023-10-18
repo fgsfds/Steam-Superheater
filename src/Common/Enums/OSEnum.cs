@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Common
+namespace Common.Enums
 {
     [Flags]
     public enum OSEnum

@@ -10,10 +10,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Common.Providers;
-using Common;
 using System.Collections.Immutable;
 using System.Threading;
 using System.Windows;
+using Common.Enums;
 
 namespace Superheater.ViewModels
 {

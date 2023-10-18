@@ -13,9 +13,9 @@ using System.Threading.Tasks;
 using Avalonia.Platform.Storage;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Providers;
-using Common;
 using System.Threading;
 using System.Collections.Immutable;
+using Common.Enums;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -85,6 +85,17 @@ namespace Superheater.Avalonia.Core.ViewModels
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
                 SelectedFix.FilesToBackup = value.Split(";").ToList();
+            }
+        }
+
+        public string SelectedFixTags
+        {
+            get => SelectedFix?.Tags is null ? string.Empty : string.Join(";", SelectedFix.Tags);
+            set
+            {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+                SelectedFix.Tags = value.Split(";").ToList();
             }
         }
 
@@ -161,6 +172,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]

@@ -12,7 +12,7 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!--Delete archive switch-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <ToggleSwitch IsChecked="{Binding DeleteArchivesCheckbox}"
                               Grid.Column="0"
@@ -30,7 +30,7 @@
             </Grid>
 
             <!--Open config switch-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <ToggleSwitch IsChecked="{Binding OpenConfigCheckbox}"
                               Grid.Column="0"
@@ -48,7 +48,7 @@
             </Grid>
 
             <!--Show uninstalled games-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <ToggleSwitch IsChecked="{Binding ShowUninstalledGamesCheckbox}"
                               Grid.Column="0"
@@ -66,7 +66,7 @@
             </Grid>
 
             <!--Test branch switch-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <ToggleSwitch IsChecked="{Binding UseTestRepoBranchCheckbox}"
                               Grid.Column="0"
@@ -84,7 +84,7 @@
             </Grid>
 
             <!--Unsupported fixes-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <ToggleSwitch IsChecked="{Binding ShowUnsupportedFixesCheckbox}"
                               Grid.Column="0"
@@ -101,8 +101,23 @@
 
             </Grid>
 
+            <!--Hidden tags-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Hidden tags
+                </TextBlock>
+
+                <TextBox Grid.Column="1"
+                         Margin="5"
+                         Text="{Binding HiddenTagsTextBox}"></TextBox>
+
+            </Grid>
+
             <!--Theme selection-->
-            <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="auto,*">
 
                 <StackPanel Orientation="Horizontal" Margin="5">
 
@@ -149,7 +164,7 @@
                 <StackPanel Orientation="Vertical">
 
                     <!--Path to local repo-->
-                    <Grid ColumnDefinitions="auto,*,auto,auto" RowDefinitions="*,*,*">
+                    <Grid ColumnDefinitions="auto,*,auto,auto">
 
                         <TextBlock Grid.Column="0"
                                    VerticalAlignment="Center"
@@ -176,7 +191,7 @@
                     </Grid>
 
                     <!--Local repo switch-->
-                    <Grid ColumnDefinitions="auto,*" RowDefinitions="*,*,*">
+                    <Grid ColumnDefinitions="auto,*">
 
                         <ToggleSwitch IsChecked="{Binding UseLocalRepoCheckbox}"
                                       Grid.Column="0"

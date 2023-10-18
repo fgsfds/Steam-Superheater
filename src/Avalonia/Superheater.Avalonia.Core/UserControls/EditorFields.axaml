@@ -17,6 +17,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -102,9 +103,16 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Run after install-->
+        <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
+                 Watermark="Tags"
+                 Grid.Row="9"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
         <!--Supported OSes-->
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="9"
+                    Grid.Row="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
 
@@ -128,7 +136,7 @@
         </StackPanel>
 
         <!--Dependencies-->
-        <Grid Grid.Row="10"
+        <Grid Grid.Row="11"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">

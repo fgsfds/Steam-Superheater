@@ -1,6 +1,7 @@
 ﻿using Common.CombinedEntities;
 using Common.Config;
 using Common.Entities;
+using Common.Enums;
 using Common.FixTools;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -48,6 +49,25 @@ namespace Common.Models
             try
             {
                 var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+                var hiddenTags = _config.HiddenTags;
+
+                foreach (var game in games.ToList())
+                {
+                    foreach (var fix in game.FixesList.Fixes.ToList())
+                    {
+                        if (fix.Tags is not null &&
+                            fix.Tags.Any(x => hiddenTags.Contains(x)))
+                        {
+                            game.FixesList.Fixes.Remove(fix);
+                        }
+                    }
+
+                    if (!game.FixesList.Fixes.Any())
+                    {
+                        games.Remove(game);
+                    }
+                }
+
                 _combinedEntitiesList.AddRange(games);
 
                 return new(true, string.Empty);
@@ -103,15 +123,15 @@ namespace Common.Models
 
             if (!_config.ShowUninstalledGames)
             {
-                result = result.Where(x => x.IsGameInstalled).ToList();
+                result = _combinedEntitiesList.Where(x => x.IsGameInstalled).ToList();
             }
 
-            if (!string.IsNullOrEmpty(search))
+            if (string.IsNullOrEmpty(search))
             {
-                result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
+                return result.ToImmutableList();
             }
 
-            return result.Where(x => x.FixesList.Fixes.Count > 0).ToImmutableList();
+            return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
         }
 
         /// <summary>
@@ -204,7 +224,7 @@ namespace Common.Models
             }
             else
             {
-                return new (false, result.Item2);
+                return new(false, result.Item2);
             }
         }
 

@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Common.Enums;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Common.Entities
 {
@@ -60,6 +61,7 @@ namespace Common.Entities
             FilesToBackup = null;
             RunAfterInstall = null;
             Dependencies = null;
+            Tags = null;
         }
 
         /// <summary>
@@ -127,6 +129,12 @@ namespace Common.Entities
         /// Paths are relative to the game folder, separated by ;
         /// </summary>
         public List<string>? FilesToBackup { get; set; }
+
+        /// <summary>
+        /// List of files that will be backed up before the fix is installed, and the original file will remain
+        /// Paths are relative to the game folder, separated by ;
+        /// </summary>
+        public List<string>? Tags { get; set; }
 
         /// <summary>
         /// File that will be run after the fix is installed

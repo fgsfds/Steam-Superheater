@@ -12,7 +12,7 @@ namespace Common.Config
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
             _theme = ThemeEnum.System;
-            _installedUpdater = 0;
+            _hiddenTags = new();
             _showUninstalledGames = true;
             _useTestRepoBranch = false;
             _showUnsupportedFixes = false;
@@ -114,21 +114,6 @@ namespace Common.Config
             }
         }
 
-        private int _installedUpdater;
-        public int InstalledUpdater
-        {
-            get => _installedUpdater;
-            set
-            {
-                if (_installedUpdater != value)
-                {
-                    _installedUpdater = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(InstalledUpdater));
-                }
-            }
-        }
-
         private bool _showUninstalledGames;
         public bool ShowUninstalledGames
         {
@@ -170,6 +155,21 @@ namespace Common.Config
                     _showUnsupportedFixes = value;
                     NotifyConfigChanged?.Invoke();
                     NotifyParameterChanged?.Invoke(nameof(ShowUnsupportedFixes));
+                }
+            }
+        }
+
+        private List<string> _hiddenTags;
+        public List<string> HiddenTags
+        {
+            get => _hiddenTags;
+            set
+            {
+                if (_hiddenTags != value)
+                {
+                    _hiddenTags = value;
+                    NotifyConfigChanged?.Invoke();
+                    NotifyParameterChanged?.Invoke(nameof(HiddenTags));
                 }
             }
         }
