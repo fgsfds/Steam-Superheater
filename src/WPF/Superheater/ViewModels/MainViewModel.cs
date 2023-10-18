@@ -71,7 +71,7 @@ namespace Superheater.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public ImmutableList<FixEntity>? SelectedGameFixesList => _mainModel.GetFixesForSelectedGame(SelectedGame);
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.ToImmutableList();
 
         /// <summary>
         /// List of selected fix's variants

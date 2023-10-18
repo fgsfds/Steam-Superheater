@@ -55,13 +55,24 @@ namespace Common.Models
                 {
                     foreach (var fix in game.FixesList.Fixes.ToList())
                     {
+                        //remove fixes with hidden tags
                         if (fix.Tags is not null &&
                             fix.Tags.Any(x => hiddenTags.Contains(x)))
                         {
                             game.FixesList.Fixes.Remove(fix);
+                            continue;
+                        }
+
+                        //remove fixes for different OSes
+                        if (!_config.ShowUnsupportedFixes &&
+                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS()))
+                        {
+                            game.FixesList.Fixes.Remove(fix);
+                            continue;
                         }
                     }
 
+                    //remove games with no fixes
                     if (!game.FixesList.Fixes.Any())
                     {
                         games.Remove(game);
@@ -79,25 +90,6 @@ namespace Common.Models
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
                 return new(false, "Can't connect to GitHub repository");
-            }
-        }
-
-        public ImmutableList<FixEntity> GetFixesForSelectedGame(FixFirstCombinedEntity? game)
-        {
-            if (game is null)
-            {
-                return ImmutableList.Create<FixEntity>();
-            }
-
-            var list = game.FixesList.Fixes.ToImmutableList();
-
-            if (_config.ShowUnsupportedFixes)
-            {
-                return list;
-            }
-            else
-            {
-                return list.Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToImmutableList();
             }
         }
 

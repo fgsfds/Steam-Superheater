@@ -28,6 +28,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+            HiddenTagsTextBox = string.Join(';', _config.HiddenTags);
         }
 
         private readonly ConfigEntity _config;

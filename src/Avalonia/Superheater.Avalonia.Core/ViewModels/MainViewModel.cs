@@ -71,7 +71,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public ImmutableList<FixEntity>? SelectedGameFixesList => _mainModel.GetFixesForSelectedGame(SelectedGame);
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.ToImmutableList();
 
         /// <summary>
         /// List of selected fix's variants
@@ -560,9 +560,13 @@ Do you want to set it to always run as admin?",
                 FillGamesList();
             }
 
-            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)))
+            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
+                parameterName.Equals(nameof(_config.HiddenTags)))
             {
+                await _locker.WaitAsync();
+                await UpdateAsync(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
+                _locker.Release();
             }
 
             if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
