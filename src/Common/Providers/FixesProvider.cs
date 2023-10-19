@@ -111,9 +111,18 @@ namespace Common.Providers
                         fix.FilesToBackup = null;
                     }
 
-                    if (fix.Tags is null || !fix.Tags.Any())
+                    if (fix.Tags is null || !fix.Tags.Any(x => !string.IsNullOrWhiteSpace(x)))
                     {
                         fix.Tags = null;
+                    }
+                    else
+                    {
+                        var tags = fix.Tags
+                            .Where(x => !string.IsNullOrWhiteSpace(x))
+                            .OrderBy(x => x)
+                            .ToList();
+
+                        fix.Tags = tags;
                     }
 
                     if (fix.Url is null || string.IsNullOrEmpty(fix.Url))

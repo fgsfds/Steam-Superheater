@@ -62,7 +62,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                SelectedFix.Variants = value.Split(";").ToList();
+                SelectedFix.Variants = value.Split(";").Select(x => x.Trim()).ToList();
             }
         }
 
@@ -73,7 +73,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                SelectedFix.FilesToDelete = value.Split(";").ToList();
+                SelectedFix.FilesToDelete = value.Split(";").Select(x => x.Trim()).ToList();
             }
         }
 
@@ -84,7 +84,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                SelectedFix.FilesToBackup = value.Split(";").ToList();
+                SelectedFix.FilesToBackup = value.Split(";").Select(x => x.Trim()).ToList();
             }
         }
 
@@ -95,7 +95,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-                SelectedFix.Tags = value.Split(";").ToList();
+                SelectedFix.Tags = value.Split(";").Select(x => x.Trim()).ToList();
             }
         }
 
