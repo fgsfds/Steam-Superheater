@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
 using System.Threading;
 using System.Collections.Immutable;
+using System.Collections.Generic;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -30,6 +31,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
             _search = string.Empty;
+
+            SelectedTagFilter = TagsComboboxList.First();
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
@@ -63,12 +66,21 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
 
-        public string SearchBarWatermark => "Search by game name. To search for tags, start with #.";
+        public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
+
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value)
+        {
+            OnPropertyChanged(nameof(FilteredGamesList));
+        }
+
+        public bool IsTagsComboboxVisible => true;
 
         /// <summary>
         /// List of games
         /// </summary>
-        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search);
+        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search, SelectedTagFilter);
 
         /// <summary>
         /// List of fixes for selected game
@@ -404,7 +416,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void LaunchGame()
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
-            
+
             if (SelectedGame.IsGameInstalled)
             {
                 Process.Start(new ProcessStartInfo
@@ -490,6 +502,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = false;
             _locker.Release();
+
+            OnPropertyChanged(nameof(TagsComboboxList));
         }
 
         /// <summary>

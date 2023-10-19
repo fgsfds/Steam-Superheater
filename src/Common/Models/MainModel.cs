@@ -5,6 +5,7 @@ using Common.Enums;
 using Common.FixTools;
 using Common.Providers;
 using System.Collections.Immutable;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Common.Models
 {
@@ -103,7 +104,7 @@ namespace Common.Models
         /// Get list of games optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
+        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
             List<FixFirstCombinedEntity> result = _combinedEntitiesList.ToList();
 
@@ -115,39 +116,37 @@ namespace Common.Models
                 }
             }
 
-            if (string.IsNullOrEmpty(search) ||
-                search.Equals("#"))
+            if (string.IsNullOrEmpty(search) &&
+                string.IsNullOrEmpty(tag))
             {
                 return result.ToImmutableList();
             }
 
-            if (search.StartsWith('#'))
+            if (!string.IsNullOrEmpty(tag))
             {
-                //var tags = search
-                //    .Split(' ')
-                //    .Where(x => x.StartsWith('#'))
-                //    .Where(x => x.Length > 1)
-                //    .Select(x => x[1..]);
-
-                var tag = search[1..];
-
-                foreach (var entity in result.ToList())
+                if (!tag.Equals("All tags"))
                 {
-                    foreach(var fix in entity.FixesList.Fixes)
+                    foreach (var entity in result.ToList())
                     {
-                        if (fix.Tags is not null &&
-                            !fix.Tags.Any(x => x.StartsWith(tag)))
+                        foreach (var fix in entity.FixesList.Fixes)
                         {
-                            fix.IsHidden = true;
+                            if (fix.Tags is not null &&
+                                !fix.Tags.Any(x => x.Equals(tag)))
+                            {
+                                fix.IsHidden = true;
+                            }
+                        }
+
+                        if (!entity.FixesList.Fixes.Any(x => !x.IsHidden))
+                        {
+                            result.Remove(entity);
                         }
                     }
-
-                    if (!entity.FixesList.Fixes.Any(x => !x.IsHidden))
-                    {
-                        result.Remove(entity);
-                    }
                 }
+            }
 
+            if (search is null)
+            {
                 return result.ToImmutableList();
             }
 
@@ -164,6 +163,31 @@ namespace Common.Models
             return !_config.UseTestRepoBranch
                 ? fix.Url
                 : fix.Url.Replace("/master/", "/test/");
+        }
+
+        public HashSet<string> GetListOfTags()
+        {
+            HashSet<string> result = new() { "All tags" };
+
+            var games = _combinedEntitiesList;
+
+            foreach (var entity in games)
+            {
+                foreach (var game in entity.FixesList.Fixes)
+                {
+                    if (game.Tags is null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var tag in game.Tags)
+                    {
+                        result.Add(tag);
+                    }
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
