@@ -49,15 +49,21 @@ namespace Common.Models
             try
             {
                 var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
-                var hiddenTags = _config.HiddenTags;
 
                 foreach (var game in games.ToList())
                 {
+                    //remove uninstalled games
+                    if (!_config.ShowUninstalledGames &&
+                        !game.IsGameInstalled)
+                    {
+                        games.Remove(game);
+                    }
+
                     foreach (var fix in game.FixesList.Fixes.ToList())
                     {
                         //remove fixes with hidden tags
                         if (fix.Tags is not null &&
-                            fix.Tags.Any(x => hiddenTags.Contains(x)))
+                            fix.Tags.Any(x => _config.HiddenTags.Contains(x)))
                         {
                             game.FixesList.Fixes.Remove(fix);
                             continue;
@@ -72,8 +78,8 @@ namespace Common.Models
                         }
                     }
 
-                    //remove games with no fixes
-                    if (!game.FixesList.Fixes.Any())
+                    //remove games with no shown fixes
+                    if (!game.FixesList.Fixes.Any(x => !x.IsHidden))
                     {
                         games.Remove(game);
                     }
@@ -93,6 +99,61 @@ namespace Common.Models
             }
         }
 
+        /// <summary>
+        /// Get list of games optionally filtered by a search string
+        /// </summary>
+        /// <param name="search">Search string</param>
+        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
+        {
+            List<FixFirstCombinedEntity> result = _combinedEntitiesList.ToList();
+
+            foreach (var entity in result.ToList())
+            {
+                foreach (var fix in entity.FixesList.Fixes)
+                {
+                    fix.IsHidden = false;
+                }
+            }
+
+            if (string.IsNullOrEmpty(search) ||
+                search.Equals("#"))
+            {
+                return result.ToImmutableList();
+            }
+
+            if (search.StartsWith('#'))
+            {
+                //var tags = search
+                //    .Split(' ')
+                //    .Where(x => x.StartsWith('#'))
+                //    .Where(x => x.Length > 1)
+                //    .Select(x => x[1..]);
+
+                var tag = search[1..];
+
+                foreach (var entity in result.ToList())
+                {
+                    foreach(var fix in entity.FixesList.Fixes)
+                    {
+                        if (fix.Tags is not null &&
+                            !fix.Tags.Any(x => x.StartsWith(tag)))
+                        {
+                            fix.IsHidden = true;
+                        }
+                    }
+
+                    if (!entity.FixesList.Fixes.Any(x => !x.IsHidden))
+                    {
+                        result.Remove(entity);
+                    }
+                }
+
+                return result.ToImmutableList();
+            }
+
+            return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
+        }
+
         public string GetSelectedFixUrl(FixEntity? fix)
         {
             if (string.IsNullOrEmpty(fix?.Url))
@@ -103,27 +164,6 @@ namespace Common.Models
             return !_config.UseTestRepoBranch
                 ? fix.Url
                 : fix.Url.Replace("/master/", "/test/");
-        }
-
-        /// <summary>
-        /// Get list of games optionally filtered by a search string
-        /// </summary>
-        /// <param name="search">Search string</param>
-        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
-        {
-            List<FixFirstCombinedEntity> result = _combinedEntitiesList;
-
-            if (!_config.ShowUninstalledGames)
-            {
-                result = _combinedEntitiesList.Where(x => x.IsGameInstalled).ToList();
-            }
-
-            if (string.IsNullOrEmpty(search))
-            {
-                return result.ToImmutableList();
-            }
-
-            return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
         }
 
         /// <summary>

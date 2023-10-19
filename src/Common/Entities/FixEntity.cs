@@ -1,5 +1,6 @@
 ﻿using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Xml.Serialization;
 
 namespace Common.Entities
 {
@@ -161,6 +162,9 @@ namespace Common.Entities
         /// Is there a newer version of the fix
         /// </summary>
         public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
+
+        [XmlIgnore]
+        public bool IsHidden { get; set; }
 
         public override string ToString() => Name;
     }

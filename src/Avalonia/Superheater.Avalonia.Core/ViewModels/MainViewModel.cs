@@ -63,6 +63,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
 
+        public string SearchBarWatermark => "Search by game name. To search for tags, start with #.";
+
         /// <summary>
         /// List of games
         /// </summary>
@@ -71,7 +73,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.ToImmutableList();
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         /// <summary>
         /// List of selected fix's variants
@@ -579,7 +581,7 @@ Do you want to set it to always run as admin?",
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
-                FillGamesList();
+                await UpdateAsync(true);
             }
 
             if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
