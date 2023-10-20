@@ -502,8 +502,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = false;
             _locker.Release();
-
-            OnPropertyChanged(nameof(TagsComboboxList));
         }
 
         /// <summary>
@@ -529,6 +527,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
+            OnPropertyChanged(nameof(TagsComboboxList));
 
             UpdateHeader();
 
@@ -603,7 +602,6 @@ Do you want to set it to always run as admin?",
             {
                 await UpdateAsync(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
-                OnPropertyChanged(nameof(TagsComboboxList));
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
 
