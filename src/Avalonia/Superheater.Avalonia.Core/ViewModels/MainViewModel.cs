@@ -92,7 +92,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         public ImmutableList<string>? FixVariants => SelectedFix?.Variants?.ToImmutableList();
 
-        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.ToImmutableList();
+        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
 
         public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
 
@@ -603,6 +603,8 @@ Do you want to set it to always run as admin?",
             {
                 await UpdateAsync(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
+                OnPropertyChanged(nameof(TagsComboboxList));
+                OnPropertyChanged(nameof(SelectedFixTags));
             }
 
             if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||

@@ -183,9 +183,14 @@ namespace Common.Models
 
                     foreach (var tag in game.Tags)
                     {
-                        list.Add(tag);
+                        if (!_config.HiddenTags.Contains(tag))
+                        {
+                            list.Add(tag);
+                        }
                     }
                 }
+
+                list = list.OrderBy(x => x).ToHashSet();
             }
 
             return result.Concat(list).ToHashSet();
