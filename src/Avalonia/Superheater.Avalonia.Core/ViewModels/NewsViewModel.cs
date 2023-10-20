@@ -63,6 +63,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async Task UpdateAsync()
         {
+            await _locker.WaitAsync();
             var result = await _newsModel.UpdateNewsListAsync();
 
             if (!result.Item1)
@@ -77,6 +78,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             OnNewsChanged();
+            _locker.Release();
         }
 
         private void OnNewsChanged()
@@ -93,9 +95,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await _locker.WaitAsync();
                 await UpdateAsync();
-                _locker.Release();
             }
         }
     }

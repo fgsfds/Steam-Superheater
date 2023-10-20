@@ -17,6 +17,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -53,6 +54,8 @@
 
             <Button Grid.Column="1"
                     Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     Command="{Binding OpenFilePickerCommand}"
                     IsEnabled="{Binding IsEditingAvailable}">
                 ...
@@ -102,9 +105,16 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
+        <!--Run after install-->
+        <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
+                 Watermark="Tags"
+                 Grid.Row="9"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
         <!--Supported OSes-->
         <StackPanel Orientation="Horizontal"
-                    Grid.Row="9"
+                    Grid.Row="10"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center">
 
@@ -128,7 +138,7 @@
         </StackPanel>
 
         <!--Dependencies-->
-        <Grid Grid.Row="10"
+        <Grid Grid.Row="11"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">
@@ -159,6 +169,8 @@
                     Grid.Row="1"
                     Margin="1"
                     ToolTip.Tip="Add dependency"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding AddDependencyCommand}">
                 &gt;
@@ -168,6 +180,8 @@
                     Grid.Row="2"
                     Margin="1"
                     ToolTip.Tip="Remove dependency"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding RemoveDependencyCommand}">
                 &lt;

@@ -1,9 +1,11 @@
 ﻿using Common.CombinedEntities;
 using Common.Config;
 using Common.Entities;
+using Common.Enums;
 using Common.FixTools;
 using Common.Providers;
 using System.Collections.Immutable;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Common.Models
 {
@@ -48,6 +50,42 @@ namespace Common.Models
             try
             {
                 var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+
+                foreach (var game in games.ToList())
+                {
+                    //remove uninstalled games
+                    if (!_config.ShowUninstalledGames &&
+                        !game.IsGameInstalled)
+                    {
+                        games.Remove(game);
+                    }
+
+                    foreach (var fix in game.FixesList.Fixes.ToList())
+                    {
+                        //remove fixes with hidden tags
+                        if (fix.Tags is not null &&
+                            fix.Tags.All(x => _config.HiddenTags.Contains(x)))
+                        {
+                            game.FixesList.Fixes.Remove(fix);
+                            continue;
+                        }
+
+                        //remove fixes for different OSes
+                        if (!_config.ShowUnsupportedFixes &&
+                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS()))
+                        {
+                            game.FixesList.Fixes.Remove(fix);
+                            continue;
+                        }
+                    }
+
+                    //remove games with no shown fixes
+                    if (!game.FixesList.Fixes.Any(x => !x.IsHidden))
+                    {
+                        games.Remove(game);
+                    }
+                }
+
                 _combinedEntitiesList.AddRange(games);
 
                 return new(true, string.Empty);
@@ -62,23 +100,57 @@ namespace Common.Models
             }
         }
 
-        public ImmutableList<FixEntity> GetFixesForSelectedGame(FixFirstCombinedEntity? game)
+        /// <summary>
+        /// Get list of games optionally filtered by a search string
+        /// </summary>
+        /// <param name="search">Search string</param>
+        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            if (game is null)
+            List<FixFirstCombinedEntity> result = _combinedEntitiesList.ToList();
+
+            foreach (var entity in result.ToList())
             {
-                return ImmutableList.Create<FixEntity>();
+                foreach (var fix in entity.FixesList.Fixes)
+                {
+                    fix.IsHidden = false;
+                }
             }
 
-            var list = game.FixesList.Fixes.ToImmutableList();
+            if (string.IsNullOrEmpty(search) &&
+                string.IsNullOrEmpty(tag))
+            {
+                return result.ToImmutableList();
+            }
 
-            if (_config.ShowUnsupportedFixes)
+            if (!string.IsNullOrEmpty(tag))
             {
-                return list;
+                if (!tag.Equals("All tags"))
+                {
+                    foreach (var entity in result.ToList())
+                    {
+                        foreach (var fix in entity.FixesList.Fixes)
+                        {
+                            if (fix.Tags is not null &&
+                                !fix.Tags.Any(x => x.Equals(tag)))
+                            {
+                                fix.IsHidden = true;
+                            }
+                        }
+
+                        if (!entity.FixesList.Fixes.Any(x => !x.IsHidden))
+                        {
+                            result.Remove(entity);
+                        }
+                    }
+                }
             }
-            else
+
+            if (search is null)
             {
-                return list.Where(x => x.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS())).ToImmutableList();
+                return result.ToImmutableList();
             }
+
+            return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
         }
 
         public string GetSelectedFixUrl(FixEntity? fix)
@@ -93,25 +165,35 @@ namespace Common.Models
                 : fix.Url.Replace("/master/", "/test/");
         }
 
-        /// <summary>
-        /// Get list of games optionally filtered by a search string
-        /// </summary>
-        /// <param name="search">Search string</param>
-        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null)
+        public HashSet<string> GetListOfTags()
         {
-            List<FixFirstCombinedEntity> result = _combinedEntitiesList;
+            List<string> result = new() { "All tags" };
+            HashSet<string> list = new();
 
-            if (!_config.ShowUninstalledGames)
+            var games = _combinedEntitiesList;
+
+            foreach (var entity in games)
             {
-                result = result.Where(x => x.IsGameInstalled).ToList();
+                foreach (var game in entity.FixesList.Fixes)
+                {
+                    if (game.Tags is null)
+                    {
+                        continue;
+                    }
+
+                    foreach (var tag in game.Tags)
+                    {
+                        if (!_config.HiddenTags.Contains(tag))
+                        {
+                            list.Add(tag);
+                        }
+                    }
+                }
+
+                list = list.OrderBy(x => x).ToHashSet();
             }
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                result = result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToList();
-            }
-
-            return result.Where(x => x.FixesList.Fixes.Count > 0).ToImmutableList();
+            return result.Concat(list).ToHashSet();
         }
 
         /// <summary>
@@ -204,7 +286,7 @@ namespace Common.Models
             }
             else
             {
-                return new (false, result.Item2);
+                return new(false, result.Item2);
             }
         }
 

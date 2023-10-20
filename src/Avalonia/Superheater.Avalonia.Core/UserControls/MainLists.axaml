@@ -10,10 +10,6 @@
         <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
     </UserControl.Resources>
 
-    <UserControl.Styles>
-        <StyleInclude Source="/Styles/UrlButton.axaml"/>
-    </UserControl.Styles>
-
     <Grid>
 
         <Grid.ColumnDefinitions>
@@ -22,6 +18,7 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <!--Games list-->
         <ListBox ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
                  Grid.Column="0"
@@ -98,6 +95,7 @@
 
         </ListBox>
 
+        <!--Fixes list-->
         <ListBox ItemsSource="{Binding SelectedGameFixesList}"
                  SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
                  SelectionChanged="FixSelected"
@@ -126,24 +124,81 @@
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
-
         </ListBox>
 
-        <Grid Grid.Column="2" RowDefinitions="*,auto,auto">
+        <!--Right column-->
+        <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto">
 
+            <!--Description-->
             <ScrollViewer Grid.Row="0">
-                <StackPanel Orientation="Vertical" Name="DescriptionBox"></StackPanel>
+                <StackPanel Orientation="Vertical" Name="DescriptionBox">
+
+                    <StackPanel.Styles>
+                        <StyleInclude Source="/Styles/UrlButton.axaml"/>
+                    </StackPanel.Styles>
+
+                </StackPanel>
             </ScrollViewer>
 
+            <!--Requirements-->
             <TextBlock Text="{Binding Requirements, Mode=OneWay}"
                        TextWrapping="Wrap"
-                       Margin="0,2,0,0"
+                       Margin="3"
                        Grid.Row="1"
                        Padding="3"/>
 
+            <!--Tags-->
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="2"
-                  Margin="0,2,0,0"
+                  Margin="3"
+                  IsVisible="{Binding SelectedFixHasTags}">
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center">
+                    Tags:
+                </TextBlock>
+
+                <ListBox Grid.Column="1"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Margin="5"
+                         ItemsSource="{Binding SelectedFixTags}">
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="5">
+
+                                <TextBlock Text="{Binding}"
+                                           VerticalAlignment="Center"
+                                           Margin="5"/>
+
+                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.HideTagCommand}"
+                                        CommandParameter="{Binding}"
+                                        Width="{Binding $self.Bounds.Height}"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                        ToolTip.Tip="Hide tag">
+                                    -
+                                </Button>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+            </Grid>
+
+            <!--Variants-->
+            <Grid ColumnDefinitions="auto,*"
+                  Grid.Row="3"
+                  Margin="3"
                   IsVisible="{Binding FixHasVariants}">
 
                 <TextBlock Grid.Column="0"
@@ -157,12 +212,7 @@
                           Margin="0,2,0,0"
                           ItemsSource="{Binding FixVariants}"
                           SelectedItem="{Binding SelectedFixVariant}"/>
-
             </Grid>
-
-
         </Grid>
-
     </Grid>
-
 </UserControl>

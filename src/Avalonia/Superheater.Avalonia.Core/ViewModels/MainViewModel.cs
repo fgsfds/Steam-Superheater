@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
 using System.Threading;
 using System.Collections.Immutable;
+using System.Collections.Generic;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -30,6 +31,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
             _search = string.Empty;
+
+            SelectedTagFilter = TagsComboboxList.First();
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
@@ -63,20 +66,35 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
 
+        public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
+
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value)
+        {
+            OnPropertyChanged(nameof(FilteredGamesList));
+        }
+
+        public bool IsTagsComboboxVisible => true;
+
         /// <summary>
         /// List of games
         /// </summary>
-        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search);
+        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search, SelectedTagFilter);
 
         /// <summary>
         /// List of fixes for selected game
         /// </summary>
-        public ImmutableList<FixEntity>? SelectedGameFixesList => _mainModel.GetFixesForSelectedGame(SelectedGame);
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         /// <summary>
         /// List of selected fix's variants
         /// </summary>
         public ImmutableList<string>? FixVariants => SelectedFix?.Variants?.ToImmutableList();
+
+        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
+
+        public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
@@ -101,6 +119,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(FixVariants))]
         [NotifyPropertyChangedFor(nameof(FixHasVariants))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -396,7 +416,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void LaunchGame()
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
-            
+
             if (SelectedGame.IsGameInstalled)
             {
                 Process.Start(new ProcessStartInfo
@@ -441,6 +461,20 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void CloseApp() => Environment.Exit(0);
 
+
+        /// <summary>
+        /// Close app
+        /// </summary>
+        [RelayCommand]
+        private void HideTag(string value)
+        {
+            var tags = _config.HiddenTags.ToList();
+            tags.Add(value);
+            tags = tags.OrderBy(x => x).ToList();
+
+            _config.HiddenTags = tags;
+        }
+
         #endregion Relay Commands
 
 
@@ -450,6 +484,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
+            await _locker.WaitAsync();
             IsInProgress = true;
 
             var result = await _mainModel.UpdateGamesListAsync(useCache);
@@ -466,6 +501,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             IsInProgress = false;
+            _locker.Release();
         }
 
         /// <summary>
@@ -491,6 +527,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
+            OnPropertyChanged(nameof(TagsComboboxList));
 
             UpdateHeader();
 
@@ -557,21 +594,22 @@ Do you want to set it to always run as admin?",
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
-                FillGamesList();
+                await UpdateAsync(true);
             }
 
-            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)))
+            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
+                parameterName.Equals(nameof(_config.HiddenTags)))
             {
+                await UpdateAsync(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
+                OnPropertyChanged(nameof(SelectedFixTags));
             }
 
             if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await _locker.WaitAsync();
                 await UpdateAsync(false);
-                _locker.Release();
             }
         }
 

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -28,6 +29,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
         private readonly ConfigEntity _config;
@@ -39,6 +42,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
         public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
         public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
+
+        public ImmutableList<string> HiddenTagsList => _config.HiddenTags.ToImmutableList();
+
+        public string SelectedHiddenTag
+        {
+            get;
+            set;
+        }
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -192,6 +203,24 @@ namespace Superheater.Avalonia.Core.ViewModels
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
+
+        [RelayCommand]
+        private void RemoveTag(string value)
+        {
+            var tags = HiddenTagsList.Remove(value);
+            _config.HiddenTags = tags.ToList();
+            OnPropertyChanged(nameof(HiddenTagsList));
+        }
+
         #endregion Relay Commands
+
+
+        private void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.HiddenTags)))
+            {
+                OnPropertyChanged(nameof(HiddenTagsList));
+            }
+        }
     }
 }
