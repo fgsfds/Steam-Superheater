@@ -91,51 +91,71 @@ namespace Common.Providers
                         fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
                     }
 
-                    if (fix.FilesToDelete is null || !fix.FilesToDelete.Any())
+                    if (fix.FilesToDelete is not null)
                     {
-                        fix.FilesToDelete = null;
+                        fix.FilesToDelete = fix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (!fix.FilesToDelete.Any())
+                        {
+                            fix.FilesToDelete = null;
+                        }
                     }
 
-                    if (fix.Variants is null || !fix.Variants.Any())
+                    if (fix.FilesToBackup is not null)
                     {
-                        fix.Variants = null;
+                        fix.FilesToBackup = fix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (!fix.FilesToBackup.Any())
+                        {
+                            fix.FilesToBackup = null;
+                        }
                     }
 
-                    if (fix.Dependencies is null || !fix.Dependencies.Any())
+                    if (fix.Variants is not null)
+                    {
+                        fix.Variants = fix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (!fix.Variants.Any())
+                        {
+                            fix.Variants = null;
+                        }
+                    }
+
+                    if (fix.Tags is not null)
+                    {
+                        fix.Tags = fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (!fix.Tags.Any())
+                        {
+                            fix.Tags = null;
+                        }
+                        else
+                        {
+                            var tags = fix.Tags
+                                .Where(x => !string.IsNullOrWhiteSpace(x))
+                                .OrderBy(x => x)
+                                .ToList();
+
+                            fix.Tags = tags;
+                        }
+                    }
+
+                    if (fix.Dependencies is not null && !fix.Dependencies.Any())
                     {
                         fix.Dependencies = null;
                     }
 
-                    if (fix.FilesToBackup is null || !fix.FilesToBackup.Any())
-                    {
-                        fix.FilesToBackup = null;
-                    }
-
-                    if (fix.Tags is null || !fix.Tags.Any(x => !string.IsNullOrWhiteSpace(x)))
-                    {
-                        fix.Tags = null;
-                    }
-                    else
-                    {
-                        var tags = fix.Tags
-                            .Where(x => !string.IsNullOrWhiteSpace(x))
-                            .OrderBy(x => x)
-                            .ToList();
-
-                        fix.Tags = tags;
-                    }
-
-                    if (fix.Url is null || string.IsNullOrEmpty(fix.Url))
+                    if (fix.Url is not null && string.IsNullOrEmpty(fix.Url))
                     {
                         fix.Url = null;
                     }
 
-                    if (fix.Description is null || string.IsNullOrEmpty(fix.Description))
+                    if (fix.Description is not null && string.IsNullOrEmpty(fix.Description))
                     {
                         fix.Description = null;
                     }
 
-                    if (fix.InstallFolder is null || string.IsNullOrEmpty(fix.InstallFolder))
+                    if (fix.InstallFolder is not null && string.IsNullOrEmpty(fix.InstallFolder))
                     {
                         fix.InstallFolder = null;
                     }

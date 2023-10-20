@@ -64,7 +64,7 @@ namespace Common.Models
                     {
                         //remove fixes with hidden tags
                         if (fix.Tags is not null &&
-                            fix.Tags.Any(x => _config.HiddenTags.Contains(x)))
+                            fix.Tags.All(x => _config.HiddenTags.Contains(x)))
                         {
                             game.FixesList.Fixes.Remove(fix);
                             continue;
@@ -167,7 +167,8 @@ namespace Common.Models
 
         public HashSet<string> GetListOfTags()
         {
-            HashSet<string> result = new() { "All tags" };
+            List<string> result = new() { "All tags" };
+            HashSet<string> list = new();
 
             var games = _combinedEntitiesList;
 
@@ -182,12 +183,12 @@ namespace Common.Models
 
                     foreach (var tag in game.Tags)
                     {
-                        result.Add(tag);
+                        list.Add(tag);
                     }
                 }
             }
 
-            return result;
+            return result.Concat(list).ToHashSet();
         }
 
         /// <summary>
