@@ -1,44 +1,36 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Superheater</AssemblyName>
-    <Version>0.7.1</Version>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <Nullable>enable</Nullable>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <StartupObject>Superheater.Desktop.Program</StartupObject>
     <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)'=='Debug-Linux' ">
-		<RuntimeIdentifier>linux-x64</RuntimeIdentifier>
-	</PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)'=='Debug-Linux' ">
+    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+  </PropertyGroup>
 	
   <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AddSealed" Version="0.6.0">
+    <PackageReference Include="AddSealed">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Avalonia.Desktop" Version="11.0.5" />
+    <PackageReference Include="Avalonia.Desktop" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
     <ProjectReference Include="..\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj" />
   </ItemGroup>
-
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="del &quot;$(TargetDir)hostfxr.dll.bak&quot; /q" />
-  </Target>
 </Project>

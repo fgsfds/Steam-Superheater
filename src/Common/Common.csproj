@@ -1,33 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <AssemblyName>Superheater.Common</AssemblyName>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Linux|AnyCPU'">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
-    <PackageReference Include="AddSealed" Version="0.6.0">
+    <PackageReference Include="AddSealed">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-    <PackageReference Include="FluentFTP" Version="48.0.1" />
-    <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="FluentFTP" />
+    <PackageReference Include="SimpleInjector" />
   </ItemGroup>
 
 </Project>

@@ -2,57 +2,20 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <Version>0.7.1</Version>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <Platforms>AnyCPU;x64</Platforms>
-    <LangVersion>latest</LangVersion>
     <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
     <ApplicationIcon>Assets\icon.ico</ApplicationIcon>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Linux|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Linux|x64'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="Resources\**" />
-    <None Remove="Resources\**" />
     <Page Remove="Resources\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Remove="Assets\avatar.jpg" />
-    <None Remove="Assets\github.png" />
-    <None Remove="Assets\icon.ico" />
-    <None Remove="Assets\issues.png" />
-    <None Remove="Assets\logo.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -60,11 +23,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AddSealed" Version="0.6.0">
+    <PackageReference Include="AddSealed">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="SimpleInjector" Version="5.4.1" />
+    <PackageReference Include="SimpleInjector" />
   </ItemGroup>
 
   <ItemGroup>
@@ -77,18 +40,6 @@
     <Resource Include="Assets\icon.ico" />
     <Resource Include="Assets\issues.png" />
     <Resource Include="Assets\logo.png" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Pages\AboutPage.axaml.cs">
-      <SubType>Code</SubType>
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
 
   <ItemGroup>

@@ -1,52 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
   </PropertyGroup>
-
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
 
-  
   <ItemGroup>
-    <AvaloniaXaml Remove="Styles\UrlButton.axaml" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <None Remove="Assets\icon.ico" />
-    <None Remove="Assets\issues.png" />
-    <None Remove="Assets\logo.png" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <AvaloniaResource Include="Styles\UrlButton.axaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AddSealed" Version="0.6.0">
+    <PackageReference Include="AddSealed">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Avalonia" Version="11.0.5" />
-    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.5" />
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
-
-    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Pages\EditorPage.axaml.cs">
-      <DependentUpon>EditorPage.axaml</DependentUpon>
-    </Compile>
-  </ItemGroup>
+  
 </Project>

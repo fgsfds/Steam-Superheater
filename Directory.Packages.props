@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="AddSealed" Version="0.6.0" />
+    <PackageVersion Include="Avalonia" Version="11.0.5" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.0.5" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.0.5" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.1" />
+    <PackageVersion Include="FluentFTP" Version="48.0.1" />
+    <PackageVersion Include="MSTest.TestAdapter" Version="3.1.1" />
+    <PackageVersion Include="MSTest.TestFramework" Version="3.1.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.7.2" />
+    <PackageVersion Include="SimpleInjector" Version="5.4.1" />
+  </ItemGroup>
+</Project>

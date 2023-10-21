@@ -1,6 +1,11 @@
 <Project>
   <PropertyGroup>
+    <Version>0.8.0</Version>
+    <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
-    <AvaloniaVersion>11.0.4</AvaloniaVersion>
+    <LangVersion>latest</LangVersion>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <ImplicitUsings>true</ImplicitUsings>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
 </Project>
