@@ -1,7 +1,6 @@
 ﻿using Common.Entities;
 using System.Diagnostics;
 using System.Windows;
-using System;
 using System.Windows.Controls;
 using System.Windows.Media;
 

@@ -125,7 +125,7 @@ namespace Common.FixTools
             if (files is null || !files.Any())
             {
                 return;
-            }            
+            }
 
             foreach (var file in files)
             {

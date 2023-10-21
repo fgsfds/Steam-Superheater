@@ -6,11 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Config;
 using Common.Helpers;
-using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Threading;
 using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels

@@ -3,9 +3,6 @@ using CommunityToolkit.Mvvm.Input;
 using Common.Config;
 using Common.Helpers;
 using System.Diagnostics;
-using System.Threading.Tasks;
-using System;
-using System.Windows.Controls;
 
 namespace Superheater.ViewModels
 {

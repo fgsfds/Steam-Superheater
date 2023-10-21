@@ -47,7 +47,7 @@ namespace Common.Helpers
                     CreateNoWindow = true
                 };
 
-                var proc = Process.Start(processInfo) ?? throw new Exception("Error starting process"); 
+                var proc = Process.Start(processInfo) ?? throw new Exception("Error starting process");
 
                 var result = proc.StandardOutput.ReadToEnd();
 

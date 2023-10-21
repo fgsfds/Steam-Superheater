@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Common.Entities;
-using System;
 using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.UserControls

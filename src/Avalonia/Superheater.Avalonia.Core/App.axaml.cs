@@ -8,7 +8,6 @@ using Superheater.Avalonia.Core.Pages;
 using Superheater.Avalonia.Core.Windows;
 using Common.Config;
 using Common.DI;
-using System;
 using Common.Helpers;
 
 namespace Superheater.Avalonia.Core;

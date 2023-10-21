@@ -6,15 +6,9 @@ using Common.Config;
 using Common.Helpers;
 using Common.Models;
 using Common.Entities;
-using System;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
-using System.Threading;
 using System.Collections.Immutable;
-using System.Collections.Generic;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {

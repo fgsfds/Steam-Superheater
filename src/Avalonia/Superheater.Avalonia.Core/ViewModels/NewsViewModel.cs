@@ -2,11 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using Common.Models;
 using Common.Entities;
-using System;
-using System.Threading.Tasks;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Config;
-using System.Threading;
 using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels

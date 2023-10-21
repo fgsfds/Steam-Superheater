@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using Avalonia;
+﻿using Avalonia;
 using Common;
 using Common.Helpers;
 using Superheater.Avalonia.Core;

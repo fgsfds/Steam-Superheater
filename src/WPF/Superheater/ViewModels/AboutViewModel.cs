@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using Common.Helpers;
-using System;
 
 namespace Superheater.ViewModels
 {

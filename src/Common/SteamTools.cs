@@ -93,7 +93,7 @@ namespace Common
 
             var libraryfolders = Path.Combine(steamInstallPath, "steamapps", "libraryfolders.vdf");
 
-            if (!File.Exists(libraryfolders)) 
+            if (!File.Exists(libraryfolders))
             {
                 return new();
             }

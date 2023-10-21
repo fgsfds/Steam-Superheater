@@ -1,7 +1,6 @@
 ﻿using Superheater.DI;
 using Common.Config;
 using Common.DI;
-using System;
 using System.Windows;
 
 namespace Superheater

@@ -119,7 +119,7 @@ namespace Common.Models
 
             if (game.Fixes.Count == 0)
             {
-                
+
             }
         }
 

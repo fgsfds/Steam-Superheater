@@ -2,7 +2,6 @@ using Common.Config;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Superheater.Avalonia.Core.Helpers;
-using System;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {

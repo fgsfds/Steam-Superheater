@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Common.DI;
-using System;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {

@@ -1,9 +1,4 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Win32;
-using Common.Helpers;
-using System.Runtime.InteropServices;
-
-namespace Common.Entities
+﻿namespace Common.Entities
 {
     public sealed class GameEntity
     {
@@ -36,7 +31,7 @@ namespace Common.Entities
         /// <summary>
         /// Game icon
         /// </summary>
-        public string Icon => SteamTools.SteamInstallPath is null 
+        public string Icon => SteamTools.SteamInstallPath is null
             ? string.Empty
             : Path.Combine(
             SteamTools.SteamInstallPath,

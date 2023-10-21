@@ -2,7 +2,6 @@
 using Common.Entities;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.IO;
 using System.Xml.Serialization;
 
 namespace Common.Providers
