@@ -72,7 +72,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _selectedTagFilter;
         partial void OnSelectedTagFilterChanged(string value)
         {
-            OnPropertyChanged(nameof(FilteredGamesList));
+            FillGamesList();
         }
 
         public bool IsTagsComboboxVisible => true;
