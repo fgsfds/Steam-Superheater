@@ -1,13 +1,14 @@
 using Avalonia;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Common.Config;
+using Common.Enums;
+using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
-using Common.Config;
-using Common.Helpers;
-using System.Diagnostics;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -21,7 +22,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
             UseLocalRepoCheckbox = _config.UseLocalRepo;
-            PathToLocalRepo = _config.LocalRepoPath;
+            PathToLocalRepoTextBox = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
@@ -33,19 +34,21 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainWindowViewModel _mwvm;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public bool LocalPathTextboxChanged;
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
-        public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
-        public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
-        public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
+        public bool IsLocalPathTextboxChanged;
+
+
+        #region Binding Properties
 
         public ImmutableList<string> HiddenTagsList => _config.HiddenTags.ToImmutableList();
 
-        public string SelectedHiddenTag
-        {
-            get;
-            set;
-        }
+
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+
+        public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
+
+        public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
+
+        public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -90,24 +93,26 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        private string _pathToLocalRepo;
-        partial void OnPathToLocalRepoChanged(string value)
+        private string _pathToLocalRepoTextBox;
+        partial void OnPathToLocalRepoTextBoxChanged(string value)
         {
             var configValue = _config.LocalRepoPath;
 
             if (value.Equals(configValue))
             {
-                LocalPathTextboxChanged = false;
-                OnPropertyChanged(nameof(LocalPathTextboxChanged));
+                IsLocalPathTextboxChanged = false;
+                OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             }
             else
             {
-                LocalPathTextboxChanged = true;
-                OnPropertyChanged(nameof(LocalPathTextboxChanged));
+                IsLocalPathTextboxChanged = true;
+                OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             }
 
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
+
+        #endregion Binding Properties
 
 
         #region Relay Commands
@@ -115,21 +120,18 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(SaveLocalRepoPathCanExecute)))]
         private void SaveLocalRepoPath()
         {
-            _config.LocalRepoPath = PathToLocalRepo;
+            _config.LocalRepoPath = PathToLocalRepoTextBox;
 
-            LocalPathTextboxChanged = false;
-            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            IsLocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
-        private bool SaveLocalRepoPathCanExecute() => LocalPathTextboxChanged is true;
+        private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged is true;
 
         [RelayCommand]
         private void SetDefaultTheme()
         {
-            if (Application.Current is null)
-            {
-                throw new NullReferenceException(nameof(Application.Current));
-            }
+            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
             _config.Theme = ThemeEnum.System;
@@ -138,10 +140,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetLightTheme()
         {
-            if (Application.Current is null)
-            {
-                throw new NullReferenceException(nameof(Application.Current));
-            }
+            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
             _config.Theme = ThemeEnum.Light;
@@ -150,10 +149,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetDarkTheme()
         {
-            if (Application.Current is null)
-            {
-                throw new NullReferenceException(nameof(Application.Current));
-            }
+            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
             _config.Theme = ThemeEnum.Dark;
@@ -172,12 +168,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var topLevel = Properties.TopLevel;
-
-            if (topLevel is null)
-            {
-                throw new NullReferenceException(nameof(topLevel));
-            }
+            var topLevel = Properties.TopLevel ?? throw new NullReferenceException("topLevel");
 
             var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
@@ -190,12 +181,12 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            PathToLocalRepo = files[0].Path.LocalPath;
-            _config.LocalRepoPath = PathToLocalRepo;
-            OnPropertyChanged(nameof(PathToLocalRepo));
+            PathToLocalRepoTextBox = files[0].Path.LocalPath;
+            _config.LocalRepoPath = PathToLocalRepoTextBox;
+            OnPropertyChanged(nameof(PathToLocalRepoTextBox));
 
-            LocalPathTextboxChanged = false;
-            OnPropertyChanged(nameof(LocalPathTextboxChanged));
+            IsLocalPathTextboxChanged = false;
+            OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 

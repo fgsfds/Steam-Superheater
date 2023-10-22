@@ -141,7 +141,7 @@
             </ScrollViewer>
 
             <!--Requirements-->
-            <TextBlock Text="{Binding Requirements, Mode=OneWay}"
+            <TextBlock Text="{Binding SelectedFixRequirements, Mode=OneWay}"
                        TextWrapping="Wrap"
                        Margin="3"
                        Grid.Row="1"
@@ -199,7 +199,7 @@
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="3"
                   Margin="3"
-                  IsVisible="{Binding FixHasVariants}">
+                  IsVisible="{Binding DoesSelectedFixHaveVariants}">
 
                 <TextBlock Grid.Column="0"
                            VerticalAlignment="Center"
@@ -210,7 +210,7 @@
                 <ComboBox Grid.Column="1"
                           HorizontalAlignment="Stretch"
                           Margin="0,2,0,0"
-                          ItemsSource="{Binding FixVariants}"
+                          ItemsSource="{Binding SelectedFixVariants}"
                           SelectedItem="{Binding SelectedFixVariant}"/>
             </Grid>
         </Grid>

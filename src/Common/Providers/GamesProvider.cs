@@ -8,7 +8,9 @@ namespace Common.Providers
         private ImmutableList<GameEntity>? _gamesCache;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Get cached games list from online or local repo or create new cache if it wasn't created yet
+        /// </summary>
         public async Task<ImmutableList<GameEntity>> GetCachedListAsync()
         {
             await _locker.WaitAsync();
@@ -20,7 +22,9 @@ namespace Common.Providers
             return result;
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Remove current cache, then create new one and return games list
+        /// </summary>
         public async Task<ImmutableList<GameEntity>> GetNewListAsync()
         {
             _gamesCache = null;
@@ -28,7 +32,9 @@ namespace Common.Providers
             return await GetCachedListAsync();
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Create new cache of games from online or local repository
+        /// </summary>
         private async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
             List<GameEntity> result = new();

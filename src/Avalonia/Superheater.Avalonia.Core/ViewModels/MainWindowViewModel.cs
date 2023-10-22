@@ -19,6 +19,9 @@ namespace Superheater.Avalonia.Core.ViewModels
             UpdateRepoMessage();
         }
 
+
+        #region Binding Properties
+
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
@@ -29,16 +32,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         private string _repositoryMessage;
 
-        private void NotifyParameterChanged(string parameterName)
-        {
-            if (parameterName.Equals(nameof(_config.UseLocalRepo)) ||
-                parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
-                parameterName.Equals(nameof(_config.LocalRepoPath)))
-            {
-                UpdateRepoMessage();
-            }
-        }
+        #endregion Binding Properties
 
+
+        /// <summary>
+        /// Update repository message (only visible in the dev mode)
+        /// </summary>
         private void UpdateRepoMessage()
         {
             if (_config.UseLocalRepo)
@@ -48,6 +47,16 @@ namespace Superheater.Avalonia.Core.ViewModels
             else
             {
                 RepositoryMessage = $"Online repo: {CommonProperties.CurrentFixesRepo}";
+            }
+        }
+
+        private void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                UpdateRepoMessage();
             }
         }
     }

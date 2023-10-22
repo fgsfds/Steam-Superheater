@@ -24,7 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
-            _search = string.Empty;
+            _searchBarText = string.Empty;
 
             SelectedTagFilter = TagsComboboxList.First();
 
@@ -36,63 +36,49 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool _lockButtons;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public string MainTabHeader { get; private set; }
 
-        public float ProgressBarValue { get; set; }
+        #region Binding Properties
 
-        public string LaunchGameButtonText { get; private set; }
+        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
-
-        /// <summary>
-        /// Does selected fix has variants
-        /// </summary>
-        public bool FixHasVariants => FixVariants is not null && FixVariants.Any();
-
-        /// <summary>
-        /// Does selected fix has any updates
-        /// </summary>
-        public bool SelectedFixHasUpdate => SelectedFix?.HasNewerVersion ?? false;
-
-        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
-
-        public string Requirements => GetRequirementsString();
-
-        public bool SelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
-
-        public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
-
-        [ObservableProperty]
-        private string _selectedTagFilter;
-        partial void OnSelectedTagFilterChanged(string value)
-        {
-            FillGamesList();
-        }
-
-        public bool IsTagsComboboxVisible => true;
-
-        /// <summary>
-        /// List of games
-        /// </summary>
-        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(Search, SelectedTagFilter);
-
-        /// <summary>
-        /// List of fixes for selected game
-        /// </summary>
         public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
-        /// <summary>
-        /// List of selected fix's variants
-        /// </summary>
-        public ImmutableList<string>? FixVariants => SelectedFix?.Variants?.ToImmutableList();
+        public ImmutableList<string>? SelectedFixVariants => SelectedFix?.Variants?.ToImmutableList();
 
         public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
 
+        public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
+
+
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+
+        public bool IsTagsComboboxVisible => true;
+
+        public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && SelectedFixVariants.Any();
+
+        public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
+
+
+        public string MainTabHeader { get; private set; }
+
+        public string LaunchGameButtonText { get; private set; }
+
+        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
+
+        public string SelectedFixRequirements => GetRequirementsString();
+
+
+        public bool DoesSelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
+
         public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
+
+
+        public float ProgressBarValue { get; set; }
+
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
-        [NotifyPropertyChangedFor(nameof(SelectedGameRequireAdmin))]
+        [NotifyPropertyChangedFor(nameof(DoesSelectedGameRequireAdmin))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
@@ -108,10 +94,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(Requirements))]
-        [NotifyPropertyChangedFor(nameof(SelectedFixHasUpdate))]
-        [NotifyPropertyChangedFor(nameof(FixVariants))]
-        [NotifyPropertyChangedFor(nameof(FixHasVariants))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
+        [NotifyPropertyChangedFor(nameof(DoesSelectedFixHaveUpdates))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
+        [NotifyPropertyChangedFor(nameof(DoesSelectedFixHaveVariants))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
@@ -121,22 +107,25 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
         private FixEntity? _selectedFix;
 
-        /// <summary>
-        /// Selected fix variant
-        /// </summary>
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         private string? _selectedFixVariant;
+
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
+        private string _searchBarText;
+        partial void OnSearchBarTextChanged(string value) => FillGamesList();
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
         partial void OnIsInProgressChanged(bool value) => _lockButtons = value;
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
-        private string _search;
-        partial void OnSearchChanged(string value) => FillGamesList();
+        #endregion Binding Properties
 
 
         #region Relay Commands
@@ -221,7 +210,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix is null ||
                 SelectedFix.IsInstalled ||
                 !SelectedGame.IsGameInstalled ||
-                (FixHasVariants && SelectedFixVariant is null) ||
+                (DoesSelectedFixHaveVariants && SelectedFixVariant is null) ||
                 _lockButtons)
             {
                 return false;
@@ -345,8 +334,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Clear search bar
         /// </summary>
         [RelayCommand(CanExecute = (nameof(ClearSearchCanExecute)))]
-        private void ClearSearch() => Search = string.Empty;
-        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
+        private void ClearSearch() => SearchBarText = string.Empty;
+        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
 
 
         /// <summary>
@@ -367,9 +356,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             SelectedGame.Game.SetRunAsAdmin();
 
-            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
+            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
         }
-        private bool ApplyAdminCanExecute() => SelectedGameRequireAdmin;
+        private bool ApplyAdminCanExecute() => DoesSelectedGameRequireAdmin;
 
 
         /// <summary>
@@ -390,7 +379,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open PCGW page for selected game
+        /// Copy file URL to clipboard
         /// </summary>
         [RelayCommand]
         private async Task UrlCopyToClipboardAsync()
@@ -457,7 +446,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Close app
+        /// Hide selected tag
         /// </summary>
         [RelayCommand]
         private void HideTag(string value)
@@ -555,7 +544,7 @@ Do you want to set it to always run as admin?",
                 SelectedGame.Game.SetRunAsAdmin
                 ).Show();
 
-            OnPropertyChanged(nameof(SelectedGameRequireAdmin));
+            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
         }
 
         /// <summary>
@@ -578,35 +567,9 @@ Do you want to set it to always run as admin?",
             });
         }
 
-        private void Progress_ProgressChanged(object? sender, float e)
-        {
-            ProgressBarValue = e;
-            OnPropertyChanged(nameof(ProgressBarValue));
-        }
-
-        private async void NotifyParameterChanged(string parameterName)
-        {
-            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
-            {
-                await UpdateAsync(true);
-            }
-
-            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
-                parameterName.Equals(nameof(_config.HiddenTags)))
-            {
-                await UpdateAsync(true);
-                OnPropertyChanged(nameof(SelectedGameFixesList));
-                OnPropertyChanged(nameof(SelectedFixTags));
-            }
-
-            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
-                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
-                parameterName.Equals(nameof(_config.LocalRepoPath)))
-            {
-                await UpdateAsync(false);
-            }
-        }
-
+        /// <summary>
+        /// Get requirements for selected fix
+        /// </summary>
         private string GetRequirementsString()
         {
             if (SelectedGameFixesList is null ||
@@ -655,6 +618,35 @@ Do you want to set it to always run as admin?",
             }
 
             return string.Empty;
+        }
+
+        private void Progress_ProgressChanged(object? sender, float e)
+        {
+            ProgressBarValue = e;
+            OnPropertyChanged(nameof(ProgressBarValue));
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
+            {
+                await UpdateAsync(true);
+            }
+
+            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
+                parameterName.Equals(nameof(_config.HiddenTags)))
+            {
+                await UpdateAsync(true);
+                OnPropertyChanged(nameof(SelectedGameFixesList));
+                OnPropertyChanged(nameof(SelectedFixTags));
+            }
+
+            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+                parameterName.Equals(nameof(_config.LocalRepoPath)))
+            {
+                await UpdateAsync(false);
+            }
         }
     }
 }

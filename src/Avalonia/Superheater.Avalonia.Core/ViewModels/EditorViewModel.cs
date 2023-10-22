@@ -1,15 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using Avalonia.Platform.Storage;
 using Common.Config;
+using Common.Entities;
+using Common.Enums;
 using Common.Helpers;
 using Common.Models;
-using Common.Entities;
-using System.Diagnostics;
-using Avalonia.Platform.Storage;
-using Superheater.Avalonia.Core.Helpers;
 using Common.Providers;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Superheater.Avalonia.Core.Helpers;
 using System.Collections.Immutable;
-using Common.Enums;
+using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -25,7 +25,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config = config?.Config ?? throw new NullReferenceException(nameof(config));
             _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
 
-            _search = string.Empty;
+            _searchBarText = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
@@ -35,21 +35,21 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly FixesProvider _fixesProvider;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
-        public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(Search);
+        #region Binding Properties
+
+        public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText);
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<FixEntity>? SelectedGameFixes => SelectedGame?.Fixes.ToImmutableList();
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
 
-        public ImmutableList<FixEntity> AvailableDependencies => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<FixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public ImmutableList<FixEntity> AddedDependencies => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+        public ImmutableList<FixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public bool IsEditingAvailable => SelectedFix is not null;
 
-        public string FixVariants
+        public string SelectedFixVariants
         {
             get => SelectedFix?.Variants is null ? string.Empty : string.Join(";", SelectedFix.Variants);
             set
@@ -60,7 +60,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public string FilesToDelete
+        public string SelectedFixFilesToDelete
         {
             get => SelectedFix?.FilesToDelete is null ? string.Empty : string.Join(";", SelectedFix.FilesToDelete);
             set
@@ -71,7 +71,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public string FilesToBackup
+        public string SelectedFixFilesToBackup
         {
             get => SelectedFix?.FilesToBackup is null ? string.Empty : string.Join(";", SelectedFix.FilesToBackup);
             set
@@ -92,6 +92,29 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.Tags = value.Split(";").Select(x => x.Trim()).ToList();
             }
         }
+
+        public string SelectedFixUrl
+        {
+            get => SelectedFix?.Url ?? string.Empty;
+            set
+            {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+                if (string.IsNullOrEmpty(value))
+                {
+                    SelectedFix.Url = null;
+                }
+                else
+                {
+                    SelectedFix.Url = value;
+                }
+            }
+        }
+
+
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+
+        public bool IsEditingAvailable => SelectedFix is not null;
 
         public bool IsWindowsChecked
         {
@@ -129,40 +152,23 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public string SelectedFixUrl
-        {
-            get => SelectedFix?.Url ?? string.Empty;
-            set
-            {
-                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
-
-                if (string.IsNullOrEmpty(value))
-                {
-                    SelectedFix.Url = null;
-                }
-                else
-                {
-                    SelectedFix.Url = value;
-                }
-            }
-        }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
         public GameEntity? _selectedAvailableGame;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SelectedGameFixes))]
+        [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
         [NotifyCanExecuteChangedFor(nameof(AddNewFixCommand))]
         private FixesList? _selectedGame;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(AvailableDependencies))]
-        [NotifyPropertyChangedFor(nameof(AddedDependencies))]
+        [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
         [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
-        [NotifyPropertyChangedFor(nameof(FixVariants))]
-        [NotifyPropertyChangedFor(nameof(FilesToDelete))]
-        [NotifyPropertyChangedFor(nameof(FilesToBackup))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixFilesToDelete))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixFilesToBackup))]
         [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
@@ -177,21 +183,23 @@ namespace Superheater.Avalonia.Core.ViewModels
         public int _selectedFixIndex;
 
         [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
-        private bool _isInProgress;
-
-        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
         private int _selectedAvailableDependencyIndex;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(RemoveDependencyCommand))]
-        private int _selectedAddedDependencyIndex;
+        private int _selectedDependencyIndex;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
-        private string _search;
-        partial void OnSearchChanged(string value) => FillGamesList();
+        private string _searchBarText;
+        partial void OnSearchBarTextChanged(string value) => FillGamesList();
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
+        private bool _isInProgress;
+
+        #endregion Binding Properties
 
 
         #region Relay Commands
@@ -221,7 +229,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var newFix = _editorModel.AddNewFix(SelectedGame);
 
-            OnPropertyChanged(nameof(SelectedGameFixes));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
 
             SelectedFix = newFix;
         }
@@ -239,7 +247,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _editorModel.RemoveFix(SelectedGame, SelectedFix);
 
-            OnPropertyChanged(nameof(SelectedGameFixes));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
         }
         private bool RemoveFixCanExecute() => SelectedFix is not null;
 
@@ -248,8 +256,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Clear search bar
         /// </summary>
         [RelayCommand(CanExecute = nameof(ClearSearchCanExecute))]
-        private void ClearSearch() => Search = string.Empty;
-        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(Search);
+        private void ClearSearch() => SearchBarText = string.Empty;
+        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
 
 
         /// <summary>
@@ -288,10 +296,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
+            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
 
-            OnPropertyChanged(nameof(AvailableDependencies));
-            OnPropertyChanged(nameof(AddedDependencies));
+            OnPropertyChanged(nameof(AvailableDependenciesList));
+            OnPropertyChanged(nameof(SelectedFixDependenciesList));
         }
         private bool AddDependencyCanExecute() => SelectedAvailableDependencyIndex > -1;
 
@@ -304,12 +312,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
+            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
 
-            OnPropertyChanged(nameof(AvailableDependencies));
-            OnPropertyChanged(nameof(AddedDependencies));
+            OnPropertyChanged(nameof(AvailableDependenciesList));
+            OnPropertyChanged(nameof(SelectedFixDependenciesList));
         }
-        private bool RemoveDependencyCanExecute() => SelectedAddedDependencyIndex > -1;
+        private bool RemoveDependencyCanExecute() => SelectedDependencyIndex > -1;
 
 
         /// <summary>
@@ -340,7 +348,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _editorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
-            OnPropertyChanged(nameof(SelectedGameFixes));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();
             MoveFixUpCommand.NotifyCanExecuteChanged();
         }
@@ -357,11 +365,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _editorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
-            OnPropertyChanged(nameof(SelectedGameFixes));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();
             MoveFixUpCommand.NotifyCanExecuteChanged();
         }
-        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixes?.Count - 1;
+        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixesList?.Count - 1;
 
 
         /// <summary>
@@ -476,10 +484,10 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&
-                    SelectedGameFixes is not null &&
-                    SelectedGameFixes.Any(x => x.Guid == selectedFixGuid))
+                    SelectedGameFixesList is not null &&
+                    SelectedGameFixesList.Any(x => x.Guid == selectedFixGuid))
                 {
-                    SelectedFix = SelectedGameFixes.First(x => x.Guid == selectedFixGuid);
+                    SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
                 }
             }
         }

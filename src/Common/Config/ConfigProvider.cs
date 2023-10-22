@@ -5,11 +5,6 @@ namespace Common.Config
 {
     public sealed class ConfigProvider
     {
-        /// <summary>
-        /// Current config
-        /// </summary>
-        public ConfigEntity Config { get; private set; }
-
         public ConfigProvider()
         {
             Config = ReadConfigFromXml();
@@ -18,10 +13,13 @@ namespace Common.Config
         }
 
         /// <summary>
+        /// Current config
+        /// </summary>
+        public ConfigEntity Config { get; private set; }
+
+        /// <summary>
         /// Read config from XML or create new XML if it doesn't exist
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
         private ConfigEntity ReadConfigFromXml()
         {
             if (!File.Exists(Consts.ConfigFile))

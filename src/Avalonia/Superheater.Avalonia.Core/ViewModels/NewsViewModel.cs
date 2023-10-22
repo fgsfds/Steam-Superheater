@@ -25,16 +25,28 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
+
+        #region Binding Properties
+
         public ImmutableList<NewsEntity> NewsList => _newsModel.News;
 
         public string NewsTabHeader { get; private set; }
 
+        #endregion Binding Properties
+
 
         #region Relay Commands
 
+        /// <summary>
+        /// VM initialization
+        /// </summary>
         [RelayCommand]
         private async Task InitializeAsync() => await UpdateAsync();
 
+        /// <summary>
+        /// Mark all news as read
+        /// </summary>
+        /// <returns></returns>
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private async Task MarkAllAsReadAsync()
         {
@@ -51,13 +63,18 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            OnNewsChanged();
+            OnPropertyChanged(nameof(NewsList));
+            UpdateHeader();
+            MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 
         #endregion Relay Commands
 
-
+        /// <summary>
+        /// Update news list and tab header
+        /// </summary>
+        /// <returns></returns>
         private async Task UpdateAsync()
         {
             await _locker.WaitAsync();
@@ -74,16 +91,23 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            OnNewsChanged();
+            OnPropertyChanged(nameof(NewsList));
+            UpdateHeader();
+            MarkAllAsReadCommand.NotifyCanExecuteChanged();
+
             _locker.Release();
         }
 
-        private void OnNewsChanged()
+        /// <summary>
+        /// Update tab header
+        /// </summary>
+        private void UpdateHeader()
         {
-            OnPropertyChanged(nameof(NewsList));
-            NewsTabHeader = "News" + (_newsModel.HasUnreadNews ? $" ({_newsModel.UnreadNewsCount} unread)" : string.Empty);
+            NewsTabHeader = "News" + (_newsModel.HasUnreadNews
+                ? $" ({_newsModel.UnreadNewsCount} unread)"
+                : string.Empty);
+
             OnPropertyChanged(nameof(NewsTabHeader));
-            MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
 
         private async void NotifyParameterChanged(string parameterName)

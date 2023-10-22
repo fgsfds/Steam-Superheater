@@ -25,6 +25,9 @@ namespace Common.Models
 
         public ImmutableList<NewsEntity> News;
 
+        /// <summary>
+        /// Get list of news from online or local repo
+        /// </summary>
         public async Task<Tuple<bool, string>> UpdateNewsListAsync()
         {
             try
@@ -45,6 +48,10 @@ namespace Common.Models
             return new(true, string.Empty);
         }
 
+        /// <summary>
+        /// Mark all news as read
+        /// </summary>
+        /// <returns></returns>
         public async Task<Tuple<bool, string>> MarkAllAsReadAsync()
         {
             var result = await UpdateNewsListAsync();
@@ -58,6 +65,9 @@ namespace Common.Models
             return result;
         }
 
+        /// <summary>
+        /// Set read status based on last read date from config
+        /// </summary>
         private void UpdateReadStatusOfExistingNews()
         {
             foreach (var item in News)
@@ -66,6 +76,9 @@ namespace Common.Models
             }
         }
 
+        /// <summary>
+        /// Update last read date in config
+        /// </summary>
         private void UpdateConfigLastReadVersion()
         {
             var lastReadDate = News.Max(x => x.Date);

@@ -163,6 +163,9 @@ namespace Common.Entities
         /// </summary>
         public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
 
+        /// <summary>
+        /// Is this fix hidden from the list
+        /// </summary>
         [XmlIgnore]
         public bool IsHidden { get; set; }
 

@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Common.DI;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Common.DI;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -41,6 +41,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainWindowViewModel _mwvm;
         private readonly Action? _okAction;
 
+
+        #region Binding Properties
+
         public bool IsPopupVisible { get; set; }
 
         public bool IsOkCancel { get; init; }
@@ -50,6 +53,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string TitleText { get; init; }
 
         public string MessageText { get; init; }
+
+        #endregion Binding Properties
 
 
         #region Relay Commands
@@ -84,7 +89,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
     public enum PopupMessageType
     {
+        ///<summary>
+        ///Only ok button that closes popup
+        ///</summary>
         OkOnly,
+        ///<summary>
+        ///Ok and cancel buttons, ok button executes action
+        ///</summary>
         OkCancel
     }
 }

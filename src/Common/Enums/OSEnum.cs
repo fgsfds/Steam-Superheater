@@ -21,6 +21,9 @@ namespace Common.Enums
             return osenum &= ~flag;
         }
 
+        /// <summary>
+        /// Get current OS
+        /// </summary>
         public static OSEnum GetCurrentOS()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

@@ -46,7 +46,7 @@ namespace Common.Helpers
         }
 
         /// <summary>
-        /// Pairs 'game id - game exe'
+        /// Pairs  of game id and game exe
         /// Only used for games that require admin rights
         /// </summary>
         private static readonly Dictionary<int, string> _gamesThatRequireAdmin = new()

@@ -16,8 +16,14 @@ namespace Common.Helpers
             IsInSteamDeckGameMode = CheckDeckGameMode();
         }
 
+        /// <summary>
+        /// Path to local repository
+        /// </summary>
         public static string LocalRepoPath => _config.LocalRepoPath;
 
+        /// <summary>
+        /// Path to current repository (local or online)
+        /// </summary>
         public static string CurrentFixesRepo
         {
             get
@@ -28,12 +34,24 @@ namespace Common.Helpers
             }
         }
 
+        /// <summary>
+        /// Current app version
+        /// </summary>
         public static Version CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version ?? new Version("999");
 
+        /// <summary>
+        /// Name of the executable file
+        /// </summary>
         public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
 
+        /// <summary>
+        /// Is Game Mode active on Steam Deck
+        /// </summary>
         public static bool IsInSteamDeckGameMode { get; }
 
+        /// <summary>
+        /// Check if Game Mode is active on Steam Deck
+        /// </summary>
         private static bool CheckDeckGameMode()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))

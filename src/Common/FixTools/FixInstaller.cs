@@ -113,7 +113,6 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="files">List of files to backup</param>
         /// <param name="gameDir">Game install folder</param>
-        /// <param name="backupFolder">Name of the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
         private void BackupFiles(
             IEnumerable<string>? files,

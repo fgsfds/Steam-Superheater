@@ -314,8 +314,10 @@ Thank you.");
 
         public void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
 
-
-
+        /// <summary>
+        /// Get sorted list of fixes
+        /// </summary>
+        /// <param name="useCache">Use cached list</param>
         private async Task GetListOfFixesAsync(bool useCache)
         {
             _fixesList.Clear();
@@ -350,6 +352,9 @@ Thank you.");
             }
         }
 
+        /// <summary>
+        /// Create readme file containing list of fixes
+        /// </summary>
         private void CreateReadme()
         {
             string result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;

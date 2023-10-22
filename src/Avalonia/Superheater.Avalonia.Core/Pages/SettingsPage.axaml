@@ -204,7 +204,7 @@
                             Path to local repository
                         </TextBlock>
 
-                        <TextBox Text="{Binding PathToLocalRepo}"
+                        <TextBox Text="{Binding PathToLocalRepoTextBox}"
                                  Grid.Column="1"
                                  VerticalAlignment="Center"
                                  Margin="5"/>

@@ -71,7 +71,7 @@
                  Margin="0,3"/>
 
         <!--Variants-->
-        <TextBox Text="{Binding FixVariants, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixVariants, Mode=TwoWay}"
                  Watermark="Variants"
                  Grid.Row="4"
                  IsReadOnly="{Binding !IsEditingAvailable}"
@@ -85,14 +85,14 @@
                  Margin="0,3"/>
 
         <!--Files to delete-->
-        <TextBox Text="{Binding FilesToDelete, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
                  Watermark="Files to delete"
                  Grid.Row="6"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <!--Files to backup-->
-        <TextBox Text="{Binding FilesToBackup, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
                  Watermark="Files to backup"
                  Grid.Row="7"
                  IsReadOnly="{Binding !IsEditingAvailable}"
@@ -112,32 +112,6 @@
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <!--Supported OSes-->
-        <StackPanel Orientation="Horizontal"
-                    Grid.Row="10"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center">
-
-            <TextBlock Margin="10,0"
-                       VerticalAlignment="Center">
-                Supported OSes:
-            </TextBlock>
-
-            <CheckBox Margin="10,0"
-                      IsChecked="{Binding IsWindowsChecked}"
-                      IsEnabled="{Binding IsEditingAvailable}">
-                Windows
-            </CheckBox>
-
-            <CheckBox Margin="10,0"
-                      IsChecked="{Binding IsLinuxChecked}"
-                      IsEnabled="{Binding IsEditingAvailable}">
-                Linux
-            </CheckBox>
-
-        </StackPanel>
-
-        <!--Dependencies-->
         <Grid Grid.Row="11"
               Grid.Column="1"
               Margin="0,3"
@@ -148,24 +122,57 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <TextBlock Text="Available fixes" HorizontalAlignment="Center"/>
-            <TextBlock Text="Dependencies" HorizontalAlignment="Center" Grid.Column="2"/>
+            <!--Supported OSes-->
+            <TextBlock Grid.Column="0"
+                       Grid.RowSpan="3"
+                       VerticalAlignment="Center">
+                Supported OSes:
+            </TextBlock>
+
+            <StackPanel Grid.Column="1"
+                        Grid.RowSpan="3"
+                        Margin="10"
+                        Orientation="Vertical"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                <CheckBox IsChecked="{Binding IsWindowsChecked}"
+                          IsEnabled="{Binding IsEditingAvailable}">
+                    Windows
+                </CheckBox>
+
+                <CheckBox IsChecked="{Binding IsLinuxChecked}"
+                          IsEnabled="{Binding IsEditingAvailable}">
+                    Linux
+                </CheckBox>
+
+            </StackPanel>
+
+            <!--Dependencies-->
+            <TextBlock Text="Available fixes"
+                       Grid.Column="2"
+                       HorizontalAlignment="Center"/>
+            <TextBlock Text="Dependencies"
+                       HorizontalAlignment="Center"
+                       Grid.Column="4"/>
 
             <ListBox SelectionMode="Single"
-                     ItemsSource="{Binding AvailableDependencies}"
-                     Grid.Column="0"
+                     ItemsSource="{Binding AvailableDependenciesList}"
+                     SelectedIndex="{Binding SelectedAvailableDependencyIndex}"
+                     Grid.Column="2"
                      Grid.Row="1"
                      Grid.RowSpan="2"
                      Padding="5"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     SelectedIndex="{Binding SelectedAvailableDependencyIndex}"></ListBox>
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
 
-            <Button Grid.Column="1"
+            <Button Grid.Column="3"
                     Grid.Row="1"
                     Margin="1"
                     ToolTip.Tip="Add dependency"
@@ -176,7 +183,7 @@
                 &gt;
             </Button>
 
-            <Button Grid.Column="1"
+            <Button Grid.Column="3"
                     Grid.Row="2"
                     Margin="1"
                     ToolTip.Tip="Remove dependency"
@@ -188,13 +195,13 @@
             </Button>
 
             <ListBox SelectionMode="Single"
-                     ItemsSource="{Binding AddedDependencies}"
-                     Grid.Column="2"
+                     ItemsSource="{Binding SelectedFixDependenciesList}"
+                     SelectedIndex="{Binding SelectedDependencyIndex}"
+                     Grid.Column="4"
                      Grid.Row="1"
                      Grid.RowSpan="2"
                      Padding="5"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                     SelectedIndex="{Binding SelectedAddedDependencyIndex}"></ListBox>
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
         </Grid>
 
         <!--Description-->

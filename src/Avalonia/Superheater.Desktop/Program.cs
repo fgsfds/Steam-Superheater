@@ -51,6 +51,9 @@ sealed class Program
             //.WithInterFont()
             .LogToTrace();
 
+    /// <summary>
+    /// Remove update leftovers
+    /// </summary>
     private static void Cleanup()
     {
         var files = Directory.GetFiles(Directory.GetCurrentDirectory());

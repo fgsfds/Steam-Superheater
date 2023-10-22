@@ -1,9 +1,9 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Common;
 using Common.Helpers;
-using System.Runtime.InteropServices;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -14,20 +14,27 @@ namespace Superheater.Avalonia.Core.ViewModels
             _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
 
             AboutTabHeader = "About";
-            CheckForUpdatesText = string.Empty;
+            CheckForUpdatesButtonText = string.Empty;
         }
 
         private readonly UpdateInstaller _updateInstaller;
 
+
+        #region Binding Properties
+
+        public Version CurrentVersion => CommonProperties.CurrentVersion;
+
+
         public string AboutTabHeader { get; private set; }
+
+        public string CheckForUpdatesButtonText { get; set; }
+
 
         public bool IsUpdateAvailable { get; set; }
 
         public bool IsInProgress { get; set; }
 
-        public string CheckForUpdatesText { get; set; }
-
-        public Version CurrentVersion => CommonProperties.CurrentVersion;
+        #endregion Binding Properties
 
 
         #region Relay Commands
@@ -52,8 +59,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             try
             {
-                CheckForUpdatesText = "Checking...";
-                OnPropertyChanged(nameof(CheckForUpdatesText));
+                CheckForUpdatesButtonText = "Checking...";
+                OnPropertyChanged(nameof(CheckForUpdatesButtonText));
                 updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
             }
             catch (Exception ex)
@@ -77,8 +84,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
             else
             {
-                CheckForUpdatesText = "Already up-to-date";
-                OnPropertyChanged(nameof(CheckForUpdatesText));
+                CheckForUpdatesButtonText = "Already up-to-date";
+                OnPropertyChanged(nameof(CheckForUpdatesButtonText));
             }
 
             IsInProgress = false;
@@ -121,6 +128,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
 
         #endregion Relay Commands
+
 
         /// <summary>
         /// Update tab header

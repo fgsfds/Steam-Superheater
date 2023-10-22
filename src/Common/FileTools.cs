@@ -117,8 +117,7 @@ namespace Common
 
                         i++;
                     }
-                }
-                );
+                });
             }
         }
     }

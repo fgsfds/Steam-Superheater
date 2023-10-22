@@ -45,7 +45,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <ListBox ItemsSource="{Binding SelectedGameFixes}"
+            <ListBox ItemsSource="{Binding SelectedGameFixesList}"
                      SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
                      SelectedIndex="{Binding SelectedFixIndex}"
                      Grid.Column="0"

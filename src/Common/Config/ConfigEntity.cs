@@ -1,4 +1,4 @@
-﻿using Common.Helpers;
+﻿using Common.Enums;
 
 namespace Common.Config
 {

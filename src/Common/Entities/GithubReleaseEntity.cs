@@ -2,6 +2,9 @@
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 namespace Common.Entities
 {
+    /// <summary>
+    /// Class is auto generated from the json response
+    /// </summary>
     internal sealed class GitHubRelease
     {
         public string url { get; set; }

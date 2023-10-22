@@ -152,6 +152,10 @@ namespace Common.Models
             return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
         }
 
+        /// <summary>
+        /// Get link to current fix's file
+        /// </summary>
+        /// <param name="fix">Fix</param>
         public string GetSelectedFixUrl(FixEntity? fix)
         {
             if (string.IsNullOrEmpty(fix?.Url))
@@ -164,6 +168,9 @@ namespace Common.Models
                 : fix.Url.Replace("/master/", "/test/");
         }
 
+        /// <summary>
+        /// Get list of all tags
+        /// </summary>
         public HashSet<string> GetListOfTags()
         {
             List<string> result = new() { "All tags" };

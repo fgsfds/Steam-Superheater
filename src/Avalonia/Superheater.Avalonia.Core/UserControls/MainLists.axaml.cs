@@ -61,10 +61,7 @@ namespace Superheater.Avalonia.Core.UserControls
 
         private void UrlButtonClick(object? sender, RoutedEventArgs e)
         {
-            if (sender is not Button button)
-            {
-                throw new Exception("Sender is not a button");
-            }
+            if (sender is not Button button) throw new Exception("Sender is not a button");
 
             var url = button.Content?.ToString() ?? throw new NullReferenceException(nameof(button.Content));
 

@@ -83,6 +83,11 @@ namespace Common.Providers
             return result;
         }
 
+        /// <summary>
+        /// Get list of installed fixes from the list of combined entities
+        /// </summary>
+        /// <param name="combinedList">List of combined entities</param>
+        /// <returns>List of installed fixes</returns>
         public static List<InstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
             List<InstalledFixEntity> result = new();

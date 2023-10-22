@@ -49,7 +49,7 @@
                     Padding="8"
                     Background="{DynamicResource SystemAccentColor}"
                     ToolTip.Tip="This game requires running it as an admin in order to work. Press to apply 'Run as admin' to the exe automatically."
-                    IsVisible="{Binding SelectedGameRequireAdmin, FallbackValue='False'}">
+                    IsVisible="{Binding DoesSelectedGameRequireAdmin, FallbackValue='False'}">
                 Set to run as admin
             </Button>
 
@@ -63,7 +63,7 @@
                     Command="{Binding InstallFixCommand}"
                     Margin="3,0"
                     Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding !SelectedFixHasUpdate}"
+                    IsVisible="{Binding !DoesSelectedFixHaveUpdates}"
                     Padding="8">
                 Install
             </Button>
@@ -72,7 +72,7 @@
                     Command="{Binding UpdateFixCommand}"
                     Margin="3,0"
                     Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding SelectedFixHasUpdate}"
+                    IsVisible="{Binding DoesSelectedFixHaveUpdates}"
                     Padding="8">
                 Update
             </Button>

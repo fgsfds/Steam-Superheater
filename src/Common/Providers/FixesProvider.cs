@@ -20,15 +20,13 @@ namespace Common.Providers
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
             await _locker.WaitAsync();
 
             if (_fixesCachedString is null)
             {
-                await CreateFixesCacheAsync();
+                await CreateCacheAsync();
             }
 
             _locker.Release();
@@ -47,7 +45,6 @@ namespace Common.Providers
         /// <summary>
         /// Remove current cache, then create new one and return fixes list
         /// </summary>
-        /// <returns></returns>
         public async Task<ImmutableList<FixesList>> GetNewListAsync()
         {
             _fixesCachedString = null;
@@ -185,9 +182,7 @@ namespace Common.Providers
         /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        private async Task CreateFixesCacheAsync()
+        private async Task CreateCacheAsync()
         {
             if (_config.UseLocalRepo)
             {
@@ -206,6 +201,11 @@ namespace Common.Providers
             }
         }
 
+        /// <summary>
+        /// Deserialize string
+        /// </summary>
+        /// <param name="fixes">String to deserialize</param>
+        /// <returns>List of fixes</returns>
         private List<FixesList> DeserializeCachedString(string fixes)
         {
             List<FixesList>? fixesDatabase;

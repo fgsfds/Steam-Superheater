@@ -15,7 +15,7 @@
                   SelectedItem="{Binding SelectedTagFilter}"
                   IsVisible="{Binding IsTagsComboboxVisible, FallbackValue=False}"/>
 
-        <TextBox Text="{Binding Search, Mode=TwoWay}"
+        <TextBox Text="{Binding SearchBarText, Mode=TwoWay}"
                  Grid.Column="1"
                  Margin="0"
                  TextWrapping="NoWrap"

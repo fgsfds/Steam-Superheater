@@ -1,4 +1,4 @@
-﻿namespace Common.Helpers
+﻿namespace Common.Enums
 {
     public enum ThemeEnum
     {

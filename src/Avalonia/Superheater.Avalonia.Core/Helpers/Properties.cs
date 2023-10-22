@@ -12,6 +12,9 @@ namespace Superheater.Avalonia.Core.Helpers
         public static TopLevel TopLevel => TopLevel.GetTopLevel(MainWindow)
             ?? throw new NullReferenceException(nameof(TopLevel));
 
+        /// <summary>
+        /// Is app started in developer mode
+        /// </summary>
         public static bool IsDeveloperMode { get; set; }
     }
 }
