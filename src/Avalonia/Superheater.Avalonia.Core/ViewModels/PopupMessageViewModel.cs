@@ -44,7 +44,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public bool IsPopupVisible { get; set; }
+        public bool IsPopupVisible { get; private set; }
 
         public bool IsOkCancel { get; init; }
 

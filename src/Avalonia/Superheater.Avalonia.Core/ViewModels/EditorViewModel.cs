@@ -52,7 +52,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixVariants
         {
             get => SelectedFix?.Variants is null ? string.Empty : string.Join(";", SelectedFix.Variants);
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -63,7 +63,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixFilesToDelete
         {
             get => SelectedFix?.FilesToDelete is null ? string.Empty : string.Join(";", SelectedFix.FilesToDelete);
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -74,7 +74,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixFilesToBackup
         {
             get => SelectedFix?.FilesToBackup is null ? string.Empty : string.Join(";", SelectedFix.FilesToBackup);
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -85,7 +85,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixTags
         {
             get => SelectedFix?.Tags is null ? string.Empty : string.Join(";", SelectedFix.Tags);
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -96,7 +96,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixUrl
         {
             get => SelectedFix?.Url ?? string.Empty;
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -119,7 +119,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsWindowsChecked
         {
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -137,7 +137,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsLinuxChecked
         {
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
-            set
+            private set
             {
                 if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
@@ -155,7 +155,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
-        public GameEntity? _selectedAvailableGame;
+        private GameEntity? _selectedAvailableGame;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
@@ -180,7 +180,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private FixEntity? _selectedFix;
 
         [ObservableProperty]
-        public int _selectedFixIndex;
+        private int _selectedFixIndex;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]

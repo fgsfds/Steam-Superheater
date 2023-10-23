@@ -73,7 +73,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
 
 
-        public float ProgressBarValue { get; set; }
+        public float ProgressBarValue { get; private set; }
 
 
         [ObservableProperty]

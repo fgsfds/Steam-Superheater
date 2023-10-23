@@ -27,12 +27,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string AboutTabHeader { get; private set; }
 
-        public string CheckForUpdatesButtonText { get; set; }
+        public string CheckForUpdatesButtonText { get; private set; }
 
 
-        public bool IsUpdateAvailable { get; set; }
+        public bool IsUpdateAvailable { get; private set; }
 
-        public bool IsInProgress { get; set; }
+        public bool IsInProgress { get; private set; }
 
         #endregion Binding Properties
 
