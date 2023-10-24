@@ -141,7 +141,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
-        private async Task UpdateGames() => await UpdateAsync(false);
+        private async Task UpdateGames()
+        {
+            await UpdateAsync(false);
+
+            InstallFixCommand.NotifyCanExecuteChanged();
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            UpdateFixCommand.NotifyCanExecuteChanged();
+        }
         private bool UpdateGamesCanExecute() => !_lockButtons;
 
 
@@ -279,7 +286,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = true;
 
-            InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
@@ -292,7 +298,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = false;
 
-            InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
@@ -484,6 +489,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             IsInProgress = false;
+
             _locker.Release();
         }
 
