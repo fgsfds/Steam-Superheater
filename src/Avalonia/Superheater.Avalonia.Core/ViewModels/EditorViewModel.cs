@@ -10,6 +10,7 @@ using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -107,6 +108,24 @@ namespace Superheater.Avalonia.Core.ViewModels
                 else
                 {
                     SelectedFix.Url = value;
+                }
+            }
+        }
+
+        public string SelectedFixMD5
+        {
+            get => SelectedFix?.MD5 ?? string.Empty;
+            set
+            {
+                if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    SelectedFix.MD5 = null;
+                }
+                else
+                {
+                    SelectedFix.MD5 = value;
                 }
             }
         }

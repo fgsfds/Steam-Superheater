@@ -127,6 +127,7 @@ namespace Tests
         private static async Task InstallUninstallFixAsync(string? variant)
         {
             string fixArchive = variant is null ? "test_fix.zip" : "test_fix_variant.zip";
+            string fixArchiveMD5 = variant is null ? "4E9DE15FC40592B26421E05882C2F6F7" : "DA2D7701D2EB5BC9A35FB58B3B04C5B9";
 
             string gameFolder = PrepareGameFolder();
 
@@ -146,7 +147,8 @@ namespace Tests
                 Url = "test_fix.zip",
                 InstallFolder = "install folder",
                 FilesToDelete = new() { "install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt" },
-                FilesToBackup = new() { "install folder\\file to backup.txt" }
+                FilesToBackup = new() { "install folder\\file to backup.txt" },
+                MD5 = fixArchiveMD5
             };
 
             var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();

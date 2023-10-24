@@ -2,7 +2,7 @@
 {
     public sealed class InstalledFixEntity
     {
-        public InstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string> list)
+        public InstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string>? list)
         {
             GameId = id;
             Guid = guid;
@@ -34,7 +34,7 @@
         /// <summary>
         /// Paths to files relative to the game folder
         /// </summary>
-        public List<string> FilesList { get; init; }
+        public List<string>? FilesList { get; init; }
 
         /// <summary>
         /// Serializer constructor
