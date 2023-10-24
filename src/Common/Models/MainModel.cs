@@ -71,7 +71,7 @@ namespace Common.Models
 
                         //remove fixes for different OSes
                         if (!_config.ShowUnsupportedFixes &&
-                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOS()))
+                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
                         {
                             game.FixesList.Fixes.Remove(fix);
                             continue;
@@ -280,7 +280,9 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Tuple<bool, string> UninstallFix(GameEntity game, FixEntity fix)
         {
-            _fixUninstaller.UninstallFix(game, fix);
+            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+
+            _fixUninstaller.UninstallFix(game, fix.InstalledFix);
 
             fix.InstalledFix = null;
 
@@ -337,7 +339,9 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Tuple<bool, string>> UpdateFix(GameEntity game, FixEntity fix, string? variant)
         {
-            _fixUninstaller.UninstallFix(game, fix);
+            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+
+            _fixUninstaller.UninstallFix(game, fix.InstalledFix);
 
             fix.InstalledFix = null;
 

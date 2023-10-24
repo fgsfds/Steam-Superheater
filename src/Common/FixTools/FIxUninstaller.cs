@@ -10,11 +10,11 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(GameEntity game, FixEntity fix)
+        public void UninstallFix(GameEntity game, InstalledFixEntity fix)
         {
-            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+            if (fix is null) throw new NullReferenceException(nameof(fix));
 
-            DeleteFiles(game.InstallDir, fix.InstalledFix.FilesList);
+            DeleteFiles(game.InstallDir, fix.FilesList);
 
             RestoreBackup(game.InstallDir, fix);
 
@@ -49,42 +49,36 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="fix">Installed fix</param>
-        private void RestoreBackup(string gameDir, FixEntity fix)
+        private static void RestoreBackup(
+            string gameDir,
+            InstalledFixEntity fix)
         {
-            string backupFolder = fix.Name.Replace(' ', '_');
+            var backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
 
-            if (!string.IsNullOrEmpty(fix.Url))
-            {
-                backupFolder = Path.GetFileNameWithoutExtension(fix.Url);
-            }
-
-            var fixFolderPath = Path.Combine(gameDir, Consts.BackupFolder, backupFolder);
-            fixFolderPath = string.Join(string.Empty, fixFolderPath.Split(Path.GetInvalidPathChars()));
-
-            if (!Directory.Exists(fixFolderPath))
+            if (!Directory.Exists(backupFolder))
             {
                 return;
             }
 
-            var files = Directory.GetFiles(fixFolderPath, "*.*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(backupFolder, "*.*", SearchOption.AllDirectories);
 
             foreach (var file in files)
             {
-                var relativePath = Path.GetRelativePath(fixFolderPath, file);
+                var relativePath = Path.GetRelativePath(backupFolder, file);
 
                 var pathTo = Path.Combine(gameDir, relativePath);
 
                 File.Move(file, pathTo, true);
             }
 
-            Directory.Delete(fixFolderPath, true);
+            Directory.Delete(backupFolder, true);
         }
 
         /// <summary>
         /// Delete backup folder if it's empty
         /// </summary>
         /// <param name="gameInstallDir">Game install folder</param>
-        private void DeleteBackupFolderIfEmpty(string gameInstallDir)
+        private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
         {
             var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
 

@@ -114,7 +114,7 @@ namespace Tests
 
             fixEntity.InstalledFix = installedFix;
 
-            fixUninstaller.UninstallFix(gameEntity, fixEntity);
+            fixUninstaller.UninstallFix(gameEntity, installedFix);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -164,7 +164,7 @@ namespace Tests
             //modify backed up file
             File.WriteAllText("game\\install folder\\file to backup.txt", "22");
 
-            fixUninstaller.UninstallFix(gameEntity, fixEntity);
+            fixUninstaller.UninstallFix(gameEntity, installedFix);
 
             CheckOriginalFiles();
         }
@@ -241,7 +241,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.IsTrue(hash.Equals("1ACFF09755D3D16A824E23FE1DD45B6B"));
+                    Assert.IsTrue(hash.Equals("720FA0310861D613AAD2A4CFBAFCA80A"));
                 }
             }
         }

@@ -2,11 +2,12 @@
 {
     public sealed class InstalledFixEntity
     {
-        public InstalledFixEntity(int id, Guid guid, int version, List<string> list)
+        public InstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string> list)
         {
             GameId = id;
             Guid = guid;
             Version = version;
+            BackupFolder = backupFolder;
             FilesList = list;
         }
 
@@ -24,6 +25,11 @@
         /// Installed version
         /// </summary>
         public int Version { get; init; }
+
+        /// <summary>
+        /// Name of the backup folder
+        /// </summary>
+        public string BackupFolder { get; init; }
 
         /// <summary>
         /// Paths to files relative to the game folder
