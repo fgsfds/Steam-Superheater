@@ -1,6 +1,7 @@
 using Common.DI;
 using Common.Entities;
 using Common.FixTools;
+using Common.Helpers;
 using Common.Providers;
 using System.IO.Compression;
 using System.Security.Cryptography;
@@ -74,13 +75,45 @@ namespace Tests
         }
 
         [TestMethod]
-        public async Task InstallUninstallFixTest() => await InstallUninstallFixAsync(null);
+        public async Task InstallUninstallFixTest() => await InstallUninstallFixAsync();
 
         [TestMethod]
-        public async Task InstallUninstallFixVariantTest() => await InstallUninstallFixAsync("variant1");
+        public async Task InstallUninstallFixVariantTest() => await InstallUninstallFixAsync(variant: "variant1");
 
         [TestMethod]
-        public async Task InstallFixInANewFolder()
+        public async Task InstallCompromisedFixTest()
+        {
+            GameEntity gameEntity = new(
+                1,
+                "test game",
+                "game folder"
+            );
+
+            FixEntity fixEntity = new()
+            {
+                Name = "test fix",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/fixes/bsp_nointro_v1.zip",
+                MD5 = "badMD5"
+            };
+
+            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+
+            try
+            {
+                await fixInstaller.InstallFix(gameEntity, fixEntity, null);
+            }
+            catch (HashCheckFailedException)
+            {
+                return;
+            }
+
+            Assert.Fail();
+        }
+
+        [TestMethod]
+        public async Task InstallFixToANewFolder()
         {
             string gameFolder = PrepareGameFolder();
 
@@ -124,9 +157,10 @@ namespace Tests
 
         #region Private Methods
 
-        private static async Task InstallUninstallFixAsync(string? variant)
+        private static async Task InstallUninstallFixAsync(string? variant = null)
         {
             string fixArchive = variant is null ? "test_fix.zip" : "test_fix_variant.zip";
+
             string fixArchiveMD5 = variant is null ? "4E9DE15FC40592B26421E05882C2F6F7" : "DA2D7701D2EB5BC9A35FB58B3B04C5B9";
 
             string gameFolder = PrepareGameFolder();

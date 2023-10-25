@@ -312,6 +312,10 @@ namespace Common.Models
             {
                 installedFix = await _fixInstaller.InstallFix(game, fix, variant);
             }
+            //catch (HashCheckFailedException ex)
+            //{
+
+            //}
             catch (Exception ex)
             {
                 return new(false, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
@@ -353,7 +357,7 @@ namespace Common.Models
             }
             catch (Exception ex)
             {
-                return new(false, "Error while downloading fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
+                return new(false, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 
             fix.InstalledFix = installedFix;

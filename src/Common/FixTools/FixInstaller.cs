@@ -23,13 +23,14 @@ namespace Common.FixTools
         /// <param name="fix">Fix entity</param>
         public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
         {
+            await CheckAndDownloadFileAsync(fix);
+
             string backupFolderPath = CreateAndGetBackupFolder(game, fix);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
 
-            var filesInArchive = await DownloadCheckAndUnpackZIP(fix, game.InstallDir, variant, backupFolderPath);
+            var filesInArchive = await BackupFilesAndUnpackZIP(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -38,33 +39,39 @@ namespace Common.FixTools
             return installedFix;
         }
 
-        private async Task<List<string>?> DownloadCheckAndUnpackZIP(
-            FixEntity fix, 
-            string gameDir,
-            string? variant, 
-            string backupFolderPath)
+        private async Task CheckAndDownloadFileAsync(FixEntity fix)
         {
             if (fix.Url is null)
             {
-                return null;
+                return;
             }
 
-            string? zipFullPath = _configEntity.UseLocalRepo
-                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
+            var zipFullPath = _configEntity.UseLocalRepo
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
 
-            await DownloadZip(fix.Url, zipFullPath);
-
-            var md5CheckResult = CheckZipMD5(fix.MD5, zipFullPath);
-
-            if (!md5CheckResult.Item1)
+            //checking md5 of the existing file
+            if (File.Exists(zipFullPath))
             {
-                throw new Exception(md5CheckResult.Item2);
+                var result = CheckZipMD5(fix.MD5, zipFullPath);
+
+                if (!result.Item1)
+                {
+                    File.Delete(zipFullPath);
+                }
             }
 
-            var filesInArchive = await BackupFilesAndUnpackZIP(gameDir, fix.InstallFolder, backupFolderPath, zipFullPath, variant);
+            if (!File.Exists(zipFullPath))
+            {
+                var url = fix.Url;
 
-            return filesInArchive;
+                if (_configEntity.UseTestRepoBranch)
+                {
+                    url = url.Replace("/master/", "/test/");
+                }
+
+                await FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fix.MD5);
+            }
         }
 
         /// <summary>
@@ -137,27 +144,6 @@ namespace Common.FixTools
             }
         }
 
-        /// <summary>
-        /// Download and unpack ZIP if URL is not null
-        /// </summary>
-        /// <param name="fixUrl">URL to fix zip</param>
-        /// <param name="zipFullPath">Fix install folder</param>
-        /// <returns></returns>
-        private async Task DownloadZip(string fixUrl, string zipFullPath)
-        {
-            if (!File.Exists(zipFullPath))
-            {
-                var url = fixUrl;
-
-                if (_configEntity.UseTestRepoBranch)
-                {
-                    url = url.Replace("/master/", "/test/");
-                }
-
-                await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
-            }
-        }
-
         private static Tuple<bool, string> CheckZipMD5(string? fixMD5, string zipFullPath)
         {
             if (fixMD5 is null)
@@ -183,16 +169,25 @@ namespace Common.FixTools
             return new(true, string.Empty);
         }
 
-        private async Task<List<string>> BackupFilesAndUnpackZIP(
+        private async Task<List<string>?> BackupFilesAndUnpackZIP(
             string gameDir, 
             string? fixInstallFolder, 
+            string? fixUrl,
             string backupFolderPath,
-            string zipFullPath,
             string? variant)
         {
+            if (fixUrl is null)
+            {
+                return null;
+            }
+
             var unpackToPath = fixInstallFolder is null
                 ? gameDir
                 : Path.Combine(gameDir, fixInstallFolder) + Path.DirectorySeparatorChar;
+
+            var zipFullPath = _configEntity.UseLocalRepo
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
 
             var filesInArchive = GetListOfFilesInArchive(zipFullPath, fixInstallFolder, unpackToPath, variant);
 

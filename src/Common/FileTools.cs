@@ -1,4 +1,6 @@
-﻿using System.IO.Compression;
+﻿using Common.Helpers;
+using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace Common
 {
@@ -14,7 +16,10 @@ namespace Common
         /// </summary>
         /// <param name="url">Link to file download</param>
         /// <param name="filePath">Absolute path to destination file</param>
-        public static async Task DownloadFileAsync(Uri url, string filePath)
+        /// <param name="hash">MD5 to check file against</param>
+        /// <exception cref="Exception"></exception>
+        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
+        public static async Task CheckAndDownloadFileAsync(Uri url, string filePath, string? hash = null)
         {
             IProgress<float> progress = Progress;
             var tempFile = filePath + ".temp";
@@ -28,24 +33,30 @@ namespace Common
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
 
-                using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
                 using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    file.Dispose();
-                    File.Delete(tempFile);
-                    throw new Exception("Error while downloading a file: " + response.StatusCode.ToString());
+                    throw new ("Error while downloading a file: " + response.StatusCode.ToString());
+                }
+
+                if (hash is not null)
+                {
+                    if (response.Content.Headers.ContentMD5 is not null &&
+                        !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
+                    {
+                        throw new HashCheckFailedException("File hash doesn't match");
+                    }
                 }
 
                 using var source = await response.Content.ReadAsStreamAsync();
                 var contentLength = response.Content.Headers.ContentLength;
 
+                using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+
                 if (Progress is null || !contentLength.HasValue)
                 {
                     await source.CopyToAsync(file);
-
-                    return;
                 }
                 else
                 {
@@ -59,11 +70,31 @@ namespace Common
                         totalBytesRead += bytesRead;
                         progress.Report((float)(totalBytesRead / contentLength * 100));
                     }
+
+                    await file.DisposeAsync();
+
+                    File.Move(tempFile, filePath);
+                }
+
+                if (hash is not null)
+                {
+                    using (var md5 = MD5.Create())
+                    {
+                        using var stream = File.OpenRead(filePath);
+
+                        var fileHash = Convert.ToHexString(md5.ComputeHash(stream));
+
+                        if (!hash.Equals(fileHash))
+                        {
+                            await stream.DisposeAsync();
+
+                            File.Delete(filePath);
+
+                            throw new HashCheckFailedException("File hash doesn't match");
+                        }
+                    }
                 }
             }
-
-            File.Move(tempFile, filePath);
-            return;
         }
 
         /// <summary>

@@ -127,9 +127,9 @@ namespace Common.Models
         /// Save current fixes list to XML
         /// </summary>
         /// <returns>Result message</returns>
-        public Tuple<bool, string> SaveFixesListAsync()
+        public async Task<Tuple<bool, string>> SaveFixesListAsync()
         {
-            var result = _fixesProvider.SaveFixes(_fixesList);
+            var result = await _fixesProvider.SaveFixesAsync(_fixesList);
 
             CreateReadme();
 

@@ -192,6 +192,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
@@ -283,9 +284,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Save fixes.xml
         /// </summary>
         [RelayCommand]
-        private void SaveChanges()
+        private async Task SaveChangesAsync()
         {
-            var result = _editorModel.SaveFixesListAsync();
+            var result = await _editorModel.SaveFixesListAsync();
 
             new PopupMessageViewModel(
                 result.Item1 ? "Success" : "Error",
