@@ -14,18 +14,21 @@ namespace Common.Models
         public MainModel(
             ConfigProvider configProvider,
             CombinedEntitiesProvider combinedEntitiesProvider,
-            FixInstaller fixInstaller
+            FixInstaller fixInstaller,
+            FixUpdater fixUpdater
             )
         {
             _combinedEntitiesList = new();
             _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
             _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
             _fixInstaller = fixInstaller ?? throw new NullReferenceException(nameof(fixInstaller));
+            _fixUpdater = fixUpdater ?? throw new NullReferenceException(nameof(fixUpdater));
         }
 
         private readonly ConfigEntity _config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
         private readonly FixInstaller _fixInstaller;
+        private readonly FixUpdater _fixUpdater;
 
         private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
 
@@ -268,6 +271,43 @@ namespace Common.Models
         }
 
         /// <summary>
+        /// Install fix
+        /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix to install</param>
+        /// <returns>Result message</returns>
+        public async Task<Result> InstallFixAsync(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        {
+            InstalledFixEntity? installedFix;
+
+            try
+            {
+                installedFix = await _fixInstaller.InstallFix(game, fix, variant, skipMD5Check);
+            }
+            catch (HashCheckFailedException)
+            {
+                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
+            }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
+            }
+
+            fix.InstalledFix = installedFix;
+
+            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+
+            if (result.IsSuccess)
+            {
+                return new(ResultEnum.Ok, "Fix installed successfully!");
+            }
+            else
+            {
+                return new(ResultEnum.Error, result.Message);
+            }
+        }
+
+        /// <summary>
         /// Uninstall fix
         /// </summary>
         /// <param name="game">Game entity</param>
@@ -307,18 +347,26 @@ namespace Common.Models
         }
 
         /// <summary>
-        /// Install fix
+        /// Update fix
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to install</param>
+        /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> UpdateFixAsync(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
+            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+
             InstalledFixEntity? installedFix;
+            var backupRestoreFailed = false;
 
             try
             {
-                installedFix = await _fixInstaller.InstallFix(game, fix, variant, skipMD5Check);
+                installedFix = await _fixUpdater.UpdateFixAsync(game, fix, variant, skipMD5Check);
+            }
+            catch (BackwardsCompatibilityException)
+            {
+                backupRestoreFailed = true;
+                installedFix = null;
             }
             catch (HashCheckFailedException)
             {
@@ -333,38 +381,18 @@ namespace Common.Models
 
             var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
-            if (result.IsSuccess)
+            if (backupRestoreFailed)
             {
-                return new(ResultEnum.Ok, "Fix installed successfully!");
+                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
+            }
+            else if (result.IsSuccess)
+            {
+                return new(ResultEnum.Ok, "Fix updater successfully!");
             }
             else
             {
                 return new(ResultEnum.Error, result.Message);
             }
-        }
-
-        /// <summary>
-        /// Update fix
-        /// </summary>
-        /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to update</param>
-        /// <returns>Result message</returns>
-        public async Task<Result> UpdateFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
-        {
-            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
-
-            try
-            {
-                FixUninstaller.UninstallFix(game, fix.InstalledFix, fix);
-            }
-            catch (BackwardsCompatibilityException)
-            {
-                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam and install the fix again.");
-            }
-
-            fix.InstalledFix = null;
-
-            return await InstallFix(game, fix, variant, skipMD5Check);
         }
     }
 }

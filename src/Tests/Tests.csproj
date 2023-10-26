@@ -7,7 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\test_fix_v2.zip" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Resources\test_fix.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\test_fix_v2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_fix_variant.zip">

@@ -156,77 +156,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Install selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(InstallFixCanExecute)))]
-        private async Task InstallFix()
-        {
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
-
-            _lockButtons = true;
-
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-
-            FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
-
-            var fixInstallResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
-
-            if (fixInstallResult.ResultEnum is ResultEnum.MD5Error)
-            {
-                var popupResult = await new PopupMessageViewModel(
-                    "Warning",
-                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
-
-Do you still want to install the fix?",
-                    PopupMessageType.YesNo)
-                    .ShowAndGetResultAsync();
-
-                if (popupResult)
-                {
-                    fixInstallResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
-                }
-            }
-
-            FillGamesList();
-
-            _lockButtons = false;
-
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-
-            FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
-            ProgressBarValue = 0;
-            OnPropertyChanged(nameof(ProgressBarValue));
-
-            if (!fixInstallResult.IsSuccess)
-            {
-                new PopupMessageViewModel(
-                    "Error",
-                    fixInstallResult.Message ?? string.Empty,
-                    PopupMessageType.OkOnly)
-                .Show();
-
-                return;
-            }
-
-            if (SelectedFix.ConfigFile is not null &&
-                _config.OpenConfigAfterInstall)
-            {
-                new PopupMessageViewModel(
-                    "Success",
-                    fixInstallResult.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
-                    PopupMessageType.YesNo,
-                    OpenConfigXml)
-                .Show();
-            }
-            else
-            {
-                new PopupMessageViewModel(
-                    "Success",
-                    fixInstallResult.Message ?? string.Empty,
-                    PopupMessageType.OkOnly)
-                .Show();
-            }
-        }
+        private async Task InstallFix() => await InstallUpdateFixAsync(false);
         private bool InstallFixCanExecute()
         {
             if (SelectedGame is null ||
@@ -243,6 +173,14 @@ Do you still want to install the fix?",
 
             return result;
         }
+
+
+        /// <summary>
+        /// Update selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
+        private async Task UpdateFix() => await InstallUpdateFixAsync(true);
+        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
 
         /// <summary>
@@ -289,67 +227,6 @@ Do you still want to install the fix?",
 
             return result;
         }
-
-
-        /// <summary>
-        /// Update selected fix
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
-        private async Task UpdateFix()
-        {
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
-
-            IsInProgress = true;
-
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-
-            var selectedFix = SelectedFix;
-
-            var fixUpdateResult = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
-
-            if (fixUpdateResult.ResultEnum is ResultEnum.MD5Error)
-            {
-                var popupResult = await new PopupMessageViewModel(
-                    "Warning",
-                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
-
-Do you still want to install the fix?",
-                    PopupMessageType.YesNo)
-                    .ShowAndGetResultAsync();
-
-                if (popupResult)
-                {
-                    //if we got there, the fix is already deleted 
-                    fixUpdateResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
-                }
-            }
-
-            FillGamesList();
-
-            IsInProgress = false;
-
-            InstallFixCommand.NotifyCanExecuteChanged();
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-
-            new PopupMessageViewModel(
-                fixUpdateResult.IsSuccess ? "Success" : "Error",
-                fixUpdateResult.Message,
-                PopupMessageType.OkOnly)
-                .Show();
-
-            if (fixUpdateResult.IsSuccess &&
-                selectedFix.ConfigFile is not null &&
-                _config.OpenConfigAfterInstall)
-            {
-                OpenConfig();
-            }
-        }
-        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
 
         /// <summary>
@@ -499,6 +376,95 @@ Do you still want to install the fix?",
 
         #endregion Relay Commands
 
+
+        /// <summary>
+        /// Install or update fix
+        /// </summary>
+        /// <param name="isUpdate">Update fix</param>
+        private async Task InstallUpdateFixAsync(bool isUpdate)
+        {
+            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+
+            _lockButtons = true;
+
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+            InstallFixCommand.NotifyCanExecuteChanged();
+            UpdateFixCommand.NotifyCanExecuteChanged();
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+
+            FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
+
+            Result result;
+
+            if (isUpdate)
+            {
+                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+            }
+            else
+            {
+                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+            }
+
+            if (result.ResultEnum is ResultEnum.MD5Error)
+            {
+                var popupResult = await new PopupMessageViewModel(
+                    "Warning",
+                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+
+Do you still want to install the fix?",
+                    PopupMessageType.YesNo)
+                    .ShowAndGetResultAsync();
+
+                if (popupResult)
+                {
+                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
+                }
+            }
+
+            FillGamesList();
+
+            _lockButtons = false;
+
+            UninstallFixCommand.NotifyCanExecuteChanged();
+            OpenConfigCommand.NotifyCanExecuteChanged();
+            UpdateGamesCommand.NotifyCanExecuteChanged();
+
+            FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
+            ProgressBarValue = 0;
+            OnPropertyChanged(nameof(ProgressBarValue));
+
+            if (!result.IsSuccess)
+            {
+                new PopupMessageViewModel(
+                    "Error",
+                    result.Message,
+                    PopupMessageType.OkOnly)
+                .Show();
+
+                return;
+            }
+
+            if (SelectedFix.ConfigFile is not null &&
+                _config.OpenConfigAfterInstall)
+            {
+                new PopupMessageViewModel(
+                    "Success",
+                    result.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
+                    PopupMessageType.YesNo,
+                    OpenConfigXml)
+                .Show();
+            }
+            else
+            {
+                new PopupMessageViewModel(
+                    "Success",
+                    result.Message,
+                    PopupMessageType.OkOnly)
+                .Show();
+            }
+        }
 
         /// <summary>
         /// Update games list
