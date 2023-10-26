@@ -24,7 +24,7 @@ namespace Common.FixTools
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check = false)
+        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
             await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
 

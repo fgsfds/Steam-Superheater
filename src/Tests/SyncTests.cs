@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 namespace Tests
 {
     /// <summary>
-    /// Tests that use instance data and should be run in single thread
+    /// Tests that use instance data and should be run in a single thread
     /// </summary>
     [TestClass]
     public sealed class SyncTests
@@ -102,7 +102,7 @@ namespace Tests
 
             try
             {
-                await fixInstaller.InstallFix(gameEntity, fixEntity, null);
+                await fixInstaller.InstallFix(gameEntity, fixEntity, null, false);
             }
             catch (HashCheckFailedException)
             {
@@ -137,7 +137,7 @@ namespace Tests
 
             var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
 
-            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, null);
+            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, null, true);
 
             InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 
@@ -186,7 +186,7 @@ namespace Tests
 
             var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
 
-            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, variant);
+            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, variant, true);
 
             InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 

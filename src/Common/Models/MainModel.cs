@@ -86,7 +86,7 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new(ResultEnum.FileNotFound, "File not found: " + ex.Message);
+                return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
@@ -299,7 +299,7 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check = false)
+        public async Task<Result> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
             InstalledFixEntity? installedFix;
 
@@ -336,7 +336,7 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<Result> UpdateFix(GameEntity game, FixEntity fix, string? variant)
+        public async Task<Result> UpdateFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
             if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
 
@@ -344,33 +344,7 @@ namespace Common.Models
 
             fix.InstalledFix = null;
 
-            InstalledFixEntity? installedFix;
-
-            try
-            {
-                installedFix = await _fixInstaller.InstallFix(game, fix, variant);
-            }
-            catch (HashCheckFailedException)
-            {
-                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
-            }
-            catch (Exception ex)
-            {
-                return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
-            }
-
-            fix.InstalledFix = installedFix;
-
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
-
-            if (result.IsSuccess)
-            {
-                return new(ResultEnum.Ok, "Fix updated successfully!");
-            }
-            else
-            {
-                return new(ResultEnum.Error, result.Message);
-            }
+            return await InstallFix(game, fix, variant, skipMD5Check);
         }
     }
 }

@@ -41,9 +41,9 @@
         /// </summary>
         MD5Error,
         /// <summary>
-        /// File not found
+        /// File or directory not found
         /// </summary>
-        FileNotFound,
+        NotFound,
         /// <summary>
         /// Connection to online resource failed
         /// </summary>

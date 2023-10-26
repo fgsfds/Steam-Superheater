@@ -1,7 +1,6 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Helpers;
-using System;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
@@ -191,12 +190,19 @@ namespace Common.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return new Result(ResultEnum.FileNotFound, e.Message);
+                return new Result(ResultEnum.NotFound, e.Message);
             }
 
             return new(ResultEnum.Ok, "XML saved successfully!");
         }
 
+        /// <summary>
+        /// Get MD5 of the local or online file
+        /// </summary>
+        /// <param name="client">Http client</param>
+        /// <param name="fix">Fix entity</param>
+        /// <returns>MD5 of the fix file</returns>
+        /// <exception cref="Exception">Http response error</exception>
         private static async Task<string> GetMD5(HttpClient client, FixEntity fix)
         {
             if (fix.Url is null) throw new NullReferenceException(nameof(fix.Url));

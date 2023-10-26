@@ -153,7 +153,7 @@ namespace Superheater.ViewModels
 
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
-            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
 
             FillGamesList();
 
@@ -278,7 +278,7 @@ namespace Superheater.ViewModels
 
             var selectedFix = SelectedFix;
 
-            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
 
             FillGamesList();
 

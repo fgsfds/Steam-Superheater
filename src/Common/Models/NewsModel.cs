@@ -37,7 +37,7 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new(ResultEnum.FileNotFound, "File not found: " + ex.Message);
+                return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {

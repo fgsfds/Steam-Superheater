@@ -131,7 +131,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
 

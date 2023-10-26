@@ -66,7 +66,7 @@ namespace Common.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return new Result(ResultEnum.FileNotFound, e.Message);
+                return new Result(ResultEnum.NotFound, e.Message);
             }
 
             return new (ResultEnum.Ok, string.Empty);

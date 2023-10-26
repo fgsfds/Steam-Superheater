@@ -33,8 +33,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
-        private bool _lockButtons;
         private readonly SemaphoreSlim _locker = new(1, 1);
+        private bool _lockButtons;
 
 
         #region Binding Properties
@@ -172,7 +172,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (fixInstallResult.ResultEnum is ResultEnum.MD5Error)
             {
                 var popupResult = await new PopupMessageViewModel(
-                    "Error",
+                    "Warning",
                     @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
 
 Do you still want to install the fix?",
@@ -258,7 +258,7 @@ Do you still want to install the fix?",
 
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            var result = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+            var fixUninstallResult = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
 
             FillGamesList();
 
@@ -269,8 +269,8 @@ Do you still want to install the fix?",
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                result.IsSuccess ? "Success" : "Error",
-                result.Message,
+                fixUninstallResult.IsSuccess ? "Success" : "Error",
+                fixUninstallResult.Message,
                 PopupMessageType.OkOnly)
                 .Show();
         }
@@ -308,23 +308,41 @@ Do you still want to install the fix?",
 
             var selectedFix = SelectedFix;
 
-            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var fixUpdateResult = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+
+            if (fixUpdateResult.ResultEnum is ResultEnum.MD5Error)
+            {
+                var popupResult = await new PopupMessageViewModel(
+                    "Warning",
+                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+
+Do you still want to install the fix?",
+                    PopupMessageType.YesNo)
+                    .ShowAndGetResultAsync();
+
+                if (popupResult)
+                {
+                    //if we got there, the fix is already deleted 
+                    fixUpdateResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
+                }
+            }
 
             FillGamesList();
 
             IsInProgress = false;
 
+            InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                result.IsSuccess ? "Success" : "Error",
-                result.Message,
+                fixUpdateResult.IsSuccess ? "Success" : "Error",
+                fixUpdateResult.Message,
                 PopupMessageType.OkOnly)
                 .Show();
 
-            if (result.IsSuccess &&
+            if (fixUpdateResult.IsSuccess &&
                 selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
