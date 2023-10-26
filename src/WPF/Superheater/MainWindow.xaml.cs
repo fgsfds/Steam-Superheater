@@ -31,7 +31,7 @@ namespace Superheater
 
             InitializeComponent();
 
-            void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+            static void OnDispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
             {
                 string errorMessage = $"An unhandled exception occurred:{Environment.NewLine}{e.Exception.Message}";
 

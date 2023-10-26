@@ -59,6 +59,6 @@ namespace Common.Helpers
         /// Game executable
         /// Only defined if the game requires admin rights, otherwise is null
         /// </summary>
-        private static string? GetGameExecutable(int id) => _gamesThatRequireAdmin.ContainsKey(id) ? _gamesThatRequireAdmin[key: id] : null;
+        private static string? GetGameExecutable(int id) => _gamesThatRequireAdmin.TryGetValue(id, out string? value) ? value : null;
     }
 }

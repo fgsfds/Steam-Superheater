@@ -29,8 +29,8 @@ namespace Superheater.Avalonia.Core.ViewModels
                 case PopupMessageType.OkOnly:
                     IsOkOnly = true;
                     break;
-                case PopupMessageType.OkCancel:
-                    IsOkCancel = true;
+                case PopupMessageType.YesNo:
+                    IsYesNo = true;
                     break;
             }
 
@@ -38,15 +38,17 @@ namespace Superheater.Avalonia.Core.ViewModels
             _mwvm.PopupDataContext = this;
         }
 
-        private readonly MainWindowViewModel _mwvm;
         private readonly Action? _okAction;
+        private readonly MainWindowViewModel _mwvm;
+        private SemaphoreSlim? _semaphore;
+        private bool _result;
 
 
         #region Binding Properties
 
         public bool IsPopupVisible { get; private set; }
 
-        public bool IsOkCancel { get; init; }
+        public bool IsYesNo { get; init; }
 
         public bool IsOkOnly { get; init; }
 
@@ -62,20 +64,46 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void Cancel()
         {
+            _result = false;
+
             IsPopupVisible = false;
             OnPropertyChanged(nameof(IsPopupVisible));
+
+            _semaphore?.Release();
         }
 
         [RelayCommand]
         private void Ok()
         {
-            _okAction?.Invoke();
+            _result = true;
+
             IsPopupVisible = false;
             OnPropertyChanged(nameof(IsPopupVisible));
+
+            _semaphore?.Release();
+
+            _okAction?.Invoke();
         }
 
         #endregion Relay Commands
 
+
+        /// <summary>
+        /// Show popup window and return result
+        /// </summary>
+        /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
+        public async Task<bool> ShowAndGetResultAsync()
+        {
+            _semaphore = new(1, 1);
+            await _semaphore.WaitAsync();
+
+            IsPopupVisible = true;
+            OnPropertyChanged(nameof(IsPopupVisible));
+
+            await _semaphore.WaitAsync();
+
+            return _result;
+        }
 
         /// <summary>
         /// Show popup window
@@ -90,12 +118,12 @@ namespace Superheater.Avalonia.Core.ViewModels
     public enum PopupMessageType
     {
         ///<summary>
-        ///Only ok button that closes popup
+        ///OK button that executes action
         ///</summary>
         OkOnly,
         ///<summary>
-        ///Ok and cancel buttons, ok button executes action
+        ///Yes and No buttons, Yes button executes action
         ///</summary>
-        OkCancel
+        YesNo
     }
 }

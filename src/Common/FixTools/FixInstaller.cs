@@ -3,6 +3,7 @@ using Common.Entities;
 using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace Common.FixTools
 {
@@ -20,15 +21,19 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
+        /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
+        /// <exception cref="Exception">Error while downloading file</exception>
+        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
+        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
-            string backupFolderPath = CreateAndGetBackupFolder(game, fix);
+            await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
+
+            string backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
 
-            var filesInArchive = await DownloadAndUnpackZip(fix.Url, fix.InstallFolder, game.InstallDir, variant, backupFolderPath);
+            var filesInArchive = await BackupFilesAndUnpackZIP(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -38,14 +43,56 @@ namespace Common.FixTools
         }
 
         /// <summary>
+        /// Check file's MD5 and download if MD5 is correct
+        /// </summary>
+        /// <param name="fixUrl">Url to the file</param>
+        /// <param name="fixMD5">MD5 of the file</param>
+        /// <exception cref="Exception">Error while downloading file</exception>
+        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
+        private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
+        {
+            if (fixUrl is null)
+            {
+                return;
+            }
+
+            var zipFullPath = _configEntity.UseLocalRepo
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
+
+            //checking md5 of the existing file
+            if (File.Exists(zipFullPath))
+            {
+                var result = CheckFileMD5(zipFullPath, fixMD5);
+
+                if (!result)
+                {
+                    File.Delete(zipFullPath);
+                }
+            }
+
+            if (!File.Exists(zipFullPath))
+            {
+                var url = fixUrl;
+
+                if (_configEntity.UseTestRepoBranch)
+                {
+                    url = url.Replace("/master/", "/test/");
+                }
+
+                await FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
+            }
+        }
+
+        /// <summary>
         /// Get path to backup folder and create if it doesn't exist
         /// </summary>
-        /// <param name="game">Game Entity</param>
-        /// <param name="fix">Fix Entity</param>
+        /// <param name="gameDir">Game install directory</param>
+        /// <param name="fixName">Name of the fix</param>
         /// <returns>Absolute path to the backup folder</returns>
-        private static string CreateAndGetBackupFolder(GameEntity game, FixEntity fix)
+        private static string CreateAndGetBackupFolder(string gameDir, string fixName)
         {
-            var backupFolderPath = Path.Combine(game.InstallDir, Consts.BackupFolder, fix.Name.Replace(' ', '_'));
+            var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Replace(' ', '_'));
             backupFolderPath = string.Join(string.Empty, backupFolderPath.Split(Path.GetInvalidPathChars()));
 
             if (Directory.Exists(backupFolderPath))
@@ -61,6 +108,7 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="files">List of files to backup</param>
         /// <param name="gameDir">Game install folder</param>
+        /// <param name="backupFolderPath">Absolute path to the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
         private static void BackupFiles(
             IEnumerable<string>? files,
@@ -108,47 +156,55 @@ namespace Common.FixTools
         }
 
         /// <summary>
-        /// Download and unpack ZIP if URL is not null
+        /// Check MD5 of the local file
         /// </summary>
-        /// <param name="fixUrl">URL to fix zip</param>
-        /// <param name="fixInstallFolder">Fix install folder</param>
-        /// <param name="gameDir">Game install dir</param>
-        /// <param name="variant">Fix variant</param>
-        /// <param name="backupFolderPath">Absolute path to the backup folder</param>
-        /// <returns></returns>
-        private async Task<List<string>> DownloadAndUnpackZip(
-            string? fixUrl,
-            string? fixInstallFolder,
-            string gameDir,
-            string? variant,
-            string backupFolderPath)
+        /// <param name="filePath">Full path to the file</param>
+        /// <param name="fixMD5">MD5 that the file's hash will be compared to</param>
+        /// <returns>true if check is passed</returns>
+        private static bool CheckFileMD5(string filePath, string? fixMD5)
         {
-            if (string.IsNullOrEmpty(fixUrl))
+            if (fixMD5 is null)
             {
-                return new();
+                return true;
             }
 
-            var zipName = Path.GetFileName(fixUrl);
+            string? hash;
 
-            var zipFullPath = _configEntity.UseLocalRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", zipName)
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, zipName);
+            using (var md5 = MD5.Create())
+            {
+                using (var stream = File.OpenRead(filePath))
+                {
+                    hash = Convert.ToHexString(md5.ComputeHash(stream));
+                }
+            }
+
+            if (!fixMD5.Equals(hash))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<List<string>?> BackupFilesAndUnpackZIP(
+            string gameDir, 
+            string? fixInstallFolder, 
+            string? fixUrl,
+            string backupFolderPath,
+            string? variant)
+        {
+            if (fixUrl is null)
+            {
+                return null;
+            }
 
             var unpackToPath = fixInstallFolder is null
                 ? gameDir
                 : Path.Combine(gameDir, fixInstallFolder) + Path.DirectorySeparatorChar;
 
-            if (!File.Exists(zipFullPath))
-            {
-                var url = fixUrl;
-
-                if (_configEntity.UseTestRepoBranch)
-                {
-                    url = url.Replace("/master/", "/test/");
-                }
-
-                await FileTools.DownloadFileAsync(new Uri(url), zipFullPath);
-            }
+            var zipFullPath = _configEntity.UseLocalRepo
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
 
             var filesInArchive = GetListOfFilesInArchive(zipFullPath, fixInstallFolder, unpackToPath, variant);
 
@@ -170,7 +226,10 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameInstallPath">Path to the game folder</param>
         /// <param name="runAfterInstall">File to open</param>
-        private static void RunAfterInstall(string gameInstallPath, string? runAfterInstall)
+        private static void RunAfterInstall(
+            string gameInstallPath, 
+            string? runAfterInstall
+            )
         {
             if (runAfterInstall is null)
             {

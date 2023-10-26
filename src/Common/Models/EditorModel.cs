@@ -33,23 +33,22 @@ namespace Common.Models
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
         /// </summary>
         /// <param name="useCache">Is cache used</param>
-        public async Task<Tuple<bool, string>> UpdateListsAsync(bool useCache)
+        public async Task<Result> UpdateListsAsync(bool useCache)
         {
             try
             {
                 await GetListOfFixesAsync(useCache);
                 await GetListOfAvailableGamesAsync(useCache);
 
-                return new(true, string.Empty);
+                return new(ResultEnum.Ok, string.Empty);
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new(false, $"File not found: {ex.Message}");
+                return new(ResultEnum.NotFound, $"File not found: {ex.Message}");
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
-
-                return new(false, "Can't connect to GitHub repository");
+                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
             }
         }
 
@@ -99,7 +98,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <returns>New fix entity</returns>
-        public FixEntity AddNewFix(FixesList game)
+        public static FixEntity AddNewFix(FixesList game)
         {
             FixEntity newFix = new();
 
@@ -113,7 +112,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void RemoveFix(FixesList game, FixEntity fix)
+        public static void RemoveFix(FixesList game, FixEntity fix)
         {
             game.Fixes.Remove(fix);
 
@@ -127,9 +126,9 @@ namespace Common.Models
         /// Save current fixes list to XML
         /// </summary>
         /// <returns>Result message</returns>
-        public Tuple<bool, string> SaveFixesListAsync()
+        public async Task<Result> SaveFixesListAsync()
         {
-            var result = _fixesProvider.SaveFixes(_fixesList);
+            var result = await FixesProvider.SaveFixesAsync(_fixesList);
 
             CreateReadme();
 
@@ -206,7 +205,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public Tuple<bool, string> UploadFix(FixesList fixesList, FixEntity fix)
+        public static Result UploadFix(FixesList fixesList, FixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
@@ -247,14 +246,14 @@ namespace Common.Models
 
                 if (result)
                 {
-                    return new(true, @$"Fix successfully uploaded.
+                    return new(ResultEnum.Ok, @$"Fix successfully uploaded.
 It will be added to the database after developer's review.
 
 Thank you.");
                 }
                 else
                 {
-                    return new(false, "Can't upload fix.");
+                    return new(ResultEnum.Error, "Can't upload fix.");
                 }
             }
         }
@@ -262,12 +261,12 @@ Thank you.");
         /// <summary>
         /// Check if the file can be uploaded
         /// </summary>
-        public async Task<Tuple<bool, string>> CheckFixBeforeUploadAsync(FixEntity fix)
+        public async Task<Result> CheckFixBeforeUploadAsync(FixEntity fix)
         {
             if (string.IsNullOrEmpty(fix?.Name) ||
                 fix.Version < 1)
             {
-                return new(false, "Name and Version are required to upload a fix.");
+                return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
             }
 
             if (!string.IsNullOrEmpty(fix.Url) &&
@@ -275,12 +274,12 @@ Thank you.");
             {
                 if (!File.Exists(fix.Url))
                 {
-                    return new(false, $"{fix.Url} doesn't exist.");
+                    return new(ResultEnum.Error, $"{fix.Url} doesn't exist.");
                 }
 
                 else if (new FileInfo(fix.Url).Length > 1e+8)
                 {
-                    return new(false, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
+                    return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
             }
 
@@ -291,28 +290,28 @@ Thank you.");
                 //if fix already exists in the repo, don't upload it
                 if (onlineFix.Fixes.Any(x => x.Guid == fix.Guid))
                 {
-                    return new(false, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+                    return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
                 }
             }
 
-            return new(true, string.Empty);
+            return new(ResultEnum.Ok, string.Empty);
         }
 
-        public void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Add(dependency.Guid);
         }
 
-        public void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Remove(dependency.Guid);
         }
 
-        public void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
+        public static void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 
-        public void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+        public static void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
 
         /// <summary>
         /// Get sorted list of fixes

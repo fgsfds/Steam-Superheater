@@ -52,11 +52,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             var result = await _newsModel.MarkAllAsReadAsync();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    result.Item2,
+                    result.Message,
                     PopupMessageType.OkOnly
                     ).Show();
 
@@ -80,11 +80,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             await _locker.WaitAsync();
             var result = await _newsModel.UpdateNewsListAsync();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    result.Item2,
+                    result.Message,
                     PopupMessageType.OkOnly
                     ).Show();
 

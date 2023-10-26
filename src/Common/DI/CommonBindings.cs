@@ -9,7 +9,7 @@ namespace Common.DI
         {
             container.Register<UpdateInstaller>(Lifestyle.Singleton);
             container.Register<FixInstaller>(Lifestyle.Singleton);
-            container.Register<FixUninstaller>(Lifestyle.Singleton);
+            //container.Register<FixUninstaller>(Lifestyle.Singleton);
         }
     }
 }

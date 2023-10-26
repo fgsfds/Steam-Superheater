@@ -6,13 +6,13 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class InstalledFixesProvider
+    public static class InstalledFixesProvider
     {
         /// <summary>
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public ImmutableList<InstalledFixEntity> GetInstalledFixes()
+        public static ImmutableList<InstalledFixEntity> GetInstalledFixes()
         {
             if (!File.Exists(Consts.InstalledFile))
             {
@@ -41,7 +41,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedEntitiesList">List of combined entities</param>
         /// <returns>result, error message</returns>
-        public Tuple<bool, string> SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
+        public static Result SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
         {
             var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
 
@@ -55,7 +55,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>result, error message</returns>
-        public Tuple<bool, string> SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        public static Result SaveInstalledFixes(List<InstalledFixEntity> fixesList)
         {
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
 
@@ -66,15 +66,15 @@ namespace Common.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return new Tuple<bool, string>(false, e.Message);
+                return new Result(ResultEnum.NotFound, e.Message);
             }
 
-            return new Tuple<bool, string>(true, string.Empty);
+            return new (ResultEnum.Ok, string.Empty);
         }
 
         /// <summary>
         /// Create empty installed fixes XML
         /// </summary>
-        private void MakeEmptyFixesXml() => SaveInstalledFixes(new List<InstalledFixEntity>());
+        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<InstalledFixEntity>());
     }
 }

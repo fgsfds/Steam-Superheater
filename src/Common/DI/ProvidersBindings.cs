@@ -13,7 +13,6 @@ namespace Common.DI
             container.Register<GamesProvider>(Lifestyle.Singleton);
             container.Register<NewsProvider>(Lifestyle.Singleton);
             container.Register<FixesProvider>(Lifestyle.Singleton);
-            container.Register<InstalledFixesProvider>(Lifestyle.Singleton);
         }
     }
 }

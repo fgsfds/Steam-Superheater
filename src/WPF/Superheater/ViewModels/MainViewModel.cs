@@ -41,7 +41,7 @@ namespace Superheater.ViewModels
 
         public string LaunchGameButtonText { get; private set; }
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         /// <summary>
         /// Does selected fix has variants
@@ -153,7 +153,7 @@ namespace Superheater.ViewModels
 
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
-            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
 
             FillGamesList();
 
@@ -167,10 +167,10 @@ namespace Superheater.ViewModels
             ProgressBarValue = 0;
             OnPropertyChanged(nameof(ProgressBarValue));
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Error",
                     MessageBoxButton.OK
                     );
@@ -182,7 +182,7 @@ namespace Superheater.ViewModels
                 _config.OpenConfigAfterInstall)
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Success",
                     MessageBoxButton.OK
                     );
@@ -190,7 +190,7 @@ namespace Superheater.ViewModels
             else
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Success",
                     MessageBoxButton.OK
                     );
@@ -238,8 +238,8 @@ namespace Superheater.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             MessageBox.Show(
-                result.Item2,
-                result.Item1 ? "Success" : "Error",
+                result.Message,
+                result.IsSuccess ? "Success" : "Error",
                 MessageBoxButton.OK
                 );
         }
@@ -254,7 +254,7 @@ namespace Superheater.ViewModels
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+            var result = !MainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
             return result;
         }
@@ -278,7 +278,7 @@ namespace Superheater.ViewModels
 
             var selectedFix = SelectedFix;
 
-            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
 
             FillGamesList();
 
@@ -290,12 +290,12 @@ namespace Superheater.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             MessageBox.Show(
-                result.Item2,
-                result.Item1 ? "Success" : "Error",
+                result.Message,
+                result.IsSuccess ? "Success" : "Error",
                 MessageBoxButton.OK
                 );
 
-            if (result.Item1 &&
+            if (result.IsSuccess &&
                 selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
@@ -432,7 +432,7 @@ namespace Superheater.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private void CloseApp() => Environment.Exit(0);
+        private static void CloseApp() => Environment.Exit(0);
 
         #endregion Relay Commands
 
@@ -449,11 +449,11 @@ namespace Superheater.ViewModels
 
             FillGamesList();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
 
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Error",
                     MessageBoxButton.OK
                     );
@@ -592,7 +592,7 @@ Do you want to set it to always run as admin?",
 
             if (SelectedFix?.Dependencies is not null)
             {
-                var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+                var dependsBy = MainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                 if (dependsBy.Any())
                 {

@@ -1,5 +1,6 @@
 ﻿using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Security.Cryptography;
 using System.Xml.Serialization;
 
 namespace Common.Entities
@@ -63,6 +64,7 @@ namespace Common.Entities
             RunAfterInstall = null;
             Dependencies = null;
             Tags = null;
+            MD5 = null;
         }
 
         /// <summary>
@@ -152,6 +154,11 @@ namespace Common.Entities
         /// Supported OSes
         /// </summary>
         public OSEnum SupportedOSes { get; set; }
+
+        /// <summary>
+        /// Zip archive MD5
+        /// </summary>
+        public string? MD5 { get; set; }
 
         /// <summary>
         /// Is fix installed

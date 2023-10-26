@@ -3,14 +3,14 @@ using Common.Helpers;
 
 namespace Common.FixTools
 {
-    public sealed class FixUninstaller
+    public static class FixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(GameEntity game, InstalledFixEntity fix)
+        public static void UninstallFix(GameEntity game, InstalledFixEntity fix)
         {
             if (fix is null) throw new NullReferenceException(nameof(fix));
 
@@ -26,8 +26,10 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameInstallDir">Game install folder</param>
         /// <param name="fixFiles">Files to delete</param>
-        private void DeleteFiles(string gameInstallDir, List<string> fixFiles)
+        private static void DeleteFiles(string gameInstallDir, List<string>? fixFiles)
         {
+            if (fixFiles is null) return;
+
             foreach (var file in fixFiles)
             {
                 var fullPath = Path.Combine(gameInstallDir, file);

@@ -1,14 +1,14 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using Common;
 using Common.CombinedEntities;
 using Common.Config;
+using Common.Entities;
 using Common.Helpers;
 using Common.Models;
-using Common.Entities;
-using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
 using System.Collections.Immutable;
+using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -33,8 +33,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
-        private bool _lockButtons;
         private readonly SemaphoreSlim _locker = new(1, 1);
+        private bool _lockButtons;
 
 
         #region Binding Properties
@@ -50,9 +50,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
 
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
-        public bool IsTagsComboboxVisible => true;
+        public static bool IsTagsComboboxVisible => true;
 
         public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && SelectedFixVariants.Any();
 
@@ -167,7 +167,23 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
 
-            var result = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var fixInstallResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+
+            if (fixInstallResult.ResultEnum is ResultEnum.MD5Error)
+            {
+                var popupResult = await new PopupMessageViewModel(
+                    "Warning",
+                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+
+Do you still want to install the fix?",
+                    PopupMessageType.YesNo)
+                    .ShowAndGetResultAsync();
+
+                if (popupResult)
+                {
+                    fixInstallResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
+                }
+            }
 
             FillGamesList();
 
@@ -181,11 +197,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             ProgressBarValue = 0;
             OnPropertyChanged(nameof(ProgressBarValue));
 
-            if (!result.Item1)
+            if (!fixInstallResult.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    result.Item2,
+                    fixInstallResult.Message ?? string.Empty,
                     PopupMessageType.OkOnly)
                 .Show();
 
@@ -197,8 +213,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 new PopupMessageViewModel(
                     "Success",
-                    result.Item2 + Environment.NewLine + Environment.NewLine + "Open config file?",
-                    PopupMessageType.OkCancel,
+                    fixInstallResult.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
+                    PopupMessageType.YesNo,
                     OpenConfigXml)
                 .Show();
             }
@@ -206,7 +222,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 new PopupMessageViewModel(
                     "Success",
-                    result.Item2,
+                    fixInstallResult.Message ?? string.Empty,
                     PopupMessageType.OkOnly)
                 .Show();
             }
@@ -242,7 +258,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            var result = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+            var fixUninstallResult = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
 
             FillGamesList();
 
@@ -253,8 +269,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                result.Item1 ? "Success" : "Error",
-                result.Item2,
+                fixUninstallResult.IsSuccess ? "Success" : "Error",
+                fixUninstallResult.Message,
                 PopupMessageType.OkOnly)
                 .Show();
         }
@@ -269,7 +285,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+            var result = !MainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
             return result;
         }
@@ -292,23 +308,41 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var selectedFix = SelectedFix;
 
-            var result = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant);
+            var fixUpdateResult = await _mainModel.UpdateFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+
+            if (fixUpdateResult.ResultEnum is ResultEnum.MD5Error)
+            {
+                var popupResult = await new PopupMessageViewModel(
+                    "Warning",
+                    @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+
+Do you still want to install the fix?",
+                    PopupMessageType.YesNo)
+                    .ShowAndGetResultAsync();
+
+                if (popupResult)
+                {
+                    //if we got there, the fix is already deleted 
+                    fixUpdateResult = await _mainModel.InstallFix(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
+                }
+            }
 
             FillGamesList();
 
             IsInProgress = false;
 
+            InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
             new PopupMessageViewModel(
-                result.Item1 ? "Success" : "Error",
-                result.Item2,
+                fixUpdateResult.IsSuccess ? "Success" : "Error",
+                fixUpdateResult.Message,
                 PopupMessageType.OkOnly)
                 .Show();
 
-            if (result.Item1 &&
+            if (fixUpdateResult.IsSuccess &&
                 selectedFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
@@ -447,7 +481,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private void CloseApp() => Environment.Exit(0);
+        private static void CloseApp() => Environment.Exit(0);
 
 
         /// <summary>
@@ -479,11 +513,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             FillGamesList();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    result.Item2,
+                    result.Message,
                     PopupMessageType.OkOnly
                     ).Show();
             }
@@ -546,9 +580,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                 @"This game requires to be run as admin in order to work.
 
 Do you want to set it to always run as admin?",
-                PopupMessageType.OkCancel,
-                SelectedGame.Game.SetRunAsAdmin
-                ).Show();
+                PopupMessageType.YesNo,
+                SelectedGame.Game.SetRunAsAdmin)
+                .Show();
 
             OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
         }
@@ -600,7 +634,7 @@ Do you want to set it to always run as admin?",
 
             if (SelectedFix?.Dependencies is not null)
             {
-                var dependsBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+                var dependsBy = MainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
                 if (dependsBy.Any())
                 {

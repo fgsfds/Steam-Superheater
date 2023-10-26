@@ -52,7 +52,7 @@
             <Grid ColumnDefinitions="*,*"
                   Grid.Row="2"
                   Grid.ColumnSpan="2"
-                  IsVisible="{Binding IsOkCancel}">
+                  IsVisible="{Binding IsYesNo}">
 
                 <Button Grid.Column="0"
                         HorizontalAlignment="Center"
@@ -65,7 +65,7 @@
                         Command="{Binding OkCommand}"
                         Background="{DynamicResource SystemAccentColor}"
                         IsEnabled="True">
-                    OK
+                    Yes
                 </Button>
 
                 <Button Grid.Column="1"
@@ -77,7 +77,7 @@
                         Width="150"
                         Height="50"
                         Command="{Binding CancelCommand}">
-                    Cancel
+                    No
                 </Button>
 
             </Grid>
@@ -97,7 +97,7 @@
                         Width="150"
                         Height="50"
                         Background="{DynamicResource SystemAccentColor}"
-                        Command="{Binding CancelCommand}">
+                        Command="{Binding OkCommand}">
                     OK
                 </Button>
 

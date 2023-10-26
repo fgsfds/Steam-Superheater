@@ -43,7 +43,7 @@ namespace Common
                 File.Delete(fileName);
             }
 
-            await FileTools.DownloadFileAsync(fixUrl, fileName);
+            await FileTools.CheckAndDownloadFileAsync(fixUrl, fileName);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 
