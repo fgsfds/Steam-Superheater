@@ -1,5 +1,6 @@
 ﻿using Common.Config;
 using Common.Entities;
+using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
 
@@ -28,7 +29,7 @@ namespace Common.Models
         /// <summary>
         /// Get list of news from online or local repo
         /// </summary>
-        public async Task<Tuple<bool, string>> UpdateNewsListAsync()
+        public async Task<Result> UpdateNewsListAsync()
         {
             try
             {
@@ -36,27 +37,27 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new(false, "File not found: " + ex.Message);
+                return new(ResultEnum.FileNotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
-                return new(false, "Can't connect to GitHub repository");
+                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
             }
 
             UpdateReadStatusOfExistingNews();
 
-            return new(true, string.Empty);
+            return new(ResultEnum.Ok, string.Empty);
         }
 
         /// <summary>
         /// Mark all news as read
         /// </summary>
         /// <returns></returns>
-        public async Task<Tuple<bool, string>> MarkAllAsReadAsync()
+        public async Task<Result> MarkAllAsReadAsync()
         {
             var result = await UpdateNewsListAsync();
 
-            if (result.Item1)
+            if (result.IsSuccess)
             {
                 UpdateConfigLastReadVersion();
                 UpdateReadStatusOfExistingNews();

@@ -17,7 +17,7 @@ namespace Common
         /// <param name="url">Link to file download</param>
         /// <param name="filePath">Absolute path to destination file</param>
         /// <param name="hash">MD5 to check file against</param>
-        /// <exception cref="Exception"></exception>
+        /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public static async Task CheckAndDownloadFileAsync(Uri url, string filePath, string? hash = null)
         {

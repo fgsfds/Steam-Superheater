@@ -21,11 +21,14 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant)
+        /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
+        /// <exception cref="Exception">Error while downloading file</exception>
+        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
+        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check = false)
         {
-            await CheckAndDownloadFileAsync(fix);
+            await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
 
-            string backupFolderPath = CreateAndGetBackupFolder(game, fix);
+            string backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
@@ -39,23 +42,30 @@ namespace Common.FixTools
             return installedFix;
         }
 
-        private async Task CheckAndDownloadFileAsync(FixEntity fix)
+        /// <summary>
+        /// Check file's MD5 and download if MD5 is correct
+        /// </summary>
+        /// <param name="fixUrl">Url to the file</param>
+        /// <param name="fixMD5">MD5 of the file</param>
+        /// <exception cref="Exception">Error while downloading file</exception>
+        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
+        private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
         {
-            if (fix.Url is null)
+            if (fixUrl is null)
             {
                 return;
             }
 
             var zipFullPath = _configEntity.UseLocalRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
 
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
-                var result = CheckZipMD5(fix.MD5, zipFullPath);
+                var result = CheckFileMD5(zipFullPath, fixMD5);
 
-                if (!result.Item1)
+                if (!result)
                 {
                     File.Delete(zipFullPath);
                 }
@@ -63,26 +73,26 @@ namespace Common.FixTools
 
             if (!File.Exists(zipFullPath))
             {
-                var url = fix.Url;
+                var url = fixUrl;
 
                 if (_configEntity.UseTestRepoBranch)
                 {
                     url = url.Replace("/master/", "/test/");
                 }
 
-                await FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fix.MD5);
+                await FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
             }
         }
 
         /// <summary>
         /// Get path to backup folder and create if it doesn't exist
         /// </summary>
-        /// <param name="game">Game Entity</param>
-        /// <param name="fix">Fix Entity</param>
+        /// <param name="gameDir">Game install directory</param>
+        /// <param name="fixName">Name of the fix</param>
         /// <returns>Absolute path to the backup folder</returns>
-        private static string CreateAndGetBackupFolder(GameEntity game, FixEntity fix)
+        private static string CreateAndGetBackupFolder(string gameDir, string fixName)
         {
-            var backupFolderPath = Path.Combine(game.InstallDir, Consts.BackupFolder, fix.Name.Replace(' ', '_'));
+            var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Replace(' ', '_'));
             backupFolderPath = string.Join(string.Empty, backupFolderPath.Split(Path.GetInvalidPathChars()));
 
             if (Directory.Exists(backupFolderPath))
@@ -98,6 +108,7 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="files">List of files to backup</param>
         /// <param name="gameDir">Game install folder</param>
+        /// <param name="backupFolderPath">Absolute path to the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
         private static void BackupFiles(
             IEnumerable<string>? files,
@@ -144,17 +155,24 @@ namespace Common.FixTools
             }
         }
 
-        private static Tuple<bool, string> CheckZipMD5(string? fixMD5, string zipFullPath)
+        /// <summary>
+        /// Check MD5 of the local file
+        /// </summary>
+        /// <param name="filePath">Full path to the file</param>
+        /// <param name="fixMD5">MD5 that the file's hash will be compared to</param>
+        /// <returns>true if check is passed</returns>
+        private static bool CheckFileMD5(string filePath, string? fixMD5)
         {
             if (fixMD5 is null)
             {
-                return new(true, string.Empty);
+                return true;
             }
+
             string? hash;
 
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(zipFullPath))
+                using (var stream = File.OpenRead(filePath))
                 {
                     hash = Convert.ToHexString(md5.ComputeHash(stream));
                 }
@@ -162,11 +180,10 @@ namespace Common.FixTools
 
             if (!fixMD5.Equals(hash))
             {
-                File.Delete(zipFullPath);
-                return new(false, "MD5 of the ZIP archive doesn't match the database. Installation is prohibited.");
+                return false;
             }
 
-            return new(true, string.Empty);
+            return true;
         }
 
         private async Task<List<string>?> BackupFilesAndUnpackZIP(
@@ -209,7 +226,10 @@ namespace Common.FixTools
         /// </summary>
         /// <param name="gameInstallPath">Path to the game folder</param>
         /// <param name="runAfterInstall">File to open</param>
-        private static void RunAfterInstall(string gameInstallPath, string? runAfterInstall)
+        private static void RunAfterInstall(
+            string gameInstallPath, 
+            string? runAfterInstall
+            )
         {
             if (runAfterInstall is null)
             {

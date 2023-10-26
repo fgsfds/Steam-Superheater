@@ -39,10 +39,10 @@ namespace Superheater.ViewModels
         {
             var result = await _newsModel.MarkAllAsReadAsync();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Error",
                     MessageBoxButton.OK
                     );
@@ -61,10 +61,10 @@ namespace Superheater.ViewModels
         {
             var result = await _newsModel.UpdateNewsListAsync();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Error",
                     MessageBoxButton.OK
                     );

@@ -8,17 +8,14 @@ namespace Common.Providers
     {
         private readonly FixesProvider _fixesProvider;
         private readonly GamesProvider _gamesProvider;
-        private readonly InstalledFixesProvider _installedFixesProvide;
 
         public CombinedEntitiesProvider(
             FixesProvider fixesProvider,
-            GamesProvider gamesProvider,
-            InstalledFixesProvider installedFixesProvider
+            GamesProvider gamesProvider
             )
         {
             _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
             _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
-            _installedFixesProvide = installedFixesProvider ?? throw new NullReferenceException(nameof(installedFixesProvider));
         }
         /// <summary>
         /// Get list of fix entities with installed fixes
@@ -66,7 +63,7 @@ namespace Common.Providers
                 games = await _gamesProvider.GetNewListAsync();
             }
 
-            installed = _installedFixesProvide.GetInstalledFixes();
+            installed = InstalledFixesProvider.GetInstalledFixes();
 
             List<FixFirstCombinedEntity> result = new();
 

@@ -28,8 +28,8 @@ namespace Common.Helpers
         public static void Move<T>(this List<T> list, int oldIndex, int newIndex)
         {
             var element = list[oldIndex];
-            list.RemoveAt(oldIndex);
 
+            list.RemoveAt(oldIndex);
             list.Insert(newIndex, element);
         }
 
@@ -37,10 +37,10 @@ namespace Common.Helpers
         {
             var element = list[oldIndex];
 
-            var newList = list.RemoveAt(oldIndex);
-            newList = list.Insert(newIndex, element);
+            list = list.RemoveAt(oldIndex);
+            list = list.Insert(newIndex, element);
 
-            return newList;
+            return list;
         }
     }
 }

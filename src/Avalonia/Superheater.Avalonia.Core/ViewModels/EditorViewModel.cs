@@ -247,7 +247,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            var newFix = _editorModel.AddNewFix(SelectedGame);
+            var newFix = EditorModel.AddNewFix(SelectedGame);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
 
@@ -265,7 +265,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.RemoveFix(SelectedGame, SelectedFix);
+            EditorModel.RemoveFix(SelectedGame, SelectedFix);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
         }
@@ -289,8 +289,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             var result = await _editorModel.SaveFixesListAsync();
 
             new PopupMessageViewModel(
-                result.Item1 ? "Success" : "Error",
-                result.Item2,
+                result.IsSuccess ? "Success" : "Error",
+                result.Message,
                 PopupMessageType.OkOnly)
                 .Show();
         }
@@ -316,7 +316,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
+            EditorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -332,7 +332,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
+            EditorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -366,7 +366,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            _editorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
+            EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();
@@ -383,7 +383,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            _editorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
+            EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();
@@ -402,11 +402,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
 
-            if (!canUpload.Item1)
+            if (!canUpload.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    canUpload.Item2,
+                    canUpload.Message,
                     PopupMessageType.OkOnly)
                     .Show();
 
@@ -416,11 +416,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
             var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
 
-            var result = _editorModel.UploadFix(fixesList, fix);
+            var result = EditorModel.UploadFix(fixesList, fix);
 
             new PopupMessageViewModel(
-                    result.Item1 ? "Success" : "Error",
-                    result.Item2,
+                    result.IsSuccess ? "Success" : "Error",
+                    result.Message,
                     PopupMessageType.OkOnly)
                 .Show();
         }
@@ -475,11 +475,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             FillGamesList();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 new PopupMessageViewModel(
                     "Error",
-                    result.Item2,
+                    result.Message,
                     PopupMessageType.OkOnly
                     ).Show();
             }

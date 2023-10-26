@@ -35,7 +35,7 @@ namespace Superheater.ViewModels
         private readonly FixesProvider _fixesProvider;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
-        public bool IsDeveloperMode => true;
+        public static bool IsDeveloperMode => true;
 
         public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(Search);
 
@@ -207,7 +207,7 @@ namespace Superheater.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            var newFix = _editorModel.AddNewFix(SelectedGame);
+            var newFix = EditorModel.AddNewFix(SelectedGame);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
 
@@ -225,7 +225,7 @@ namespace Superheater.ViewModels
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.RemoveFix(SelectedGame, SelectedFix);
+            EditorModel.RemoveFix(SelectedGame, SelectedFix);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
         }
@@ -244,13 +244,13 @@ namespace Superheater.ViewModels
         /// Save fixes.xml
         /// </summary>
         [RelayCommand]
-        private void SaveChanges()
+        private async Task SaveChangesAsync()
         {
-            var result = _editorModel.SaveFixesListAsync();
+            var result = await _editorModel.SaveFixesListAsync();
 
             MessageBox.Show(
-                result.Item2,
-                result.Item1 ? "Success" : "Error",
+                result.Message,
+                result.IsSuccess ? "Success" : "Error",
                 MessageBoxButton.OK
                 );
         }
@@ -276,7 +276,7 @@ namespace Superheater.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
+            EditorModel.AddDependencyForFix(SelectedFix, AvailableDependencies.ElementAt(SelectedAvailableDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependencies));
             OnPropertyChanged(nameof(AddedDependencies));
@@ -292,7 +292,7 @@ namespace Superheater.ViewModels
         {
             if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
 
-            _editorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
+            EditorModel.RemoveDependencyForFix(SelectedFix, AddedDependencies.ElementAt(SelectedAddedDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependencies));
             OnPropertyChanged(nameof(AddedDependencies));
@@ -326,7 +326,7 @@ namespace Superheater.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            _editorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
+            EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
             MoveFixDownCommand.NotifyCanExecuteChanged();
@@ -343,7 +343,7 @@ namespace Superheater.ViewModels
         {
             if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
 
-            _editorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
+            EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixes));
             MoveFixDownCommand.NotifyCanExecuteChanged();
@@ -362,10 +362,10 @@ namespace Superheater.ViewModels
 
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
 
-            if (!canUpload.Item1)
+            if (!canUpload.IsSuccess)
             {
                 MessageBox.Show(
-                    canUpload.Item2,
+                    canUpload.Message,
                     "Error",
                     MessageBoxButton.OK
                     );
@@ -376,11 +376,11 @@ namespace Superheater.ViewModels
             var fixesList = SelectedGame ?? throw new NullReferenceException(nameof(SelectedFix));
             var fix = SelectedFix ?? throw new NullReferenceException(nameof(SelectedFix));
 
-            var result = _editorModel.UploadFix(fixesList, fix);
+            var result = EditorModel.UploadFix(fixesList, fix);
 
             MessageBox.Show(
-                result.Item2,
-                result.Item1 ? "Success" : "Error",
+                result.Message,
+                result.IsSuccess ? "Success" : "Error",
                 MessageBoxButton.OK
                 );
         }
@@ -429,10 +429,10 @@ namespace Superheater.ViewModels
 
             FillGamesList();
 
-            if (!result.Item1)
+            if (!result.IsSuccess)
             {
                 MessageBox.Show(
-                    result.Item2,
+                    result.Message,
                     "Error",
                     MessageBoxButton.OK
                     );

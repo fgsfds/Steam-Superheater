@@ -22,7 +22,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public Version CurrentVersion => CommonProperties.CurrentVersion;
+        public static Version CurrentVersion => CommonProperties.CurrentVersion;
 
 
         public string AboutTabHeader { get; private set; }

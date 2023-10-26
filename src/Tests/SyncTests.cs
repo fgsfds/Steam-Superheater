@@ -106,6 +106,7 @@ namespace Tests
             }
             catch (HashCheckFailedException)
             {
+                //method failed successfully
                 return;
             }
 
@@ -135,19 +136,17 @@ namespace Tests
             };
 
             var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
-            var fixUninstaller = BindingsManager.Instance.GetInstance<FixUninstaller>();
-            var installedProvider = BindingsManager.Instance.GetInstance<InstalledFixesProvider>();
 
             var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, null);
 
-            installedProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
             Assert.IsTrue(exeExists);
 
             fixEntity.InstalledFix = installedFix;
 
-            fixUninstaller.UninstallFix(gameEntity, installedFix);
+            FixUninstaller.UninstallFix(gameEntity, installedFix);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -186,12 +185,10 @@ namespace Tests
             };
 
             var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
-            var fixUninstaller = BindingsManager.Instance.GetInstance<FixUninstaller>();
-            var installedProvider = BindingsManager.Instance.GetInstance<InstalledFixesProvider>();
 
             var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, variant);
 
-            installedProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
 
             CheckNewFiles();
 
@@ -200,7 +197,7 @@ namespace Tests
             //modify backed up file
             File.WriteAllText("game\\install folder\\file to backup.txt", "22");
 
-            fixUninstaller.UninstallFix(gameEntity, installedFix);
+            FixUninstaller.UninstallFix(gameEntity, installedFix);
 
             CheckOriginalFiles();
         }

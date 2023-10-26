@@ -78,7 +78,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList"></param>
         /// <returns></returns>
-        public async Task<Tuple<bool, string>> SaveFixesAsync(List<FixesList> fixesList)
+        public static async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
             using var client = new HttpClient();
 
@@ -99,9 +99,9 @@ namespace Common.Providers
                             {
                                 fix.MD5 = await GetMD5(client, fix);
                             }
-                            catch (Exception ex)
+                            catch (Exception e)
                             {
-
+                                return new Result(ResultEnum.ConnectionError, e.Message);
                             }
                         }
                     }
@@ -191,10 +191,10 @@ namespace Common.Providers
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
-                return new Tuple<bool, string>(false, e.Message);
+                return new Result(ResultEnum.FileNotFound, e.Message);
             }
 
-            return new Tuple<bool, string>(true, "XML saved successfully!");
+            return new(ResultEnum.Ok, "XML saved successfully!");
         }
 
         private static async Task<string> GetMD5(HttpClient client, FixEntity fix)
@@ -221,7 +221,7 @@ namespace Common.Providers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Error while getting response: {response.StatusCode}");
+                    throw new Exception($"Error while getting response for {fix.Url}: {response.StatusCode}");
                 }
                 else if (response.Content.Headers.ContentMD5 is not null)
                 {
@@ -285,7 +285,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixes">String to deserialize</param>
         /// <returns>List of fixes</returns>
-        private List<FixesList> DeserializeCachedString(string fixes)
+        private static List<FixesList> DeserializeCachedString(string fixes)
         {
             List<FixesList>? fixesDatabase;
 
@@ -308,7 +308,7 @@ namespace Common.Providers
         /// Download fixes xml from online repository
         /// </summary>
         /// <returns></returns>
-        private async Task<string> DownloadFixesXMLAsync()
+        private static async Task<string> DownloadFixesXMLAsync()
         {
             using (var client = new HttpClient())
             {
