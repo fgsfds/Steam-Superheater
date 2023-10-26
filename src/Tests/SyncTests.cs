@@ -146,7 +146,7 @@ namespace Tests
 
             fixEntity.InstalledFix = installedFix;
 
-            FixUninstaller.UninstallFix(gameEntity, installedFix);
+            FixUninstaller.UninstallFix(gameEntity, installedFix, fixEntity);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -197,7 +197,7 @@ namespace Tests
             //modify backed up file
             File.WriteAllText("game\\install folder\\file to backup.txt", "22");
 
-            FixUninstaller.UninstallFix(gameEntity, installedFix);
+            FixUninstaller.UninstallFix(gameEntity, installedFix, fixEntity);
 
             CheckOriginalFiles();
         }

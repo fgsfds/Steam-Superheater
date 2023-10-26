@@ -9,14 +9,15 @@ namespace Common.FixTools
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix entity</param>
-        public static void UninstallFix(GameEntity game, InstalledFixEntity fix)
+        /// <param name="fix">Installed fix entity</param>
+        /// <param name="fixEntity">Fix entity</param>
+        public static void UninstallFix(GameEntity game, InstalledFixEntity fix, FixEntity fixEntity)
         {
             if (fix is null) throw new NullReferenceException(nameof(fix));
 
             DeleteFiles(game.InstallDir, fix.FilesList);
 
-            RestoreBackup(game.InstallDir, fix);
+            RestoreBackup(game.InstallDir, fix, fixEntity.Url);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
         }
@@ -53,9 +54,27 @@ namespace Common.FixTools
         /// <param name="fix">Installed fix</param>
         private static void RestoreBackup(
             string gameDir,
-            InstalledFixEntity fix)
+            InstalledFixEntity fix,
+            string? fixUrl)
         {
-            var backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
+            string backupFolder;
+
+            if (fix.BackupFolder is not null)
+            {
+                backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
+            }
+            //TODO: Added for backwards compatibility, need to remove some time later
+            else
+            {
+                if (fixUrl is not null)
+                {
+                    backupFolder = Path.Combine(gameDir, Consts.BackupFolder, Path.GetFileNameWithoutExtension(fixUrl));
+                }
+                else
+                {
+                    throw new BackwardsCompatibilityException("Can't get backup folder.");
+                }
+            }
 
             if (!Directory.Exists(backupFolder))
             {

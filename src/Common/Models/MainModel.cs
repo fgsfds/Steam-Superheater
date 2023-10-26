@@ -277,13 +277,26 @@ namespace Common.Models
         {
             if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
 
-            FixUninstaller.UninstallFix(game, fix.InstalledFix);
+            var backupRestoreFailed = false;
+
+            try
+            {
+                FixUninstaller.UninstallFix(game, fix.InstalledFix, fix);
+            }
+            catch (BackwardsCompatibilityException)
+            {
+                backupRestoreFailed = true;
+            }
 
             fix.InstalledFix = null;
 
             var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
-            if (result.IsSuccess)
+            if (backupRestoreFailed)
+            {
+                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
+            }
+            else if (result.IsSuccess)
             {
                 return new(ResultEnum.Ok, "Fix uninstalled successfully!");
             }
@@ -340,7 +353,14 @@ namespace Common.Models
         {
             if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
 
-            FixUninstaller.UninstallFix(game, fix.InstalledFix);
+            try
+            {
+                FixUninstaller.UninstallFix(game, fix.InstalledFix, fix);
+            }
+            catch (BackwardsCompatibilityException)
+            {
+                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam and install the fix again.");
+            }
 
             fix.InstalledFix = null;
 
