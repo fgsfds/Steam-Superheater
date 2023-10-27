@@ -229,32 +229,36 @@ namespace Common.Models
 
             XmlSerializer xmlSerializer = new(typeof(FixesList));
 
-            List<object> filesToUpload = new();
+            List<string> filesToUpload = new();
 
-            using (MemoryStream fs = new())
+            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
+
+            using (FileStream fs = new(fixFilePath, FileMode.Create))
             {
                 xmlSerializer.Serialize(fs, newFix);
+            }
 
-                filesToUpload.Add(new Tuple<string, MemoryStream>("fix.xml", fs));
+            filesToUpload.Add(fixFilePath);
 
-                if (fileToUpload is not null)
-                {
-                    filesToUpload.Add(fileToUpload);
-                }
+            if (fileToUpload is not null)
+            {
+                filesToUpload.Add(fileToUpload);
+            }
 
-                var result = FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
+            var result = FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
 
-                if (result)
-                {
-                    return new(ResultEnum.Ok, @$"Fix successfully uploaded.
+            File.Delete(fixFilePath);
+
+            if (result)
+            {
+                return new(ResultEnum.Ok, @$"Fix successfully uploaded.
 It will be added to the database after developer's review.
 
 Thank you.");
-                }
-                else
-                {
-                    return new(ResultEnum.Error, "Can't upload fix.");
-                }
+            }
+            else
+            {
+                return new(ResultEnum.Error, "Can't upload fix.");
             }
         }
 
