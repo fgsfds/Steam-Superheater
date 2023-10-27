@@ -72,6 +72,7 @@ namespace Tests
 
             //Looking for Alan Wake fixes list
             var result = fixes.Any(x => x.GameId == 108710);
+            Assert.IsTrue(result);
         }
 
         [TestMethod]
