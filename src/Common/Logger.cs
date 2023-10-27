@@ -30,7 +30,7 @@
         /// </summary>
         public static void UploadLog()
         {
-            FilesUploader.UploadFileToFtp("crashlogs", LogFile, DateTime.Now.ToString());
+            FilesUploader.UploadFileToFtp("crashlogs", LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log");
         }
     }
 }

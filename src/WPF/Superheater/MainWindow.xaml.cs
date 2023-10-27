@@ -45,7 +45,7 @@ namespace Superheater
 
                 e.Handled = true;
 
-                Environment.Exit(-1);
+                Environment.FailFast(e.Exception.Message);
             }
         }
 

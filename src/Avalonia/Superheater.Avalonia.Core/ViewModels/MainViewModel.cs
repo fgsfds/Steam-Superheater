@@ -358,7 +358,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private static void CloseApp() => Environment.Exit(0);
+        private static void CloseApp() => Properties.MainWindow.Close();
 
 
         /// <summary>

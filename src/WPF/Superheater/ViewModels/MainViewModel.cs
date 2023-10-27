@@ -432,7 +432,7 @@ namespace Superheater.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private static void CloseApp() => Environment.Exit(0);
+        private static void CloseApp() => Application.Current.Shutdown();
 
         #endregion Relay Commands
 

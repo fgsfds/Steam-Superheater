@@ -39,7 +39,12 @@ sealed class Program
                 Logger.Log(CommonProperties.CurrentVersion.ToString());
                 Logger.Log(ex.ToString());
 
-                Logger.UploadLog();
+                if (!Properties.IsDeveloperMode)
+                {
+                    Logger.UploadLog();
+                }
+
+                Environment.FailFast(ex.ToString());
             }
         }
     }

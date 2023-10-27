@@ -55,7 +55,7 @@ namespace Common
 
             foreach (var file in filesList)
             {
-                remoteFileName = remoteFileName is not null ? remoteFileName + ".log" : file;
+                remoteFileName ??= file;
 
                 var status = client.UploadFile(file, $"{folder}/{Path.GetFileName(remoteFileName)}");
 
