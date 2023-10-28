@@ -61,6 +61,7 @@ namespace Common.Models
                     {
                         //remove fixes with hidden tags
                         if (fix.Tags is not null &&
+                            fix.Tags.Any() &&
                             fix.Tags.All(x => _config.HiddenTags.Contains(x)))
                         {
                             game.FixesList.Fixes.Remove(fix);
