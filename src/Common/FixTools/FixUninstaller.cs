@@ -31,6 +31,19 @@ namespace Common.FixTools
         {
             if (fixFiles is null) return;
 
+            //checking if files can be opened before deleting them
+            foreach (var file in fixFiles)
+            {
+                var fullPath = Path.Combine(gameInstallDir, file);
+
+                if (!file.EndsWith(@"/") &&
+                    File.Exists(fullPath))
+                {
+                    var stream = File.Open(fullPath, FileMode.Open);
+                    stream.Dispose();
+                }
+            }
+
             foreach (var file in fixFiles)
             {
                 var fullPath = Path.Combine(gameInstallDir, file);

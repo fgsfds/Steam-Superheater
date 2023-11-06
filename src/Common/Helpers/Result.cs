@@ -49,6 +49,10 @@
         /// </summary>
         ConnectionError,
         /// <summary>
+        /// Access to file failed
+        /// </summary>
+        FileAccessError,
+        /// <summary>
         /// General error
         /// </summary>
         Error

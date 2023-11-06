@@ -328,6 +328,10 @@ namespace Common.Models
             {
                 backupRestoreFailed = true;
             }
+            catch (IOException ex)
+            {
+                return new(ResultEnum.FileAccessError, ex.Message);
+            }
 
             fix.InstalledFix = null;
 
@@ -372,6 +376,10 @@ namespace Common.Models
             catch (HashCheckFailedException)
             {
                 return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
+            }
+            catch (IOException ex)
+            {
+                return new(ResultEnum.FileAccessError, ex.Message);
             }
             catch (Exception ex)
             {

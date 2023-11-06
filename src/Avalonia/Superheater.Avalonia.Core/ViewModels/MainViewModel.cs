@@ -203,6 +203,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             IsInProgress = false;
 
             InstallFixCommand.NotifyCanExecuteChanged();
+            UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
