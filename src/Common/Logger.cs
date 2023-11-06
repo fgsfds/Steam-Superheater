@@ -1,4 +1,6 @@
-﻿namespace Common
+﻿using Common.Helpers;
+
+namespace Common
 {
     public static class Logger
     {
@@ -30,7 +32,7 @@
         /// </summary>
         public static void UploadLog()
         {
-            FilesUploader.UploadFileToFtp("crashlogs", LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log");
+            FilesUploader.UploadFileToFtp(Consts.CrashlogsFolder, LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log");
         }
     }
 }

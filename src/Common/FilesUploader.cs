@@ -1,10 +1,12 @@
-﻿using FluentFTP;
+﻿#pragma warning disable SYSLIB0014
+using Common.Helpers;
+using System.Net;
 
 namespace Common
 {
     internal static class FilesUploader
     {
-        private const string FtpAddress = "31.31.198.106";
+        private const string FtpAddress = "ftp://31.31.198.106";
         private const string FtpUser = "u2220544_Upload";
         private const string FtpPassword = "YdBunW64d447Pby";
 
@@ -15,7 +17,7 @@ namespace Common
         /// <param name="filePath">Path to file to upload</param>
         /// <param name="remoteFileName">File name on the ftp server</param>
         /// <returns>True if successfully uploaded</returns>
-        public static bool UploadFileToFtp(string folder, string filePath, string remoteFileName)
+        public static Result UploadFileToFtp(string folder, string filePath, string remoteFileName)
         {
             return UploadFilesToFtp(folder, new List<string>() { filePath }, remoteFileName);
         }
@@ -26,25 +28,34 @@ namespace Common
         /// <param name="folder">Destination folder on ftp server</param>
         /// <param name="files">List of paths to files</param>
         /// <returns>True if successfully uploaded</returns>
-        public static bool UploadFilesToFtp(string folder, List<string> files, string? remoteFileName = null)
+        public static Result UploadFilesToFtp(string folder, List<string> files, string? remoteFileName = null)
         {
-            var client = new FtpClient(FtpAddress, FtpUser, FtpPassword);
-
-            client.CreateDirectory(folder);
-
-            foreach (var file in files)
+            try
             {
-                var fileName = remoteFileName is null ? Path.GetFileName(file) : remoteFileName;
-
-                var status = client.UploadFile(file, $"{folder}/{fileName}");
-
-                if (status is FtpStatus.Failed)
+                if (!folder.Equals(Consts.CrashlogsFolder))
                 {
-                    return false;
+                    var createFolderRequest = WebRequest.Create($"{FtpAddress}/{folder}");
+                    createFolderRequest.Method = WebRequestMethods.Ftp.MakeDirectory;
+                    createFolderRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+                    createFolderRequest.GetResponse();
+                }
+
+                foreach (var file in files)
+                {
+                    var fileName = remoteFileName is null ? Path.GetFileName(file) : remoteFileName;
+
+                    var uploadFileRequest = new WebClient();
+                    uploadFileRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+                    uploadFileRequest.UploadFile($"{FtpAddress}/{folder}/{fileName}", file);
                 }
             }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, ex.Message);
+            }
 
-            return true;
+            return new(ResultEnum.Ok, string.Empty);
         }
     }
 }
+#pragma warning restore SYSLIB0014

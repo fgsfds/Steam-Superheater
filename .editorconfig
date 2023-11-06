@@ -19,3 +19,6 @@ dotnet_code_quality.CA1806.additional_use_results_methods = M:System.Collections
 
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
+
+# IDE0017: Simplify object initialization
+dotnet_diagnostic.IDE0017.severity = none

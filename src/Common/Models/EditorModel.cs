@@ -249,7 +249,7 @@ namespace Common.Models
 
             File.Delete(fixFilePath);
 
-            if (result)
+            if (result.ResultEnum is ResultEnum.Ok)
             {
                 return new(ResultEnum.Ok, @$"Fix successfully uploaded.
 It will be added to the database after developer's review.
@@ -258,7 +258,7 @@ Thank you.");
             }
             else
             {
-                return new(ResultEnum.Error, "Can't upload fix.");
+                return new(ResultEnum.Error, result.Message);
             }
         }
 
