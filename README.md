@@ -72,7 +72,7 @@ Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b>
 
 ### Links
 
-<img align="left" height="32" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://discord.gg/nUvX9fwJx">Superheater Discord server</a>
+<img align="left" height="32" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://discord.gg/8KjDS3EKV">Superheater Discord server</a>
 
 ### Credits
 
