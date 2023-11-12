@@ -46,7 +46,7 @@ namespace Common.Entities
     /// <summary>
     /// Fix entity
     /// </summary>
-    public sealed partial class FixEntity : ObservableObject
+    public sealed partial class FixEntity : IFixEntity
     {
         public FixEntity()
         {
@@ -69,22 +69,17 @@ namespace Common.Entities
         /// <summary>
         /// Fix title
         /// </summary>
-        [ObservableProperty]
-        private string _name;
+        public string Name { get; set; }
 
         /// <summary>
         /// Fix version
         /// </summary>
-        [ObservableProperty]
-        private int _version;
+        public int Version { get; set; }
 
         /// <summary>
         /// Installed fix entity
         /// </summary>
-        [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(IsInstalled))]
-        [NotifyPropertyChangedFor(nameof(HasNewerVersion))]
-        private InstalledFixEntity? _installedFix;
+        public InstalledFixEntity? InstalledFix { get; set; }
 
         /// <summary>
         /// Fix GUID
@@ -162,11 +157,13 @@ namespace Common.Entities
         /// <summary>
         /// Is fix installed
         /// </summary>
+        [XmlIgnore]
         public bool IsInstalled => InstalledFix is not null;
 
         /// <summary>
         /// Is there a newer version of the fix
         /// </summary>
+        [XmlIgnore]
         public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
 
         /// <summary>
@@ -174,7 +171,5 @@ namespace Common.Entities
         /// </summary>
         [XmlIgnore]
         public bool IsHidden { get; set; }
-
-        public override string ToString() => Name;
     }
 }
