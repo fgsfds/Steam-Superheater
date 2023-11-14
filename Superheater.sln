@@ -3,13 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33711.374
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater", "src\WPF\Superheater\Superheater.csproj", "{1D180688-35C6-4058-9ECA-466F3C256393}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater.Avalonia.Core", "src\Avalonia\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj", "{F168094A-678F-4CE3-8AFC-2483812FE8DC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Superheater.Desktop", "src\Avalonia\Superheater.Desktop\Superheater.Desktop.csproj", "{28228407-76F8-44DD-8FC9-395239090645}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WPF", "WPF", "{5F8C9EF1-29BD-4487-8BBB-A2CB626662CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Avalonia", "Avalonia", "{7D1B7241-B52F-41F4-8622-FF9018555C70}"
 EndProject
@@ -27,18 +23,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug|x64.ActiveCfg = Debug|x64
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug|x64.Build.0 = Debug|x64
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug-Linux|Any CPU.ActiveCfg = Debug-Linux|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug-Linux|Any CPU.Build.0 = Debug-Linux|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug-Linux|x64.ActiveCfg = Debug-Linux|x64
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Debug-Linux|x64.Build.0 = Debug-Linux|x64
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Release|x64.ActiveCfg = Release|x64
-		{1D180688-35C6-4058-9ECA-466F3C256393}.Release|x64.Build.0 = Release|x64
 		{F168094A-678F-4CE3-8AFC-2483812FE8DC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F168094A-678F-4CE3-8AFC-2483812FE8DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F168094A-678F-4CE3-8AFC-2483812FE8DC}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -92,7 +76,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{1D180688-35C6-4058-9ECA-466F3C256393} = {5F8C9EF1-29BD-4487-8BBB-A2CB626662CD}
 		{F168094A-678F-4CE3-8AFC-2483812FE8DC} = {7D1B7241-B52F-41F4-8622-FF9018555C70}
 		{28228407-76F8-44DD-8FC9-395239090645} = {7D1B7241-B52F-41F4-8622-FF9018555C70}
 	EndGlobalSection
