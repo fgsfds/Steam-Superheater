@@ -33,7 +33,7 @@ namespace Common.Helpers
         }
 
         /// <summary>
-        /// Add value the the registry to always run the game as admin
+        /// Add value to the registry to make the game always run as admin
         /// </summary>
         public static void SetRunAsAdmin(this GameEntity game)
         {
@@ -46,7 +46,7 @@ namespace Common.Helpers
         }
 
         /// <summary>
-        /// Pairs  of game id and game exe
+        /// Pairs of game id and game exe
         /// Only used for games that require admin rights
         /// </summary>
         private static readonly Dictionary<int, string> _gamesThatRequireAdmin = new()

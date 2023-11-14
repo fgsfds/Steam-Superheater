@@ -28,10 +28,7 @@ namespace Common.Providers
                 fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity>;
             }
 
-            if (fixesDatabase is null)
-            {
-                throw new NullReferenceException(nameof(fixesDatabase));
-            }
+            if (fixesDatabase is null) ThrowHelper.NullReferenceException(nameof(fixesDatabase));
 
             return fixesDatabase.ToImmutableList();
         }

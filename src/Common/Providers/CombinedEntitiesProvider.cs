@@ -1,5 +1,6 @@
 ﻿using Common.CombinedEntities;
 using Common.Entities;
+using Common.Helpers;
 using System.Collections.Immutable;
 
 namespace Common.Providers
@@ -14,8 +15,8 @@ namespace Common.Providers
             GamesProvider gamesProvider
             )
         {
-            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
-            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
+            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
         }
         /// <summary>
         /// Get list of fix entities with installed fixes

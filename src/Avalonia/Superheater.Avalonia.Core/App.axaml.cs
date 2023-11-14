@@ -9,6 +9,7 @@ using Superheater.Avalonia.Core.Windows;
 using Common.Config;
 using Common.DI;
 using Common.Enums;
+using Common.Helpers;
 
 namespace Superheater.Avalonia.Core;
 
@@ -37,8 +38,8 @@ public sealed partial class App : Application
             ThemeEnum.System => ThemeVariant.Default,
             ThemeEnum.Light => ThemeVariant.Light,
             ThemeEnum.Dark => ThemeVariant.Dark,
-            _ => throw new ArgumentOutOfRangeException(theme.ToString())
-        }; ;
+            _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+        };
 
         RequestedThemeVariant = themeEnum;
 

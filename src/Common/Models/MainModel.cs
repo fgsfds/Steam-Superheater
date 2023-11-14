@@ -18,11 +18,11 @@ namespace Common.Models
             FixUpdater fixUpdater
             )
         {
+            _config = configProvider?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
+            _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<FixInstaller>(nameof(fixInstaller));
+            _fixUpdater = fixUpdater ?? ThrowHelper.ArgumentNullException<FixUpdater>(nameof(fixUpdater));
             _combinedEntitiesList = new();
-            _config = configProvider?.Config ?? throw new NullReferenceException(nameof(configProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
-            _fixInstaller = fixInstaller ?? throw new NullReferenceException(nameof(fixInstaller));
-            _fixUpdater = fixUpdater ?? throw new NullReferenceException(nameof(fixUpdater));
         }
 
         private readonly ConfigEntity _config;
@@ -61,7 +61,7 @@ namespace Common.Models
                     {
                         //remove fixes with hidden tags
                         if (fix.Tags is not null &&
-                            fix.Tags.Any() &&
+                            fix.Tags.Count != 0 &&
                             fix.Tags.All(x => _config.HiddenTags.Contains(x)))
                         {
                             game.FixesList.Fixes.Remove(fix);
@@ -148,7 +148,7 @@ namespace Common.Models
                 return result.ToImmutableList();
             }
 
-            return result.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
+            return result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase)).ToImmutableList();
         }
 
         /// <summary>
@@ -234,7 +234,7 @@ namespace Common.Models
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
-            if (deps.Any() &&
+            if (deps.Count != 0 &&
                 deps.Where(x => !x.IsInstalled).Any())
             {
                 return true;
@@ -262,7 +262,7 @@ namespace Common.Models
         {
             var deps = GetDependentFixes(fixes, guid);
 
-            if (deps.Any() &&
+            if (deps.Count != 0 &&
                 deps.Where(x => x.IsInstalled).Any())
             {
                 return true;
@@ -316,7 +316,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Result UninstallFix(GameEntity game, FixEntity fix)
         {
-            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+            if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
             var backupRestoreFailed = false;
 
@@ -359,7 +359,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> UpdateFixAsync(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (fix.InstalledFix is null) throw new NullReferenceException(nameof(fix.InstalledFix));
+            if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
             InstalledFixEntity? installedFix;
             var backupRestoreFailed = false;

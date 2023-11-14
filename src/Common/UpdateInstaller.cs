@@ -25,7 +25,7 @@ namespace Common
 
             _updates.AddRange(await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
 
-            return _updates.Any();
+            return _updates.Count != 0;
         }
 
         /// <summary>

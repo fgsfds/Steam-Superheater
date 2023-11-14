@@ -30,7 +30,7 @@ namespace Common.Providers
 
                 if (!File.Exists(file))
                 {
-                    throw new FileNotFoundException(file);
+                    ThrowHelper.FileNotFoundException(file);
                 }
 
                 news = File.ReadAllText(file);
@@ -48,7 +48,7 @@ namespace Common.Providers
                 {
                     Logger.Log("Error while deserializing news...");
 
-                    return ImmutableList.Create<NewsEntity>();
+                    return [];
                 }
 
                 return list.OrderByDescending(x => x.Date).ToImmutableList();
@@ -59,7 +59,7 @@ namespace Common.Providers
         /// Get list of news from online repository
         /// </summary>
         /// <returns></returns>
-        private async Task<string> DownloadNewsXMLAsync()
+        private static async Task<string> DownloadNewsXMLAsync()
         {
             try
             {

@@ -13,8 +13,6 @@ namespace Common.FixTools
         /// <param name="fixEntity">Fix entity</param>
         public static void UninstallFix(GameEntity game, InstalledFixEntity fix, FixEntity fixEntity)
         {
-            if (fix is null) throw new NullReferenceException(nameof(fix));
-
             DeleteFiles(game.InstallDir, fix.FilesList);
 
             RestoreBackup(game.InstallDir, fix, fixEntity.Url);
@@ -36,7 +34,7 @@ namespace Common.FixTools
             {
                 var fullPath = Path.Combine(gameInstallDir, file);
 
-                if (!file.EndsWith(@"/") &&
+                if (!file.EndsWith('/') &&
                     File.Exists(fullPath))
                 {
                     var stream = File.Open(fullPath, FileMode.Open);
@@ -48,7 +46,7 @@ namespace Common.FixTools
             {
                 var fullPath = Path.Combine(gameInstallDir, file);
 
-                if (!file.EndsWith(@"/") &&
+                if (!file.EndsWith('/') &&
                     File.Exists(fullPath))
                 {
                     File.Delete(fullPath);
@@ -79,14 +77,9 @@ namespace Common.FixTools
             //TODO: Added for backwards compatibility, need to remove some time later
             else
             {
-                if (fixUrl is not null)
-                {
-                    backupFolder = Path.Combine(gameDir, Consts.BackupFolder, Path.GetFileNameWithoutExtension(fixUrl));
-                }
-                else
-                {
-                    throw new BackwardsCompatibilityException("Can't get backup folder.");
-                }
+                if (fixUrl is null) ThrowHelper.BackwardsCompatibilityException("Can't get backup folder.");
+
+                backupFolder = Path.Combine(gameDir, Consts.BackupFolder, Path.GetFileNameWithoutExtension(fixUrl));
             }
 
             if (!Directory.Exists(backupFolder))
@@ -117,8 +110,8 @@ namespace Common.FixTools
             var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
 
             if (Directory.Exists(backupFolder) &&
-                !Directory.GetFiles(backupFolder).Any() &&
-                !Directory.GetDirectories(backupFolder).Any())
+                Directory.GetFiles(backupFolder).Length == 0 &&
+                Directory.GetDirectories(backupFolder).Length == 0)
             {
                 Directory.Delete(backupFolder);
             }

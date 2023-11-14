@@ -5,6 +5,7 @@ using Common.Entities;
 using Superheater.Avalonia.Core.Helpers;
 using Common.Config;
 using System.Collections.Immutable;
+using Common.Helpers;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -12,7 +13,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
         {
-            _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
+            _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
 
             NewsTabHeader = "News";
             _newsModel = newsModel;

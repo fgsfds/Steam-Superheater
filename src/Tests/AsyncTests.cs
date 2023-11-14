@@ -31,7 +31,7 @@ namespace Tests
         [TestMethod]
         public void GetGameEntityFromAcfTest()
         {
-            var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
+            var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Static);
 
             Assert.IsNotNull(method);
 
