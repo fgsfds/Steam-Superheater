@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
 using Common.Entities;
+using Common.Helpers;
 using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.UserControls
@@ -34,7 +35,7 @@ namespace Superheater.Avalonia.Core.UserControls
 
             foreach (var item in splitDescription)
             {
-                if (item.StartsWith("*") && item.EndsWith("*"))
+                if (item.StartsWith('*') && item.EndsWith('*'))
                 {
                     var text = item[1..^1];
                     DescriptionBox.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap });
@@ -61,9 +62,13 @@ namespace Superheater.Avalonia.Core.UserControls
 
         private void UrlButtonClick(object? sender, RoutedEventArgs e)
         {
-            if (sender is not Button button) throw new Exception("Sender is not a button");
+            if (sender is not Button button)
+            {
+                ThrowHelper.Exception(nameof(sender));
+                return;
+            }
 
-            var url = button.Content?.ToString() ?? throw new NullReferenceException(nameof(button.Content));
+            var url = button.Content?.ToString() ?? ThrowHelper.ArgumentNullException<string>(nameof(button.Content));
 
             Process.Start(new ProcessStartInfo(url)
             {

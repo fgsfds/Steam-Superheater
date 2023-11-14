@@ -1,6 +1,5 @@
 ﻿using Common.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
-using System.Security.Cryptography;
 using System.Xml.Serialization;
 
 namespace Common.Entities

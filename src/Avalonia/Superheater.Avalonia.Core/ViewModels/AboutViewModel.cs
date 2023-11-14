@@ -11,7 +11,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         public AboutViewModel(UpdateInstaller updateInstaller)
         {
-            _updateInstaller = updateInstaller ?? throw new NullReferenceException(nameof(updateInstaller));
+            _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<UpdateInstaller>(nameof(updateInstaller));
 
             AboutTabHeader = "About";
             CheckForUpdatesButtonText = string.Empty;
@@ -116,11 +116,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                 {
                     FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
                     UseShellExecute = true
-                });
+                }); 
             }
             else
             {
-                throw new Exception("Can't identify platform");
+                ThrowHelper.PlatformNotSupportedException("Can't identify platform");
             }
 
 

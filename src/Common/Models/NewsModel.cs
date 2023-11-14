@@ -13,8 +13,8 @@ namespace Common.Models
             NewsProvider news
             )
         {
-            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
-            _newsProvider = news ?? throw new NullReferenceException(nameof(news));
+            _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
+            _newsProvider = news ?? ThrowHelper.ArgumentNullException<NewsProvider>(nameof(news));
         }
 
         private readonly ConfigEntity _config;

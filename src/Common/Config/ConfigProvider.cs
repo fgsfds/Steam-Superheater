@@ -42,10 +42,7 @@ namespace Common.Config
                 config = xmlSerializer.Deserialize(fs) as ConfigEntity;
             }
 
-            if (config is null)
-            {
-                throw new NullReferenceException(nameof(config));
-            }
+            if (config is null) ThrowHelper.NullReferenceException(nameof(config));
 
             return config;
         }

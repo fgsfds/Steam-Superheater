@@ -1,4 +1,5 @@
 ﻿using Common.Entities;
+using Common.Helpers;
 using System.Collections.Immutable;
 
 namespace Common.Providers
@@ -65,9 +66,9 @@ namespace Common.Providers
         /// Parse ACF file to GameEntity
         /// </summary>
         /// <param name="file">Path to ACF file</param>
-        private GameEntity? GetGameEntityFromAcf(string file)
+        private static GameEntity? GetGameEntityFromAcf(string file)
         {
-            var libraryFolder = Path.GetDirectoryName(file) ?? throw new Exception("Can't find install dir");
+            var libraryFolder = Path.GetDirectoryName(file) ?? ThrowHelper.Exception<string>("Can't find install dir");
 
             var lines = File.ReadAllLines(file);
 
@@ -101,8 +102,8 @@ namespace Common.Providers
 
             if (!string.IsNullOrEmpty(dir) && !string.IsNullOrEmpty(name))
             {
-                if (!dir.EndsWith("\\") &&
-                    !dir.EndsWith("/"))
+                if (!dir.EndsWith('\\') &&
+                    !dir.EndsWith('/'))
                 {
                     dir += Path.DirectorySeparatorChar;
                 }

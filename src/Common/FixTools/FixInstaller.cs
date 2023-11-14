@@ -13,7 +13,7 @@ namespace Common.FixTools
 
         public FixInstaller(ConfigProvider config)
         {
-            _configEntity = config.Config ?? throw new NullReferenceException(nameof(config));
+            _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
         }
 
         /// <summary>
@@ -133,10 +133,7 @@ namespace Common.FixTools
 
                     var dir = Path.GetDirectoryName(to);
 
-                    if (dir is null)
-                    {
-                        throw new NullReferenceException(nameof(dir));
-                    }
+                    if (dir is null) ThrowHelper.NullReferenceException(nameof(dir));
 
                     if (!Directory.Exists(dir))
                     {
@@ -296,8 +293,8 @@ namespace Common.FixTools
                         .Replace('/', Path.DirectorySeparatorChar);
 
                     //if it's a file, add it to the list
-                    if (!fullName.EndsWith("\\") &&
-                        !fullName.EndsWith("/"))
+                    if (!fullName.EndsWith('\\') &&
+                        !fullName.EndsWith('/'))
                     {
                         files.Add(fullName);
                     }

@@ -11,7 +11,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public MainWindowViewModel(ConfigProvider configProvider)
         {
-            _config = configProvider.Config ?? throw new NullReferenceException(nameof(configProvider));
+            _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
             _repositoryMessage = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;

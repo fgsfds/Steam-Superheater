@@ -1,4 +1,5 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Common.Config;
@@ -131,7 +132,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetDefaultTheme()
         {
-            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
+            if (Application.Current is null) ThrowHelper.NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
             _config.Theme = ThemeEnum.System;
@@ -140,7 +141,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetLightTheme()
         {
-            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
+            if (Application.Current is null) ThrowHelper.NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
             _config.Theme = ThemeEnum.Light;
@@ -149,7 +150,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetDarkTheme()
         {
-            if (Application.Current is null) throw new NullReferenceException(nameof(Application.Current));
+            if (Application.Current is null) ThrowHelper.NullReferenceException(nameof(Application.Current));
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
             _config.Theme = ThemeEnum.Dark;
@@ -168,7 +169,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var topLevel = Properties.TopLevel ?? throw new NullReferenceException("topLevel");
+            var topLevel = Properties.TopLevel ?? ThrowHelper.ArgumentNullException<TopLevel>(nameof(Properties.TopLevel));
 
             var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {

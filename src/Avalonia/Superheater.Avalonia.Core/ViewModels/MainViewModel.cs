@@ -1,3 +1,4 @@
+using Avalonia.Input.Platform;
 using Common;
 using Common.CombinedEntities;
 using Common.Config;
@@ -19,8 +20,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             ConfigProvider config
             )
         {
-            _mainModel = mainModel ?? throw new NullReferenceException(nameof(mainModel));
-            _config = config?.Config ?? throw new NullReferenceException(nameof(config));
+            _mainModel = mainModel ?? ThrowHelper.ArgumentNullException<MainModel>(nameof(mainModel));
+            _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
 
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
@@ -41,7 +42,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? ImmutableList.Create<FixEntity>() : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
+        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         public ImmutableList<string>? SelectedFixVariants => SelectedFix?.Variants?.ToImmutableList();
 
@@ -54,7 +55,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public static bool IsTagsComboboxVisible => true;
 
-        public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && SelectedFixVariants.Any();
+        public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && !SelectedFixVariants.IsEmpty;
 
         public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
 
@@ -70,7 +71,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool DoesSelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
 
-        public bool SelectedFixHasTags => SelectedFixTags is not null && SelectedFixTags.Any();
+        public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
 
 
         public float ProgressBarValue { get; private set; }
@@ -189,8 +190,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
         private void UninstallFix()
         {
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
 
             IsInProgress = true;
 
@@ -236,7 +237,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
         private void OpenGameFolder()
         {
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
 
             Process.Start(new ProcessStartInfo
             {
@@ -269,10 +270,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
         private void ApplyAdmin()
         {
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
-
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
             SelectedGame.Game.SetRunAsAdmin();
-
             OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
         }
         private bool ApplyAdminCanExecute() => DoesSelectedGameRequireAdmin;
@@ -284,7 +283,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
         private void OpenPCGamingWiki()
         {
-            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
 
             Process.Start(new ProcessStartInfo
             {
@@ -301,10 +300,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task UrlCopyToClipboardAsync()
         {
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedGame));
-
-            var clipboard = Properties.TopLevel.Clipboard ?? throw new Exception("Error while getting clipboard implementation");
-
+            var clipboard = Properties.TopLevel.Clipboard ?? ThrowHelper.ArgumentNullException<IClipboard>("Error while getting clipboard implementation");
             await clipboard.SetTextAsync(SelectedFixUrl);
         }
 
@@ -315,7 +311,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(LaunchGameCanExecute)))]
         private void LaunchGame()
         {
-            if (SelectedGame is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
 
             if (SelectedGame.IsGameInstalled)
             {
@@ -384,8 +380,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="isUpdate">Update fix</param>
         private async Task InstallUpdateFixAsync(bool isUpdate)
         {
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
-            if (SelectedFix is null) throw new NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
 
             _lockButtons = true;
 
@@ -540,7 +536,7 @@ Do you still want to install the fix?",
         /// <exception cref="NullReferenceException"></exception>
         private void RequireAdmin()
         {
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
 
             new PopupMessageViewModel(
                 "Admin privileges required",
@@ -559,8 +555,8 @@ Do you want to set it to always run as admin?",
         /// </summary>
         private void OpenConfigXml()
         {
-            if (SelectedFix?.ConfigFile is null) throw new NullReferenceException(nameof(SelectedGame));
-            if (SelectedGame?.Game is null) throw new NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            if (SelectedFix?.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(SelectedFix.ConfigFile));
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
 
@@ -590,7 +586,7 @@ Do you want to set it to always run as admin?",
 
             string? requires = null;
 
-            if (dependsOn.Any())
+            if (dependsOn.Count != 0)
             {
                 requires = "REQUIRES: ";
 
@@ -603,7 +599,7 @@ Do you want to set it to always run as admin?",
             {
                 var dependsBy = MainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
-                if (dependsBy.Any())
+                if (dependsBy.Count != 0)
                 {
                     required = "REQUIRED BY: ";
 

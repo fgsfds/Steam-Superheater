@@ -14,9 +14,9 @@ namespace Common.Models
             GamesProvider gamesProvider
             )
         {
-            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
-            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
+            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
 
             _fixesList = new();
             _availableGamesList = new();
@@ -60,7 +60,7 @@ namespace Common.Models
         {
             if (!string.IsNullOrEmpty(search))
             {
-                return _fixesList.Where(x => x.GameName.ToLower().Contains(search.ToLower())).ToImmutableList();
+                return _fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase)).ToImmutableList();
             }
             else
             {
@@ -146,14 +146,14 @@ namespace Common.Models
             if (fixEntity?.Dependencies is null ||
                 fixesList is null)
             {
-                return ImmutableList.Create<FixEntity>();
+                return [];
             }
 
             var allGameFixes = _fixesList.Where(x => x.GameId == fixesList.GameId).FirstOrDefault();
 
             if (allGameFixes is null)
             {
-                return ImmutableList.Create<FixEntity>();
+                return [];
             }
 
             var allGameDeps = fixEntity.Dependencies;
@@ -174,7 +174,7 @@ namespace Common.Models
             if (fixesList is null ||
                 fixEntity is null)
             {
-                return ImmutableList.Create<FixEntity>();
+                return [];
             }
 
             List<FixEntity> result = new();

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using Common.Helpers;
+using System.Runtime.InteropServices;
 
 namespace Common.Enums
 {
@@ -35,7 +36,7 @@ namespace Common.Enums
                 return OSEnum.Linux;
             }
 
-            throw new NotImplementedException();
+            return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using Common.Helpers;
+using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 namespace Common
@@ -63,7 +64,7 @@ namespace Common
             }
             else
             {
-                throw new Exception("Can't identify platform");
+                return ThrowHelper.PlatformNotSupportedException<string>("Can't identify platform");
             }
 
             if (!Directory.Exists(result))

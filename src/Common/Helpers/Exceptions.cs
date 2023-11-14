@@ -1,14 +1,14 @@
 ﻿namespace Common.Helpers
 {
-    public class HashCheckFailedException : Exception
+    public sealed class HashCheckFailedException : Exception
     {
-        public HashCheckFailedException(string message)
+        public HashCheckFailedException(string? message)
             : base(message) { }
     }
 
-    public class BackwardsCompatibilityException : Exception
+    public sealed class BackwardsCompatibilityException : Exception
     {
-        public BackwardsCompatibilityException(string message)
+        public BackwardsCompatibilityException(string? message)
             : base(message) { }
     }
 }

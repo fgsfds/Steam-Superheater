@@ -34,7 +34,7 @@ namespace Common.Providers
 
             if (_fixesCachedString is null)
             {
-                throw new Exception("Can't create fixes cache");
+                ThrowHelper.Exception("Can't create fixes cache");
             }
 
             using (StringReader fs = new(_fixesCachedString))
@@ -109,7 +109,7 @@ namespace Common.Providers
                     {
                         fix.FilesToDelete = fix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
-                        if (!fix.FilesToDelete.Any())
+                        if (fix.FilesToDelete.Count == 0)
                         {
                             fix.FilesToDelete = null;
                         }
@@ -119,7 +119,7 @@ namespace Common.Providers
                     {
                         fix.FilesToBackup = fix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
-                        if (!fix.FilesToBackup.Any())
+                        if (fix.FilesToBackup.Count == 0)
                         {
                             fix.FilesToBackup = null;
                         }
@@ -129,7 +129,7 @@ namespace Common.Providers
                     {
                         fix.Variants = fix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
-                        if (!fix.Variants.Any())
+                        if (fix.Variants.Count == 0)
                         {
                             fix.Variants = null;
                         }
@@ -139,7 +139,7 @@ namespace Common.Providers
                     {
                         fix.Tags = fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
 
-                        if (!fix.Tags.Any())
+                        if (fix.Tags.Count == 0)
                         {
                             fix.Tags = null;
                         }
@@ -154,7 +154,7 @@ namespace Common.Providers
                         }
                     }
 
-                    if (fix.Dependencies is not null && !fix.Dependencies.Any())
+                    if (fix.Dependencies is not null && fix.Dependencies.Count == 0)
                     {
                         fix.Dependencies = null;
                     }
@@ -205,7 +205,7 @@ namespace Common.Providers
         /// <exception cref="Exception">Http response error</exception>
         private static async Task<string> GetMD5(HttpClient client, FixEntity fix)
         {
-            if (fix.Url is null) throw new NullReferenceException(nameof(fix.Url));
+            if (fix.Url is null) ThrowHelper.NullReferenceException(nameof(fix.Url));
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
@@ -227,7 +227,7 @@ namespace Common.Providers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Error while getting response for {fix.Url}: {response.StatusCode}");
+                    return ThrowHelper.Exception<string>($"Error while getting response for {fix.Url}: {response.StatusCode}");
                 }
                 else if (response.Content.Headers.ContentMD5 is not null)
                 {
@@ -275,7 +275,7 @@ namespace Common.Providers
 
                 if (!File.Exists(file))
                 {
-                    throw new FileNotFoundException(file);
+                    ThrowHelper.FileNotFoundException(file);
                 }
 
                 _fixesCachedString = File.ReadAllText(file);
@@ -302,10 +302,7 @@ namespace Common.Providers
                 fixesDatabase = xmlSerializer.Deserialize(reader) as List<FixesList>;
             }
 
-            if (fixesDatabase is null)
-            {
-                throw new NullReferenceException(nameof(fixesDatabase));
-            }
+            if (fixesDatabase is null) ThrowHelper.NullReferenceException(nameof(fixesDatabase));
 
             return fixesDatabase;
         }

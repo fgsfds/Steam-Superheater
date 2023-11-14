@@ -37,7 +37,7 @@ namespace Common
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new ("Error while downloading a file: " + response.StatusCode.ToString());
+                    ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode.ToString());
                 }
 
                 if (hash is not null)
@@ -45,7 +45,7 @@ namespace Common
                     if (response.Content.Headers.ContentMD5 is not null &&
                         !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
                     {
-                        throw new HashCheckFailedException("File hash doesn't match");
+                        ThrowHelper.HashCheckFailedException("File hash doesn't match");
                     }
                 }
 
@@ -90,7 +90,7 @@ namespace Common
 
                             File.Delete(filePath);
 
-                            throw new HashCheckFailedException("File hash doesn't match");
+                            ThrowHelper.HashCheckFailedException("File hash doesn't match");
                         }
                     }
                 }
@@ -131,7 +131,8 @@ namespace Common
 
                         if (!Directory.Exists(Path.GetDirectoryName(fullName)))
                         {
-                            Directory.CreateDirectory(Path.GetDirectoryName(fullName) ?? throw new Exception());
+                            var dirName = Path.GetDirectoryName(fullName) ?? ThrowHelper.ArgumentNullException<string>(fullName);
+                            Directory.CreateDirectory(dirName);
                         }
 
                         if (Path.GetFileName(fullName).Length == 0)
