@@ -1,5 +1,6 @@
 using Common.DI;
 using Common.Entities;
+using Common.Entities.Fixes;
 using Common.FixTools;
 using Common.Helpers;
 using Common.Providers;
@@ -93,7 +94,7 @@ namespace Tests
                 "game folder"
             );
 
-            FixEntity fixEntity = new()
+            FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
                 Version = 1,
@@ -102,11 +103,11 @@ namespace Tests
                 MD5 = "badMD5"
             };
 
-            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+            var fixInstaller = BindingsManager.Instance.GetInstance<FixManager>();
 
             try
             {
-                await fixInstaller.InstallFix(gameEntity, fixEntity, null, false);
+                await fixInstaller.InstallFixAsync(gameEntity, fixEntity, null, false);
             }
             catch (HashCheckFailedException)
             {
@@ -130,7 +131,7 @@ namespace Tests
                 gameFolder
             );
 
-            FixEntity fixEntity = new()
+            FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
                 Version = 1,
@@ -139,18 +140,18 @@ namespace Tests
                 InstallFolder = "new folder"
             };
 
-            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+            var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
-            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, null, true);
+            var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { installedFix });
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
             Assert.IsTrue(exeExists);
 
             fixEntity.InstalledFix = installedFix;
 
-            FixUninstaller.UninstallFix(gameEntity, installedFix, fixEntity);
+            fixManager.UninstallFix(gameEntity, installedFix, fixEntity);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -176,7 +177,7 @@ namespace Tests
                 gameFolder
             );
 
-            FixEntity fixEntity = new()
+            FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
                 Version = 1,
@@ -188,11 +189,11 @@ namespace Tests
                 MD5 = fixArchiveMD5
             };
 
-            var fixInstaller = BindingsManager.Instance.GetInstance<FixInstaller>();
+            var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
-            var installedFix = await fixInstaller.InstallFix(gameEntity, fixEntity, variant, true);
+            var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, variant, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { installedFix });
 
             CheckNewFiles();
 
@@ -206,16 +207,16 @@ namespace Tests
                 fixEntity.InstalledFix = await UpdateFixAsync(gameEntity, fixEntity.InstalledFix);
             }
 
-            FixUninstaller.UninstallFix(gameEntity, fixEntity.InstalledFix, fixEntity);
+            fixManager.UninstallFix(gameEntity, fixEntity.InstalledFix, fixEntity);
 
             CheckOriginalFiles();
         }
 
-        private static async Task<InstalledFixEntity> UpdateFixAsync(GameEntity gameEntity, InstalledFixEntity installedFix)
+        private static async Task<IInstalledFixEntity> UpdateFixAsync(GameEntity gameEntity, IInstalledFixEntity installedFix)
         {
             File.Copy($"..\\Resources\\test_fix_v2.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix_v2.zip"), true);
 
-            FixEntity fixEntity = new()
+            FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
                 Version = 2,
@@ -227,11 +228,11 @@ namespace Tests
                 InstalledFix = installedFix
             };
 
-            var fixUpdater = BindingsManager.Instance.GetInstance<FixUpdater>();
+            var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
-            var newInstalledFix = await fixUpdater.UpdateFixAsync(gameEntity, fixEntity, null, true);
+            var newInstalledFix = await fixManager.UpdateFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<InstalledFixEntity>() { newInstalledFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { newInstalledFix });
 
             CheckUpdatedFiles();
 

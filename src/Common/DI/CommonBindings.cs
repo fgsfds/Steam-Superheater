@@ -1,5 +1,6 @@
 ﻿using SimpleInjector;
 using Common.FixTools;
+using Common.FixTools.FileFix;
 
 namespace Common.DI
 {
@@ -8,9 +9,12 @@ namespace Common.DI
         public static void Load(Container container)
         {
             container.Register<UpdateInstaller>(Lifestyle.Singleton);
-            container.Register<FixInstaller>(Lifestyle.Singleton);
-            container.Register<FixUpdater>(Lifestyle.Singleton);
-            //container.Register<FixUninstaller>(Lifestyle.Singleton);
+
+            container.Register<FileFixInstaller>(Lifestyle.Singleton);
+            container.Register<FileFixUpdater>(Lifestyle.Singleton);
+            container.Register<FileFixUninstaller>(Lifestyle.Singleton);
+
+            container.Register<FixManager>(Lifestyle.Singleton);
         }
     }
 }

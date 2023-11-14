@@ -1,20 +1,16 @@
 ﻿using Common.Config;
 using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
-namespace Common.FixTools
+namespace Common.FixTools.FileFix
 {
-    public sealed class FixInstaller
+    public sealed class FileFixInstaller(ConfigProvider config) : IFixInstaller
     {
-        private readonly ConfigEntity _configEntity;
-
-        public FixInstaller(ConfigProvider config)
-        {
-            _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-        }
+        private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
 
         /// <summary>
         /// Install fix: download ZIP, backup and delete files if needed, run post install events
@@ -24,20 +20,22 @@ namespace Common.FixTools
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<IInstalledFixEntity> InstallFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
         {
-            await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
+            if (fix is not FileFixEntity fileFix) { return ThrowHelper.ArgumentException<IInstalledFixEntity>(nameof(fix)); }
+
+            await CheckAndDownloadFileAsync(fileFix.Url, skipMD5Check ? null : fileFix.MD5);
 
             string backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
-            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-            BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
+            BackupFiles(fileFix.FilesToDelete, game.InstallDir, backupFolderPath, true);
+            BackupFiles(fileFix.FilesToBackup, game.InstallDir, backupFolderPath, false);
 
-            var filesInArchive = await BackupFilesAndUnpackZIP(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
+            var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fileFix.InstallFolder, fileFix.Url, backupFolderPath, variant);
 
-            RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
+            RunAfterInstall(game.InstallDir, fileFix.RunAfterInstall);
 
-            InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
+            FileInstalledFixEntity installedFix = new(game.Id, fileFix.Guid, fileFix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
 
             return installedFix;
         }
@@ -51,10 +49,7 @@ namespace Common.FixTools
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
         {
-            if (fixUrl is null)
-            {
-                return;
-            }
+            if (fixUrl is null) { return; }
 
             var zipFullPath = _configEntity.UseLocalRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
@@ -117,10 +112,7 @@ namespace Common.FixTools
             bool deleteOriginal
             )
         {
-            if (files is null || !files.Any())
-            {
-                return;
-            }
+            if (files is null || !files.Any()) { return; }
 
             foreach (var file in files)
             {
@@ -160,10 +152,7 @@ namespace Common.FixTools
         /// <returns>true if check is passed</returns>
         private static bool CheckFileMD5(string filePath, string? fixMD5)
         {
-            if (fixMD5 is null)
-            {
-                return true;
-            }
+            if (fixMD5 is null) { return true; }
 
             string? hash;
 
@@ -183,17 +172,14 @@ namespace Common.FixTools
             return true;
         }
 
-        private async Task<List<string>?> BackupFilesAndUnpackZIP(
-            string gameDir, 
-            string? fixInstallFolder, 
+        private async Task<List<string>?> BackupFilesAndUnpackZIPAsync(
+            string gameDir,
+            string? fixInstallFolder,
             string? fixUrl,
             string backupFolderPath,
             string? variant)
         {
-            if (fixUrl is null)
-            {
-                return null;
-            }
+            if (fixUrl is null) { return null; }
 
             var unpackToPath = fixInstallFolder is null
                 ? gameDir
@@ -224,14 +210,11 @@ namespace Common.FixTools
         /// <param name="gameInstallPath">Path to the game folder</param>
         /// <param name="runAfterInstall">File to open</param>
         private static void RunAfterInstall(
-            string gameInstallPath, 
+            string gameInstallPath,
             string? runAfterInstall
             )
         {
-            if (runAfterInstall is null)
-            {
-                return;
-            }
+            if (runAfterInstall is null) { return; }
 
             var path = Path.Combine(gameInstallPath, runAfterInstall);
 
@@ -272,9 +255,9 @@ namespace Common.FixTools
 
                     if (variant is not null)
                     {
-                        if (entry.FullName.StartsWith(variant + "/"))
+                        if (entry.FullName.StartsWith(variant + '/'))
                         {
-                            path = entry.FullName.Replace(variant + "/", string.Empty);
+                            path = entry.FullName.Replace(variant + '/', string.Empty);
 
                             if (string.IsNullOrEmpty(path))
                             {

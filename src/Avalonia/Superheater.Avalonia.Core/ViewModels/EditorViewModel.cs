@@ -1,6 +1,7 @@
 ﻿using Avalonia.Platform.Storage;
 using Common.Config;
 using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Enums;
 using Common.Helpers;
 using Common.Models;
@@ -42,42 +43,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
+        public ImmutableList<IFixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
 
-        public ImmutableList<FixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<IFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public ImmutableList<FixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
-
-
-        public string SelectedFixVariants
-        {
-            get => SelectedFix?.Variants is null ? string.Empty : string.Join(';', SelectedFix.Variants);
-            private set
-            {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                SelectedFix.Variants = value.Split(';').Select(x => x.Trim()).ToList();
-            }
-        }
-
-        public string SelectedFixFilesToDelete
-        {
-            get => SelectedFix?.FilesToDelete is null ? string.Empty : string.Join(';', SelectedFix.FilesToDelete);
-            private set
-            {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                SelectedFix.FilesToDelete = value.Split(';').Select(x => x.Trim()).ToList();
-            }
-        }
-
-        public string SelectedFixFilesToBackup
-        {
-            get => SelectedFix?.FilesToBackup is null ? string.Empty : string.Join(';', SelectedFix.FilesToBackup);
-            private set
-            {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                SelectedFix.FilesToBackup = value.Split(';').Select(x => x.Trim()).ToList();
-            }
-        }
+        public ImmutableList<IFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
         public string SelectedFixTags
         {
@@ -85,42 +55,82 @@ namespace Superheater.Avalonia.Core.ViewModels
             private set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+
                 SelectedFix.Tags = value.Split(';').Select(x => x.Trim()).ToList();
+            }
+        }
+
+
+        public string SelectedFixVariants
+        {
+            get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? string.Join(';', fileFix.Variants) : string.Empty;
+            private set
+            {
+                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+
+                fileFix.Variants = value.Split(';').Select(x => x.Trim()).ToList();
+            }
+        }
+
+        public string SelectedFixFilesToDelete
+        {
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null ? string.Join(';', fileFix.FilesToDelete) : string.Empty;
+            private set
+            {
+                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+
+                fileFix.FilesToDelete = value.Split(';').Select(x => x.Trim()).ToList();
+            }
+        }
+
+        public string SelectedFixFilesToBackup
+        {
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null ? string.Join(';', fileFix.FilesToBackup) : string.Empty;
+            private set
+            {
+                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+
+                fileFix.FilesToBackup = value.Split(';').Select(x => x.Trim()).ToList();
             }
         }
 
         public string SelectedFixUrl
         {
-            get => SelectedFix?.Url ?? string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
             private set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 if (string.IsNullOrEmpty(value))
                 {
-                    SelectedFix.Url = null;
+                    fileFix.Url = null;
                 }
                 else
                 {
-                    SelectedFix.Url = value;
+                    fileFix.Url = value;
                 }
             }
         }
 
         public string SelectedFixMD5
         {
-            get => SelectedFix?.MD5 ?? string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null ? fileFix.MD5 : string.Empty;
             set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    SelectedFix.MD5 = null;
+                    fileFix.MD5 = null;
                 }
                 else
                 {
-                    SelectedFix.MD5 = value;
+                    fileFix.MD5 = value;
                 }
             }
         }
@@ -192,7 +202,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
-        private FixEntity? _selectedFix;
+        private IFixEntity? _selectedFix;
 
         [ObservableProperty]
         private int _selectedFixIndex;
@@ -423,10 +433,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// Open fix file picker
         /// </summary>
-        [RelayCommand]
+        [RelayCommand(CanExecute = nameof(OpenFilePickerCanExecute))]
         private async Task OpenFilePickerAsync()
         {
             if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedFix is not FileFixEntity fileFix) { return; }
 
             var topLevel = Properties.TopLevel;
 
@@ -443,14 +454,15 @@ namespace Superheater.Avalonia.Core.ViewModels
                 FileTypeFilter = new List<FilePickerFileType>() { zipType }
             });
 
-            if (!files.Any())
+            if (files.Count == 0)
             {
                 return;
             }
 
-            SelectedFix.Url = files[0].Path.LocalPath.ToString();
+            fileFix.Url = files[0].Path.LocalPath.ToString();
             OnPropertyChanged(nameof(SelectedFixUrl));
         }
+        private bool OpenFilePickerCanExecute() => SelectedFix is FileFixEntity;
 
         #endregion Relay Commands
 

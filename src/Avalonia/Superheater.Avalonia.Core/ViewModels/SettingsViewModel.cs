@@ -177,7 +177,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 AllowMultiple = false
             });
 
-            if (!files.Any())
+            if (files.Count == 0)
             {
                 return;
             }

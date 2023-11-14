@@ -1,19 +1,20 @@
-﻿using Common.Enums;
+﻿
+using Common.Enums;
 
-namespace Common.Entities
+namespace Common.Entities.Fixes
 {
     public interface IFixEntity
     {
-        string Name { get; set; }
         List<Guid>? Dependencies { get; set; }
         string? Description { get; set; }
         Guid Guid { get; init; }
         bool HasNewerVersion { get; }
+        IInstalledFixEntity? InstalledFix { get; set; }
         bool IsHidden { get; set; }
         bool IsInstalled { get; }
-        OSEnum SupportedOSes { get; set; }
+        string Name { get; set; }
         List<string>? Tags { get; set; }
-
-        string? ToString() => Name;
+        int Version { get; set; }
+        OSEnum SupportedOSes { get; set; }
     }
 }

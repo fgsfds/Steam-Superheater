@@ -1,6 +1,6 @@
 ﻿using Common.CombinedEntities;
 using Common.Entities;
-using Common.Helpers;
+using Common.Entities.Fixes;
 using System.Collections.Immutable;
 
 namespace Common.Providers
@@ -15,8 +15,8 @@ namespace Common.Providers
             GamesProvider gamesProvider
             )
         {
-            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
-            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
         }
         /// <summary>
         /// Get list of fix entities with installed fixes
@@ -51,7 +51,7 @@ namespace Common.Providers
         {
             ImmutableList<FixesList> fixes;
             ImmutableList<GameEntity> games;
-            ImmutableList<InstalledFixEntity> installed;
+            ImmutableList<IInstalledFixEntity> installed;
 
             if (useCache)
             {
@@ -86,9 +86,9 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedList">List of combined entities</param>
         /// <returns>List of installed fixes</returns>
-        public static List<InstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
+        public static List<IInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
-            List<InstalledFixEntity> result = new();
+            List<IInstalledFixEntity> result = new();
 
             foreach (var combined in combinedList)
             {

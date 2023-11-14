@@ -1,5 +1,5 @@
 ﻿using Common.Config;
-using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
@@ -34,7 +34,7 @@ namespace Common.Providers
 
             if (_fixesCachedString is null)
             {
-                ThrowHelper.Exception("Can't create fixes cache");
+                throw new Exception("Can't create fixes cache");
             }
 
             using (StringReader fs = new(_fixesCachedString))
@@ -85,56 +85,6 @@ namespace Common.Providers
             {
                 foreach (var fix in fixes.Fixes)
                 {
-                    if (!string.IsNullOrEmpty(fix.Url))
-                    {
-                        if (!fix.Url.StartsWith("http"))
-                        {
-                            fix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fix.Url;
-                        }
-
-                        if (fix.MD5 is null)
-                        {
-                            try
-                            {
-                                fix.MD5 = await GetMD5(client, fix);
-                            }
-                            catch (Exception e)
-                            {
-                                return new Result(ResultEnum.ConnectionError, e.Message);
-                            }
-                        }
-                    }
-
-                    if (fix.FilesToDelete is not null)
-                    {
-                        fix.FilesToDelete = fix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fix.FilesToDelete.Count == 0)
-                        {
-                            fix.FilesToDelete = null;
-                        }
-                    }
-
-                    if (fix.FilesToBackup is not null)
-                    {
-                        fix.FilesToBackup = fix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fix.FilesToBackup.Count == 0)
-                        {
-                            fix.FilesToBackup = null;
-                        }
-                    }
-
-                    if (fix.Variants is not null)
-                    {
-                        fix.Variants = fix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fix.Variants.Count == 0)
-                        {
-                            fix.Variants = null;
-                        }
-                    }
-
                     if (fix.Tags is not null)
                     {
                         fix.Tags = fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
@@ -159,19 +109,74 @@ namespace Common.Providers
                         fix.Dependencies = null;
                     }
 
-                    if (fix.Url is not null && string.IsNullOrEmpty(fix.Url))
+                    if (fix is not FileFixEntity fileFix)
                     {
-                        fix.Url = null;
+                        continue;
                     }
 
-                    if (fix.Description is not null && string.IsNullOrEmpty(fix.Description))
+                    if (!string.IsNullOrEmpty(fileFix.Url))
                     {
-                        fix.Description = null;
+                        if (!fileFix.Url.StartsWith("http"))
+                        {
+                            fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
+                        }
+
+                        if (fileFix.MD5 is null)
+                        {
+                            try
+                            {
+                                fileFix.MD5 = await GetMD5(client, fileFix);
+                            }
+                            catch (Exception e)
+                            {
+                                return new Result(ResultEnum.ConnectionError, e.Message);
+                            }
+                        }
                     }
 
-                    if (fix.InstallFolder is not null && string.IsNullOrEmpty(fix.InstallFolder))
+                    if (fileFix.FilesToDelete is not null)
                     {
-                        fix.InstallFolder = null;
+                        fileFix.FilesToDelete = fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (fileFix.FilesToDelete.Count == 0)
+                        {
+                            fileFix.FilesToDelete = null;
+                        }
+                    }
+
+                    if (fileFix.FilesToBackup is not null)
+                    {
+                        fileFix.FilesToBackup = fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (fileFix.FilesToBackup.Count == 0)
+                        {
+                            fileFix.FilesToBackup = null;
+                        }
+                    }
+
+                    if (fileFix.Variants is not null)
+                    {
+                        fileFix.Variants = fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                        if (fileFix.Variants.Count == 0)
+                        {
+                            fileFix.Variants = null;
+                        }
+                    }
+
+                    if (fileFix.Url is not null && string.IsNullOrEmpty(fileFix.Url))
+                    {
+                        fileFix.Url = null;
+                    }
+
+                    if (fileFix.Description is not null && string.IsNullOrEmpty(fileFix.Description))
+                    {
+                        fileFix.Description = null;
+                    }
+
+                    if (fileFix.InstallFolder is not null && string.IsNullOrEmpty(fileFix.InstallFolder))
+                    {
+                        fileFix.InstallFolder = null;
                     }
                 }
             }
@@ -203,9 +208,9 @@ namespace Common.Providers
         /// <param name="fix">Fix entity</param>
         /// <returns>MD5 of the fix file</returns>
         /// <exception cref="Exception">Http response error</exception>
-        private static async Task<string> GetMD5(HttpClient client, FixEntity fix)
+        private static async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
         {
-            if (fix.Url is null) ThrowHelper.NullReferenceException(nameof(fix.Url));
+            if (fix.Url is null) throw new NullReferenceException(nameof(fix.Url));
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
@@ -227,7 +232,7 @@ namespace Common.Providers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    return ThrowHelper.Exception<string>($"Error while getting response for {fix.Url}: {response.StatusCode}");
+                    throw new Exception($"Error while getting response for {fix.Url}: {response.StatusCode}");
                 }
                 else if (response.Content.Headers.ContentMD5 is not null)
                 {
@@ -275,7 +280,7 @@ namespace Common.Providers
 
                 if (!File.Exists(file))
                 {
-                    ThrowHelper.FileNotFoundException(file);
+                    throw new FileNotFoundException(file);
                 }
 
                 _fixesCachedString = File.ReadAllText(file);
@@ -302,7 +307,10 @@ namespace Common.Providers
                 fixesDatabase = xmlSerializer.Deserialize(reader) as List<FixesList>;
             }
 
-            if (fixesDatabase is null) ThrowHelper.NullReferenceException(nameof(fixesDatabase));
+            if (fixesDatabase is null)
+            {
+                throw new NullReferenceException(nameof(fixesDatabase));
+            }
 
             return fixesDatabase;
         }

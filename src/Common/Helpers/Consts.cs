@@ -4,7 +4,7 @@
     {
         public const string ConfigFile = "config.xml";
 
-        public const string FixesFile = "fixes_v2.xml";
+        public const string FixesFile = "fixes_v3.xml";
 
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 

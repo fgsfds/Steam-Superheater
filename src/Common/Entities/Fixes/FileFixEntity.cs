@@ -1,54 +1,14 @@
 ﻿using Common.Enums;
-using CommunityToolkit.Mvvm.ComponentModel;
 using System.Xml.Serialization;
 
-namespace Common.Entities
+namespace Common.Entities.Fixes
 {
-    /// <summary>
-    /// Entity containing game information and a list of fixes for it
-    /// </summary>
-    public sealed class FixesList
-    {
-        public FixesList(
-            int gameId,
-            string gameName,
-            List<FixEntity> fixes
-            )
-        {
-            GameId = gameId;
-            GameName = gameName;
-            Fixes = fixes;
-        }
-
-        /// <summary>
-        /// Steam ID of the game
-        /// </summary>
-        public int GameId { get; init; }
-
-        /// <summary>
-        /// Game title
-        /// </summary>
-        public string GameName { get; init; }
-
-        /// <summary>
-        /// List of fixes
-        /// </summary>
-        public List<FixEntity> Fixes { get; init; }
-
-        /// <summary>
-        /// Serializer constructor
-        /// </summary>
-        private FixesList()
-        {
-        }
-    }
-
     /// <summary>
     /// Fix entity
     /// </summary>
-    public sealed partial class FixEntity : IFixEntity
+    public sealed partial class FileFixEntity : IFixEntity
     {
-        public FixEntity()
+        public FileFixEntity()
         {
             Name = string.Empty;
             Version = 1;
@@ -65,21 +25,15 @@ namespace Common.Entities
             Tags = null;
             MD5 = null;
         }
+        /// <summary>
+        /// List of fixes GUIDs that are required for this fix
+        /// </summary>
+        public List<Guid>? Dependencies { get; set; }
 
         /// <summary>
-        /// Fix title
+        /// Fix description
         /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Fix version
-        /// </summary>
-        public int Version { get; set; }
-
-        /// <summary>
-        /// Installed fix entity
-        /// </summary>
-        public InstalledFixEntity? InstalledFix { get; set; }
+        public string? Description { get; set; }
 
         /// <summary>
         /// Fix GUID
@@ -87,14 +41,48 @@ namespace Common.Entities
         public Guid Guid { get; init; }
 
         /// <summary>
+        /// Is there a newer version of the fix
+        /// </summary>
+        [XmlIgnore]
+        public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
+
+        /// <summary>
+        /// Installed fix entity
+        /// </summary>
+        public IInstalledFixEntity? InstalledFix { get; set; }
+
+        /// <summary>
+        /// Is this fix hidden from the list
+        /// </summary>
+        [XmlIgnore]
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Is fix installed
+        /// </summary>
+        [XmlIgnore]
+        public bool IsInstalled => InstalledFix is not null;
+
+        /// <summary>
+        /// Fix title
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// List of files that will be backed up before the fix is installed, and the original file will remain
+        /// Paths are relative to the game folder, separated by ;
+        /// </summary>
+        public List<string>? Tags { get; set; }
+
+        /// <summary>
+        /// Fix version
+        /// </summary>
+        public int Version { get; set; }
+
+        /// <summary>
         /// Download URL
         /// </summary>
         public string? Url { get; set; }
-
-        /// <summary>
-        /// Fix description
-        /// </summary>
-        public string? Description { get; set; }
 
         /// <summary>
         /// List of fix's variants
@@ -128,21 +116,10 @@ namespace Common.Entities
         public List<string>? FilesToBackup { get; set; }
 
         /// <summary>
-        /// List of files that will be backed up before the fix is installed, and the original file will remain
-        /// Paths are relative to the game folder, separated by ;
-        /// </summary>
-        public List<string>? Tags { get; set; }
-
-        /// <summary>
         /// File that will be run after the fix is installed
         /// Path is relative to the game folder
         /// </summary>
         public string? RunAfterInstall { get; set; }
-
-        /// <summary>
-        /// List of fixes GUIDs that are required for this fix
-        /// </summary>
-        public List<Guid>? Dependencies { get; set; }
 
         /// <summary>
         /// Supported OSes
@@ -153,23 +130,5 @@ namespace Common.Entities
         /// Zip archive MD5
         /// </summary>
         public string? MD5 { get; set; }
-
-        /// <summary>
-        /// Is fix installed
-        /// </summary>
-        [XmlIgnore]
-        public bool IsInstalled => InstalledFix is not null;
-
-        /// <summary>
-        /// Is there a newer version of the fix
-        /// </summary>
-        [XmlIgnore]
-        public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
-
-        /// <summary>
-        /// Is this fix hidden from the list
-        /// </summary>
-        [XmlIgnore]
-        public bool IsHidden { get; set; }
     }
 }

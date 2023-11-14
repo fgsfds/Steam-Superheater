@@ -1,5 +1,5 @@
 ﻿using Common.CombinedEntities;
-using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
@@ -12,23 +12,26 @@ namespace Common.Providers
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public static ImmutableList<InstalledFixEntity> GetInstalledFixes()
+        public static ImmutableList<IInstalledFixEntity> GetInstalledFixes()
         {
             if (!File.Exists(Consts.InstalledFile))
             {
                 MakeEmptyFixesXml();
             }
 
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
+            XmlSerializer xmlSerializer = new(typeof(List<FileInstalledFixEntity>));
 
-            List<InstalledFixEntity>? fixesDatabase;
+            List<IInstalledFixEntity>? fixesDatabase;
 
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity>;
+                fixesDatabase = xmlSerializer.Deserialize(fs) as List<IInstalledFixEntity>;
             }
 
-            if (fixesDatabase is null) ThrowHelper.NullReferenceException(nameof(fixesDatabase));
+            if (fixesDatabase is null)
+            {
+                throw new NullReferenceException(nameof(fixesDatabase));
+            }
 
             return fixesDatabase.ToImmutableList();
         }
@@ -52,9 +55,9 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>result, error message</returns>
-        public static Result SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        public static Result SaveInstalledFixes(List<IInstalledFixEntity> fixesList)
         {
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
+            XmlSerializer xmlSerializer = new(typeof(List<FileInstalledFixEntity>));
 
             try
             {
@@ -72,6 +75,6 @@ namespace Common.Providers
         /// <summary>
         /// Create empty installed fixes XML
         /// </summary>
-        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<InstalledFixEntity>());
+        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<IInstalledFixEntity>());
     }
 }

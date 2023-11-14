@@ -1,4 +1,5 @@
 ﻿using Common.Entities;
+using Common.Entities.Fixes;
 
 namespace Common.CombinedEntities
 {
@@ -10,7 +11,7 @@ namespace Common.CombinedEntities
         public FixFirstCombinedEntity(
             FixesList fixesList,
             GameEntity? game,
-            IEnumerable<InstalledFixEntity>? installedFixes
+            IEnumerable<IInstalledFixEntity>? installedFixes
             )
         {
             FixesList = fixesList;

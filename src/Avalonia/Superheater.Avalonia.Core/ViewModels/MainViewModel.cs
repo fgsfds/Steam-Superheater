@@ -3,6 +3,7 @@ using Common;
 using Common.CombinedEntities;
 using Common.Config;
 using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -42,13 +43,21 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
-
-        public ImmutableList<string>? SelectedFixVariants => SelectedFix?.Variants?.ToImmutableList();
+        public ImmutableList<IFixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
 
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
+
+        public ImmutableList<string>? SelectedFixVariants
+        {
+            get
+            {
+                if (SelectedFix is not FileFixEntity fileFix) { return null; }
+
+                return fileFix.Variants?.ToImmutableList();
+            }
+        }
 
 
         public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
@@ -106,7 +115,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
-        private FixEntity? _selectedFix;
+        private IFixEntity? _selectedFix;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -261,7 +270,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
-        private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
+        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
 
 
         /// <summary>
@@ -443,7 +452,8 @@ Do you still want to install the fix?",
                 return;
             }
 
-            if (SelectedFix.ConfigFile is not null &&
+            if (SelectedFix is FileFixEntity fileFix &&
+                fileFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
                 new PopupMessageViewModel(
@@ -555,12 +565,13 @@ Do you want to set it to always run as admin?",
         /// </summary>
         private void OpenConfigXml()
         {
+            if (SelectedFix is not FileFixEntity fileFix) { return; }
             if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            if (SelectedFix?.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(SelectedFix.ConfigFile));
+            if (fileFix.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(fileFix.ConfigFile));
 
-            var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
+            var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
 
-            var workingDir = SelectedFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
+            var workingDir = fileFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
 
             Process.Start(new ProcessStartInfo
             {

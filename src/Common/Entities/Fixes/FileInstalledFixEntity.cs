@@ -1,8 +1,8 @@
-﻿namespace Common.Entities
+﻿namespace Common.Entities.Fixes
 {
-    public sealed class InstalledFixEntity
+    public sealed class FileInstalledFixEntity : IInstalledFixEntity
     {
-        public InstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string>? list)
+        public FileInstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string>? list)
         {
             GameId = id;
             Guid = guid;
@@ -39,7 +39,7 @@
         /// <summary>
         /// Serializer constructor
         /// </summary>
-        private InstalledFixEntity()
+        private FileInstalledFixEntity()
         {
         }
     }

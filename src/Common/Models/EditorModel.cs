@@ -1,4 +1,5 @@
 ﻿using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -14,9 +15,9 @@ namespace Common.Models
             GamesProvider gamesProvider
             )
         {
-            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
-            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
+            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
 
             _fixesList = new();
             _availableGamesList = new();
@@ -81,7 +82,7 @@ namespace Common.Models
         /// <returns>New fixes list</returns>
         public FixesList AddNewGame(GameEntity game)
         {
-            var newFix = new FixesList(game.Id, game.Name, new() { new() });
+            var newFix = new FixesList(game.Id, game.Name, []);
 
             _fixesList.Add(newFix);
             var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
@@ -98,9 +99,9 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <returns>New fix entity</returns>
-        public static FixEntity AddNewFix(FixesList game)
+        public static FileFixEntity AddNewFix(FixesList game)
         {
-            FixEntity newFix = new();
+            FileFixEntity newFix = new();
 
             game.Fixes.Add(newFix);
 
@@ -112,7 +113,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static void RemoveFix(FixesList game, FixEntity fix)
+        public static void RemoveFix(FixesList game, IFixEntity fix)
         {
             game.Fixes.Remove(fix);
 
@@ -141,7 +142,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of dependencies</returns>
-        public ImmutableList<FixEntity> GetDependenciesForAFix(FixesList? fixesList, FixEntity? fixEntity)
+        public ImmutableList<IFixEntity> GetDependenciesForAFix(FixesList? fixesList, IFixEntity? fixEntity)
         {
             if (fixEntity?.Dependencies is null ||
                 fixesList is null)
@@ -169,7 +170,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of fixes</returns>
-        public ImmutableList<FixEntity> GetListOfAvailableDependencies(FixesList? fixesList, FixEntity? fixEntity)
+        public ImmutableList<IFixEntity> GetListOfAvailableDependencies(FixesList? fixesList, IFixEntity? fixEntity)
         {
             if (fixesList is null ||
                 fixEntity is null)
@@ -177,7 +178,7 @@ namespace Common.Models
                 return [];
             }
 
-            List<FixEntity> result = new();
+            List<IFixEntity> result = new();
 
             var fixDependencies = GetDependenciesForAFix(fixesList, fixEntity);
 
@@ -205,26 +206,28 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public static Result UploadFix(FixesList fixesList, FixEntity fix)
+        public static Result UploadFix(FixesList fixesList, IFixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
                 fixesList.GameName,
-                new List<FixEntity>() { fix }
+                new List<IFixEntity>() { fix }
                 );
 
             var guid = newFix.Fixes.First().Guid;
 
             string? fileToUpload = null;
 
-            var url = newFix.Fixes[0].Url;
-
-            if (!string.IsNullOrEmpty(url) &&
-                !url.StartsWith("http"))
+            if (newFix.Fixes[0] is FileFixEntity fileFix)
             {
-                fileToUpload = fix.Url;
+                var url = fileFix.Url;
 
-                newFix.Fixes[0].Url = Path.GetFileName(fileToUpload);
+                if (!string.IsNullOrEmpty(url) &&
+                    !url.StartsWith("http"))
+                {
+                    fileToUpload = fileFix.Url;
+                    fileFix.Url = Path.GetFileName(fileToUpload);
+                }
             }
 
             XmlSerializer xmlSerializer = new(typeof(FixesList));
@@ -265,7 +268,7 @@ Thank you.");
         /// <summary>
         /// Check if the file can be uploaded
         /// </summary>
-        public async Task<Result> CheckFixBeforeUploadAsync(FixEntity fix)
+        public async Task<Result> CheckFixBeforeUploadAsync(IFixEntity fix)
         {
             if (string.IsNullOrEmpty(fix?.Name) ||
                 fix.Version < 1)
@@ -273,15 +276,16 @@ Thank you.");
                 return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
             }
 
-            if (!string.IsNullOrEmpty(fix.Url) &&
-                !fix.Url.StartsWith("http"))
+            if (fix is FileFixEntity fileFix &&
+                !string.IsNullOrEmpty(fileFix.Url) &&
+                !fileFix.Url.StartsWith("http"))
             {
-                if (!File.Exists(fix.Url))
+                if (!File.Exists(fileFix.Url))
                 {
-                    return new(ResultEnum.Error, $"{fix.Url} doesn't exist.");
+                    return new(ResultEnum.Error, $"{fileFix.Url} doesn't exist.");
                 }
 
-                else if (new FileInfo(fix.Url).Length > 1e+8)
+                else if (new FileInfo(fileFix.Url).Length > 1e+8)
                 {
                     return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
@@ -301,21 +305,21 @@ Thank you.");
             return new(ResultEnum.Ok, string.Empty);
         }
 
-        public static void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void AddDependencyForFix(IFixEntity addTo, IFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Add(dependency.Guid);
         }
 
-        public static void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void RemoveDependencyForFix(IFixEntity addTo, IFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Remove(dependency.Guid);
         }
 
-        public static void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
+        public static void MoveFixUp(List<IFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 
-        public static void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+        public static void MoveFixDown(List<IFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
 
         /// <summary>
         /// Get sorted list of fixes

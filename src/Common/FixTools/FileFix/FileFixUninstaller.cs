@@ -1,21 +1,25 @@
 ﻿using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 
-namespace Common.FixTools
+namespace Common.FixTools.FileFix
 {
-    public static class FixUninstaller
+    public sealed class FileFixUninstaller : IFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="fix">Installed fix entity</param>
+        /// <param name="installedFix">Installed fix entity</param>
         /// <param name="fixEntity">Fix entity</param>
-        public static void UninstallFix(GameEntity game, InstalledFixEntity fix, FixEntity fixEntity)
+        public void UninstallFix(GameEntity game, IInstalledFixEntity installedFix, IFixEntity fixEntity)
         {
-            DeleteFiles(game.InstallDir, fix.FilesList);
+            if (installedFix is not FileInstalledFixEntity fileInstalledFix) { ThrowHelper.ArgumentException(nameof(installedFix)); return; }
+            if (fixEntity is not FileFixEntity fileFixEntity) { ThrowHelper.ArgumentException(nameof(fixEntity)); return; }
 
-            RestoreBackup(game.InstallDir, fix, fixEntity.Url);
+            DeleteFiles(game.InstallDir, fileInstalledFix.FilesList);
+
+            RestoreBackup(game.InstallDir, fileInstalledFix, fileFixEntity.Url);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
         }
@@ -65,7 +69,7 @@ namespace Common.FixTools
         /// <param name="fix">Installed fix</param>
         private static void RestoreBackup(
             string gameDir,
-            InstalledFixEntity fix,
+            FileInstalledFixEntity fix,
             string? fixUrl)
         {
             string backupFolder;
