@@ -1,5 +1,6 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.FixTools.FileFix;
 using Common.Helpers;
 

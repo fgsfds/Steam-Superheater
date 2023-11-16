@@ -1,5 +1,6 @@
 ﻿using Common.CombinedEntities;
 using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
@@ -19,7 +20,23 @@ namespace Common.Providers
                 MakeEmptyFixesXml();
             }
 
-            XmlSerializer xmlSerializer = new(typeof(List<FileInstalledFixEntity>));
+            List<IInstalledFixEntity>? fixesDatabase;
+
+            try
+            {
+                fixesDatabase = GetNewInstalledFixes();
+            }
+            catch
+            {
+                fixesDatabase = GetOldInstalledFixes();
+            }
+
+            return fixesDatabase.ToImmutableList();
+        }
+
+        private static List<IInstalledFixEntity> GetNewInstalledFixes()
+        {
+            XmlSerializer xmlSerializer = new(typeof(List<IInstalledFixEntity>));
 
             List<IInstalledFixEntity>? fixesDatabase;
 
@@ -33,7 +50,27 @@ namespace Common.Providers
                 throw new NullReferenceException(nameof(fixesDatabase));
             }
 
-            return fixesDatabase.ToImmutableList();
+            return fixesDatabase;
+        }
+
+        [Obsolete("Remove in version 1.0")]
+        private static List<IInstalledFixEntity> GetOldInstalledFixes()
+        {
+            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
+
+            List<InstalledFixEntity_Obsolete>? fixesDatabase;
+
+            using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
+            {
+                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
+            }
+
+            if (fixesDatabase is null)
+            {
+                throw new NullReferenceException(nameof(fixesDatabase));
+            }
+
+            return fixesDatabase.ConvertAll(x => (IInstalledFixEntity)x);
         }
 
         /// <summary>

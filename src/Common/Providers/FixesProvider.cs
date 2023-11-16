@@ -1,5 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
@@ -7,16 +9,11 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class FixesProvider
+    public sealed class FixesProvider(ConfigProvider config)
     {
         private string? _fixesCachedString;
-        private readonly ConfigEntity _config;
+        private readonly ConfigEntity _config = config.Config;
         private readonly SemaphoreSlim _locker = new(1, 1);
-
-        public FixesProvider(ConfigProvider config)
-        {
-            _config = config.Config;
-        }
 
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
@@ -298,21 +295,37 @@ namespace Common.Providers
         /// <returns>List of fixes</returns>
         private static List<FixesList> DeserializeCachedString(string fixes)
         {
-            List<FixesList>? fixesDatabase;
+            List<FixesListXml>? fixesListXml;
+            List<FixesList>? fixesListResult = new();
 
-            XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
+            XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
             using (TextReader reader = new StringReader(fixes))
             {
-                fixesDatabase = xmlSerializer.Deserialize(reader) as List<FixesList>;
+                fixesListXml = xmlSerializer.Deserialize(reader) as List<FixesListXml>;
             }
 
-            if (fixesDatabase is null)
+            if (fixesListXml is null)
             {
-                throw new NullReferenceException(nameof(fixesDatabase));
+                throw new NullReferenceException(nameof(fixesListXml));
             }
 
-            return fixesDatabase;
+            foreach (var fix in fixesListXml)
+            {
+                List<IFixEntity> fixesList = new();
+
+                foreach (var f in fix.Fixes)
+                {
+                    if (f is FileFixEntity fileFix)
+                    {
+                        fixesList.Add(fileFix);
+                    }
+                }
+
+                fixesListResult.Add(new FixesList(fix.GameId, fix.GameName, fixesList));
+            }
+
+            return fixesListResult;
         }
 
         /// <summary>

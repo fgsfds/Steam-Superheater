@@ -1,6 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;

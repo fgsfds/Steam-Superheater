@@ -8,7 +8,7 @@ namespace Common.DI
     {
         public static void Load(Container container)
         {
-            container.Register<UpdateInstaller>(Lifestyle.Singleton);
+            container.Register<AppUpdateInstaller>(Lifestyle.Singleton);
 
             container.Register<FileFixInstaller>(Lifestyle.Singleton);
             container.Register<FileFixUpdater>(Lifestyle.Singleton);

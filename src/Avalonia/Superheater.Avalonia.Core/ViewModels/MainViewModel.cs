@@ -4,6 +4,7 @@ using Common.CombinedEntities;
 using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;

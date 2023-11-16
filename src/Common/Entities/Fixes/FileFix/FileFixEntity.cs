@@ -1,4 +1,5 @@
-﻿using Common.Enums;
+﻿using Common.Entities.Fixes.FileFix;
+using Common.Enums;
 using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes
@@ -39,29 +40,6 @@ namespace Common.Entities.Fixes
         /// Fix GUID
         /// </summary>
         public Guid Guid { get; init; }
-
-        /// <summary>
-        /// Is there a newer version of the fix
-        /// </summary>
-        [XmlIgnore]
-        public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
-
-        /// <summary>
-        /// Installed fix entity
-        /// </summary>
-        public IInstalledFixEntity? InstalledFix { get; set; }
-
-        /// <summary>
-        /// Is this fix hidden from the list
-        /// </summary>
-        [XmlIgnore]
-        public bool IsHidden { get; set; }
-
-        /// <summary>
-        /// Is fix installed
-        /// </summary>
-        [XmlIgnore]
-        public bool IsInstalled => InstalledFix is not null;
 
         /// <summary>
         /// Fix title
@@ -130,5 +108,29 @@ namespace Common.Entities.Fixes
         /// Zip archive MD5
         /// </summary>
         public string? MD5 { get; set; }
+
+        /// <summary>
+        /// Installed fix entity
+        /// </summary>
+        [XmlIgnore]
+        public IInstalledFixEntity? InstalledFix { get; set; }
+
+        /// <summary>
+        /// Is this fix hidden from the list
+        /// </summary>
+        [XmlIgnore]
+        public bool IsHidden { get; set; }
+
+        /// <summary>
+        /// Is there a newer version of the fix
+        /// </summary>
+        [XmlIgnore]
+        public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
+
+        /// <summary>
+        /// Is fix installed
+        /// </summary>
+        [XmlIgnore]
+        public bool IsInstalled => InstalledFix is not null;
     }
 }

@@ -1,8 +1,8 @@
-﻿namespace Common.Entities.Fixes
+﻿namespace Common.Entities.Fixes.FileFix
 {
-    public sealed class FileInstalledFixEntity : IInstalledFixEntity
+    public sealed class FileInstalledFixEntity() : IInstalledFixEntity
     {
-        public FileInstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string>? list)
+        public FileInstalledFixEntity(int id, Guid guid, int version, string backupFolder, List<string>? list) : this()
         {
             GameId = id;
             Guid = guid;
@@ -35,12 +35,5 @@
         /// Paths to files relative to the game folder
         /// </summary>
         public List<string>? FilesList { get; init; }
-
-        /// <summary>
-        /// Serializer constructor
-        /// </summary>
-        private FileInstalledFixEntity()
-        {
-        }
     }
 }

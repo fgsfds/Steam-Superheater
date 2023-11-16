@@ -7,17 +7,9 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class AboutViewModel : ObservableObject
+    internal sealed partial class AboutViewModel(AppUpdateInstaller updateInstaller) : ObservableObject
     {
-        public AboutViewModel(UpdateInstaller updateInstaller)
-        {
-            _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<UpdateInstaller>(nameof(updateInstaller));
-
-            AboutTabHeader = "About";
-            CheckForUpdatesButtonText = string.Empty;
-        }
-
-        private readonly UpdateInstaller _updateInstaller;
+        private readonly AppUpdateInstaller _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<AppUpdateInstaller>(nameof(updateInstaller));
 
 
         #region Binding Properties
@@ -25,9 +17,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         public static Version CurrentVersion => CommonProperties.CurrentVersion;
 
 
-        public string AboutTabHeader { get; private set; }
+        public string AboutTabHeader { get; private set; } = "About";
 
-        public string CheckForUpdatesButtonText { get; private set; }
+        public string CheckForUpdatesButtonText { get; private set; } = string.Empty;
 
 
         public bool IsUpdateAvailable { get; private set; }
@@ -108,7 +100,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 await _updateInstaller.DownloadAndUnpackLatestRelease();
 
-                UpdateInstaller.InstallUpdate();
+                AppUpdateInstaller.InstallUpdate();
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
