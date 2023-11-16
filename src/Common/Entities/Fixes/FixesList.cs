@@ -5,13 +5,13 @@ namespace Common.Entities.Fixes
     /// <summary>
     /// Entity containing game information and a list of fixes for it
     /// </summary>
-    public sealed class FixesList
+    public sealed class FixesList()
     {
         public FixesList(
             int gameId,
             string gameName,
             List<IFixEntity> fixes
-            )
+            ) : this()
         {
             GameId = gameId;
             GameName = gameName;
@@ -32,12 +32,5 @@ namespace Common.Entities.Fixes
         /// List of fixes
         /// </summary>
         public List<IFixEntity> Fixes { get; init; }
-
-        /// <summary>
-        /// Serializer constructor
-        /// </summary>
-        private FixesList()
-        {
-        }
     }
 }

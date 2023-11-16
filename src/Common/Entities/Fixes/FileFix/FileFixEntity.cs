@@ -1,5 +1,4 @@
-﻿using Common.Entities.Fixes.FileFix;
-using Common.Enums;
+﻿using Common.Enums;
 using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes
@@ -7,7 +6,7 @@ namespace Common.Entities.Fixes
     /// <summary>
     /// Fix entity
     /// </summary>
-    public sealed partial class FileFixEntity : IFixEntity
+    public sealed class FileFixEntity : IFixEntity
     {
         public FileFixEntity()
         {
@@ -26,6 +25,7 @@ namespace Common.Entities.Fixes
             Tags = null;
             MD5 = null;
         }
+
         /// <summary>
         /// List of fixes GUIDs that are required for this fix
         /// </summary>

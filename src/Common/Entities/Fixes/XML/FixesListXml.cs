@@ -1,5 +1,4 @@
 ﻿using System.Xml.Serialization;
-using Common.Entities.Fixes.FileFix;
 
 namespace Common.Entities.Fixes.XML
 {
@@ -7,13 +6,13 @@ namespace Common.Entities.Fixes.XML
     /// Entity containing game information and a list of fixes for it
     /// </summary>
     [XmlRoot("FixesList")]
-    public sealed class FixesListXml
+    public sealed class FixesListXml()
     {
         public FixesListXml(
             int gameId,
             string gameName,
             List<object> fixes
-            )
+            ) :this()
         {
             GameId = gameId;
             GameName = gameName;
@@ -35,12 +34,5 @@ namespace Common.Entities.Fixes.XML
         /// </summary>
         [XmlElement("FileFix", typeof(FileFixEntity))]
         public required List<object> Fixes { get; init; }
-
-        /// <summary>
-        /// Serializer constructor
-        /// </summary>
-        private FixesListXml()
-        {
-        }
     }
 }

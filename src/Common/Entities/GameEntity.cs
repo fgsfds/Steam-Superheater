@@ -1,32 +1,26 @@
 ﻿namespace Common.Entities
 {
-    public sealed class GameEntity
+    public sealed class GameEntity(
+        int id,
+        string name,
+        string dir
+        )
     {
-        public GameEntity(
-            int id,
-            string name,
-            string dir
-            )
-        {
-            Id = id;
-            Name = name;
-            InstallDir = dir;
-        }
 
         /// <summary>
         /// Steam game ID
         /// </summary>
-        public int Id { get; init; }
+        public int Id { get; init; } = id;
 
         /// <summary>
         /// Game title
         /// </summary>
-        public string Name { get; init; }
+        public string Name { get; init; } = name;
 
         /// <summary>
         /// Game install directory
         /// </summary>
-        public string InstallDir { get; set; }
+        public string InstallDir { get; set; } = dir;
 
         /// <summary>
         /// Game icon
