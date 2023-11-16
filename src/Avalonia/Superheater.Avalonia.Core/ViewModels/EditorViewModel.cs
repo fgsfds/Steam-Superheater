@@ -225,6 +225,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
 
+        //[ObservableProperty]
+        //private bool _isFileFixType;
+        public bool IsFileFixType => false;
+
         #endregion Binding Properties
 
 

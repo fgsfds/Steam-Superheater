@@ -18,17 +18,30 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    Margin="0,3">
+            <TextBlock VerticalAlignment="Center" Margin="5,0">Fix Type</TextBlock>
+            <RadioButton GroupName="Type" Margin="5,0">File</RadioButton>
+            <RadioButton GroupName="Type" Margin="5,0">Registry</RadioButton>
+        </StackPanel>
+
         <!--Name-->
         <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay}"
                  Watermark="Name (required)"
                  Name="NameTextBox"
-                 Grid.Row="0"
+                 Grid.Row="1"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
@@ -38,15 +51,16 @@
                  Watermark="Version (required)"
                  TextChanging="VersionTextBoxChanging"
                  TextChanged="VersionTextBoxChanged"
-                 Grid.Row="1"
+                 Grid.Row="2"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
 
         <!--Link to file-->
         <Grid ColumnDefinitions="*, auto"
-              Grid.Row="2"
-              Margin="0,3">
+              Grid.Row="3"
+              Margin="0,3"
+              IsVisible="{Binding IsFileFixType}">
 
             <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
                      Watermark="Link to file"
@@ -66,60 +80,88 @@
         <!--Install folder-->
         <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
                  Watermark="Unpack archive to"
-                 Grid.Row="3"
+                 Grid.Row="4"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Variants-->
         <TextBox Text="{Binding SelectedFixVariants, Mode=TwoWay}"
                  Watermark="Variants"
-                 Grid.Row="4"
+                 Grid.Row="5"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Config-->
         <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
                  Watermark="Config file"
-                 Grid.Row="5"
+                 Grid.Row="6"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Files to delete-->
         <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
                  Watermark="Files to delete"
-                 Grid.Row="6"
+                 Grid.Row="7"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Files to backup-->
         <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
                  Watermark="Files to backup"
-                 Grid.Row="7"
+                 Grid.Row="8"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Run after install-->
         <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
                  Watermark="Run after install"
-                 Grid.Row="8"
+                 Grid.Row="9"
                  IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
 
         <!--Tags-->
         <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
                  Watermark="Tags"
-                 Grid.Row="9"
+                 Grid.Row="10"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <!--MD5-->
         <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
                  Watermark="MD5"
-                 Grid.Row="10"
+                 Grid.Row="11"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"
+                 IsVisible="{Binding IsFileFixType}"/>
+
+        <!--Reg Key-->
+        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+                 Watermark="Registry Key"
+                 Grid.Row="12"
                  IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
-        <Grid Grid.Row="11"
+        <!--Reg Value Name-->
+        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+                 Watermark="Registry Value Name"
+                 Grid.Row="13"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <!--Reg New Value-->
+        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+                 Watermark="Registry New Value"
+                 Grid.Row="14"
+                 IsReadOnly="{Binding !IsEditingAvailable}"
+                 Margin="0,3"/>
+
+        <Grid Grid.Row="15"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">
@@ -139,7 +181,8 @@
             <!--Supported OSes-->
             <TextBlock Grid.Column="0"
                        Grid.RowSpan="3"
-                       VerticalAlignment="Center">
+                       VerticalAlignment="Center"
+                       IsVisible="{Binding IsFileFixType}">
                 Supported OSes:
             </TextBlock>
 
@@ -148,7 +191,8 @@
                         Margin="10"
                         Orientation="Vertical"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Center"
+                        IsVisible="{Binding IsFileFixType}">
 
                 <CheckBox IsChecked="{Binding IsWindowsChecked}"
                           IsEnabled="{Binding IsEditingAvailable}">
