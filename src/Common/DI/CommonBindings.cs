@@ -1,5 +1,6 @@
 ﻿using Common.FixTools;
 using Common.FixTools.FileFix;
+using Common.FixTools.RegistryFix;
 using SimpleInjector;
 
 namespace Common.DI
@@ -13,6 +14,10 @@ namespace Common.DI
             container.Register<FileFixInstaller>(Lifestyle.Singleton);
             container.Register<FileFixUpdater>(Lifestyle.Singleton);
             container.Register<FileFixUninstaller>(Lifestyle.Singleton);
+
+            container.Register<RegistryFixInstaller>(Lifestyle.Singleton);
+            container.Register<RegistryFixUpdater>(Lifestyle.Singleton);
+            container.Register<RegistryFixUninstaller>(Lifestyle.Singleton);
 
             container.Register<FixManager>(Lifestyle.Singleton);
         }

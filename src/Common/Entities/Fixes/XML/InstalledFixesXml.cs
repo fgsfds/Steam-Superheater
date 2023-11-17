@@ -3,7 +3,7 @@ using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes.XML
 {
-    [XmlType]
+    [XmlType("InstalledFixes")]
     public sealed class InstalledFixesXml()
     {
         public InstalledFixesXml(List<BaseInstalledFixEntity> fixes) : this()

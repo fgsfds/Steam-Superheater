@@ -18,7 +18,6 @@ namespace Common.Providers
         {
             if (!File.Exists(Consts.InstalledFile))
             {
-                //MakeEmptyFixesXml();
                 return [];
             }
 
@@ -99,10 +98,5 @@ namespace Common.Providers
                 return new Result(ResultEnum.NotFound, e.Message);
             }
         }
-
-        /// <summary>
-        /// Create empty installed fixes XML
-        /// </summary>
-        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<BaseInstalledFixEntity>());
     }
 }

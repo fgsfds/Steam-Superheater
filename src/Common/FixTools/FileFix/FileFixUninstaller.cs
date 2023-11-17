@@ -5,7 +5,7 @@ using Common.Helpers;
 
 namespace Common.FixTools.FileFix
 {
-    public sealed class FileFixUninstaller : IFixUninstaller
+    public sealed class FileFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup

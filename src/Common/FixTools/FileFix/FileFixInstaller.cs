@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 
 namespace Common.FixTools.FileFix
 {
-    public sealed class FileFixInstaller(ConfigProvider config) : IFixInstaller
+    public sealed class FileFixInstaller(ConfigProvider config)
     {
         private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
 

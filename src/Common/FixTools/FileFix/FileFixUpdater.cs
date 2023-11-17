@@ -7,7 +7,7 @@ namespace Common.FixTools.FileFix
     public sealed class FileFixUpdater(
         FileFixInstaller fixInstaller,
         FileFixUninstaller fixUninstaller
-        ) : IFixUpdater
+        )
     {
         private readonly FileFixInstaller _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<FileFixInstaller>(nameof(fixInstaller));
         private readonly FileFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<FileFixUninstaller>(nameof(fixUninstaller));
