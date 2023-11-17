@@ -312,7 +312,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.IsTrue(hash.Equals("720FA0310861D613AAD2A4CFBAFCA80A"));
+                    Assert.IsTrue(hash.Equals("F00B992B76C2F014342203102B261A54"));
                 }
             }
         }

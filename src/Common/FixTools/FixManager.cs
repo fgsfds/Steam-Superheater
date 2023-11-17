@@ -23,7 +23,7 @@ namespace Common.FixTools
                 return await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
             }
 
-            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("");
+            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Installer for this fix type is not implemented");
         }
 
         public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, BaseFixEntity fix)
@@ -32,8 +32,10 @@ namespace Common.FixTools
             {
                 _fileFixUninstaller.UninstallFix(game, installedFix, fileFix);
             }
-
-            ThrowHelper.NotImplementedException("");
+            else
+            {
+                ThrowHelper.NotImplementedException("Uninstaller for this fix type is not implemented");
+            }
         }
 
         public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
@@ -43,7 +45,7 @@ namespace Common.FixTools
                 return await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);
             }
 
-            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("");
+            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Updater for this fix type is not implemented");
         }
     }
 }

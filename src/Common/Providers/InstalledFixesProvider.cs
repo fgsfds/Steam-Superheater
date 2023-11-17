@@ -1,6 +1,7 @@
 ﻿using Common.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
@@ -17,7 +18,8 @@ namespace Common.Providers
         {
             if (!File.Exists(Consts.InstalledFile))
             {
-                MakeEmptyFixesXml();
+                //MakeEmptyFixesXml();
+                return [];
             }
 
             List<BaseInstalledFixEntity>? fixesDatabase;
@@ -86,9 +88,9 @@ namespace Common.Providers
         {
             try
             {
-                XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
+                XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
                 using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
-                xmlSerializer.Serialize(fs, fixesList);
+                xmlSerializer.Serialize(fs, new InstalledFixesXml(fixesList));
 
                 return new(ResultEnum.Ok, string.Empty);
             }

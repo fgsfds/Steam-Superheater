@@ -1,6 +1,5 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -8,28 +7,18 @@ using System.Xml.Serialization;
 
 namespace Common.Models
 {
-    public sealed class EditorModel
+    public sealed class EditorModel(
+        FixesProvider fixesProvider,
+        CombinedEntitiesProvider combinedEntitiesProvider,
+        GamesProvider gamesProvider
+        )
     {
-        public EditorModel(
-            FixesProvider fixesProvider,
-            CombinedEntitiesProvider combinedEntitiesProvider,
-            GamesProvider gamesProvider
-            )
-        {
-            _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
-            _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+        private readonly FixesProvider _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
+        private readonly GamesProvider _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
 
-            _fixesList = new();
-            _availableGamesList = new();
-        }
-
-        private readonly FixesProvider _fixesProvider;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly GamesProvider _gamesProvider;
-
-        private readonly List<FixesList> _fixesList;
-        private readonly List<GameEntity> _availableGamesList;
+        private readonly List<FixesList> _fixesList = new();
+        private readonly List<GameEntity> _availableGamesList = new();
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
