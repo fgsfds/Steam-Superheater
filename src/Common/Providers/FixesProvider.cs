@@ -1,9 +1,11 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 
@@ -78,6 +80,8 @@ namespace Common.Providers
         {
             using var client = new HttpClient();
 
+            List<FixesListXml> result = new();
+
             foreach (var fixes in fixesList)
             {
                 foreach (var fix in fixes.Fixes)
@@ -106,79 +110,14 @@ namespace Common.Providers
                         fix.Dependencies = null;
                     }
 
-                    if (fix is not FileFixEntity fileFix)
-                    {
-                        continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(fileFix.Url))
-                    {
-                        if (!fileFix.Url.StartsWith("http"))
-                        {
-                            fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
-                        }
-
-                        if (fileFix.MD5 is null)
-                        {
-                            try
-                            {
-                                fileFix.MD5 = await GetMD5(client, fileFix);
-                            }
-                            catch (Exception e)
-                            {
-                                return new Result(ResultEnum.ConnectionError, e.Message);
-                            }
-                        }
-                    }
-
-                    if (fileFix.FilesToDelete is not null)
-                    {
-                        fileFix.FilesToDelete = fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fileFix.FilesToDelete.Count == 0)
-                        {
-                            fileFix.FilesToDelete = null;
-                        }
-                    }
-
-                    if (fileFix.FilesToBackup is not null)
-                    {
-                        fileFix.FilesToBackup = fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fileFix.FilesToBackup.Count == 0)
-                        {
-                            fileFix.FilesToBackup = null;
-                        }
-                    }
-
-                    if (fileFix.Variants is not null)
-                    {
-                        fileFix.Variants = fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
-
-                        if (fileFix.Variants.Count == 0)
-                        {
-                            fileFix.Variants = null;
-                        }
-                    }
-
-                    if (fileFix.Url is not null && string.IsNullOrEmpty(fileFix.Url))
-                    {
-                        fileFix.Url = null;
-                    }
-
-                    if (fileFix.Description is not null && string.IsNullOrEmpty(fileFix.Description))
-                    {
-                        fileFix.Description = null;
-                    }
-
-                    if (fileFix.InstallFolder is not null && string.IsNullOrEmpty(fileFix.InstallFolder))
-                    {
-                        fileFix.InstallFolder = null;
-                    }
+                    var fileFixResult = await PrepareFileFix(client, fix);
+                    if (fileFixResult is not null) { return (Result)fileFixResult; }
                 }
+
+                result.Add(new FixesListXml(fixes));
             }
 
-            XmlSerializer xmlSerializer = new(typeof(List<FixesList>));
+            XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
             if (!Directory.Exists(CommonProperties.LocalRepoPath))
             {
@@ -188,7 +127,7 @@ namespace Common.Providers
             try
             {
                 using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
-                xmlSerializer.Serialize(fs, fixesList);
+                xmlSerializer.Serialize(fs, result);
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
@@ -196,6 +135,79 @@ namespace Common.Providers
             }
 
             return new(ResultEnum.Ok, "XML saved successfully!");
+        }
+
+        private static async Task<Result?> PrepareFileFix(HttpClient client, BaseFixEntity fix)
+        {
+            if (fix is FileFixEntity fileFix)
+            {
+                if (!string.IsNullOrEmpty(fileFix.Url))
+                {
+                    if (!fileFix.Url.StartsWith("http"))
+                    {
+                        fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
+                    }
+
+                    if (fileFix.MD5 is null)
+                    {
+                        try
+                        {
+                            fileFix.MD5 = await GetMD5(client, fileFix);
+                        }
+                        catch (Exception e)
+                        {
+                            return new Result(ResultEnum.ConnectionError, e.Message);
+                        }
+                    }
+                }
+
+                if (fileFix.FilesToDelete is not null)
+                {
+                    fileFix.FilesToDelete = fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                    if (fileFix.FilesToDelete.Count == 0)
+                    {
+                        fileFix.FilesToDelete = null;
+                    }
+                }
+
+                if (fileFix.FilesToBackup is not null)
+                {
+                    fileFix.FilesToBackup = fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                    if (fileFix.FilesToBackup.Count == 0)
+                    {
+                        fileFix.FilesToBackup = null;
+                    }
+                }
+
+                if (fileFix.Variants is not null)
+                {
+                    fileFix.Variants = fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+
+                    if (fileFix.Variants.Count == 0)
+                    {
+                        fileFix.Variants = null;
+                    }
+                }
+
+                if (fileFix.Url is not null && string.IsNullOrEmpty(fileFix.Url))
+                {
+                    fileFix.Url = null;
+                }
+
+                if (fileFix.Description is not null && string.IsNullOrEmpty(fileFix.Description))
+                {
+                    fileFix.Description = null;
+                }
+
+                if (fileFix.InstallFolder is not null && string.IsNullOrEmpty(fileFix.InstallFolder))
+                {
+                    fileFix.InstallFolder = null;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -319,6 +331,10 @@ namespace Common.Providers
                     if (f is FileFixEntity fileFix)
                     {
                         fixesList.Add(fileFix);
+                    }
+                    else if (f is RegistryFixEntity regFix)
+                    {
+                        fixesList.Add(regFix);
                     }
                 }
 

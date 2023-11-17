@@ -38,19 +38,14 @@ namespace Common.Providers
         {
             XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
 
-            List<BaseInstalledFixEntity>? fixesDatabase;
-
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<BaseInstalledFixEntity>;
-            }
+                var fixesDatabase = xmlSerializer.Deserialize(fs) as List<BaseInstalledFixEntity>;
 
-            if (fixesDatabase is null)
-            {
-                throw new NullReferenceException(nameof(fixesDatabase));
-            }
+                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
 
-            return fixesDatabase;
+                return fixesDatabase;
+            }
         }
 
         [Obsolete("Remove in version 1.0")]
@@ -58,19 +53,14 @@ namespace Common.Providers
         {
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
 
-            List<InstalledFixEntity_Obsolete>? fixesDatabase;
-
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
-            }
+                var fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
 
-            if (fixesDatabase is null)
-            {
-                throw new NullReferenceException(nameof(fixesDatabase));
-            }
+                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
 
-            return fixesDatabase.ConvertAll(x => (BaseInstalledFixEntity)x);
+                return fixesDatabase.ConvertAll(x => (BaseInstalledFixEntity)x);
+            }
         }
 
         /// <summary>
@@ -94,19 +84,18 @@ namespace Common.Providers
         /// <returns>result, error message</returns>
         public static Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
         {
-            XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
-
             try
             {
+                XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
                 using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
                 xmlSerializer.Serialize(fs, fixesList);
+
+                return new(ResultEnum.Ok, string.Empty);
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
                 return new Result(ResultEnum.NotFound, e.Message);
             }
-
-            return new (ResultEnum.Ok, string.Empty);
         }
 
         /// <summary>
