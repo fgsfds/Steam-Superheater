@@ -1,6 +1,6 @@
-﻿using SimpleInjector;
-using Common.FixTools;
+﻿using Common.FixTools;
 using Common.FixTools.FileFix;
+using SimpleInjector;
 
 namespace Common.DI
 {

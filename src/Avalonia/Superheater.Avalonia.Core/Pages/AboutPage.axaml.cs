@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Superheater.Avalonia.Core.ViewModels;
 using Common.DI;
+using Superheater.Avalonia.Core.ViewModels;
 using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.Pages

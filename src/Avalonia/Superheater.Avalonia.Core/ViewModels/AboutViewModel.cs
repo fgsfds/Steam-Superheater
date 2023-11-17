@@ -108,7 +108,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 {
                     FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
                     UseShellExecute = true
-                }); 
+                });
             }
             else
             {

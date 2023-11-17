@@ -1,5 +1,5 @@
-﻿using System.Xml.Serialization;
-using Common.Helpers;
+﻿using Common.Helpers;
+using System.Xml.Serialization;
 
 namespace Common.Config
 {

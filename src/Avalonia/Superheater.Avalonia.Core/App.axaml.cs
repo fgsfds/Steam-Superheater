@@ -3,13 +3,13 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using Superheater.Avalonia.Core.DI;
-using Superheater.Avalonia.Core.Pages;
-using Superheater.Avalonia.Core.Windows;
 using Common.Config;
 using Common.DI;
 using Common.Enums;
 using Common.Helpers;
+using Superheater.Avalonia.Core.DI;
+using Superheater.Avalonia.Core.Pages;
+using Superheater.Avalonia.Core.Windows;
 
 namespace Superheater.Avalonia.Core;
 

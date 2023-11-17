@@ -1,6 +1,4 @@
-﻿using System.Xml.Serialization;
-
-namespace Common.Entities.Fixes
+﻿namespace Common.Entities.Fixes
 {
     /// <summary>
     /// Entity containing game information and a list of fixes for it

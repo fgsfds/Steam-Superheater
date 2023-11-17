@@ -1,8 +1,7 @@
 using Avalonia.Input.Platform;
 using Common;
-using Common.CombinedEntities;
 using Common.Config;
-using Common.Entities;
+using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;

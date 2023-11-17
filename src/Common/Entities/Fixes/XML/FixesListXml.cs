@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using Common.Entities.Fixes.FileFix;
+using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes.XML
 {

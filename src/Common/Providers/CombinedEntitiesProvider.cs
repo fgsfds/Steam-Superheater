@@ -1,5 +1,5 @@
-﻿using Common.CombinedEntities;
-using Common.Entities;
+﻿using Common.Entities;
+using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;

@@ -1,7 +1,6 @@
 ﻿using Common.Enums;
-using System.Xml.Serialization;
 
-namespace Common.Entities.Fixes
+namespace Common.Entities.Fixes.FileFix
 {
     /// <summary>
     /// Fix entity

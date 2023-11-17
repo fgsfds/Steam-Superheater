@@ -1,7 +1,6 @@
-﻿using Common.Entities;
-using Common.Entities.Fixes;
+﻿using Common.Entities.Fixes;
 
-namespace Common.CombinedEntities
+namespace Common.Entities.CombinedEntities
 {
     /// <summary>
     /// Object that combines fixes list with installed game

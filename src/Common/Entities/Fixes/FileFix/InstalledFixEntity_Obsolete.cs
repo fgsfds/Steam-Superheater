@@ -6,7 +6,7 @@ namespace Common.Entities.Fixes.FileFix
     [XmlType("InstalledFixEntity")]
     public sealed class InstalledFixEntity_Obsolete() : BaseInstalledFixEntity
     {
-        public InstalledFixEntity_Obsolete(int id, Guid guid, int version, string backupFolder, List<string>? list) : this ()
+        public InstalledFixEntity_Obsolete(int id, Guid guid, int version, string backupFolder, List<string>? list) : this()
         {
             GameId = id;
             Guid = guid;

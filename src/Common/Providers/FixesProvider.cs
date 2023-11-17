@@ -5,7 +5,6 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
 

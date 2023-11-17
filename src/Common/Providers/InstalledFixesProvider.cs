@@ -1,4 +1,4 @@
-﻿using Common.CombinedEntities;
+﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.XML;

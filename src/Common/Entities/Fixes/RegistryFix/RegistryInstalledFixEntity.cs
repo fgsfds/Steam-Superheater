@@ -3,9 +3,9 @@
     public sealed class RegistryInstalledFixEntity() : BaseInstalledFixEntity
     {
         public RegistryInstalledFixEntity(
-            int id, 
-            Guid guid, 
-            int version, 
+            int id,
+            Guid guid,
+            int version,
             string originalValue) : this()
         {
             GameId = id;
