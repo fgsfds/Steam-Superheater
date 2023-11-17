@@ -2,7 +2,6 @@
 {
     public abstract class BaseInstalledFixEntity
     {
-
         /// <summary>
         /// Steam game ID
         /// </summary>

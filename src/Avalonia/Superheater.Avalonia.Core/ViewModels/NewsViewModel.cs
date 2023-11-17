@@ -21,7 +21,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
-        private bool IsDeveloperMode => Properties.IsDeveloperMode;
+        private static bool IsDeveloperMode => Properties.IsDeveloperMode;
         private readonly NewsModel _newsModel;
         private readonly ConfigEntity _config;
         private readonly SemaphoreSlim _locker = new(1, 1);

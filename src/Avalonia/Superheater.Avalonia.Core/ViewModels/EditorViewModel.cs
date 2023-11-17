@@ -227,7 +227,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         //[ObservableProperty]
         //private bool _isFileFixType;
-        public bool IsFileFixType => false;
+        public static bool IsFileFixType => false;
 
         #endregion Binding Properties
 

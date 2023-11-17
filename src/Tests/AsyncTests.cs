@@ -35,7 +35,7 @@ namespace Tests
 
             Assert.IsNotNull(method);
 
-            var result = method.Invoke(new GamesProvider(), new object[] { "Resources\\test_manifest.acf" });
+            var result = method.Invoke(new GamesProvider(), ["Resources\\test_manifest.acf"]);
 
             Assert.IsNotNull(result);
             Assert.IsInstanceOfType(result, typeof(GameEntity));

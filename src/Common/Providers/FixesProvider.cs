@@ -33,7 +33,7 @@ namespace Common.Providers
 
             if (_fixesCachedString is null)
             {
-                throw new Exception("Can't create fixes cache");
+                ThrowHelper.Exception("Can't create fixes cache");
             }
 
             using (StringReader fs = new(_fixesCachedString))
@@ -219,7 +219,7 @@ namespace Common.Providers
         /// <exception cref="Exception">Http response error</exception>
         private static async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
         {
-            if (fix.Url is null) throw new NullReferenceException(nameof(fix.Url));
+            if (fix.Url is null) { ThrowHelper.NullReferenceException(nameof(fix.Url)); };
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
@@ -241,7 +241,7 @@ namespace Common.Providers
 
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Error while getting response for {fix.Url}: {response.StatusCode}");
+                    return ThrowHelper.Exception<string>($"Error while getting response for {fix.Url}: {response.StatusCode}");
                 }
                 else if (response.Content.Headers.ContentMD5 is not null)
                 {
@@ -289,7 +289,7 @@ namespace Common.Providers
 
                 if (!File.Exists(file))
                 {
-                    throw new FileNotFoundException(file);
+                    ThrowHelper.FileNotFoundException(file);
                 }
 
                 _fixesCachedString = File.ReadAllText(file);
@@ -319,7 +319,7 @@ namespace Common.Providers
 
             if (fixesListXml is null)
             {
-                throw new NullReferenceException(nameof(fixesListXml));
+                ThrowHelper.NullReferenceException(nameof(fixesListXml));
             }
 
             foreach (var fix in fixesListXml)

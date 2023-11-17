@@ -43,7 +43,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public ImmutableList<string> HiddenTagsList => _config.HiddenTags.ToImmutableList();
 
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
 
@@ -157,7 +157,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [RelayCommand]
-        private void OpenConfigXML()
+        private static void OpenConfigXML()
         {
             Process.Start(new ProcessStartInfo
             {

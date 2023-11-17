@@ -29,11 +29,13 @@ namespace Common.Entities.Fixes.XML
         /// <summary>
         /// Steam ID of the game
         /// </summary>
+        [XmlElement]
         public int GameId { get; init; }
 
         /// <summary>
         /// Game title
         /// </summary>
+        [XmlElement]
         public string GameName { get; init; }
 
         /// <summary>

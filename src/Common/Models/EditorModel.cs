@@ -13,9 +13,9 @@ namespace Common.Models
         GamesProvider gamesProvider
         )
     {
-        private readonly FixesProvider _fixesProvider = fixesProvider ?? throw new NullReferenceException(nameof(fixesProvider));
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? throw new NullReferenceException(nameof(combinedEntitiesProvider));
-        private readonly GamesProvider _gamesProvider = gamesProvider ?? throw new NullReferenceException(nameof(gamesProvider));
+        private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.NullReferenceException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
+        private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
 
         private readonly List<FixesList> _fixesList = new();
         private readonly List<GameEntity> _availableGamesList = new();

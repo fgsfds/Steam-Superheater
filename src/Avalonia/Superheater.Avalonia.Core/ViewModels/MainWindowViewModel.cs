@@ -22,9 +22,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         [ObservableProperty]
         public PopupMessageViewModel? _popupDataContext;

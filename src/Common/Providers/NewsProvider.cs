@@ -6,14 +6,9 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class NewsProvider
+    public sealed class NewsProvider(ConfigProvider config)
     {
-        private readonly ConfigEntity _config;
-
-        public NewsProvider(ConfigProvider config)
-        {
-            _config = config.Config;
-        }
+        private readonly ConfigEntity _config = config.Config;
 
         /// <summary>
         /// Get list of news
