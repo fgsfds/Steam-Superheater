@@ -1,4 +1,5 @@
 ﻿using Common.Enums;
+using System.Xml.Linq;
 
 namespace Common.Entities.Fixes.RegistryFix
 {
@@ -13,6 +14,25 @@ namespace Common.Entities.Fixes.RegistryFix
             Dependencies = null;
             Tags = null;
             SupportedOSes = OSEnum.Windows;
+
+            Key = string.Empty;
+            ValueName = string.Empty;
+            NewValueData = string.Empty;
+        }
+
+        public RegistryFixEntity(BaseFixEntity fix)
+        {
+            Name = fix.Name;
+            Version = fix.Version;
+            Guid = fix.Guid;
+            Description = fix.Description;
+            Dependencies = fix.Dependencies;
+            Tags = fix.Tags;
+            SupportedOSes = OSEnum.Windows;
+
+            Key = string.Empty;
+            ValueName = string.Empty;
+            NewValueData = string.Empty;
         }
 
         public string Key { get; set; }

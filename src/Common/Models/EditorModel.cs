@@ -1,6 +1,7 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -311,6 +312,26 @@ Thank you.");
         public static void MoveFixUp(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 
         public static void MoveFixDown(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+
+        public static void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
+        {
+            var fixIndex = fixesList.IndexOf(fix);
+
+            if (typeof(T) == typeof(RegistryFixEntity))
+            {
+                var newFix = new RegistryFixEntity(fix);
+                fixesList[fixIndex] = newFix;
+            }
+            else if (typeof(T) == typeof(FileFixEntity))
+            {
+                var newFix = new FileFixEntity(fix);
+                fixesList[fixIndex] = newFix;
+            }
+            else
+            {
+                ThrowHelper.ArgumentException(nameof(fix));
+            }
+        }
 
         /// <summary>
         /// Get sorted list of fixes

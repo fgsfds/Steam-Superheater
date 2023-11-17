@@ -3,6 +3,7 @@ using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.Helpers;
 using Common.Models;
@@ -50,10 +51,14 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
+        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
+
+        public bool IsEditingAvailable => SelectedFix is not null;
+
         public string SelectedFixTags
         {
             get => SelectedFix?.Tags is null ? string.Empty : string.Join(';', SelectedFix.Tags);
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
 
@@ -65,7 +70,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixVariants
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? string.Join(';', fileFix.Variants) : string.Empty;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
@@ -77,7 +82,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixFilesToDelete
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null ? string.Join(';', fileFix.FilesToDelete) : string.Empty;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
@@ -89,7 +94,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixFilesToBackup
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null ? string.Join(';', fileFix.FilesToBackup) : string.Empty;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
@@ -101,7 +106,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixUrl
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
@@ -136,15 +141,10 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-
-        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
-
-        public bool IsEditingAvailable => SelectedFix is not null;
-
         public bool IsWindowsChecked
         {
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
 
@@ -162,7 +162,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsLinuxChecked
         {
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
-            private set
+            set
             {
                 if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
 
@@ -173,6 +173,44 @@ namespace Superheater.Avalonia.Core.ViewModels
                 else
                 {
                     SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Linux);
+                }
+            }
+        }
+
+        public bool IsFileFixType
+        {
+            get => SelectedFix is FileFixEntity;
+            set
+            {
+                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+
+                if (value)
+                {
+                    EditorModel.ChangeFixType<FileFixEntity>(SelectedGame.Fixes, SelectedFix);
+
+                    var index = SelectedFixIndex;
+                    OnPropertyChanged(nameof(SelectedGameFixesList));
+                    SelectedFixIndex = index;
+                }
+            }
+        }
+
+        public bool IsRegistryFixType
+        {
+            get => SelectedFix is RegistryFixEntity;
+            set
+            {
+                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+
+                if (value)
+                {
+                    EditorModel.ChangeFixType<RegistryFixEntity>(SelectedGame.Fixes, SelectedFix);
+
+                    var index = SelectedFixIndex;
+                    OnPropertyChanged(nameof(SelectedGameFixesList));
+                    SelectedFixIndex = index;
                 }
             }
         }
@@ -199,6 +237,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
+        [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
+        [NotifyPropertyChangedFor(nameof(IsFileFixType))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
@@ -224,10 +264,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
-
-        //[ObservableProperty]
-        //private bool _isFileFixType;
-        public static bool IsFileFixType => false;
 
         #endregion Binding Properties
 

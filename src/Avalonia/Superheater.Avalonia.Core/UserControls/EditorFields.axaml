@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="Superheater.Avalonia.Core.UserControls.EditorFields">
-    <Grid>
+    <Grid IsVisible="{Binding IsEditingAvailable}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
@@ -28,13 +28,25 @@
             <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <!--Fix Type-->
         <StackPanel Orientation="Horizontal"
                     Grid.Row="0"
                     HorizontalAlignment="Center"
                     Margin="0,3">
+
             <TextBlock VerticalAlignment="Center" Margin="5,0">Fix Type</TextBlock>
-            <RadioButton GroupName="Type" Margin="5,0">File</RadioButton>
-            <RadioButton GroupName="Type" Margin="5,0">Registry</RadioButton>
+
+            <RadioButton GroupName="Type"
+                         IsChecked="{Binding IsFileFixType}"
+                         Margin="5,0">
+                File
+            </RadioButton>
+
+            <RadioButton GroupName="Type1"
+                         IsChecked="{Binding IsRegistryFixType}"
+                         Margin="5,0">
+                Registry
+            </RadioButton>
         </StackPanel>
 
         <!--Name-->
@@ -42,7 +54,6 @@
                  Watermark="Name (required)"
                  Name="NameTextBox"
                  Grid.Row="1"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <!--Version-->
@@ -52,7 +63,6 @@
                  TextChanging="VersionTextBoxChanging"
                  TextChanged="VersionTextBoxChanged"
                  Grid.Row="2"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
 
@@ -63,15 +73,13 @@
               IsVisible="{Binding IsFileFixType}">
 
             <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
-                     Watermark="Link to file"
-                     IsReadOnly="{Binding !IsEditingAvailable}"/>
+                     Watermark="Link to file"/>
 
             <Button Grid.Column="1"
                     Margin="5,0,0,0"
                     Width="{Binding $self.Bounds.Height}"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding OpenFilePickerCommand}"
-                    IsEnabled="{Binding IsEditingAvailable}">
+                    Command="{Binding OpenFilePickerCommand}">
                 ...
             </Button>
 
@@ -81,7 +89,6 @@
         <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
                  Watermark="Unpack archive to"
                  Grid.Row="4"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -89,7 +96,6 @@
         <TextBox Text="{Binding SelectedFixVariants, Mode=TwoWay}"
                  Watermark="Variants"
                  Grid.Row="5"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -97,7 +103,6 @@
         <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
                  Watermark="Config file"
                  Grid.Row="6"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -105,7 +110,6 @@
         <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
                  Watermark="Files to delete"
                  Grid.Row="7"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -113,7 +117,6 @@
         <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
                  Watermark="Files to backup"
                  Grid.Row="8"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -121,7 +124,6 @@
         <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
                  Watermark="Run after install"
                  Grid.Row="9"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -129,14 +131,12 @@
         <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
                  Watermark="Tags"
                  Grid.Row="10"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"/>
 
         <!--MD5-->
         <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
                  Watermark="MD5"
                  Grid.Row="11"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  Margin="0,3"
                  IsVisible="{Binding IsFileFixType}"/>
 
@@ -144,22 +144,22 @@
         <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
                  Watermark="Registry Key"
                  Grid.Row="12"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg Value Name-->
         <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
                  Watermark="Registry Value Name"
                  Grid.Row="13"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg New Value-->
         <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
                  Watermark="Registry New Value"
                  Grid.Row="14"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
-                 Margin="0,3"/>
+                 Margin="0,3"
+                 IsVisible="{Binding IsRegistryFixType}"/>
 
         <Grid Grid.Row="15"
               Grid.Column="1"
@@ -194,13 +194,11 @@
                         VerticalAlignment="Center"
                         IsVisible="{Binding IsFileFixType}">
 
-                <CheckBox IsChecked="{Binding IsWindowsChecked}"
-                          IsEnabled="{Binding IsEditingAvailable}">
+                <CheckBox IsChecked="{Binding IsWindowsChecked}">
                     Windows
                 </CheckBox>
 
-                <CheckBox IsChecked="{Binding IsLinuxChecked}"
-                          IsEnabled="{Binding IsEditingAvailable}">
+                <CheckBox IsChecked="{Binding IsLinuxChecked}">
                     Linux
                 </CheckBox>
 
@@ -229,7 +227,6 @@
                     ToolTip.Tip="Add dependency"
                     Width="{Binding $self.Bounds.Height}"
                     HorizontalContentAlignment="Center"
-                    IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding AddDependencyCommand}">
                 &gt;
             </Button>
@@ -240,7 +237,6 @@
                     ToolTip.Tip="Remove dependency"
                     Width="{Binding $self.Bounds.Height}"
                     HorizontalContentAlignment="Center"
-                    IsEnabled="{Binding IsEditingAvailable}"
                     Command="{Binding RemoveDependencyCommand}">
                 &lt;
             </Button>
@@ -259,7 +255,6 @@
         <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
                  Grid.Row="999"
                  Grid.Column="1"
-                 IsReadOnly="{Binding !IsEditingAvailable}"
                  TextWrapping="Wrap"
                  AcceptsReturn="True"/>
     </Grid>

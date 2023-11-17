@@ -12,16 +12,36 @@ namespace Common.Entities.Fixes.FileFix
             Name = string.Empty;
             Version = 1;
             Guid = Guid.NewGuid();
-            SupportedOSes = OSEnum.Windows;
-            Url = null;
             Description = null;
+            Dependencies = null;
+            Tags = null;
+            SupportedOSes = OSEnum.Windows;
+
+            Url = null;
             InstallFolder = null;
             ConfigFile = null;
             FilesToDelete = null;
             FilesToBackup = null;
             RunAfterInstall = null;
-            Dependencies = null;
-            Tags = null;
+            MD5 = null;
+        }
+
+        public FileFixEntity(BaseFixEntity fix)
+        {
+            Name = fix.Name;
+            Version = fix.Version;
+            Guid = fix.Guid;
+            Description = fix.Description;
+            Dependencies = fix.Dependencies;
+            Tags = fix.Tags;
+            SupportedOSes = fix.SupportedOSes;
+
+            Url = null;
+            InstallFolder = null;
+            ConfigFile = null;
+            FilesToDelete = null;
+            FilesToBackup = null;
+            RunAfterInstall = null;
             MD5 = null;
         }
 
