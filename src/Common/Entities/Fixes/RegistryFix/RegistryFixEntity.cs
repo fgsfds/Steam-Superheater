@@ -1,5 +1,4 @@
 ﻿using Common.Enums;
-using System.Xml.Linq;
 
 namespace Common.Entities.Fixes.RegistryFix
 {

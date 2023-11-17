@@ -141,21 +141,21 @@
                  IsVisible="{Binding IsFileFixType}"/>
 
         <!--Reg Key-->
-        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFix.Key, Mode=TwoWay}"
                  Watermark="Registry Key"
                  Grid.Row="12"
                  Margin="0,3"
                  IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg Value Name-->
-        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFix.ValueName, Mode=TwoWay}"
                  Watermark="Registry Value Name"
                  Grid.Row="13"
                  Margin="0,3"
                  IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg New Value-->
-        <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFix.NewValueData, Mode=TwoWay}"
                  Watermark="Registry New Value"
                  Grid.Row="14"
                  Margin="0,3"

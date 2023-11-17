@@ -1,10 +1,10 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
-using Common.FixTools.FileFix;
-using Common.Helpers;
-using Common.FixTools.RegistryFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.FixTools.FileFix;
+using Common.FixTools.RegistryFix;
+using Common.Helpers;
 
 namespace Common.FixTools
 {
