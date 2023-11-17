@@ -145,7 +145,7 @@ namespace Common.Models
         /// Get link to current fix's file
         /// </summary>
         /// <param name="fix">Fix</param>
-        public string GetSelectedFixUrl(IFixEntity? fix)
+        public string GetSelectedFixUrl(BaseFixEntity? fix)
         {
             if (fix is not FileFixEntity fileFix)
             {
@@ -199,12 +199,12 @@ namespace Common.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>List of dependencies</returns>
-        public List<IFixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, IFixEntity fix)
+        public List<BaseFixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             if (fix?.Dependencies is null ||
                 fix.Dependencies.Count == 0)
             {
-                return new List<IFixEntity>();
+                return new List<BaseFixEntity>();
             }
 
             var allGameFixes = _combinedEntitiesList.Where(x => x.GameName == entity.GameName).First().FixesList;
@@ -222,7 +222,7 @@ namespace Common.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, IFixEntity fix)
+        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
@@ -241,7 +241,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public static List<IFixEntity> GetDependentFixes(IEnumerable<IFixEntity> fixes, Guid guid)
+        public static List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
             => fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid)).ToList();
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>true if there are installed dependent fixes</returns>
-        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<IFixEntity> fixes, Guid guid)
+        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
         {
             var deps = GetDependentFixes(fixes, guid);
 
@@ -269,9 +269,9 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
-            IInstalledFixEntity? installedFix;
+            BaseInstalledFixEntity? installedFix;
 
             try
             {
@@ -306,7 +306,7 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to delete</param>
         /// <returns>Result message</returns>
-        public Result UninstallFix(GameEntity game, IFixEntity fix)
+        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
         {
             if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
@@ -349,11 +349,11 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<Result> UpdateFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
             if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
-            IInstalledFixEntity? installedFix;
+            BaseInstalledFixEntity? installedFix;
             var backupRestoreFailed = false;
 
             try

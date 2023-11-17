@@ -11,7 +11,7 @@ namespace Common.CombinedEntities
         public FixFirstCombinedEntity(
             FixesList fixesList,
             GameEntity? game,
-            IEnumerable<IInstalledFixEntity>? installedFixes
+            IEnumerable<BaseInstalledFixEntity>? installedFixes
             )
         {
             FixesList = fixesList;

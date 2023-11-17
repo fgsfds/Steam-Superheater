@@ -16,17 +16,17 @@ namespace Common.FixTools
         private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller ?? ThrowHelper.NullReferenceException<FileFixUninstaller>(nameof(fileFixUninstaller));
         private readonly FileFixUpdater _fileFixUpdater = fileFixUpdater ?? ThrowHelper.NullReferenceException<FileFixUpdater>(nameof(fileFixUpdater));
 
-        public async Task<IInstalledFixEntity> InstallFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
             if (fix is FileFixEntity fileFix)
             {
                 return await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
             }
 
-            return ThrowHelper.NotImplementedException<IInstalledFixEntity>("");
+            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("");
         }
 
-        public void UninstallFix(GameEntity game, IInstalledFixEntity installedFix, IFixEntity fix)
+        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, BaseFixEntity fix)
         {
             if (fix is FileFixEntity fileFix)
             {
@@ -36,14 +36,14 @@ namespace Common.FixTools
             ThrowHelper.NotImplementedException("");
         }
 
-        public async Task<IInstalledFixEntity> UpdateFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
             if (fix is FileFixEntity fileFix)
             {
                 return await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);
             }
 
-            return ThrowHelper.NotImplementedException<IInstalledFixEntity>("");
+            return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("");
         }
     }
 }

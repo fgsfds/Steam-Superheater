@@ -19,7 +19,7 @@ namespace Superheater.Avalonia.Core.UserControls
         {
             DescriptionBox.Children.Clear();
 
-            if (((ListBox)sender).SelectedItem is not IFixEntity fixEntity)
+            if (((ListBox)sender).SelectedItem is not BaseFixEntity fixEntity)
             {
                 return;
             }

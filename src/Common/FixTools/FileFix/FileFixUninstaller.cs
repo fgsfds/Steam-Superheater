@@ -13,7 +13,7 @@ namespace Common.FixTools.FileFix
         /// <param name="game">Game entity</param>
         /// <param name="installedFix">Installed fix entity</param>
         /// <param name="fixEntity">Fix entity</param>
-        public void UninstallFix(GameEntity game, IInstalledFixEntity installedFix, IFixEntity fixEntity)
+        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, BaseFixEntity fixEntity)
         {
             if (installedFix is not FileInstalledFixEntity fileInstalledFix) { ThrowHelper.ArgumentException(nameof(installedFix)); return; }
             if (fixEntity is not FileFixEntity fileFixEntity) { ThrowHelper.ArgumentException(nameof(fixEntity)); return; }

@@ -2,6 +2,7 @@
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
@@ -21,9 +22,9 @@ namespace Common.FixTools.FileFix
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<IInstalledFixEntity> InstallFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (fix is not FileFixEntity fileFix) { return ThrowHelper.ArgumentException<IInstalledFixEntity>(nameof(fix)); }
+            if (fix is not FileFixEntity fileFix) { return ThrowHelper.ArgumentException<BaseInstalledFixEntity>(nameof(fix)); }
 
             await CheckAndDownloadFileAsync(fileFix.Url, skipMD5Check ? null : fileFix.MD5);
 

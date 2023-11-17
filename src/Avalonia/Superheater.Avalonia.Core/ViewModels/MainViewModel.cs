@@ -44,7 +44,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<IFixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
+        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
 
@@ -116,7 +116,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
-        private IFixEntity? _selectedFix;
+        private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]

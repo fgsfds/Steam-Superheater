@@ -145,7 +145,7 @@ namespace Tests
 
             var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
             Assert.IsTrue(exeExists);
@@ -194,7 +194,7 @@ namespace Tests
 
             var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, variant, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
 
             CheckNewFiles();
 
@@ -213,7 +213,7 @@ namespace Tests
             CheckOriginalFiles();
         }
 
-        private static async Task<IInstalledFixEntity> UpdateFixAsync(GameEntity gameEntity, IInstalledFixEntity installedFix)
+        private static async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity gameEntity, BaseInstalledFixEntity installedFix)
         {
             File.Copy($"..\\Resources\\test_fix_v2.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix_v2.zip"), true);
 
@@ -233,7 +233,7 @@ namespace Tests
 
             var newInstalledFix = await fixManager.UpdateFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<IInstalledFixEntity>() { newInstalledFix });
+            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { newInstalledFix });
 
             CheckUpdatedFiles();
 

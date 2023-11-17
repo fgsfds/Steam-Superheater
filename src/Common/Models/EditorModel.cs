@@ -114,7 +114,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static void RemoveFix(FixesList game, IFixEntity fix)
+        public static void RemoveFix(FixesList game, BaseFixEntity fix)
         {
             game.Fixes.Remove(fix);
 
@@ -143,7 +143,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of dependencies</returns>
-        public ImmutableList<IFixEntity> GetDependenciesForAFix(FixesList? fixesList, IFixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity> GetDependenciesForAFix(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixEntity?.Dependencies is null ||
                 fixesList is null)
@@ -171,7 +171,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of fixes</returns>
-        public ImmutableList<IFixEntity> GetListOfAvailableDependencies(FixesList? fixesList, IFixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity> GetListOfAvailableDependencies(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixesList is null ||
                 fixEntity is null)
@@ -179,7 +179,7 @@ namespace Common.Models
                 return [];
             }
 
-            List<IFixEntity> result = new();
+            List<BaseFixEntity> result = new();
 
             var fixDependencies = GetDependenciesForAFix(fixesList, fixEntity);
 
@@ -207,12 +207,12 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public static Result UploadFix(FixesList fixesList, IFixEntity fix)
+        public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
                 fixesList.GameName,
-                new List<IFixEntity>() { fix }
+                new List<BaseFixEntity>() { fix }
                 );
 
             var guid = newFix.Fixes.First().Guid;
@@ -269,7 +269,7 @@ Thank you.");
         /// <summary>
         /// Check if the file can be uploaded
         /// </summary>
-        public async Task<Result> CheckFixBeforeUploadAsync(IFixEntity fix)
+        public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
         {
             if (string.IsNullOrEmpty(fix?.Name) ||
                 fix.Version < 1)
@@ -306,21 +306,21 @@ Thank you.");
             return new(ResultEnum.Ok, string.Empty);
         }
 
-        public static void AddDependencyForFix(IFixEntity addTo, IFixEntity dependency)
+        public static void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Add(dependency.Guid);
         }
 
-        public static void RemoveDependencyForFix(IFixEntity addTo, IFixEntity dependency)
+        public static void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Remove(dependency.Guid);
         }
 
-        public static void MoveFixUp(List<IFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
+        public static void MoveFixUp(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 
-        public static void MoveFixDown(List<IFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+        public static void MoveFixDown(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
 
         /// <summary>
         /// Get sorted list of fixes

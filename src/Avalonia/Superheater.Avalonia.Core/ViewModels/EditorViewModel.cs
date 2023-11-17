@@ -44,11 +44,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<IFixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
+        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
 
-        public ImmutableList<IFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public ImmutableList<IFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
         public string SelectedFixTags
         {
@@ -203,7 +203,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
-        private IFixEntity? _selectedFix;
+        private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
         private int _selectedFixIndex;
@@ -363,7 +363,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             FillGamesList();
 
             SelectedGame = newGame;
-            SelectedFix = newGame.Fixes.First();
+            //SelectedFix = newGame.Fixes.First();
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
 

@@ -46,7 +46,7 @@ namespace Common.Providers
         {
             ImmutableList<FixesList> fixes;
             ImmutableList<GameEntity> games;
-            ImmutableList<IInstalledFixEntity> installed;
+            ImmutableList<BaseInstalledFixEntity> installed;
 
             if (useCache)
             {
@@ -81,9 +81,9 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedList">List of combined entities</param>
         /// <returns>List of installed fixes</returns>
-        public static List<IInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
+        public static List<BaseInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
-            List<IInstalledFixEntity> result = new();
+            List<BaseInstalledFixEntity> result = new();
 
             foreach (var combined in combinedList)
             {

@@ -5,6 +5,6 @@ namespace Common.FixTools
 {
     public interface IFixInstaller
     {
-        Task<IInstalledFixEntity> InstallFixAsync(GameEntity game, IFixEntity fix, string? variant, bool skipMD5Check);
+        Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check);
     }
 }

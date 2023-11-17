@@ -13,14 +13,14 @@ namespace Common.Providers
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public static ImmutableList<IInstalledFixEntity> GetInstalledFixes()
+        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixes()
         {
             if (!File.Exists(Consts.InstalledFile))
             {
                 MakeEmptyFixesXml();
             }
 
-            List<IInstalledFixEntity>? fixesDatabase;
+            List<BaseInstalledFixEntity>? fixesDatabase;
 
             try
             {
@@ -34,15 +34,15 @@ namespace Common.Providers
             return fixesDatabase.ToImmutableList();
         }
 
-        private static List<IInstalledFixEntity> GetNewInstalledFixes()
+        private static List<BaseInstalledFixEntity> GetNewInstalledFixes()
         {
-            XmlSerializer xmlSerializer = new(typeof(List<IInstalledFixEntity>));
+            XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
 
-            List<IInstalledFixEntity>? fixesDatabase;
+            List<BaseInstalledFixEntity>? fixesDatabase;
 
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<IInstalledFixEntity>;
+                fixesDatabase = xmlSerializer.Deserialize(fs) as List<BaseInstalledFixEntity>;
             }
 
             if (fixesDatabase is null)
@@ -54,7 +54,7 @@ namespace Common.Providers
         }
 
         [Obsolete("Remove in version 1.0")]
-        private static List<IInstalledFixEntity> GetOldInstalledFixes()
+        private static List<BaseInstalledFixEntity> GetOldInstalledFixes()
         {
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
 
@@ -70,7 +70,7 @@ namespace Common.Providers
                 throw new NullReferenceException(nameof(fixesDatabase));
             }
 
-            return fixesDatabase.ConvertAll(x => (IInstalledFixEntity)x);
+            return fixesDatabase.ConvertAll(x => (BaseInstalledFixEntity)x);
         }
 
         /// <summary>
@@ -92,9 +92,9 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>result, error message</returns>
-        public static Result SaveInstalledFixes(List<IInstalledFixEntity> fixesList)
+        public static Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
         {
-            XmlSerializer xmlSerializer = new(typeof(List<FileInstalledFixEntity>));
+            XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
 
             try
             {
@@ -112,6 +112,6 @@ namespace Common.Providers
         /// <summary>
         /// Create empty installed fixes XML
         /// </summary>
-        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<IInstalledFixEntity>());
+        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<BaseInstalledFixEntity>());
     }
 }

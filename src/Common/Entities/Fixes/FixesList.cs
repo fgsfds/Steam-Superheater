@@ -10,7 +10,7 @@ namespace Common.Entities.Fixes
         public FixesList(
             int gameId,
             string gameName,
-            List<IFixEntity> fixes
+            List<BaseFixEntity> fixes
             ) : this()
         {
             GameId = gameId;
@@ -31,6 +31,6 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// List of fixes
         /// </summary>
-        public List<IFixEntity> Fixes { get; init; }
+        public List<BaseFixEntity> Fixes { get; init; }
     }
 }

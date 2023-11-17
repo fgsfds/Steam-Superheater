@@ -312,7 +312,7 @@ namespace Common.Providers
 
             foreach (var fix in fixesListXml)
             {
-                List<IFixEntity> fixesList = new();
+                List<BaseFixEntity> fixesList = new();
 
                 foreach (var f in fix.Fixes)
                 {

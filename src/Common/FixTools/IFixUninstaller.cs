@@ -5,6 +5,6 @@ namespace Common.FixTools
 {
     public interface IFixUninstaller
     {
-        void UninstallFix(GameEntity game, IInstalledFixEntity fix, IFixEntity fixEntity);
+        void UninstallFix(GameEntity game, BaseInstalledFixEntity fix, BaseFixEntity fixEntity);
     }
 }
