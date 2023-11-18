@@ -3,6 +3,9 @@ using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes
 {
+    /// <summary>
+    /// Base fix entity
+    /// </summary>
     public abstract class BaseFixEntity
     {
         /// <summary>

@@ -1,13 +1,11 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
-using System.Collections.Generic;
-using System;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
-using Common.Entities.Fixes.RegistryFix;
 
 namespace Common.Providers
 {

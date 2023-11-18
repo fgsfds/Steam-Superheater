@@ -3,7 +3,7 @@
 namespace Common.Entities.Fixes.FileFix
 {
     /// <summary>
-    /// Fix entity
+    /// File fix entity
     /// </summary>
     public sealed class FileFixEntity : BaseFixEntity
     {

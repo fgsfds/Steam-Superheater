@@ -13,19 +13,16 @@ namespace Tests
     /// <summary>
     /// Tests that use instance data and should be run in a single thread
     /// </summary>
-    [TestClass]
-    public sealed class SyncTests
+    [Collection("Sync")]
+    public sealed class FileFixTests : IDisposable
     {
         private const string TestTempFolder = "test_temp";
-        private static readonly object LockObject = new();
-        private string _currentDirectory;
+        private readonly string _currentDirectory;
 
         #region Test Preparations
 
-        [TestInitialize]
-        public void Init()
+        public FileFixTests()
         {
-            Monitor.Enter(LockObject);
             BindingsManager.Reset();
 
             _currentDirectory = Directory.GetCurrentDirectory();
@@ -47,8 +44,7 @@ namespace Tests
             Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), TestTempFolder));
         }
 
-        [TestCleanup]
-        public void Cleanup()
+        public void Dispose()
         {
             Directory.SetCurrentDirectory(_currentDirectory);
 
@@ -58,35 +54,22 @@ namespace Tests
             {
                 File.Delete("test_fix.zip");
             }
-
-            Monitor.Exit(LockObject);
         }
 
         #endregion Test Preparations
 
         #region Tests
 
-        [TestMethod]
-        public async Task GetFixesFromGithubTest()
-        {
-            var fixesProvider = BindingsManager.Instance.GetInstance<FixesProvider>();
-            var fixes = await fixesProvider.GetNewListAsync();
-
-            //Looking for Alan Wake fixes list
-            var result = fixes.Any(x => x.GameId == 108710);
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
+        [Fact]
         public async Task InstallUninstallFixTest() => await InstallUninstallFixAsync(variant: null, update: false);
 
-        [TestMethod]
+        [Fact]
         public async Task InstallUninstallFixVariantTest() => await InstallUninstallFixAsync(variant: "variant2", update: false);
 
-        [TestMethod]
+        [Fact]
         public async Task UpdateFixTest() => await InstallUninstallFixAsync(variant: null, update: true);
 
-        [TestMethod]
+        [Fact]
         public async Task InstallCompromisedFixTest()
         {
             GameEntity gameEntity = new(
@@ -119,7 +102,7 @@ namespace Tests
             Assert.Fail();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task InstallFixToANewFolder()
         {
             string gameFolder = PrepareGameFolder();
@@ -148,14 +131,14 @@ namespace Tests
             InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
-            Assert.IsTrue(exeExists);
+            Assert.True(exeExists);
 
             fixEntity.InstalledFix = installedFix;
 
             fixManager.UninstallFix(gameEntity, fixEntity);
 
             var newDirExists = Directory.Exists("game\\new folder");
-            Assert.IsFalse(newDirExists);
+            Assert.False(newDirExists);
         }
 
         #endregion Tests
@@ -244,66 +227,66 @@ namespace Tests
         {
             //check original files
             var exeExists = File.Exists("game\\install folder\\start game.exe");
-            Assert.IsTrue(exeExists);
+            Assert.True(exeExists);
 
             var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
-            Assert.IsTrue(fi.Equals("original"));
+            Assert.Equal("original", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
-            Assert.IsTrue(fileExists);
+            Assert.True(fileExists);
 
             var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
-            Assert.IsTrue(fi2.Equals("original"));
+            Assert.Equal("original", fi2);
 
             //check deleted files
             var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
-            Assert.IsTrue(fileToDeleteExists);
+            Assert.True(fileToDeleteExists);
 
             var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
-            Assert.IsTrue(fileToDeleteSubExists);
+            Assert.True(fileToDeleteSubExists);
 
             var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
-            Assert.IsTrue(fileToDeleteParentExists);
+            Assert.True(fileToDeleteParentExists);
 
             //check backed up files
             var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
-            Assert.IsTrue(fileToBackupExists);
+            Assert.True(fileToBackupExists);
 
             var fi3 = File.ReadAllTextAsync("game\\install folder\\file to backup.txt").Result;
-            Assert.IsTrue(fi3.Equals("original"));
+            Assert.Equal("original", fi3);
         }
 
         private static void CheckNewFiles()
         {
             //check replaced files
             var exeExists = File.Exists("game\\install folder\\start game.exe");
-            Assert.IsTrue(exeExists);
+            Assert.True(exeExists);
 
             var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
-            Assert.IsTrue(fi.Equals("fix_v1"));
+            Assert.Equal("fix_v1", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
-            Assert.IsTrue(fileExists);
+            Assert.True(fileExists);
 
             var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
-            Assert.IsTrue(fi2.Equals("fix_v1"));
+            Assert.Equal("fix_v1", fi2);
 
             //check deleted files
             var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
-            Assert.IsFalse(fileToDeleteExists);
+            Assert.False(fileToDeleteExists);
 
             var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
-            Assert.IsFalse(fileToDeleteSubExists);
+            Assert.False(fileToDeleteSubExists);
 
             var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
-            Assert.IsFalse(fileToDeleteParentExists);
+            Assert.False(fileToDeleteParentExists);
 
             //check backed up files
             var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
-            Assert.IsTrue(fileToBackupExists);
+            Assert.True(fileToBackupExists);
 
             var backedUpFileExists = File.Exists("game\\.sfd\\test_fix\\install folder\\file to backup.txt");
-            Assert.IsTrue(backedUpFileExists);
+            Assert.True(backedUpFileExists);
 
             //check installed.xml
             using (var md5 = MD5.Create())
@@ -312,7 +295,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.IsTrue(hash.Equals("E529E785414A1805C467C6407E4A8FC4"));
+                    Assert.Equal("E529E785414A1805C467C6407E4A8FC4", hash);
                 }
             }
         }
@@ -321,44 +304,33 @@ namespace Tests
         {
             //check replaced files
             var exeExists = File.Exists("game\\install folder\\start game.exe");
-            Assert.IsTrue(exeExists);
+            Assert.True(exeExists);
 
             var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
-            Assert.IsTrue(fi.Equals("fix_v2"));
+            Assert.Equal("fix_v2", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
-            Assert.IsTrue(fileExists);
+            Assert.True(fileExists);
 
             var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
-            Assert.IsTrue(fi2.Equals("original"));
+            Assert.Equal("original", fi2);
 
             //check deleted files
             var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
-            Assert.IsFalse(fileToDeleteExists);
+            Assert.False(fileToDeleteExists);
 
             var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
-            Assert.IsFalse(fileToDeleteSubExists);
+            Assert.False(fileToDeleteSubExists);
 
             var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
-            Assert.IsFalse(fileToDeleteParentExists);
+            Assert.False(fileToDeleteParentExists);
 
             //check backed up files
             var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
-            Assert.IsTrue(fileToBackupExists);
+            Assert.True(fileToBackupExists);
 
             var backedUpFileExists = File.Exists("game\\.sfd\\test_fix\\install folder\\file to backup.txt");
-            Assert.IsTrue(backedUpFileExists);
-
-            //check installed.xml
-            //using (var md5 = MD5.Create())
-            //{
-            //    using (var stream = File.OpenRead("installed.xml"))
-            //    {
-            //        var hash = Convert.ToHexString(md5.ComputeHash(stream));
-
-            //        Assert.IsTrue(hash.Equals("720FA0310861D613AAD2A4CFBAFCA80A"));
-            //    }
-            //}
+            Assert.True(backedUpFileExists);
         }
 
         private static string PrepareGameFolder()
