@@ -291,7 +291,7 @@ namespace Tests
             //check installed.xml
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead("installed.xml"))
+                using (var stream = File.OpenRead(Consts.InstalledFile))
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
