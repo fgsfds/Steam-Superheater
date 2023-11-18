@@ -77,9 +77,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixRequirements => GetRequirementsString();
 
-
-        public bool DoesSelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
-
         public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
 
 
@@ -88,20 +85,10 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
-        [NotifyPropertyChangedFor(nameof(DoesSelectedGameRequireAdmin))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
-        [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
         private FixFirstCombinedEntity? _selectedGame;
-        partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
-        {
-            if (value?.Game is not null &&
-                value.Game.DoesRequireAdmin())
-            {
-                RequireAdmin();
-            }
-        }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
@@ -271,19 +258,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
         private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
-
-
-        /// <summary>
-        /// Apply admin rights for selected game
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
-        private void ApplyAdmin()
-        {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            SelectedGame.Game.SetRunAsAdmin();
-            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
-        }
-        private bool ApplyAdminCanExecute() => DoesSelectedGameRequireAdmin;
 
 
         /// <summary>
@@ -538,26 +512,6 @@ Do you still want to install the fix?",
                     SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
                 }
             }
-        }
-
-        /// <summary>
-        /// Show popup with admin right requirement
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        private void RequireAdmin()
-        {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-
-            new PopupMessageViewModel(
-                "Admin privileges required",
-                @"This game requires to be run as admin in order to work.
-
-Do you want to set it to always run as admin?",
-                PopupMessageType.YesNo,
-                SelectedGame.Game.SetRunAsAdmin)
-                .Show();
-
-            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
         }
 
         /// <summary>

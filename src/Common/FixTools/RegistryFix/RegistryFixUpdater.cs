@@ -12,7 +12,7 @@ namespace Common.FixTools.RegistryFix
         private readonly RegistryFixInstaller _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<RegistryFixInstaller>(nameof(fixInstaller));
         private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<RegistryFixUninstaller>(nameof(fixUninstaller));
 
-        public async Task<BaseInstalledFixEntity> UpdateFixAsync()
+        public BaseInstalledFixEntity UpdateFix()
         {
             return new FileInstalledFixEntity();
         }

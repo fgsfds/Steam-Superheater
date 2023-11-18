@@ -3,8 +3,11 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
+using System.Collections.Generic;
+using System;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
+using Common.Entities.Fixes.RegistryFix;
 
 namespace Common.Providers
 {
@@ -37,15 +40,29 @@ namespace Common.Providers
 
         private static List<BaseInstalledFixEntity> GetNewInstalledFixes()
         {
-            XmlSerializer xmlSerializer = new(typeof(List<BaseInstalledFixEntity>));
+            XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
 
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                var fixesDatabase = xmlSerializer.Deserialize(fs) as List<BaseInstalledFixEntity>;
+                var fixesDatabase = xmlSerializer.Deserialize(fs) as InstalledFixesXml;
 
                 if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
 
-                return fixesDatabase;
+                List<BaseInstalledFixEntity> result = new();
+
+                foreach (var fix in fixesDatabase.InstalledFixes)
+                {
+                    if (fix is FileInstalledFixEntity fileFix)
+                    {
+                        result.Add(fileFix);
+                    }
+                    else if (fix is RegistryInstalledFixEntity regFix)
+                    {
+                        result.Add(regFix);
+                    }
+                }
+
+                return result;
             }
         }
 
@@ -60,7 +77,14 @@ namespace Common.Providers
 
                 if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
 
-                return fixesDatabase.ConvertAll(x => (BaseInstalledFixEntity)x);
+                return fixesDatabase.ConvertAll(x =>
+                    (BaseInstalledFixEntity)new FileInstalledFixEntity(
+                        x.GameId,
+                        x.Guid,
+                        x.Version,
+                        x.BackupFolder,
+                        x.FilesList
+                        ));
             }
         }
 

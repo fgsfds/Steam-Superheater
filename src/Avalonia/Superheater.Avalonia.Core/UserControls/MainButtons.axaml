@@ -43,16 +43,6 @@
                 Update list
             </Button>
 
-            <Button Name="ApplyAdmin"
-                    Command="{Binding ApplyAdminCommand}"
-                    Margin="3,0"
-                    Padding="8"
-                    Background="{DynamicResource SystemAccentColor}"
-                    ToolTip.Tip="This game requires running it as an admin in order to work. Press to apply 'Run as admin' to the exe automatically."
-                    IsVisible="{Binding DoesSelectedGameRequireAdmin, FallbackValue='False'}">
-                Set to run as admin
-            </Button>
-
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"

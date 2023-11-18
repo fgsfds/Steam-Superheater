@@ -21,22 +21,20 @@ namespace Common.FixTools.FileFix
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (fix is not FileFixEntity fileFix) { return ThrowHelper.ArgumentException<BaseInstalledFixEntity>(nameof(fix)); }
-
-            await CheckAndDownloadFileAsync(fileFix.Url, skipMD5Check ? null : fileFix.MD5);
+            await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
 
             string backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
-            BackupFiles(fileFix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-            BackupFiles(fileFix.FilesToBackup, game.InstallDir, backupFolderPath, false);
+            BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
+            BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
 
-            var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fileFix.InstallFolder, fileFix.Url, backupFolderPath, variant);
+            var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
 
-            RunAfterInstall(game.InstallDir, fileFix.RunAfterInstall);
+            RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
-            FileInstalledFixEntity installedFix = new(game.Id, fileFix.Guid, fileFix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
+            FileInstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
 
             return installedFix;
         }

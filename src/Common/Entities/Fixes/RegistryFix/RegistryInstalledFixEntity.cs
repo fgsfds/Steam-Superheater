@@ -6,7 +6,7 @@
             int id,
             Guid guid,
             int version,
-            string originalValue) : this()
+            string? originalValue) : this()
         {
             GameId = id;
             Guid = guid;
@@ -14,6 +14,6 @@
             OriginalValue = originalValue;
         }
 
-        public string OriginalValue { get; init; }
+        public string? OriginalValue { get; init; }
     }
 }

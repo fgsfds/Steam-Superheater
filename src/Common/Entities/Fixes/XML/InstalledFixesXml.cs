@@ -1,4 +1,5 @@
 ﻿using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes.XML
@@ -8,10 +9,11 @@ namespace Common.Entities.Fixes.XML
     {
         public InstalledFixesXml(List<BaseInstalledFixEntity> fixes) : this()
         {
-            InstalledFix = fixes.ConvertAll(x => (object)x);
+            InstalledFixes = fixes.ConvertAll(x => (object)x);
         }
 
         [XmlElement("FileInstalledFix", typeof(FileInstalledFixEntity))]
-        public List<object> InstalledFix { get; init; }
+        [XmlElement("RegistryInstalledFix", typeof(RegistryInstalledFixEntity))]
+        public List<object> InstalledFixes { get; init; }
     }
 }

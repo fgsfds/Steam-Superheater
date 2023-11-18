@@ -33,7 +33,7 @@ namespace Common.FixTools
             }
             else if (fix is RegistryFixEntity registryFix)
             {
-                return await _registryFixInstaller.InstallFixAsync();
+                return _registryFixInstaller.InstallFix(game, registryFix);
             }
             else
             {
@@ -65,7 +65,7 @@ namespace Common.FixTools
             }
             else if (fix is RegistryFixEntity registryFix)
             {
-                return await _registryFixUpdater.UpdateFixAsync();
+                return _registryFixUpdater.UpdateFix();
             }
             else
             {
