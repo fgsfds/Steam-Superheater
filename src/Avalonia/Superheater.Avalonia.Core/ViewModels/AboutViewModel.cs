@@ -16,11 +16,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public static Version CurrentVersion => CommonProperties.CurrentVersion;
 
-
         public string AboutTabHeader { get; private set; } = "About";
 
         public string CheckForUpdatesButtonText { get; private set; } = string.Empty;
-
 
         public bool IsUpdateAvailable { get; private set; }
 

@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public sealed class RegistryFixInstaller()
+    public static class RegistryFixInstaller
     {
         /// <summary>
         /// Install registry fix
@@ -15,11 +15,11 @@ namespace Common.FixTools.RegistryFix
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>Installed fix entity</returns>
-        public BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
+        public static BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);
 
-            var valueName = fix.ValueName.Replace("{installfolder}", game.InstallDir).Replace("\\\\", "\\");
+            var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
             var oldValue = (string?)Registry.GetValue(fix.Key, valueName, null);
 

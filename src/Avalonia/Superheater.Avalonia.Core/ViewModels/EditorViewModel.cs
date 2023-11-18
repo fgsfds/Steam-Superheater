@@ -399,7 +399,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             FillGamesList();
 
             SelectedGame = newGame;
-            //SelectedFix = newGame.Fixes.First();
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
 

@@ -6,16 +6,16 @@ using Common.Helpers;
 namespace Common.FixTools.FileFix
 {
     public sealed class FileFixUpdater(
-        FileFixInstaller fixInstaller,
-        FileFixUninstaller fixUninstaller
+        FileFixInstaller fixInstaller
+        //FileFixUninstaller fixUninstaller
         )
     {
         private readonly FileFixInstaller _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<FileFixInstaller>(nameof(fixInstaller));
-        private readonly FileFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<FileFixUninstaller>(nameof(fixUninstaller));
+        //private readonly FileFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<FileFixUninstaller>(nameof(fixUninstaller));
 
         public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
-            _fixUninstaller.UninstallFix(game, fix);
+            FileFixUninstaller.UninstallFix(game, fix);
 
             var result = await _fixInstaller.InstallFixAsync(game, fix, variant, skipMD5Check);
 

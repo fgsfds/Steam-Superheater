@@ -5,13 +5,13 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public sealed class RegistryFixUninstaller
+    public static class RegistryFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(RegistryFixEntity fix)
+        public static void UninstallFix(RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { ThrowHelper.PlatformNotSupportedException(string.Empty); return; }
             if (fix.InstalledFix is not RegistryInstalledFixEntity installedFix) { ThrowHelper.ArgumentException(nameof(fix.InstalledFix)); return; }
