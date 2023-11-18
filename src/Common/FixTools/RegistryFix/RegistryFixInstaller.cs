@@ -10,8 +10,11 @@ namespace Common.FixTools.RegistryFix
     public sealed class RegistryFixInstaller()
     {
         /// <summary>
-        /// Install fix: download ZIP, backup and delete files if needed, run post install events
+        /// Install registry fix
         /// </summary>
+        /// <param name="game">Game entity</param>
+        /// <param name="fix">Fix entity</param>
+        /// <returns>Installed fix entity</returns>
         public BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);

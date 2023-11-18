@@ -10,6 +10,7 @@ namespace Common.FixTools.RegistryFix
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
+        /// <param name="fix">Fix entity</param>
         public void UninstallFix(RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { ThrowHelper.PlatformNotSupportedException(string.Empty); return; }

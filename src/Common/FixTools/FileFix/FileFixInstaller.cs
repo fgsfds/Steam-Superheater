@@ -14,7 +14,7 @@ namespace Common.FixTools.FileFix
         private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
 
         /// <summary>
-        /// Install fix: download ZIP, backup and delete files if needed, run post install events
+        /// Install file fix: download ZIP, backup and delete files if needed, run post install events
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
@@ -171,6 +171,15 @@ namespace Common.FixTools.FileFix
             return true;
         }
 
+        /// <summary>
+        /// Backup files that will be replaced and unpack Zip
+        /// </summary>
+        /// <param name="gameDir">Game install folder</param>
+        /// <param name="fixInstallFolder">Fix install folder</param>
+        /// <param name="fixUrl">Url to fix file</param>
+        /// <param name="backupFolderPath">Path to backup folder</param>
+        /// <param name="variant"></param>
+        /// <returns>List of files in the archive</returns>
         private async Task<List<string>?> BackupFilesAndUnpackZIPAsync(
             string gameDir,
             string? fixInstallFolder,

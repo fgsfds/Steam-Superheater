@@ -1,5 +1,6 @@
 ﻿namespace Common.Entities
 {
+
     public sealed class AppUpdateEntity(
         Version version,
         string description,

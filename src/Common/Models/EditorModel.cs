@@ -313,6 +313,12 @@ Thank you.");
 
         public static void MoveFixDown(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
 
+        /// <summary>
+        /// Change type of the fix
+        /// </summary>
+        /// <typeparam name="T">New fix type</typeparam>
+        /// <param name="fixesList">List of fixes</param>
+        /// <param name="fix">Fix to replace</param>
         public static void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
         {
             var fixIndex = fixesList.IndexOf(fix);

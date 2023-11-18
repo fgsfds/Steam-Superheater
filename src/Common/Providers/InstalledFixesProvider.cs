@@ -36,6 +36,10 @@ namespace Common.Providers
             return fixesDatabase.ToImmutableList();
         }
 
+        /// <summary>
+        /// Parse installed.xml and return a list of installed fixes
+        /// </summary>
+        /// <returns>List of installed fixes</returns>
         private static List<BaseInstalledFixEntity> GetNewInstalledFixes()
         {
             XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
@@ -64,6 +68,10 @@ namespace Common.Providers
             }
         }
 
+        /// <summary>
+        /// Parse old version of installed.xml and return a list of installed fixes
+        /// </summary>
+        /// <returns>List of installed fixes</returns>
         [Obsolete("Remove in version 1.0")]
         private static List<BaseInstalledFixEntity> GetOldInstalledFixes()
         {
