@@ -12,15 +12,15 @@ namespace Common.FixTools.FileFix
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="installedFix">Installed fix entity</param>
-        /// <param name="fixEntity">Fix entity</param>
-        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, BaseFixEntity fixEntity)
+        /// <param name="fix">Fix entity</param>
+        public void UninstallFix(GameEntity game, FileFixEntity fix)
         {
-            if (installedFix is not FileInstalledFixEntity fileInstalledFix) { ThrowHelper.ArgumentException(nameof(installedFix)); return; }
-            if (fixEntity is not FileFixEntity fileFixEntity) { ThrowHelper.ArgumentException(nameof(fixEntity)); return; }
+            if (fix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(fix)); return; }
+            if (fix.InstalledFix is not FileInstalledFixEntity fileInstalledFix) { ThrowHelper.ArgumentException(nameof(fix)); return; }
 
             DeleteFiles(game.InstallDir, fileInstalledFix.FilesList);
 
-            RestoreBackup(game.InstallDir, fileInstalledFix, fileFixEntity.Url);
+            RestoreBackup(game.InstallDir, fileInstalledFix, fileFix.Url);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
         }

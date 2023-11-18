@@ -15,9 +15,7 @@ namespace Common.FixTools.FileFix
 
         public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
-
-            _fixUninstaller.UninstallFix(game, fix.InstalledFix, fix);
+            _fixUninstaller.UninstallFix(game, fix);
 
             var result = await _fixInstaller.InstallFixAsync(game, fix, variant, skipMD5Check);
 

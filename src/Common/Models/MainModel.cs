@@ -314,7 +314,7 @@ namespace Common.Models
 
             try
             {
-                _fixManager.UninstallFix(game, fix.InstalledFix, fix);
+                _fixManager.UninstallFix(game, fix);
             }
             catch (BackwardsCompatibilityException)
             {

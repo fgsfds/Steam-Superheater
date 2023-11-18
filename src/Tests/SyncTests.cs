@@ -152,7 +152,7 @@ namespace Tests
 
             fixEntity.InstalledFix = installedFix;
 
-            fixManager.UninstallFix(gameEntity, installedFix, fixEntity);
+            fixManager.UninstallFix(gameEntity, fixEntity);
 
             var newDirExists = Directory.Exists("game\\new folder");
             Assert.IsFalse(newDirExists);
@@ -208,7 +208,7 @@ namespace Tests
                 fixEntity.InstalledFix = await UpdateFixAsync(gameEntity, fixEntity.InstalledFix);
             }
 
-            fixManager.UninstallFix(gameEntity, fixEntity.InstalledFix, fixEntity);
+            fixManager.UninstallFix(gameEntity, fixEntity);
 
             CheckOriginalFiles();
         }

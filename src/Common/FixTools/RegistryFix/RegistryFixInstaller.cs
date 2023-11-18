@@ -1,5 +1,4 @@
-﻿using Common.Config;
-using Common.Entities;
+﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
@@ -8,10 +7,8 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public sealed class RegistryFixInstaller(ConfigProvider config)
+    public sealed class RegistryFixInstaller()
     {
-        private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-
         /// <summary>
         /// Install fix: download ZIP, backup and delete files if needed, run post install events
         /// </summary>
@@ -21,11 +18,11 @@ namespace Common.FixTools.RegistryFix
 
             var valueName = fix.ValueName.Replace("{installfolder}", game.InstallDir).Replace("\\\\", "\\");
 
-            var oldValue = (string?)Registry.GetValue(fix.Key, valueName, string.Empty);
+            var oldValue = (string?)Registry.GetValue(fix.Key, valueName, null);
 
             Registry.SetValue(fix.Key, valueName, fix.NewValueData);
 
-            return new RegistryInstalledFixEntity(game.Id, fix.Guid, fix.Version, oldValue);
+            return new RegistryInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Key, valueName, oldValue);
         }
     }
 }

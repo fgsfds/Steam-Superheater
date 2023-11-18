@@ -41,15 +41,15 @@ namespace Common.FixTools
             }
         }
 
-        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, BaseFixEntity fix)
+        public void UninstallFix(GameEntity game, BaseFixEntity fix)
         {
             if (fix is FileFixEntity fileFix)
             {
-                _fileFixUninstaller.UninstallFix(game, installedFix, fileFix);
+                _fileFixUninstaller.UninstallFix(game, fileFix);
             }
-            else if (fix is RegistryFixEntity registryFix)
+            else if (fix is RegistryFixEntity regFix)
             {
-                _registryFixUninstaller.UninstallFix();
+                _registryFixUninstaller.UninstallFix(regFix);
             }
             else
             {
@@ -65,7 +65,7 @@ namespace Common.FixTools
             }
             else if (fix is RegistryFixEntity registryFix)
             {
-                return _registryFixUpdater.UpdateFix();
+                return _registryFixUpdater.UpdateFix(game, registryFix);
             }
             else
             {
