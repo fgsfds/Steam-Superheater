@@ -1,6 +1,8 @@
-﻿using Common.CombinedEntities;
-using Common.Config;
+﻿using Common.Config;
 using Common.Entities;
+using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
@@ -9,28 +11,16 @@ using System.Collections.Immutable;
 
 namespace Common.Models
 {
-    public sealed class MainModel
+    public sealed class MainModel(
+        ConfigProvider configProvider,
+        CombinedEntitiesProvider combinedEntitiesProvider,
+        FixManager fixManager
+        )
     {
-        public MainModel(
-            ConfigProvider configProvider,
-            CombinedEntitiesProvider combinedEntitiesProvider,
-            FixInstaller fixInstaller,
-            FixUpdater fixUpdater
-            )
-        {
-            _config = configProvider?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
-            _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<FixInstaller>(nameof(fixInstaller));
-            _fixUpdater = fixUpdater ?? ThrowHelper.ArgumentNullException<FixUpdater>(nameof(fixUpdater));
-            _combinedEntitiesList = new();
-        }
-
-        private readonly ConfigEntity _config;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly FixInstaller _fixInstaller;
-        private readonly FixUpdater _fixUpdater;
-
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList;
+        private readonly ConfigEntity _config = configProvider?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
+        private readonly FixManager _fixManager = fixManager ?? ThrowHelper.ArgumentNullException<FixManager>(nameof(fixManager));
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList = new();
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
@@ -155,16 +145,18 @@ namespace Common.Models
         /// Get link to current fix's file
         /// </summary>
         /// <param name="fix">Fix</param>
-        public string GetSelectedFixUrl(FixEntity? fix)
+        public string GetSelectedFixUrl(BaseFixEntity? fix)
         {
-            if (string.IsNullOrEmpty(fix?.Url))
+            if (fix is not FileFixEntity fileFix)
             {
                 return string.Empty;
             }
 
+            if (string.IsNullOrEmpty(fileFix?.Url)) { return string.Empty; }
+
             return !_config.UseTestRepoBranch
-                ? fix.Url
-                : fix.Url.Replace("/master/", "/test/");
+                ? fileFix.Url
+                : fileFix.Url.Replace("/master/", "/test/");
         }
 
         /// <summary>
@@ -207,12 +199,12 @@ namespace Common.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>List of dependencies</returns>
-        public List<FixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, FixEntity fix)
+        public List<BaseFixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             if (fix?.Dependencies is null ||
                 fix.Dependencies.Count == 0)
             {
-                return new List<FixEntity>();
+                return new List<BaseFixEntity>();
             }
 
             var allGameFixes = _combinedEntitiesList.Where(x => x.GameName == entity.GameName).First().FixesList;
@@ -230,7 +222,7 @@ namespace Common.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, FixEntity fix)
+        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
@@ -249,7 +241,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public static List<FixEntity> GetDependentFixes(IEnumerable<FixEntity> fixes, Guid guid)
+        public static List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
             => fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid)).ToList();
 
         /// <summary>
@@ -258,7 +250,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>true if there are installed dependent fixes</returns>
-        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<FixEntity> fixes, Guid guid)
+        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
         {
             var deps = GetDependentFixes(fixes, guid);
 
@@ -277,13 +269,13 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFixAsync(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
-            InstalledFixEntity? installedFix;
+            BaseInstalledFixEntity? installedFix;
 
             try
             {
-                installedFix = await _fixInstaller.InstallFix(game, fix, variant, skipMD5Check);
+                installedFix = await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
             }
             catch (HashCheckFailedException)
             {
@@ -314,7 +306,7 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to delete</param>
         /// <returns>Result message</returns>
-        public Result UninstallFix(GameEntity game, FixEntity fix)
+        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
         {
             if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
@@ -322,7 +314,7 @@ namespace Common.Models
 
             try
             {
-                FixUninstaller.UninstallFix(game, fix.InstalledFix, fix);
+                _fixManager.UninstallFix(game, fix);
             }
             catch (BackwardsCompatibilityException)
             {
@@ -357,16 +349,16 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
         /// <returns>Result message</returns>
-        public async Task<Result> UpdateFixAsync(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
             if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
 
-            InstalledFixEntity? installedFix;
+            BaseInstalledFixEntity? installedFix;
             var backupRestoreFailed = false;
 
             try
             {
-                installedFix = await _fixUpdater.UpdateFixAsync(game, fix, variant, skipMD5Check);
+                installedFix = await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
             }
             catch (BackwardsCompatibilityException)
             {

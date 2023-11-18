@@ -1,8 +1,9 @@
 using Avalonia.Input.Platform;
 using Common;
-using Common.CombinedEntities;
 using Common.Config;
-using Common.Entities;
+using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -42,13 +43,21 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<FixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
-
-        public ImmutableList<string>? SelectedFixVariants => SelectedFix?.Variants?.ToImmutableList();
+        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
 
         public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
 
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
+
+        public ImmutableList<string>? SelectedFixVariants
+        {
+            get
+            {
+                if (SelectedFix is not FileFixEntity fileFix) { return null; }
+
+                return fileFix.Variants?.ToImmutableList();
+            }
+        }
 
 
         public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
@@ -68,9 +77,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixRequirements => GetRequirementsString();
 
-
-        public bool DoesSelectedGameRequireAdmin => SelectedGame?.Game is not null && SelectedGame.Game.DoesRequireAdmin();
-
         public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
 
 
@@ -79,20 +85,10 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
-        [NotifyPropertyChangedFor(nameof(DoesSelectedGameRequireAdmin))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
-        [NotifyCanExecuteChangedFor(nameof(ApplyAdminCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
         private FixFirstCombinedEntity? _selectedGame;
-        partial void OnSelectedGameChanged(FixFirstCombinedEntity? value)
-        {
-            if (value?.Game is not null &&
-                value.Game.DoesRequireAdmin())
-            {
-                RequireAdmin();
-            }
-        }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
@@ -106,7 +102,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
-        private FixEntity? _selectedFix;
+        private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -261,20 +257,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
-        private bool OpenConfigCanExecute() => SelectedFix?.ConfigFile is not null && SelectedFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
-
-
-        /// <summary>
-        /// Apply admin rights for selected game
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(ApplyAdminCanExecute)))]
-        private void ApplyAdmin()
-        {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            SelectedGame.Game.SetRunAsAdmin();
-            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
-        }
-        private bool ApplyAdminCanExecute() => DoesSelectedGameRequireAdmin;
+        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
 
 
         /// <summary>
@@ -443,7 +426,8 @@ Do you still want to install the fix?",
                 return;
             }
 
-            if (SelectedFix.ConfigFile is not null &&
+            if (SelectedFix is FileFixEntity fileFix &&
+                fileFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
                 new PopupMessageViewModel(
@@ -531,36 +515,17 @@ Do you still want to install the fix?",
         }
 
         /// <summary>
-        /// Show popup with admin right requirement
-        /// </summary>
-        /// <exception cref="NullReferenceException"></exception>
-        private void RequireAdmin()
-        {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-
-            new PopupMessageViewModel(
-                "Admin privileges required",
-                @"This game requires to be run as admin in order to work.
-
-Do you want to set it to always run as admin?",
-                PopupMessageType.YesNo,
-                SelectedGame.Game.SetRunAsAdmin)
-                .Show();
-
-            OnPropertyChanged(nameof(DoesSelectedGameRequireAdmin));
-        }
-
-        /// <summary>
         /// Open config file for selected fix
         /// </summary>
         private void OpenConfigXml()
         {
+            if (SelectedFix is not FileFixEntity fileFix) { return; }
             if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            if (SelectedFix?.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(SelectedFix.ConfigFile));
+            if (fileFix.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(fileFix.ConfigFile));
 
-            var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, SelectedFix.ConfigFile);
+            var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
 
-            var workingDir = SelectedFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
+            var workingDir = fileFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
 
             Process.Start(new ProcessStartInfo
             {

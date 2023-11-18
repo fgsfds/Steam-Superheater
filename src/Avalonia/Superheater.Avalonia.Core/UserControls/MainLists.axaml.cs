@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Media;
-using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Diagnostics;
 
@@ -19,7 +19,7 @@ namespace Superheater.Avalonia.Core.UserControls
         {
             DescriptionBox.Children.Clear();
 
-            if (((ListBox)sender).SelectedItem is not FixEntity fixEntity)
+            if (((ListBox)sender).SelectedItem is not BaseFixEntity fixEntity)
             {
                 return;
             }

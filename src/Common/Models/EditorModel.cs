@@ -1,4 +1,7 @@
 ﻿using Common.Entities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -6,28 +9,18 @@ using System.Xml.Serialization;
 
 namespace Common.Models
 {
-    public sealed class EditorModel
+    public sealed class EditorModel(
+        FixesProvider fixesProvider,
+        CombinedEntitiesProvider combinedEntitiesProvider,
+        GamesProvider gamesProvider
+        )
     {
-        public EditorModel(
-            FixesProvider fixesProvider,
-            CombinedEntitiesProvider combinedEntitiesProvider,
-            GamesProvider gamesProvider
-            )
-        {
-            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
-            _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
-            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
+        private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.NullReferenceException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
+        private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
 
-            _fixesList = new();
-            _availableGamesList = new();
-        }
-
-        private readonly FixesProvider _fixesProvider;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly GamesProvider _gamesProvider;
-
-        private readonly List<FixesList> _fixesList;
-        private readonly List<GameEntity> _availableGamesList;
+        private readonly List<FixesList> _fixesList = new();
+        private readonly List<GameEntity> _availableGamesList = new();
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
@@ -81,7 +74,7 @@ namespace Common.Models
         /// <returns>New fixes list</returns>
         public FixesList AddNewGame(GameEntity game)
         {
-            var newFix = new FixesList(game.Id, game.Name, new() { new() });
+            var newFix = new FixesList(game.Id, game.Name, []);
 
             _fixesList.Add(newFix);
             var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
@@ -98,9 +91,9 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <returns>New fix entity</returns>
-        public static FixEntity AddNewFix(FixesList game)
+        public static FileFixEntity AddNewFix(FixesList game)
         {
-            FixEntity newFix = new();
+            FileFixEntity newFix = new();
 
             game.Fixes.Add(newFix);
 
@@ -112,7 +105,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static void RemoveFix(FixesList game, FixEntity fix)
+        public static void RemoveFix(FixesList game, BaseFixEntity fix)
         {
             game.Fixes.Remove(fix);
 
@@ -141,7 +134,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of dependencies</returns>
-        public ImmutableList<FixEntity> GetDependenciesForAFix(FixesList? fixesList, FixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity> GetDependenciesForAFix(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixEntity?.Dependencies is null ||
                 fixesList is null)
@@ -169,7 +162,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of fixes</returns>
-        public ImmutableList<FixEntity> GetListOfAvailableDependencies(FixesList? fixesList, FixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity> GetListOfAvailableDependencies(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixesList is null ||
                 fixEntity is null)
@@ -177,7 +170,7 @@ namespace Common.Models
                 return [];
             }
 
-            List<FixEntity> result = new();
+            List<BaseFixEntity> result = new();
 
             var fixDependencies = GetDependenciesForAFix(fixesList, fixEntity);
 
@@ -205,26 +198,28 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public static Result UploadFix(FixesList fixesList, FixEntity fix)
+        public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
             var newFix = new FixesList(
                 fixesList.GameId,
                 fixesList.GameName,
-                new List<FixEntity>() { fix }
+                new List<BaseFixEntity>() { fix }
                 );
 
             var guid = newFix.Fixes.First().Guid;
 
             string? fileToUpload = null;
 
-            var url = newFix.Fixes[0].Url;
-
-            if (!string.IsNullOrEmpty(url) &&
-                !url.StartsWith("http"))
+            if (newFix.Fixes[0] is FileFixEntity fileFix)
             {
-                fileToUpload = fix.Url;
+                var url = fileFix.Url;
 
-                newFix.Fixes[0].Url = Path.GetFileName(fileToUpload);
+                if (!string.IsNullOrEmpty(url) &&
+                    !url.StartsWith("http"))
+                {
+                    fileToUpload = fileFix.Url;
+                    fileFix.Url = Path.GetFileName(fileToUpload);
+                }
             }
 
             XmlSerializer xmlSerializer = new(typeof(FixesList));
@@ -265,7 +260,7 @@ Thank you.");
         /// <summary>
         /// Check if the file can be uploaded
         /// </summary>
-        public async Task<Result> CheckFixBeforeUploadAsync(FixEntity fix)
+        public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
         {
             if (string.IsNullOrEmpty(fix?.Name) ||
                 fix.Version < 1)
@@ -273,15 +268,16 @@ Thank you.");
                 return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
             }
 
-            if (!string.IsNullOrEmpty(fix.Url) &&
-                !fix.Url.StartsWith("http"))
+            if (fix is FileFixEntity fileFix &&
+                !string.IsNullOrEmpty(fileFix.Url) &&
+                !fileFix.Url.StartsWith("http"))
             {
-                if (!File.Exists(fix.Url))
+                if (!File.Exists(fileFix.Url))
                 {
-                    return new(ResultEnum.Error, $"{fix.Url} doesn't exist.");
+                    return new(ResultEnum.Error, $"{fileFix.Url} doesn't exist.");
                 }
 
-                else if (new FileInfo(fix.Url).Length > 1e+8)
+                else if (new FileInfo(fileFix.Url).Length > 1e+8)
                 {
                     return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
@@ -301,21 +297,47 @@ Thank you.");
             return new(ResultEnum.Ok, string.Empty);
         }
 
-        public static void AddDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Add(dependency.Guid);
         }
 
-        public static void RemoveDependencyForFix(FixEntity addTo, FixEntity dependency)
+        public static void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies ??= new();
             addTo.Dependencies.Remove(dependency.Guid);
         }
 
-        public static void MoveFixUp(List<FixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
+        public static void MoveFixUp(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
 
-        public static void MoveFixDown(List<FixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+        public static void MoveFixDown(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
+
+        /// <summary>
+        /// Change type of the fix
+        /// </summary>
+        /// <typeparam name="T">New fix type</typeparam>
+        /// <param name="fixesList">List of fixes</param>
+        /// <param name="fix">Fix to replace</param>
+        public static void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
+        {
+            var fixIndex = fixesList.IndexOf(fix);
+
+            if (typeof(T) == typeof(RegistryFixEntity))
+            {
+                var newFix = new RegistryFixEntity(fix);
+                fixesList[fixIndex] = newFix;
+            }
+            else if (typeof(T) == typeof(FileFixEntity))
+            {
+                var newFix = new FileFixEntity(fix);
+                fixesList[fixIndex] = newFix;
+            }
+            else
+            {
+                ThrowHelper.ArgumentException(nameof(fix));
+            }
+        }
 
         /// <summary>
         /// Get sorted list of fixes

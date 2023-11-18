@@ -1,6 +1,6 @@
 using Avalonia.Controls;
-using Superheater.Avalonia.Core.ViewModels;
 using Common.DI;
+using Superheater.Avalonia.Core.ViewModels;
 
 namespace Superheater.Avalonia.Core.Pages
 {

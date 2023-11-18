@@ -3,26 +3,21 @@
     /// <summary>
     /// Operation result
     /// </summary>
-    public readonly struct Result
+    public readonly struct Result(
+        ResultEnum resultEnum,
+        string message
+        )
     {
-        public Result(
-            ResultEnum resultEnum,
-            string message
-            )
-        {
-            ResultEnum = resultEnum;
-            Message = message;
-        }
 
         /// <summary>
         /// Operation result enum
         /// </summary>
-        public ResultEnum ResultEnum { get; init; }
+        public ResultEnum ResultEnum { get; init; } = resultEnum;
 
         /// <summary>
         /// Operation result message
         /// </summary>
-        public string Message { get; init; }
+        public string Message { get; init; } = message;
 
         /// <summary>
         /// Is operation successful

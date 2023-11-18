@@ -1,23 +1,19 @@
-﻿using Common.CombinedEntities;
-using Common.Entities;
+﻿using Common.Entities;
+using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 
 namespace Common.Providers
 {
-    public sealed class CombinedEntitiesProvider
+    public sealed class CombinedEntitiesProvider(
+        FixesProvider fixesProvider,
+        GamesProvider gamesProvider
+        )
     {
-        private readonly FixesProvider _fixesProvider;
-        private readonly GamesProvider _gamesProvider;
+        private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
+        private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
 
-        public CombinedEntitiesProvider(
-            FixesProvider fixesProvider,
-            GamesProvider gamesProvider
-            )
-        {
-            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
-            _gamesProvider = gamesProvider ?? ThrowHelper.ArgumentNullException<GamesProvider>(nameof(gamesProvider));
-        }
         /// <summary>
         /// Get list of fix entities with installed fixes
         /// </summary>
@@ -51,7 +47,7 @@ namespace Common.Providers
         {
             ImmutableList<FixesList> fixes;
             ImmutableList<GameEntity> games;
-            ImmutableList<InstalledFixEntity> installed;
+            ImmutableList<BaseInstalledFixEntity> installed;
 
             if (useCache)
             {
@@ -71,9 +67,9 @@ namespace Common.Providers
             foreach (var fix in fixes)
             {
                 var game = games.Where(x => x.Id == fix.GameId).FirstOrDefault();
-                var inst = installed.Where(x => x.GameId == fix.GameId);
+                var installedForGame = installed.Where(x => x.GameId == fix.GameId);
 
-                result.Add(new FixFirstCombinedEntity(fix, game, inst));
+                result.Add(new FixFirstCombinedEntity(fix, game, installedForGame));
             }
 
             result = result.OrderByDescending(x => x.IsGameInstalled).ToList();
@@ -86,9 +82,9 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedList">List of combined entities</param>
         /// <returns>List of installed fixes</returns>
-        public static List<InstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
+        public static List<BaseInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
-            List<InstalledFixEntity> result = new();
+            List<BaseInstalledFixEntity> result = new();
 
             foreach (var combined in combinedList)
             {

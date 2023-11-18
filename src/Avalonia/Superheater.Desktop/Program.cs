@@ -23,7 +23,7 @@ sealed class Program
 
         if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
         {
-            UpdateInstaller.InstallUpdate();
+            AppUpdateInstaller.InstallUpdate();
         }
         else
         {

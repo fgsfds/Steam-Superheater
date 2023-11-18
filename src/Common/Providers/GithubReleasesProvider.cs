@@ -10,7 +10,7 @@ namespace Common.Providers
         /// Return a list of releases from GitHub repo that have higher version than the current
         /// </summary>
         /// <param name="currentVersion">current release version</param>
-        public static async Task<IEnumerable<UpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
+        public static async Task<IEnumerable<AppUpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
         {
             using (var client = new HttpClient())
             {
@@ -23,7 +23,7 @@ namespace Common.Providers
 
                 releases = releases.Where(x => x.draft is false && x.prerelease is false).ToList();
 
-                var updates = releases.ConvertAll(x => new UpdateEntity(
+                var updates = releases.ConvertAll(x => new AppUpdateEntity(
                     new Version(x.tag_name),
                     x.body,
                     new Uri(x.assets.Where(x => x.name.EndsWith("win-x64.zip")).First().browser_download_url)

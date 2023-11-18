@@ -1,6 +1,6 @@
-﻿using SimpleInjector;
-using Common.Config;
+﻿using Common.Config;
 using Common.Providers;
+using SimpleInjector;
 
 namespace Common.DI
 {

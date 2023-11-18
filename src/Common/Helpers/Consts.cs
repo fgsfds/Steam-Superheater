@@ -4,7 +4,7 @@
     {
         public const string ConfigFile = "config.xml";
 
-        public const string FixesFile = "fixes_v2.xml";
+        public const string FixesFile = "fixes_v3.xml";
 
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
@@ -18,9 +18,9 @@
 
         public const string UpdateFolder = "update";
 
-        internal const string NewsFile = "news.xml";
+        public const string InstalledFile = "installed.xml";
 
-        internal const string InstalledFile = "installed.xml";
+        internal const string NewsFile = "news.xml";
 
         internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
 

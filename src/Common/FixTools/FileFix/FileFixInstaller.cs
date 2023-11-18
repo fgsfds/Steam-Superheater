@@ -1,30 +1,27 @@
 ﻿using Common.Config;
 using Common.Entities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Security.Cryptography;
 
-namespace Common.FixTools
+namespace Common.FixTools.FileFix
 {
-    public sealed class FixInstaller
+    public sealed class FileFixInstaller(ConfigProvider config)
     {
-        private readonly ConfigEntity _configEntity;
-
-        public FixInstaller(ConfigProvider config)
-        {
-            _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-        }
+        private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
 
         /// <summary>
-        /// Install fix: download ZIP, backup and delete files if needed, run post install events
+        /// Install file fix: download ZIP, backup and delete files if needed, run post install events
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<InstalledFixEntity> InstallFix(GameEntity game, FixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
             await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
 
@@ -33,11 +30,11 @@ namespace Common.FixTools
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
 
-            var filesInArchive = await BackupFilesAndUnpackZIP(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
+            var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
-            InstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
+            FileInstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
 
             return installedFix;
         }
@@ -51,10 +48,7 @@ namespace Common.FixTools
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
         {
-            if (fixUrl is null)
-            {
-                return;
-            }
+            if (fixUrl is null) { return; }
 
             var zipFullPath = _configEntity.UseLocalRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
@@ -117,10 +111,7 @@ namespace Common.FixTools
             bool deleteOriginal
             )
         {
-            if (files is null || !files.Any())
-            {
-                return;
-            }
+            if (files is null || !files.Any()) { return; }
 
             foreach (var file in files)
             {
@@ -160,10 +151,7 @@ namespace Common.FixTools
         /// <returns>true if check is passed</returns>
         private static bool CheckFileMD5(string filePath, string? fixMD5)
         {
-            if (fixMD5 is null)
-            {
-                return true;
-            }
+            if (fixMD5 is null) { return true; }
 
             string? hash;
 
@@ -183,17 +171,23 @@ namespace Common.FixTools
             return true;
         }
 
-        private async Task<List<string>?> BackupFilesAndUnpackZIP(
-            string gameDir, 
-            string? fixInstallFolder, 
+        /// <summary>
+        /// Backup files that will be replaced and unpack Zip
+        /// </summary>
+        /// <param name="gameDir">Game install folder</param>
+        /// <param name="fixInstallFolder">Fix install folder</param>
+        /// <param name="fixUrl">Url to fix file</param>
+        /// <param name="backupFolderPath">Path to backup folder</param>
+        /// <param name="variant"></param>
+        /// <returns>List of files in the archive</returns>
+        private async Task<List<string>?> BackupFilesAndUnpackZIPAsync(
+            string gameDir,
+            string? fixInstallFolder,
             string? fixUrl,
             string backupFolderPath,
             string? variant)
         {
-            if (fixUrl is null)
-            {
-                return null;
-            }
+            if (fixUrl is null) { return null; }
 
             var unpackToPath = fixInstallFolder is null
                 ? gameDir
@@ -224,14 +218,11 @@ namespace Common.FixTools
         /// <param name="gameInstallPath">Path to the game folder</param>
         /// <param name="runAfterInstall">File to open</param>
         private static void RunAfterInstall(
-            string gameInstallPath, 
+            string gameInstallPath,
             string? runAfterInstall
             )
         {
-            if (runAfterInstall is null)
-            {
-                return;
-            }
+            if (runAfterInstall is null) { return; }
 
             var path = Path.Combine(gameInstallPath, runAfterInstall);
 
@@ -272,9 +263,9 @@ namespace Common.FixTools
 
                     if (variant is not null)
                     {
-                        if (entry.FullName.StartsWith(variant + "/"))
+                        if (entry.FullName.StartsWith(variant + '/'))
                         {
-                            path = entry.FullName.Replace(variant + "/", string.Empty);
+                            path = entry.FullName.Replace(variant + '/', string.Empty);
 
                             if (string.IsNullOrEmpty(path))
                             {

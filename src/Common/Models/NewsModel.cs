@@ -6,19 +6,13 @@ using System.Collections.Immutable;
 
 namespace Common.Models
 {
-    public sealed class NewsModel
+    public sealed class NewsModel(
+        ConfigProvider config,
+        NewsProvider news
+        )
     {
-        public NewsModel(
-            ConfigProvider config,
-            NewsProvider news
-            )
-        {
-            _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-            _newsProvider = news ?? ThrowHelper.ArgumentNullException<NewsProvider>(nameof(news));
-        }
-
-        private readonly ConfigEntity _config;
-        private readonly NewsProvider _newsProvider;
+        private readonly ConfigEntity _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
+        private readonly NewsProvider _newsProvider = news ?? ThrowHelper.ArgumentNullException<NewsProvider>(nameof(news));
 
         public int UnreadNewsCount => News?.Where(x => x.IsNewer)?.Count() ?? 0;
 

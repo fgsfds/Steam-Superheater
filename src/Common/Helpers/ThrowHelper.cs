@@ -60,5 +60,11 @@ namespace Common.Helpers
 
         [DoesNotReturn]
         public static T NullReferenceException<T>(string? message) => throw new NullReferenceException(message);
+
+        [DoesNotReturn]
+        public static void ArgumentException(string? message) => throw new ArgumentException(message);
+
+        [DoesNotReturn]
+        public static T ArgumentException<T>(string? message) => throw new ArgumentException(message);
     }
 }

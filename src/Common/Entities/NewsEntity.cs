@@ -1,6 +1,6 @@
 ﻿namespace Common.Entities
 {
-    public sealed partial class NewsEntity
+    public sealed partial class NewsEntity()
     {
         /// <summary>
         /// Date of the news article
@@ -16,12 +16,5 @@
         /// Is newer than the last read version
         /// </summary>
         public bool IsNewer { get; set; }
-
-        /// <summary>
-        /// Serializer constructor
-        /// </summary>
-        private NewsEntity()
-        {
-        }
     }
 }

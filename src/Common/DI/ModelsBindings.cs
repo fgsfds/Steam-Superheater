@@ -1,5 +1,5 @@
-﻿using SimpleInjector;
-using Common.Models;
+﻿using Common.Models;
+using SimpleInjector;
 using Container = SimpleInjector.Container;
 
 namespace Common.DI

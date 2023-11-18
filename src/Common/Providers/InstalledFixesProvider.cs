@@ -1,5 +1,8 @@
-﻿using Common.CombinedEntities;
-using Common.Entities;
+﻿using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
@@ -12,25 +15,83 @@ namespace Common.Providers
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public static ImmutableList<InstalledFixEntity> GetInstalledFixes()
+        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixes()
         {
             if (!File.Exists(Consts.InstalledFile))
             {
-                MakeEmptyFixesXml();
+                return [];
             }
 
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
+            List<BaseInstalledFixEntity>? fixesDatabase;
 
-            List<InstalledFixEntity>? fixesDatabase;
+            try
+            {
+                fixesDatabase = GetNewInstalledFixes();
+            }
+            catch
+            {
+                fixesDatabase = GetOldInstalledFixes();
+            }
+
+            return fixesDatabase.ToImmutableList();
+        }
+
+        /// <summary>
+        /// Parse installed.xml and return a list of installed fixes
+        /// </summary>
+        /// <returns>List of installed fixes</returns>
+        private static List<BaseInstalledFixEntity> GetNewInstalledFixes()
+        {
+            XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
 
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity>;
+                var fixesDatabase = xmlSerializer.Deserialize(fs) as InstalledFixesXml;
+
+                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
+
+                List<BaseInstalledFixEntity> result = new();
+
+                foreach (var fix in fixesDatabase.InstalledFixes)
+                {
+                    if (fix is FileInstalledFixEntity fileFix)
+                    {
+                        result.Add(fileFix);
+                    }
+                    else if (fix is RegistryInstalledFixEntity regFix)
+                    {
+                        result.Add(regFix);
+                    }
+                }
+
+                return result;
             }
+        }
 
-            if (fixesDatabase is null) ThrowHelper.NullReferenceException(nameof(fixesDatabase));
+        /// <summary>
+        /// Parse old version of installed.xml and return a list of installed fixes
+        /// </summary>
+        /// <returns>List of installed fixes</returns>
+        [Obsolete("Remove in version 1.0")]
+        private static List<BaseInstalledFixEntity> GetOldInstalledFixes()
+        {
+            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
 
-            return fixesDatabase.ToImmutableList();
+            using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
+            {
+                var fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
+
+                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
+
+                return fixesDatabase.ConvertAll(x =>
+                    (BaseInstalledFixEntity)new FileInstalledFixEntity(
+                        x.GameId,
+                        x.Guid,
+                        x.Version,
+                        x.BackupFolder,
+                        x.FilesList
+                        ));
+            }
         }
 
         /// <summary>
@@ -52,26 +113,20 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>result, error message</returns>
-        public static Result SaveInstalledFixes(List<InstalledFixEntity> fixesList)
+        public static Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
         {
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity>));
-
             try
             {
+                XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
                 using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
-                xmlSerializer.Serialize(fs, fixesList);
+                xmlSerializer.Serialize(fs, new InstalledFixesXml(fixesList));
+
+                return new(ResultEnum.Ok, string.Empty);
             }
             catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
             {
                 return new Result(ResultEnum.NotFound, e.Message);
             }
-
-            return new (ResultEnum.Ok, string.Empty);
         }
-
-        /// <summary>
-        /// Create empty installed fixes XML
-        /// </summary>
-        private static void MakeEmptyFixesXml() => SaveInstalledFixes(new List<InstalledFixEntity>());
     }
 }

@@ -1,6 +1,6 @@
-﻿using Common.Entities;
+﻿using Common.Entities.Fixes;
 
-namespace Common.CombinedEntities
+namespace Common.Entities.CombinedEntities
 {
     /// <summary>
     /// Object that combines fixes list with installed game
@@ -10,7 +10,7 @@ namespace Common.CombinedEntities
         public FixFirstCombinedEntity(
             FixesList fixesList,
             GameEntity? game,
-            IEnumerable<InstalledFixEntity>? installedFixes
+            IEnumerable<BaseInstalledFixEntity>? installedFixes
             )
         {
             FixesList = fixesList;

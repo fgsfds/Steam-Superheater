@@ -1,15 +1,15 @@
 ﻿using Common.Entities;
-using Common.Providers;
 using Common.Helpers;
+using Common.Providers;
 using System.IO.Compression;
 
 namespace Common
 {
-    public sealed class UpdateInstaller
+    public sealed class AppUpdateInstaller
     {
-        private readonly List<UpdateEntity> _updates;
+        private readonly List<AppUpdateEntity> _updates;
 
-        public UpdateInstaller()
+        public AppUpdateInstaller()
         {
             _updates = new();
         }
