@@ -44,7 +44,7 @@ namespace Common
                 {
                     var fileName = remoteFileName is null ? Path.GetFileName(file) : remoteFileName;
 
-                    var uploadFileRequest = new WebClient();
+                    using var uploadFileRequest = new WebClient();
                     uploadFileRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);
                     uploadFileRequest.UploadFile($"{FtpAddress}/{folder}/{fileName}", file);
                 }
