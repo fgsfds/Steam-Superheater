@@ -4,7 +4,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Diagnostics;
-using System.IO.Compression;
 using System.Security.Cryptography;
 
 namespace Common.FixTools.FileFix
@@ -197,11 +196,11 @@ namespace Common.FixTools.FileFix
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
 
-            var filesInArchive = GetListOfFilesInArchive(zipFullPath, fixInstallFolder, unpackToPath, variant);
+            var filesInArchive = FileTools.GetListOfFilesInArchive(zipFullPath, unpackToPath, fixInstallFolder, variant);
 
             BackupFiles(filesInArchive, gameDir, backupFolderPath, true);
 
-            await FileTools.UnpackZipAsync(zipFullPath, unpackToPath, variant);
+            await FileTools.UnpackArchiveAsync(zipFullPath, unpackToPath, variant);
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalRepo)
@@ -232,72 +231,6 @@ namespace Common.FixTools.FileFix
                 UseShellExecute = true,
                 WorkingDirectory = gameInstallPath
             });
-        }
-
-        /// <summary>
-        /// Get list of files and new folders in the archive
-        /// </summary>
-        /// <param name="zipPath">Path to ZIP</param>
-        /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
-        /// <param name="unpackToPath">Full path </param>
-        /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
-        private static List<string> GetListOfFilesInArchive(
-            string zipPath,
-            string? fixInstallFolder,
-            string unpackToPath,
-            string? variant)
-        {
-            List<string> files = new();
-
-            //if directory that the archive will be extracted to doesn't exist, add it to the list too
-            if (!Directory.Exists(unpackToPath))
-            {
-                files.Add(unpackToPath);
-            }
-
-            using (ZipArchive archive = ZipFile.OpenRead(zipPath))
-            {
-                foreach (ZipArchiveEntry entry in archive.Entries)
-                {
-                    string path = entry.FullName;
-
-                    if (variant is not null)
-                    {
-                        if (entry.FullName.StartsWith(variant + '/'))
-                        {
-                            path = entry.FullName.Replace(variant + '/', string.Empty);
-
-                            if (string.IsNullOrEmpty(path))
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            continue;
-                        }
-                    }
-
-                    var fullName = Path.Combine(
-                        fixInstallFolder is null ? string.Empty : fixInstallFolder,
-                        path)
-                        .Replace('/', Path.DirectorySeparatorChar);
-
-                    //if it's a file, add it to the list
-                    if (!fullName.EndsWith('\\') &&
-                        !fullName.EndsWith('/'))
-                    {
-                        files.Add(fullName);
-                    }
-                    //if it's a directory and it doesn't already exist, add it to the list
-                    else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
-                    {
-                        files.Add(fullName);
-                    }
-                }
-            }
-
-            return files;
         }
     }
 }
