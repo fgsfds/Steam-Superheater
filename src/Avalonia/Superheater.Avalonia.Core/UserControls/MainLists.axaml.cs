@@ -44,7 +44,7 @@ namespace Superheater.Avalonia.Core.UserControls
                 }
                 else if (item.StartsWith("http"))
                 {
-                    var button = new Button
+                    Button button = new()
                     {
                         Content = item
                     };

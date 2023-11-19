@@ -74,7 +74,7 @@ namespace Common.Models
         /// <returns>New fixes list</returns>
         public FixesList AddNewGame(GameEntity game)
         {
-            var newFix = new FixesList(game.Id, game.Name, []);
+            FixesList newFix = new(game.Id, game.Name, []);
 
             _fixesList.Add(newFix);
             var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
@@ -176,11 +176,10 @@ namespace Common.Models
 
             foreach (var fix in fixesList.Fixes)
             {
-                if (
-                    //don't add itself
+                if (//don't add itself
                     fix.Guid != fixEntity.Guid &&
                     //don't add fixes that depend on it
-                    (fix.Dependencies is not null && !fix.Dependencies.Any(x => x == fixEntity.Guid)) &&
+                    fix.Dependencies is not null && !fix.Dependencies.Any(x => x == fixEntity.Guid) &&
                     //don't add fixes that are already dependencies
                     !fixDependencies.Where(x => x.Guid == fix.Guid).Any()
                     )
@@ -200,7 +199,7 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            var newFix = new FixesList(
+            FixesList newFix = new(
                 fixesList.GameId,
                 fixesList.GameName,
                 new List<BaseFixEntity>() { fix }
@@ -325,12 +324,12 @@ Thank you.");
 
             if (typeof(T) == typeof(RegistryFixEntity))
             {
-                var newFix = new RegistryFixEntity(fix);
+                RegistryFixEntity newFix = new(fix);
                 fixesList[fixIndex] = newFix;
             }
             else if (typeof(T) == typeof(FileFixEntity))
             {
-                var newFix = new FileFixEntity(fix);
+                FileFixEntity newFix = new(fix);
                 fixesList[fixIndex] = newFix;
             }
             else
@@ -382,7 +381,7 @@ Thank you.");
         /// </summary>
         private void CreateReadme()
         {
-            string result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
+            var result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
 
             foreach (var fix in _fixesList)
             {

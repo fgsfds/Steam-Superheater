@@ -72,7 +72,7 @@ namespace Common.Providers
 
             var lines = File.ReadAllLines(file);
 
-            int id = -1;
+            var id = -1;
             string? name = null;
             string? dir = null;
 

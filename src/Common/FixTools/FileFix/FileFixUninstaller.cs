@@ -31,7 +31,10 @@ namespace Common.FixTools.FileFix
         /// <param name="fixFiles">Files to delete</param>
         private static void DeleteFiles(string gameInstallDir, List<string>? fixFiles)
         {
-            if (fixFiles is null) return;
+            if (fixFiles is null)
+            {
+                return;
+            }
 
             //checking if files can be opened before deleting them
             foreach (var file in fixFiles)
@@ -81,7 +84,10 @@ namespace Common.FixTools.FileFix
             //TODO: Added for backwards compatibility, need to remove some time later
             else
             {
-                if (fixUrl is null) ThrowHelper.BackwardsCompatibilityException("Can't get backup folder.");
+                if (fixUrl is null)
+                {
+                    ThrowHelper.BackwardsCompatibilityException("Can't get backup folder.");
+                }
 
                 backupFolder = Path.Combine(gameDir, Consts.BackupFolder, Path.GetFileNameWithoutExtension(fixUrl));
             }

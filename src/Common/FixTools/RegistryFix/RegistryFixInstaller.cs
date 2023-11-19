@@ -17,7 +17,10 @@ namespace Common.FixTools.RegistryFix
         /// <returns>Installed fix entity</returns>
         public static BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);
+            }
 
             var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 

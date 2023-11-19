@@ -5,8 +5,8 @@ using Common.Entities.Fixes.RegistryFix;
 namespace Common.FixTools.RegistryFix
 {
     public static class RegistryFixUpdater
-        //RegistryFixInstaller fixInstaller,
-        //RegistryFixUninstaller fixUninstaller
+    //RegistryFixInstaller fixInstaller,
+    //RegistryFixUninstaller fixUninstaller
     {
         //private readonly RegistryFixInstaller _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<RegistryFixInstaller>(nameof(fixInstaller));
         //private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<RegistryFixUninstaller>(nameof(fixUninstaller));

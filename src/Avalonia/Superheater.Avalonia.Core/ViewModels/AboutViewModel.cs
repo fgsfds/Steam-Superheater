@@ -45,7 +45,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(IsInProgress));
             CheckForUpdatesCommand.NotifyCanExecuteChanged();
 
-            bool updates = false;
+            var updates = false;
 
             try
             {

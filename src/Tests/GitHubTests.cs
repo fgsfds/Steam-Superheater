@@ -24,7 +24,7 @@ namespace Tests
             var firstRelease = releases.Last();
 
             var versionActual = firstRelease.Version;
-            var versionExpected = new Version("0.2.2");
+            Version versionExpected = new("0.2.2");
             var versionCompare = versionActual.CompareTo(versionExpected);
 
             Assert.True(versionCompare == 0);

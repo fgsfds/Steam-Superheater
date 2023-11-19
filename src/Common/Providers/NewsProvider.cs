@@ -58,11 +58,11 @@ namespace Common.Providers
         {
             try
             {
-                using (var client = new HttpClient())
+                using (HttpClient client = new())
                 {
                     client.Timeout = TimeSpan.FromSeconds(10);
                     using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
-                    using var file = new StreamReader(stream);
+                    using StreamReader file = new(stream);
                     var newsXml = await file.ReadToEndAsync();
 
                     return newsXml;

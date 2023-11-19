@@ -12,7 +12,7 @@ namespace Common.Providers
         /// <param name="currentVersion">current release version</param>
         public static async Task<IEnumerable<AppUpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
         {
-            using (var client = new HttpClient())
+            using (HttpClient client = new())
             {
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("Superheater");
 

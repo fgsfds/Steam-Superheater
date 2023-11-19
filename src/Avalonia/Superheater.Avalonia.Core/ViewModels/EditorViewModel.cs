@@ -60,7 +60,10 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.Tags is null ? string.Empty : string.Join(';', SelectedFix.Tags);
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
 
                 SelectedFix.Tags = value.Split(';').Select(x => x.Trim()).ToList();
             }
@@ -72,7 +75,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? string.Join(';', fileFix.Variants) : string.Empty;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 fileFix.Variants = value.Split(';').Select(x => x.Trim()).ToList();
@@ -84,7 +91,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null ? string.Join(';', fileFix.FilesToDelete) : string.Empty;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 fileFix.FilesToDelete = value.Split(';').Select(x => x.Trim()).ToList();
@@ -96,7 +107,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null ? string.Join(';', fileFix.FilesToBackup) : string.Empty;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 fileFix.FilesToBackup = value.Split(';').Select(x => x.Trim()).ToList();
@@ -108,7 +123,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 if (string.IsNullOrEmpty(value))
@@ -127,7 +146,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null ? fileFix.MD5 : string.Empty;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
                 if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
 
                 if (string.IsNullOrWhiteSpace(value))
@@ -146,7 +169,10 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
 
                 if (value)
                 {
@@ -164,7 +190,10 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
 
                 if (value)
                 {
@@ -182,8 +211,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedGame is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
 
                 if (value)
                 {
@@ -201,8 +237,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is RegistryFixEntity;
             set
             {
-                if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedGame is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
 
                 if (value)
                 {
@@ -291,7 +334,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
         private void AddNewFix()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             var newFix = EditorModel.AddNewFix(SelectedGame);
 
@@ -308,8 +354,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(RemoveFixCanExecute))]
         private void RemoveFix()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
+
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
 
             EditorModel.RemoveFix(SelectedGame, SelectedFix);
 
@@ -360,7 +413,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddDependencyCanExecute))]
         private void AddDependency()
         {
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
 
             EditorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
 
@@ -376,7 +432,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(RemoveDependencyCanExecute))]
         private void RemoveDependency()
         {
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
 
             EditorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
 
@@ -392,9 +451,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddNewGameCanExecute))]
         private void AddNewGame()
         {
-            if (SelectedAvailableGame is null) ThrowHelper.NullReferenceException(nameof(SelectedAvailableGame));
+            if (SelectedAvailableGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedAvailableGame));
+            }
 
-            FixesList? newGame = _editorModel.AddNewGame(SelectedAvailableGame);
+            var newGame = _editorModel.AddNewGame(SelectedAvailableGame);
 
             FillGamesList();
 
@@ -409,7 +471,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixUpCanExecute))]
         private void MoveFixUp()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
@@ -426,7 +491,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixDownCanExecute))]
         private void MoveFixDown()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
@@ -443,8 +511,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
         private async Task UploadFixAsync()
         {
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
+
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
 
@@ -476,12 +551,16 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenFilePickerCanExecute))]
         private async Task OpenFilePickerAsync()
         {
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
+
             if (SelectedFix is not FileFixEntity fileFix) { return; }
 
             var topLevel = Properties.TopLevel;
 
-            var zipType = new FilePickerFileType("Zip")
+            FilePickerFileType zipType = new("Zip")
             {
                 Patterns = new[] { "*.zip" },
                 MimeTypes = new[] { "application/zip" }

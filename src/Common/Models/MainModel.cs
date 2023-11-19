@@ -94,7 +94,7 @@ namespace Common.Models
         /// <param name="search">Search string</param>
         public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            List<FixFirstCombinedEntity> result = _combinedEntitiesList.ToList();
+            var result = _combinedEntitiesList.ToList();
 
             foreach (var entity in result.ToList())
             {
@@ -308,7 +308,10 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public Result UninstallFix(GameEntity game, BaseFixEntity fix)
         {
-            if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
+            if (fix.InstalledFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
+            }
 
             var backupRestoreFailed = false;
 
@@ -351,7 +354,10 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (fix.InstalledFix is null) ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
+            if (fix.InstalledFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
+            }
 
             BaseInstalledFixEntity? installedFix;
             var backupRestoreFailed = false;

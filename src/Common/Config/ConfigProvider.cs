@@ -24,7 +24,7 @@ namespace Common.Config
         {
             if (!File.Exists(Consts.ConfigFile))
             {
-                var newConfig = new ConfigEntity();
+                ConfigEntity newConfig = new();
 
                 Config = newConfig;
 
@@ -42,7 +42,10 @@ namespace Common.Config
                 config = xmlSerializer.Deserialize(fs) as ConfigEntity;
             }
 
-            if (config is null) ThrowHelper.NullReferenceException(nameof(config));
+            if (config is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(config));
+            }
 
             return config;
         }

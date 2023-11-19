@@ -78,8 +78,8 @@ namespace Tests
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { Assert.Fail(); return; }
 
             //Preparations
-            GameEntity gameEntity = _gameEntity;
-            RegistryFixEntity fixEntity = _fixEntity;
+            var gameEntity = _gameEntity;
+            var fixEntity = _fixEntity;
             var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
             //Install Fix
@@ -146,8 +146,8 @@ namespace Tests
                 key.SetValue(GameDir + GameExe, OldValue);
             }
 
-            GameEntity gameEntity = _gameEntity;
-            RegistryFixEntity fixEntity = _fixEntity;
+            var gameEntity = _gameEntity;
+            var fixEntity = _fixEntity;
             var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
             //Install Fix

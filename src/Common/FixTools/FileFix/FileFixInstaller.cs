@@ -24,7 +24,7 @@ namespace Common.FixTools.FileFix
         {
             await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
 
-            string backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
+            var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
@@ -123,7 +123,10 @@ namespace Common.FixTools.FileFix
 
                     var dir = Path.GetDirectoryName(to);
 
-                    if (dir is null) ThrowHelper.NullReferenceException(nameof(dir));
+                    if (dir is null)
+                    {
+                        ThrowHelper.NullReferenceException(nameof(dir));
+                    }
 
                     if (!Directory.Exists(dir))
                     {

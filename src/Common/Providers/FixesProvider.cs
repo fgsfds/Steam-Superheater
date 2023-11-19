@@ -77,7 +77,7 @@ namespace Common.Providers
         /// <returns></returns>
         public static async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
-            using var client = new HttpClient();
+            using HttpClient client = new();
 
             List<FixesListXml> result = new();
 
@@ -253,7 +253,7 @@ namespace Common.Providers
                     var fileName = Path.GetFileName(fix.Url.ToString());
                     var pathToFile = Path.Combine(currentDir, fileName);
 
-                    using (var file = new FileStream(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                    using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
                         using var source = await response.Content.ReadAsStreamAsync();
 
@@ -349,11 +349,11 @@ namespace Common.Providers
         /// <returns></returns>
         private static async Task<string> DownloadFixesXMLAsync()
         {
-            using (var client = new HttpClient())
+            using (HttpClient client = new())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
                 using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.FixesFile);
-                using var file = new StreamReader(stream);
+                using StreamReader file = new(stream);
                 var fixesXml = await file.ReadToEndAsync();
 
                 return fixesXml;

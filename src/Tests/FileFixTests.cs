@@ -105,7 +105,7 @@ namespace Tests
         [Fact]
         public async Task InstallFixToANewFolder()
         {
-            string gameFolder = PrepareGameFolder();
+            var gameFolder = PrepareGameFolder();
 
             File.Copy($"..\\Resources\\test_fix.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
 
@@ -147,11 +147,11 @@ namespace Tests
 
         private static async Task InstallUninstallFixAsync(string? variant, bool update)
         {
-            string fixArchive = variant is null ? "test_fix.zip" : "test_fix_variant.zip";
+            var fixArchive = variant is null ? "test_fix.zip" : "test_fix_variant.zip";
 
-            string fixArchiveMD5 = variant is null ? "4E9DE15FC40592B26421E05882C2F6F7" : "DA2D7701D2EB5BC9A35FB58B3B04C5B9";
+            var fixArchiveMD5 = variant is null ? "4E9DE15FC40592B26421E05882C2F6F7" : "DA2D7701D2EB5BC9A35FB58B3B04C5B9";
 
-            string gameFolder = PrepareGameFolder();
+            var gameFolder = PrepareGameFolder();
 
             File.Copy($"..\\Resources\\{fixArchive}", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
 

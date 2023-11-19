@@ -1,6 +1,6 @@
 ﻿using Common.Helpers;
-using System.Security.Cryptography;
 using SharpCompress.Archives;
+using System.Security.Cryptography;
 
 namespace Common
 {
@@ -32,7 +32,7 @@ namespace Common
                 File.Delete(tempFile);
             }
 
-            using (var client = new HttpClient())
+            using (HttpClient client = new())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
 
@@ -55,7 +55,7 @@ namespace Common
                 using var source = await response.Content.ReadAsStreamAsync();
                 var contentLength = response.Content.Headers.ContentLength;
 
-                using var file = new FileStream(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
                 if (Progress is null || !contentLength.HasValue)
                 {
@@ -64,7 +64,7 @@ namespace Common
                 else
                 {
                     var buffer = new byte[81920];
-                    float totalBytesRead = 0f;
+                    var totalBytesRead = 0f;
                     int bytesRead;
 
                     while ((bytesRead = await source.ReadAsync(buffer)) != 0)
@@ -146,7 +146,7 @@ namespace Common
                     }
                     else
                     {
-                        using var target = new FileStream(fullName, FileMode.Create);
+                        using FileStream target = new(fullName, FileMode.Create);
                         await zipEntry.OpenEntryStream().CopyToAsync(target);
                     }
 
@@ -182,7 +182,7 @@ namespace Common
             {
                 foreach (var entry in reader.Entries)
                 {
-                    string path = entry.Key;
+                    var path = entry.Key;
 
                     if (variant is not null)
                     {

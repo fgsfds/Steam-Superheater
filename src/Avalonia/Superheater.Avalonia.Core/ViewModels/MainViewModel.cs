@@ -186,8 +186,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
         private void UninstallFix()
         {
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
+
+            if (SelectedGame?.Game is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            }
 
             IsInProgress = true;
 
@@ -233,7 +240,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
         private void OpenGameFolder()
         {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            if (SelectedGame?.Game is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            }
 
             Process.Start(new ProcessStartInfo
             {
@@ -257,7 +267,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
         private void OpenConfig() => OpenConfigXml();
-        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && (SelectedGame is not null && SelectedGame.IsGameInstalled);
+        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
 
 
         /// <summary>
@@ -266,7 +276,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
         private void OpenPCGamingWiki()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             Process.Start(new ProcessStartInfo
             {
@@ -294,7 +307,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(LaunchGameCanExecute)))]
         private void LaunchGame()
         {
-            if (SelectedGame is null) ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            if (SelectedGame is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame));
+            }
 
             if (SelectedGame.IsGameInstalled)
             {
@@ -363,8 +379,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="isUpdate">Update fix</param>
         private async Task InstallUpdateFixAsync(bool isUpdate)
         {
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            if (SelectedFix is null) ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            if (SelectedGame?.Game is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            }
+
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+            }
 
             _lockButtons = true;
 
@@ -520,8 +543,15 @@ Do you still want to install the fix?",
         private void OpenConfigXml()
         {
             if (SelectedFix is not FileFixEntity fileFix) { return; }
-            if (SelectedGame?.Game is null) ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            if (fileFix.ConfigFile is null) ThrowHelper.NullReferenceException(nameof(fileFix.ConfigFile));
+            if (SelectedGame?.Game is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
+            }
+
+            if (fileFix.ConfigFile is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(fileFix.ConfigFile));
+            }
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
 
