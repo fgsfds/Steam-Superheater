@@ -1,6 +1,6 @@
 ﻿using Common.Helpers;
-using System.IO.Compression;
 using System.Security.Cryptography;
+using SharpCompress.Archives;
 
 namespace Common
 {
@@ -19,7 +19,10 @@ namespace Common
         /// <param name="hash">MD5 to check file against</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public static async Task CheckAndDownloadFileAsync(Uri url, string filePath, string? hash = null)
+        public static async Task CheckAndDownloadFileAsync(
+            Uri url,
+            string filePath,
+            string? hash = null)
         {
             IProgress<float> progress = Progress;
             var tempFile = filePath + ".temp";
@@ -100,57 +103,125 @@ namespace Common
         /// <summary>
         /// Unpack fix from zip archive
         /// </summary>
-        /// <param name="pathToZip">Absolute path to zip file</param>
-        /// <param name="unpackTo">Directory to unpack zip to</param>
+        /// <param name="pathToArchive">Absolute path to archive file</param>
+        /// <param name="unpackTo">Directory to unpack archive to</param>
         /// <param name="variant">Fix variant</param>
-        public static async Task UnpackZipAsync(string pathToZip, string unpackTo, string? variant)
+        public static async Task UnpackArchiveAsync(
+            string pathToArchive,
+            string unpackTo,
+            string? variant)
         {
             IProgress<float> progress = Progress;
 
-            using (var zip = ZipFile.OpenRead(pathToZip))
+            using (var archive = ArchiveFactory.Open(pathToArchive))
             {
                 var count = variant is null
-                    ? zip.Entries.Count
-                    : zip.Entries.Where(x => x.FullName.StartsWith(variant)).Count();
+                    ? archive.Entries.Count()
+                    : archive.Entries.Where(x => x.Key.StartsWith(variant + "/")).Count();
 
                 var i = 1f;
 
-                await Task.Run(() =>
+                foreach (var zipEntry in archive.Entries)
                 {
-                    foreach (var zipEntry in zip.Entries)
+                    if (variant is not null &&
+                        !zipEntry.Key.StartsWith(variant + "/"))
                     {
-                        if (variant is not null &&
-                        !zipEntry.FullName.StartsWith(variant))
-                        {
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        var fullName = variant is null
-                            ? Path.Combine(unpackTo, zipEntry.FullName)
-                            : Path.Combine(unpackTo, zipEntry.FullName.Replace(variant + "/", string.Empty));
+                    var fullName = variant is null
+                        ? Path.Combine(unpackTo, zipEntry.Key)
+                        : Path.Combine(unpackTo, zipEntry.Key.Replace(variant + "/", string.Empty));
 
-                        if (!Directory.Exists(Path.GetDirectoryName(fullName)))
-                        {
-                            var dirName = Path.GetDirectoryName(fullName) ?? ThrowHelper.ArgumentNullException<string>(fullName);
-                            Directory.CreateDirectory(dirName);
-                        }
+                    if (!Directory.Exists(Path.GetDirectoryName(fullName)))
+                    {
+                        var dirName = Path.GetDirectoryName(fullName) ?? ThrowHelper.ArgumentNullException<string>(fullName);
+                        Directory.CreateDirectory(dirName);
+                    }
 
-                        if (Path.GetFileName(fullName).Length == 0)
+                    if (zipEntry.IsDirectory)
+                    {
+                        //it's a directory
+                        Directory.CreateDirectory(fullName);
+                    }
+                    else
+                    {
+                        using var target = new FileStream(fullName, FileMode.Create);
+                        await zipEntry.OpenEntryStream().CopyToAsync(target);
+                    }
+
+                    progress.Report(i / count * 100);
+
+                    i++;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get list of files and new folders in the archive
+        /// </summary>
+        /// <param name="zipPath">Path to ZIP</param>
+        /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
+        /// <param name="unpackToPath">Full path </param>
+        /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
+        public static List<string> GetListOfFilesInArchive(
+            string zipPath,
+            string unpackToPath,
+            string? fixInstallFolder,
+            string? variant)
+        {
+            List<string> files = new();
+
+            //if directory that the archive will be extracted to doesn't exist, add it to the list too
+            if (!Directory.Exists(unpackToPath))
+            {
+                files.Add(unpackToPath);
+            }
+
+            using (var reader = ArchiveFactory.Open(zipPath))
+            {
+                foreach (var entry in reader.Entries)
+                {
+                    string path = entry.Key;
+
+                    if (variant is not null)
+                    {
+                        if (entry.Key.StartsWith(variant + '/'))
                         {
-                            //it's a directory
-                            Directory.CreateDirectory(fullName);
+                            path = entry.Key.Replace(variant + '/', string.Empty);
+
+                            if (string.IsNullOrEmpty(path))
+                            {
+                                continue;
+                            }
                         }
                         else
                         {
-                            zipEntry.ExtractToFile(fullName, true);
+                            continue;
                         }
-
-                        progress.Report(i / count * 100);
-
-                        i++;
                     }
-                });
+
+                    var fullName = Path.Combine(
+                        fixInstallFolder is null
+                            ? string.Empty
+                            : fixInstallFolder,
+                        path)
+                        .Replace('/', Path.DirectorySeparatorChar);
+
+                    //if it's a file, add it to the list
+                    if (!entry.IsDirectory)
+                    {
+                        files.Add(fullName);
+                    }
+                    //if it's a directory and it doesn't already exist, add it to the list
+                    else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
+                    {
+                        files.Add(fullName);
+                    }
+                }
             }
+
+            return files;
         }
     }
 }
