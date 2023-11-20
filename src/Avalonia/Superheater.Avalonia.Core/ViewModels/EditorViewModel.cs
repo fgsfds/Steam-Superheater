@@ -55,6 +55,36 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
+        public string SelectedFixName
+        {
+            get => SelectedFix?.Name ?? string.Empty;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                SelectedFix.Name = value;
+                OnPropertyChanged(nameof(SelectedGameFixesList));
+            }
+        }
+
+        public int SelectedFixVersion
+        {
+            get => SelectedFix?.Version ?? 0;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                SelectedFix.Version = value;
+                OnPropertyChanged(nameof(SelectedGameFixesList));
+            }
+        }
+
         public string SelectedFixTags
         {
             get => SelectedFix?.Tags is null ? string.Empty : string.Join(';', SelectedFix.Tags);
@@ -337,6 +367,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private FixesList? _selectedGame;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(SelectedFixName))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixVersion))]
         [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
         [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
@@ -412,6 +444,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             var newFix = EditorModel.AddNewFix(SelectedGame);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
+            OnPropertyChanged(nameof(FilteredGamesList));
 
             SelectedFix = newFix;
         }
@@ -437,6 +470,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             EditorModel.RemoveFix(SelectedGame, SelectedFix);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
+            OnPropertyChanged(nameof(FilteredGamesList));
         }
         private bool RemoveFixCanExecute() => SelectedFix is not null;
 
@@ -456,6 +490,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task SaveChangesAsync()
         {
             var result = await _editorModel.SaveFixesListAsync();
+
+            OnPropertyChanged(nameof(SelectedFixMD5));
+            OnPropertyChanged(nameof(SelectedFixUrl));
 
             new PopupMessageViewModel(
                 result.IsSuccess ? "Success" : "Error",

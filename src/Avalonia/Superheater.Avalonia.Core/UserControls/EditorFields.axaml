@@ -51,14 +51,14 @@
         </StackPanel>
 
         <!--Name-->
-        <TextBox Text="{Binding SelectedFix.Name, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixName, Mode=TwoWay}"
                  Watermark="Name (required)"
                  Name="NameTextBox"
                  Grid.Row="1"
                  Margin="0,3"/>
 
         <!--Version-->
-        <TextBox Text="{Binding SelectedFix.Version, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixVersion, Mode=TwoWay}"
                  Name="VersionTextBox"
                  Watermark="Version (required)"
                  TextChanging="VersionTextBoxChanging"
