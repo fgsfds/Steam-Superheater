@@ -26,11 +26,31 @@ namespace Common.FixTools.RegistryFix
 
             Logger.Info($"Value name is {valueName}");
 
-            var oldValue = (string?)Registry.GetValue(fix.Key, valueName, null);
+            string? oldValueStr = null;
 
-            Registry.SetValue(fix.Key, valueName, fix.NewValueData);
+            var oldValue = Registry.GetValue(fix.Key, valueName, null);
+            if (oldValue is not null)
+            {
+                if (fix.ValueType is RegistryValueType.Dword)
+                {
+                    oldValueStr = ((int)oldValue).ToString();
+                }
+                else if (fix.ValueType is RegistryValueType.String)
+                {
+                    oldValueStr = (string)oldValue;
+                }
+            }
 
-            return new RegistryInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Key, valueName, oldValue);
+            if (fix.ValueType is RegistryValueType.Dword)
+            {
+                Registry.SetValue(fix.Key, valueName, int.Parse(fix.NewValueData));
+            }
+            else if (fix.ValueType is RegistryValueType.String)
+            {
+                Registry.SetValue(fix.Key, valueName, fix.NewValueData);
+            }
+
+            return new RegistryInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Key, valueName, oldValueStr);
         }
     }
 }

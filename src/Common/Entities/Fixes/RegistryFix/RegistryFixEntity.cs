@@ -17,6 +17,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Key = string.Empty;
             ValueName = string.Empty;
             NewValueData = string.Empty;
+            ValueType = RegistryValueType.String;
         }
 
         public RegistryFixEntity(BaseFixEntity fix)
@@ -32,6 +33,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Key = string.Empty;
             ValueName = string.Empty;
             NewValueData = string.Empty;
+            ValueType = RegistryValueType.String;
         }
 
         public string Key { get; set; }
@@ -39,5 +41,13 @@ namespace Common.Entities.Fixes.RegistryFix
         public string ValueName { get; set; }
 
         public string NewValueData { get; set; }
+
+        public RegistryValueType ValueType { get; set; }
+    }
+
+    public enum RegistryValueType
+    {
+        String,
+        Dword
     }
 }

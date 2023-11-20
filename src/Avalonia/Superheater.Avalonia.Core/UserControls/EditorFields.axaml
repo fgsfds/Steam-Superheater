@@ -22,6 +22,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -36,13 +37,13 @@
 
             <TextBlock VerticalAlignment="Center" Margin="5,0">Fix Type</TextBlock>
 
-            <RadioButton GroupName="Type"
+            <RadioButton GroupName="Type1"
                          IsChecked="{Binding IsFileFixType}"
                          Margin="5,0">
                 File
             </RadioButton>
 
-            <RadioButton GroupName="Type1"
+            <RadioButton GroupName="Type2"
                          IsChecked="{Binding IsRegistryFixType}"
                          Margin="5,0">
                 Registry
@@ -160,7 +161,31 @@
                  Margin="0,3"
                  IsVisible="{Binding IsRegistryFixType}"/>
 
-        <Grid Grid.Row="15"
+        <!--Value Type-->
+        <StackPanel Orientation="Horizontal"
+                    Grid.Row="15"
+                    HorizontalAlignment="Center"
+                    Margin="0,3"
+                    IsVisible="{Binding IsRegistryFixType}">
+
+            <TextBlock VerticalAlignment="Center" Margin="5,0">
+                Value Type
+            </TextBlock>
+
+            <RadioButton GroupName="Value1"
+                         IsChecked="{Binding IsStringValueType}"
+                         Margin="5,0">
+                String
+            </RadioButton>
+
+            <RadioButton GroupName="Value2"
+                         IsChecked="{Binding IsDwordValueType}"
+                         Margin="5,0">
+                Dword
+            </RadioButton>
+        </StackPanel>
+
+        <Grid Grid.Row="16"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">

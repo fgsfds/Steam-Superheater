@@ -38,7 +38,19 @@ namespace Common.FixTools.RegistryFix
                 }
                 else
                 {
-                    key.SetValue(installedFix.ValueName, installedFix.OriginalValue);
+                    if (fix.ValueType is RegistryValueType.String)
+                    {
+                        key.SetValue(installedFix.ValueName, installedFix.OriginalValue);
+                    }
+                    else if (fix.ValueType is RegistryValueType.Dword)
+                    {
+                        var intValue = int.Parse(installedFix.OriginalValue);
+                        key.SetValue(installedFix.ValueName, intValue);
+                    }
+                    else
+                    {
+                        ThrowHelper.ArgumentException(string.Empty);
+                    }
                 }
             }
         }

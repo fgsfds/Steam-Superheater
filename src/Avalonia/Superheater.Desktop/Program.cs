@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Common;
-using Common.DI;
 using Common.Helpers;
 using Superheater.Avalonia.Core;
-using Superheater.Avalonia.Core.DI;
 using Superheater.Avalonia.Core.Helpers;
 
 namespace Superheater.Desktop;
@@ -16,16 +14,9 @@ internal sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        var container = BindingsManager.Instance;
-
-        ModelsBindings.Load(container);
-        ViewModelsBindings.Load(container);
-        CommonBindings.Load(container);
-        ProvidersBindings.Load(container);
-
         if (args.Contains("-dev"))
         {
-            Logger.Info("Started in developer mode");
+            //Logger.Info("Started in developer mode");
 
             Properties.IsDeveloperMode = true;
         }
@@ -34,7 +25,7 @@ internal sealed class Program
 
         if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
         {
-            Logger.Info("Update file detected");
+            //Logger.Info("Update file detected");
 
             AppUpdateInstaller.InstallUpdate();
         }

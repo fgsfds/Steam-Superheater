@@ -34,7 +34,8 @@ namespace Tests
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Key = "HKEY_CURRENT_USER\\" + RegKey,
             ValueName = "{gamefolder}\\" + GameExe,
-            NewValueData = "~ RUNASADMIN"
+            NewValueData = "~ RUNASADMIN",
+            ValueType = RegistryValueType.String
         };
 
         #region Test Preparations

@@ -278,6 +278,54 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsStringValueType
+        {
+            get
+            {
+                if (SelectedFix is RegistryFixEntity regFix)
+                {
+                    return regFix.ValueType is RegistryValueType.String;
+                }
+
+                return false;
+            }
+            set
+            {
+                if (value && SelectedFix is RegistryFixEntity regFix)
+                {
+                    regFix.ValueType = RegistryValueType.String;
+                    OnPropertyChanged(nameof(IsDwordValueType));
+                    return;
+                }
+
+                ThrowHelper.ArgumentException(nameof(SelectedFix));
+            }
+        }
+
+        public bool IsDwordValueType
+        {
+            get
+            {
+                if (SelectedFix is RegistryFixEntity regFix)
+                {
+                    return regFix.ValueType is RegistryValueType.Dword;
+                }
+
+                return false;
+            }
+            set
+            {
+                if (value && SelectedFix is RegistryFixEntity regFix)
+                {
+                    regFix.ValueType = RegistryValueType.Dword;
+                    OnPropertyChanged(nameof(IsStringValueType));
+                    return;
+                }
+
+                ThrowHelper.ArgumentException(nameof(SelectedFix));
+            }
+        }
+
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
@@ -302,6 +350,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
         [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
         [NotifyPropertyChangedFor(nameof(IsFileFixType))]
+        [NotifyPropertyChangedFor(nameof(IsStringValueType))]
+        [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
