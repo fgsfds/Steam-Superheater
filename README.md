@@ -14,7 +14,7 @@
 
 <tr>
 <td valign="center">
-<img align="right" width="600" src="https://i.imgur.com/DlVU3Iq.png">
+<img align="right" width="600" src="https://i.imgur.com/8uXf0eZ.png">
 
 <b>Steam Superheater</b> is an app which main purpose is to make it easy to install various must-have fixes and patches for Steam games.
 
@@ -33,7 +33,7 @@ It's not meant to be an ultimate mod manager, but rather an easy way to fix and 
 
 <tr>
 <td valign="center">
-<img align="right" width="600" src="https://i.imgur.com/75CIDMT.png">
+<img align="right" width="600" src="https://i.imgur.com/5Qa1Kpe.png">
 
 Superheater is standalone and <b>doesn't require Steam credentials</b> or any other sensitive information to work.
 
@@ -52,7 +52,7 @@ Same for uninstalling and updating: original files are backed up and restored wh
 
 <tr>
 <td valign="center">
-<img align="right" width="600" src="https://i.imgur.com/TQWafHk.png">
+<img align="right" width="600" src="https://i.imgur.com/LXXji8K.png">
 
 Fixes are hand-picked, verified, and prepared (if needed) by me. Some are downloaded directly from the fix developer's GitHub, some a repacked to support single-button install and put into <a href="https://github.com/fgsfds/SteamFD-Fixes-Repo">my fixes repo</a>.
 
@@ -72,4 +72,4 @@ Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b>
 
 ### Links
 
-<img align="left" height="32" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://discord.gg/8KjDS3EKV">Superheater Discord server</a>
+<img align="left" height="32" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://github.com/fgsfds/Steam-Superheater/wiki/Useful-links">Superheater Discord server</a>

@@ -47,6 +47,20 @@
                 </StackPanel>
             </Button>
 
+            <!--Discord-->
+            <Button Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Button.Click="DiscordClick">
+                <StackPanel Orientation="Horizontal">
+                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/discord.png" Width="48" />
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Discord server</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Join discussions on Discord</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
+
             <!--Github-->
             <Button Padding="10"
                     Margin="10"

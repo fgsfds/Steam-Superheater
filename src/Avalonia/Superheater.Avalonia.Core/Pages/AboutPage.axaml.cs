@@ -30,6 +30,15 @@ namespace Superheater.Avalonia.Core.Pages
             });
         }
 
+        private void DiscordClick(object sender, RoutedEventArgs e)
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/fgsfds/Steam-Superheater/wiki/Useful-links",
+                UseShellExecute = true
+            });
+        }
+
         private void GitHubClick(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo
