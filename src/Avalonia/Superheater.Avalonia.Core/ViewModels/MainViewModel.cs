@@ -542,7 +542,10 @@ Do you still want to install the fix?",
         /// </summary>
         private void OpenConfigXml()
         {
-            if (SelectedFix is not FileFixEntity fileFix) { return; }
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                return;
+            }
             if (SelectedGame?.Game is null)
             {
                 ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));

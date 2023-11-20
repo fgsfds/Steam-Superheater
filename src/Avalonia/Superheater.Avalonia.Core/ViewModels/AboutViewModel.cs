@@ -55,13 +55,17 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
             catch (Exception ex)
             {
+                var message = @$"Cannot retrieve latest releases from GitHub:
+                    
+{ex.Message}";
+
                 new PopupMessageViewModel(
                     "Error",
-                    @$"Cannot retrieve latest releases from GitHub:
-                    
-{ex.Message}",
+                    message,
                     PopupMessageType.OkOnly
                     ).Show();
+
+                Logger.Error(message);
             }
 
             if (updates)

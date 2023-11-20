@@ -31,10 +31,12 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
             }
 

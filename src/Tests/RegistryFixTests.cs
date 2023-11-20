@@ -53,13 +53,19 @@ namespace Tests
 
         public void Dispose()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { return; }
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
 
             var dir = Directory.GetCurrentDirectory();
 
             using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags", true))
             {
-                if (key is null) { return; }
+                if (key is null)
+                {
+                    return;
+                }
 
                 key.DeleteSubKey("Layers_test");
             }
@@ -75,7 +81,11 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallFixTest()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { Assert.Fail(); return; }
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Assert.Fail();
+                return;
+            }
 
             //Preparations
             var gameEntity = _gameEntity;
@@ -134,14 +144,22 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallReplaceFixTest()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { Assert.Fail(); return; }
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                Assert.Fail();
+                return;
+            }
 
             const string OldValue = "OLD VALUE";
 
             //Preparations
             using (var key = Registry.CurrentUser.CreateSubKey(RegKey))
             {
-                if (key is null) { Assert.Fail(); return; }
+                if (key is null)
+                {
+                    Assert.Fail();
+                    return;
+                }
 
                 key.SetValue(GameDir + GameExe, OldValue);
             }

@@ -21,9 +21,13 @@ namespace Common
         /// <returns></returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
+            Logger.Info("Checking for updates");
+
             _updates.Clear();
 
             _updates.AddRange(await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
+
+            Logger.Info($"Found {_updates.Count} updates");
 
             return _updates.Count != 0;
         }
@@ -34,16 +38,20 @@ namespace Common
         /// <returns></returns>
         public async Task DownloadAndUnpackLatestRelease()
         {
-            var fixUrl = _updates.OrderByDescending(x => x.Version).First().DownloadUrl;
+            var latestUpdate = _updates.OrderByDescending(x => x.Version).First();
 
-            var fileName = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(fixUrl.ToString()).Trim());
+            Logger.Info($"Downloading app update version {latestUpdate.Version}");
+
+            var updateUrl = latestUpdate.DownloadUrl;
+
+            var fileName = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(updateUrl.ToString()).Trim());
 
             if (File.Exists(fileName))
             {
                 File.Delete(fileName);
             }
 
-            await FileTools.CheckAndDownloadFileAsync(fixUrl, fileName);
+            await FileTools.CheckAndDownloadFileAsync(updateUrl, fileName);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 
@@ -57,6 +65,8 @@ namespace Common
         /// </summary>
         public static void InstallUpdate()
         {
+            Logger.Info("Starting app update");
+
             var dir = Directory.GetCurrentDirectory();
             var updateDir = Path.Combine(dir, Consts.UpdateFolder);
             var oldExe = Path.Combine(dir, CommonProperties.ExecutableName);

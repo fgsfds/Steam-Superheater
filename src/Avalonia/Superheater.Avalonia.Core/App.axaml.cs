@@ -7,7 +7,6 @@ using Common.Config;
 using Common.DI;
 using Common.Enums;
 using Common.Helpers;
-using Superheater.Avalonia.Core.DI;
 using Superheater.Avalonia.Core.Pages;
 using Superheater.Avalonia.Core.Windows;
 
@@ -17,15 +16,6 @@ public sealed partial class App : Application
 {
     public override void Initialize()
     {
-        var container = BindingsManager.Instance;
-        container.Options.EnableAutoVerification = false;
-        container.Options.ResolveUnregisteredConcreteTypes = true;
-
-        ModelsBindings.Load(container);
-        ViewModelsBindings.Load(container);
-        CommonBindings.Load(container);
-        ProvidersBindings.Load(container);
-
         AvaloniaXamlLoader.Load(this);
     }
 

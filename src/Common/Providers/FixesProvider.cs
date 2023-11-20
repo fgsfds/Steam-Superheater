@@ -21,6 +21,8 @@ namespace Common.Providers
         /// </summary>
         public async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
+            Logger.Info("Requesting cached fixes list");
+
             await _locker.WaitAsync();
 
             if (_fixesCachedString is null)
@@ -46,6 +48,8 @@ namespace Common.Providers
         /// </summary>
         public async Task<ImmutableList<FixesList>> GetNewListAsync()
         {
+            Logger.Info("Requesting new fixes list");
+
             _fixesCachedString = null;
 
             return await GetCachedListAsync();
@@ -58,6 +62,8 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<FixesList>> GetOnlineFixesListAsync()
         {
+            Logger.Info("Requesting online fixes");
+
             if (_config.UseLocalRepo)
             {
                 var xmlString = await DownloadFixesXMLAsync();
@@ -77,6 +83,8 @@ namespace Common.Providers
         /// <returns></returns>
         public static async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
+            Logger.Info("Saving fixes list");
+
             using HttpClient client = new();
 
             List<FixesListXml> result = new();
@@ -110,7 +118,10 @@ namespace Common.Providers
                     }
 
                     var fileFixResult = await PrepareFileFix(client, fix);
-                    if (fileFixResult is not null) { return (Result)fileFixResult; }
+                    if (fileFixResult is not null)
+                    {
+                        return (Result)fileFixResult;
+                    }
                 }
 
                 result.Add(new FixesListXml(fixes));
@@ -128,11 +139,13 @@ namespace Common.Providers
                 using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
                 xmlSerializer.Serialize(fs, result);
             }
-            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new Result(ResultEnum.NotFound, e.Message);
+                Logger.Error(ex.Message);
+                return new Result(ResultEnum.NotFound, ex.Message);
             }
 
+            Logger.Info("XML saved successfully!");
             return new(ResultEnum.Ok, "XML saved successfully!");
         }
 
@@ -153,9 +166,10 @@ namespace Common.Providers
                         {
                             fileFix.MD5 = await GetMD5(client, fileFix);
                         }
-                        catch (Exception e)
+                        catch (Exception ex)
                         {
-                            return new Result(ResultEnum.ConnectionError, e.Message);
+                            Logger.Error(ex.Message);
+                            return new Result(ResultEnum.ConnectionError, ex.Message);
                         }
                     }
                 }
@@ -218,7 +232,10 @@ namespace Common.Providers
         /// <exception cref="Exception">Http response error</exception>
         private static async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
         {
-            if (fix.Url is null) { ThrowHelper.NullReferenceException(nameof(fix.Url)); };
+            if (fix.Url is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(fix.Url));
+            };
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
@@ -282,6 +299,8 @@ namespace Common.Providers
         /// </summary>
         private async Task CreateCacheAsync()
         {
+            Logger.Info("Creating fixes cache");
+
             if (_config.UseLocalRepo)
             {
                 var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile);
@@ -349,6 +368,8 @@ namespace Common.Providers
         /// <returns></returns>
         private static async Task<string> DownloadFixesXMLAsync()
         {
+            Logger.Info("Downloading fixes xml from online repository");
+
             using (HttpClient client = new())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);

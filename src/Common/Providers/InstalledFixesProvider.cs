@@ -17,6 +17,8 @@ namespace Common.Providers
         /// <returns></returns>
         public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixes()
         {
+            Logger.Info("Requesting installed fixes");
+
             if (!File.Exists(Consts.InstalledFile))
             {
                 return [];
@@ -48,7 +50,10 @@ namespace Common.Providers
             {
                 var fixesDatabase = xmlSerializer.Deserialize(fs) as InstalledFixesXml;
 
-                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
+                if (fixesDatabase is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(fixesDatabase));
+                }
 
                 List<BaseInstalledFixEntity> result = new();
 
@@ -75,13 +80,18 @@ namespace Common.Providers
         [Obsolete("Remove in version 1.0")]
         private static List<BaseInstalledFixEntity> GetOldInstalledFixes()
         {
+            Logger.Info("Parsing old version of installed fixes xml");
+
             XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
 
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
                 var fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
 
-                if (fixesDatabase is null) { ThrowHelper.NullReferenceException(nameof(fixesDatabase)); }
+                if (fixesDatabase is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(fixesDatabase));
+                }
 
                 return fixesDatabase.ConvertAll(x =>
                     (BaseInstalledFixEntity)new FileInstalledFixEntity(
@@ -115,6 +125,8 @@ namespace Common.Providers
         /// <returns>result, error message</returns>
         public static Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
         {
+            Logger.Info("Saving installed fixes list");
+
             try
             {
                 XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
@@ -123,9 +135,10 @@ namespace Common.Providers
 
                 return new(ResultEnum.Ok, string.Empty);
             }
-            catch (Exception e) when (e is FileNotFoundException || e is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                return new Result(ResultEnum.NotFound, e.Message);
+                Logger.Error(ex.Message);
+                return new Result(ResultEnum.NotFound, ex.Message);
             }
         }
     }

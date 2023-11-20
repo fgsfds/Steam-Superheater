@@ -24,6 +24,8 @@ namespace Common.FixTools.RegistryFix
 
             var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
+            Logger.Info($"Value name is {valueName}");
+
             var oldValue = (string?)Registry.GetValue(fix.Key, valueName, null);
 
             Registry.SetValue(fix.Key, valueName, fix.NewValueData);

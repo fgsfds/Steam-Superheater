@@ -14,8 +14,16 @@ namespace Common.FixTools.FileFix
         /// <param name="fix">Fix entity</param>
         public static void UninstallFix(GameEntity game, FileFixEntity fix)
         {
-            if (fix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(fix)); return; }
-            if (fix.InstalledFix is not FileInstalledFixEntity fileInstalledFix) { ThrowHelper.ArgumentException(nameof(fix)); return; }
+            if (fix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.ArgumentException(nameof(fix));
+                return;
+            }
+            if (fix.InstalledFix is not FileInstalledFixEntity fileInstalledFix)
+            {
+                ThrowHelper.ArgumentException(nameof(fix));
+                return;
+            }
 
             DeleteFiles(game.InstallDir, fileInstalledFix.FilesList);
 

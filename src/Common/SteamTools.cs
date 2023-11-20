@@ -50,7 +50,7 @@ namespace Common
 
                 if (path is null)
                 {
-                    Logger.Log($"Can't find Steam install folder");
+                    Logger.Error($"Can't find Steam install folder");
                     return null;
                 }
 
@@ -69,11 +69,11 @@ namespace Common
 
             if (!Directory.Exists(result))
             {
-                Logger.Log($"Steam install folder {result} doesn't exist");
+                Logger.Error($"Steam install folder {result} doesn't exist");
                 return null;
             }
 
-            Logger.Log($"Steam install folder is {result}");
+            Logger.Info($"Steam install folder is {result}");
             return result;
         }
 

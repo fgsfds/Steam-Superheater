@@ -17,6 +17,8 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
+            Logger.Info("Requesting news");
+
             string? news;
 
             if (_config.UseLocalRepo)
@@ -41,7 +43,7 @@ namespace Common.Providers
             {
                 if (xmlSerializer.Deserialize(fs) is not List<NewsEntity> list)
                 {
-                    Logger.Log("Error while deserializing news...");
+                    Logger.Error("Error while deserializing news...");
 
                     return [];
                 }
@@ -56,6 +58,8 @@ namespace Common.Providers
         /// <returns></returns>
         private static async Task<string> DownloadNewsXMLAsync()
         {
+            Logger.Info("Downloading news xml from online repository");
+
             try
             {
                 using (HttpClient client = new())
@@ -68,8 +72,9 @@ namespace Common.Providers
                     return newsXml;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 throw;
             }
         }

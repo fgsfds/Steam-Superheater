@@ -80,10 +80,12 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
             }
         }
@@ -277,12 +279,14 @@ namespace Common.Models
             {
                 installedFix = await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
             }
-            catch (HashCheckFailedException)
+            catch (HashCheckFailedException ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 
@@ -319,12 +323,14 @@ namespace Common.Models
             {
                 _fixManager.UninstallFix(game, fix);
             }
-            catch (BackwardsCompatibilityException)
+            catch (BackwardsCompatibilityException ex)
             {
+                Logger.Error(ex.Message);
                 backupRestoreFailed = true;
             }
             catch (IOException ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
 
@@ -366,21 +372,25 @@ namespace Common.Models
             {
                 installedFix = await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
             }
-            catch (BackwardsCompatibilityException)
+            catch (BackwardsCompatibilityException ex)
             {
+                Logger.Error(ex.Message);
                 backupRestoreFailed = true;
                 installedFix = null;
             }
-            catch (HashCheckFailedException)
+            catch (HashCheckFailedException ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
             }
             catch (IOException ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 

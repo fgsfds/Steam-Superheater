@@ -80,7 +80,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
 
                 fileFix.Variants = value.Split(';').Select(x => x.Trim()).ToList();
             }
@@ -96,7 +100,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
 
                 fileFix.FilesToDelete = value.Split(';').Select(x => x.Trim()).ToList();
             }
@@ -112,7 +120,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
 
                 fileFix.FilesToBackup = value.Split(';').Select(x => x.Trim()).ToList();
             }
@@ -128,7 +140,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
 
                 if (string.IsNullOrEmpty(value))
                 {
@@ -151,7 +167,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (SelectedFix is not FileFixEntity fileFix) { ThrowHelper.ArgumentException(nameof(SelectedFix)); return; }
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
 
                 if (string.IsNullOrWhiteSpace(value))
                 {
@@ -556,7 +576,10 @@ namespace Superheater.Avalonia.Core.ViewModels
                 ThrowHelper.NullReferenceException(nameof(SelectedFix));
             }
 
-            if (SelectedFix is not FileFixEntity fileFix) { return; }
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                return;
+            }
 
             var topLevel = Properties.TopLevel;
 

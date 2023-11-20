@@ -11,17 +11,23 @@ namespace Common
         static Logger()
         {
             File.WriteAllText(LogFile, string.Empty);
+            Info(Environment.OSVersion.ToString());
+            Info(CommonProperties.CurrentVersion.ToString());
         }
+
+        public static void Info(string message) => Log(message, "Info");
+
+        public static void Error(string message) => Log(message, "Error");
 
         /// <summary>
         /// Add message to the log file
         /// </summary>
         /// <param name="message"></param>
-        public static void Log(string message)
+        private static void Log(string message, string type)
         {
             lock (_lock)
             {
-                message = $"[{DateTime.Now}] {message}";
+                message = $"[{DateTime.Now:dd.MM.yyyy HH.mm.ss}] [{type}] {message}";
 
                 File.AppendAllText(LogFile, message + Environment.NewLine);
             }

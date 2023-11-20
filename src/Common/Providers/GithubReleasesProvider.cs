@@ -12,6 +12,8 @@ namespace Common.Providers
         /// <param name="currentVersion">current release version</param>
         public static async Task<IEnumerable<AppUpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
         {
+            Logger.Info("Requesting newer releases from GitHub");
+
             using (HttpClient client = new())
             {
                 client.DefaultRequestHeaders.UserAgent.ParseAdd("Superheater");
@@ -19,7 +21,7 @@ namespace Common.Providers
                 var a = await client.GetStringAsync(Consts.GitHubReleases);
 
                 var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(a)
-                ?? ThrowHelper.Exception<List<GitHubRelease>>("Error while deserializing GitHub releases");
+                    ?? ThrowHelper.Exception<List<GitHubRelease>>("Error while deserializing GitHub releases");
 
                 releases = releases.Where(x => x.draft is false && x.prerelease is false).ToList();
 

@@ -30,6 +30,8 @@ namespace Common
         /// <returns>True if successfully uploaded</returns>
         public static Result UploadFilesToFtp(string folder, List<string> files, string? remoteFileName = null)
         {
+            Logger.Info($"Uploading {files.Count} file(s)");
+
             try
             {
                 if (!folder.Equals(Consts.CrashlogsFolder))
@@ -51,6 +53,7 @@ namespace Common
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 

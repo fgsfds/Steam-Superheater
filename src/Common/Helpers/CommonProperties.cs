@@ -71,11 +71,11 @@ namespace Common.Helpers
 
                 proc.WaitForExit();
 
-                Logger.Log($"DESKTOP_SESSION result {result}");
+                Logger.Info($"DESKTOP_SESSION result {result}");
 
                 if (result.StartsWith("gamescope-wayland"))
                 {
-                    Logger.Log("Steam game mode detected");
+                    Logger.Info("Steam game mode detected");
                     return true;
                 }
             }

@@ -47,7 +47,10 @@ namespace Common.FixTools.FileFix
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
         {
-            if (fixUrl is null) { return; }
+            if (fixUrl is null)
+            {
+                return;
+            }
 
             var zipFullPath = _configEntity.UseLocalRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
@@ -56,16 +59,21 @@ namespace Common.FixTools.FileFix
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
+                Logger.Info($"Using local file {zipFullPath}");
+
                 var result = CheckFileMD5(zipFullPath, fixMD5);
 
                 if (!result)
                 {
+                    Logger.Info("MD5 of the local file doesn't match, removing it");
                     File.Delete(zipFullPath);
                 }
             }
 
             if (!File.Exists(zipFullPath))
             {
+                Logger.Info($"Local file {zipFullPath} not found");
+
                 var url = fixUrl;
 
                 if (_configEntity.UseTestRepoBranch)
@@ -110,7 +118,10 @@ namespace Common.FixTools.FileFix
             bool deleteOriginal
             )
         {
-            if (files is null || !files.Any()) { return; }
+            if (files is null || !files.Any())
+            {
+                return;
+            }
 
             foreach (var file in files)
             {
@@ -189,7 +200,10 @@ namespace Common.FixTools.FileFix
             string backupFolderPath,
             string? variant)
         {
-            if (fixUrl is null) { return null; }
+            if (fixUrl is null)
+            {
+                return null;
+            }
 
             var unpackToPath = fixInstallFolder is null
                 ? gameDir
@@ -224,7 +238,10 @@ namespace Common.FixTools.FileFix
             string? runAfterInstall
             )
         {
-            if (runAfterInstall is null) { return; }
+            if (runAfterInstall is null)
+            {
+                return;
+            }
 
             var path = Path.Combine(gameInstallPath, runAfterInstall);
 

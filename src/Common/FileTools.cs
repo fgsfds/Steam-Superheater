@@ -24,6 +24,8 @@ namespace Common
             string filePath,
             string? hash = null)
         {
+            Logger.Info($"Started downloading file {url}");
+
             IProgress<float> progress = Progress;
             var tempFile = filePath + ".temp";
 

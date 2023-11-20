@@ -27,6 +27,8 @@ namespace Common.FixTools
 
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
+            Logger.Info($"Installing {fix.Name} for {game.Name}");
+
             if (fix is FileFixEntity fileFix)
             {
                 return await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
@@ -43,6 +45,8 @@ namespace Common.FixTools
 
         public void UninstallFix(GameEntity game, BaseFixEntity fix)
         {
+            Logger.Info($"Uninstalling {fix.Name} for {game.Name}");
+
             if (fix is FileFixEntity fileFix)
             {
                 FileFixUninstaller.UninstallFix(game, fileFix);
@@ -59,6 +63,8 @@ namespace Common.FixTools
 
         public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
+            Logger.Info($"Updating {fix.Name} for {game.Name}");
+
             if (fix is FileFixEntity fileFix)
             {
                 return await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);

@@ -13,8 +13,16 @@ namespace Common.FixTools.RegistryFix
         /// <param name="fix">Fix entity</param>
         public static void UninstallFix(RegistryFixEntity fix)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) { ThrowHelper.PlatformNotSupportedException(string.Empty); return; }
-            if (fix.InstalledFix is not RegistryInstalledFixEntity installedFix) { ThrowHelper.ArgumentException(nameof(fix.InstalledFix)); return; }
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                ThrowHelper.PlatformNotSupportedException(string.Empty);
+                return;
+            }
+            if (fix.InstalledFix is not RegistryInstalledFixEntity installedFix)
+            {
+                ThrowHelper.ArgumentException(nameof(fix.InstalledFix));
+                return;
+            }
 
             var newKey = installedFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
 

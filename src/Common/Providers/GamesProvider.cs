@@ -14,6 +14,8 @@ namespace Common.Providers
         /// </summary>
         public async Task<ImmutableList<GameEntity>> GetCachedListAsync()
         {
+            Logger.Info("Requesting cached games list");
+
             await _locker.WaitAsync();
 
             var result = _gamesCache ?? await CreateCacheAsync();
@@ -28,6 +30,8 @@ namespace Common.Providers
         /// </summary>
         public async Task<ImmutableList<GameEntity>> GetNewListAsync()
         {
+            Logger.Info("Requesting new games list");
+
             _gamesCache = null;
 
             return await GetCachedListAsync();
@@ -38,6 +42,8 @@ namespace Common.Providers
         /// </summary>
         private async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
+            Logger.Info("Creating games cache list");
+
             List<GameEntity> result = new();
 
             await Task.Run(() =>
@@ -58,6 +64,8 @@ namespace Common.Providers
             });
 
             _gamesCache = result.OrderBy(x => x.Name).ToImmutableList();
+
+            Logger.Info($"Added {_gamesCache.Count} games to the cache");
 
             return _gamesCache;
         }
