@@ -404,7 +404,7 @@ namespace Common.Models
             }
             else if (result.IsSuccess)
             {
-                return new(ResultEnum.Ok, "Fix updater successfully!");
+                return new(ResultEnum.Ok, "Fix updated successfully!");
             }
             else
             {
