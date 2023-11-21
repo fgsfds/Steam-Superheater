@@ -467,10 +467,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                 ThrowHelper.NullReferenceException(nameof(SelectedFix));
             }
 
-            EditorModel.RemoveFix(SelectedGame, SelectedFix);
+            _editorModel.RemoveFix(SelectedGame, SelectedFix);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             OnPropertyChanged(nameof(FilteredGamesList));
+            OnPropertyChanged(nameof(AvailableGamesList));
         }
         private bool RemoveFixCanExecute() => SelectedFix is not null;
 
@@ -568,6 +569,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             FillGamesList();
 
             SelectedGame = newGame;
+            SelectedFix = newGame.Fixes.First();
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
 

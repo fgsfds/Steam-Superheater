@@ -31,7 +31,7 @@ namespace Common.Models
             try
             {
                 await GetListOfFixesAsync(useCache);
-                await GetListOfAvailableGamesAsync(useCache);
+                await UpdateListOfAvailableGamesAsync(useCache);
 
                 return new(ResultEnum.Ok, string.Empty);
             }
@@ -77,8 +77,10 @@ namespace Common.Models
         public FixesList AddNewGame(GameEntity game)
         {
             FixesList newFix = new(game.Id, game.Name, []);
+            newFix.Fixes.Add(new FileFixEntity());
 
             _fixesList.Add(newFix);
+
             var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
             _fixesList.Clear();
             _fixesList.AddRange(newFixesList);
@@ -107,13 +109,15 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public static void RemoveFix(FixesList game, BaseFixEntity fix)
+        public async void RemoveFix(FixesList game, BaseFixEntity fix)
         {
             game.Fixes.Remove(fix);
 
             if (game.Fixes.Count == 0)
             {
+                _fixesList.Remove(game);
 
+                await UpdateListOfAvailableGamesAsync(true);
             }
         }
 
@@ -359,9 +363,9 @@ Thank you.");
         }
 
         /// <summary>
-        /// Get list of games that can be added to the fixes list
+        /// Create or update list of games that can be added to the fixes list
         /// </summary>
-        private async Task GetListOfAvailableGamesAsync(bool useCache)
+        private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
             _availableGamesList.Clear();
 

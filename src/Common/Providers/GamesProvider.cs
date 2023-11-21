@@ -37,6 +37,22 @@ namespace Common.Providers
             return await GetCachedListAsync();
         }
 
+        public async Task<GameEntity> GetGameByIdAsync (int id)
+        {
+            if (_gamesCache is null)
+            {
+                await GetNewListAsync();
+            }
+
+            if (_gamesCache is null)
+            {
+                ThrowHelper.ArgumentException(nameof(_gamesCache));
+                return null;
+            }
+
+            return _gamesCache.First(x => x.Id == id);
+        }
+
         /// <summary>
         /// Create new cache of games from online or local repository
         /// </summary>
