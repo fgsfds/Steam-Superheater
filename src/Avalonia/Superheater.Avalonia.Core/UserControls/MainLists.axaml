@@ -127,7 +127,7 @@
         </ListBox>
 
         <!--Right column-->
-        <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto">
+        <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto">
 
             <!--Description-->
             <ScrollViewer Grid.Row="0">
@@ -213,6 +213,16 @@
                           ItemsSource="{Binding SelectedFixVariants}"
                           SelectedItem="{Binding SelectedFixVariant}"/>
             </Grid>
+
+            <!--Message-->
+            <TextBlock Text="{Binding Message}"
+                       Grid.Row="4"
+                       Margin="3"
+                       Foreground="{DynamicResource SystemAccentColor}"
+                       HorizontalAlignment="Center">
+                Message
+            </TextBlock>
+
         </Grid>
     </Grid>
 </UserControl>
