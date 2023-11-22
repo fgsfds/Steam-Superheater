@@ -23,6 +23,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -47,6 +48,12 @@
                          IsChecked="{Binding IsRegistryFixType}"
                          Margin="5,0">
                 Registry
+            </RadioButton>
+
+            <RadioButton GroupName="Type3"
+                         IsChecked="{Binding IsHostsFixType}"
+                         Margin="5,0">
+                Hosts
             </RadioButton>
         </StackPanel>
 
@@ -185,7 +192,14 @@
             </RadioButton>
         </StackPanel>
 
-        <Grid Grid.Row="16"
+        <!--Hosts Entries-->
+        <TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
+                 Watermark="Hosts Entries"
+                 Grid.Row="16"
+                 Margin="0,3"
+                 IsVisible="{Binding IsHostsFixType}"/>
+
+        <Grid Grid.Row="17"
               Grid.Column="1"
               Margin="0,3"
               MinHeight="60">
