@@ -10,20 +10,20 @@ namespace Common.FixTools
 {
     public class FixManager(
         FileFixInstaller fileFixInstaller,
-        //FileFixUninstaller fileFixUninstaller,
-        FileFixUpdater fileFixUpdater
-        //RegistryFixInstaller registryFixInstaller,
-        //RegistryFixUninstaller registryFixUninstaller,
-        //RegistryFixUpdater registryFixUpdater
+        FileFixUninstaller fileFixUninstaller,
+        FileFixUpdater fileFixUpdater,
+        RegistryFixInstaller registryFixInstaller,
+        RegistryFixUninstaller registryFixUninstaller,
+        RegistryFixUpdater registryFixUpdater
         )
     {
         private readonly FileFixInstaller _fileFixInstaller = fileFixInstaller ?? ThrowHelper.NullReferenceException<FileFixInstaller>(nameof(fileFixInstaller));
-        //private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller ?? ThrowHelper.NullReferenceException<FileFixUninstaller>(nameof(fileFixUninstaller));
+        private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller ?? ThrowHelper.NullReferenceException<FileFixUninstaller>(nameof(fileFixUninstaller));
         private readonly FileFixUpdater _fileFixUpdater = fileFixUpdater ?? ThrowHelper.NullReferenceException<FileFixUpdater>(nameof(fileFixUpdater));
 
-        //private readonly RegistryFixInstaller _registryFixInstaller = registryFixInstaller ?? ThrowHelper.NullReferenceException<RegistryFixInstaller>(nameof(registryFixInstaller));
-        //private readonly RegistryFixUninstaller _registryFixUninstaller = registryFixUninstaller ?? ThrowHelper.NullReferenceException<RegistryFixUninstaller>(nameof(registryFixUninstaller));
-        //private readonly RegistryFixUpdater _registryFixUpdater = registryFixUpdater ?? ThrowHelper.NullReferenceException<RegistryFixUpdater>(nameof(registryFixUpdater));
+        private readonly RegistryFixInstaller _registryFixInstaller = registryFixInstaller ?? ThrowHelper.NullReferenceException<RegistryFixInstaller>(nameof(registryFixInstaller));
+        private readonly RegistryFixUninstaller _registryFixUninstaller = registryFixUninstaller ?? ThrowHelper.NullReferenceException<RegistryFixUninstaller>(nameof(registryFixUninstaller));
+        private readonly RegistryFixUpdater _registryFixUpdater = registryFixUpdater ?? ThrowHelper.NullReferenceException<RegistryFixUpdater>(nameof(registryFixUpdater));
 
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
@@ -35,7 +35,7 @@ namespace Common.FixTools
             }
             else if (fix is RegistryFixEntity registryFix)
             {
-                return RegistryFixInstaller.InstallFix(game, registryFix);
+                return _registryFixInstaller.InstallFix(game, registryFix);
             }
             else
             {
@@ -49,11 +49,11 @@ namespace Common.FixTools
 
             if (fix is FileFixEntity fileFix)
             {
-                FileFixUninstaller.UninstallFix(game, fileFix);
+                _fileFixUninstaller.UninstallFix(game, fileFix);
             }
             else if (fix is RegistryFixEntity regFix)
             {
-                RegistryFixUninstaller.UninstallFix(regFix);
+                _registryFixUninstaller.UninstallFix(regFix);
             }
             else
             {
@@ -71,7 +71,7 @@ namespace Common.FixTools
             }
             else if (fix is RegistryFixEntity registryFix)
             {
-                return RegistryFixUpdater.UpdateFix(game, registryFix);
+                return _registryFixUpdater.UpdateFix(game, registryFix);
             }
             else
             {

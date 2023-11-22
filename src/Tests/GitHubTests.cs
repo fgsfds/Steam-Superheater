@@ -1,5 +1,6 @@
 ﻿using Common.DI;
 using Common.Providers;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests
 {
@@ -9,7 +10,7 @@ namespace Tests
         [Fact]
         public async Task GetFixesFromGitHubTest()
         {
-            var fixesProvider = BindingsManager.Instance.GetInstance<FixesProvider>();
+            var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
             var fixes = await fixesProvider.GetNewListAsync();
 
             //Looking for Alan Wake fixes list

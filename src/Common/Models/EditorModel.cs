@@ -12,12 +12,14 @@ namespace Common.Models
     public sealed class EditorModel(
         FixesProvider fixesProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
-        GamesProvider gamesProvider
+        GamesProvider gamesProvider,
+        CommonProperties properties
         )
     {
         private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.NullReferenceException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
         private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
+        private readonly CommonProperties _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
 
         private readonly List<FixesList> _fixesList = new();
         private readonly List<GameEntity> _availableGamesList = new();
@@ -127,7 +129,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> SaveFixesListAsync()
         {
-            var result = await FixesProvider.SaveFixesAsync(_fixesList);
+            var result = await _fixesProvider.SaveFixesAsync(_fixesList);
 
             CreateReadme();
 
@@ -401,7 +403,7 @@ Thank you.");
                 result += Environment.NewLine;
             }
 
-            File.WriteAllText(Path.Combine(CommonProperties.LocalRepoPath, "README.md"), result);
+            File.WriteAllText(Path.Combine(_properties.LocalRepoPath, "README.md"), result);
         }
     }
 }

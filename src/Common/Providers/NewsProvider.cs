@@ -6,9 +6,13 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class NewsProvider(ConfigProvider config)
+    public sealed class NewsProvider(
+        ConfigProvider config,
+        CommonProperties properties
+        )
     {
         private readonly ConfigEntity _config = config.Config;
+        private readonly CommonProperties _properties = properties;
 
         /// <summary>
         /// Get list of news
@@ -23,7 +27,7 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.NewsFile);
+                var file = Path.Combine(_properties.LocalRepoPath, Consts.NewsFile);
 
                 if (!File.Exists(file))
                 {
@@ -56,7 +60,7 @@ namespace Common.Providers
         /// Get list of news from online repository
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> DownloadNewsXMLAsync()
+        private async Task<string> DownloadNewsXMLAsync()
         {
             Logger.Info("Downloading news xml from online repository");
 
@@ -65,7 +69,7 @@ namespace Common.Providers
                 using (HttpClient client = new())
                 {
                     client.Timeout = TimeSpan.FromSeconds(10);
-                    using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
+                    using var stream = await client.GetStreamAsync(_properties.CurrentFixesRepo + Consts.NewsFile);
                     using StreamReader file = new(stream);
                     var newsXml = await file.ReadToEndAsync();
 

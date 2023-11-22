@@ -1,18 +1,18 @@
-﻿using SimpleInjector;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
 
 namespace Superheater.Avalonia.Core.DI
 {
     public static class ViewModelsBindings
     {
-        public static void Load(Container container)
+        public static void Load(ServiceCollection container)
         {
-            container.Register<MainWindowViewModel>(Lifestyle.Singleton);
-            container.Register<MainViewModel>(Lifestyle.Singleton);
-            container.Register<EditorViewModel>(Lifestyle.Singleton);
-            container.Register<NewsViewModel>(Lifestyle.Singleton);
-            container.Register<SettingsViewModel>(Lifestyle.Singleton);
-            container.Register<AboutViewModel>(Lifestyle.Singleton);
+            container.AddSingleton<MainWindowViewModel>();
+            container.AddSingleton<MainViewModel>();
+            container.AddSingleton<EditorViewModel>();
+            container.AddSingleton<NewsViewModel>();
+            container.AddSingleton<SettingsViewModel>();
+            container.AddSingleton<AboutViewModel>();
         }
     }
 }

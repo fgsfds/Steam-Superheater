@@ -1,6 +1,7 @@
 ﻿using Common.DI;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -34,12 +35,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     break;
             }
 
-            _mwvm = BindingsManager.Instance.GetInstance<MainWindowViewModel>();
-            _mwvm.PopupDataContext = this;
+            var vm = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
+            vm.PopupDataContext = this;
         }
 
         private readonly Action? _okAction;
-        private readonly MainWindowViewModel _mwvm;
         private SemaphoreSlim? _semaphore;
         private bool _result;
 

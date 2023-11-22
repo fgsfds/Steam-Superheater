@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public static class RegistryFixInstaller
+    public class RegistryFixInstaller
     {
         /// <summary>
         /// Install registry fix
@@ -15,7 +15,7 @@ namespace Common.FixTools.RegistryFix
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>Installed fix entity</returns>
-        public static BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
+        public BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {

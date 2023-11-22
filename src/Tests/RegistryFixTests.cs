@@ -5,6 +5,7 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.FixTools;
 using Common.Helpers;
 using Common.Providers;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
@@ -20,6 +21,8 @@ namespace Tests
         private const string GameDir = "C:\\games\\test game\\";
         private const string GameExe = "game exe.exe";
         private const string RegKey = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test";
+
+        private readonly FixManager _fixManager;
 
         private readonly GameEntity _gameEntity = new(
             1,
@@ -45,11 +48,11 @@ namespace Tests
             BindingsManager.Reset();
 
             var container = BindingsManager.Instance;
-            container.Options.EnableAutoVerification = false;
-            container.Options.ResolveUnregisteredConcreteTypes = true;
 
             CommonBindings.Load(container);
             ProvidersBindings.Load(container);
+
+            _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
         }
 
         public void Dispose()
@@ -91,10 +94,9 @@ namespace Tests
             //Preparations
             var gameEntity = _gameEntity;
             var fixEntity = _fixEntity;
-            var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
             //Install Fix
-            var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
+            var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
             InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
 
@@ -129,7 +131,7 @@ namespace Tests
             }
 
             //Uninstall fix
-            fixManager.UninstallFix(gameEntity, fixEntity);
+            _fixManager.UninstallFix(gameEntity, fixEntity);
 
             //Check if registry value is removed
             using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
@@ -167,10 +169,9 @@ namespace Tests
 
             var gameEntity = _gameEntity;
             var fixEntity = _fixEntity;
-            var fixManager = BindingsManager.Instance.GetInstance<FixManager>();
 
             //Install Fix
-            var installedFix = await fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
+            var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
             InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
 
@@ -205,7 +206,7 @@ namespace Tests
             }
 
             //Uninstall fix
-            fixManager.UninstallFix(gameEntity, fixEntity);
+            _fixManager.UninstallFix(gameEntity, fixEntity);
 
             //Check if registry value is reverted
             using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))

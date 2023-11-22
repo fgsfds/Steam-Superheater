@@ -1,30 +1,23 @@
 ﻿using Common.Config;
-using Common.DI;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
 namespace Common.Helpers
 {
-    public sealed class CommonProperties
+    public sealed class CommonProperties(ConfigProvider configProvider)
     {
-        private static readonly ConfigEntity _config;
-
-        static CommonProperties()
-        {
-            _config = BindingsManager.Instance.GetInstance<ConfigProvider>().Config;
-            IsInSteamDeckGameMode = CheckDeckGameMode();
-        }
+        private readonly ConfigEntity _config = configProvider.Config ?? ThrowHelper.NullReferenceException<ConfigEntity>(string.Empty);
 
         /// <summary>
         /// Path to local repository
         /// </summary>
-        public static string LocalRepoPath => _config.LocalRepoPath;
+        public string LocalRepoPath => _config.LocalRepoPath;
 
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
-        public static string CurrentFixesRepo
+        public string CurrentFixesRepo
         {
             get
             {
@@ -35,6 +28,11 @@ namespace Common.Helpers
         }
 
         /// <summary>
+        /// Is Game Mode active on Steam Deck
+        /// </summary>
+        public bool IsInSteamDeckGameMode { get; } = CheckDeckGameMode();
+
+        /// <summary>
         /// Current app version
         /// </summary>
         public static Version CurrentVersion => Assembly.GetEntryAssembly()?.GetName().Version ?? new Version("999");
@@ -43,11 +41,6 @@ namespace Common.Helpers
         /// Name of the executable file
         /// </summary>
         public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
-
-        /// <summary>
-        /// Is Game Mode active on Steam Deck
-        /// </summary>
-        public static bool IsInSteamDeckGameMode { get; }
 
         /// <summary>
         /// Check if Game Mode is active on Steam Deck

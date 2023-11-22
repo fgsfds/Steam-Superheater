@@ -8,10 +8,15 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class MainWindowViewModel : ObservableObject
     {
         private readonly ConfigEntity _config;
+        private readonly CommonProperties _properties;
 
-        public MainWindowViewModel(ConfigProvider configProvider)
+        public MainWindowViewModel(
+            ConfigProvider configProvider,
+            CommonProperties properties
+            )
         {
             _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
+            _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
             _repositoryMessage = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
@@ -22,7 +27,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
 
         public static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
@@ -46,7 +51,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
             else
             {
-                RepositoryMessage = $"Online repo: {CommonProperties.CurrentFixesRepo}";
+                RepositoryMessage = $"Online repo: {_properties.CurrentFixesRepo}";
             }
         }
 

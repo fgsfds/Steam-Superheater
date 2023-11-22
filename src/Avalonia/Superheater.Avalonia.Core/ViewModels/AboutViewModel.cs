@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class AboutViewModel(AppUpdateInstaller updateInstaller) : ObservableObject
+    public sealed partial class AboutViewModel(AppUpdateInstaller updateInstaller) : ObservableObject
     {
         private readonly AppUpdateInstaller _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<AppUpdateInstaller>(nameof(updateInstaller));
 

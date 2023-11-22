@@ -1,22 +1,21 @@
 using Avalonia.Controls;
 using Common.DI;
+using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
 
 namespace Superheater.Avalonia.Core.Pages
 {
     public sealed partial class EditorPage : UserControl
     {
-        private readonly EditorViewModel _evm;
-
         public EditorPage()
         {
-            _evm = BindingsManager.Instance.GetInstance<EditorViewModel>();
+            var vm = BindingsManager.Provider.GetRequiredService<EditorViewModel>();
 
-            DataContext = _evm;
+            DataContext = vm;
 
             InitializeComponent();
 
-            _evm.InitializeCommand.Execute(null);
+            vm.InitializeCommand.Execute(null);
         }
     }
 }

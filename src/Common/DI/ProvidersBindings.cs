@@ -1,18 +1,18 @@
 ﻿using Common.Config;
 using Common.Providers;
-using SimpleInjector;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.DI
 {
     public static class ProvidersBindings
     {
-        public static void Load(Container container)
+        public static void Load(ServiceCollection container)
         {
-            container.Register<CombinedEntitiesProvider>(Lifestyle.Singleton);
-            container.Register<ConfigProvider>(Lifestyle.Singleton);
-            container.Register<GamesProvider>(Lifestyle.Singleton);
-            container.Register<NewsProvider>(Lifestyle.Singleton);
-            container.Register<FixesProvider>(Lifestyle.Singleton);
+            container.AddScoped<CombinedEntitiesProvider>();
+            container.AddScoped<ConfigProvider>();
+            container.AddScoped<GamesProvider>();
+            container.AddScoped<NewsProvider>();
+            container.AddScoped<FixesProvider>();
         }
     }
 }

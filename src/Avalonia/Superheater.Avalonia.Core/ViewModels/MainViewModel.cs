@@ -18,11 +18,13 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         public MainViewModel(
             MainModel mainModel,
-            ConfigProvider config
+            ConfigProvider config,
+            CommonProperties properties
             )
         {
             _mainModel = mainModel ?? ThrowHelper.ArgumentNullException<MainModel>(nameof(mainModel));
             _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
+            _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
 
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
@@ -35,6 +37,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
+        private readonly CommonProperties _properties;
         private readonly SemaphoreSlim _locker = new(1, 1);
         private bool _lockButtons;
 
@@ -60,7 +63,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
 
-        public static bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
 
         public static bool IsTagsComboboxVisible => true;
 

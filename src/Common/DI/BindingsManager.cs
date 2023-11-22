@@ -1,30 +1,49 @@
-﻿using SimpleInjector;
+﻿using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.DI
 {
     public static class BindingsManager
     {
-        private static volatile Container? _instance;
+        private static ServiceCollection? _instance;
+        private static ServiceProvider? _provider;
         private static readonly object _syncRoot = new();
 
-        public static Container Instance
+        public static ServiceCollection Instance
         {
             get
             {
-                if (_instance == null)
+                if (_instance is null)
                 {
                     lock (_syncRoot)
                     {
-                        _instance ??= new Container();
+                        _instance = new ServiceCollection();
                     }
                 }
+
                 return _instance;
+            }
+        }
+
+        public static ServiceProvider Provider
+        {
+            get
+            {
+                if (_provider is null)
+                {
+                    lock (_syncRoot)
+                    {
+                        _provider = _instance.BuildServiceProvider();
+                    }
+                }
+
+                return _provider;
             }
         }
 
         public static void Reset()
         {
             _instance = null;
+            _provider = null;
         }
     }
 }

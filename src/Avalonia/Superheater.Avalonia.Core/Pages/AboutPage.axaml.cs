@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Common.DI;
+using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
 using System.Diagnostics;
 
@@ -8,17 +9,15 @@ namespace Superheater.Avalonia.Core.Pages
 {
     public sealed partial class AboutPage : UserControl
     {
-        private readonly AboutViewModel _avm;
-
         public AboutPage()
         {
-            _avm = BindingsManager.Instance.GetInstance<AboutViewModel>();
+            var vm = BindingsManager.Provider.GetRequiredService<AboutViewModel>();
 
-            DataContext = _avm;
+            DataContext = vm;
 
             InitializeComponent();
 
-            _avm.InitializeCommand.Execute(null);
+            vm.InitializeCommand.Execute(null);
         }
 
         private void SteamClick(object sender, RoutedEventArgs e)

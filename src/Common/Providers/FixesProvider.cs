@@ -10,10 +10,13 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class FixesProvider(ConfigProvider config)
+    public sealed class FixesProvider(
+        ConfigProvider config,
+        CommonProperties properties)
     {
         private string? _fixesCachedString;
         private readonly ConfigEntity _config = config.Config;
+        private readonly CommonProperties _properties = properties;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
         /// <summary>
@@ -81,7 +84,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList"></param>
         /// <returns></returns>
-        public static async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
+        public async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
             Logger.Info("Saving fixes list");
 
@@ -129,14 +132,14 @@ namespace Common.Providers
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
-            if (!Directory.Exists(CommonProperties.LocalRepoPath))
+            if (!Directory.Exists(_properties.LocalRepoPath))
             {
-                Directory.CreateDirectory(CommonProperties.LocalRepoPath);
+                Directory.CreateDirectory(_properties.LocalRepoPath);
             }
 
             try
             {
-                using FileStream fs = new(Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
+                using FileStream fs = new(Path.Combine(_properties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
                 xmlSerializer.Serialize(fs, result);
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
@@ -149,7 +152,7 @@ namespace Common.Providers
             return new(ResultEnum.Ok, "XML saved successfully!");
         }
 
-        private static async Task<Result?> PrepareFileFix(HttpClient client, BaseFixEntity fix)
+        private async Task<Result?> PrepareFileFix(HttpClient client, BaseFixEntity fix)
         {
             if (fix is FileFixEntity fileFix)
             {
@@ -230,7 +233,7 @@ namespace Common.Providers
         /// <param name="fix">Fix entity</param>
         /// <returns>MD5 of the fix file</returns>
         /// <exception cref="Exception">Http response error</exception>
-        private static async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
+        private async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
         {
             if (fix.Url is null)
             {
@@ -239,7 +242,7 @@ namespace Common.Providers
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
-                var currentDir = Path.Combine(CommonProperties.LocalRepoPath, "fixes");
+                var currentDir = Path.Combine(_properties.LocalRepoPath, "fixes");
                 var fileName = Path.GetFileName(fix.Url.ToString());
                 var pathToFile = Path.Combine(currentDir, fileName);
 
@@ -303,7 +306,7 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(CommonProperties.LocalRepoPath, Consts.FixesFile);
+                var file = Path.Combine(_properties.LocalRepoPath, Consts.FixesFile);
 
                 if (!File.Exists(file))
                 {
@@ -366,14 +369,14 @@ namespace Common.Providers
         /// Download fixes xml from online repository
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> DownloadFixesXMLAsync()
+        private async Task<string> DownloadFixesXMLAsync()
         {
             Logger.Info("Downloading fixes xml from online repository");
 
             using (HttpClient client = new())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
-                using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.FixesFile);
+                using var stream = await client.GetStreamAsync(_properties.CurrentFixesRepo + Consts.FixesFile);
                 using StreamReader file = new(stream);
                 var fixesXml = await file.ReadToEndAsync();
 

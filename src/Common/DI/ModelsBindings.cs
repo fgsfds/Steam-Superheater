@@ -1,16 +1,15 @@
 ﻿using Common.Models;
-using SimpleInjector;
-using Container = SimpleInjector.Container;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.DI
 {
     public static class ModelsBindings
     {
-        public static void Load(Container container)
+        public static void Load(ServiceCollection container)
         {
-            container.Register<EditorModel>(Lifestyle.Singleton);
-            container.Register<MainModel>(Lifestyle.Singleton);
-            container.Register<NewsModel>(Lifestyle.Singleton);
+            container.AddSingleton<EditorModel>();
+            container.AddSingleton<MainModel>();
+            container.AddSingleton<NewsModel>();
         }
     }
 }

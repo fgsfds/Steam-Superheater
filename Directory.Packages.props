@@ -8,9 +8,9 @@
     <PackageVersion Include="Avalonia.Desktop" Version="11.0.5" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.0.5" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageVersion Include="SharpCompress" Version="0.34.2" />
-    <PackageVersion Include="SimpleInjector" Version="5.4.2" />
     <PackageVersion Include="xunit" Version="2.6.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.5.4" />
   </ItemGroup>

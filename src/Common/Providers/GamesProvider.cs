@@ -37,7 +37,7 @@ namespace Common.Providers
             return await GetCachedListAsync();
         }
 
-        public async Task<GameEntity> GetGameByIdAsync (int id)
+        public async Task<GameEntity> GetGameByIdAsync(int id)
         {
             if (_gamesCache is null)
             {
