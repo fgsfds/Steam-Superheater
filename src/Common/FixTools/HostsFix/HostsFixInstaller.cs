@@ -4,7 +4,6 @@ using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 
 namespace Common.FixTools.HostsFix
 {
@@ -37,7 +36,14 @@ namespace Common.FixTools.HostsFix
                 ThrowHelper.Exception("Superheater needs to be run as admin in order to install hosts fixes");
             }
 
-            File.AppendAllLinesAsync(Consts.Hosts, fix.Entries);
+            string stringToAdd = string.Empty;
+
+            foreach (var line in fix.Entries)
+            {
+                stringToAdd += Environment.NewLine + line + $" #{fix.Guid}";
+            }
+
+            File.AppendAllText(Consts.Hosts, stringToAdd);
 
             return new HostsInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Entries);
         }
