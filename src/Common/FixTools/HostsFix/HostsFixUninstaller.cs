@@ -39,18 +39,20 @@ namespace Common.FixTools.HostsFix
                 ThrowHelper.Exception("Superheater needs to be run as admin in order to install hosts fixes");
             }
 
-            var lines = File.ReadAllLines(Consts.Hosts);
-            List<string> newString = new();
+            List<string> hostsList = new();
 
-            foreach (var line in lines)
+            foreach (var line in File.ReadAllLines(Consts.Hosts))
             {
                 if (!line.EndsWith(installedFix.Guid.ToString()))
                 {
-                    newString.Add(line);
+                    hostsList.Add(line);
                 }
             }
 
-            File.WriteAllLines(Consts.Hosts, newString);
+            //converting list to string to prevent adding empty line to the end of the file
+            var hostsString = string.Join(Environment.NewLine, hostsList);
+
+            File.WriteAllText(Consts.Hosts, hostsString);
         }
     }
 }
