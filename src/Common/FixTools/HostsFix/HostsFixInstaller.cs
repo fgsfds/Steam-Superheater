@@ -14,8 +14,9 @@ namespace Common.FixTools.HostsFix
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
+        /// <param name="hostsFilePath">Path to hosts file</param>
         /// <returns>Installed fix entity</returns>
-        public BaseInstalledFixEntity InstallFix(GameEntity game, HostsFixEntity fix)
+        public BaseInstalledFixEntity InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath = Consts.Hosts)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -43,7 +44,7 @@ namespace Common.FixTools.HostsFix
                 stringToAdd += Environment.NewLine + line + $" #{fix.Guid}";
             }
 
-            File.AppendAllText(Consts.Hosts, stringToAdd);
+            File.AppendAllText(hostsFilePath, stringToAdd);
 
             return new HostsInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Entries);
         }

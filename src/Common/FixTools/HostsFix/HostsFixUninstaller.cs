@@ -11,7 +11,7 @@ namespace Common.FixTools.HostsFix
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(HostsFixEntity fix)
+        public void UninstallFix(HostsFixEntity fix, string hostsFilePath = Consts.Hosts)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -41,7 +41,7 @@ namespace Common.FixTools.HostsFix
 
             List<string> hostsList = new();
 
-            foreach (var line in File.ReadAllLines(Consts.Hosts))
+            foreach (var line in File.ReadAllLines(hostsFilePath))
             {
                 if (!line.EndsWith(installedFix.Guid.ToString()))
                 {
@@ -52,7 +52,7 @@ namespace Common.FixTools.HostsFix
             //converting list to string to prevent adding empty line to the end of the file
             var hostsString = string.Join(Environment.NewLine, hostsList);
 
-            File.WriteAllText(Consts.Hosts, hostsString);
+            File.WriteAllText(hostsFilePath, hostsString);
         }
     }
 }

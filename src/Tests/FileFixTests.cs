@@ -1,3 +1,4 @@
+using Common.Config;
 using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -27,13 +28,11 @@ namespace Tests
         public FileFixTests()
         {
             BindingsManager.Reset();
+            var container = BindingsManager.Instance;
+            container.AddScoped<ConfigProvider>();
+            CommonBindings.Load(container);
 
             _currentDirectory = Directory.GetCurrentDirectory();
-
-            var container = BindingsManager.Instance;
-
-            CommonBindings.Load(container);
-            ProvidersBindings.Load(container);
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
 
