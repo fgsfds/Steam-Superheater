@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace Common.Helpers
 {
@@ -41,6 +42,19 @@ namespace Common.Helpers
         /// Name of the executable file
         /// </summary>
         public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
+
+        public static bool IsAdmin
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+                }
+
+                return false;
+            }
+        }
 
         /// <summary>
         /// Check if Game Mode is active on Steam Deck

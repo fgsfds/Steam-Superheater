@@ -1,4 +1,6 @@
-﻿using Common.DI;
+﻿using Common.Config;
+using Common.DI;
+using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -10,6 +12,12 @@ namespace Tests
         [Fact]
         public async Task GetFixesFromGitHubTest()
         {
+            BindingsManager.Reset();
+            var container = BindingsManager.Instance;
+            container.AddTransient<FixesProvider>();
+            container.AddTransient<ConfigProvider>();
+            container.AddTransient<CommonProperties>();
+
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
             var fixes = await fixesProvider.GetNewListAsync();
 

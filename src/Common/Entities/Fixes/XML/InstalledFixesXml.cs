@@ -1,4 +1,5 @@
 ﻿using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using System.Xml.Serialization;
 
@@ -14,6 +15,7 @@ namespace Common.Entities.Fixes.XML
 
         [XmlElement("FileInstalledFix", typeof(FileInstalledFixEntity))]
         [XmlElement("RegistryInstalledFix", typeof(RegistryInstalledFixEntity))]
+        [XmlElement("HostsInstalledFix", typeof(HostsInstalledFixEntity))]
         public List<object> InstalledFixes { get; init; }
     }
 }

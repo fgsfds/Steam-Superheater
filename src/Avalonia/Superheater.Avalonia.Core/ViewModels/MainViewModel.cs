@@ -4,6 +4,7 @@ using Common.Config;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -63,24 +64,52 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
 
-        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
-
         public static bool IsTagsComboboxVisible => true;
+
+        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
 
         public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && !SelectedFixVariants.IsEmpty;
 
         public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
+
+        public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
 
 
         public string MainTabHeader { get; private set; }
 
         public string LaunchGameButtonText { get; private set; }
 
-        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
-
         public string SelectedFixRequirements => GetRequirementsString();
 
-        public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
+        public string Message
+        {
+            get
+            {
+                if (SelectedFix is HostsFixEntity &&
+                    !CommonProperties.IsAdmin)
+                {
+                    return "Superheater needs to be run as admin in order to install hosts fixes";
+                }
+
+                return string.Empty;
+            }
+        }
+
+        public string InstallButtonText
+        {
+            get
+            {
+                if (SelectedFix is HostsFixEntity &&
+                    !CommonProperties.IsAdmin)
+                {
+                    return "Restart as admin...";
+                }
+
+                return "Install";
+            }
+        }
+
+        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
 
         public float ProgressBarValue { get; private set; }
@@ -101,6 +130,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
+        [NotifyPropertyChangedFor(nameof(InstallButtonText))]
+        [NotifyPropertyChangedFor(nameof(Message))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]

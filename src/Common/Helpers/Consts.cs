@@ -25,5 +25,7 @@
         internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
 
         internal const string CrashlogsFolder = "crashlogs";
+
+        internal const string Hosts = @"C:\Windows\System32\drivers\etc\hosts";
     }
 }

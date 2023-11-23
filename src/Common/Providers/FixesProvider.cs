@@ -1,6 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
@@ -356,6 +357,10 @@ namespace Common.Providers
                     else if (f is RegistryFixEntity regFix)
                     {
                         fixesList.Add(regFix);
+                    }
+                    else if (f is HostsFixEntity hostsFix)
+                    {
+                        fixesList.Add(hostsFix);
                     }
                 }
 

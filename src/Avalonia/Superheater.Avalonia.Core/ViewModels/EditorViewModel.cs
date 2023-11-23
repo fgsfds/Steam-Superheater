@@ -3,6 +3,7 @@ using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.Helpers;
@@ -214,6 +215,26 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string SelectedFixEntries
+        {
+            get => SelectedFix is HostsFixEntity hostsFix && hostsFix.Entries is not null ? string.Join(';', hostsFix.Entries) : string.Empty;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedFix is not HostsFixEntity hostsFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
+
+                hostsFix.Entries = value.Split(';').ToList();
+            }
+        }
+
         public bool IsWindowsChecked
         {
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
@@ -308,6 +329,32 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsHostsFixType
+        {
+            get => SelectedFix is HostsFixEntity;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedGame is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (value)
+                {
+                    EditorModel.ChangeFixType<HostsFixEntity>(SelectedGame.Fixes, SelectedFix);
+
+                    var index = SelectedFixIndex;
+                    OnPropertyChanged(nameof(SelectedGameFixesList));
+                    SelectedFixIndex = index;
+                }
+            }
+        }
+
         public bool IsStringValueType
         {
             get
@@ -380,8 +427,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixEntries))]
         [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
         [NotifyPropertyChangedFor(nameof(IsFileFixType))]
+        [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]

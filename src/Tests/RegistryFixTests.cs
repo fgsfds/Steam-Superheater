@@ -1,3 +1,4 @@
+using Common.Config;
 using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -46,11 +47,9 @@ namespace Tests
         public RegistryFixTests()
         {
             BindingsManager.Reset();
-
             var container = BindingsManager.Instance;
-
+            container.AddScoped<ConfigProvider>();
             CommonBindings.Load(container);
-            ProvidersBindings.Load(container);
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
         }

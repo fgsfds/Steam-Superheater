@@ -1,6 +1,7 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
@@ -66,6 +67,10 @@ namespace Common.Providers
                     else if (fix is RegistryInstalledFixEntity regFix)
                     {
                         result.Add(regFix);
+                    }
+                    else if (fix is HostsInstalledFixEntity hostsFix)
+                    {
+                        result.Add(hostsFix);
                     }
                 }
 
