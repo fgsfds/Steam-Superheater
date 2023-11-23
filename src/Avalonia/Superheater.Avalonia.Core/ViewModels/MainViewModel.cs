@@ -95,6 +95,20 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string InstallButtonText
+        {
+            get
+            {
+                if (SelectedFix is HostsFixEntity &&
+                    !CommonProperties.IsAdmin)
+                {
+                    return "Restart as admin...";
+                }
+
+                return "Install";
+            }
+        }
+
         private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
 
@@ -116,6 +130,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
+        [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyPropertyChangedFor(nameof(Message))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
