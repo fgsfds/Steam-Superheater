@@ -1,4 +1,7 @@
 using Avalonia.Controls;
+using Common.DI;
+using Microsoft.Extensions.DependencyInjection;
+using Superheater.Avalonia.Core.ViewModels;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
@@ -6,6 +9,10 @@ namespace Superheater.Avalonia.Core.UserControls
     {
         public PopupMessage()
         {
+            var vm = BindingsManager.Provider.GetRequiredService<PopupMessageViewModel>();
+
+            DataContext = vm;
+
             InitializeComponent();
         }
     }

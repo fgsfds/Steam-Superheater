@@ -1,60 +1,31 @@
-﻿using Common.DI;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class PopupMessageViewModel : ObservableObject
+    public sealed partial class PopupMessageViewModel : ObservableObject
     {
-        /// <summary>
-        /// Create new Popup window
-        /// </summary>
-        /// <param name="title">Title text</param>
-        /// <param name="message">Message Text</param>
-        /// <param name="type">PopupMessageType</param>
-        /// <param name="okAction">Action delegate for OK button</param>
-        public PopupMessageViewModel(
-            string title,
-            string message,
-            PopupMessageType type,
-            Action? okAction = null
-            )
-        {
-            TitleText = title;
-            MessageText = message;
-            _okAction = okAction;
-
-            switch (type)
-            {
-                case PopupMessageType.OkOnly:
-                    IsOkOnly = true;
-                    break;
-                case PopupMessageType.YesNo:
-                    IsYesNo = true;
-                    break;
-            }
-
-            var vm = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
-            vm.PopupDataContext = this;
-        }
-
-        private readonly Action? _okAction;
+        private Action? _okAction;
         private SemaphoreSlim? _semaphore;
         private bool _result;
 
 
         #region Binding Properties
 
-        public bool IsPopupVisible { get; private set; }
+        [ObservableProperty]
+        private bool _isPopupMessageVisible;
 
-        public bool IsYesNo { get; init; }
+        [ObservableProperty]
+        private bool _isYesNo;
 
-        public bool IsOkOnly { get; init; }
+        [ObservableProperty]
+        private bool _isOkOnly;
 
-        public string TitleText { get; init; }
+        [ObservableProperty]
+        private string _titleText;
 
-        public string MessageText { get; init; }
+        [ObservableProperty]
+        private string _messageText;
 
         #endregion Binding Properties
 
@@ -66,10 +37,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _result = false;
 
-            IsPopupVisible = false;
-            OnPropertyChanged(nameof(IsPopupVisible));
-
-            _semaphore?.Release();
+            Reset();
         }
 
         [RelayCommand]
@@ -77,10 +45,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _result = true;
 
-            IsPopupVisible = false;
-            OnPropertyChanged(nameof(IsPopupVisible));
-
-            _semaphore?.Release();
+            Reset();
 
             _okAction?.Invoke();
         }
@@ -92,14 +57,20 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Show popup window and return result
         /// </summary>
         /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
-        public async Task<bool> ShowAndGetResultAsync()
+        public async Task<bool> ShowAndGetResultAsync(
+            string title,
+            string message,
+            PopupMessageType type,
+            Action? okAction = null)
         {
-            _semaphore = new(1, 1);
-            await _semaphore.WaitAsync();
+            ChangePopupType(type);
 
-            IsPopupVisible = true;
-            OnPropertyChanged(nameof(IsPopupVisible));
+            _okAction = okAction;
+            TitleText = title;
+            MessageText = message;
+            IsPopupMessageVisible = true;
 
+            _semaphore = new(0);
             await _semaphore.WaitAsync();
 
             return _result;
@@ -108,10 +79,50 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// Show popup window
         /// </summary>
-        public void Show()
+        public void Show(
+            string title,
+            string message,
+            PopupMessageType type,
+            Action? okAction = null)
         {
-            IsPopupVisible = true;
-            OnPropertyChanged(nameof(IsPopupVisible));
+            ChangePopupType(type);
+
+            _okAction = okAction;
+            TitleText = title;
+            MessageText = message;
+
+            IsPopupMessageVisible = true;
+        }
+
+        /// <summary>
+        /// Change type of the popup message
+        /// </summary>
+        /// <param name="type">Popup message type</param>
+        private void ChangePopupType(PopupMessageType type)
+        {
+            switch (type)
+            {
+                case PopupMessageType.OkOnly:
+                    IsOkOnly = true;
+                    IsYesNo = false;
+                    break;
+                case PopupMessageType.YesNo:
+                    IsYesNo = true;
+                    IsOkOnly = false;
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Reset popup to its initial state
+        /// </summary>
+        private void Reset()
+        {
+            IsPopupMessageVisible = false;
+
+            _semaphore?.Release();
+
+            _semaphore = null;
         }
     }
 

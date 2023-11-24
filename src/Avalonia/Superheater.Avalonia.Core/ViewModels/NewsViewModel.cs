@@ -11,9 +11,14 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class NewsViewModel : ObservableObject
     {
-        public NewsViewModel(NewsModel newsModel, ConfigProvider configProvider)
+        public NewsViewModel(
+            NewsModel newsModel, 
+            ConfigProvider configProvider,
+            PopupMessageViewModel popupMessage
+            )
         {
             _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
+            _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage)); ;
 
             NewsTabHeader = "News";
             _newsModel = newsModel;
@@ -24,7 +29,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private static bool IsDeveloperMode => Properties.IsDeveloperMode;
         private readonly NewsModel _newsModel;
         private readonly ConfigEntity _config;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+        private readonly PopupMessageViewModel _popupMessage;
+        private readonly SemaphoreSlim _locker = new(1);
 
 
         #region Binding Properties
@@ -55,11 +61,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
 
                 return;
             }
@@ -83,11 +89,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
 
                 return;
             }

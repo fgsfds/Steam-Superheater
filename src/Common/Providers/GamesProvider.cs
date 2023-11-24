@@ -7,7 +7,7 @@ namespace Common.Providers
     public sealed class GamesProvider
     {
         private ImmutableList<GameEntity>? _gamesCache;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+        private readonly SemaphoreSlim _locker = new(1);
 
         /// <summary>
         /// Get cached games list from online or local repo or create new cache if it wasn't created yet

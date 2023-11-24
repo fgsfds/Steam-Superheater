@@ -6,17 +6,19 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class PopupEditorViewModel : ObservableObject
     {
         private List<string>? _result;
+        private SemaphoreSlim? _semaphore;
 
 
         #region Binding Properties
 
-        public bool IsPopupVisible { get; private set; }
+        [ObservableProperty]
+        private bool _isPopupEditorVisible;
 
-        public bool IsYesNo { get; private set; }
+        [ObservableProperty]
+        private string _titleText;
 
-        public string TitleText { get; private set; }
-
-        public string Text { get; set; }
+        [ObservableProperty]
+        private string _text;
 
         #endregion Binding Properties
 
@@ -28,8 +30,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _result = null;
 
-            IsPopupVisible = false;
-            OnPropertyChanged(nameof(IsPopupVisible));
+            Reset();
         }
 
         [RelayCommand]
@@ -48,8 +49,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _result = result;
 
-            IsPopupVisible = false;
-            OnPropertyChanged(nameof(IsPopupVisible));
+            Reset();
         }
 
         #endregion Relay Commands
@@ -59,11 +59,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Show popup window and return result
         /// </summary>
         /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
-        public List<string>? ShowAndGetResult(string title, List<string>? text)
+        public async Task<List<string>?> ShowAndGetResultAsync(string title, List<string>? text)
         {
-            TitleText = title;
-            OnPropertyChanged(nameof(TitleText));
-
             string textString = string.Empty;
 
             if (text is not null)
@@ -71,13 +68,26 @@ namespace Superheater.Avalonia.Core.ViewModels
                 textString = string.Join(Environment.NewLine, text);
             }
 
+            TitleText = title;
             Text = textString;
-            OnPropertyChanged(nameof(Text));
+            IsPopupEditorVisible = true;
 
-            IsPopupVisible = true;
-            OnPropertyChanged(nameof(IsPopupVisible));
+            _semaphore = new(0);
+            await _semaphore.WaitAsync();
 
             return _result;
+        }
+
+        /// <summary>
+        /// Reset popup to its initial state
+        /// </summary>
+        private void Reset()
+        {
+            IsPopupEditorVisible = false;
+
+            _semaphore?.Release();
+
+            _semaphore = null;
         }
     }
 }

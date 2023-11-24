@@ -18,7 +18,7 @@ namespace Common.Providers
         private string? _fixesCachedString;
         private readonly ConfigEntity _config = config.Config;
         private readonly CommonProperties _properties = properties;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+        private readonly SemaphoreSlim _locker = new(1);
 
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet

@@ -33,7 +33,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private readonly ConfigEntity _config;
         private readonly MainWindowViewModel _mwvm;
-        private readonly SemaphoreSlim _locker = new(1, 1);
 
         public bool IsLocalPathTextboxChanged;
 

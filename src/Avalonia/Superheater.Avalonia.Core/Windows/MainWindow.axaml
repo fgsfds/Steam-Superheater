@@ -57,12 +57,11 @@
 
             <controls:PopupMessage
                 Grid.RowSpan="2"
-                DataContext="{Binding PopupDataContext}"
-                IsVisible="{Binding IsPopupVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding IsPopupMessageVisible, FallbackValue='False'}"/>
 
             <controls:PopupEditor
                 Grid.RowSpan="2"
-                IsVisible="{Binding IsPopupVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding IsPopupEditorVisible, FallbackValue='False'}"/>
 
         </Grid>
 

@@ -12,7 +12,6 @@ using Common.Providers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
-using Superheater.Avalonia.Core.UserControls;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -24,13 +23,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             EditorModel editorModel,
             ConfigProvider config,
             FixesProvider fixesProvider,
-            PopupEditorViewModel popupEditor
+            PopupEditorViewModel popupEditor,
+            PopupMessageViewModel popupMessage
             )
         {
             _editorModel = editorModel ?? ThrowHelper.ArgumentNullException<EditorModel>(nameof(editorModel));
             _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
             _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
             _popupEditor = popupEditor ?? ThrowHelper.ArgumentNullException<PopupEditorViewModel>(nameof(popupEditor));
+            _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage));
 
             _searchBarText = string.Empty;
 
@@ -38,10 +39,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly EditorModel _editorModel;
+
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
+
         private readonly PopupEditorViewModel _popupEditor;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+        private readonly PopupMessageViewModel _popupMessage;
+
+        private readonly SemaphoreSlim _locker = new(1);
 
 
         #region Binding Properties
@@ -549,11 +554,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(SelectedFixMD5));
             OnPropertyChanged(nameof(SelectedFixUrl));
 
-            new PopupMessageViewModel(
+            _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",
                 result.Message,
-                PopupMessageType.OkOnly)
-                .Show();
+                PopupMessageType.OkOnly
+                );
         }
 
 
@@ -688,22 +693,22 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!canUpload.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     canUpload.Message,
-                    PopupMessageType.OkOnly)
-                    .Show();
+                    PopupMessageType.OkOnly
+                    );
 
                 return;
             }
 
             var result = EditorModel.UploadFix(SelectedGame, SelectedFix);
 
-            new PopupMessageViewModel(
+            _popupMessage.Show(
                     result.IsSuccess ? "Success" : "Error",
                     result.Message,
-                    PopupMessageType.OkOnly)
-                .Show();
+                    PopupMessageType.OkOnly
+                    );
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
 
@@ -762,14 +767,17 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            var result = _popupEditor.ShowAndGetResult("Tags", SelectedFix.Tags);
+            var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags);
 
             if (result is not null)
             {
                 SelectedFix.Tags = result;
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
+
+            return;
         }
+
         private bool OpenTagsEditorCanExecute() => SelectedFix is not null;
 
         #endregion Relay Commands
@@ -790,11 +798,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
             }
 
             IsInProgress = false;
