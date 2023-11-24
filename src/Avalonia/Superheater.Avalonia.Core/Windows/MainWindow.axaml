@@ -33,7 +33,7 @@
         <Grid RowDefinitions="25,*">
 
             <TextBlock Margin="10,5,0,0"
-                       Foreground="Tomato"
+                       Foreground="{DynamicResource SystemAccentColor}"
                        IsVisible="{Binding IsDeveloperMode}"
                        Text="{Binding RepositoryMessage}"/>
 
@@ -57,8 +57,11 @@
 
             <controls:PopupMessage
                 Grid.RowSpan="2"
-                DataContext="{Binding PopupDataContext}"
-                IsVisible="{Binding IsPopupVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding IsPopupMessageVisible, FallbackValue='False'}"/>
+
+            <controls:PopupEditor
+                Grid.RowSpan="2"
+                IsVisible="{Binding IsPopupEditorVisible, FallbackValue='False'}"/>
 
         </Grid>
 

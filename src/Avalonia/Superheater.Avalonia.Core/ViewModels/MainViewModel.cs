@@ -20,12 +20,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public MainViewModel(
             MainModel mainModel,
             ConfigProvider config,
-            CommonProperties properties
+            CommonProperties properties,
+            PopupMessageViewModel popupMessage
             )
         {
             _mainModel = mainModel ?? ThrowHelper.ArgumentNullException<MainModel>(nameof(mainModel));
             _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
             _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
+            _popupMessage = popupMessage ?? ThrowHelper.NullReferenceException<PopupMessageViewModel>(nameof(popupMessage));
 
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
@@ -37,9 +39,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly MainModel _mainModel;
+
         private readonly ConfigEntity _config;
         private readonly CommonProperties _properties;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+
+        private readonly PopupMessageViewModel _popupMessage;
+
+        private readonly SemaphoreSlim _locker = new(1);
         private bool _lockButtons;
 
 
@@ -245,11 +251,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            new PopupMessageViewModel(
+            _popupMessage.Show(
                 fixUninstallResult.IsSuccess ? "Success" : "Error",
                 fixUninstallResult.Message,
-                PopupMessageType.OkOnly)
-                .Show();
+                PopupMessageType.OkOnly
+                );
         }
         private bool UninstallFixCanExecute()
         {
@@ -446,13 +452,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result.ResultEnum is ResultEnum.MD5Error)
             {
-                var popupResult = await new PopupMessageViewModel(
+                var popupResult = await _popupMessage.ShowAndGetResultAsync(
                     "Warning",
                     @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
 
 Do you still want to install the fix?",
-                    PopupMessageType.YesNo)
-                    .ShowAndGetResultAsync();
+                    PopupMessageType.YesNo
+                    );
 
                 if (popupResult)
                 {
@@ -474,11 +480,11 @@ Do you still want to install the fix?",
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
-                    PopupMessageType.OkOnly)
-                .Show();
+                    PopupMessageType.OkOnly
+                    );
 
                 return;
             }
@@ -487,20 +493,20 @@ Do you still want to install the fix?",
                 fileFix.ConfigFile is not null &&
                 _config.OpenConfigAfterInstall)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Success",
                     result.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
                     PopupMessageType.YesNo,
-                    OpenConfigXml)
-                .Show();
+                    OpenConfigXml
+                    );
             }
             else
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Success",
                     result.Message,
-                    PopupMessageType.OkOnly)
-                .Show();
+                    PopupMessageType.OkOnly
+                    );
             }
         }
 
@@ -519,11 +525,11 @@ Do you still want to install the fix?",
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
             }
 
             IsInProgress = false;

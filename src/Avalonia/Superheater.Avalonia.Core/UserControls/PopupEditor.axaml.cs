@@ -5,11 +5,11 @@ using Superheater.Avalonia.Core.ViewModels;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
-    public sealed partial class PopupMessage : UserControl
+    public sealed partial class PopupEditor : UserControl
     {
-        public PopupMessage()
+        public PopupEditor()
         {
-            var vm = BindingsManager.Provider.GetRequiredService<PopupMessageViewModel>();
+            var vm = BindingsManager.Provider.GetRequiredService<PopupEditorViewModel>();
 
             DataContext = vm;
 

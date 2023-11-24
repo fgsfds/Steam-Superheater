@@ -22,12 +22,16 @@ namespace Superheater.Avalonia.Core.ViewModels
         public EditorViewModel(
             EditorModel editorModel,
             ConfigProvider config,
-            FixesProvider fixesProvider
+            FixesProvider fixesProvider,
+            PopupEditorViewModel popupEditor,
+            PopupMessageViewModel popupMessage
             )
         {
             _editorModel = editorModel ?? ThrowHelper.ArgumentNullException<EditorModel>(nameof(editorModel));
             _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
             _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
+            _popupEditor = popupEditor ?? ThrowHelper.ArgumentNullException<PopupEditorViewModel>(nameof(popupEditor));
+            _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage));
 
             _searchBarText = string.Empty;
 
@@ -35,9 +39,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly EditorModel _editorModel;
+
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
-        private readonly SemaphoreSlim _locker = new(1, 1);
+
+        private readonly PopupEditorViewModel _popupEditor;
+        private readonly PopupMessageViewModel _popupMessage;
+
+        private readonly SemaphoreSlim _locker = new(1);
 
 
         #region Binding Properties
@@ -433,10 +442,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -544,11 +558,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(SelectedFixMD5));
             OnPropertyChanged(nameof(SelectedFixUrl));
 
-            new PopupMessageViewModel(
+            _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",
                 result.Message,
-                PopupMessageType.OkOnly)
-                .Show();
+                PopupMessageType.OkOnly
+                );
         }
 
 
@@ -683,22 +697,22 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!canUpload.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     canUpload.Message,
-                    PopupMessageType.OkOnly)
-                    .Show();
+                    PopupMessageType.OkOnly
+                    );
 
                 return;
             }
 
             var result = EditorModel.UploadFix(SelectedGame, SelectedFix);
 
-            new PopupMessageViewModel(
+            _popupMessage.Show(
                     result.IsSuccess ? "Success" : "Error",
                     result.Message,
-                    PopupMessageType.OkOnly)
-                .Show();
+                    PopupMessageType.OkOnly
+                    );
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
 
@@ -744,6 +758,106 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool OpenFilePickerCanExecute() => SelectedFix is FileFixEntity;
 
+
+        /// <summary>
+        /// Open tags editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
+        private async Task OpenTagsEditorAsync()
+        {
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags);
+
+            if (result is not null)
+            {
+                SelectedFix.Tags = result;
+                OnPropertyChanged(nameof(SelectedFixTags));
+            }
+
+            return;
+        }
+        private bool OpenTagsEditorCanExecute() => SelectedFix is not null;
+
+
+        /// <summary>
+        /// Open files to delete editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenFilesToDeleteEditorCanExecute))]
+        private async Task OpenFilesToDeleteEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete);
+
+            if (result is not null)
+            {
+                fileFix.FilesToDelete = result;
+                OnPropertyChanged(nameof(SelectedFixFilesToDelete));
+            }
+
+            return;
+        }
+        private bool OpenFilesToDeleteEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to backup editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenFilesToBackupEditorCanExecute))]
+        private async Task OpenFilesToBackupEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup);
+
+            if (result is not null)
+            {
+                fileFix.FilesToBackup = result;
+                OnPropertyChanged(nameof(SelectedFixFilesToBackup));
+            }
+
+            return;
+        }
+        private bool OpenFilesToBackupEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to backup editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
+        private async Task OpenVariantsEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants);
+
+            if (result is not null)
+            {
+                fileFix.Variants = result;
+                OnPropertyChanged(nameof(SelectedFixVariants));
+            }
+
+            return;
+        }
+        private bool OpenVariantsEditorCanExecute() => SelectedFix is FileFixEntity;
+
         #endregion Relay Commands
 
 
@@ -762,11 +876,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (!result.IsSuccess)
             {
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     result.Message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
             }
 
             IsInProgress = false;

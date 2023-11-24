@@ -7,9 +7,13 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    public sealed partial class AboutViewModel(AppUpdateInstaller updateInstaller) : ObservableObject
+    public sealed partial class AboutViewModel(
+        AppUpdateInstaller updateInstaller,
+        PopupMessageViewModel popupMessage
+        ) : ObservableObject
     {
         private readonly AppUpdateInstaller _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<AppUpdateInstaller>(nameof(updateInstaller));
+        private readonly PopupMessageViewModel _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage));
 
 
         #region Binding Properties
@@ -59,11 +63,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                     
 {ex.Message}";
 
-                new PopupMessageViewModel(
+                _popupMessage.Show(
                     "Error",
                     message,
                     PopupMessageType.OkOnly
-                    ).Show();
+                    );
 
                 Logger.Error(message);
             }
