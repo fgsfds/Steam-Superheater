@@ -442,11 +442,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -756,7 +760,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open fix file picker
+        /// Open tags editor
         /// </summary>
         [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
         private async Task OpenTagsEditorAsync()
@@ -777,8 +781,82 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             return;
         }
-
         private bool OpenTagsEditorCanExecute() => SelectedFix is not null;
+
+
+        /// <summary>
+        /// Open files to delete editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenFilesToDeleteEditorCanExecute))]
+        private async Task OpenFilesToDeleteEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete);
+
+            if (result is not null)
+            {
+                fileFix.FilesToDelete = result;
+                OnPropertyChanged(nameof(SelectedFixFilesToDelete));
+            }
+
+            return;
+        }
+        private bool OpenFilesToDeleteEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to backup editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenFilesToBackupEditorCanExecute))]
+        private async Task OpenFilesToBackupEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup);
+
+            if (result is not null)
+            {
+                fileFix.FilesToBackup = result;
+                OnPropertyChanged(nameof(SelectedFixFilesToBackup));
+            }
+
+            return;
+        }
+        private bool OpenFilesToBackupEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to backup editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
+        private async Task OpenVariantsEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants);
+
+            if (result is not null)
+            {
+                fileFix.Variants = result;
+                OnPropertyChanged(nameof(SelectedFixVariants));
+            }
+
+            return;
+        }
+        private bool OpenVariantsEditorCanExecute() => SelectedFix is FileFixEntity;
 
         #endregion Relay Commands
 

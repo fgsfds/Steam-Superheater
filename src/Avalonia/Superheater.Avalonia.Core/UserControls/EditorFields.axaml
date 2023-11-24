@@ -119,11 +119,24 @@
                  IsVisible="{Binding IsFileFixType}"/>
 
         <!--Variants-->
-        <TextBox Text="{Binding SelectedFixVariants, Mode=TwoWay}"
-                 Watermark="Variants"
-                 Grid.Row="6"
-                 Margin="0,3"
-                 IsVisible="{Binding IsFileFixType}"/>
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="6"
+              IsVisible="{Binding IsFileFixType}">
+
+            <TextBox Text="{Binding SelectedFixVariants, Mode=TwoWay}"
+                     Watermark="Variants"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenVariantsEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
 
         <!--Config-->
         <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
@@ -133,18 +146,44 @@
                  IsVisible="{Binding IsFileFixType}"/>
 
         <!--Files to delete-->
-        <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
-                 Watermark="Files to delete"
-                 Grid.Row="8"
-                 Margin="0,3"
-                 IsVisible="{Binding IsFileFixType}"/>
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="8"
+              IsVisible="{Binding IsFileFixType}">
+
+            <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
+                     Watermark="Files to delete"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToDeleteEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
 
         <!--Files to backup-->
-        <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
-                 Watermark="Files to backup"
-                 Grid.Row="9"
-                 Margin="0,3"
-                 IsVisible="{Binding IsFileFixType}"/>
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="9"
+              IsVisible="{Binding IsFileFixType}">
+
+            <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
+                     Watermark="Files to backup"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToBackupEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
 
         <!--Run after install-->
         <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"

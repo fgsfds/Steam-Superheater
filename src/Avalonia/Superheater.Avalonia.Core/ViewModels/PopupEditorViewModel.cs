@@ -43,7 +43,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (!string.IsNullOrWhiteSpace(item))
                 {
-                    result.Add(item);
+                    result.Add(item.Trim());
                 }
             }
 
