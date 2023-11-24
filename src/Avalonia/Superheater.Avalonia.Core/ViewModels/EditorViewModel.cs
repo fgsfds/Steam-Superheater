@@ -12,6 +12,7 @@ using Common.Providers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
+using Superheater.Avalonia.Core.UserControls;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -22,12 +23,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public EditorViewModel(
             EditorModel editorModel,
             ConfigProvider config,
-            FixesProvider fixesProvider
+            FixesProvider fixesProvider,
+            PopupEditorViewModel popupEditor
             )
         {
             _editorModel = editorModel ?? ThrowHelper.ArgumentNullException<EditorModel>(nameof(editorModel));
             _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
             _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
+            _popupEditor = popupEditor ?? ThrowHelper.ArgumentNullException<PopupEditorViewModel>(nameof(popupEditor));
 
             _searchBarText = string.Empty;
 
@@ -37,6 +40,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
         private readonly FixesProvider _fixesProvider;
+        private readonly PopupEditorViewModel _popupEditor;
         private readonly SemaphoreSlim _locker = new(1, 1);
 
 
@@ -437,6 +441,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -743,6 +748,29 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(SelectedFixUrl));
         }
         private bool OpenFilePickerCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open fix file picker
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
+        private async Task OpenTagsEditorAsync()
+        {
+            if (SelectedFix is null)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = _popupEditor.ShowAndGetResult("Tags", SelectedFix.Tags);
+
+            if (result is not null)
+            {
+                SelectedFix.Tags = result;
+                OnPropertyChanged(nameof(SelectedFixTags));
+            }
+        }
+        private bool OpenTagsEditorCanExecute() => SelectedFix is not null;
 
         #endregion Relay Commands
 

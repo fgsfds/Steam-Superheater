@@ -13,6 +13,7 @@ namespace Superheater.Avalonia.Core.DI
             container.AddSingleton<NewsViewModel>();
             container.AddSingleton<SettingsViewModel>();
             container.AddSingleton<AboutViewModel>();
+            container.AddSingleton<PopupEditorViewModel>();
         }
     }
 }

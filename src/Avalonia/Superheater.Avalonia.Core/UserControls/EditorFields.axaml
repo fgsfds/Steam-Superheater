@@ -74,19 +74,32 @@
                  Margin="0,3"/>
 
         <!--Tags-->
-        <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
-                 Watermark="Tags"
-                 Grid.Row="3"
-                 Margin="0,3"/>
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="3">
+
+            <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
+                     Watermark="Tags"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenTagsEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
 
         <!--Link to file-->
         <Grid ColumnDefinitions="*, auto"
               Grid.Row="4"
-              Margin="0,3"
               IsVisible="{Binding IsFileFixType}">
 
             <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
-                     Watermark="Link to file"/>
+                     Watermark="Link to file"
+                     Margin="0,3"/>
 
             <Button Grid.Column="1"
                     Margin="5,0,0,0"

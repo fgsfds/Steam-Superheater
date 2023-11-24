@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="1000"
+             d:DesignHeight="800"
+             x:Class="Superheater.Avalonia.Core.UserControls.PopupEditor">
+
+    <Grid ColumnDefinitions="*,auto,*"
+          RowDefinitions="30,*,30">
+
+        <Border Grid.ColumnSpan="3"
+                Grid.RowSpan="3"
+                Background="{DynamicResource PopupBackground}"
+                Opacity="50"/>
+
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              RowDefinitions="auto,*,auto"
+              ColumnDefinitions="*,*"
+              MinWidth="600"
+              MaxWidth="600">
+
+            <Border Grid.RowSpan="3"
+                    Grid.ColumnSpan="2"
+                    CornerRadius="10"
+                    MinHeight="300"
+                    BorderBrush="{DynamicResource SystemAccentColor}"
+                    BorderThickness="1"
+                    Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    BoxShadow="{DynamicResource Shadow}"></Border>
+
+            <TextBlock HorizontalAlignment="Center"
+                       Grid.Row="0"
+                       Grid.ColumnSpan="2"
+                       Margin="30,30,30,0"
+                       Foreground="{DynamicResource SystemAccentColor} "
+                       FontWeight="Bold"
+                       FontSize="25"
+                       Text="{Binding TitleText, FallbackValue='Editor'}"/>
+
+            <TextBox Grid.Row="1"
+                     Grid.ColumnSpan="2"
+                     Margin="30"
+                     TextWrapping="Wrap"
+                     Text="{Binding Text}"
+                     AcceptsReturn="True"/>
+
+            <Grid ColumnDefinitions="*,*"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2">
+
+                <Button Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Command="{Binding SaveCommand}"
+                        Background="{DynamicResource SystemAccentColor}"
+                        IsEnabled="True">
+                    Save
+                </Button>
+
+                <Button Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Command="{Binding CancelCommand}">
+                    Cancel
+                </Button>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>
