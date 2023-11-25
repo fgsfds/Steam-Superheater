@@ -1,9 +1,4 @@
 using Avalonia.Controls;
-using Avalonia.Interactivity;
-using Avalonia.Media;
-using Common.Entities.Fixes;
-using Common.Helpers;
-using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.UserControls
 {
@@ -12,68 +7,6 @@ namespace Superheater.Avalonia.Core.UserControls
         public MainLists()
         {
             InitializeComponent();
-        }
-
-        //formatting description text
-        private void FixSelected(object sender, SelectionChangedEventArgs e)
-        {
-            DescriptionBox.Children.Clear();
-
-            if (((ListBox)sender).SelectedItem is not BaseFixEntity fixEntity)
-            {
-                return;
-            }
-
-            var description = fixEntity.Description;
-
-            if (description is null)
-            {
-                return;
-            }
-
-            var splitDescription = description.Split('\n');
-
-            foreach (var item in splitDescription)
-            {
-                if (item.StartsWith('*') && item.EndsWith('*'))
-                {
-                    var text = item[1..^1];
-                    DescriptionBox.Children.Add(new TextBlock() { Text = text, FontWeight = FontWeight.Bold, TextWrapping = TextWrapping.Wrap });
-
-                    continue;
-                }
-                else if (item.StartsWith("http"))
-                {
-                    Button button = new()
-                    {
-                        Content = item
-                    };
-
-                    button.Click += UrlButtonClick;
-
-                    DescriptionBox.Children.Add(button);
-
-                    continue;
-                }
-
-                DescriptionBox.Children.Add(new TextBlock() { Text = item, TextWrapping = TextWrapping.Wrap });
-            }
-        }
-
-        private void UrlButtonClick(object? sender, RoutedEventArgs e)
-        {
-            if (sender is not Button button)
-            {
-                ThrowHelper.Exception(nameof(sender));
-                return;
-            }
-
-            var url = button.Content?.ToString() ?? ThrowHelper.ArgumentNullException<string>(nameof(button.Content));
-
-            Process.Start(new ProcessStartInfo(url)
-            {
-                UseShellExecute = true
-            });
         }
     }
 }

@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
              x:Class="Superheater.Avalonia.Core.UserControls.MainLists">
@@ -98,7 +99,6 @@
         <!--Fixes list-->
         <ListBox ItemsSource="{Binding SelectedGameFixesList}"
                  SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
-                 SelectionChanged="FixSelected"
                  Grid.Column="1"
                  Margin="0,0,3,0"
                  Padding="5"
@@ -130,15 +130,14 @@
         <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto">
 
             <!--Description-->
-            <ScrollViewer Grid.Row="0">
-                <StackPanel Orientation="Vertical" Name="DescriptionBox">
+			<md:MarkdownScrollViewer Markdown="{Binding SelectedFix.Description}"
+	                                 Grid.Row="0">
 
-                    <StackPanel.Styles>
-                        <StyleInclude Source="/Styles/UrlButton.axaml"/>
-                    </StackPanel.Styles>
+				<md:MarkdownScrollViewer.Styles>
+					<StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+				</md:MarkdownScrollViewer.Styles>
 
-                </StackPanel>
-            </ScrollViewer>
+			</md:MarkdownScrollViewer>
 
             <!--Requirements-->
             <TextBlock Text="{Binding SelectedFixRequirements, Mode=OneWay}"
