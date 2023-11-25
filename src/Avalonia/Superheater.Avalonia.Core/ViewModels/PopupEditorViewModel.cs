@@ -36,7 +36,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void Save()
         {
-            List<string> result = new();
+            List<string> result = [];
             var list = Text.Split(Environment.NewLine);
 
             foreach (var item in list)
@@ -61,7 +61,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
         public async Task<List<string>?> ShowAndGetResultAsync(string title, List<string>? text)
         {
-            string textString = string.Empty;
+            var textString = string.Empty;
 
             if (text is not null)
             {

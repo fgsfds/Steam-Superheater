@@ -33,7 +33,19 @@ namespace Common.FixTools.FileFix
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
-            FileInstalledFixEntity installedFix = new(game.Id, fix.Guid, fix.Version, new DirectoryInfo(backupFolderPath).Name, filesInArchive);
+            if (!Directory.Exists(backupFolderPath))
+            {
+                backupFolderPath = null;
+            }
+
+            FileInstalledFixEntity installedFix = new()
+            {
+                GameId = game.Id,
+                Guid = fix.Guid,
+                Version = fix.Version,
+                BackupFolder = backupFolderPath is null ? null : new DirectoryInfo(backupFolderPath).Name,
+                FilesList = filesInArchive
+            };
 
             return installedFix;
         }

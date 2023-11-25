@@ -39,7 +39,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public ImmutableList<string> HiddenTagsList => _config.HiddenTags.ToImmutableList();
+        public ImmutableList<string> HiddenTagsList => [.. _config.HiddenTags];
 
 
         public static bool IsDeveloperMode => Properties.IsDeveloperMode;
@@ -204,7 +204,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void RemoveTag(string value)
         {
             var tags = HiddenTagsList.Remove(value);
-            _config.HiddenTags = tags.ToList();
+            _config.HiddenTags = [.. tags];
             OnPropertyChanged(nameof(HiddenTagsList));
         }
 

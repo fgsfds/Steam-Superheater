@@ -11,7 +11,22 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// Fix title
         /// </summary>
-        public string Name { get; set; }
+        required public string Name { get; set; }
+
+        /// <summary>
+        /// Fix GUID
+        /// </summary>
+        required public Guid Guid { get; init; }
+
+        /// <summary>
+        /// Fix version
+        /// </summary>
+        required public int Version { get; set; }
+
+        /// <summary>
+        /// Supported OSes
+        /// </summary>
+        required public OSEnum SupportedOSes { get; set; }
 
         /// <summary>
         /// List of fixes GUIDs that are required for this fix
@@ -24,9 +39,10 @@ namespace Common.Entities.Fixes
         public string? Description { get; set; }
 
         /// <summary>
-        /// Fix GUID
+        /// List of files that will be backed up before the fix is installed, and the original file will remain
+        /// Paths are relative to the game folder, separated by ;
         /// </summary>
-        public Guid Guid { get; init; }
+        public List<string>? Tags { get; set; }
 
         /// <summary>
         /// Is there a newer version of the fix
@@ -51,22 +67,6 @@ namespace Common.Entities.Fixes
         /// </summary>
         [XmlIgnore]
         public bool IsInstalled => InstalledFix is not null;
-
-        /// <summary>
-        /// Supported OSes
-        /// </summary>
-        public OSEnum SupportedOSes { get; set; }
-
-        /// <summary>
-        /// List of files that will be backed up before the fix is installed, and the original file will remain
-        /// Paths are relative to the game folder, separated by ;
-        /// </summary>
-        public List<string>? Tags { get; set; }
-
-        /// <summary>
-        /// Fix version
-        /// </summary>
-        public int Version { get; set; }
 
         public override string ToString() => Name;
     }

@@ -143,24 +143,25 @@
             <!--Requirements-->
             <TextBlock Text="{Binding SelectedFixRequirements, Mode=OneWay}"
                        TextWrapping="Wrap"
-                       Margin="3"
+                       Margin="0,6,0,0"
                        Grid.Row="1"
                        Padding="3"/>
 
             <!--Tags-->
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="2"
-                  Margin="3"
+                  Margin="3,6,3,0"
                   IsVisible="{Binding SelectedFixHasTags}">
 
                 <TextBlock Grid.Column="0"
-                           VerticalAlignment="Center">
+                           VerticalAlignment="Center"
+                           Margin="0,0,3,0">
                     Tags:
                 </TextBlock>
 
                 <ListBox Grid.Column="1"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Margin="5"
+                         Padding="2"
                          ItemsSource="{Binding SelectedFixTags}">
 
                     <ListBox.ItemsPanel>
@@ -172,14 +173,15 @@
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal"
-                                        Margin="5">
+                                        Margin="0">
 
                                 <TextBlock Text="{Binding}"
                                            VerticalAlignment="Center"
-                                           Margin="5"/>
+                                           Margin="10"/>
 
                                 <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.HideTagCommand}"
                                         CommandParameter="{Binding}"
+										Margin="0,0,3,0"
                                         Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
@@ -198,29 +200,30 @@
             <!--Variants-->
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="3"
-                  Margin="3"
+                  Margin="3,6,3,0"
                   IsVisible="{Binding DoesSelectedFixHaveVariants}">
 
                 <TextBlock Grid.Column="0"
                            VerticalAlignment="Center"
-                           Margin="0,0,2,0">
+                           Margin="0,0,3,0">
                     Variant:
                 </TextBlock>
 
                 <ComboBox Grid.Column="1"
+                          Padding="5"
                           HorizontalAlignment="Stretch"
-                          Margin="0,2,0,0"
                           ItemsSource="{Binding SelectedFixVariants}"
                           SelectedItem="{Binding SelectedFixVariant}"/>
             </Grid>
 
             <!--Message-->
-            <TextBlock Text="{Binding Message}"
-                       Grid.Row="4"
-                       Margin="3"
+            <TextBlock Grid.Row="4"
+                       Margin="3,6,3,0"
+                       IsVisible="{Binding IsAdminMessageVisible, FallbackValue=False}"
                        Foreground="{DynamicResource SystemAccentColor}"
+                       TextBlock.TextWrapping ="Wrap"
                        HorizontalAlignment="Center">
-                Message
+                Superheater needs to be run as admin in order to install hosts fixes
             </TextBlock>
 
         </Grid>

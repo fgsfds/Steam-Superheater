@@ -20,7 +20,7 @@ namespace Common.Models
         private readonly ConfigEntity _config = configProvider?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
         private readonly FixManager _fixManager = fixManager ?? ThrowHelper.ArgumentNullException<FixManager>(nameof(fixManager));
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList = new();
+        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
 
@@ -96,7 +96,7 @@ namespace Common.Models
         /// <param name="search">Search string</param>
         public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            var result = _combinedEntitiesList.ToList();
+            List<FixFirstCombinedEntity> result = [.. _combinedEntitiesList];
 
             foreach (var entity in result.ToList())
             {
@@ -109,7 +109,7 @@ namespace Common.Models
             if (string.IsNullOrEmpty(search) &&
                 string.IsNullOrEmpty(tag))
             {
-                return result.ToImmutableList();
+                return [.. result];
             }
 
             if (!string.IsNullOrEmpty(tag))
@@ -137,10 +137,10 @@ namespace Common.Models
 
             if (search is null)
             {
-                return result.ToImmutableList();
+                return [.. result];
             }
 
-            return result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase)).ToImmutableList();
+            return [.. result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
         }
 
         /// <summary>
@@ -166,8 +166,8 @@ namespace Common.Models
         /// </summary>
         public HashSet<string> GetListOfTags()
         {
-            List<string> result = new() { "All tags" };
-            HashSet<string> list = new();
+            List<string> result = ["All tags"];
+            HashSet<string> list = [];
 
             var games = _combinedEntitiesList;
 
@@ -189,10 +189,10 @@ namespace Common.Models
                     }
                 }
 
-                list = list.OrderBy(x => x).ToHashSet();
+                list = [.. list.OrderBy(x => x)];
             }
 
-            return result.Concat(list).ToHashSet();
+            return [.. result, .. list];
         }
 
         /// <summary>
@@ -206,14 +206,14 @@ namespace Common.Models
             if (fix?.Dependencies is null ||
                 fix.Dependencies.Count == 0)
             {
-                return new List<BaseFixEntity>();
+                return [];
             }
 
             var allGameFixes = _combinedEntitiesList.Where(x => x.GameName == entity.GameName).First().FixesList;
 
             var allGameDeps = fix.Dependencies;
 
-            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
 
             return deps;
         }
@@ -244,7 +244,7 @@ namespace Common.Models
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
         public static List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
-            => fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid)).ToList();
+            => [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
 
         /// <summary>
         /// Does fix have dependent fixes that are currently installed

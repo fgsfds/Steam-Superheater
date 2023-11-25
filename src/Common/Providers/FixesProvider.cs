@@ -43,7 +43,7 @@ namespace Common.Providers
 
             using (StringReader fs = new(_fixesCachedString))
             {
-                return DeserializeCachedString(fs.ReadToEnd()).ToImmutableList();
+                return [.. DeserializeCachedString(fs.ReadToEnd())];
             }
         }
 
@@ -72,7 +72,7 @@ namespace Common.Providers
             {
                 var xmlString = await DownloadFixesXMLAsync();
 
-                return DeserializeCachedString(xmlString).ToImmutableList();
+                return [.. DeserializeCachedString(xmlString)];
             }
             else
             {
@@ -91,7 +91,7 @@ namespace Common.Providers
 
             using HttpClient client = new();
 
-            List<FixesListXml> result = new();
+            List<FixesListXml> result = [];
 
             foreach (var fixes in fixesList)
             {
@@ -99,7 +99,7 @@ namespace Common.Providers
                 {
                     if (fix.Tags is not null)
                     {
-                        fix.Tags = fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                        fix.Tags = [.. fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x))];
 
                         if (fix.Tags.Count == 0)
                         {
@@ -107,10 +107,9 @@ namespace Common.Providers
                         }
                         else
                         {
-                            var tags = fix.Tags
+                            List<string> tags = [.. fix.Tags
                                 .Where(x => !string.IsNullOrWhiteSpace(x))
-                                .OrderBy(x => x)
-                                .ToList();
+                                .OrderBy(x => x)];
 
                             fix.Tags = tags;
                         }
@@ -180,7 +179,7 @@ namespace Common.Providers
 
                 if (fileFix.FilesToDelete is not null)
                 {
-                    fileFix.FilesToDelete = fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    fileFix.FilesToDelete = [.. fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.FilesToDelete.Count == 0)
                     {
@@ -190,7 +189,7 @@ namespace Common.Providers
 
                 if (fileFix.FilesToBackup is not null)
                 {
-                    fileFix.FilesToBackup = fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    fileFix.FilesToBackup = [.. fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.FilesToBackup.Count == 0)
                     {
@@ -200,7 +199,7 @@ namespace Common.Providers
 
                 if (fileFix.Variants is not null)
                 {
-                    fileFix.Variants = fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x)).ToList();
+                    fileFix.Variants = [.. fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.Variants.Count == 0)
                     {
@@ -330,7 +329,7 @@ namespace Common.Providers
         private static List<FixesList> DeserializeCachedString(string fixes)
         {
             List<FixesListXml>? fixesListXml;
-            List<FixesList>? fixesListResult = new();
+            List<FixesList>? fixesListResult = [];
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
@@ -346,7 +345,7 @@ namespace Common.Providers
 
             foreach (var fix in fixesListXml)
             {
-                List<BaseFixEntity> fixesList = new();
+                List<BaseFixEntity> fixesList = [];
 
                 foreach (var f in fix.Fixes)
                 {
@@ -364,7 +363,12 @@ namespace Common.Providers
                     }
                 }
 
-                fixesListResult.Add(new FixesList(fix.GameId, fix.GameName, fixesList));
+                fixesListResult.Add(new FixesList()
+                {
+                    GameId = fix.GameId,
+                    GameName = fix.GameName,
+                    Fixes = fixesList
+                });
             }
 
             return fixesListResult;

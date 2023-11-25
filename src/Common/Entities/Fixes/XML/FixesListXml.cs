@@ -11,17 +11,6 @@ namespace Common.Entities.Fixes.XML
     [XmlType("FixesList")]
     public sealed class FixesListXml()
     {
-        public FixesListXml(
-            int gameId,
-            string gameName,
-            List<object> fixes
-            ) : this()
-        {
-            GameId = gameId;
-            GameName = gameName;
-            Fixes = fixes;
-        }
-
         public FixesListXml(FixesList fix) : this()
         {
             GameId = fix.GameId;

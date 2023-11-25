@@ -74,11 +74,12 @@ namespace Tests
         [Fact]
         public async Task InstallCompromisedFixTest()
         {
-            GameEntity gameEntity = new(
-                1,
-                "test game",
-                "game folder"
-            );
+            GameEntity gameEntity = new()
+            {
+                Id = 1,
+                Name = "test game",
+                InstallDir = "game folder"
+            };
 
             FileFixEntity fixEntity = new()
             {
@@ -109,11 +110,12 @@ namespace Tests
 
             File.Copy($"..\\Resources\\test_fix.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
 
-            GameEntity gameEntity = new(
-                1,
-                "test game",
-                gameFolder
-            );
+            GameEntity gameEntity = new()
+            {
+                Id = 1,
+                Name = "test game",
+                InstallDir = gameFolder
+            };
 
             FileFixEntity fixEntity = new()
             {
@@ -153,11 +155,12 @@ namespace Tests
 
             File.Copy($"..\\Resources\\{fixArchive}", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
 
-            GameEntity gameEntity = new(
-                1,
-                "test game",
-                gameFolder
-            );
+            GameEntity gameEntity = new()
+            {
+                Id = 1,
+                Name = "test game",
+                InstallDir = gameFolder
+            };
 
             FileFixEntity fixEntity = new()
             {
@@ -166,8 +169,8 @@ namespace Tests
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = "test_fix.zip",
                 InstallFolder = "install folder",
-                FilesToDelete = new() { "install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt" },
-                FilesToBackup = new() { "install folder\\file to backup.txt" },
+                FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
+                FilesToBackup = ["install folder\\file to backup.txt"],
                 MD5 = fixArchiveMD5
             };
 
@@ -203,8 +206,8 @@ namespace Tests
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = "test_fix_v2.zip",
                 InstallFolder = "install folder",
-                FilesToDelete = new() { "install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt" },
-                FilesToBackup = new() { "install folder\\file to backup.txt" },
+                FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
+                FilesToBackup = ["install folder\\file to backup.txt"],
                 InstalledFix = installedFix
             };
 

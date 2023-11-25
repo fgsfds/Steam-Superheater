@@ -11,7 +11,7 @@ namespace Common
 
         public AppUpdateInstaller()
         {
-            _updates = new();
+            _updates = [];
         }
 
         /// <summary>

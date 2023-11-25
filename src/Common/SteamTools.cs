@@ -1,4 +1,4 @@
-﻿    using Common.Helpers;
+﻿using Common.Helpers;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
@@ -21,7 +21,7 @@ namespace Common
         {
             var libraries = GetSteamLibraries();
 
-            List<string> result = new();
+            List<string> result = [];
 
             foreach (var lib in libraries)
             {
@@ -83,7 +83,7 @@ namespace Common
         /// <returns></returns>
         private static List<string> GetSteamLibraries()
         {
-            List<string> result = new();
+            List<string> result = [];
 
             var steamInstallPath = SteamInstallPath;
 
@@ -96,7 +96,7 @@ namespace Common
 
             if (!File.Exists(libraryfolders))
             {
-                return new();
+                return [];
             }
 
             var lines = File.ReadAllLines(libraryfolders);

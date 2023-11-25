@@ -1,9 +1,11 @@
 ﻿using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.Fixes.HostsFix
 {
     public sealed class HostsFixEntity : BaseFixEntity
     {
+        [SetsRequiredMembers]
         public HostsFixEntity()
         {
             Name = string.Empty;
@@ -14,9 +16,10 @@ namespace Common.Entities.Fixes.HostsFix
             Tags = null;
             SupportedOSes = OSEnum.Windows;
 
-            Entries = new();
+            Entries = [];
         }
 
+        [SetsRequiredMembers]
         public HostsFixEntity(BaseFixEntity fix)
         {
             Name = fix.Name;
@@ -27,7 +30,7 @@ namespace Common.Entities.Fixes.HostsFix
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
 
-            Entries = new();
+            Entries = [];
         }
 
         public List<string> Entries { get; set; }

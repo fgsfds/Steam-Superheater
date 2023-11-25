@@ -3,6 +3,7 @@ using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
 using Common.Providers;
@@ -25,11 +26,12 @@ namespace Tests
 
         private readonly FixManager _fixManager;
 
-        private readonly GameEntity _gameEntity = new(
-            1,
-            "test game",
-            GameDir
-            );
+        private readonly GameEntity _gameEntity = new()
+        {
+            Id = 1,
+            Name = "test game",
+            InstallDir = GameDir
+        };
 
         private readonly RegistryFixEntity _fixEntity = new()
         {
@@ -39,7 +41,8 @@ namespace Tests
             Key = "HKEY_CURRENT_USER\\" + RegKey,
             ValueName = "{gamefolder}\\" + GameExe,
             NewValueData = "~ RUNASADMIN",
-            ValueType = RegistryValueType.String
+            ValueType = RegistryValueType.String,
+            SupportedOSes = OSEnum.Windows
         };
 
         #region Test Preparations

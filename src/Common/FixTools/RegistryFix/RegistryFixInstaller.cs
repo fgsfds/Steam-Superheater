@@ -50,7 +50,15 @@ namespace Common.FixTools.RegistryFix
                 Registry.SetValue(fix.Key, valueName, fix.NewValueData);
             }
 
-            return new RegistryInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Key, valueName, oldValueStr);
+            return new RegistryInstalledFixEntity()
+            {
+                GameId = game.Id,
+                Guid = fix.Guid,
+                Version = fix.Version,
+                Key = fix.Key,
+                ValueName = valueName,
+                OriginalValue = oldValueStr
+            };
         }
     }
 }

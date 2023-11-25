@@ -1,4 +1,5 @@
 ﻿using Common.Entities.Fixes;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.CombinedEntities
 {
@@ -7,6 +8,7 @@ namespace Common.Entities.CombinedEntities
     /// </summary>
     public sealed class FixFirstCombinedEntity
     {
+        [SetsRequiredMembers]
         public FixFirstCombinedEntity(
             FixesList fixesList,
             GameEntity? game,
@@ -33,12 +35,12 @@ namespace Common.Entities.CombinedEntities
         /// <summary>
         /// List of fixes
         /// </summary>
-        public FixesList FixesList { get; set; }
+        required public FixesList FixesList { get; init; }
 
         /// <summary>
         /// Game entity
         /// </summary>
-        public GameEntity? Game { get; init; }
+        required public GameEntity? Game { get; init; }
 
         /// <summary>
         /// Is game installed

@@ -12,7 +12,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class NewsViewModel : ObservableObject
     {
         public NewsViewModel(
-            NewsModel newsModel, 
+            NewsModel newsModel,
             ConfigProvider configProvider,
             PopupMessageViewModel popupMessage
             )

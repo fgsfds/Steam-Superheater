@@ -36,7 +36,7 @@ namespace Common.Providers
                 fixesDatabase = GetOldInstalledFixes();
             }
 
-            return fixesDatabase.ToImmutableList();
+            return [.. fixesDatabase];
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Common.Providers
                     ThrowHelper.NullReferenceException(nameof(fixesDatabase));
                 }
 
-                List<BaseInstalledFixEntity> result = new();
+                List<BaseInstalledFixEntity> result = [];
 
                 foreach (var fix in fixesDatabase.InstalledFixes)
                 {
@@ -99,13 +99,15 @@ namespace Common.Providers
                 }
 
                 return fixesDatabase.ConvertAll(x =>
-                    (BaseInstalledFixEntity)new FileInstalledFixEntity(
-                        x.GameId,
-                        x.Guid,
-                        x.Version,
-                        x.BackupFolder,
-                        x.FilesList
-                        ));
+                    (BaseInstalledFixEntity)new FileInstalledFixEntity()
+                    {
+                        GameId = x.GameId,
+                        Guid = x.Guid,
+                        Version = x.Version,
+                        BackupFolder = x.BackupFolder,
+                        FilesList = x.FilesList
+                    }
+                    );
             }
         }
 

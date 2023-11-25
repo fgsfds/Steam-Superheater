@@ -2,26 +2,10 @@
 {
     public sealed class RegistryInstalledFixEntity() : BaseInstalledFixEntity
     {
-        public RegistryInstalledFixEntity(
-            int id,
-            Guid guid,
-            int version,
-            string key,
-            string valueName,
-            string? originalValue) : this()
-        {
-            GameId = id;
-            Guid = guid;
-            Version = version;
-            Key = key;
-            ValueName = valueName;
-            OriginalValue = originalValue;
-        }
+        required public string Key { get; init; }
 
-        public string Key { get; set; }
+        required public string ValueName { get; init; }
 
-        public string ValueName { get; set; }
-
-        public string? OriginalValue { get; init; }
+        required public string? OriginalValue { get; init; }
     }
 }

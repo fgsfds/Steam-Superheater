@@ -30,11 +30,16 @@ namespace Common.Providers
                 fixes = await _fixesProvider.GetNewListAsync();
             }
 
-            List<FixesList> result = new();
+            List<FixesList> result = [];
 
             foreach (var fix in fixes)
             {
-                result.Add(new FixesList(fix.GameId, fix.GameName, fix.Fixes));
+                result.Add(new FixesList()
+                {
+                    GameId = fix.GameId,
+                    GameName = fix.GameName,
+                    Fixes = fix.Fixes
+                });
             }
 
             return result;
@@ -62,7 +67,7 @@ namespace Common.Providers
 
             installed = InstalledFixesProvider.GetInstalledFixes();
 
-            List<FixFirstCombinedEntity> result = new();
+            List<FixFirstCombinedEntity> result = [];
 
             foreach (var fix in fixes)
             {
@@ -72,7 +77,7 @@ namespace Common.Providers
                 result.Add(new FixFirstCombinedEntity(fix, game, installedForGame));
             }
 
-            result = result.OrderByDescending(x => x.IsGameInstalled).ToList();
+            result = [.. result.OrderByDescending(x => x.IsGameInstalled)];
 
             return result;
         }
@@ -84,7 +89,7 @@ namespace Common.Providers
         /// <returns>List of installed fixes</returns>
         public static List<BaseInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
         {
-            List<BaseInstalledFixEntity> result = new();
+            List<BaseInstalledFixEntity> result = [];
 
             foreach (var combined in combinedList)
             {

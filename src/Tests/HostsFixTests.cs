@@ -3,10 +3,7 @@ using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.FixTools;
 using Common.FixTools.HostsFix;
-using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
@@ -24,18 +21,19 @@ namespace Tests
         private readonly HostsFixUninstaller _hostsFixUninstaller;
         private readonly string _hostsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "hosts");
 
-        private readonly GameEntity _gameEntity = new(
-            1,
-            "test game",
-            "C:\\games\\test game\\"
-            );
+        private readonly GameEntity _gameEntity = new()
+        {
+            Id = 1,
+            Name = "test game",
+            InstallDir = "C:\\games\\test game\\"
+        };
 
         private readonly HostsFixEntity _fixEntity = new()
         {
             Name = "test fix",
             Version = 1,
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Entries = new() { "123 added entry "}
+            Entries = ["123 added entry "]
         };
 
         #region Test Preparations

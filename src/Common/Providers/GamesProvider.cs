@@ -60,7 +60,7 @@ namespace Common.Providers
         {
             Logger.Info("Creating games cache list");
 
-            List<GameEntity> result = new();
+            List<GameEntity> result = [];
 
             await Task.Run(() =>
             {
@@ -79,7 +79,7 @@ namespace Common.Providers
                 }
             });
 
-            _gamesCache = result.OrderBy(x => x.Name).ToImmutableList();
+            _gamesCache = [.. result.OrderBy(x => x.Name)];
 
             Logger.Info($"Added {_gamesCache.Count} games to the cache");
 
@@ -132,7 +132,12 @@ namespace Common.Providers
                     dir += Path.DirectorySeparatorChar;
                 }
 
-                return new GameEntity(id, name, dir);
+                return new GameEntity()
+                {
+                    Id = id,
+                    Name = name,
+                    InstallDir = dir,
+                };
             }
 
             return null;

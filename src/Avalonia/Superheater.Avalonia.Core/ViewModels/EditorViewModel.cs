@@ -55,7 +55,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame?.Fixes.ToImmutableList();
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes];
 
         public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
@@ -105,7 +105,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                SelectedFix.Tags = value.Split(';').Select(x => x.Trim()).ToList();
+                SelectedFix.Tags = [.. value.Split(';').Select(x => x.Trim())];
             }
         }
 
@@ -126,7 +126,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.Variants = value.Split(';').Select(x => x.Trim()).ToList();
+                fileFix.Variants = [.. value.Split(';').Select(x => x.Trim())];
             }
         }
 
@@ -146,7 +146,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.FilesToDelete = value.Split(';').Select(x => x.Trim()).ToList();
+                fileFix.FilesToDelete = [.. value.Split(';').Select(x => x.Trim())];
             }
         }
 
@@ -166,7 +166,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.FilesToBackup = value.Split(';').Select(x => x.Trim()).ToList();
+                fileFix.FilesToBackup = [.. value.Split(';').Select(x => x.Trim())];
             }
         }
 
@@ -240,7 +240,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                hostsFix.Entries = value.Split(';').ToList();
+                hostsFix.Entries = [.. value.Split(';')];
             }
         }
 

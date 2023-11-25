@@ -52,7 +52,7 @@ namespace Common.Providers
                     return [];
                 }
 
-                return list.OrderByDescending(x => x.Date).ToImmutableList();
+                return [.. list.OrderByDescending(x => x.Date)];
             }
         }
 

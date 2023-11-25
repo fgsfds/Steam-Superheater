@@ -22,8 +22,8 @@ namespace Common.Models
         private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
         private readonly CommonProperties _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
 
-        private readonly List<FixesList> _fixesList = new();
-        private readonly List<GameEntity> _availableGamesList = new();
+        private readonly List<FixesList> _fixesList = [];
+        private readonly List<GameEntity> _availableGamesList = [];
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
@@ -58,11 +58,11 @@ namespace Common.Models
         {
             if (!string.IsNullOrEmpty(search))
             {
-                return _fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase)).ToImmutableList();
+                return [.. _fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
             }
             else
             {
-                return _fixesList.ToImmutableList();
+                return [.. _fixesList];
             }
         }
 
@@ -70,7 +70,7 @@ namespace Common.Models
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public ImmutableList<GameEntity> GetAvailableGamesList() => _availableGamesList.ToImmutableList();
+        public ImmutableList<GameEntity> GetAvailableGamesList() => [.. _availableGamesList];
 
         /// <summary>
         /// Add new game with empty fix
@@ -79,12 +79,16 @@ namespace Common.Models
         /// <returns>New fixes list</returns>
         public FixesList AddNewGame(GameEntity game)
         {
-            FixesList newFix = new(game.Id, game.Name, []);
-            newFix.Fixes.Add(new FileFixEntity());
+            FixesList newFix = new()
+            {
+                GameId = game.Id,
+                GameName = game.Name,
+                Fixes = [new FileFixEntity()]
+            };
 
             _fixesList.Add(newFix);
 
-            var newFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
+            List<FixesList> newFixesList = [.. _fixesList.OrderBy(x => x.GameName)];
             _fixesList.Clear();
             _fixesList.AddRange(newFixesList);
 
@@ -160,9 +164,9 @@ namespace Common.Models
 
             var allGameDeps = fixEntity.Dependencies;
 
-            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid)).ToList();
+            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
 
-            return deps.ToImmutableList();
+            return [.. deps];
         }
 
         /// <summary>
@@ -179,7 +183,7 @@ namespace Common.Models
                 return [];
             }
 
-            List<BaseFixEntity> result = new();
+            List<BaseFixEntity> result = [];
 
             var fixDependencies = GetDependenciesForAFix(fixesList, fixEntity);
 
@@ -197,7 +201,7 @@ namespace Common.Models
                 }
             }
 
-            return result.ToImmutableList();
+            return [.. result];
         }
 
         /// <summary>
@@ -208,11 +212,12 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            FixesList newFix = new(
-                fixesList.GameId,
-                fixesList.GameName,
-                new List<BaseFixEntity>() { fix }
-                );
+            FixesList newFix = new()
+            {
+                GameId = fixesList.GameId,
+                GameName = fixesList.GameName,
+                Fixes = [fix]
+            };
 
             var guid = newFix.Fixes.First().Guid;
 
@@ -232,7 +237,7 @@ namespace Common.Models
 
             XmlSerializer xmlSerializer = new(typeof(FixesList));
 
-            List<string> filesToUpload = new();
+            List<string> filesToUpload = [];
 
             var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
 
@@ -307,13 +312,13 @@ Thank you.");
 
         public static void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
-            addTo.Dependencies ??= new();
+            addTo.Dependencies ??= [];
             addTo.Dependencies.Add(dependency.Guid);
         }
 
         public static void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
-            addTo.Dependencies ??= new();
+            addTo.Dependencies ??= [];
             addTo.Dependencies.Remove(dependency.Guid);
         }
 
@@ -362,7 +367,7 @@ Thank you.");
 
             var fixes = await _combinedEntitiesProvider.GetFixesListAsync(useCache);
 
-            fixes = fixes.OrderBy(x => x.GameName).ToList();
+            fixes = [.. fixes.OrderBy(x => x.GameName)];
 
             foreach (var fix in fixes)
             {

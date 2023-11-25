@@ -11,6 +11,7 @@
                   Height="{Binding Bounds.Height, ElementName=SearchBox}"
                   MinWidth="200"
                   Margin="0,0,4,0"
+                  Padding="5"
                   ItemsSource="{Binding TagsComboboxList}"
                   SelectedItem="{Binding SelectedTagFilter}"
                   IsVisible="{Binding IsTagsComboboxVisible, FallbackValue=False}"/>
@@ -18,6 +19,7 @@
         <TextBox Text="{Binding SearchBarText, Mode=TwoWay}"
                  Grid.Column="1"
                  Margin="0"
+                 Padding="5"
                  TextWrapping="NoWrap"
                  Name="SearchBox"
                  Watermark="Search by game name"/>

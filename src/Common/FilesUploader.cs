@@ -19,7 +19,7 @@ namespace Common
         /// <returns>True if successfully uploaded</returns>
         public static Result UploadFileToFtp(string folder, string filePath, string remoteFileName)
         {
-            return UploadFilesToFtp(folder, new List<string>() { filePath }, remoteFileName);
+            return UploadFilesToFtp(folder, [filePath], remoteFileName);
         }
 
         /// <summary>

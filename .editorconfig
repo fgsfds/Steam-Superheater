@@ -1,17 +1,17 @@
 ﻿[*.cs]
 
 # CA1822: Mark members as static
-#dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CA1822.severity = none
 
 # IDE0063: Use simple 'using' statement
 dotnet_diagnostic.IDE0063.severity = none
 
 # IDE0305: Simplify collection initialization
-dotnet_diagnostic.IDE0305.severity = none
-dotnet_diagnostic.IDE0028.severity = none
+#dotnet_diagnostic.IDE0305.severity = none
+#dotnet_diagnostic.IDE0028.severity = none
 
 # CS8618: Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-dotnet_diagnostic.CS8618.severity = suggestion
+dotnet_diagnostic.CS8618.severity = none
 
 # CA1806: Do not ignore method results
 dotnet_diagnostic.CA1806.severity = warning
@@ -22,9 +22,6 @@ dotnet_code_quality.CA1806.additional_use_results_methods = M:System.Collections
 
 # IDE0017: Simplify object initialization
 dotnet_diagnostic.IDE0017.severity = none
-
-# Non-nullable variable must contain a non-null value when exiting constructor. Consider declaring it as nullable.
-dotnet_diagnostic.CS8618.severity = none
 
 # Remove unnecessary suppression (IDE0079)
 dotnet_diagnostic.IDE0079.severity = none

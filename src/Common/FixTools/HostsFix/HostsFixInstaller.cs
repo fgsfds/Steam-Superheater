@@ -37,7 +37,7 @@ namespace Common.FixTools.HostsFix
                 ThrowHelper.Exception("Superheater needs to be run as admin in order to install hosts fixes");
             }
 
-            string stringToAdd = string.Empty;
+            var stringToAdd = string.Empty;
 
             foreach (var line in fix.Entries)
             {
@@ -46,7 +46,13 @@ namespace Common.FixTools.HostsFix
 
             File.AppendAllText(hostsFilePath, stringToAdd);
 
-            return new HostsInstalledFixEntity(game.Id, fix.Guid, fix.Version, fix.Entries);
+            return new HostsInstalledFixEntity()
+            {
+                GameId = game.Id,
+                Guid = fix.Guid,
+                Version = fix.Version,
+                Entries = fix.Entries
+            };
         }
     }
 }

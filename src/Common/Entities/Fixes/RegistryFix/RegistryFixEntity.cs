@@ -1,9 +1,11 @@
 ﻿using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.Fixes.RegistryFix
 {
     public sealed class RegistryFixEntity : BaseFixEntity
     {
+        [SetsRequiredMembers]
         public RegistryFixEntity()
         {
             Name = string.Empty;
@@ -20,6 +22,7 @@ namespace Common.Entities.Fixes.RegistryFix
             ValueType = RegistryValueType.String;
         }
 
+        [SetsRequiredMembers]
         public RegistryFixEntity(BaseFixEntity fix)
         {
             Name = fix.Name;
@@ -42,7 +45,7 @@ namespace Common.Entities.Fixes.RegistryFix
 
         public string NewValueData { get; set; }
 
-        public RegistryValueType ValueType { get; set; }
+        required public RegistryValueType ValueType { get; set; }
     }
 
     public enum RegistryValueType

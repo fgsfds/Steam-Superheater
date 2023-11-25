@@ -53,28 +53,20 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? [] : SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden).ToImmutableList();
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden)];
 
-        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags?.Where(x => !_config.HiddenTags.Contains(x)).ToImmutableList();
+        public ImmutableList<string> SelectedFixTags => SelectedFix?.Tags is null ? [] : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
 
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
 
-        public ImmutableList<string>? SelectedFixVariants
-        {
-            get
-            {
-                if (SelectedFix is not FileFixEntity fileFix) { return null; }
-
-                return fileFix.Variants?.ToImmutableList();
-            }
-        }
+        public ImmutableList<string> SelectedFixVariants => SelectedFix is not FileFixEntity fileFix ? [] : [.. fileFix.Variants];
 
 
         public static bool IsTagsComboboxVisible => true;
 
         public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
 
-        public bool DoesSelectedFixHaveVariants => SelectedFixVariants is not null && !SelectedFixVariants.IsEmpty;
+        public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty;
 
         public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
 
@@ -87,19 +79,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixRequirements => GetRequirementsString();
 
-        public string Message
-        {
-            get
-            {
-                if (SelectedFix is HostsFixEntity &&
-                    !CommonProperties.IsAdmin)
-                {
-                    return "Superheater needs to be run as admin in order to install hosts fixes";
-                }
-
-                return string.Empty;
-            }
-        }
+        public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !CommonProperties.IsAdmin;
 
         public string InstallButtonText
         {
@@ -137,7 +117,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
         [NotifyPropertyChangedFor(nameof(InstallButtonText))]
-        [NotifyPropertyChangedFor(nameof(Message))]
+        [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -403,9 +383,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void HideTag(string value)
         {
-            var tags = _config.HiddenTags.ToList();
+            List<string> tags = [.. _config.HiddenTags];
             tags.Add(value);
-            tags = tags.OrderBy(x => x).ToList();
+            tags = [.. tags.OrderBy(x => x)];
 
             _config.HiddenTags = tags;
         }

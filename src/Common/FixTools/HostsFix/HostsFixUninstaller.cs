@@ -39,7 +39,7 @@ namespace Common.FixTools.HostsFix
                 ThrowHelper.Exception("Superheater needs to be run as admin in order to install hosts fixes");
             }
 
-            List<string> hostsList = new();
+            List<string> hostsList = [];
 
             foreach (var line in File.ReadAllLines(hostsFilePath))
             {

@@ -172,7 +172,7 @@ namespace Common
             string? fixInstallFolder,
             string? variant)
         {
-            List<string> files = new();
+            List<string> files = [];
 
             //if directory that the archive will be extracted to doesn't exist, add it to the list too
             if (!Directory.Exists(unpackToPath))

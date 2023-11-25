@@ -12,7 +12,7 @@ namespace Common.Config
             _useLocalRepo = false;
             _localRepoPath = "LocalRepo";
             _theme = ThemeEnum.System;
-            _hiddenTags = new();
+            _hiddenTags = [];
             _showUninstalledGames = true;
             _useTestRepoBranch = false;
             _showUnsupportedFixes = false;

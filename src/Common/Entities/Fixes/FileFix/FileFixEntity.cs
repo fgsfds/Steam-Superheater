@@ -1,4 +1,5 @@
 ﻿using Common.Enums;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.Fixes.FileFix
 {
@@ -7,6 +8,7 @@ namespace Common.Entities.Fixes.FileFix
     /// </summary>
     public sealed class FileFixEntity : BaseFixEntity
     {
+        [SetsRequiredMembers]
         public FileFixEntity()
         {
             Name = string.Empty;
@@ -26,6 +28,7 @@ namespace Common.Entities.Fixes.FileFix
             MD5 = null;
         }
 
+        [SetsRequiredMembers]
         public FileFixEntity(BaseFixEntity fix)
         {
             Name = fix.Name;

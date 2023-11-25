@@ -1,26 +1,20 @@
 ﻿namespace Common.Entities
 {
-
-    public sealed class AppUpdateEntity(
-        Version version,
-        string description,
-        Uri url
-        )
+    public sealed class AppUpdateEntity
     {
-
         /// <summary>
         /// Release version
         /// </summary>
-        public Version Version { get; set; } = version;
+        required public Version Version { get; init; }
 
         /// <summary>
         /// Release description
         /// </summary>
-        public string Description { get; set; } = description;
+        required public string Description { get; init; }
 
         /// <summary>
         /// Release download URL
         /// </summary>
-        public Uri DownloadUrl { get; set; } = url;
+        required public Uri DownloadUrl { get; init; }
     }
 }
