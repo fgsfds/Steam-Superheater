@@ -245,12 +245,26 @@
         </StackPanel>
 
         <!--Hosts Entries-->
-        <TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
-                 Watermark="Hosts Entries"
-                 Grid.Row="16"
-                 Margin="0,3"
-                 IsVisible="{Binding IsHostsFixType}"/>
+		<Grid ColumnDefinitions="*,auto"
+              Grid.Row="16"
+              IsVisible="{Binding IsHostsFixType}">
 
+			<TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
+                     Watermark="Hosts Entries"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+			<Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenHostsEditorCommand}">
+				...
+			</Button>
+
+		</Grid>
+
+		<!--OSes and dependencies-->
         <Grid Grid.Row="17"
               Grid.Column="1"
               Margin="0,3"

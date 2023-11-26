@@ -451,6 +451,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -835,7 +836,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open files to backup editor
+        /// Open variants editor
         /// </summary>
         [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
         private async Task OpenVariantsEditorAsync()
@@ -857,6 +858,31 @@ namespace Superheater.Avalonia.Core.ViewModels
             return;
         }
         private bool OpenVariantsEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenHostsEditorCanExecute))]
+        private async Task OpenHostsEditorAsync()
+        {
+            if (SelectedFix is not HostsFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", fileFix.Entries);
+
+            if (result is not null)
+            {
+                fileFix.Entries = result;
+                OnPropertyChanged(nameof(SelectedFixEntries));
+            }
+
+            return;
+        }
+        private bool OpenHostsEditorCanExecute() => SelectedFix is HostsFixEntity;
 
         #endregion Relay Commands
 
