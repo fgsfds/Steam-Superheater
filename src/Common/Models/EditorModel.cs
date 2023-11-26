@@ -3,6 +3,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -212,14 +213,12 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            FixesList newFix = new()
+            FixesListXml newFix = new()
             {
                 GameId = fixesList.GameId,
                 GameName = fixesList.GameName,
                 Fixes = [fix]
             };
-
-            var guid = newFix.Fixes.First().Guid;
 
             string? fileToUpload = null;
 
@@ -235,7 +234,7 @@ namespace Common.Models
                 }
             }
 
-            XmlSerializer xmlSerializer = new(typeof(FixesList));
+            XmlSerializer xmlSerializer = new(typeof(FixesListXml));
 
             List<string> filesToUpload = [];
 
@@ -253,7 +252,7 @@ namespace Common.Models
                 filesToUpload.Add(fileToUpload);
             }
 
-            var result = FilesUploader.UploadFilesToFtp(guid.ToString(), filesToUpload);
+            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
 
             File.Delete(fixFilePath);
 
