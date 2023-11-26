@@ -3,6 +3,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.TextFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using Common.Providers;
@@ -348,6 +349,11 @@ Thank you.");
             else if (typeof(T) == typeof(HostsFixEntity))
             {
                 HostsFixEntity newFix = new(fix);
+                fixesList[fixIndex] = newFix;
+            }
+            else if (typeof(T) == typeof(TextFixEntity))
+            {
+                TextFixEntity newFix = new(fix);
                 fixesList[fixIndex] = newFix;
             }
             else

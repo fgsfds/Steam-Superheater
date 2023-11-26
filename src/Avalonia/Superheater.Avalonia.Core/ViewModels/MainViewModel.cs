@@ -5,6 +5,7 @@ using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
+using Common.Entities.Fixes.TextFix;
 using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -178,6 +179,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedGame is null ||
                 SelectedFix is null ||
+                SelectedFix is TextFixEntity ||
                 SelectedFix.IsInstalled ||
                 !SelectedGame.IsGameInstalled ||
                 (DoesSelectedFixHaveVariants && SelectedFixVariant is null) ||

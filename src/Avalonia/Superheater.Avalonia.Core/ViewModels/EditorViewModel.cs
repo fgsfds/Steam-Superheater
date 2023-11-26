@@ -5,6 +5,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using Common.Models;
@@ -364,6 +365,32 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsTextFixType
+        {
+            get => SelectedFix is TextFixEntity;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedGame is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (value)
+                {
+                    EditorModel.ChangeFixType<TextFixEntity>(SelectedGame.Fixes, SelectedFix);
+
+                    var index = SelectedFixIndex;
+                    OnPropertyChanged(nameof(SelectedGameFixesList));
+                    SelectedFixIndex = index;
+                }
+            }
+        }
+
         public bool IsStringValueType
         {
             get
@@ -440,6 +467,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
         [NotifyPropertyChangedFor(nameof(IsFileFixType))]
         [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
+        [NotifyPropertyChangedFor(nameof(IsTextFixType))]
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]

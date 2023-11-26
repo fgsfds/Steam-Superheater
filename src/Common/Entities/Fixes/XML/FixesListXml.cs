@@ -1,6 +1,7 @@
 ﻿using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.TextFix;
 using System.Xml.Serialization;
 
 namespace Common.Entities.Fixes.XML
@@ -36,6 +37,7 @@ namespace Common.Entities.Fixes.XML
         [XmlElement("FileFix", typeof(FileFixEntity))]
         [XmlElement("RegistryFix", typeof(RegistryFixEntity))]
         [XmlElement("HostsFix", typeof(HostsFixEntity))]
+        [XmlElement("TextFix", typeof(TextFixEntity))]
         public List<object> Fixes { get; init; }
     }
 }

@@ -55,6 +55,12 @@
                          Margin="5,0">
                 Hosts
             </RadioButton>
+
+            <RadioButton GroupName="Type4"
+                         IsChecked="{Binding IsTextFixType}"
+                         Margin="5,0">
+                Text
+            </RadioButton>
         </StackPanel>
 
         <!--Name-->
@@ -245,26 +251,26 @@
         </StackPanel>
 
         <!--Hosts Entries-->
-		<Grid ColumnDefinitions="*,auto"
+        <Grid ColumnDefinitions="*,auto"
               Grid.Row="16"
               IsVisible="{Binding IsHostsFixType}">
 
-			<TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
+            <TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
                      Watermark="Hosts Entries"
                      Margin="0,3"
                      Grid.Row="0"/>
 
-			<Button Grid.Column="1"
+            <Button Grid.Column="1"
                     Margin="5,0,0,0"
                     Width="{Binding $self.Bounds.Height}"
                     HorizontalContentAlignment="Center"
                     Command="{Binding OpenHostsEditorCommand}">
-				...
-			</Button>
+                ...
+            </Button>
 
-		</Grid>
+        </Grid>
 
-		<!--OSes and dependencies-->
+        <!--OSes and dependencies-->
         <Grid Grid.Row="17"
               Grid.Column="1"
               Margin="0,3"

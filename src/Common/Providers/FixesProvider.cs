@@ -3,6 +3,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.TextFix;
 using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
@@ -360,6 +361,10 @@ namespace Common.Providers
                     else if (f is HostsFixEntity hostsFix)
                     {
                         fixesList.Add(hostsFix);
+                    }
+                    else if (f is TextFixEntity textFix)
+                    {
+                        fixesList.Add(textFix);
                     }
                 }
 

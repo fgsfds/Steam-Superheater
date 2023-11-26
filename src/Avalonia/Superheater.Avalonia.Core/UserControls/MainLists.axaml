@@ -130,14 +130,14 @@
         <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto">
 
             <!--Description-->
-			<md:MarkdownScrollViewer Markdown="{Binding SelectedFix.Description}"
-	                                 Grid.Row="0">
+            <md:MarkdownScrollViewer Markdown="{Binding SelectedFix.Description}"
+                                     Grid.Row="0">
 
-				<md:MarkdownScrollViewer.Styles>
-					<StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-				</md:MarkdownScrollViewer.Styles>
+                <md:MarkdownScrollViewer.Styles>
+                    <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+                </md:MarkdownScrollViewer.Styles>
 
-			</md:MarkdownScrollViewer>
+            </md:MarkdownScrollViewer>
 
             <!--Requirements-->
             <TextBlock Text="{Binding SelectedFixRequirements, Mode=OneWay}"
@@ -180,7 +180,7 @@
 
                                 <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.HideTagCommand}"
                                         CommandParameter="{Binding}"
-										Margin="0,0,3,0"
+                                        Margin="0,0,3,0"
                                         Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
