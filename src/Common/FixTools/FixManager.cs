@@ -10,51 +10,35 @@ using Common.Helpers;
 
 namespace Common.FixTools
 {
-    public class FixManager(
-        FileFixInstaller fileFixInstaller,
-        FileFixUninstaller fileFixUninstaller,
-        FileFixUpdater fileFixUpdater,
+    public sealed class FixManager(
+        FileFixInstaller _fileFixInstaller,
+        FileFixUninstaller _fileFixUninstaller,
+        FileFixUpdater _fileFixUpdater,
 
-        RegistryFixInstaller registryFixInstaller,
-        RegistryFixUninstaller registryFixUninstaller,
-        RegistryFixUpdater registryFixUpdater,
+        RegistryFixInstaller _registryFixInstaller,
+        RegistryFixUninstaller _registryFixUninstaller,
+        RegistryFixUpdater _registryFixUpdater,
 
-        HostsFixInstaller hostsFixInstaller,
-        HostsFixUninstaller hostsFixUninstaller,
-        HostsFixUpdater hostsFixUpdater
+        HostsFixInstaller _hostsFixInstaller,
+        HostsFixUninstaller _hostsFixUninstaller,
+        HostsFixUpdater _hostsFixUpdater
         )
     {
-        private readonly FileFixInstaller _fileFixInstaller = fileFixInstaller ?? ThrowHelper.NullReferenceException<FileFixInstaller>(nameof(fileFixInstaller));
-        private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller ?? ThrowHelper.NullReferenceException<FileFixUninstaller>(nameof(fileFixUninstaller));
-        private readonly FileFixUpdater _fileFixUpdater = fileFixUpdater ?? ThrowHelper.NullReferenceException<FileFixUpdater>(nameof(fileFixUpdater));
-
-        private readonly RegistryFixInstaller _registryFixInstaller = registryFixInstaller ?? ThrowHelper.NullReferenceException<RegistryFixInstaller>(nameof(registryFixInstaller));
-        private readonly RegistryFixUninstaller _registryFixUninstaller = registryFixUninstaller ?? ThrowHelper.NullReferenceException<RegistryFixUninstaller>(nameof(registryFixUninstaller));
-        private readonly RegistryFixUpdater _registryFixUpdater = registryFixUpdater ?? ThrowHelper.NullReferenceException<RegistryFixUpdater>(nameof(registryFixUpdater));
-
-        private readonly HostsFixInstaller _hostsFixInstaller = hostsFixInstaller ?? ThrowHelper.NullReferenceException<HostsFixInstaller>(nameof(hostsFixInstaller));
-        private readonly HostsFixUninstaller _hostsFixUninstaller = hostsFixUninstaller ?? ThrowHelper.NullReferenceException<HostsFixUninstaller>(nameof(hostsFixUninstaller));
-        private readonly HostsFixUpdater _hostsFixUpdater = hostsFixUpdater ?? ThrowHelper.NullReferenceException<HostsFixUpdater>(nameof(hostsFixUpdater));
 
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
             Logger.Info($"Installing {fix.Name} for {game.Name}");
 
-            if (fix is FileFixEntity fileFix)
+            switch (fix)
             {
-                return await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
-            }
-            else if (fix is RegistryFixEntity registryFix)
-            {
-                return _registryFixInstaller.InstallFix(game, registryFix);
-            }
-            else if (fix is HostsFixEntity hostsFix)
-            {
-                return _hostsFixInstaller.InstallFix(game, hostsFix);
-            }
-            else
-            {
-                return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Installer for this fix type is not implemented");
+                case FileFixEntity fileFix:
+                    return await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
+                case RegistryFixEntity registryFix:
+                    return _registryFixInstaller.InstallFix(game, registryFix);
+                case HostsFixEntity hostsFix:
+                    return _hostsFixInstaller.InstallFix(game, hostsFix);
+                default:
+                    return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Installer for this fix type is not implemented");
             }
         }
 
@@ -62,21 +46,20 @@ namespace Common.FixTools
         {
             Logger.Info($"Uninstalling {fix.Name} for {game.Name}");
 
-            if (fix is FileFixEntity fileFix)
+            switch (fix)
             {
-                _fileFixUninstaller.UninstallFix(game, fileFix);
-            }
-            else if (fix is RegistryFixEntity regFix)
-            {
-                _registryFixUninstaller.UninstallFix(regFix);
-            }
-            else if (fix is HostsFixEntity hostsFix)
-            {
-                _hostsFixUninstaller.UninstallFix(hostsFix);
-            }
-            else
-            {
-                ThrowHelper.NotImplementedException("Uninstaller for this fix type is not implemented");
+                case FileFixEntity fileFix:
+                    _fileFixUninstaller.UninstallFix(game, fileFix);
+                    break;
+                case RegistryFixEntity regFix:
+                    _registryFixUninstaller.UninstallFix(regFix);
+                    break;
+                case HostsFixEntity hostsFix:
+                    _hostsFixUninstaller.UninstallFix(hostsFix);
+                    break;
+                default:
+                    ThrowHelper.NotImplementedException("Uninstaller for this fix type is not implemented");
+                    break;
             }
         }
 
@@ -84,21 +67,16 @@ namespace Common.FixTools
         {
             Logger.Info($"Updating {fix.Name} for {game.Name}");
 
-            if (fix is FileFixEntity fileFix)
+            switch (fix)
             {
-                return await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);
-            }
-            else if (fix is RegistryFixEntity registryFix)
-            {
-                return _registryFixUpdater.UpdateFix(game, registryFix);
-            }
-            else if (fix is HostsFixEntity hostsFix)
-            {
-                return _hostsFixUpdater.UpdateFix(game, hostsFix);
-            }
-            else
-            {
-                return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Updater for this fix type is not implemented");
+                case FileFixEntity fileFix:
+                    return await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);
+                case RegistryFixEntity registryFix:
+                    return _registryFixUpdater.UpdateFix(game, registryFix);
+                case HostsFixEntity hostsFix:
+                    return _hostsFixUpdater.UpdateFix(game, hostsFix);
+                default:
+                    return ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Updater for this fix type is not implemented");
             }
         }
     }

@@ -54,12 +54,12 @@ namespace Common
                     }
                 }
 
-                using var source = await response.Content.ReadAsStreamAsync();
+                await using var source = await response.Content.ReadAsStreamAsync();
                 var contentLength = response.Content.Headers.ContentLength;
 
-                using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+                await using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
-                if (Progress is null || !contentLength.HasValue)
+                if (!contentLength.HasValue)
                 {
                     await source.CopyToAsync(file);
                 }
@@ -73,7 +73,7 @@ namespace Common
                     {
                         await file.WriteAsync(buffer.AsMemory(0, bytesRead));
                         totalBytesRead += bytesRead;
-                        progress.Report((float)(totalBytesRead / contentLength * 100));
+                        progress.Report((totalBytesRead / (long)contentLength * 100));
                     }
 
                     await file.DisposeAsync();
@@ -85,9 +85,9 @@ namespace Common
                 {
                     using (var md5 = MD5.Create())
                     {
-                        using var stream = File.OpenRead(filePath);
+                        await using var stream = File.OpenRead(filePath);
 
-                        var fileHash = Convert.ToHexString(md5.ComputeHash(stream));
+                        var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
                         if (!hash.Equals(fileHash))
                         {
@@ -117,9 +117,11 @@ namespace Common
 
             using (var archive = ArchiveFactory.Open(pathToArchive))
             {
+                var sub = variant + "/";
+
                 var count = variant is null
                     ? archive.Entries.Count()
-                    : archive.Entries.Where(x => x.Key.StartsWith(variant + "/")).Count();
+                    : archive.Entries.Count(x => x.Key.StartsWith(sub));
 
                 var i = 1f;
 
@@ -148,7 +150,7 @@ namespace Common
                     }
                     else
                     {
-                        using FileStream target = new(fullName, FileMode.Create);
+                        await using FileStream target = new(fullName, FileMode.Create);
                         await zipEntry.OpenEntryStream().CopyToAsync(target);
                     }
 
@@ -164,7 +166,8 @@ namespace Common
         /// </summary>
         /// <param name="zipPath">Path to ZIP</param>
         /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
-        /// <param name="unpackToPath">Full path </param>
+        /// <param name="unpackToPath">Full path</param>
+        /// <param name="variant">Fix variant</param>
         /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
         public static List<string> GetListOfFilesInArchive(
             string zipPath,
@@ -172,7 +175,9 @@ namespace Common
             string? fixInstallFolder,
             string? variant)
         {
-            List<string> files = [];
+            using var reader = ArchiveFactory.Open(zipPath);
+
+            List<string> files = new(reader.Entries.Count() + 1);
 
             //if directory that the archive will be extracted to doesn't exist, add it to the list too
             if (!Directory.Exists(unpackToPath))
@@ -180,46 +185,41 @@ namespace Common
                 files.Add(unpackToPath);
             }
 
-            using (var reader = ArchiveFactory.Open(zipPath))
+            foreach (var entry in reader.Entries)
             {
-                foreach (var entry in reader.Entries)
+                var path = entry.Key;
+
+                if (variant is not null)
                 {
-                    var path = entry.Key;
-
-                    if (variant is not null)
+                    if (entry.Key.StartsWith(variant + '/'))
                     {
-                        if (entry.Key.StartsWith(variant + '/'))
-                        {
-                            path = entry.Key.Replace(variant + '/', string.Empty);
+                        path = entry.Key.Replace(variant + '/', string.Empty);
 
-                            if (string.IsNullOrEmpty(path))
-                            {
-                                continue;
-                            }
-                        }
-                        else
+                        if (string.IsNullOrEmpty(path))
                         {
                             continue;
                         }
                     }
-
-                    var fullName = Path.Combine(
-                        fixInstallFolder is null
-                            ? string.Empty
-                            : fixInstallFolder,
-                        path)
-                        .Replace('/', Path.DirectorySeparatorChar);
-
-                    //if it's a file, add it to the list
-                    if (!entry.IsDirectory)
+                    else
                     {
-                        files.Add(fullName);
+                        continue;
                     }
-                    //if it's a directory and it doesn't already exist, add it to the list
-                    else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
-                    {
-                        files.Add(fullName);
-                    }
+                }
+
+                var fullName = Path.Combine(
+                    fixInstallFolder ?? string.Empty,
+                    path)
+                    .Replace('/', Path.DirectorySeparatorChar);
+
+                //if it's a file, add it to the list
+                if (!entry.IsDirectory)
+                {
+                    files.Add(fullName);
+                }
+                //if it's a directory and it doesn't already exist, add it to the list
+                else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
+                {
+                    files.Add(fullName);
                 }
             }
 

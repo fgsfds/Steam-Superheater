@@ -5,17 +5,17 @@
         /// <summary>
         /// Steam game ID
         /// </summary>
-        required public int Id { get; init; }
+        public required int Id { get; init; }
 
         /// <summary>
         /// Game title
         /// </summary>
-        required public string Name { get; init; }
+        public required string Name { get; init; }
 
         /// <summary>
         /// Game install directory
         /// </summary>
-        required public string InstallDir { get; set; }
+        public required string InstallDir { get; init; }
 
         /// <summary>
         /// Game icon
@@ -24,7 +24,7 @@
             ? string.Empty
             : Path.Combine(
                 SteamTools.SteamInstallPath,
-                @$"appcache{Path.DirectorySeparatorChar}librarycache{Path.DirectorySeparatorChar}{Id}_icon.jpg"
+                $"appcache{Path.DirectorySeparatorChar}librarycache{Path.DirectorySeparatorChar}{Id}_icon.jpg"
                 );
 
         public override string ToString() => Name;

@@ -2,10 +2,10 @@
 {
     public sealed class RegistryInstalledFixEntity() : BaseInstalledFixEntity
     {
-        required public string Key { get; init; }
+        public required string Key { get; init; }
 
-        required public string ValueName { get; init; }
+        public required string ValueName { get; init; }
 
-        required public string? OriginalValue { get; init; }
+        public required string? OriginalValue { get; init; }
     }
 }

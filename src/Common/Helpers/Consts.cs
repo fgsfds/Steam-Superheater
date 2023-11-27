@@ -1,6 +1,6 @@
 ﻿namespace Common.Helpers
 {
-    public sealed class Consts
+    public static class Consts
     {
         public const string ConfigFile = "config.xml";
 
@@ -9,8 +9,6 @@
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
-
-        public const string AdminRegistryKey = "HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers";
 
         public const string BackupFolder = ".sfd";
 

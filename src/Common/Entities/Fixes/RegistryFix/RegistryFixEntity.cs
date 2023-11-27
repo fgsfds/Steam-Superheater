@@ -19,7 +19,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Key = string.Empty;
             ValueName = string.Empty;
             NewValueData = string.Empty;
-            ValueType = RegistryValueType.String;
+            ValueType = RegistryValueTypeEnum.String;
         }
 
         [SetsRequiredMembers]
@@ -36,7 +36,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Key = string.Empty;
             ValueName = string.Empty;
             NewValueData = string.Empty;
-            ValueType = RegistryValueType.String;
+            ValueType = RegistryValueTypeEnum.String;
         }
 
         public string Key { get; set; }
@@ -45,12 +45,6 @@ namespace Common.Entities.Fixes.RegistryFix
 
         public string NewValueData { get; set; }
 
-        required public RegistryValueType ValueType { get; set; }
-    }
-
-    public enum RegistryValueType
-    {
-        String,
-        Dword
+        public required RegistryValueTypeEnum ValueType { get; set; }
     }
 }

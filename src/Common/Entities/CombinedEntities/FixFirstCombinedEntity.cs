@@ -18,16 +18,20 @@ namespace Common.Entities.CombinedEntities
             FixesList = fixesList;
             Game = game;
 
-            if (installedFixes is not null)
+            if (installedFixes is null)
             {
-                foreach (var installedFix in installedFixes)
-                {
-                    var fix = FixesList.Fixes.Where(x => x.Guid == installedFix.Guid).FirstOrDefault();
+                return;
+            }
 
-                    if (fix is not null)
-                    {
-                        fix.InstalledFix = installedFix;
-                    }
+            foreach (var installedFix in installedFixes)
+            {
+                var guid = installedFix.Guid;
+
+                var fix = FixesList.Fixes.FirstOrDefault(x => x.Guid == guid);
+
+                if (fix is not null)
+                {
+                    fix.InstalledFix = installedFix;
                 }
             }
         }
@@ -35,12 +39,12 @@ namespace Common.Entities.CombinedEntities
         /// <summary>
         /// List of fixes
         /// </summary>
-        required public FixesList FixesList { get; init; }
+        public required FixesList FixesList { get; init; }
 
         /// <summary>
         /// Game entity
         /// </summary>
-        required public GameEntity? Game { get; init; }
+        public required GameEntity? Game { get; init; }
 
         /// <summary>
         /// Is game installed
@@ -55,17 +59,17 @@ namespace Common.Entities.CombinedEntities
         /// <summary>
         /// Id of the game
         /// </summary>
-        public int GameId => Game is not null ? Game.Id : FixesList.GameId;
+        public int GameId => Game?.Id ?? FixesList.GameId;
 
         /// <summary>
         /// Does this game have installed fixes
         /// </summary>
-        public bool HasInstalledFixes => FixesList.Fixes.Any(x => x.IsInstalled);
+        public bool HasInstalledFixes => FixesList.Fixes.Exists(static x => x.IsInstalled);
 
         /// <summary>
         /// Does this game have newer version of fixes
         /// </summary>
-        public bool HasUpdates => FixesList.Fixes.Any(x => x.HasNewerVersion);
+        public bool HasUpdates => FixesList.Fixes.Exists(static x => x.HasNewerVersion);
 
         public override string ToString() => GameName;
     }

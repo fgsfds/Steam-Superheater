@@ -3,24 +3,24 @@
 namespace Common.Entities
 {
     [XmlRoot]
-    public sealed partial class NewsEntity()
+    public sealed class NewsEntity()
     {
         /// <summary>
         /// Date of the news article
         /// </summary>
         [XmlElement]
-        public DateTime Date { get; set; }
+        public DateTime Date { get; init; }
 
         /// <summary>
         /// News article text
         /// </summary>
         [XmlElement]
-        public string Content { get; set; }
+        public string Content { get; init; }
 
         /// <summary>
         /// Is newer than the last read version
         /// </summary>
-        [XmlElement]
+        [XmlIgnore]
         public bool IsNewer { get; set; }
     }
 }

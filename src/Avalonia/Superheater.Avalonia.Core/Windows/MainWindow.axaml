@@ -56,11 +56,11 @@
             </TabControl>
 
             <controls:PopupMessage
-                Grid.RowSpan="2"
+                Grid.Row="0" Grid.RowSpan="2"
                 IsVisible="{Binding IsPopupMessageVisible, FallbackValue='False'}"/>
 
             <controls:PopupEditor
-                Grid.RowSpan="2"
+                Grid.Row="0" Grid.RowSpan="2"
                 IsVisible="{Binding IsPopupEditorVisible, FallbackValue='False'}"/>
 
         </Grid>

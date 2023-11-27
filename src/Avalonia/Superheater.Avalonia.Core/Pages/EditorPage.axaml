@@ -6,14 +6,7 @@
              xmlns:usc="clr-namespace:Superheater.Avalonia.Core.UserControls"
              x:Class="Superheater.Avalonia.Core.Pages.EditorPage">
 
-    <Grid>
-
-        <Grid.RowDefinitions>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-            <RowDefinition Height="auto"></RowDefinition>
-        </Grid.RowDefinitions>
+    <Grid RowDefinitions="auto,*,auto,auto">
 
         <usc:SearchBar Grid.Row="0" Margin="5"/>
 

@@ -32,7 +32,7 @@ namespace Common.DI
                 {
                     lock (_syncRoot)
                     {
-                        _provider = _instance.BuildServiceProvider();
+                        _provider = Instance.BuildServiceProvider();
                     }
                 }
 

@@ -1,13 +1,14 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
 using Common.Helpers;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public class RegistryFixInstaller
+    public sealed class RegistryFixInstaller
     {
         /// <summary>
         /// Install registry fix
@@ -31,23 +32,31 @@ namespace Common.FixTools.RegistryFix
             var oldValue = Registry.GetValue(fix.Key, valueName, null);
             if (oldValue is not null)
             {
-                if (fix.ValueType is RegistryValueType.Dword)
+                switch (fix.ValueType)
                 {
-                    oldValueStr = ((int)oldValue).ToString();
-                }
-                else if (fix.ValueType is RegistryValueType.String)
-                {
-                    oldValueStr = (string)oldValue;
+                    case RegistryValueTypeEnum.Dword:
+                        oldValueStr = ((int)oldValue).ToString();
+                        break;
+                    case RegistryValueTypeEnum.String:
+                        oldValueStr = (string)oldValue;
+                        break;
+                    default:
+                        ThrowHelper.ArgumentException($"Unknown type: {oldValue.GetType()}");
+                        break;
                 }
             }
 
-            if (fix.ValueType is RegistryValueType.Dword)
+            switch (fix.ValueType)
             {
-                Registry.SetValue(fix.Key, valueName, int.Parse(fix.NewValueData));
-            }
-            else if (fix.ValueType is RegistryValueType.String)
-            {
-                Registry.SetValue(fix.Key, valueName, fix.NewValueData);
+                case RegistryValueTypeEnum.Dword:
+                    Registry.SetValue(fix.Key, valueName, int.Parse(fix.NewValueData));
+                    break;
+                case RegistryValueTypeEnum.String:
+                    Registry.SetValue(fix.Key, valueName, fix.NewValueData);
+                    break;
+                default:
+                    ThrowHelper.ArgumentException($"Unknown type: {fix.ValueType.GetType()}");
+                    break;
             }
 
             return new RegistryInstalledFixEntity()

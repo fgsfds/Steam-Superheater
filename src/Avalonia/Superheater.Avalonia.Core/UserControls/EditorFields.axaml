@@ -272,21 +272,8 @@
 
         <!--OSes and dependencies-->
         <Grid Grid.Row="17"
-              Grid.Column="1"
               Margin="0,3"
-              MinHeight="60">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+              MinHeight="60" RowDefinitions="*,*,*" ColumnDefinitions="auto,auto,*,auto,*">
 
             <!--Supported OSes-->
             <TextBlock Grid.Column="0"
@@ -297,7 +284,7 @@
             </TextBlock>
 
             <StackPanel Grid.Column="1"
-                        Grid.RowSpan="3"
+                        Grid.Row="0" Grid.RowSpan="3"
                         Margin="10"
                         Orientation="Vertical"
                         HorizontalAlignment="Center"
@@ -316,11 +303,11 @@
 
             <!--Dependencies-->
             <TextBlock Text="Available fixes"
-                       Grid.Column="2"
+                       Grid.Row="0" Grid.Column="2"
                        HorizontalAlignment="Center"/>
             <TextBlock Text="Dependencies"
                        HorizontalAlignment="Center"
-                       Grid.Column="4"/>
+                       Grid.Row="0" Grid.Column="4"/>
 
             <ListBox SelectionMode="Single"
                      ItemsSource="{Binding AvailableDependenciesList}"
@@ -364,7 +351,6 @@
         <!--Description-->
         <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
                  Grid.Row="999"
-                 Grid.Column="1"
                  TextWrapping="Wrap"
                  AcceptsReturn="True"/>
     </Grid>

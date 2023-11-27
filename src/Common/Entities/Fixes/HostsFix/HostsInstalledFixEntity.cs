@@ -2,6 +2,6 @@
 {
     public sealed class HostsInstalledFixEntity() : BaseInstalledFixEntity
     {
-        required public List<string> Entries { get; init; }
+        public required List<string> Entries { get; init; }
     }
 }

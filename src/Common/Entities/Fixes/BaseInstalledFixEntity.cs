@@ -5,16 +5,16 @@
         /// <summary>
         /// Steam game ID
         /// </summary>
-        required public int GameId { get; init; }
+        public required int GameId { get; init; }
 
         /// <summary>
         /// Fix GUID
         /// </summary>
-        required public Guid Guid { get; init; }
+        public required Guid Guid { get; init; }
 
         /// <summary>
         /// Installed version
         /// </summary>
-        required public int Version { get; set; }
+        public required int Version { get; init; }
     }
 }

@@ -220,7 +220,7 @@
                        Margin="3,6,3,0"
                        IsVisible="{Binding IsAdminMessageVisible, FallbackValue=False}"
                        Foreground="{DynamicResource SystemAccentColor}"
-                       TextBlock.TextWrapping ="Wrap"
+                       TextWrapping ="Wrap"
                        HorizontalAlignment="Center">
                 Superheater needs to be run as admin in order to install hosts fixes
             </TextBlock>

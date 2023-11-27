@@ -1,7 +1,6 @@
 using Common.Config;
 using Common.DI;
 using Common.Entities;
-using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
 using Common.FixTools.HostsFix;
 using Common.Providers;
@@ -48,7 +47,7 @@ namespace Tests
             _hostsFixInstaller = BindingsManager.Provider.GetRequiredService<HostsFixInstaller>();
             _hostsFixUninstaller = BindingsManager.Provider.GetRequiredService<HostsFixUninstaller>();
 
-            File.Copy($"Resources\\hosts", _hostsFilePath, true);
+            File.Copy("Resources\\hosts", _hostsFilePath, true);
 
         }
 
@@ -82,7 +81,7 @@ namespace Tests
             //Install Fix
             var installedFix = _hostsFixInstaller.InstallFix(gameEntity, fixEntity, _hostsFilePath);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not HostsInstalledFixEntity)
             {

@@ -11,22 +11,22 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// Fix title
         /// </summary>
-        required public string Name { get; set; }
+        public required string Name { get; set; }
 
         /// <summary>
         /// Fix GUID
         /// </summary>
-        required public Guid Guid { get; init; }
+        public required Guid Guid { get; init; }
 
         /// <summary>
         /// Fix version
         /// </summary>
-        required public int Version { get; set; }
+        public required int Version { get; set; }
 
         /// <summary>
         /// Supported OSes
         /// </summary>
-        required public OSEnum SupportedOSes { get; set; }
+        public required OSEnum SupportedOSes { get; set; }
 
         /// <summary>
         /// List of fixes GUIDs that are required for this fix

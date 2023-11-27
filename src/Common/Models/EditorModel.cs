@@ -9,23 +9,20 @@ using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
+using Common.Config;
 
 namespace Common.Models
 {
     public sealed class EditorModel(
-        FixesProvider fixesProvider,
-        CombinedEntitiesProvider combinedEntitiesProvider,
-        GamesProvider gamesProvider,
-        CommonProperties properties
+        FixesProvider _fixesProvider,
+        GamesProvider _gamesProvider,
+        ConfigProvider configProvider
         )
     {
-        private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.NullReferenceException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
-        private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
-        private readonly CommonProperties _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
+        private readonly ConfigEntity _config = configProvider.Config;
 
-        private readonly List<FixesList> _fixesList = [];
-        private readonly List<GameEntity> _availableGamesList = [];
+        private List<FixesList> _fixesList = [];
+        private List<GameEntity> _availableGamesList = [];
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
@@ -40,12 +37,12 @@ namespace Common.Models
 
                 return new(ResultEnum.Ok, string.Empty);
             }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, $"File not found: {ex.Message}");
             }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
@@ -62,16 +59,13 @@ namespace Common.Models
             {
                 return [.. _fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
             }
-            else
-            {
-                return [.. _fixesList];
-            }
+
+            return [.. _fixesList];
         }
 
         /// <summary>
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
-        /// <param name="search">Search string</param>
         public ImmutableList<GameEntity> GetAvailableGamesList() => [.. _availableGamesList];
 
         /// <summary>
@@ -90,9 +84,7 @@ namespace Common.Models
 
             _fixesList.Add(newFix);
 
-            List<FixesList> newFixesList = [.. _fixesList.OrderBy(x => x.GameName)];
-            _fixesList.Clear();
-            _fixesList.AddRange(newFixesList);
+            _fixesList = [.. _fixesList.OrderBy(static x => x.GameName)];
 
             _availableGamesList.Remove(game);
 
@@ -157,7 +149,7 @@ namespace Common.Models
                 return [];
             }
 
-            var allGameFixes = _fixesList.Where(x => x.GameId == fixesList.GameId).FirstOrDefault();
+            var allGameFixes = _fixesList.FirstOrDefault(x => x.GameId == fixesList.GameId);
 
             if (allGameFixes is null)
             {
@@ -194,9 +186,9 @@ namespace Common.Models
                 if (//don't add itself
                     fix.Guid != fixEntity.Guid &&
                     //don't add fixes that depend on it
-                    fix.Dependencies is not null && !fix.Dependencies.Any(x => x == fixEntity.Guid) &&
+                    fix.Dependencies is not null && !fix.Dependencies.Contains(fixEntity.Guid) &&
                     //don't add fixes that are already dependencies
-                    !fixDependencies.Where(x => x.Guid == fix.Guid).Any()
+                    !fixDependencies.Exists(x => x.Guid == fix.Guid)
                     )
                 {
                     result.Add(fix);
@@ -257,17 +249,15 @@ namespace Common.Models
 
             File.Delete(fixFilePath);
 
-            if (result.ResultEnum is ResultEnum.Ok)
+            if (result == ResultEnum.Ok)
             {
-                return new(ResultEnum.Ok, @$"Fix successfully uploaded.
+                return new(ResultEnum.Ok, @"Fix successfully uploaded.
 It will be added to the database after developer's review.
 
 Thank you.");
             }
-            else
-            {
-                return new(ResultEnum.Error, result.Message);
-            }
+
+            return new(ResultEnum.Error, result.Message);
         }
 
         /// <summary>
@@ -275,7 +265,7 @@ Thank you.");
         /// </summary>
         public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
         {
-            if (string.IsNullOrEmpty(fix?.Name) ||
+            if (string.IsNullOrEmpty(fix.Name) ||
                 fix.Version < 1)
             {
                 return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
@@ -290,7 +280,7 @@ Thank you.");
                     return new(ResultEnum.Error, $"{fileFix.Url} doesn't exist.");
                 }
 
-                else if (new FileInfo(fileFix.Url).Length > 1e+8)
+                if (new FileInfo(fileFix.Url).Length > 1e+8)
                 {
                     return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
@@ -301,7 +291,7 @@ Thank you.");
             foreach (var onlineFix in onlineFixes)
             {
                 //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Any(x => x.Guid == fix.Guid))
+                if (onlineFix.Fixes.Exists(x => x.Guid == fix.Guid))
                 {
                     return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
                 }
@@ -318,8 +308,7 @@ Thank you.");
 
         public static void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
-            addTo.Dependencies ??= [];
-            addTo.Dependencies.Remove(dependency.Guid);
+            addTo.Dependencies?.Remove(dependency.Guid);
         }
 
         public static void MoveFixUp(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
@@ -366,34 +355,20 @@ Thank you.");
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache)
-        {
-            _fixesList.Clear();
-
-            var fixes = await _combinedEntitiesProvider.GetFixesListAsync(useCache);
-
-            fixes = [.. fixes.OrderBy(x => x.GameName)];
-
-            foreach (var fix in fixes)
-            {
-                _fixesList.Add(fix);
-            }
-        }
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetFixesListAsync(useCache)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
-            _availableGamesList.Clear();
+            var installedGames = await _gamesProvider.GetGamesListAsync(useCache);
 
-            var installedGames = useCache
-                ? await _gamesProvider.GetCachedListAsync()
-                : await _gamesProvider.GetNewListAsync();
+            _availableGamesList = new(installedGames.Count);
 
             foreach (var game in installedGames)
             {
-                if (!_fixesList.Any(x => x.GameId == game.Id))
+                if (!_fixesList.Exists(x => x.GameId == game.Id))
                 {
                     _availableGamesList.Add(game);
                 }
@@ -419,7 +394,7 @@ Thank you.");
                 result += Environment.NewLine;
             }
 
-            File.WriteAllText(Path.Combine(_properties.LocalRepoPath, "README.md"), result);
+            File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result);
         }
     }
 }

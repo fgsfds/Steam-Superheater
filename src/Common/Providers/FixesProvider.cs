@@ -12,53 +12,19 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class FixesProvider(
-        ConfigProvider config,
-        CommonProperties properties)
+    public sealed class FixesProvider(ConfigProvider config)
     {
         private string? _fixesCachedString;
         private readonly ConfigEntity _config = config.Config;
-        private readonly CommonProperties _properties = properties;
         private readonly SemaphoreSlim _locker = new(1);
 
         /// <summary>
-        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
+        /// Get list of fix entities with installed fixes
         /// </summary>
-        public async Task<ImmutableList<FixesList>> GetCachedListAsync()
-        {
-            Logger.Info("Requesting cached fixes list");
-
-            await _locker.WaitAsync();
-
-            if (_fixesCachedString is null)
-            {
-                await CreateCacheAsync();
-            }
-
-            _locker.Release();
-
-            if (_fixesCachedString is null)
-            {
-                ThrowHelper.Exception("Can't create fixes cache");
-            }
-
-            using (StringReader fs = new(_fixesCachedString))
-            {
-                return [.. DeserializeCachedString(fs.ReadToEnd())];
-            }
-        }
-
-        /// <summary>
-        /// Remove current cache, then create new one and return fixes list
-        /// </summary>
-        public async Task<ImmutableList<FixesList>> GetNewListAsync()
-        {
-            Logger.Info("Requesting new fixes list");
-
-            _fixesCachedString = null;
-
-            return await GetCachedListAsync();
-        }
+        public async Task<ImmutableList<FixesList>> GetFixesListAsync(bool useCache) =>
+            useCache
+            ? await GetCachedListAsync()
+            : await GetNewListAsync();
 
         /// <summary>
         /// Get cached fixes list from online repo or create new cache if it wasn't created yet
@@ -92,7 +58,7 @@ namespace Common.Providers
 
             using HttpClient client = new();
 
-            List<FixesListXml> result = [];
+            List<FixesListXml> result = new(fixesList.Count);
 
             foreach (var fixes in fixesList)
             {
@@ -100,7 +66,7 @@ namespace Common.Providers
                 {
                     if (fix.Tags is not null)
                     {
-                        fix.Tags = [.. fix.Tags.Where(x => !string.IsNullOrWhiteSpace(x))];
+                        fix.Tags = [.. fix.Tags.Where(static x => !string.IsNullOrWhiteSpace(x))];
 
                         if (fix.Tags.Count == 0)
                         {
@@ -109,8 +75,8 @@ namespace Common.Providers
                         else
                         {
                             List<string> tags = [.. fix.Tags
-                                .Where(x => !string.IsNullOrWhiteSpace(x))
-                                .OrderBy(x => x)];
+                                .Where(static x => !string.IsNullOrWhiteSpace(x))
+                                .OrderBy(static x => x)];
 
                             fix.Tags = tags;
                         }
@@ -133,17 +99,17 @@ namespace Common.Providers
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
-            if (!Directory.Exists(_properties.LocalRepoPath))
+            if (!Directory.Exists(_config.LocalRepoPath))
             {
-                Directory.CreateDirectory(_properties.LocalRepoPath);
+                Directory.CreateDirectory(_config.LocalRepoPath);
             }
 
             try
             {
-                using FileStream fs = new(Path.Combine(_properties.LocalRepoPath, Consts.FixesFile), FileMode.Create);
+                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
                 xmlSerializer.Serialize(fs, result);
             }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
                 Logger.Error(ex.Message);
                 return new Result(ResultEnum.NotFound, ex.Message);
@@ -151,6 +117,45 @@ namespace Common.Providers
 
             Logger.Info("XML saved successfully!");
             return new(ResultEnum.Ok, "XML saved successfully!");
+        }
+
+        /// <summary>
+        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
+        /// </summary>
+        private async Task<ImmutableList<FixesList>> GetCachedListAsync()
+        {
+            Logger.Info("Requesting cached fixes list");
+
+            await _locker.WaitAsync();
+
+            if (_fixesCachedString is null)
+            {
+                await CreateCacheAsync();
+            }
+
+            _locker.Release();
+
+            if (_fixesCachedString is null)
+            {
+                ThrowHelper.Exception("Can't create fixes cache");
+            }
+
+            using (StringReader fs = new(_fixesCachedString))
+            {
+                return [.. DeserializeCachedString(await fs.ReadToEndAsync())];
+            }
+        }
+
+        /// <summary>
+        /// Remove current cache, then create new one and return fixes list
+        /// </summary>
+        private Task<ImmutableList<FixesList>> GetNewListAsync()
+        {
+            Logger.Info("Requesting new fixes list");
+
+            _fixesCachedString = null;
+
+            return GetCachedListAsync();
         }
 
         private async Task<Result?> PrepareFileFix(HttpClient client, BaseFixEntity fix)
@@ -180,7 +185,7 @@ namespace Common.Providers
 
                 if (fileFix.FilesToDelete is not null)
                 {
-                    fileFix.FilesToDelete = [.. fileFix.FilesToDelete.Where(x => !string.IsNullOrWhiteSpace(x))];
+                    fileFix.FilesToDelete = [.. fileFix.FilesToDelete.Where(static x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.FilesToDelete.Count == 0)
                     {
@@ -190,7 +195,7 @@ namespace Common.Providers
 
                 if (fileFix.FilesToBackup is not null)
                 {
-                    fileFix.FilesToBackup = [.. fileFix.FilesToBackup.Where(x => !string.IsNullOrWhiteSpace(x))];
+                    fileFix.FilesToBackup = [.. fileFix.FilesToBackup.Where(static x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.FilesToBackup.Count == 0)
                     {
@@ -200,7 +205,7 @@ namespace Common.Providers
 
                 if (fileFix.Variants is not null)
                 {
-                    fileFix.Variants = [.. fileFix.Variants.Where(x => !string.IsNullOrWhiteSpace(x))];
+                    fileFix.Variants = [.. fileFix.Variants.Where(static x => !string.IsNullOrWhiteSpace(x))];
 
                     if (fileFix.Variants.Count == 0)
                     {
@@ -239,19 +244,19 @@ namespace Common.Providers
             if (fix.Url is null)
             {
                 ThrowHelper.NullReferenceException(nameof(fix.Url));
-            };
+            }
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
-                var currentDir = Path.Combine(_properties.LocalRepoPath, "fixes");
-                var fileName = Path.GetFileName(fix.Url.ToString());
+                var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
+                var fileName = Path.GetFileName(fix.Url);
                 var pathToFile = Path.Combine(currentDir, fileName);
 
                 using (var md5 = MD5.Create())
                 {
-                    using (var stream = File.OpenRead(pathToFile))
+                    await using (var stream = File.OpenRead(pathToFile))
                     {
-                        return Convert.ToHexString(md5.ComputeHash(stream));
+                        return Convert.ToHexString(await md5.ComputeHashAsync(stream));
                     }
                 }
             }
@@ -271,12 +276,12 @@ namespace Common.Providers
                 {
                     //if can't get md5 from the response, download zip
                     var currentDir = Directory.GetCurrentDirectory();
-                    var fileName = Path.GetFileName(fix.Url.ToString());
+                    var fileName = Path.GetFileName(fix.Url);
                     var pathToFile = Path.Combine(currentDir, fileName);
 
-                    using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                    await using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        using var source = await response.Content.ReadAsStreamAsync();
+                        await using var source = await response.Content.ReadAsStreamAsync();
 
                         await source.CopyToAsync(file);
                     }
@@ -287,9 +292,9 @@ namespace Common.Providers
 
                     using (var md5 = MD5.Create())
                     {
-                        using var stream = File.OpenRead(pathToFile);
+                        await using var stream = File.OpenRead(pathToFile);
 
-                        hash = Convert.ToHexString(md5.ComputeHash(stream));
+                        hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
                     }
 
                     File.Delete(pathToFile);
@@ -307,14 +312,14 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(_properties.LocalRepoPath, Consts.FixesFile);
+                var file = Path.Combine(_config.LocalRepoPath, Consts.FixesFile);
 
                 if (!File.Exists(file))
                 {
                     ThrowHelper.FileNotFoundException(file);
                 }
 
-                _fixesCachedString = File.ReadAllText(file);
+                _fixesCachedString = await File.ReadAllTextAsync(file);
             }
             else
             {
@@ -330,11 +335,10 @@ namespace Common.Providers
         private static List<FixesList> DeserializeCachedString(string fixes)
         {
             List<FixesListXml>? fixesListXml;
-            List<FixesList>? fixesListResult = [];
 
             XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
 
-            using (TextReader reader = new StringReader(fixes))
+            using (var reader = new StringReader(fixes))
             {
                 fixesListXml = xmlSerializer.Deserialize(reader) as List<FixesListXml>;
             }
@@ -344,9 +348,11 @@ namespace Common.Providers
                 ThrowHelper.NullReferenceException(nameof(fixesListXml));
             }
 
+            List<FixesList> fixesListResult = new(fixesListXml.Count);
+
             foreach (var fix in fixesListXml)
             {
-                List<BaseFixEntity> fixesList = [];
+                List<BaseFixEntity> fixesList = new(fix.Fixes.Count);
 
                 foreach (var f in fix.Fixes)
                 {
@@ -390,7 +396,7 @@ namespace Common.Providers
             using (HttpClient client = new())
             {
                 client.Timeout = TimeSpan.FromSeconds(10);
-                using var stream = await client.GetStreamAsync(_properties.CurrentFixesRepo + Consts.FixesFile);
+                await using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.FixesFile);
                 using StreamReader file = new(stream);
                 var fixesXml = await file.ReadToEndAsync();
 

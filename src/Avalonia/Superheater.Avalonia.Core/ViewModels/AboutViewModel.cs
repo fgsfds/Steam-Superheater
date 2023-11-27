@@ -7,18 +7,14 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    public sealed partial class AboutViewModel(
-        AppUpdateInstaller updateInstaller,
-        PopupMessageViewModel popupMessage
+    internal sealed partial class AboutViewModel(
+        AppUpdateInstaller _updateInstaller,
+        PopupMessageViewModel _popupMessage
         ) : ObservableObject
     {
-        private readonly AppUpdateInstaller _updateInstaller = updateInstaller ?? ThrowHelper.ArgumentNullException<AppUpdateInstaller>(nameof(updateInstaller));
-        private readonly PopupMessageViewModel _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage));
-
-
         #region Binding Properties
 
-        public static Version CurrentVersion => CommonProperties.CurrentVersion;
+        private static Version CurrentVersion => CommonProperties.CurrentVersion;
 
         public string AboutTabHeader { get; private set; } = "About";
 
@@ -37,13 +33,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        private async Task InitializeAsync() => await CheckForUpdates();
+        private Task InitializeAsync() => CheckForUpdatesAsync();
 
         /// <summary>
         /// Check for SSH updates
         /// </summary>
         [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
-        private async Task CheckForUpdates()
+        private async Task CheckForUpdatesAsync()
         {
             IsInProgress = true;
             OnPropertyChanged(nameof(IsInProgress));
@@ -59,9 +55,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
             catch (Exception ex)
             {
-                var message = @$"Cannot retrieve latest releases from GitHub:
-                    
-{ex.Message}";
+                var message = $"""
+                               Cannot retrieve latest releases from GitHub:
+                                                   
+                               {ex.Message}
+                               """;
 
                 _popupMessage.Show(
                     "Error",
@@ -96,7 +94,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Download and install SSH update
         /// </summary>
         [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
-        private async Task DownloadAndInstall()
+        private async Task DownloadAndInstallAsync()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -123,7 +121,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         }
-        private bool DownloadAndInstallCanExecute() => IsUpdateAvailable is true;
+        private bool DownloadAndInstallCanExecute() => IsUpdateAvailable;
 
         #endregion Relay Commands
 

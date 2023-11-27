@@ -1,83 +1,35 @@
-﻿using Common.Entities;
-using Common.Entities.CombinedEntities;
+﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
-using Common.Helpers;
-using System.Collections.Immutable;
 
 namespace Common.Providers
 {
     public sealed class CombinedEntitiesProvider(
-        FixesProvider fixesProvider,
-        GamesProvider gamesProvider
+        FixesProvider _fixesProvider,
+        GamesProvider _gamesProvider
         )
     {
-        private readonly FixesProvider _fixesProvider = fixesProvider ?? ThrowHelper.NullReferenceException<FixesProvider>(nameof(fixesProvider));
-        private readonly GamesProvider _gamesProvider = gamesProvider ?? ThrowHelper.NullReferenceException<GamesProvider>(nameof(gamesProvider));
-
-        /// <summary>
-        /// Get list of fix entities with installed fixes
-        /// </summary>
-        public async Task<List<FixesList>> GetFixesListAsync(bool useCache)
-        {
-            ImmutableList<FixesList> fixes;
-
-            if (useCache)
-            {
-                fixes = await _fixesProvider.GetCachedListAsync();
-            }
-            else
-            {
-                fixes = await _fixesProvider.GetNewListAsync();
-            }
-
-            List<FixesList> result = [];
-
-            foreach (var fix in fixes)
-            {
-                result.Add(new FixesList()
-                {
-                    GameId = fix.GameId,
-                    GameName = fix.GameName,
-                    Fixes = fix.Fixes
-                });
-            }
-
-            return result;
-        }
-
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            ImmutableList<FixesList> fixes;
-            ImmutableList<GameEntity> games;
-            ImmutableList<BaseInstalledFixEntity> installed;
+            var fixes = await _fixesProvider.GetFixesListAsync(useCache);
+            var games = await _gamesProvider.GetGamesListAsync(useCache);
+            var installed = InstalledFixesProvider.GetInstalledFixes();
 
-            if (useCache)
-            {
-                fixes = await _fixesProvider.GetCachedListAsync();
-                games = await _gamesProvider.GetCachedListAsync();
-            }
-            else
-            {
-                fixes = await _fixesProvider.GetNewListAsync();
-                games = await _gamesProvider.GetNewListAsync();
-            }
-
-            installed = InstalledFixesProvider.GetInstalledFixes();
-
-            List<FixFirstCombinedEntity> result = [];
+            List<FixFirstCombinedEntity> result = new(fixes.Count);
 
             foreach (var fix in fixes)
             {
-                var game = games.Where(x => x.Id == fix.GameId).FirstOrDefault();
-                var installedForGame = installed.Where(x => x.GameId == fix.GameId);
+                var id = fix.GameId;
+
+                var game = games.FirstOrDefault(x => x.Id == id);
+                var installedForGame = installed.Where(x => x.GameId == id);
 
                 result.Add(new FixFirstCombinedEntity(fix, game, installedForGame));
             }
 
-            result = [.. result.OrderByDescending(x => x.IsGameInstalled)];
+            result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
 
             return result;
         }
@@ -93,11 +45,6 @@ namespace Common.Providers
 
             foreach (var combined in combinedList)
             {
-                if (!combined.FixesList.Fixes.Any(x => x.IsInstalled))
-                {
-                    continue;
-                }
-
                 foreach (var fix in combined.FixesList.Fixes)
                 {
                     if (fix.InstalledFix is null)

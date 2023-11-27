@@ -1,6 +1,6 @@
 ﻿namespace Common.Enums
 {
-    public enum ThemeEnum
+    public enum ThemeEnum: byte
     {
         System,
         Light,

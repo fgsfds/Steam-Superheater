@@ -23,13 +23,13 @@ namespace Common.Providers
                 var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(a)
                     ?? ThrowHelper.Exception<List<GitHubRelease>>("Error while deserializing GitHub releases");
 
-                releases = [.. releases.Where(x => x.draft is false && x.prerelease is false)];
+                releases = [.. releases.Where(static x => x.draft is false && x.prerelease is false)];
 
-                var updates = releases.ConvertAll(x => new AppUpdateEntity()
+                var updates = releases.ConvertAll(static x => new AppUpdateEntity()
                 {
                     Version = new Version(x.tag_name),
                     Description = x.body,
-                    DownloadUrl = new Uri(x.assets.Where(x => x.name.EndsWith("win-x64.zip")).First().browser_download_url)
+                    DownloadUrl = new Uri(x.assets.First(static x => x.name.EndsWith("win-x64.zip")).browser_download_url)
                 }
                 );
 

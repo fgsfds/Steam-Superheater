@@ -17,16 +17,14 @@ namespace Common
         /// <param name="filePath">Path to file to upload</param>
         /// <param name="remoteFileName">File name on the ftp server</param>
         /// <returns>True if successfully uploaded</returns>
-        public static Result UploadFileToFtp(string folder, string filePath, string remoteFileName)
-        {
-            return UploadFilesToFtp(folder, [filePath], remoteFileName);
-        }
+        public static Result UploadFileToFtp(string folder, string filePath, string remoteFileName) => UploadFilesToFtp(folder, [filePath], remoteFileName);
 
         /// <summary>
         /// Upload multiple files to ftp
         /// </summary>
         /// <param name="folder">Destination folder on ftp server</param>
         /// <param name="files">List of paths to files</param>
+        /// <param name="remoteFileName">Name of the file on the remote server</param>
         /// <returns>True if successfully uploaded</returns>
         public static Result UploadFilesToFtp(string folder, List<string> files, string? remoteFileName = null)
         {
@@ -44,7 +42,7 @@ namespace Common
 
                 foreach (var file in files)
                 {
-                    var fileName = remoteFileName is null ? Path.GetFileName(file) : remoteFileName;
+                    var fileName = remoteFileName ?? Path.GetFileName(file);
 
                     using WebClient uploadFileRequest = new();
                     uploadFileRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);

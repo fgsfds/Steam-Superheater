@@ -7,12 +7,7 @@ namespace Common
 {
     public sealed class AppUpdateInstaller
     {
-        private readonly List<AppUpdateEntity> _updates;
-
-        public AppUpdateInstaller()
-        {
-            _updates = [];
-        }
+        private List<AppUpdateEntity> _updates = [];
 
         /// <summary>
         /// Check GitHub for releases with version higher than current
@@ -23,9 +18,7 @@ namespace Common
         {
             Logger.Info("Checking for updates");
 
-            _updates.Clear();
-
-            _updates.AddRange(await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion));
+            _updates = (await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion)).ToList();
 
             Logger.Info($"Found {_updates.Count} updates");
 
@@ -38,7 +31,7 @@ namespace Common
         /// <returns></returns>
         public async Task DownloadAndUnpackLatestRelease()
         {
-            var latestUpdate = _updates.OrderByDescending(x => x.Version).First();
+            AppUpdateEntity latestUpdate = _updates.MaxBy(static x => x.Version) ?? ThrowHelper.NullReferenceException<AppUpdateEntity>("Error while getting newer release");
 
             Logger.Info($"Downloading app update version {latestUpdate.Version}");
 
@@ -57,7 +50,7 @@ namespace Common
 
             File.Delete(fileName);
 
-            File.Create(Consts.UpdateFile).Dispose();
+            await File.Create(Consts.UpdateFile).DisposeAsync();
         }
 
         /// <summary>

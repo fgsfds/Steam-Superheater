@@ -33,7 +33,7 @@
 
             <TextBlock HorizontalAlignment="Center"
                        Grid.Row="0"
-                       Grid.ColumnSpan="2"
+                       Grid.ColumnSpan="2" Grid.Column="0"
                        Margin="30,30,30,0"
                        Foreground="{DynamicResource SystemAccentColor} "
                        FontWeight="Bold"
@@ -43,7 +43,7 @@
             <TextBlock HorizontalAlignment="Center"
                        TextAlignment="Center"
                        Grid.Row="1"
-                       Grid.ColumnSpan="2"
+                       Grid.ColumnSpan="2" Grid.Column="0"
                        Margin="30"
                        FontSize="15"
                        TextWrapping="Wrap"
@@ -51,7 +51,7 @@
 
             <Grid ColumnDefinitions="*,*"
                   Grid.Row="2"
-                  Grid.ColumnSpan="2"
+                  Grid.ColumnSpan="2" Grid.Column="0"
                   IsVisible="{Binding IsYesNo}">
 
                 <Button Grid.Column="0"
@@ -84,7 +84,7 @@
 
             <Grid ColumnDefinitions="*,*"
                   Grid.Row="2"
-                  Grid.ColumnSpan="2"
+                  Grid.ColumnSpan="2" Grid.Column="0"
                   IsVisible="{Binding IsOkOnly}">
 
                 <Button Grid.Column="0"

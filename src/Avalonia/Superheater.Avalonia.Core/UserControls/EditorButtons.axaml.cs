@@ -12,7 +12,7 @@ namespace Superheater.Avalonia.Core.UserControls
             InitializeComponent();
 
             //fix for inconsistent combobox width
-            GamesComboBox.ItemsPanel = new FuncTemplate<Panel?>(new(() => new StackPanel()));
+            GamesComboBox.ItemsPanel = new FuncTemplate<Panel?>(() => new StackPanel());
         }
 
         private void HowToSubmitButtonClick(object sender, RoutedEventArgs e)

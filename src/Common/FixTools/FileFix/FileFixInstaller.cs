@@ -10,13 +10,14 @@ namespace Common.FixTools.FileFix
 {
     public sealed class FileFixInstaller(ConfigProvider config)
     {
-        private readonly ConfigEntity _configEntity = config.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
+        private readonly ConfigEntity _configEntity = config.Config;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
+        /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
@@ -57,11 +58,11 @@ namespace Common.FixTools.FileFix
         /// <param name="fixMD5">MD5 of the file</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        private async Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
+        private Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
         {
             if (fixUrl is null)
             {
-                return;
+                return Task.CompletedTask;
             }
 
             var zipFullPath = _configEntity.UseLocalRepo
@@ -82,19 +83,22 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            if (!File.Exists(zipFullPath))
+            if (File.Exists(zipFullPath))
             {
-                Logger.Info($"Local file {zipFullPath} not found");
-
-                var url = fixUrl;
-
-                if (_configEntity.UseTestRepoBranch)
-                {
-                    url = url.Replace("/master/", "/test/");
-                }
-
-                await FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
+                return Task.CompletedTask;
             }
+
+            Logger.Info($"Local file {zipFullPath} not found");
+
+            var url = fixUrl;
+
+            if (_configEntity.UseTestRepoBranch)
+            {
+                url = url.Replace("/master/", "/test/");
+            }
+
+            return FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
+
         }
 
         /// <summary>
@@ -124,13 +128,12 @@ namespace Common.FixTools.FileFix
         /// <param name="backupFolderPath">Absolute path to the backup folder</param>
         /// <param name="deleteOriginal">Will original file be deleted</param>
         private static void BackupFiles(
-            IEnumerable<string>? files,
+            List<string>? files,
             string gameDir,
             string backupFolderPath,
-            bool deleteOriginal
-            )
+            bool deleteOriginal)
         {
-            if (files is null || !files.Any())
+            if (files is null || files.Count == 0)
             {
                 return;
             }
@@ -139,31 +142,32 @@ namespace Common.FixTools.FileFix
             {
                 var fullFilePath = Path.Combine(gameDir, file);
 
-                if (File.Exists(fullFilePath))
+                if (!File.Exists(fullFilePath))
                 {
-                    var from = fullFilePath;
-                    var to = Path.Combine(backupFolderPath, file);
+                    continue;
+                }
 
-                    var dir = Path.GetDirectoryName(to);
+                var to = Path.Combine(backupFolderPath, file);
 
-                    if (dir is null)
-                    {
-                        ThrowHelper.NullReferenceException(nameof(dir));
-                    }
+                var dir = Path.GetDirectoryName(to);
 
-                    if (!Directory.Exists(dir))
-                    {
-                        Directory.CreateDirectory(dir);
-                    }
+                if (dir is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(dir));
+                }
 
-                    if (deleteOriginal)
-                    {
-                        File.Move(from, to);
-                    }
-                    else
-                    {
-                        File.Copy(from, to);
-                    }
+                if (!Directory.Exists(dir))
+                {
+                    Directory.CreateDirectory(dir);
+                }
+
+                if (deleteOriginal)
+                {
+                    File.Move(fullFilePath, to);
+                }
+                else
+                {
+                    File.Copy(fullFilePath, to);
                 }
             }
         }
@@ -188,12 +192,7 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            if (!fixMD5.Equals(hash))
-            {
-                return false;
-            }
-
-            return true;
+            return fixMD5.Equals(hash);
         }
 
         /// <summary>

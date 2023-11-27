@@ -21,14 +21,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         public MainViewModel(
             MainModel mainModel,
             ConfigProvider config,
-            CommonProperties properties,
             PopupMessageViewModel popupMessage
             )
         {
-            _mainModel = mainModel ?? ThrowHelper.ArgumentNullException<MainModel>(nameof(mainModel));
-            _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-            _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
-            _popupMessage = popupMessage ?? ThrowHelper.NullReferenceException<PopupMessageViewModel>(nameof(popupMessage));
+            _mainModel = mainModel;
+            _config = config.Config;
+            _popupMessage = popupMessage;
 
             MainTabHeader = "Main";
             LaunchGameButtonText = "Launch game...";
@@ -42,7 +40,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainModel _mainModel;
 
         private readonly ConfigEntity _config;
-        private readonly CommonProperties _properties;
 
         private readonly PopupMessageViewModel _popupMessage;
 
@@ -54,7 +51,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.FixesList.Fixes.Where(x => !x.IsHidden)];
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden)];
 
         public ImmutableList<string> SelectedFixTags => SelectedFix?.Tags is null ? [] : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
 
@@ -65,13 +62,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public static bool IsTagsComboboxVisible => true;
 
-        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty;
 
         public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
 
-        public bool SelectedFixHasTags => SelectedFixTags is not null && !SelectedFixTags.IsEmpty;
+        public bool SelectedFixHasTags => !SelectedFixTags.IsEmpty;
 
 
         public string MainTabHeader { get; private set; }
@@ -152,14 +149,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        private async Task InitializeAsync() => await UpdateAsync(true);
+        private Task InitializeAsync() => UpdateAsync(true);
 
 
         /// <summary>
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
-        private async Task UpdateGames()
+        private async Task UpdateGamesAsync()
         {
             await UpdateAsync(false);
 
@@ -174,7 +171,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Install selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(InstallFixCanExecute)))]
-        private async Task InstallFix() => await InstallUpdateFixAsync(false);
+        private Task InstallFixAsync() => InstallUpdateFixAsync(false);
         private bool InstallFixCanExecute()
         {
             if (SelectedGame is null ||
@@ -198,7 +195,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Update selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
-        private async Task UpdateFix() => await InstallUpdateFixAsync(true);
+        private Task UpdateFixAsync() => InstallUpdateFixAsync(true);
         public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
 
 
@@ -243,7 +240,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             if (SelectedFix is null ||
                 !SelectedFix.IsInstalled ||
-                SelectedGameFixesList is null ||
                 (SelectedGame is not null && !SelectedGame.IsGameInstalled) ||
                 _lockButtons)
             {
@@ -316,10 +312,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Copy file URL to clipboard
         /// </summary>
         [RelayCommand]
-        private async Task UrlCopyToClipboardAsync()
+        private Task UrlCopyToClipboardAsync()
         {
             var clipboard = Properties.TopLevel.Clipboard ?? ThrowHelper.ArgumentNullException<IClipboard>("Error while getting clipboard implementation");
-            await clipboard.SetTextAsync(SelectedFixUrl);
+            return clipboard.SetTextAsync(SelectedFixUrl);
         }
 
 
@@ -358,14 +354,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
-            if (SelectedGame.IsGameInstalled)
-            {
-                LaunchGameButtonText = "Launch game...";
-            }
-            else
-            {
-                LaunchGameButtonText = "Install game...";
-            }
+            LaunchGameButtonText = SelectedGame.IsGameInstalled
+                ? "Launch game..."
+                : "Install game...";
 
             OnPropertyChanged(nameof(LaunchGameButtonText));
             return true;
@@ -376,7 +367,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private static void CloseApp() => Properties.MainWindow.Close();
+        private void CloseApp() => Properties.MainWindow.Close();
 
 
         /// <summary>
@@ -387,7 +378,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             List<string> tags = [.. _config.HiddenTags];
             tags.Add(value);
-            tags = [.. tags.OrderBy(x => x)];
+            tags = [.. tags.OrderBy(static x => x)];
 
             _config.HiddenTags = tags;
         }
@@ -432,7 +423,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
             }
 
-            if (result.ResultEnum is ResultEnum.MD5Error)
+            if (result == ResultEnum.MD5Error)
             {
                 var popupResult = await _popupMessage.ShowAndGetResultAsync(
                     "Warning",
@@ -546,13 +537,12 @@ Do you still want to install the fix?",
 
             UpdateHeader();
 
-            if (selectedGameId is not null && FilteredGamesList.Any(x => x.GameId == selectedGameId))
+            if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&
-                    SelectedGameFixesList is not null &&
-                    SelectedGameFixesList.Any(x => x.Guid == selectedFixGuid))
+                    SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))
                 {
                     SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
                 }
@@ -595,8 +585,7 @@ Do you still want to install the fix?",
         /// </summary>
         private string GetRequirementsString()
         {
-            if (SelectedGameFixesList is null ||
-                SelectedFix is null ||
+            if (SelectedFix is null ||
                 SelectedGame is null)
             {
                 return string.Empty;
@@ -610,7 +599,7 @@ Do you still want to install the fix?",
             {
                 requires = "REQUIRES: ";
 
-                requires += string.Join(", ", dependsOn.Select(x => x.Name));
+                requires += string.Join(", ", dependsOn.Select(static x => x.Name));
             }
 
             string? required = null;
@@ -623,7 +612,7 @@ Do you still want to install the fix?",
                 {
                     required = "REQUIRED BY: ";
 
-                    required += string.Join(", ", dependsBy.Select(x => x.Name));
+                    required += string.Join(", ", dependsBy.Select(static x => x.Name));
                 }
             }
 

@@ -6,7 +6,7 @@ using Superheater.Avalonia.Core.Helpers;
 
 namespace Superheater.Desktop;
 
-internal sealed class Program
+internal static class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
@@ -16,7 +16,7 @@ internal sealed class Program
     {
         if (args.Contains("-dev"))
         {
-            //Logger.Info("Started in developer mode");
+            Logger.Info("Started in developer mode");
 
             Properties.IsDeveloperMode = true;
         }
@@ -25,7 +25,7 @@ internal sealed class Program
 
         if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
         {
-            //Logger.Info("Update file detected");
+            Logger.Info("Update file detected");
 
             AppUpdateInstaller.InstallUpdate();
         }
@@ -52,7 +52,7 @@ internal sealed class Program
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
-    public static AppBuilder BuildAvaloniaApp()
+    private static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
             //.WithInterFont()

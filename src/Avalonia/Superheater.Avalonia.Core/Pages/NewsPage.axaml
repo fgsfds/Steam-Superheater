@@ -2,13 +2,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Superheater.Avalonia.Core.Pages.NewsPage">
-
-    <UserControl.Resources>
-        <helpers:BoolToColorConverter x:Key="BoolToColorConverter"/>
-    </UserControl.Resources>
 
     <Grid RowDefinitions="*,auto,auto" Margin="5">
 

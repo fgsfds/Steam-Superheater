@@ -23,6 +23,7 @@ namespace Common
         /// Add message to the log file
         /// </summary>
         /// <param name="message"></param>
+        /// <param name="type">Type of log message</param>
         private static void Log(string message, string type)
         {
             lock (_lock)

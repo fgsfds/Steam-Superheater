@@ -56,7 +56,7 @@ namespace Common.Providers
                     ThrowHelper.NullReferenceException(nameof(fixesDatabase));
                 }
 
-                List<BaseInstalledFixEntity> result = [];
+                List<BaseInstalledFixEntity> result = new(fixesDatabase.InstalledFixes.Count);
 
                 foreach (var fix in fixesDatabase.InstalledFixes)
                 {
@@ -98,7 +98,7 @@ namespace Common.Providers
                     ThrowHelper.NullReferenceException(nameof(fixesDatabase));
                 }
 
-                return fixesDatabase.ConvertAll(x =>
+                return fixesDatabase.ConvertAll(static x =>
                     (BaseInstalledFixEntity)new FileInstalledFixEntity()
                     {
                         GameId = x.GameId,

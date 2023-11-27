@@ -1,18 +1,14 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Helpers;
 
 namespace Common.FixTools.RegistryFix
 {
-    public class RegistryFixUpdater(
-        RegistryFixInstaller fixInstaller,
-        RegistryFixUninstaller fixUninstaller
+    public sealed class RegistryFixUpdater(
+        RegistryFixInstaller _fixInstaller,
+        RegistryFixUninstaller _fixUninstaller
         )
     {
-        private readonly RegistryFixInstaller _fixInstaller = fixInstaller ?? ThrowHelper.ArgumentNullException<RegistryFixInstaller>(nameof(fixInstaller));
-        private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller ?? ThrowHelper.ArgumentNullException<RegistryFixUninstaller>(nameof(fixUninstaller));
-
         public BaseInstalledFixEntity UpdateFix(GameEntity game, RegistryFixEntity regFix)
         {
             _fixUninstaller.UninstallFix(regFix);

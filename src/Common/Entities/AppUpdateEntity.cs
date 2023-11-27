@@ -5,16 +5,16 @@
         /// <summary>
         /// Release version
         /// </summary>
-        required public Version Version { get; init; }
+        public required Version Version { get; init; }
 
         /// <summary>
         /// Release description
         /// </summary>
-        required public string Description { get; init; }
+        public required string Description { get; init; }
 
         /// <summary>
         /// Release download URL
         /// </summary>
-        required public Uri DownloadUrl { get; init; }
+        public required Uri DownloadUrl { get; init; }
     }
 }

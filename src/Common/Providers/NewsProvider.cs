@@ -6,13 +6,9 @@ using System.Xml.Serialization;
 
 namespace Common.Providers
 {
-    public sealed class NewsProvider(
-        ConfigProvider config,
-        CommonProperties properties
-        )
+    public sealed class NewsProvider(ConfigProvider config)
     {
         private readonly ConfigEntity _config = config.Config;
-        private readonly CommonProperties _properties = properties;
 
         /// <summary>
         /// Get list of news
@@ -27,14 +23,14 @@ namespace Common.Providers
 
             if (_config.UseLocalRepo)
             {
-                var file = Path.Combine(_properties.LocalRepoPath, Consts.NewsFile);
+                var file = Path.Combine(_config.LocalRepoPath, Consts.NewsFile);
 
                 if (!File.Exists(file))
                 {
                     ThrowHelper.FileNotFoundException(file);
                 }
 
-                news = File.ReadAllText(file);
+                news = await File.ReadAllTextAsync(file);
             }
             else
             {
@@ -52,7 +48,7 @@ namespace Common.Providers
                     return [];
                 }
 
-                return [.. list.OrderByDescending(x => x.Date)];
+                return [.. list.OrderByDescending(static x => x.Date)];
             }
         }
 
@@ -69,7 +65,7 @@ namespace Common.Providers
                 using (HttpClient client = new())
                 {
                     client.Timeout = TimeSpan.FromSeconds(10);
-                    using var stream = await client.GetStreamAsync(_properties.CurrentFixesRepo + Consts.NewsFile);
+                    await using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
                     using StreamReader file = new(stream);
                     var newsXml = await file.ReadToEndAsync();
 

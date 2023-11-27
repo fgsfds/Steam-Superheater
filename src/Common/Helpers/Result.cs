@@ -8,24 +8,53 @@
         string message
         )
     {
-
         /// <summary>
         /// Operation result enum
         /// </summary>
-        public ResultEnum ResultEnum { get; init; } = resultEnum;
+        private ResultEnum ResultEnum { get; } = resultEnum;
 
         /// <summary>
         /// Operation result message
         /// </summary>
-        public string Message { get; init; } = message;
+        public string Message { get; } = message;
 
         /// <summary>
         /// Is operation successful
         /// </summary>
         public bool IsSuccess => ResultEnum is ResultEnum.Ok;
+
+        public override bool Equals(object? obj)
+        {
+            switch (obj)
+            {
+                case Result result:
+                    return ResultEnum == result.ResultEnum;
+                case ResultEnum resultE:
+                    return ResultEnum == resultE;
+                default:
+                    ThrowHelper.ArgumentException($"Can't compare Result to {obj?.GetType()}");
+                    return false;
+            }
+        }
+
+        public static bool operator == (Result obj1, ResultEnum obj2)
+        {
+            return obj1.Equals(obj2);
+        }
+
+        public static bool operator != (Result obj1, ResultEnum obj2)
+        {
+            return !obj1.Equals(obj2);
+        }
+
+        public override int GetHashCode()
+        {
+            ThrowHelper.NotImplementedException(string.Empty);
+            return 0;
+        }
     }
 
-    public enum ResultEnum
+    public enum ResultEnum : byte
     {
         /// <summary>
         /// Successful operation

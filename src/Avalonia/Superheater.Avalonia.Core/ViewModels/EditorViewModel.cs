@@ -9,7 +9,6 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using Common.Models;
-using Common.Providers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
@@ -23,16 +22,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public EditorViewModel(
             EditorModel editorModel,
             ConfigProvider config,
-            FixesProvider fixesProvider,
             PopupEditorViewModel popupEditor,
             PopupMessageViewModel popupMessage
             )
         {
-            _editorModel = editorModel ?? ThrowHelper.ArgumentNullException<EditorModel>(nameof(editorModel));
-            _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-            _fixesProvider = fixesProvider ?? ThrowHelper.ArgumentNullException<FixesProvider>(nameof(fixesProvider));
-            _popupEditor = popupEditor ?? ThrowHelper.ArgumentNullException<PopupEditorViewModel>(nameof(popupEditor));
-            _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage));
+            _editorModel = editorModel;
+            _config = config.Config;
+            _popupEditor = popupEditor;
+            _popupMessage = popupMessage;
 
             _searchBarText = string.Empty;
 
@@ -42,7 +39,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly EditorModel _editorModel;
 
         private readonly ConfigEntity _config;
-        private readonly FixesProvider _fixesProvider;
 
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
@@ -106,7 +102,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                SelectedFix.Tags = [.. value.Split(';').Select(x => x.Trim())];
+                SelectedFix.Tags = [.. value.Split(';').Select(static x => x.Trim())];
             }
         }
 
@@ -127,7 +123,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.Variants = [.. value.Split(';').Select(x => x.Trim())];
+                fileFix.Variants = [.. value.Split(';').Select(static x => x.Trim())];
             }
         }
 
@@ -147,7 +143,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.FilesToDelete = [.. value.Split(';').Select(x => x.Trim())];
+                fileFix.FilesToDelete = [.. value.Split(';').Select(static x => x.Trim())];
             }
         }
 
@@ -167,7 +163,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                fileFix.FilesToBackup = [.. value.Split(';').Select(x => x.Trim())];
+                fileFix.FilesToBackup = [.. value.Split(';').Select(static x => x.Trim())];
             }
         }
 
@@ -187,14 +183,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                if (string.IsNullOrEmpty(value))
-                {
-                    fileFix.Url = null;
-                }
-                else
-                {
-                    fileFix.Url = value;
-                }
+                fileFix.Url = string.IsNullOrWhiteSpace(value)
+                    ? null
+                    : value;
             }
         }
 
@@ -214,20 +205,15 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return;
                 }
 
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    fileFix.MD5 = null;
-                }
-                else
-                {
-                    fileFix.MD5 = value;
-                }
+                fileFix.MD5 = string.IsNullOrWhiteSpace(value)
+                    ? null
+                    : value;
             }
         }
 
         public string SelectedFixEntries
         {
-            get => SelectedFix is HostsFixEntity hostsFix && hostsFix.Entries is not null ? string.Join(';', hostsFix.Entries) : string.Empty;
+            get => SelectedFix is HostsFixEntity hostsFix ? string.Join(';', hostsFix.Entries) : string.Empty;
             set
             {
                 if (SelectedFix is null)
@@ -255,14 +241,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (value)
-                {
-                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows);
-                }
-                else
-                {
-                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Windows);
-                }
+                SelectedFix.SupportedOSes = value
+                    ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows)
+                    : SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Windows);
             }
         }
 
@@ -276,14 +257,9 @@ namespace Superheater.Avalonia.Core.ViewModels
                     ThrowHelper.NullReferenceException(nameof(SelectedFix));
                 }
 
-                if (value)
-                {
-                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux);
-                }
-                else
-                {
-                    SelectedFix.SupportedOSes = SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Linux);
-                }
+                SelectedFix.SupportedOSes = value
+                    ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux)
+                    : SelectedFix.SupportedOSes.RemoveFlag(OSEnum.Linux);
             }
         }
 
@@ -397,7 +373,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is RegistryFixEntity regFix)
                 {
-                    return regFix.ValueType is RegistryValueType.String;
+                    return regFix.ValueType is RegistryValueTypeEnum.String;
                 }
 
                 return false;
@@ -406,7 +382,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (value && SelectedFix is RegistryFixEntity regFix)
                 {
-                    regFix.ValueType = RegistryValueType.String;
+                    regFix.ValueType = RegistryValueTypeEnum.String;
                     OnPropertyChanged(nameof(IsDwordValueType));
                     return;
                 }
@@ -421,7 +397,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (SelectedFix is RegistryFixEntity regFix)
                 {
-                    return regFix.ValueType is RegistryValueType.Dword;
+                    return regFix.ValueType is RegistryValueTypeEnum.Dword;
                 }
 
                 return false;
@@ -430,7 +406,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 if (value && SelectedFix is RegistryFixEntity regFix)
                 {
-                    regFix.ValueType = RegistryValueType.Dword;
+                    regFix.ValueType = RegistryValueTypeEnum.Dword;
                     OnPropertyChanged(nameof(IsStringValueType));
                     return;
                 }
@@ -511,14 +487,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        private async Task InitializeAsync() => await UpdateAsync(true);
+        private Task InitializeAsync() => UpdateAsync(true);
 
 
         /// <summary>
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
-        private async Task UpdateGamesAsync() => await UpdateAsync(false);
+        private Task UpdateGamesAsync() => UpdateAsync(false);
         private bool UpdateGamesCanExecute() => IsInProgress is false;
 
 
@@ -703,7 +679,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             MoveFixDownCommand.NotifyCanExecuteChanged();
             MoveFixUpCommand.NotifyCanExecuteChanged();
         }
-        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixesList?.Count - 1;
+        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixesList.Count - 1;
 
 
         /// <summary>
@@ -782,7 +758,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            fileFix.Url = files[0].Path.LocalPath.ToString();
+            fileFix.Url = files[0].Path.LocalPath;
             OnPropertyChanged(nameof(SelectedFixUrl));
         }
         private bool OpenFilePickerCanExecute() => SelectedFix is FileFixEntity;
@@ -807,8 +783,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.Tags = result;
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
-
-            return;
         }
         private bool OpenTagsEditorCanExecute() => SelectedFix is not null;
 
@@ -832,8 +806,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 fileFix.FilesToDelete = result;
                 OnPropertyChanged(nameof(SelectedFixFilesToDelete));
             }
-
-            return;
         }
         private bool OpenFilesToDeleteEditorCanExecute() => SelectedFix is FileFixEntity;
 
@@ -857,8 +829,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 fileFix.FilesToBackup = result;
                 OnPropertyChanged(nameof(SelectedFixFilesToBackup));
             }
-
-            return;
         }
         private bool OpenFilesToBackupEditorCanExecute() => SelectedFix is FileFixEntity;
 
@@ -882,8 +852,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 fileFix.Variants = result;
                 OnPropertyChanged(nameof(SelectedFixVariants));
             }
-
-            return;
         }
         private bool OpenVariantsEditorCanExecute() => SelectedFix is FileFixEntity;
 
@@ -907,8 +875,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 fileFix.Entries = result;
                 OnPropertyChanged(nameof(SelectedFixEntries));
             }
-
-            return;
         }
         private bool OpenHostsEditorCanExecute() => SelectedFix is HostsFixEntity;
 
@@ -952,13 +918,12 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(FilteredGamesList));
             OnPropertyChanged(nameof(AvailableGamesList));
 
-            if (selectedGameId is not null && FilteredGamesList.Any(x => x.GameId == selectedGameId))
+            if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&
-                    SelectedGameFixesList is not null &&
-                    SelectedGameFixesList.Any(x => x.Guid == selectedFixGuid))
+                    SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))
                 {
                     SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
                 }

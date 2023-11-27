@@ -16,7 +16,7 @@ namespace Common.Entities.Fixes.XML
         {
             GameId = fix.GameId;
             GameName = fix.GameName;
-            Fixes = fix.Fixes.ConvertAll(x => (object)x);
+            Fixes = fix.Fixes.ConvertAll(static x => (object)x);
         }
 
         /// <summary>

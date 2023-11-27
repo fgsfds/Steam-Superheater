@@ -8,17 +8,22 @@ namespace Common.Providers
     {
         private ImmutableList<GameEntity>? _gamesCache;
         private readonly SemaphoreSlim _locker = new(1);
+        
+        public async Task<ImmutableList<GameEntity>> GetGamesListAsync(bool useCache) =>
+            useCache
+            ? await GetCachedListAsync()
+            : await GetNewListAsync();
 
         /// <summary>
         /// Get cached games list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        public async Task<ImmutableList<GameEntity>> GetCachedListAsync()
+        private async Task<ImmutableList<GameEntity>> GetCachedListAsync()
         {
             Logger.Info("Requesting cached games list");
 
             await _locker.WaitAsync();
 
-            var result = _gamesCache ?? await CreateCacheAsync();
+            var result = _gamesCache ?? CreateCache();
 
             _locker.Release();
 
@@ -28,58 +33,39 @@ namespace Common.Providers
         /// <summary>
         /// Remove current cache, then create new one and return games list
         /// </summary>
-        public async Task<ImmutableList<GameEntity>> GetNewListAsync()
+        private Task<ImmutableList<GameEntity>> GetNewListAsync()
         {
             Logger.Info("Requesting new games list");
 
             _gamesCache = null;
 
-            return await GetCachedListAsync();
-        }
-
-        public async Task<GameEntity> GetGameByIdAsync(int id)
-        {
-            if (_gamesCache is null)
-            {
-                await GetNewListAsync();
-            }
-
-            if (_gamesCache is null)
-            {
-                ThrowHelper.ArgumentException(nameof(_gamesCache));
-                return null;
-            }
-
-            return _gamesCache.First(x => x.Id == id);
+            return GetCachedListAsync();
         }
 
         /// <summary>
         /// Create new cache of games from online or local repository
         /// </summary>
-        private async Task<ImmutableList<GameEntity>> CreateCacheAsync()
+        private ImmutableList<GameEntity> CreateCache()
         {
             Logger.Info("Creating games cache list");
 
-            List<GameEntity> result = [];
+            var files = SteamTools.GetAcfsList();
 
-            await Task.Run(() =>
+            List<GameEntity> result = new(files.Count);
+
+            foreach (var file in files)
             {
-                var files = SteamTools.GetAcfsList();
+                var games = GetGameEntityFromAcf(file);
 
-                foreach (var file in files)
+                if (games is null)
                 {
-                    var games = GetGameEntityFromAcf(file);
-
-                    if (games is null)
-                    {
-                        continue;
-                    }
-
-                    result.Add(games);
+                    continue;
                 }
-            });
 
-            _gamesCache = [.. result.OrderBy(x => x.Name)];
+                result.Add(games);
+            }
+
+            _gamesCache = [.. result.OrderBy(static x => x.Name)];
 
             Logger.Info($"Added {_gamesCache.Count} games to the cache");
 

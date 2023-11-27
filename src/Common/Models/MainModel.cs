@@ -13,16 +13,15 @@ namespace Common.Models
 {
     public sealed class MainModel(
         ConfigProvider configProvider,
-        CombinedEntitiesProvider combinedEntitiesProvider,
-        FixManager fixManager
+        CombinedEntitiesProvider _combinedEntitiesProvider,
+        FixManager _fixManager
         )
     {
-        private readonly ConfigEntity _config = configProvider?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider ?? ThrowHelper.ArgumentNullException<CombinedEntitiesProvider>(nameof(combinedEntitiesProvider));
-        private readonly FixManager _fixManager = fixManager ?? ThrowHelper.ArgumentNullException<FixManager>(nameof(fixManager));
-        private readonly List<FixFirstCombinedEntity> _combinedEntitiesList = [];
+        private readonly ConfigEntity _config = configProvider.Config;
+        
+        private List<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
-        public int UpdateableGamesCount => _combinedEntitiesList.Count(x => x.HasUpdates);
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
@@ -32,13 +31,11 @@ namespace Common.Models
         /// <param name="useCache">Is cache used</param>
         public async Task<Result> UpdateGamesListAsync(bool useCache)
         {
-            _combinedEntitiesList.Clear();
-
             try
             {
                 var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
 
-                foreach (var game in games.ToList())
+                foreach (var game in games.ToArray())
                 {
                     //remove uninstalled games
                     if (!_config.ShowUninstalledGames &&
@@ -47,12 +44,12 @@ namespace Common.Models
                         games.Remove(game);
                     }
 
-                    foreach (var fix in game.FixesList.Fixes.ToList())
+                    foreach (var fix in game.FixesList.Fixes.ToArray())
                     {
                         //remove fixes with hidden tags
                         if (fix.Tags is not null &&
                             fix.Tags.Count != 0 &&
-                            fix.Tags.All(x => _config.HiddenTags.Contains(x)))
+                            fix.Tags.All(_config.HiddenTags.Contains))
                         {
                             game.FixesList.Fixes.Remove(fix);
                             continue;
@@ -63,27 +60,26 @@ namespace Common.Models
                             !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
                         {
                             game.FixesList.Fixes.Remove(fix);
-                            continue;
                         }
                     }
 
                     //remove games with no shown fixes
-                    if (!game.FixesList.Fixes.Any(x => !x.IsHidden))
+                    if (!game.FixesList.Fixes.Exists(static x => !x.IsHidden))
                     {
                         games.Remove(game);
                     }
                 }
 
-                _combinedEntitiesList.AddRange(games);
+                _combinedEntitiesList = games;
 
                 return new(ResultEnum.Ok, "Games list updated successfully");
             }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
@@ -94,11 +90,12 @@ namespace Common.Models
         /// Get list of games optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
+        /// <param name="tag">Selected tag</param>
         public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
             List<FixFirstCombinedEntity> result = [.. _combinedEntitiesList];
 
-            foreach (var entity in result.ToList())
+            foreach (var entity in result.ToArray())
             {
                 foreach (var fix in entity.FixesList.Fixes)
                 {
@@ -116,18 +113,18 @@ namespace Common.Models
             {
                 if (!tag.Equals("All tags"))
                 {
-                    foreach (var entity in result.ToList())
+                    foreach (var entity in result.ToArray())
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
                             if (fix.Tags is not null &&
-                                !fix.Tags.Any(x => x.Equals(tag)))
+                                !fix.Tags.Exists(x => x.Equals(tag)))
                             {
                                 fix.IsHidden = true;
                             }
                         }
 
-                        if (!entity.FixesList.Fixes.Any(x => !x.IsHidden))
+                        if (!entity.FixesList.Fixes.Exists(static x => !x.IsHidden))
                         {
                             result.Remove(entity);
                         }
@@ -154,7 +151,7 @@ namespace Common.Models
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(fileFix?.Url)) { return string.Empty; }
+            if (string.IsNullOrEmpty(fileFix.Url)) { return string.Empty; }
 
             return !_config.UseTestRepoBranch
                 ? fileFix.Url
@@ -166,12 +163,9 @@ namespace Common.Models
         /// </summary>
         public HashSet<string> GetListOfTags()
         {
-            List<string> result = ["All tags"];
             HashSet<string> list = [];
 
-            var games = _combinedEntitiesList;
-
-            foreach (var entity in games)
+            foreach (var entity in _combinedEntitiesList)
             {
                 foreach (var game in entity.FixesList.Fixes)
                 {
@@ -189,10 +183,10 @@ namespace Common.Models
                     }
                 }
 
-                list = [.. list.OrderBy(x => x)];
+                list = [.. list.OrderBy(static x => x)];
             }
 
-            return [.. result, .. list];
+            return ["All tags", .. list];
         }
 
         /// <summary>
@@ -203,13 +197,13 @@ namespace Common.Models
         /// <returns>List of dependencies</returns>
         public List<BaseFixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
-            if (fix?.Dependencies is null ||
+            if (fix.Dependencies is null ||
                 fix.Dependencies.Count == 0)
             {
                 return [];
             }
 
-            var allGameFixes = _combinedEntitiesList.Where(x => x.GameName == entity.GameName).First().FixesList;
+            var allGameFixes = _combinedEntitiesList.First(x => x.GameName == entity.GameName).FixesList;
 
             var allGameDeps = fix.Dependencies;
 
@@ -228,13 +222,8 @@ namespace Common.Models
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
-            if (deps.Count != 0 &&
-                deps.Where(x => !x.IsInstalled).Any())
-            {
-                return true;
-            }
-
-            return false;
+            return deps.Count != 0 &&
+                   deps.Exists(static x => !x.IsInstalled);
         }
 
         /// <summary>
@@ -256,13 +245,8 @@ namespace Common.Models
         {
             var deps = GetDependentFixes(fixes, guid);
 
-            if (deps.Count != 0 &&
-                deps.Where(x => x.IsInstalled).Any())
-            {
-                return true;
-            }
-
-            return false;
+            return deps.Count != 0 &&
+                   deps.Exists(static x => x.IsInstalled);
         }
 
         /// <summary>
@@ -270,6 +254,8 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to install</param>
+        /// <param name="variant">Fix variant</param>
+        /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
@@ -298,10 +284,8 @@ namespace Common.Models
             {
                 return new(ResultEnum.Ok, "Fix installed successfully!");
             }
-            else
-            {
-                return new(ResultEnum.Error, result.Message);
-            }
+
+            return new(ResultEnum.Error, result.Message);
         }
 
         /// <summary>
@@ -342,14 +326,13 @@ namespace Common.Models
             {
                 return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
             }
-            else if (result.IsSuccess)
+
+            if (result.IsSuccess)
             {
                 return new(ResultEnum.Ok, "Fix uninstalled successfully!");
             }
-            else
-            {
-                return new(ResultEnum.Error, result.Message);
-            }
+
+            return new(ResultEnum.Error, result.Message);
         }
 
         /// <summary>
@@ -357,6 +340,8 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to update</param>
+        /// <param name="variant">Fix variant</param>
+        /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {
@@ -402,14 +387,13 @@ namespace Common.Models
             {
                 return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
             }
-            else if (result.IsSuccess)
+
+            if (result.IsSuccess)
             {
                 return new(ResultEnum.Ok, "Fix updated successfully!");
             }
-            else
-            {
-                return new(ResultEnum.Error, result.Message);
-            }
+
+            return new(ResultEnum.Error, result.Message);
         }
     }
 }

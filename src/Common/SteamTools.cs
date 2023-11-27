@@ -21,7 +21,7 @@ namespace Common
         {
             var libraries = GetSteamLibraries();
 
-            List<string> result = [];
+            List<string> result = new(100);
 
             foreach (var lib in libraries)
             {
@@ -46,11 +46,11 @@ namespace Common
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 var path = (string?)Registry
-                .GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Valve\\Steam", "SteamPath", null);
+                .GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
 
                 if (path is null)
                 {
-                    Logger.Error($"Can't find Steam install folder");
+                    Logger.Error("Can't find Steam install folder");
                     return null;
                 }
 
@@ -80,16 +80,14 @@ namespace Common
         /// <summary>
         /// Get list of Steam libraries
         /// </summary>
-        /// <returns></returns>
+        /// <returns>List of paths to Steam libraries</returns>
         private static List<string> GetSteamLibraries()
         {
-            List<string> result = [];
-
             var steamInstallPath = SteamInstallPath;
 
             if (steamInstallPath is null)
             {
-                return result;
+                return [];
             }
 
             var libraryfolders = Path.Combine(steamInstallPath, "steamapps", "libraryfolders.vdf");
@@ -99,20 +97,24 @@ namespace Common
                 return [];
             }
 
+            List<string> result = [];
+
             var lines = File.ReadAllLines(libraryfolders);
 
             foreach (var line in lines)
             {
-                if (line.Contains("\"path\""))
+                if (!line.Contains("\"path\""))
                 {
-                    var l = line.Split('"');
+                    continue;
+                }
 
-                    var z = l.ElementAt(l.Length - 2).Trim();
+                var dirLine = line.Split('"');
 
-                    if (Directory.Exists(z))
-                    {
-                        result.Add(z);
-                    }
+                var dir = dirLine.ElementAt(dirLine.Length - 2).Trim();
+
+                if (Directory.Exists(dir))
+                {
+                    result.Add(dir);
                 }
             }
 

@@ -185,9 +185,6 @@
 
             <!--Advanced settings-->
             <Expander Header="Developer settings"
-                      Grid.Row="2"
-                      Grid.Column="0"
-                      Grid.ColumnSpan="3"
                       HorizontalAlignment="Stretch"
                       IsExpanded="True"
                       IsVisible="{Binding IsDeveloperMode}"

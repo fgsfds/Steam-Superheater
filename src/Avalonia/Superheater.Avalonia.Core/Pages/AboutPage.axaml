@@ -9,7 +9,7 @@
 
         <StackPanel Orientation="Vertical"
                     HorizontalAlignment="Stretch"
-                    Grid.Row="1">
+                    Grid.Row="0">
 
             <!--Version-->
             <Border Padding="10"
@@ -27,9 +27,9 @@
                         </StackPanel>
                     </StackPanel>
                     <ProgressBar Grid.Column="1" IsIndeterminate="True" IsVisible="{Binding IsInProgress}" Margin="30,0"/>
-                    <Button Content="{Binding CheckForUpdatesButtonText}" Padding="10" Margin="10,0" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}">Check for updates</Button>
+                    <Button Content="{Binding CheckForUpdatesButtonText, FallbackValue=Check for updates}" Padding="10" Margin="10,0" IsVisible="{Binding !IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding CheckForUpdatesCommand}"/>
                     <Button Padding="10" Margin="10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="2" HorizontalAlignment="Right" Command="{Binding DownloadAndInstallCommand}" Background="{DynamicResource SystemAccentColor}">Download and install</Button>
-                    <Button Padding="10" Margin="0,0,10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="3" HorizontalAlignment="Right" Button.Click="ShowChangelogClick">Changelog...</Button>
+                    <Button Padding="10" Margin="0,0,10,0" IsVisible="{Binding IsUpdateAvailable}" Grid.Column="3" HorizontalAlignment="Right" Click="ShowChangelogClick">Changelog...</Button>
                 </Grid>
             </Border>
 
@@ -37,7 +37,7 @@
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
-                    Button.Click="SteamClick">
+                    Click="SteamClick">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -51,7 +51,7 @@
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
-                    Button.Click="DiscordClick">
+                    Click="DiscordClick">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/discord.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -65,7 +65,7 @@
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
-                    Button.Click="GitHubClick">
+                    Click="GitHubClick">
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
@@ -79,7 +79,7 @@
             <Button Padding="10"
                     Margin="10"
                     HorizontalAlignment="Stretch"
-                    Button.Click="GitHubIssuesClick">
+                    Click="GitHubIssuesClick">
 
                 <StackPanel Orientation="Horizontal">
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />

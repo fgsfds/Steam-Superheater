@@ -1,7 +1,6 @@
 using Common.Config;
 using Common.DI;
 using Common.Entities;
-using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.FixTools;
@@ -41,7 +40,7 @@ namespace Tests
             Key = "HKEY_CURRENT_USER\\" + RegKey,
             ValueName = "{gamefolder}\\" + GameExe,
             NewValueData = "~ RUNASADMIN",
-            ValueType = RegistryValueType.String,
+            ValueType = RegistryValueTypeEnum.String,
             SupportedOSes = OSEnum.Windows
         };
 
@@ -100,7 +99,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
@@ -113,9 +112,9 @@ namespace Tests
             //Check installed.fix hash
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(Consts.InstalledFile))
+                await using (var stream = File.OpenRead(Consts.InstalledFile))
                 {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
+                    var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
                     Assert.Equal("6DE97926DE75282A6898D3E1B4A6AE01", hash);
                 }
@@ -160,12 +159,6 @@ namespace Tests
             //Preparations
             using (var key = Registry.CurrentUser.CreateSubKey(RegKey))
             {
-                if (key is null)
-                {
-                    Assert.Fail();
-                    return;
-                }
-
                 key.SetValue(GameDir + GameExe, OldValue);
             }
 
@@ -175,7 +168,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes(new List<BaseInstalledFixEntity>() { installedFix });
+            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
@@ -188,9 +181,9 @@ namespace Tests
             //Check installed.fix hash
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(Consts.InstalledFile))
+                await using (var stream = File.OpenRead(Consts.InstalledFile))
                 {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
+                    var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
                     Assert.Equal("DA6D032FA42FC15504537830007B45C4", hash);
                 }

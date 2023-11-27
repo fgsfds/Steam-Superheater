@@ -1,6 +1,5 @@
 ﻿using Common.Config;
 using Common.DI;
-using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,13 +15,12 @@ namespace Tests
             var container = BindingsManager.Instance;
             container.AddTransient<FixesProvider>();
             container.AddTransient<ConfigProvider>();
-            container.AddTransient<CommonProperties>();
 
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
-            var fixes = await fixesProvider.GetNewListAsync();
+            var fixes = await fixesProvider.GetFixesListAsync(false);
 
             //Looking for Alan Wake fixes list
-            var result = fixes.Any(x => x.GameId == 108710);
+            var result = fixes.Exists(static x => x.GameId == 108710);
             Assert.True(result);
         }
 
@@ -39,9 +37,8 @@ namespace Tests
             Assert.True(versionCompare == 0);
 
             var descriptionActual = firstRelease.Description;
-            var descriptionExpected = "First public release";
 
-            Assert.Equal(descriptionActual, descriptionExpected);
+            Assert.Equal("First public release", descriptionActual);
         }
     }
 }

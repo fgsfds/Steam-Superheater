@@ -1,11 +1,12 @@
 ﻿using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
 using Common.Helpers;
 using Microsoft.Win32;
 using System.Runtime.InteropServices;
 
 namespace Common.FixTools.RegistryFix
 {
-    public class RegistryFixUninstaller
+    public sealed class RegistryFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
@@ -32,24 +33,27 @@ namespace Common.FixTools.RegistryFix
                 {
                     return;
                 }
-                else if (installedFix.OriginalValue is null)
+
+                if (installedFix.OriginalValue is null)
                 {
                     key.DeleteValue(installedFix.ValueName);
                 }
                 else
                 {
-                    if (fix.ValueType is RegistryValueType.String)
+                    switch (fix.ValueType)
                     {
-                        key.SetValue(installedFix.ValueName, installedFix.OriginalValue);
-                    }
-                    else if (fix.ValueType is RegistryValueType.Dword)
-                    {
-                        var intValue = int.Parse(installedFix.OriginalValue);
-                        key.SetValue(installedFix.ValueName, intValue);
-                    }
-                    else
-                    {
-                        ThrowHelper.ArgumentException(string.Empty);
+                        case RegistryValueTypeEnum.String:
+                            key.SetValue(installedFix.ValueName, installedFix.OriginalValue);
+                            break;
+                        case RegistryValueTypeEnum.Dword:
+                        {
+                            var intValue = int.Parse(installedFix.OriginalValue);
+                            key.SetValue(installedFix.ValueName, intValue);
+                            break;
+                        }
+                        default:
+                            ThrowHelper.ArgumentException($"Unknown type: {fix.ValueType.GetType()}");
+                            break;
                     }
                 }
             }

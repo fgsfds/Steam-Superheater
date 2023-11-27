@@ -8,16 +8,16 @@
         /// <summary>
         /// Steam ID of the game
         /// </summary>
-        required public int GameId { get; init; }
+        public required int GameId { get; init; }
 
         /// <summary>
         /// Game title
         /// </summary>
-        required public string GameName { get; init; }
+        public required string GameName { get; init; }
 
         /// <summary>
         /// List of fixes
         /// </summary>
-        required public List<BaseFixEntity> Fixes { get; init; }
+        public required List<BaseFixEntity> Fixes { get; init; }
     }
 }

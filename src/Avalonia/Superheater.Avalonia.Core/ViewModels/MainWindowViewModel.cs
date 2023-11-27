@@ -8,15 +8,10 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class MainWindowViewModel : ObservableObject
     {
         private readonly ConfigEntity _config;
-        private readonly CommonProperties _properties;
 
-        public MainWindowViewModel(
-            ConfigProvider configProvider,
-            CommonProperties properties
-            )
+        public MainWindowViewModel(ConfigProvider configProvider)
         {
-            _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
-            _properties = properties ?? ThrowHelper.NullReferenceException<CommonProperties>(nameof(properties));
+            _config = configProvider.Config;
             _repositoryMessage = string.Empty;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
@@ -27,12 +22,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public bool IsSteamGameMode => _properties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         [ObservableProperty]
-        public PopupMessageViewModel? _popupDataContext;
+        private PopupMessageViewModel? _popupDataContext;
 
         [ObservableProperty]
         private string _repositoryMessage;
@@ -45,14 +40,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         private void UpdateRepoMessage()
         {
-            if (_config.UseLocalRepo)
-            {
-                RepositoryMessage = $"Local repo: {_config.LocalRepoPath}";
-            }
-            else
-            {
-                RepositoryMessage = $"Online repo: {_properties.CurrentFixesRepo}";
-            }
+            RepositoryMessage = _config.UseLocalRepo
+                ? $"Local repo: {_config.LocalRepoPath}"
+                : $"Online repo: {CommonProperties.CurrentFixesRepo}";
         }
 
         private void NotifyParameterChanged(string parameterName)

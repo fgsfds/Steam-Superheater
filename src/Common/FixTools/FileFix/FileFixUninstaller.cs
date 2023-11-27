@@ -4,13 +4,12 @@ using Common.Helpers;
 
 namespace Common.FixTools.FileFix
 {
-    public class FileFixUninstaller
+    public sealed class FileFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="installedFix">Installed fix entity</param>
         /// <param name="fix">Fix entity</param>
         public void UninstallFix(GameEntity game, FileFixEntity fix)
         {
@@ -78,6 +77,7 @@ namespace Common.FixTools.FileFix
         /// </summary>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="fix">Installed fix</param>
+        /// <param name="fixUrl">Url to fix file</param>
         private static void RestoreBackup(
             string gameDir,
             FileInstalledFixEntity fix,

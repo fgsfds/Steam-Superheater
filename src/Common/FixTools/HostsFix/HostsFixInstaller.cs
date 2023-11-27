@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.HostsFix
 {
-    public class HostsFixInstaller
+    public sealed class HostsFixInstaller
     {
         /// <summary>
         /// Install Hosts fix
@@ -51,7 +51,7 @@ namespace Common.FixTools.HostsFix
                 GameId = game.Id,
                 Guid = fix.Guid,
                 Version = fix.Version,
-                Entries = fix.Entries
+                Entries = [.. fix.Entries]
             };
         }
     }

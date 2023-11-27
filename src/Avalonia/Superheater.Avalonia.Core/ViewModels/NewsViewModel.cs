@@ -1,6 +1,5 @@
 ﻿using Common.Config;
 using Common.Entities;
-using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -17,8 +16,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             PopupMessageViewModel popupMessage
             )
         {
-            _config = configProvider.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(configProvider));
-            _popupMessage = popupMessage ?? ThrowHelper.ArgumentNullException<PopupMessageViewModel>(nameof(popupMessage)); ;
+            _config = configProvider.Config;
+            _popupMessage = popupMessage;
 
             NewsTabHeader = "News";
             _newsModel = newsModel;
@@ -26,7 +25,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
-        private static bool IsDeveloperMode => Properties.IsDeveloperMode;
         private readonly NewsModel _newsModel;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
@@ -36,6 +34,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         #region Binding Properties
 
         public ImmutableList<NewsEntity> NewsList => _newsModel.News;
+
+        private static bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public string NewsTabHeader { get; private set; }
 
@@ -48,7 +48,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        private async Task InitializeAsync() => await UpdateAsync();
+        private Task InitializeAsync() => UpdateAsync();
 
         /// <summary>
         /// Mark all news as read

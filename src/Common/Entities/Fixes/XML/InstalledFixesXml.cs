@@ -10,7 +10,7 @@ namespace Common.Entities.Fixes.XML
     {
         public InstalledFixesXml(List<BaseInstalledFixEntity> fixes) : this()
         {
-            InstalledFixes = fixes.ConvertAll(x => (object)x);
+            InstalledFixes = fixes.ConvertAll(static x => (object)x);
         }
 
         [XmlElement("FileInstalledFix", typeof(FileInstalledFixEntity))]

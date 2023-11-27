@@ -2,7 +2,6 @@
 using Common.FixTools.FileFix;
 using Common.FixTools.HostsFix;
 using Common.FixTools.RegistryFix;
-using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.DI
@@ -26,8 +25,6 @@ namespace Common.DI
             container.AddTransient<HostsFixUninstaller>();
 
             container.AddTransient<FixManager>();
-
-            container.AddSingleton<CommonProperties>();
         }
     }
 }

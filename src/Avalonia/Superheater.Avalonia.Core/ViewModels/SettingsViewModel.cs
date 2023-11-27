@@ -15,10 +15,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class SettingsViewModel : ObservableObject
     {
-        public SettingsViewModel(ConfigProvider config, MainWindowViewModel mwvm)
+        public SettingsViewModel(ConfigProvider config)
         {
             _config = config.Config;
-            _mwvm = mwvm;
 
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
@@ -32,7 +31,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly ConfigEntity _config;
-        private readonly MainWindowViewModel _mwvm;
 
         public bool IsLocalPathTextboxChanged;
 
@@ -126,7 +124,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
-        private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged is true;
+        private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged;
 
         [RelayCommand]
         private void SetDefaultTheme()
@@ -165,7 +163,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [RelayCommand]
-        private static void OpenConfigXML()
+        private void OpenConfigXML()
         {
             Process.Start(new ProcessStartInfo
             {

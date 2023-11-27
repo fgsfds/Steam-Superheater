@@ -8,17 +8,16 @@ namespace Common.Models
 {
     public sealed class NewsModel(
         ConfigProvider config,
-        NewsProvider news
+        NewsProvider _newsProvider
         )
     {
-        private readonly ConfigEntity _config = config?.Config ?? ThrowHelper.ArgumentNullException<ConfigEntity>(nameof(config));
-        private readonly NewsProvider _newsProvider = news ?? ThrowHelper.ArgumentNullException<NewsProvider>(nameof(news));
+        private readonly ConfigEntity _config = config.Config;
 
-        public int UnreadNewsCount => News?.Where(x => x.IsNewer)?.Count() ?? 0;
+        public int UnreadNewsCount => News.Count(static x => x.IsNewer);
 
         public bool HasUnreadNews => UnreadNewsCount > 0;
 
-        public ImmutableList<NewsEntity> News;
+        public ImmutableList<NewsEntity> News = [];
 
         /// <summary>
         /// Get list of news from online or local repo
@@ -29,12 +28,12 @@ namespace Common.Models
             {
                 News = await _newsProvider.GetNewsListAsync();
             }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
-            catch (Exception ex) when (ex is HttpRequestException || ex is TaskCanceledException)
+            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
                 Logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
@@ -78,7 +77,7 @@ namespace Common.Models
         /// </summary>
         private void UpdateConfigLastReadVersion()
         {
-            var lastReadDate = News.Max(x => x.Date);
+            var lastReadDate = News.Max(static x => x.Date);
 
             _config.LastReadNewsDate = lastReadDate;
         }

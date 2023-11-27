@@ -11,14 +11,9 @@ namespace Superheater.Avalonia.Core.UserControls
 
         private void VersionTextBoxChanging(object sender, TextChangingEventArgs e)
         {
-            if (VersionTextBox.Text == "")
-            {
-                VersionTextBox.Text = "0";
-            }
-            else
-            {
-                VersionTextBox.Text = ((TextBox)sender).Text;
-            }
+            VersionTextBox.Text = string.IsNullOrWhiteSpace(VersionTextBox.Text)
+                ? "0"
+                : VersionTextBox.Text;
         }
 
         private void VersionTextBoxChanged(object sender, TextChangedEventArgs e)

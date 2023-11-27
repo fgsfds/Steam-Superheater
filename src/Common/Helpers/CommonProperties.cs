@@ -3,35 +3,19 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
+using Common.DI;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Helpers
 {
-    public sealed class CommonProperties(ConfigProvider configProvider)
+    public static class CommonProperties
     {
-        private readonly ConfigEntity _config = configProvider.Config ?? ThrowHelper.NullReferenceException<ConfigEntity>(string.Empty);
-
-        /// <summary>
-        /// Path to local repository
-        /// </summary>
-        public string LocalRepoPath => _config.LocalRepoPath;
+        private static readonly ConfigEntity _config = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config;
 
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
-        public string CurrentFixesRepo
-        {
-            get
-            {
-                var branch = _config.UseTestRepoBranch ? "test/" : "master/";
-
-                return Consts.MainFixesRepo + "/raw/" + branch;
-            }
-        }
-
-        /// <summary>
-        /// Is Game Mode active on Steam Deck
-        /// </summary>
-        public bool IsInSteamDeckGameMode { get; } = CheckDeckGameMode();
+        public static string CurrentFixesRepo => Consts.MainFixesRepo + "/raw/" + (_config.UseTestRepoBranch ? "test/" : "master/");
 
         /// <summary>
         /// Current app version
@@ -43,48 +27,48 @@ namespace Common.Helpers
         /// </summary>
         public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
 
-        public static bool IsAdmin
-        {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
-                }
+        /// <summary>
+        /// Is app run with admin privileges
+        /// </summary>
+        public static bool IsAdmin => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+                                      new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
-                return false;
-            }
-        }
+        /// <summary>
+        /// Is Game Mode active on Steam Deck
+        /// </summary>
+        public static bool IsInSteamDeckGameMode => CheckDeckGameMode();
 
         /// <summary>
         /// Check if Game Mode is active on Steam Deck
         /// </summary>
         private static bool CheckDeckGameMode()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
-                ProcessStartInfo processInfo = new()
-                {
-                    FileName = "bash",
-                    Arguments = "-c \"echo $DESKTOP_SESSION\"",
-                    RedirectStandardOutput = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
+                return false;
+            }
 
-                var proc = Process.Start(processInfo) ?? ThrowHelper.Exception<Process>("Error starting process");
+            ProcessStartInfo processInfo = new()
+            {
+                FileName = "bash",
+                Arguments = "-c \"echo $DESKTOP_SESSION\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
-                var result = proc.StandardOutput.ReadToEnd();
+            var proc = Process.Start(processInfo) ?? ThrowHelper.Exception<Process>("Error starting process");
 
-                proc.WaitForExit();
+            var result = proc.StandardOutput.ReadToEnd();
 
-                Logger.Info($"DESKTOP_SESSION result {result}");
+            proc.WaitForExit();
 
-                if (result.StartsWith("gamescope-wayland"))
-                {
-                    Logger.Info("Steam game mode detected");
-                    return true;
-                }
+            Logger.Info($"DESKTOP_SESSION result {result}");
+
+            if (result.StartsWith("gamescope-wayland"))
+            {
+                Logger.Info("Steam game mode detected");
+                return true;
             }
 
             return false;

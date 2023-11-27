@@ -5,12 +5,13 @@ using System.Runtime.InteropServices;
 
 namespace Common.FixTools.HostsFix
 {
-    public class HostsFixUninstaller
+    public sealed class HostsFixUninstaller
     {
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="fix">Fix entity</param>
+        /// <param name="hostsFilePath">Path to hosts file</param>
         public void UninstallFix(HostsFixEntity fix, string hostsFilePath = Consts.Hosts)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))

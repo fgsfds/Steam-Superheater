@@ -14,7 +14,7 @@ using Superheater.Avalonia.Core.Windows;
 
 namespace Superheater.Avalonia.Core;
 
-public sealed partial class App : Application
+public sealed class App : Application
 {
     public override void Initialize()
     {
@@ -30,7 +30,7 @@ public sealed partial class App : Application
         CommonBindings.Load(container);
         ProvidersBindings.Load(container);
 
-        var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>()?.Config.Theme;
+        var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
 
         var themeEnum = theme switch
         {
