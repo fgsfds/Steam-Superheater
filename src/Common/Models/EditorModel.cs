@@ -10,6 +10,7 @@ using Common.Providers;
 using System.Collections.Immutable;
 using System.Xml.Serialization;
 using Common.Config;
+using System.Text;
 
 namespace Common.Models
 {
@@ -382,17 +383,38 @@ Thank you.");
         {
             var result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
 
+            StringBuilder sb = new("No Intro Fixes for: ");
+            var first = true;
+
             foreach (var fix in _fixesList)
             {
-                result += fix.GameName + Environment.NewLine;
+                var woNoIntro = fix.Fixes.Where(x => !x.Name.StartsWith("No Intro Fix"));
 
-                foreach (var f in fix.Fixes)
+                if (woNoIntro.Any())
                 {
-                    result += "- " + f.Name + Environment.NewLine;
+                    result += fix.GameName + Environment.NewLine;
+
+                    foreach (var f in woNoIntro)
+                    {
+                        result += "- " + f.Name + Environment.NewLine;
+                    }
+
+                    result += Environment.NewLine;
                 }
 
-                result += Environment.NewLine;
+                if (fix.Fixes.Exists(x => x.Name.StartsWith("No Intro Fix")))
+                {
+                    if (first)
+                    {
+                        sb.Append(fix.GameName);
+                        first = false;
+                    }
+
+                    sb.Append(", " + fix.GameName);
+                }
             }
+
+            result += sb;
 
             File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result);
         }
