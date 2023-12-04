@@ -9,7 +9,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <StartupObject>Superheater.Desktop.Program</StartupObject>
-    <PackageIcon></PackageIcon>
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 

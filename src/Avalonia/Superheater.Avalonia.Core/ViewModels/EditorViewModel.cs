@@ -17,7 +17,7 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class EditorViewModel : ObservableObject
+    internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
         public EditorViewModel(
             EditorModel editorModel,
@@ -58,7 +58,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
@@ -415,6 +415,13 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public HashSet<string> TagsComboboxList { get; }
+
+        public string SelectedTagFilter { get; set; }
+
+        public bool IsTagsComboboxVisible { get; }
+
+        public float ProgressBarValue { get; set; }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]

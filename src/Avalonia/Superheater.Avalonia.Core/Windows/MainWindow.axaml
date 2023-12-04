@@ -5,6 +5,8 @@
         xmlns:pages="clr-namespace:Superheater.Avalonia.Core.Pages"
         xmlns:controls="clr-namespace:Superheater.Avalonia.Core.UserControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+        x:DataType="vm:MainWindowViewModel"
         x:Class="Superheater.Avalonia.Core.Windows.MainWindow"
         Icon="/Assets/icon.ico"
         Title="Steam Superheater"
@@ -38,30 +40,30 @@
                        Text="{Binding RepositoryMessage}"/>
 
             <TabControl Grid.Row="1" Margin="5">
-                <TabItem Header="{Binding ElementName=MainPageTab, Path=DataContext.MainTabHeader}" Margin="10,0,10,10">
+                <TabItem Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
                 <TabItem Header="Editor" IsVisible="{Binding !IsSteamGameMode}" Margin="0,0,10,10">
                     <pages:EditorPage Margin="0" />
                 </TabItem>
-                <TabItem Header="{Binding ElementName=NewsPageTab, Path=DataContext.NewsTabHeader}" Margin="0,0,10,10">
+                <TabItem Header="{Binding ElementName=NewsPageTab, Path=((vm:NewsViewModel)DataContext).NewsTabHeader}" Margin="0,0,10,10">
                     <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
                 </TabItem>
                 <TabItem Header="Settings" Margin="0,0,10,10">
                     <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
                 </TabItem>
-                <TabItem Header="{Binding ElementName=AboutPageTab, Path=DataContext.AboutTabHeader}" Margin="0,0,0,10">
+                <TabItem Header="{Binding ElementName=AboutPageTab, Path=((vm:AboutViewModel)DataContext).AboutTabHeader}" Margin="0,0,0,10">
                     <pages:AboutPage Margin="0" x:Name="AboutPageTab"/>
                 </TabItem>
             </TabControl>
 
             <controls:PopupMessage
                 Grid.Row="0" Grid.RowSpan="2"
-                IsVisible="{Binding IsPopupMessageVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding (vm:PopupMessageViewModel)IsPopupMessageVisible, FallbackValue='False'}"/>
 
             <controls:PopupEditor
                 Grid.Row="0" Grid.RowSpan="2"
-                IsVisible="{Binding IsPopupEditorVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding (vm:PopupEditorViewModel)IsPopupEditorVisible, FallbackValue='False'}"/>
 
         </Grid>
 

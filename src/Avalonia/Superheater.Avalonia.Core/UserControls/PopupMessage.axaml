@@ -5,6 +5,8 @@
              mc:Ignorable="d"
              d:DesignWidth="1000"
              d:DesignHeight="800"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             x:DataType="vm:PopupMessageViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.PopupMessage">
 
     <Grid ColumnDefinitions="*,auto,*"

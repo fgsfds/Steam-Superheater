@@ -35,7 +35,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<NewsEntity> NewsList => _newsModel.News;
 
-        private static bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public string NewsTabHeader { get; private set; }
 

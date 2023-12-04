@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class PopupMessageViewModel : ObservableObject
+    public sealed partial class PopupMessageViewModel : ObservableObject
     {
         private Action? _okAction;
         private SemaphoreSlim? _semaphore;

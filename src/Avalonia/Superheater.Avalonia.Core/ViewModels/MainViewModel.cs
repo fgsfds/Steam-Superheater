@@ -16,7 +16,7 @@ using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class MainViewModel : ObservableObject
+    internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
         public MainViewModel(
             MainModel mainModel,
@@ -44,6 +44,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly PopupMessageViewModel _popupMessage;
 
         private readonly SemaphoreSlim _locker = new(1);
+
         private bool _lockButtons;
 
 
@@ -60,7 +61,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public ImmutableList<string> SelectedFixVariants => SelectedFix is not FileFixEntity fileFix ? [] : [.. fileFix.Variants];
 
 
-        public static bool IsTagsComboboxVisible => true;
+        public bool IsTagsComboboxVisible => true;
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
@@ -93,10 +94,10 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        private string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
+        public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
 
-        public float ProgressBarValue { get; private set; }
+        public float ProgressBarValue { get; set; }
 
 
         [ObservableProperty]

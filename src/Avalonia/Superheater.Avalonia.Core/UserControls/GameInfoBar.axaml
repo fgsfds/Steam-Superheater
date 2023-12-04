@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             x:DataType="vm:MainViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.GameInfoBar">
     <Grid>
         <Grid.ColumnDefinitions>

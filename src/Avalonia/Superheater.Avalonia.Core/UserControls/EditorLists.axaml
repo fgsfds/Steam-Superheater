@@ -4,6 +4,8 @@
              xmlns:ucs="clr-namespace:Superheater.Avalonia.Core.UserControls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             x:DataType="vm:EditorViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.EditorLists">
 
     <Grid>

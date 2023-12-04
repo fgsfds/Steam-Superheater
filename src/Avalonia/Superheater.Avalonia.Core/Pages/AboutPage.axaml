@@ -2,8 +2,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Superheater.Avalonia.Core.Pages.AboutPage">
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             x:DataType="vm:AboutViewModel"
+             x:Class="Superheater.Avalonia.Core.Pages.AboutPage"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
     <Grid ColumnDefinitions="*">
 

@@ -5,6 +5,8 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             x:DataType="vm:SettingsViewModel"
              x:Class="Superheater.Avalonia.Core.Pages.SettingsPage">
 
     <Grid RowDefinitions="auto,*,auto">
@@ -130,7 +132,7 @@
                                            VerticalAlignment="Center"
                                            Margin="5"/>
 
-                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.RemoveTagCommand}"
+                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:SettingsViewModel)DataContext).RemoveTagCommand}"
                                         CommandParameter="{Binding}"
                                         Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"

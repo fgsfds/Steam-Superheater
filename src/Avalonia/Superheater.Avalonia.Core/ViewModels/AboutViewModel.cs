@@ -7,14 +7,28 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class AboutViewModel(
-        AppUpdateInstaller _updateInstaller,
-        PopupMessageViewModel _popupMessage
-        ) : ObservableObject
+    public sealed partial class AboutViewModel : ObservableObject
     {
+        public AboutViewModel(
+            AppUpdateInstaller updateInstaller,
+            PopupMessageViewModel popupMessage
+            )
+        {
+            _updateInstaller = updateInstaller;
+            _popupMessage = popupMessage;
+        }
+
+        public AboutViewModel()
+        {
+            
+        }
+
+        private AppUpdateInstaller _updateInstaller;
+        private PopupMessageViewModel _popupMessage;
+
         #region Binding Properties
 
-        private static Version CurrentVersion => CommonProperties.CurrentVersion;
+        public Version CurrentVersion => CommonProperties.CurrentVersion;
 
         public string AboutTabHeader { get; private set; } = "About";
 

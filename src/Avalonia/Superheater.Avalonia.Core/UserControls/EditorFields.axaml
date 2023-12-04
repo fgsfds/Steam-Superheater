@@ -3,7 +3,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:ff="clr-namespace:Common.Entities.Fixes.FileFix;assembly=Superheater.Common"
+             xmlns:rf="clr-namespace:Common.Entities.Fixes.RegistryFix;assembly=Superheater.Common"
+             x:DataType="vm:EditorViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.EditorFields">
+
     <Grid IsVisible="{Binding IsEditingAvailable}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"></RowDefinition>
@@ -118,7 +123,7 @@
         </Grid>
 
         <!--Install folder-->
-        <TextBox Text="{Binding SelectedFix.InstallFolder, Mode=TwoWay}"
+        <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).InstallFolder, Mode=TwoWay}"
                  Watermark="Unpack archive to"
                  Grid.Row="5"
                  Margin="0,3"
@@ -145,7 +150,7 @@
         </Grid>
 
         <!--Config-->
-        <TextBox Text="{Binding SelectedFix.ConfigFile, Mode=TwoWay}"
+        <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).ConfigFile, Mode=TwoWay}"
                  Watermark="Config file"
                  Grid.Row="7"
                  Margin="0,3"
@@ -192,7 +197,7 @@
         </Grid>
 
         <!--Run after install-->
-        <TextBox Text="{Binding SelectedFix.RunAfterInstall, Mode=TwoWay}"
+        <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).RunAfterInstall, Mode=TwoWay}"
                  Watermark="Run after install"
                  Grid.Row="10"
                  Margin="0,3"
@@ -206,21 +211,21 @@
                  IsVisible="{Binding IsFileFixType}"/>
 
         <!--Reg Key-->
-        <TextBox Text="{Binding SelectedFix.Key, Mode=TwoWay}"
+        <TextBox Text="{Binding ((rf:RegistryFixEntity)SelectedFix).Key, Mode=TwoWay}"
                  Watermark="Registry Key"
                  Grid.Row="12"
                  Margin="0,3"
                  IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg Value Name-->
-        <TextBox Text="{Binding SelectedFix.ValueName, Mode=TwoWay}"
+        <TextBox Text="{Binding ((rf:RegistryFixEntity)SelectedFix).ValueName, Mode=TwoWay}"
                  Watermark="Registry Value Name"
                  Grid.Row="13"
                  Margin="0,3"
                  IsVisible="{Binding IsRegistryFixType}"/>
 
         <!--Reg New Value-->
-        <TextBox Text="{Binding SelectedFix.NewValueData, Mode=TwoWay}"
+        <TextBox Text="{Binding ((rf:RegistryFixEntity)SelectedFix).NewValueData, Mode=TwoWay}"
                  Watermark="Registry New Value"
                  Grid.Row="14"
                  Margin="0,3"

@@ -8,5 +8,6 @@
     <ImplicitUsings>true</ImplicitUsings>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <UseArtifactsOutput>true</UseArtifactsOutput>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 </Project>
