@@ -2,6 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Superheater.Avalonia.Core.Pages.NewsPage">
 
@@ -37,8 +38,15 @@
                                     </Style>
                                 </Expander.Styles>
 
-                                <TextBlock Text="{Binding Content}"
-                                           FontSize="16"/>
+                                <md:MarkdownScrollViewer Markdown="{Binding Content}"
+                                                         Grid.Row="0">
+
+                                    <md:MarkdownScrollViewer.Styles>
+                                        <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+                                    </md:MarkdownScrollViewer.Styles>
+
+                                </md:MarkdownScrollViewer>
+
                             </Expander>
 
                             <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
@@ -46,8 +54,15 @@
                                       Margin="2"
                                       IsVisible="{Binding !IsNewer}">
 
-                                <TextBlock Text="{Binding Content}"
-                                           FontSize="16"/>
+                                <md:MarkdownScrollViewer Markdown="{Binding Content}"
+                                                         Grid.Row="0">
+
+                                    <md:MarkdownScrollViewer.Styles>
+                                        <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+                                    </md:MarkdownScrollViewer.Styles>
+
+                                </md:MarkdownScrollViewer>
+
                             </Expander>
 
                         </StackPanel>
