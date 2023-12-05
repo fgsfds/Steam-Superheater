@@ -32,21 +32,21 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private readonly ConfigEntity _config;
 
-        public bool IsLocalPathTextboxChanged;
-
-
         #region Binding Properties
 
         public ImmutableList<string> HiddenTagsList => [.. _config.HiddenTags];
 
-
-        public static bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
 
         public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
 
         public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
+
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SaveLocalRepoPathCommand))]
+        private bool _isLocalPathTextboxChanged;
 
         [ObservableProperty]
         private bool _deleteArchivesCheckbox;
@@ -99,15 +99,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (value.Equals(configValue))
             {
                 IsLocalPathTextboxChanged = false;
-                OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             }
             else
             {
                 IsLocalPathTextboxChanged = true;
-                OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
             }
-
-            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
         #endregion Binding Properties
@@ -121,8 +117,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config.LocalRepoPath = PathToLocalRepoTextBox;
 
             IsLocalPathTextboxChanged = false;
-            OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
-            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
         private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged;
 
@@ -190,11 +184,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             PathToLocalRepoTextBox = files[0].Path.LocalPath;
             _config.LocalRepoPath = PathToLocalRepoTextBox;
-            OnPropertyChanged(nameof(PathToLocalRepoTextBox));
 
             IsLocalPathTextboxChanged = false;
-            OnPropertyChanged(nameof(IsLocalPathTextboxChanged));
-            SaveLocalRepoPathCommand.NotifyCanExecuteChanged();
         }
 
 

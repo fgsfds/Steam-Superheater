@@ -7,36 +7,28 @@ using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    public sealed partial class AboutViewModel : ObservableObject
+    public sealed partial class AboutViewModel(
+        AppUpdateInstaller _updateInstaller,
+        PopupMessageViewModel _popupMessage
+        ) : ObservableObject
     {
-        public AboutViewModel(
-            AppUpdateInstaller updateInstaller,
-            PopupMessageViewModel popupMessage
-            )
-        {
-            _updateInstaller = updateInstaller;
-            _popupMessage = popupMessage;
-        }
-
-        public AboutViewModel()
-        {
-            
-        }
-
-        private AppUpdateInstaller _updateInstaller;
-        private PopupMessageViewModel _popupMessage;
-
         #region Binding Properties
 
         public Version CurrentVersion => CommonProperties.CurrentVersion;
 
-        public string AboutTabHeader { get; private set; } = "About";
+        [ObservableProperty]
+        private string _aboutTabHeader = "About";
 
-        public string CheckForUpdatesButtonText { get; private set; } = string.Empty;
+        [ObservableProperty]
+        private string _checkForUpdatesButtonText = string.Empty;
 
-        public bool IsUpdateAvailable { get; private set; }
+        [ObservableProperty]
+        private bool _isUpdateAvailable;
 
-        public bool IsInProgress { get; private set; }
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CheckForUpdatesCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DownloadAndInstallCommand))]
+        private bool _isInProgress;
 
         #endregion Binding Properties
 
@@ -56,15 +48,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task CheckForUpdatesAsync()
         {
             IsInProgress = true;
-            OnPropertyChanged(nameof(IsInProgress));
-            CheckForUpdatesCommand.NotifyCanExecuteChanged();
 
             var updates = false;
 
             try
             {
                 CheckForUpdatesButtonText = "Checking...";
-                OnPropertyChanged(nameof(CheckForUpdatesButtonText));
                 updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
             }
             catch (Exception ex)
@@ -87,20 +76,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (updates)
             {
                 IsUpdateAvailable = true;
-                OnPropertyChanged(nameof(IsUpdateAvailable));
-                DownloadAndInstallCommand.NotifyCanExecuteChanged();
 
                 UpdateHeader();
             }
             else
             {
                 CheckForUpdatesButtonText = "Already up-to-date";
-                OnPropertyChanged(nameof(CheckForUpdatesButtonText));
             }
 
             IsInProgress = false;
-            OnPropertyChanged(nameof(IsInProgress));
-            CheckForUpdatesCommand.NotifyCanExecuteChanged();
         }
         private bool CheckForUpdatesCanExecute() => IsInProgress is false;
 
@@ -113,8 +97,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 IsInProgress = true;
-                OnPropertyChanged(nameof(IsInProgress));
-                DownloadAndInstallCommand.NotifyCanExecuteChanged();
 
                 await _updateInstaller.DownloadAndUnpackLatestRelease();
 
@@ -148,8 +130,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             AboutTabHeader = "About" + (IsUpdateAvailable
                 ? " (Update available)"
                 : string.Empty);
-
-            OnPropertyChanged(nameof(AboutTabHeader));
         }
     }
 }

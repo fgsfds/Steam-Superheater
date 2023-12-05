@@ -16,11 +16,9 @@ namespace Superheater.Avalonia.Core.ViewModels
             PopupMessageViewModel popupMessage
             )
         {
+            _newsModel = newsModel;
             _config = configProvider.Config;
             _popupMessage = popupMessage;
-
-            NewsTabHeader = "News";
-            _newsModel = newsModel;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
@@ -37,7 +35,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
-        public string NewsTabHeader { get; private set; }
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(MarkAllAsReadCommand))]
+        private string _newsTabHeader = "News";
 
         #endregion Binding Properties
 
@@ -72,7 +72,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             OnPropertyChanged(nameof(NewsList));
             UpdateHeader();
-            MarkAllAsReadCommand.NotifyCanExecuteChanged();
         }
         private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
 
@@ -85,6 +84,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task UpdateAsync()
         {
             await _locker.WaitAsync();
+
             var result = await _newsModel.UpdateNewsListAsync();
 
             if (!result.IsSuccess)
@@ -100,7 +100,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             OnPropertyChanged(nameof(NewsList));
             UpdateHeader();
-            MarkAllAsReadCommand.NotifyCanExecuteChanged();
 
             _locker.Release();
         }
@@ -113,8 +112,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews
                 ? $" ({_newsModel.UnreadNewsCount} unread)"
                 : string.Empty);
-
-            OnPropertyChanged(nameof(NewsTabHeader));
         }
 
         private async void NotifyParameterChanged(string parameterName)

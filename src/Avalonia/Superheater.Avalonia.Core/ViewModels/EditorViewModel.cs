@@ -37,12 +37,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly EditorModel _editorModel;
-
         private readonly ConfigEntity _config;
-
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
-
         private readonly SemaphoreSlim _locker = new(1);
 
 
@@ -58,9 +55,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
+
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
+
 
         public string SelectedFixName
         {
@@ -105,7 +104,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.Tags = [.. value.Split(';').Select(static x => x.Trim())];
             }
         }
-
 
         public string SelectedFixVariants
         {
@@ -415,13 +413,14 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public HashSet<string> TagsComboboxList { get; }
-
-        public string SelectedTagFilter { get; set; }
-
-        public bool IsTagsComboboxVisible { get; }
-
         public float ProgressBarValue { get; set; }
+
+        #region Not Implemented
+        public HashSet<string> TagsComboboxList => [];
+        public string SelectedTagFilter { get; set; } = string.Empty;
+        public bool IsTagsComboboxVisible => false;
+        #endregion Not Implemented
+
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]

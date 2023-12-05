@@ -28,8 +28,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             _config = config.Config;
             _popupMessage = popupMessage;
 
-            MainTabHeader = "Main";
-            LaunchGameButtonText = "Launch game...";
             _searchBarText = string.Empty;
 
             SelectedTagFilter = TagsComboboxList.First();
@@ -38,13 +36,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly MainModel _mainModel;
-
         private readonly ConfigEntity _config;
-
         private readonly PopupMessageViewModel _popupMessage;
-
         private readonly SemaphoreSlim _locker = new(1);
-
         private bool _lockButtons;
 
 
@@ -71,14 +65,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool SelectedFixHasTags => !SelectedFixTags.IsEmpty;
 
+        public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !CommonProperties.IsAdmin;
 
-        public string MainTabHeader { get; private set; }
-
-        public string LaunchGameButtonText { get; private set; }
 
         public string SelectedFixRequirements => GetRequirementsString();
 
-        public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !CommonProperties.IsAdmin;
+        public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
         public string InstallButtonText
         {
@@ -94,11 +86,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
-
 
         public float ProgressBarValue { get; set; }
 
+
+        [ObservableProperty]
+        private string _mainTabHeader = "Main";
+
+        [ObservableProperty]
+        private string _launchGameButtonText = "Launch game...";
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
@@ -358,8 +354,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             LaunchGameButtonText = SelectedGame.IsGameInstalled
                 ? "Launch game..."
                 : "Install game...";
-
-            OnPropertyChanged(nameof(LaunchGameButtonText));
+ 
             return true;
         }
 
@@ -521,8 +516,6 @@ Do you still want to install the fix?",
                     ? "update"
                     : "updates")})"
                 : string.Empty);
-
-            OnPropertyChanged(nameof(MainTabHeader));
         }
 
         /// <summary>
