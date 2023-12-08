@@ -16,8 +16,6 @@ internal static class Program
     {
         if (args.Contains("-dev"))
         {
-            Logger.Info("Started in developer mode");
-
             Properties.IsDeveloperMode = true;
         }
 
@@ -25,8 +23,6 @@ internal static class Program
 
         if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
         {
-            Logger.Info("Update file detected");
-
             AppUpdateInstaller.InstallUpdate();
         }
         else
