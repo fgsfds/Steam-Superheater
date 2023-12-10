@@ -1,7 +1,9 @@
 ﻿using Common.Config;
 using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Xml.Serialization;
 
 namespace Common.Providers
@@ -17,41 +19,39 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
-            //Logger.Info("Requesting news");
+            Logger.Info("Requesting news");
 
-            //string? news;
+            string? news;
 
-            //if (_config.UseLocalRepo)
-            //{
-            //    var file = Path.Combine(_config.LocalRepoPath, Consts.NewsFile);
+            if (_config.UseLocalRepo)
+            {
+                var file = Path.Combine(_config.LocalRepoPath, Consts.NewsFile);
 
-            //    if (!File.Exists(file))
-            //    {
-            //        ThrowHelper.FileNotFoundException(file);
-            //    }
+                if (!File.Exists(file))
+                {
+                    ThrowHelper.FileNotFoundException(file);
+                }
 
-            //    news = await File.ReadAllTextAsync(file);
-            //}
-            //else
-            //{
-            //    news = await DownloadNewsXMLAsync();
-            //}
+                news = await File.ReadAllTextAsync(file);
+            }
+            else
+            {
+                news = await DownloadNewsXMLAsync();
+            }
 
-            //XmlSerializer xmlSerializer = new(typeof(List<NewsEntity>));
+            var list = JsonSerializer.Deserialize(
+                news,
+                NewsEntityContext.Default.ListNewsEntity
+                );
 
-            //using (StringReader fs = new(news))
-            //{
-            //    if (xmlSerializer.Deserialize(fs) is not List<NewsEntity> list)
-            //    {
-            //        Logger.Error("Error while deserializing news...");
+            if (list is null)
+            {
+                Logger.Error("Error while deserializing news...");
 
-            //        return [];
-            //    }
+                return [];
+            }
 
-            //    return [.. list.OrderByDescending(static x => x.Date)];
-            //}
-
-            return [];
+            return [.. list];
         }
 
         /// <summary>

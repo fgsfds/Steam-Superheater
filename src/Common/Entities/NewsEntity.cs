@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Text.Json.Serialization;
+using System.Xml.Serialization;
 
 namespace Common.Entities
 {
@@ -21,6 +22,11 @@ namespace Common.Entities
         /// Is newer than the last read version
         /// </summary>
         [XmlIgnore]
+        [JsonIgnore]
         public bool IsNewer { get; set; }
     }
+
+    [JsonSourceGenerationOptions(WriteIndented = true)]
+    [JsonSerializable(typeof(List<NewsEntity>))]
+    internal sealed partial class NewsEntityContext : JsonSerializerContext { }
 }

@@ -20,7 +20,7 @@ namespace Common.Providers
 
                 var a = await client.GetStringAsync(Consts.GitHubReleases);
 
-                var releases = JsonSerializer.Deserialize<List<GitHubRelease>>(a)
+                var releases = JsonSerializer.Deserialize(a, GitHubReleaseContext.Default.ListGitHubRelease)
                     ?? ThrowHelper.Exception<List<GitHubRelease>>("Error while deserializing GitHub releases");
 
                 releases = [.. releases.Where(static x => x.draft is false && x.prerelease is false)];

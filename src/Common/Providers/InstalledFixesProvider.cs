@@ -1,10 +1,8 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
-using System.Xml.Serialization;
 
 namespace Common.Providers
 {

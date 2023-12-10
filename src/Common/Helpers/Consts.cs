@@ -8,6 +8,8 @@
 
         public const string InstalledFile = "installed.json";
 
+        internal const string NewsFile = "news.json";
+
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
@@ -17,8 +19,6 @@
         public const string UpdateFile = ".update";
 
         public const string UpdateFolder = "update";
-
-        internal const string NewsFile = "news.xml";
 
         internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
 
