@@ -121,7 +121,7 @@ namespace Common.Providers
         {
             using HttpClient client = new();
 
-            foreach (var fix in fixesList.SelectMany(x => x.Fixes))
+            foreach (var fix in fixesList.SelectMany(static x => x.Fixes))
             {
                 if (fix is FileFixEntity fileFix)
                 {

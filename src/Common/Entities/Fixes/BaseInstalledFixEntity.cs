@@ -26,10 +26,7 @@ namespace Common.Entities.Fixes
         public required int Version { get; init; }
     }
 
-    [JsonSourceGenerationOptions(
-        WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-        )]
+    [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
     internal sealed partial class InstalledFixesListContext : JsonSerializerContext { }
 }
