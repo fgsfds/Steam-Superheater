@@ -59,11 +59,13 @@
 
             <controls:PopupMessage
                 Grid.Row="0" Grid.RowSpan="2"
-                IsVisible="{Binding (vm:PopupMessageViewModel)IsPopupMessageVisible, FallbackValue='False'}"/>
+                x:Name="PopupMessage"
+                IsVisible="{Binding ElementName=PopupMessage, Path=((vm:PopupMessageViewModel)DataContext).IsPopupMessageVisible, FallbackValue='False'}"/>
 
             <controls:PopupEditor
                 Grid.Row="0" Grid.RowSpan="2"
-                IsVisible="{Binding (vm:PopupEditorViewModel)IsPopupEditorVisible, FallbackValue='False'}"/>
+                x:Name="PopupEditor"
+                IsVisible="{Binding ElementName=PopupEditor, Path=((vm:PopupEditorViewModel)DataContext).IsPopupEditorVisible, FallbackValue='False'}"/>
 
         </Grid>
 
