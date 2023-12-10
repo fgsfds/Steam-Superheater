@@ -7,7 +7,6 @@ using Common.Entities.Fixes.TextFix;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
-using System.Xml.Serialization;
 using Common.Config;
 using System.Text;
 

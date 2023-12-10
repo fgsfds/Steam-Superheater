@@ -52,46 +52,16 @@ namespace Common.Providers
         {
             Logger.Info("Saving fixes list");
 
-            using HttpClient client = new();
+            var fileFixResult = await PrepareFixes(fixesList);
 
-            foreach (var fixes in fixesList)
+            if (fileFixResult != ResultEnum.Ok)
             {
-                foreach (var fix in fixes.Fixes)
-                {
-                    if (fix.Tags is not null)
-                    {
-                        fix.Tags = [.. fix.Tags.Where(static x => !string.IsNullOrWhiteSpace(x))];
-
-                        if (fix.Tags.Count == 0)
-                        {
-                            fix.Tags = null;
-                        }
-                        else
-                        {
-                            List<string> tags = [.. fix.Tags
-                                .Where(static x => !string.IsNullOrWhiteSpace(x))
-                                .OrderBy(static x => x)];
-
-                            fix.Tags = tags;
-                        }
-                    }
-
-                    if (fix.Dependencies is not null && fix.Dependencies.Count == 0)
-                    {
-                        fix.Dependencies = null;
-                    }
-
-                    var fileFixResult = await PrepareFileFix(client, fix);
-                    if (fileFixResult is not null)
-                    {
-                        return (Result)fileFixResult;
-                    }
-                }
+                return fileFixResult;
             }
 
             try
             {
-                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, "fixes.json"), FileMode.Create);
+                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
 
                 JsonSerializer.Serialize(
                     fs,
@@ -99,10 +69,9 @@ namespace Common.Providers
                     FixesListContext.Default.ListFixesList
                     );
             }
-            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+            catch (Exception ex)
             {
-                Logger.Error(ex.Message);
-                return new Result(ResultEnum.NotFound, ex.Message);
+                return new(ResultEnum.Error, ex.Message);
             }
 
             Logger.Info("Fixes list saved successfully!");
@@ -148,78 +117,38 @@ namespace Common.Providers
             return GetCachedListAsync();
         }
 
-        private async Task<Result?> PrepareFileFix(HttpClient client, BaseFixEntity fix)
+        private async Task<Result> PrepareFixes(List<FixesList> fixesList)
         {
-            if (fix is FileFixEntity fileFix)
+            using HttpClient client = new();
+
+            foreach (var fix in fixesList.SelectMany(x => x.Fixes))
             {
-                if (!string.IsNullOrEmpty(fileFix.Url))
+                if (fix is FileFixEntity fileFix)
                 {
-                    if (!fileFix.Url.StartsWith("http"))
+                    if (!string.IsNullOrEmpty(fileFix.Url))
                     {
-                        fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
-                    }
-
-                    if (fileFix.MD5 is null)
-                    {
-                        try
+                        if (!fileFix.Url.StartsWith("http"))
                         {
-                            fileFix.MD5 = await GetMD5(client, fileFix);
+                            fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
                         }
-                        catch (Exception ex)
+
+                        if (fileFix.MD5 is null)
                         {
-                            Logger.Error(ex.Message);
-                            return new Result(ResultEnum.ConnectionError, ex.Message);
+                            try
+                            {
+                                fileFix.MD5 = await GetMD5(client, fileFix);
+                            }
+                            catch (Exception ex)
+                            {
+                                Logger.Error(ex.Message);
+                                return new Result(ResultEnum.ConnectionError, ex.Message);
+                            }
                         }
                     }
-                }
-
-                if (fileFix.FilesToDelete is not null)
-                {
-                    fileFix.FilesToDelete = [.. fileFix.FilesToDelete.Where(static x => !string.IsNullOrWhiteSpace(x))];
-
-                    if (fileFix.FilesToDelete.Count == 0)
-                    {
-                        fileFix.FilesToDelete = null;
-                    }
-                }
-
-                if (fileFix.FilesToBackup is not null)
-                {
-                    fileFix.FilesToBackup = [.. fileFix.FilesToBackup.Where(static x => !string.IsNullOrWhiteSpace(x))];
-
-                    if (fileFix.FilesToBackup.Count == 0)
-                    {
-                        fileFix.FilesToBackup = null;
-                    }
-                }
-
-                if (fileFix.Variants is not null)
-                {
-                    fileFix.Variants = [.. fileFix.Variants.Where(static x => !string.IsNullOrWhiteSpace(x))];
-
-                    if (fileFix.Variants.Count == 0)
-                    {
-                        fileFix.Variants = null;
-                    }
-                }
-
-                if (fileFix.Url is not null && string.IsNullOrEmpty(fileFix.Url))
-                {
-                    fileFix.Url = null;
-                }
-
-                if (fileFix.Description is not null && string.IsNullOrEmpty(fileFix.Description))
-                {
-                    fileFix.Description = null;
-                }
-
-                if (fileFix.InstallFolder is not null && string.IsNullOrEmpty(fileFix.InstallFolder))
-                {
-                    fileFix.InstallFolder = null;
                 }
             }
 
-            return null;
+            return new Result(ResultEnum.Ok, string.Empty);
         }
 
         /// <summary>
