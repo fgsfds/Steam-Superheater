@@ -52,7 +52,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
 
-        public ImmutableList<string> SelectedFixVariants => SelectedFix is not FileFixEntity fileFix ? [] : [.. fileFix.Variants];
+        public ImmutableList<string> SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : [];
 
 
         public bool IsTagsComboboxVisible => true;
