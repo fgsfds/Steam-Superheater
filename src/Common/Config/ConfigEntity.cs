@@ -4,7 +4,7 @@ namespace Common.Config
 {
     public sealed class ConfigEntity
     {
-        internal ConfigEntity()
+        public ConfigEntity()
         {
             _deleteZipsAfterInstall = true;
             _openConfigAfterInstall = false;
