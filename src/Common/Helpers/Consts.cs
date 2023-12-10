@@ -2,9 +2,11 @@
 {
     public static class Consts
     {
-        public const string ConfigFile = "config.xml";
+        public const string ConfigFile = "config.json";
 
-        public const string FixesFile = "fixes_v3.xml";
+        public const string FixesFile = "fixes.json";
+
+        public const string InstalledFile = "installed.json";
 
         public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
 
@@ -15,8 +17,6 @@
         public const string UpdateFile = ".update";
 
         public const string UpdateFolder = "update";
-
-        public const string InstalledFile = "installed.xml";
 
         internal const string NewsFile = "news.xml";
 

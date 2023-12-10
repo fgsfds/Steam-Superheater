@@ -1,5 +1,13 @@
-﻿namespace Common.Entities.Fixes
+﻿using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
+using Common.Entities.Fixes.RegistryFix;
+using System.Text.Json.Serialization;
+
+namespace Common.Entities.Fixes
 {
+    [JsonDerivedType(typeof(FileInstalledFixEntity), typeDiscriminator: "FileFix")]
+    [JsonDerivedType(typeof(HostsInstalledFixEntity), typeDiscriminator: "HostsFix")]
+    [JsonDerivedType(typeof(RegistryInstalledFixEntity), typeDiscriminator: "RegistryFix")]
     public abstract class BaseInstalledFixEntity
     {
         /// <summary>
@@ -17,4 +25,11 @@
         /// </summary>
         public required int Version { get; init; }
     }
+
+    [JsonSourceGenerationOptions(
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        )]
+    [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
+    internal sealed partial class InstalledFixesListContext : JsonSerializerContext { }
 }

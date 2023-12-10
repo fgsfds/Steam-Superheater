@@ -3,7 +3,7 @@ using Avalonia.Interactivity;
 
 namespace Superheater.Avalonia.Core.Windows
 {
-    public partial class MessageBox : Window
+    public sealed partial class MessageBox : Window
     {
         public MessageBox()
         {

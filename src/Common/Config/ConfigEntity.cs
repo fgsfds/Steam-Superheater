@@ -1,4 +1,5 @@
 ﻿using Common.Enums;
+using System.Text.Json.Serialization;
 
 namespace Common.Config
 {
@@ -174,4 +175,12 @@ namespace Common.Config
             }
         }
     }
+
+    [JsonSourceGenerationOptions(
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Converters = [typeof(JsonStringEnumConverter<ThemeEnum>)]
+        )]
+    [JsonSerializable(typeof(ConfigEntity))]
+    internal sealed partial class ConfigEntityContext : JsonSerializerContext { }
 }

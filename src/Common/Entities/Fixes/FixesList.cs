@@ -1,4 +1,7 @@
-﻿namespace Common.Entities.Fixes
+﻿using Common.Enums;
+using System.Text.Json.Serialization;
+
+namespace Common.Entities.Fixes
 {
     /// <summary>
     /// Entity containing game information and a list of fixes for it
@@ -20,4 +23,12 @@
         /// </summary>
         public required List<BaseFixEntity> Fixes { get; init; }
     }
+
+    [JsonSourceGenerationOptions(
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        Converters = [typeof(JsonStringEnumConverter<OSEnum>), typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)]
+        )]
+    [JsonSerializable(typeof(List<FixesList>))]
+    internal sealed partial class FixesListContext : JsonSerializerContext { }
 }

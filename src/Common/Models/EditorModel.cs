@@ -4,7 +4,6 @@ using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
-using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
@@ -207,58 +206,52 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            FixesListXml newFix = new()
-            {
-                GameId = fixesList.GameId,
-                GameName = fixesList.GameName,
-                Fixes = [fix]
-            };
+            //            string? fileToUpload = null;
 
-            string? fileToUpload = null;
+            //            if (fixesList.Fixes[0] is FileFixEntity fileFix)
+            //            {
+            //                var url = fileFix.Url;
 
-            if (newFix.Fixes[0] is FileFixEntity fileFix)
-            {
-                var url = fileFix.Url;
+            //                if (!string.IsNullOrEmpty(url) &&
+            //                    !url.StartsWith("http"))
+            //                {
+            //                    fileToUpload = fileFix.Url;
+            //                    fileFix.Url = Path.GetFileName(fileToUpload);
+            //                }
+            //            }
 
-                if (!string.IsNullOrEmpty(url) &&
-                    !url.StartsWith("http"))
-                {
-                    fileToUpload = fileFix.Url;
-                    fileFix.Url = Path.GetFileName(fileToUpload);
-                }
-            }
+            //            XmlSerializer xmlSerializer = new(typeof(FixesList));
 
-            XmlSerializer xmlSerializer = new(typeof(FixesListXml));
+            //            List<string> filesToUpload = [];
 
-            List<string> filesToUpload = [];
+            //            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
 
-            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
+            //            using (FileStream fs = new(fixFilePath, FileMode.Create))
+            //            {
+            //                xmlSerializer.Serialize(fs, fixesList);
+            //            }
 
-            using (FileStream fs = new(fixFilePath, FileMode.Create))
-            {
-                xmlSerializer.Serialize(fs, newFix);
-            }
+            //            filesToUpload.Add(fixFilePath);
 
-            filesToUpload.Add(fixFilePath);
+            //            if (fileToUpload is not null)
+            //            {
+            //                filesToUpload.Add(fileToUpload);
+            //            }
 
-            if (fileToUpload is not null)
-            {
-                filesToUpload.Add(fileToUpload);
-            }
+            //            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
 
-            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
+            //            File.Delete(fixFilePath);
 
-            File.Delete(fixFilePath);
+            //            if (result == ResultEnum.Ok)
+            //            {
+            //                return new(ResultEnum.Ok, @"Fix successfully uploaded.
+            //It will be added to the database after developer's review.
 
-            if (result == ResultEnum.Ok)
-            {
-                return new(ResultEnum.Ok, @"Fix successfully uploaded.
-It will be added to the database after developer's review.
+            //Thank you.");
+            //            }
 
-Thank you.");
-            }
-
-            return new(ResultEnum.Error, result.Message);
+            //            return new(ResultEnum.Error, result.Message);
+            return new(ResultEnum.Error, "123");
         }
 
         /// <summary>

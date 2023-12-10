@@ -1,14 +1,10 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.TextFix;
-using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
-using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace Common.Providers
 {
@@ -58,8 +54,6 @@ namespace Common.Providers
 
             using HttpClient client = new();
 
-            List<FixesListXml> result = new(fixesList.Count);
-
             foreach (var fixes in fixesList)
             {
                 foreach (var fix in fixes.Fixes)
@@ -93,21 +87,17 @@ namespace Common.Providers
                         return (Result)fileFixResult;
                     }
                 }
-
-                result.Add(new FixesListXml(fixes));
-            }
-
-            XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
-
-            if (!Directory.Exists(_config.LocalRepoPath))
-            {
-                Directory.CreateDirectory(_config.LocalRepoPath);
             }
 
             try
             {
-                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
-                xmlSerializer.Serialize(fs, result);
+                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, "fixes.json"), FileMode.Create);
+
+                JsonSerializer.Serialize(
+                    fs,
+                    fixesList,
+                    FixesListContext.Default.ListFixesList
+                    );
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
@@ -115,8 +105,8 @@ namespace Common.Providers
                 return new Result(ResultEnum.NotFound, ex.Message);
             }
 
-            Logger.Info("XML saved successfully!");
-            return new(ResultEnum.Ok, "XML saved successfully!");
+            Logger.Info("Fixes list saved successfully!");
+            return new(ResultEnum.Ok, "Fixes list saved successfully!");   
         }
 
         /// <summary>
@@ -334,55 +324,14 @@ namespace Common.Providers
         /// <returns>List of fixes</returns>
         private static List<FixesList> DeserializeCachedString(string fixes)
         {
-            List<FixesListXml>? fixesListXml;
+            var fixesList = JsonSerializer.Deserialize(fixes, FixesListContext.Default.ListFixesList);
 
-            XmlSerializer xmlSerializer = new(typeof(List<FixesListXml>));
-
-            using (var reader = new StringReader(fixes))
+            if (fixesList is null)
             {
-                fixesListXml = xmlSerializer.Deserialize(reader) as List<FixesListXml>;
+                ThrowHelper.NullReferenceException(nameof(fixesList));
             }
 
-            if (fixesListXml is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fixesListXml));
-            }
-
-            List<FixesList> fixesListResult = new(fixesListXml.Count);
-
-            foreach (var fix in fixesListXml)
-            {
-                List<BaseFixEntity> fixesList = new(fix.Fixes.Count);
-
-                foreach (var f in fix.Fixes)
-                {
-                    if (f is FileFixEntity fileFix)
-                    {
-                        fixesList.Add(fileFix);
-                    }
-                    else if (f is RegistryFixEntity regFix)
-                    {
-                        fixesList.Add(regFix);
-                    }
-                    else if (f is HostsFixEntity hostsFix)
-                    {
-                        fixesList.Add(hostsFix);
-                    }
-                    else if (f is TextFixEntity textFix)
-                    {
-                        fixesList.Add(textFix);
-                    }
-                }
-
-                fixesListResult.Add(new FixesList()
-                {
-                    GameId = fix.GameId,
-                    GameName = fix.GameName,
-                    Fixes = fixesList
-                });
-            }
-
-            return fixesListResult;
+            return fixesList;
         }
 
         /// <summary>

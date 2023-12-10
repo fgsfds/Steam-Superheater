@@ -1,11 +1,9 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Text.Json;
 using System.Xml.Serialization;
 
 namespace Common.Providers
@@ -25,16 +23,7 @@ namespace Common.Providers
                 return [];
             }
 
-            List<BaseInstalledFixEntity>? fixesDatabase;
-
-            try
-            {
-                fixesDatabase = GetNewInstalledFixes();
-            }
-            catch
-            {
-                fixesDatabase = GetOldInstalledFixes();
-            }
+            var fixesDatabase = GetNewInstalledFixes();
 
             return [.. fixesDatabase];
         }
@@ -45,69 +34,16 @@ namespace Common.Providers
         /// <returns>List of installed fixes</returns>
         private static List<BaseInstalledFixEntity> GetNewInstalledFixes()
         {
-            XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
-
             using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
             {
-                var fixesDatabase = xmlSerializer.Deserialize(fs) as InstalledFixesXml;
+                var fixesDatabase = JsonSerializer.Deserialize(fs, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
 
                 if (fixesDatabase is null)
                 {
                     ThrowHelper.NullReferenceException(nameof(fixesDatabase));
                 }
 
-                List<BaseInstalledFixEntity> result = new(fixesDatabase.InstalledFixes.Count);
-
-                foreach (var fix in fixesDatabase.InstalledFixes)
-                {
-                    if (fix is FileInstalledFixEntity fileFix)
-                    {
-                        result.Add(fileFix);
-                    }
-                    else if (fix is RegistryInstalledFixEntity regFix)
-                    {
-                        result.Add(regFix);
-                    }
-                    else if (fix is HostsInstalledFixEntity hostsFix)
-                    {
-                        result.Add(hostsFix);
-                    }
-                }
-
-                return result;
-            }
-        }
-
-        /// <summary>
-        /// Parse old version of installed.xml and return a list of installed fixes
-        /// </summary>
-        /// <returns>List of installed fixes</returns>
-        [Obsolete("Remove in version 1.0")]
-        private static List<BaseInstalledFixEntity> GetOldInstalledFixes()
-        {
-            Logger.Info("Parsing old version of installed fixes xml");
-
-            XmlSerializer xmlSerializer = new(typeof(List<InstalledFixEntity_Obsolete>));
-
-            using (FileStream fs = new(Consts.InstalledFile, FileMode.Open))
-            {
-                var fixesDatabase = xmlSerializer.Deserialize(fs) as List<InstalledFixEntity_Obsolete>;
-
-                if (fixesDatabase is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(fixesDatabase));
-                }
-
-                return fixesDatabase.ConvertAll(static x =>
-                    (BaseInstalledFixEntity)new FileInstalledFixEntity()
-                    {
-                        GameId = x.GameId,
-                        Guid = x.Guid,
-                        Version = x.Version,
-                        BackupFolder = x.BackupFolder,
-                        FilesList = x.FilesList
-                    }
-                    );
+                return fixesDatabase;
             }
         }
 
@@ -136,9 +72,13 @@ namespace Common.Providers
 
             try
             {
-                XmlSerializer xmlSerializer = new(typeof(InstalledFixesXml));
                 using FileStream fs = new(Consts.InstalledFile, FileMode.Create);
-                xmlSerializer.Serialize(fs, new InstalledFixesXml(fixesList));
+
+                JsonSerializer.Serialize(
+                    fs,
+                    fixesList,
+                    InstalledFixesListContext.Default.ListBaseInstalledFixEntity
+                    );
 
                 return new(ResultEnum.Ok, string.Empty);
             }

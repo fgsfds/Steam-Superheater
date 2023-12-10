@@ -1,5 +1,5 @@
 ﻿using Common.Helpers;
-using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace Common.Config
 {
@@ -33,13 +33,11 @@ namespace Common.Config
                 return newConfig;
             }
 
-            XmlSerializer xmlSerializer = new(typeof(ConfigEntity));
-
             ConfigEntity? config;
 
             using (FileStream fs = new(Consts.ConfigFile, FileMode.OpenOrCreate))
             {
-                config = xmlSerializer.Deserialize(fs) as ConfigEntity;
+                config = JsonSerializer.Deserialize(fs, ConfigEntityContext.Default.ConfigEntity);
             }
 
             if (config is null)
@@ -55,11 +53,13 @@ namespace Common.Config
         /// </summary>
         private void SaveConfigXml()
         {
-            XmlSerializer xmlSerializer = new(typeof(ConfigEntity));
-
             using (FileStream fs = new(Consts.ConfigFile, FileMode.Create))
             {
-                xmlSerializer.Serialize(fs, Config);
+                JsonSerializer.Serialize(
+                   fs,
+                   Config,
+                   ConfigEntityContext.Default.ConfigEntity
+                   );
             }
         }
     }
