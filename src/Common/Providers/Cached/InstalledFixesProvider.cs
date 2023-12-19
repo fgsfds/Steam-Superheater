@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes;
+﻿using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
@@ -9,27 +10,20 @@ using System.Xml.Linq;
 
 namespace Common.Providers
 {
-    public class InstalledFixesProvider
+    public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
     {
-        private ImmutableList<BaseInstalledFixEntity>? _cache;
-        private readonly SemaphoreSlim _locker = new(1);
-
         /// <summary>
-        /// Get list of fix entities with installed fixes
+        /// Save list of installed fixes from combined entities list
         /// </summary>
-        public async Task<ImmutableList<BaseInstalledFixEntity>> GetListAsync(bool useCache) =>
-            useCache
-            ? await GetCachedListAsync()
-            : await GetNewListAsync();
-
-        public void AddToCache(BaseInstalledFixEntity fix)
+        /// <param name="combinedEntitiesList">List of combined entities</param>
+        /// <returns>result, error message</returns>
+        public Result SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
         {
-            _cache = _cache?.Add(fix) ?? ThrowHelper.NullReferenceException<ImmutableList<BaseInstalledFixEntity>>(nameof(_cache));
-        }
+            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
 
-        public void RemoveFromCache(BaseInstalledFixEntity fix)
-        {
-            _cache = _cache?.Remove(fix) ?? ThrowHelper.NullReferenceException<ImmutableList<BaseInstalledFixEntity>>(nameof(_cache));
+            var result = SaveInstalledFixes(installedFixes);
+
+            return result;
         }
 
         /// <summary>
@@ -37,14 +31,14 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>result, error message</returns>
-        public Result SaveInstalledFixes()
+        public Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
         {
             Logger.Info("Saving installed fixes list");
 
             try
             {
                 var json = JsonSerializer.Serialize(
-                    _cache,
+                    fixesList,
                     InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity
                     );
 
@@ -60,38 +54,10 @@ namespace Common.Providers
         }
 
         /// <summary>
-        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
-        /// </summary>
-        private async Task<ImmutableList<BaseInstalledFixEntity>> GetCachedListAsync()
-        {
-            Logger.Info("Requesting cached games list");
-
-            await _locker.WaitAsync();
-
-            var result = _cache ?? CreateCache();
-
-            _locker.Release();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Remove current cache, then create new one and return fixes list
-        /// </summary>
-        private Task<ImmutableList<BaseInstalledFixEntity>> GetNewListAsync()
-        {
-            Logger.Info("Requesting new fixes list");
-
-            _cache = null;
-
-            return GetCachedListAsync();
-        }
-
-        /// <summary>
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        private ImmutableList<BaseInstalledFixEntity> CreateCache()
+        internal override ImmutableList<BaseInstalledFixEntity> CreateCache()
         {
             Logger.Info("Requesting installed fixes");
 
@@ -196,7 +162,7 @@ namespace Common.Providers
                 });
             }
 
-            SaveInstalledFixes();
+            SaveInstalledFixes(result);
 
             return [.. result];
         }

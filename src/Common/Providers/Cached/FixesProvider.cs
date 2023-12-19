@@ -8,19 +8,10 @@ using System.Text.Json;
 
 namespace Common.Providers
 {
-    public sealed class FixesProvider(ConfigProvider config)
+    public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<FixesList>
     {
         private string? _fixesCachedString;
         private readonly ConfigEntity _config = config.Config;
-        private readonly SemaphoreSlim _locker = new(1);
-
-        /// <summary>
-        /// Get list of fix entities with installed fixes
-        /// </summary>
-        public async Task<ImmutableList<FixesList>> GetListAsync(bool useCache) =>
-            useCache
-            ? await GetCachedListAsync()
-            : await GetNewListAsync();
 
         /// <summary>
         /// Get cached fixes list from online repo or create new cache if it wasn't created yet
@@ -81,7 +72,7 @@ namespace Common.Providers
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        private async Task<ImmutableList<FixesList>> GetCachedListAsync()
+        protected override async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
             Logger.Info("Requesting cached fixes list");
 
@@ -89,32 +80,14 @@ namespace Common.Providers
 
             if (_fixesCachedString is null)
             {
-                await CreateCacheAsync();
+                _locker.Release();
+
+                return CreateCache();
             }
 
             _locker.Release();
 
-            if (_fixesCachedString is null)
-            {
-                ThrowHelper.Exception("Can't create fixes cache");
-            }
-
-            using (StringReader fs = new(_fixesCachedString))
-            {
-                return [.. DeserializeCachedString(await fs.ReadToEndAsync())];
-            }
-        }
-
-        /// <summary>
-        /// Remove current cache, then create new one and return fixes list
-        /// </summary>
-        private Task<ImmutableList<FixesList>> GetNewListAsync()
-        {
-            Logger.Info("Requesting new fixes list");
-
-            _fixesCachedString = null;
-
-            return GetCachedListAsync();
+            return [.. DeserializeCachedString(_fixesCachedString)];
         }
 
         private async Task<Result> PrepareFixes(List<FixesList> fixesList)
@@ -225,7 +198,7 @@ namespace Common.Providers
         /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
-        private async Task CreateCacheAsync()
+        internal override ImmutableList<FixesList> CreateCache()
         {
             Logger.Info("Creating fixes cache");
 
@@ -238,12 +211,14 @@ namespace Common.Providers
                     ThrowHelper.FileNotFoundException(file);
                 }
 
-                _fixesCachedString = await File.ReadAllTextAsync(file);
+                _fixesCachedString = File.ReadAllText(file);
             }
             else
             {
-                _fixesCachedString = await DownloadFixesXMLAsync();
+                _fixesCachedString = DownloadFixesXMLAsync().Result;
             }
+
+            return DeserializeCachedString(_fixesCachedString);
         }
 
         /// <summary>
@@ -251,7 +226,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="fixes">String to deserialize</param>
         /// <returns>List of fixes</returns>
-        private static List<FixesList> DeserializeCachedString(string fixes)
+        private static ImmutableList<FixesList> DeserializeCachedString(string fixes)
         {
             var fixesList = JsonSerializer.Deserialize(fixes, FixesListContext.Default.ListFixesList);
 
@@ -260,7 +235,7 @@ namespace Common.Providers
                 ThrowHelper.NullReferenceException(nameof(fixesList));
             }
 
-            return fixesList;
+            return [.. fixesList];
         }
 
         /// <summary>
@@ -276,7 +251,7 @@ namespace Common.Providers
                 client.Timeout = TimeSpan.FromSeconds(10);
                 await using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.FixesFile);
                 using StreamReader file = new(stream);
-                var fixesXml = await file.ReadToEndAsync();
+                var fixesXml = file.ReadToEnd();
 
                 return fixesXml;
             }

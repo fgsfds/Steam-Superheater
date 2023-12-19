@@ -279,9 +279,7 @@ namespace Common.Models
 
             fix.InstalledFix = installedFix;
 
-            _installedFixesProvider.AddToCache(fix.InstalledFix);
-
-            var result = _installedFixesProvider.SaveInstalledFixes();
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.IsSuccess)
             {
@@ -321,11 +319,9 @@ namespace Common.Models
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
 
-            _installedFixesProvider.RemoveFromCache(fix.InstalledFix);
-
             fix.InstalledFix = null;
 
-            var result = _installedFixesProvider.SaveInstalledFixes();
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (backupRestoreFailed)
             {
@@ -364,9 +360,6 @@ namespace Common.Models
             catch (BackwardsCompatibilityException ex)
             {
                 Logger.Error(ex.Message);
-
-                _installedFixesProvider.RemoveFromCache(fix.InstalledFix);
-
                 fix.InstalledFix = null;
                 return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
             }
@@ -386,13 +379,9 @@ namespace Common.Models
                 return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
             }
 
-            _installedFixesProvider.RemoveFromCache(fix.InstalledFix);
-
             fix.InstalledFix = installedFix;
 
-            _installedFixesProvider.AddToCache(fix.InstalledFix);
-
-            var result = _installedFixesProvider.SaveInstalledFixes();
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.IsSuccess)
             {
