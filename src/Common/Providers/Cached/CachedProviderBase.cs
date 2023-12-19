@@ -8,8 +8,10 @@ namespace Common.Providers
         protected ImmutableList<T>? _cache;
 
         /// <summary>
-        /// Get list of fix entities with installed fixes
+        /// Get list of entities
         /// </summary>
+        /// <param name="useCache">Get cacked list</param>
+        /// <returns>List of entities</returns>
         public async Task<ImmutableList<T>> GetListAsync(bool useCache) =>
             useCache
             ? await GetCachedListAsync()
@@ -18,8 +20,9 @@ namespace Common.Providers
         internal abstract ImmutableList<T> CreateCache();
 
         /// <summary>
-        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
+        /// Get cached list of entities from online or local repo or create new cache if it wasn't created yet
         /// </summary>
+        /// <returns>List of entities</returns>
         protected virtual async Task<ImmutableList<T>> GetCachedListAsync()
         {
             Logger.Info($"Requesting cached {typeof(T)} list");
@@ -34,8 +37,9 @@ namespace Common.Providers
         }
 
         /// <summary>
-        /// Remove current cache, then create new one and return fixes list
+        /// Remove current cache, then create new one and return list of entities
         /// </summary>
+        /// <returns>List of entities</returns>
         private Task<ImmutableList<T>> GetNewListAsync()
         {
             Logger.Info($"Requesting new {typeof(T)} list");

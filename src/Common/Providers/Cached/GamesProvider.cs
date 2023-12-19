@@ -6,9 +6,7 @@ namespace Common.Providers
 {
     public sealed class GamesProvider : CachedProviderBase<GameEntity>
     {
-        /// <summary>
-        /// Create new cache of games from online or local repository
-        /// </summary>
+        /// <inheritdoc/>
         internal override ImmutableList<GameEntity> CreateCache()
         {
             Logger.Info("Creating games cache list");

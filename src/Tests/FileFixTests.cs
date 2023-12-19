@@ -22,6 +22,7 @@ namespace Tests
         private readonly string _currentDirectory;
 
         private readonly FixManager _fixManager;
+        private readonly InstalledFixesProvider _installedFixesProvider;
 
         #region Test Preparations
 
@@ -30,11 +31,13 @@ namespace Tests
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
+            container.AddScoped<InstalledFixesProvider>();
             CommonBindings.Load(container);
 
             _currentDirectory = Directory.GetCurrentDirectory();
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
+            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
             if (Directory.Exists(TestTempFolder))
             {
@@ -128,7 +131,7 @@ namespace Tests
 
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             var exeExists = File.Exists("game\\new folder\\start game.exe");
             Assert.True(exeExists);
@@ -176,7 +179,7 @@ namespace Tests
 
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, variant, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             CheckNewFiles();
 
@@ -213,7 +216,7 @@ namespace Tests
 
             var newInstalledFix = await _fixManager.UpdateFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([newInstalledFix]);
+            _installedFixesProvider.SaveInstalledFixes([newInstalledFix]);
 
             CheckUpdatedFiles();
 
@@ -292,7 +295,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.Equal("E529E785414A1805C467C6407E4A8FC4", hash);
+                    Assert.Equal("1502A6F4AA59003053A625B117E0E3E9", hash);
                 }
             }
         }

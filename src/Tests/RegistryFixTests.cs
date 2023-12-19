@@ -24,6 +24,7 @@ namespace Tests
         private const string RegKey = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test";
 
         private readonly FixManager _fixManager;
+        private readonly InstalledFixesProvider _installedFixesProvider;
 
         private readonly GameEntity _gameEntity = new()
         {
@@ -51,9 +52,11 @@ namespace Tests
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
+            container.AddScoped<InstalledFixesProvider>();
             CommonBindings.Load(container);
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
+            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
         }
 
         public void Dispose()
@@ -99,7 +102,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
@@ -168,7 +171,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {

@@ -16,8 +16,8 @@ namespace Common.Providers
         /// Save list of installed fixes from combined entities list
         /// </summary>
         /// <param name="combinedEntitiesList">List of combined entities</param>
-        /// <returns>result, error message</returns>
-        public Result SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
+        /// <returns>Result struct</returns>
+        public Result SaveInstalledFixes(ImmutableList<FixFirstCombinedEntity> combinedEntitiesList)
         {
             var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
 
@@ -30,8 +30,8 @@ namespace Common.Providers
         /// Save installed fixes to XML
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
-        /// <returns>result, error message</returns>
-        public Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
+        /// <returns>Result struct</returns>
+        public Result SaveInstalledFixes(ImmutableList<BaseInstalledFixEntity> fixesList)
         {
             Logger.Info("Saving installed fixes list");
 
@@ -53,10 +53,7 @@ namespace Common.Providers
             }
         }
 
-        /// <summary>
-        /// Remove current cache, then create new one and return installed fixes list
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         internal override ImmutableList<BaseInstalledFixEntity> CreateCache()
         {
             Logger.Info("Requesting installed fixes");
@@ -162,7 +159,7 @@ namespace Common.Providers
                 });
             }
 
-            SaveInstalledFixes(result);
+            SaveInstalledFixes([.. result]);
 
             return [.. result];
         }

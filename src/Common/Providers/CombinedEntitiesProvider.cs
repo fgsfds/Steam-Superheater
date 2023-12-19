@@ -1,5 +1,6 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
+using System.Collections.Immutable;
 
 namespace Common.Providers
 {
@@ -40,7 +41,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedList">List of combined entities</param>
         /// <returns>List of installed fixes</returns>
-        public static List<BaseInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
+        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixesFromCombined(ImmutableList<FixFirstCombinedEntity> combinedList)
         {
             List<BaseInstalledFixEntity> result = [];
 
@@ -57,7 +58,7 @@ namespace Common.Providers
                 }
             }
 
-            return result;
+            return [.. result];
         }
     }
 }

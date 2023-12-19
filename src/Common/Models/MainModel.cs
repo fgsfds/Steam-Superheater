@@ -20,7 +20,7 @@ namespace Common.Models
     {
         private readonly ConfigEntity _config = configProvider.Config;
         
-        private List<FixFirstCombinedEntity> _combinedEntitiesList = [];
+        private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
 
@@ -71,7 +71,7 @@ namespace Common.Models
                     }
                 }
 
-                _combinedEntitiesList = games;
+                _combinedEntitiesList = [.. games];
 
                 return new(ResultEnum.Ok, "Games list updated successfully");
             }
