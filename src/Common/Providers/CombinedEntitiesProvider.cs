@@ -5,7 +5,8 @@ namespace Common.Providers
 {
     public sealed class CombinedEntitiesProvider(
         FixesProvider _fixesProvider,
-        GamesProvider _gamesProvider
+        GamesProvider _gamesProvider,
+        InstalledFixesProvider _installedFixesProvider
         )
     {
         /// <summary>
@@ -13,9 +14,9 @@ namespace Common.Providers
         /// </summary>
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            var fixes = await _fixesProvider.GetFixesListAsync(useCache);
-            var games = await _gamesProvider.GetGamesListAsync(useCache);
-            var installed = InstalledFixesProvider.GetInstalledFixes();
+            var fixes = await _fixesProvider.GetListAsync(useCache);
+            var games = await _gamesProvider.GetListAsync(useCache);
+            var installed = await _installedFixesProvider.GetListAsync(useCache);
 
             List<FixFirstCombinedEntity> result = new(fixes.Count);
 

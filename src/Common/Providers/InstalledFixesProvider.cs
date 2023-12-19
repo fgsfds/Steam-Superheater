@@ -1,5 +1,4 @@
-﻿using Common.Entities.CombinedEntities;
-using Common.Entities.Fixes;
+﻿using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
@@ -10,13 +9,89 @@ using System.Xml.Linq;
 
 namespace Common.Providers
 {
-    public static class InstalledFixesProvider
+    public class InstalledFixesProvider
     {
+        private ImmutableList<BaseInstalledFixEntity>? _cache;
+        private readonly SemaphoreSlim _locker = new(1);
+
+        /// <summary>
+        /// Get list of fix entities with installed fixes
+        /// </summary>
+        public async Task<ImmutableList<BaseInstalledFixEntity>> GetListAsync(bool useCache) =>
+            useCache
+            ? await GetCachedListAsync()
+            : await GetNewListAsync();
+
+        public void AddToCache(BaseInstalledFixEntity fix)
+        {
+            _cache = _cache?.Add(fix) ?? ThrowHelper.NullReferenceException<ImmutableList<BaseInstalledFixEntity>>(nameof(_cache));
+        }
+
+        public void RemoveFromCache(BaseInstalledFixEntity fix)
+        {
+            _cache = _cache?.Remove(fix) ?? ThrowHelper.NullReferenceException<ImmutableList<BaseInstalledFixEntity>>(nameof(_cache));
+        }
+
+        /// <summary>
+        /// Save installed fixes to XML
+        /// </summary>
+        /// <param name="fixesList">List of installed fix entities</param>
+        /// <returns>result, error message</returns>
+        public Result SaveInstalledFixes()
+        {
+            Logger.Info("Saving installed fixes list");
+
+            try
+            {
+                var json = JsonSerializer.Serialize(
+                    _cache,
+                    InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity
+                    );
+
+                File.WriteAllText(Consts.InstalledFile, json);
+
+                return new(ResultEnum.Ok, string.Empty);
+            }
+            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
+            {
+                Logger.Error(ex.Message);
+                return new Result(ResultEnum.NotFound, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
+        /// </summary>
+        private async Task<ImmutableList<BaseInstalledFixEntity>> GetCachedListAsync()
+        {
+            Logger.Info("Requesting cached games list");
+
+            await _locker.WaitAsync();
+
+            var result = _cache ?? CreateCache();
+
+            _locker.Release();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Remove current cache, then create new one and return fixes list
+        /// </summary>
+        private Task<ImmutableList<BaseInstalledFixEntity>> GetNewListAsync()
+        {
+            Logger.Info("Requesting new fixes list");
+
+            _cache = null;
+
+            return GetCachedListAsync();
+        }
+
         /// <summary>
         /// Remove current cache, then create new one and return installed fixes list
         /// </summary>
         /// <returns></returns>
-        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixes()
+        private ImmutableList<BaseInstalledFixEntity> CreateCache()
         {
             Logger.Info("Requesting installed fixes");
 
@@ -32,62 +107,23 @@ namespace Common.Providers
                 ThrowHelper.NullReferenceException(nameof(text));
             }
 
-            var fixesDatabase = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
+            var fixesDatabase = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity);
 
             if (fixesDatabase is null)
             {
                 ThrowHelper.NullReferenceException(nameof(fixesDatabase));
             }
 
-            return [.. fixesDatabase];
-        }
+            _cache = [.. fixesDatabase];
 
-        /// <summary>
-        /// Save list of installed fixes from combined entities list
-        /// </summary>
-        /// <param name="combinedEntitiesList">List of combined entities</param>
-        /// <returns>result, error message</returns>
-        public static Result SaveInstalledFixes(List<FixFirstCombinedEntity> combinedEntitiesList)
-        {
-            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
-
-            var result = SaveInstalledFixes(installedFixes);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Save installed fixes to XML
-        /// </summary>
-        /// <param name="fixesList">List of installed fix entities</param>
-        /// <returns>result, error message</returns>
-        public static Result SaveInstalledFixes(List<BaseInstalledFixEntity> fixesList)
-        {
-            Logger.Info("Saving installed fixes list");
-
-            try
-            {
-                var json = JsonSerializer.Serialize(
-                    fixesList,
-                    InstalledFixesListContext.Default.ListBaseInstalledFixEntity
-                    );
-
-                File.WriteAllText(Consts.InstalledFile, json);
-
-                return new(ResultEnum.Ok, string.Empty);
-            }
-            catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
-            {
-                Logger.Error(ex.Message);
-                return new Result(ResultEnum.NotFound, ex.Message);
-            }
+            return _cache;
         }
 
         /// <summary>
         /// Convert old installed.xml file to a newer installed.json
         /// </summary>
         [Obsolete("Remove in version 1.0")]
-        private static ImmutableList<BaseInstalledFixEntity> ConvertXmlToJson()
+        private ImmutableList<BaseInstalledFixEntity> ConvertXmlToJson()
         {
             if (!File.Exists("installed.xml"))
             {
@@ -160,7 +196,7 @@ namespace Common.Providers
                 });
             }
 
-            SaveInstalledFixes(result);
+            SaveInstalledFixes();
 
             return [.. result];
         }

@@ -1,12 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <PublishAot>true</PublishAot>
     <AssemblyName>Superheater</AssemblyName>
     <OutputType>WinExe</OutputType>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <SelfContained>true</SelfContained>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <StartupObject>Superheater.Desktop.Program</StartupObject>

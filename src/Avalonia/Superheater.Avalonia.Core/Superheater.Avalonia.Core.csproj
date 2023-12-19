@@ -7,10 +7,6 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <None Remove="Assets\discord.png" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AddSealed">
@@ -25,10 +21,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <UpToDateCheckInput Remove="Assets\discord.png" />
   </ItemGroup>
   
 </Project>

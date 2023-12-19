@@ -348,14 +348,14 @@ namespace Common.Models
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetFixesListAsync(useCache)];
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
-            var installedGames = await _gamesProvider.GetGamesListAsync(useCache);
+            var installedGames = await _gamesProvider.GetListAsync(useCache);
 
             _availableGamesList = new(installedGames.Count);
 
@@ -402,7 +402,7 @@ namespace Common.Models
                         first = false;
                     }
 
-                    sb.Append(", " + fix.GameName);
+                    sb.Append(", ").Append(fix.GameName);
                 }
             }
 

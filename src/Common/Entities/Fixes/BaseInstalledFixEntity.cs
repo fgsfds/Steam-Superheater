@@ -1,6 +1,7 @@
 ﻿using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes
@@ -27,6 +28,6 @@ namespace Common.Entities.Fixes
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
-    [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
+    [JsonSerializable(typeof(ImmutableList<BaseInstalledFixEntity>))]
     internal sealed partial class InstalledFixesListContext : JsonSerializerContext { }
 }

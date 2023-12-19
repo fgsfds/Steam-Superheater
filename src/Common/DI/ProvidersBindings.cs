@@ -13,6 +13,7 @@ namespace Common.DI
             container.AddScoped<GamesProvider>();
             container.AddScoped<NewsProvider>();
             container.AddScoped<FixesProvider>();
+            container.AddScoped<InstalledFixesProvider>();
         }
     }
 }

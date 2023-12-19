@@ -524,7 +524,6 @@ Do you still want to install the fix?",
         private void FillGamesList()
         {
             var selectedGameId = SelectedGame?.GameId;
-            var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
             OnPropertyChanged(nameof(TagsComboboxList));
@@ -533,6 +532,8 @@ Do you still want to install the fix?",
 
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
+                var selectedFixGuid = SelectedFix?.Guid;
+
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&

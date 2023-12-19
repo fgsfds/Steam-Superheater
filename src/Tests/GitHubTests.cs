@@ -17,7 +17,7 @@ namespace Tests
             container.AddTransient<ConfigProvider>();
 
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
-            var fixes = await fixesProvider.GetFixesListAsync(false);
+            var fixes = await fixesProvider.GetListAsync(false);
 
             //Looking for Alan Wake fixes list
             var result = fixes.Exists(static x => x.GameId == 108710);
@@ -34,7 +34,7 @@ namespace Tests
             Version versionExpected = new("0.2.2");
             var versionCompare = versionActual.CompareTo(versionExpected);
 
-            Assert.True(versionCompare == 0);
+            Assert.Equal(0, versionCompare);
 
             var descriptionActual = firstRelease.Description;
 

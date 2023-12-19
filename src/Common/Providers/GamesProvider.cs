@@ -9,7 +9,7 @@ namespace Common.Providers
         private ImmutableList<GameEntity>? _gamesCache;
         private readonly SemaphoreSlim _locker = new(1);
         
-        public async Task<ImmutableList<GameEntity>> GetGamesListAsync(bool useCache) =>
+        public async Task<ImmutableList<GameEntity>> GetListAsync(bool useCache) =>
             useCache
             ? await GetCachedListAsync()
             : await GetNewListAsync();

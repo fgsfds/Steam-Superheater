@@ -17,7 +17,7 @@ namespace Common.Providers
         /// <summary>
         /// Get list of fix entities with installed fixes
         /// </summary>
-        public async Task<ImmutableList<FixesList>> GetFixesListAsync(bool useCache) =>
+        public async Task<ImmutableList<FixesList>> GetListAsync(bool useCache) =>
             useCache
             ? await GetCachedListAsync()
             : await GetNewListAsync();
