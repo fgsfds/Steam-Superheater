@@ -233,7 +233,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public static List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
+        public List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
             => [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>true if there are installed dependent fixes</returns>
-        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
+        public bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
         {
             var deps = GetDependentFixes(fixes, guid);
 

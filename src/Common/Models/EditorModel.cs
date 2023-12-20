@@ -150,16 +150,9 @@ namespace Common.Models
                 return [];
             }
 
-            var allGameFixes = _fixesList.FirstOrDefault(x => x.GameId == fixesList.GameId);
-
-            if (allGameFixes is null)
-            {
-                return [];
-            }
-
             var allGameDeps = fixEntity.Dependencies;
 
-            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            List<BaseFixEntity> deps = [.. fixesList.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
 
             return [.. deps];
         }
@@ -187,7 +180,7 @@ namespace Common.Models
                 if (//don't add itself
                     fix.Guid != fixEntity.Guid &&
                     //don't add fixes that depend on it
-                    fix.Dependencies is not null && !fix.Dependencies.Contains(fixEntity.Guid) &&
+                    (fix.Dependencies is null || !fix.Dependencies.Contains(fixEntity.Guid)) &&
                     //don't add fixes that are already dependencies
                     !fixDependencies.Exists(x => x.Guid == fix.Guid)
                     )
