@@ -9,6 +9,8 @@ using Common.Providers;
 using System.Collections.Immutable;
 using Common.Config;
 using System.Text;
+using System.Text.Json;
+using System.Xml;
 
 namespace Common.Models
 {
@@ -205,52 +207,55 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            //            string? fileToUpload = null;
+            string? fileToUpload = null;
 
-            //            if (fixesList.Fixes[0] is FileFixEntity fileFix)
-            //            {
-            //                var url = fileFix.Url;
+            if (fix is FileFixEntity fileFix)
+            {
+                var url = fileFix.Url;
 
-            //                if (!string.IsNullOrEmpty(url) &&
-            //                    !url.StartsWith("http"))
-            //                {
-            //                    fileToUpload = fileFix.Url;
-            //                    fileFix.Url = Path.GetFileName(fileToUpload);
-            //                }
-            //            }
+                if (!string.IsNullOrEmpty(url) &&
+                    !url.StartsWith("http"))
+                {
+                    fileToUpload = fileFix.Url;
+                    fileFix.Url = Path.GetFileName(fileToUpload);
+                }
+            }
 
-            //            XmlSerializer xmlSerializer = new(typeof(FixesList));
+            var newFixesList = new FixesList()
+            {
+                GameId = fixesList.GameId,
+                GameName = fixesList.GameName,
+                Fixes = [fix]
+            };
 
-            //            List<string> filesToUpload = [];
+            var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
-            //            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
+            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
 
-            //            using (FileStream fs = new(fixFilePath, FileMode.Create))
-            //            {
-            //                xmlSerializer.Serialize(fs, fixesList);
-            //            }
+            File.WriteAllText(fixFilePath, fixJson);
 
-            //            filesToUpload.Add(fixFilePath);
+            List<string> filesToUpload = [fixFilePath];
 
-            //            if (fileToUpload is not null)
-            //            {
-            //                filesToUpload.Add(fileToUpload);
-            //            }
+            if (fileToUpload is not null)
+            {
+                filesToUpload.Add(fileToUpload);
+            }
 
-            //            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
+            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
 
-            //            File.Delete(fixFilePath);
+            File.Delete(fixFilePath);
 
-            //            if (result == ResultEnum.Ok)
-            //            {
-            //                return new(ResultEnum.Ok, @"Fix successfully uploaded.
-            //It will be added to the database after developer's review.
+            if (result == ResultEnum.Ok)
+            {
+                return new(ResultEnum.Ok, """
+                    Fix successfully uploaded.
+                    It will be added to the database after developer's review.
 
-            //Thank you.");
-            //            }
+                    Thank you.
+                    """);
+            }
 
-            //            return new(ResultEnum.Error, result.Message);
-            return new(ResultEnum.Error, "123");
+            return new(ResultEnum.Error, result.Message);
         }
 
         /// <summary>
