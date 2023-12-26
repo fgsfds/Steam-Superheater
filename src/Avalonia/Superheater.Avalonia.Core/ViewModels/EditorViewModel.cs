@@ -919,7 +919,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void FillGamesList()
         {
             var selectedGameId = SelectedGame?.GameId;
-            var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
             OnPropertyChanged(nameof(AvailableGamesList));
@@ -927,6 +926,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
+
+                var selectedFixGuid = SelectedFix?.Guid;
 
                 if (selectedFixGuid is not null &&
                     SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))

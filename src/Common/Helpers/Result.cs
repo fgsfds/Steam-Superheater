@@ -11,12 +11,12 @@
         /// <summary>
         /// Operation result enum
         /// </summary>
-        private ResultEnum ResultEnum { get; } = resultEnum;
+        private readonly ResultEnum ResultEnum = resultEnum;
 
         /// <summary>
         /// Operation result message
         /// </summary>
-        public string Message { get; } = message;
+        public readonly string Message = message;
 
         /// <summary>
         /// Is operation successful

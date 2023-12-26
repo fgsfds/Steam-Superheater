@@ -14,12 +14,13 @@ namespace Common.Models
     public sealed class MainModel(
         ConfigProvider configProvider,
         CombinedEntitiesProvider _combinedEntitiesProvider,
+        InstalledFixesProvider _installedFixesProvider,
         FixManager _fixManager
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         
-        private List<FixFirstCombinedEntity> _combinedEntitiesList = [];
+        private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
 
@@ -70,7 +71,7 @@ namespace Common.Models
                     }
                 }
 
-                _combinedEntitiesList = games;
+                _combinedEntitiesList = [.. games];
 
                 return new(ResultEnum.Ok, "Games list updated successfully");
             }
@@ -232,7 +233,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public static List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
+        public List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
             => [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
 
         /// <summary>
@@ -241,7 +242,7 @@ namespace Common.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>true if there are installed dependent fixes</returns>
-        public static bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
+        public bool DoesFixHaveInstalledDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
         {
             var deps = GetDependentFixes(fixes, guid);
 
@@ -278,7 +279,7 @@ namespace Common.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.IsSuccess)
             {
@@ -320,7 +321,7 @@ namespace Common.Models
 
             fix.InstalledFix = null;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (backupRestoreFailed)
             {
@@ -351,7 +352,6 @@ namespace Common.Models
             }
 
             BaseInstalledFixEntity? installedFix;
-            var backupRestoreFailed = false;
 
             try
             {
@@ -360,8 +360,8 @@ namespace Common.Models
             catch (BackwardsCompatibilityException ex)
             {
                 Logger.Error(ex.Message);
-                backupRestoreFailed = true;
-                installedFix = null;
+                fix.InstalledFix = null;
+                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
             }
             catch (HashCheckFailedException ex)
             {
@@ -381,12 +381,7 @@ namespace Common.Models
 
             fix.InstalledFix = installedFix;
 
-            var result = InstalledFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
-
-            if (backupRestoreFailed)
-            {
-                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
-            }
+            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
 
             if (result.IsSuccess)
             {

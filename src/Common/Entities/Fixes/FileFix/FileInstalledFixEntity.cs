@@ -10,6 +10,6 @@
         /// <summary>
         /// Paths to files relative to the game folder
         /// </summary>
-        public required List<string>? FilesList { get; init; }
+        public required List<string> FilesList { get; init; }
     }
 }

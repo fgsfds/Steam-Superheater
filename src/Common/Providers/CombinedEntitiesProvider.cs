@@ -1,11 +1,13 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
+using System.Collections.Immutable;
 
 namespace Common.Providers
 {
     public sealed class CombinedEntitiesProvider(
         FixesProvider _fixesProvider,
-        GamesProvider _gamesProvider
+        GamesProvider _gamesProvider,
+        InstalledFixesProvider _installedFixesProvider
         )
     {
         /// <summary>
@@ -13,9 +15,9 @@ namespace Common.Providers
         /// </summary>
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            var fixes = await _fixesProvider.GetFixesListAsync(useCache);
-            var games = await _gamesProvider.GetGamesListAsync(useCache);
-            var installed = InstalledFixesProvider.GetInstalledFixes();
+            var fixes = await _fixesProvider.GetListAsync(useCache);
+            var games = await _gamesProvider.GetListAsync(useCache);
+            var installed = await _installedFixesProvider.GetListAsync(useCache);
 
             List<FixFirstCombinedEntity> result = new(fixes.Count);
 
@@ -39,7 +41,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="combinedList">List of combined entities</param>
         /// <returns>List of installed fixes</returns>
-        public static List<BaseInstalledFixEntity> GetInstalledFixesFromCombined(List<FixFirstCombinedEntity> combinedList)
+        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixesFromCombined(ImmutableList<FixFirstCombinedEntity> combinedList)
         {
             List<BaseInstalledFixEntity> result = [];
 
@@ -56,7 +58,7 @@ namespace Common.Providers
                 }
             }
 
-            return result;
+            return [.. result];
         }
     }
 }

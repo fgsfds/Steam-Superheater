@@ -2,6 +2,7 @@ using Common.Config;
 using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
+using Common.FixTools;
 using Common.FixTools.HostsFix;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +17,9 @@ namespace Tests
     [Collection("Sync")]
     public sealed class HostsFixTests : IDisposable
     {
-        private readonly HostsFixInstaller _hostsFixInstaller;
-        private readonly HostsFixUninstaller _hostsFixUninstaller;
+        private readonly FixManager _fixManager;
+        private readonly InstalledFixesProvider _installedFixesProvider;
+
         private readonly string _hostsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "hosts");
 
         private readonly GameEntity _gameEntity = new()
@@ -42,10 +44,11 @@ namespace Tests
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
+            container.AddScoped<InstalledFixesProvider>();
             CommonBindings.Load(container);
 
-            _hostsFixInstaller = BindingsManager.Provider.GetRequiredService<HostsFixInstaller>();
-            _hostsFixUninstaller = BindingsManager.Provider.GetRequiredService<HostsFixUninstaller>();
+            _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
+            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
             File.Copy("Resources\\hosts", _hostsFilePath, true);
 
@@ -66,7 +69,7 @@ namespace Tests
         #region Tests
 
         [Fact]
-        public void InstallUninstallFixTest()
+        public async Task InstallUninstallFixTestAsync()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -79,9 +82,9 @@ namespace Tests
             var fixEntity = _fixEntity;
 
             //Install Fix
-            var installedFix = _hostsFixInstaller.InstallFix(gameEntity, fixEntity, _hostsFilePath);
+            var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, _hostsFilePath, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not HostsInstalledFixEntity)
             {
@@ -95,13 +98,13 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.Equal("F00C5C32FFAD7C21CAF5F436B204D2E7", hash);
+                    Assert.Equal("B431935EBF5DA06DC87E5032454F5E29", hash);
                 }
             }
 
             fixEntity.InstalledFix = installedFix;
 
-            _hostsFixUninstaller.UninstallFix(fixEntity, _hostsFilePath);
+            _fixManager.UninstallFix(gameEntity, fixEntity);
 
             using (var md5 = MD5.Create())
             {

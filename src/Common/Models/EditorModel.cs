@@ -4,13 +4,13 @@ using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
-using Common.Entities.Fixes.XML;
 using Common.Helpers;
 using Common.Providers;
 using System.Collections.Immutable;
-using System.Xml.Serialization;
 using Common.Config;
 using System.Text;
+using System.Text.Json;
+using System.Xml;
 
 namespace Common.Models
 {
@@ -150,16 +150,9 @@ namespace Common.Models
                 return [];
             }
 
-            var allGameFixes = _fixesList.FirstOrDefault(x => x.GameId == fixesList.GameId);
-
-            if (allGameFixes is null)
-            {
-                return [];
-            }
-
             var allGameDeps = fixEntity.Dependencies;
 
-            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            List<BaseFixEntity> deps = [.. fixesList.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
 
             return [.. deps];
         }
@@ -187,7 +180,7 @@ namespace Common.Models
                 if (//don't add itself
                     fix.Guid != fixEntity.Guid &&
                     //don't add fixes that depend on it
-                    fix.Dependencies is not null && !fix.Dependencies.Contains(fixEntity.Guid) &&
+                    (fix.Dependencies is null || !fix.Dependencies.Contains(fixEntity.Guid)) &&
                     //don't add fixes that are already dependencies
                     !fixDependencies.Exists(x => x.Guid == fix.Guid)
                     )
@@ -207,16 +200,9 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
         {
-            FixesListXml newFix = new()
-            {
-                GameId = fixesList.GameId,
-                GameName = fixesList.GameName,
-                Fixes = [fix]
-            };
-
             string? fileToUpload = null;
 
-            if (newFix.Fixes[0] is FileFixEntity fileFix)
+            if (fix is FileFixEntity fileFix)
             {
                 var url = fileFix.Url;
 
@@ -228,18 +214,20 @@ namespace Common.Models
                 }
             }
 
-            XmlSerializer xmlSerializer = new(typeof(FixesListXml));
+            var newFixesList = new FixesList()
+            {
+                GameId = fixesList.GameId,
+                GameName = fixesList.GameName,
+                Fixes = [fix]
+            };
 
-            List<string> filesToUpload = [];
+            var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
             var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
 
-            using (FileStream fs = new(fixFilePath, FileMode.Create))
-            {
-                xmlSerializer.Serialize(fs, newFix);
-            }
+            File.WriteAllText(fixFilePath, fixJson);
 
-            filesToUpload.Add(fixFilePath);
+            List<string> filesToUpload = [fixFilePath];
 
             if (fileToUpload is not null)
             {
@@ -252,10 +240,12 @@ namespace Common.Models
 
             if (result == ResultEnum.Ok)
             {
-                return new(ResultEnum.Ok, @"Fix successfully uploaded.
-It will be added to the database after developer's review.
+                return new(ResultEnum.Ok, """
+                    Fix successfully uploaded.
+                    It will be added to the database after developer's review.
 
-Thank you.");
+                    Thank you.
+                    """);
             }
 
             return new(ResultEnum.Error, result.Message);
@@ -356,14 +346,14 @@ Thank you.");
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetFixesListAsync(useCache)];
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
-            var installedGames = await _gamesProvider.GetGamesListAsync(useCache);
+            var installedGames = await _gamesProvider.GetListAsync(useCache);
 
             _availableGamesList = new(installedGames.Count);
 
@@ -410,7 +400,7 @@ Thank you.");
                         first = false;
                     }
 
-                    sb.Append(", " + fix.GameName);
+                    sb.Append(", ").Append(fix.GameName);
                 }
             }
 

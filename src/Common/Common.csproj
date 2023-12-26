@@ -12,6 +12,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="SharpCompress" />
+    <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
 </Project>

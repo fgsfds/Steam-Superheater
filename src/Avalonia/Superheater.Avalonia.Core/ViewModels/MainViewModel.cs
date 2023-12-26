@@ -243,7 +243,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
-            var result = !MainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+            var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
             return result;
         }
@@ -524,7 +524,6 @@ Do you still want to install the fix?",
         private void FillGamesList()
         {
             var selectedGameId = SelectedGame?.GameId;
-            var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
             OnPropertyChanged(nameof(TagsComboboxList));
@@ -533,6 +532,8 @@ Do you still want to install the fix?",
 
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
+                var selectedFixGuid = SelectedFix?.Guid;
+
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&
@@ -591,23 +592,16 @@ Do you still want to install the fix?",
 
             if (dependsOn.Count != 0)
             {
-                requires = "REQUIRES: ";
-
-                requires += string.Join(", ", dependsOn.Select(static x => x.Name));
+                requires = "REQUIRES: " + string.Join(", ", dependsOn.Select(static x => x.Name));
             }
 
             string? required = null;
 
-            if (SelectedFix?.Dependencies is not null)
+            var dependedBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
+
+            if (dependedBy.Count != 0)
             {
-                var dependsBy = MainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
-
-                if (dependsBy.Count != 0)
-                {
-                    required = "REQUIRED BY: ";
-
-                    required += string.Join(", ", dependsBy.Select(static x => x.Name));
-                }
+                required = "REQUIRED BY: " + string.Join(", ", dependedBy.Select(static x => x.Name));
             }
 
             if (requires is not null && required is not null)

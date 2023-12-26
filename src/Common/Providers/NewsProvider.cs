@@ -2,7 +2,7 @@
 using Common.Entities;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.Xml.Serialization;
+using System.Text.Json;
 
 namespace Common.Providers
 {
@@ -37,19 +37,19 @@ namespace Common.Providers
                 news = await DownloadNewsXMLAsync();
             }
 
-            XmlSerializer xmlSerializer = new(typeof(List<NewsEntity>));
+            var list = JsonSerializer.Deserialize(
+                news,
+                NewsEntityContext.Default.ListNewsEntity
+                );
 
-            using (StringReader fs = new(news))
+            if (list is null)
             {
-                if (xmlSerializer.Deserialize(fs) is not List<NewsEntity> list)
-                {
-                    Logger.Error("Error while deserializing news...");
+                Logger.Error("Error while deserializing news...");
 
-                    return [];
-                }
-
-                return [.. list.OrderByDescending(static x => x.Date)];
+                return [];
             }
+
+            return [.. list];
         }
 
         /// <summary>

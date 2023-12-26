@@ -24,6 +24,7 @@ namespace Tests
         private const string RegKey = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test";
 
         private readonly FixManager _fixManager;
+        private readonly InstalledFixesProvider _installedFixesProvider;
 
         private readonly GameEntity _gameEntity = new()
         {
@@ -51,9 +52,11 @@ namespace Tests
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
+            container.AddScoped<InstalledFixesProvider>();
             CommonBindings.Load(container);
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
+            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
         }
 
         public void Dispose()
@@ -99,7 +102,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
@@ -116,7 +119,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
-                    Assert.Equal("6DE97926DE75282A6898D3E1B4A6AE01", hash);
+                    Assert.Equal("CDF4CB5E941EDBBB1984977DAD4D2F29", hash);
                 }
             }
 
@@ -168,7 +171,7 @@ namespace Tests
             //Install Fix
             var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
 
-            InstalledFixesProvider.SaveInstalledFixes([installedFix]);
+            _installedFixesProvider.SaveInstalledFixes([installedFix]);
 
             if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
@@ -185,7 +188,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
-                    Assert.Equal("DA6D032FA42FC15504537830007B45C4", hash);
+                    Assert.Equal("9E0AC8E1BCF3CECDACDBDE29AFA3818E", hash);
                 }
             }
 
