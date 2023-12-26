@@ -13,13 +13,16 @@ namespace Common.Models
 {
     public sealed class MainModel(
         ConfigProvider configProvider,
-        CombinedEntitiesProvider _combinedEntitiesProvider,
-        InstalledFixesProvider _installedFixesProvider,
-        FixManager _fixManager
+        CombinedEntitiesProvider combinedEntitiesProvider,
+        InstalledFixesProvider installedFixesProvider,
+        FixManager fixManager
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
-        
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
+        private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
+        private readonly FixManager _fixManager = fixManager;
+
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);

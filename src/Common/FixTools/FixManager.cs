@@ -11,19 +11,30 @@ using Common.Helpers;
 namespace Common.FixTools
 {
     public sealed class FixManager(
-        FileFixInstaller _fileFixInstaller,
-        FileFixUninstaller _fileFixUninstaller,
-        FileFixUpdater _fileFixUpdater,
+        FileFixInstaller fileFixInstaller,
+        FileFixUninstaller fileFixUninstaller,
+        FileFixUpdater fileFixUpdater,
 
-        RegistryFixInstaller _registryFixInstaller,
-        RegistryFixUninstaller _registryFixUninstaller,
-        RegistryFixUpdater _registryFixUpdater,
+        RegistryFixInstaller registryFixInstaller,
+        RegistryFixUninstaller registryFixUninstaller,
+        RegistryFixUpdater registryFixUpdater,
 
-        HostsFixInstaller _hostsFixInstaller,
-        HostsFixUninstaller _hostsFixUninstaller,
-        HostsFixUpdater _hostsFixUpdater
+        HostsFixInstaller hostsFixInstaller,
+        HostsFixUninstaller hostsFixUninstaller,
+        HostsFixUpdater hostsFixUpdater
         )
     {
+        private readonly FileFixInstaller _fileFixInstaller = fileFixInstaller;
+        private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller;
+        private readonly FileFixUpdater _fileFixUpdater = fileFixUpdater;
+
+        private readonly RegistryFixInstaller _registryFixInstaller = registryFixInstaller;
+        private readonly RegistryFixUninstaller _registryFixUninstaller = registryFixUninstaller;
+        private readonly RegistryFixUpdater _registryFixUpdater = registryFixUpdater;
+
+        private readonly HostsFixInstaller _hostsFixInstaller = hostsFixInstaller;
+        private readonly HostsFixUninstaller _hostsFixUninstaller = hostsFixUninstaller;
+        private readonly HostsFixUpdater _hostsFixUpdater = hostsFixUpdater;
 
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
         {

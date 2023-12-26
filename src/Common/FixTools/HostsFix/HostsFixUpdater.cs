@@ -5,10 +5,13 @@ using Common.Entities.Fixes.HostsFix;
 namespace Common.FixTools.HostsFix
 {
     public sealed class HostsFixUpdater(
-        HostsFixInstaller _fixInstaller,
-        HostsFixUninstaller _fixUninstaller
+        HostsFixInstaller fixInstaller,
+        HostsFixUninstaller fixUninstaller
         )
     {
+        private readonly HostsFixInstaller _fixInstaller = fixInstaller;
+        private readonly HostsFixUninstaller _fixUninstaller = fixUninstaller;
+
         public BaseInstalledFixEntity UpdateFix(GameEntity game, HostsFixEntity hostsFix)
         {
             _fixUninstaller.UninstallFix(hostsFix);

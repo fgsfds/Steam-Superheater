@@ -8,24 +8,15 @@ using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class NewsViewModel : ObservableObject
+    internal sealed partial class NewsViewModel(
+        NewsModel newsModel,
+        ConfigProvider configProvider,
+        PopupMessageViewModel popupMessage
+        ) : ObservableObject
     {
-        public NewsViewModel(
-            NewsModel newsModel,
-            ConfigProvider configProvider,
-            PopupMessageViewModel popupMessage
-            )
-        {
-            _newsModel = newsModel;
-            _config = configProvider.Config;
-            _popupMessage = popupMessage;
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
-
-        private readonly NewsModel _newsModel;
-        private readonly ConfigEntity _config;
-        private readonly PopupMessageViewModel _popupMessage;
+        private readonly NewsModel _newsModel = newsModel;
+        private readonly ConfigEntity _config = configProvider.Config;
+        private readonly PopupMessageViewModel _popupMessage = popupMessage;
         private readonly SemaphoreSlim _locker = new(1);
 
 

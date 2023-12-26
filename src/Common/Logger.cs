@@ -4,16 +4,16 @@ namespace Common
 {
     public static class Logger
     {
-        private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
-
-        private static readonly object _lock = new();
-
         static Logger()
         {
             File.WriteAllText(LogFile, string.Empty);
             Info(Environment.OSVersion.ToString());
             Info(CommonProperties.CurrentVersion.ToString());
         }
+
+        private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+
+        private static readonly object _lock = new();
 
         public static void Info(string message) => Log(message, "Info");
 

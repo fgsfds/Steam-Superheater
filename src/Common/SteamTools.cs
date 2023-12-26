@@ -6,12 +6,12 @@ namespace Common
 {
     internal static class SteamTools
     {
-        public static string? SteamInstallPath { get; }
-
         static SteamTools()
         {
             SteamInstallPath = GetSteamInstallPath();
         }
+
+        public static string? SteamInstallPath { get; }
 
         /// <summary>
         /// Get list of ACF files from all Steam libraries

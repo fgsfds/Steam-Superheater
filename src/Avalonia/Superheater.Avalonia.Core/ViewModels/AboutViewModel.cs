@@ -8,10 +8,14 @@ using System.Runtime.InteropServices;
 namespace Superheater.Avalonia.Core.ViewModels
 {
     public sealed partial class AboutViewModel(
-        AppUpdateInstaller _updateInstaller,
-        PopupMessageViewModel _popupMessage
+        AppUpdateInstaller updateInstaller,
+        PopupMessageViewModel popupMessage
         ) : ObservableObject
     {
+        private readonly AppUpdateInstaller _updateInstaller = updateInstaller;
+        private readonly PopupMessageViewModel _popupMessage = popupMessage;
+
+
         #region Binding Properties
 
         public Version CurrentVersion => CommonProperties.CurrentVersion;

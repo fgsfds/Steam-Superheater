@@ -5,10 +5,12 @@ using Common.Entities.Fixes.FileFix;
 namespace Common.FixTools.FileFix
 {
     public sealed class FileFixUpdater(
-        FileFixInstaller _fixInstaller,
-        FileFixUninstaller _fixUninstaller
+        FileFixInstaller fixInstaller,
+        FileFixUninstaller fixUninstaller
         )
     {
+        private readonly FileFixInstaller _fixInstaller = fixInstaller;
+        private readonly FileFixUninstaller _fixUninstaller = fixUninstaller;
 
         public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {

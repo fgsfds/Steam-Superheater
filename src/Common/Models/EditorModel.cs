@@ -15,11 +15,13 @@ using System.Xml;
 namespace Common.Models
 {
     public sealed class EditorModel(
-        FixesProvider _fixesProvider,
-        GamesProvider _gamesProvider,
+        FixesProvider fixesProvider,
+        GamesProvider gamesProvider,
         ConfigProvider configProvider
         )
     {
+        private readonly FixesProvider _fixesProvider = fixesProvider;
+        private readonly GamesProvider _gamesProvider = gamesProvider;
         private readonly ConfigEntity _config = configProvider.Config;
 
         private List<FixesList> _fixesList = [];

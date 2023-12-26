@@ -5,11 +5,15 @@ using System.Collections.Immutable;
 namespace Common.Providers
 {
     public sealed class CombinedEntitiesProvider(
-        FixesProvider _fixesProvider,
-        GamesProvider _gamesProvider,
-        InstalledFixesProvider _installedFixesProvider
+        FixesProvider fixesProvider,
+        GamesProvider gamesProvider,
+        InstalledFixesProvider installedFixesProvider
         )
     {
+        private readonly FixesProvider _fixesProvider = fixesProvider;
+        private readonly GamesProvider _gamesProvider = gamesProvider;
+        private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
+
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>

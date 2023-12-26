@@ -8,10 +8,11 @@ namespace Common.Models
 {
     public sealed class NewsModel(
         ConfigProvider config,
-        NewsProvider _newsProvider
+        NewsProvider newsProvider
         )
     {
         private readonly ConfigEntity _config = config.Config;
+        private readonly NewsProvider _newsProvider = newsProvider;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
 

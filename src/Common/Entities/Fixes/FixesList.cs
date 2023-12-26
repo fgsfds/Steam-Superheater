@@ -30,5 +30,5 @@ namespace Common.Entities.Fixes
         Converters = [typeof(JsonStringEnumConverter<OSEnum>), typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)]
         )]
     [JsonSerializable(typeof(List<FixesList>))]
-    internal sealed partial class FixesListContext : JsonSerializerContext { }
+    public sealed partial class FixesListContext : JsonSerializerContext { }
 }

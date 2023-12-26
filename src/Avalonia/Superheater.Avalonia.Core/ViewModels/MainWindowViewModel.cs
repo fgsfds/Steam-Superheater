@@ -7,8 +7,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class MainWindowViewModel : ObservableObject
     {
-        private readonly ConfigEntity _config;
-
         public MainWindowViewModel(ConfigProvider configProvider)
         {
             _config = configProvider.Config;
@@ -18,6 +16,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             UpdateRepoMessage();
         }
+
+        private readonly ConfigEntity _config;
 
 
         #region Binding Properties

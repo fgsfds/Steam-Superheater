@@ -5,10 +5,13 @@ using Common.Entities.Fixes.RegistryFix;
 namespace Common.FixTools.RegistryFix
 {
     public sealed class RegistryFixUpdater(
-        RegistryFixInstaller _fixInstaller,
-        RegistryFixUninstaller _fixUninstaller
+        RegistryFixInstaller fixInstaller,
+        RegistryFixUninstaller fixUninstaller
         )
     {
+        private readonly RegistryFixInstaller _fixInstaller = fixInstaller;
+        private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller;
+
         public BaseInstalledFixEntity UpdateFix(GameEntity game, RegistryFixEntity regFix)
         {
             _fixUninstaller.UninstallFix(regFix);
