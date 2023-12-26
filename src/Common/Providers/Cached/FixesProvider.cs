@@ -82,7 +82,7 @@ namespace Common.Providers
             {
                 _locker.Release();
 
-                return CreateCache();
+                return await CreateCache();
             }
 
             _locker.Release();
@@ -198,7 +198,7 @@ namespace Common.Providers
         /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
-        internal override ImmutableList<FixesList> CreateCache()
+        internal override async Task<ImmutableList<FixesList>> CreateCache()
         {
             Logger.Info("Creating fixes cache");
 
@@ -215,7 +215,7 @@ namespace Common.Providers
             }
             else
             {
-                _fixesCachedString = DownloadFixesXMLAsync().Result;
+                _fixesCachedString = await DownloadFixesXMLAsync();
             }
 
             return DeserializeCachedString(_fixesCachedString);

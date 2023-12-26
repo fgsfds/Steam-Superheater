@@ -7,27 +7,32 @@ namespace Common.Providers
     public sealed class GamesProvider : CachedProviderBase<GameEntity>
     {
         /// <inheritdoc/>
-        internal override ImmutableList<GameEntity> CreateCache()
+        internal override async Task<ImmutableList<GameEntity>> CreateCache()
         {
             Logger.Info("Creating games cache list");
 
-            var files = SteamTools.GetAcfsList();
-
-            List<GameEntity> result = new(files.Count);
-
-            foreach (var file in files)
+            _cache = await Task.Run(() =>
             {
-                var games = GetGameEntityFromAcf(file);
+                var files = SteamTools.GetAcfsList();
 
-                if (games is null)
+                List<GameEntity> result = new(files.Count);
+
+                foreach (var file in files)
                 {
-                    continue;
+                    var games = GetGameEntityFromAcf(file);
+
+                    if (games is null)
+                    {
+                        continue;
+                    }
+
+                    result.Add(games);
                 }
 
-                result.Add(games);
-            }
+                var cache = result.OrderBy(static x => x.Name).ToImmutableList();
 
-            _cache = [.. result.OrderBy(static x => x.Name)];
+                return cache;
+            });
 
             Logger.Info($"Added {_cache.Count} games to the cache");
 

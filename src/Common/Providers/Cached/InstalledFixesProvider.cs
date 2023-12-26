@@ -54,7 +54,7 @@ namespace Common.Providers
         }
 
         /// <inheritdoc/>
-        internal override ImmutableList<BaseInstalledFixEntity> CreateCache()
+        internal override async Task<ImmutableList<BaseInstalledFixEntity>> CreateCache()
         {
             Logger.Info("Requesting installed fixes");
 
@@ -63,7 +63,7 @@ namespace Common.Providers
                 return ConvertXmlToJson();
             }
 
-            var text = File.ReadAllText(Consts.InstalledFile);
+            var text = await File.ReadAllTextAsync(Consts.InstalledFile);
 
             if (text is null)
             {
