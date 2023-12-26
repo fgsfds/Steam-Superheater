@@ -50,6 +50,8 @@ namespace Common.Providers
                 return fileFixResult;
             }
 
+            fixesList = [.. fixesList.OrderBy(static x => x.GameName)];
+
             try
             {
                 await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
@@ -255,6 +257,20 @@ namespace Common.Providers
 
                 return fixesXml;
             }
+        }
+
+        /// <summary>
+        /// Remove current cache, then create new one and return list of entities
+        /// </summary>
+        /// <returns>List of entities</returns>
+        protected override Task<ImmutableList<FixesList>> GetNewListAsync()
+        {
+            Logger.Info($"Requesting new Fixes list");
+
+            _cache = null;
+            _fixesCachedString = null;
+
+            return GetCachedListAsync();
         }
     }
 }

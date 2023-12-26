@@ -40,7 +40,7 @@ namespace Common.Providers
         /// Remove current cache, then create new one and return list of entities
         /// </summary>
         /// <returns>List of entities</returns>
-        private Task<ImmutableList<T>> GetNewListAsync()
+        protected virtual Task<ImmutableList<T>> GetNewListAsync()
         {
             Logger.Info($"Requesting new {typeof(T)} list");
 
