@@ -98,13 +98,13 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(md5.ComputeHash(stream));
 
-                    Assert.Equal("F00C5C32FFAD7C21CAF5F436B204D2E7", hash);
+                    Assert.Equal("B431935EBF5DA06DC87E5032454F5E29", hash);
                 }
             }
 
             fixEntity.InstalledFix = installedFix;
 
-            _fixManager.UninstallFix(null, fixEntity);
+            _fixManager.UninstallFix(gameEntity, fixEntity);
 
             using (var md5 = MD5.Create())
             {

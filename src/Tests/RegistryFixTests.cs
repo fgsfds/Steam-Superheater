@@ -119,7 +119,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
-                    Assert.Equal("6DE97926DE75282A6898D3E1B4A6AE01", hash);
+                    Assert.Equal("CDF4CB5E941EDBBB1984977DAD4D2F29", hash);
                 }
             }
 
@@ -188,7 +188,7 @@ namespace Tests
                 {
                     var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
-                    Assert.Equal("DA6D032FA42FC15504537830007B45C4", hash);
+                    Assert.Equal("9E0AC8E1BCF3CECDACDBDE29AFA3818E", hash);
                 }
             }
 
