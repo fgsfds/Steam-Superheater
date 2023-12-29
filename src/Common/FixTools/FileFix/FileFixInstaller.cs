@@ -10,9 +10,15 @@ using System.Security.Cryptography;
 
 namespace Common.FixTools.FileFix
 {
-    public sealed class FileFixInstaller(ConfigProvider config)
+    public sealed class FileFixInstaller(
+        ConfigProvider config,
+        FileTools fileTools,
+        ProgressReport progressReport
+        )
     {
         private readonly ConfigEntity _configEntity = config.Config;
+        private readonly FileTools _fileTools = fileTools;
+        private readonly ProgressReport _progressReport = progressReport;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events
@@ -102,7 +108,7 @@ namespace Common.FixTools.FileFix
                 url = url.Replace("/master/", "/test/");
             }
 
-            return FileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
+            return _fileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
 
         }
 
@@ -229,11 +235,11 @@ namespace Common.FixTools.FileFix
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
 
-            var filesInArchive = FileTools.GetListOfFilesInArchive(zipFullPath, unpackToPath, fixInstallFolder, variant);
+            var filesInArchive = _fileTools.GetListOfFilesInArchive(zipFullPath, unpackToPath, fixInstallFolder, variant);
 
             BackupFiles(filesInArchive, gameDir, backupFolderPath, true);
 
-            await FileTools.UnpackArchiveAsync(zipFullPath, unpackToPath, variant);
+            await _fileTools.UnpackArchiveAsync(zipFullPath, unpackToPath, variant);
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalRepo)
@@ -276,6 +282,8 @@ namespace Common.FixTools.FileFix
                 return;
             }
 
+            _progressReport.OperationMessage = "Patching...";
+
             foreach (var file in filesToPatch)
             {
                 var newFilePath = Path.Combine(gameFolder, file);
@@ -305,6 +313,8 @@ namespace Common.FixTools.FileFix
                         newFile);
                 });
             }
+
+            _progressReport.OperationMessage = string.Empty;
         }
     }
 }

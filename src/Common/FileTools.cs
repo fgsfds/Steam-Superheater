@@ -4,12 +4,9 @@ using System.Security.Cryptography;
 
 namespace Common
 {
-    public static class FileTools
+    public class FileTools (ProgressReport progressReport)
     {
-        /// <summary>
-        /// Operation progress
-        /// </summary>
-        public static readonly Progress<float> Progress = new();
+        private readonly ProgressReport _progressReport = progressReport;
 
         /// <summary>
         /// Download ZIP
@@ -19,14 +16,14 @@ namespace Common
         /// <param name="hash">MD5 to check file against</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public static async Task CheckAndDownloadFileAsync(
+        public async Task CheckAndDownloadFileAsync(
             Uri url,
             string filePath,
             string? hash = null)
         {
             Logger.Info($"Started downloading file {url}");
 
-            IProgress<float> progress = Progress;
+            IProgress<float> progress = _progressReport.Progress;
             var tempFile = filePath + ".temp";
 
             if (File.Exists(tempFile))
@@ -34,8 +31,11 @@ namespace Common
                 File.Delete(tempFile);
             }
 
+            _progressReport.OperationMessage = "Downloading...";
+
             using (HttpClient client = new())
             {
+
                 client.Timeout = TimeSpan.FromSeconds(10);
 
                 using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
@@ -100,6 +100,8 @@ namespace Common
                     }
                 }
             }
+
+            _progressReport.OperationMessage = string.Empty;
         }
 
         /// <summary>
@@ -108,12 +110,13 @@ namespace Common
         /// <param name="pathToArchive">Absolute path to archive file</param>
         /// <param name="unpackTo">Directory to unpack archive to</param>
         /// <param name="variant">Fix variant</param>
-        public static async Task UnpackArchiveAsync(
+        public async Task UnpackArchiveAsync(
             string pathToArchive,
             string unpackTo,
             string? variant)
         {
-            IProgress<float> progress = Progress;
+            IProgress<float> progress = _progressReport.Progress;
+            _progressReport.OperationMessage = "Unpacking...";
 
             using (var archive = ArchiveFactory.Open(pathToArchive))
             {
@@ -159,6 +162,8 @@ namespace Common
                     i++;
                 }
             }
+
+            _progressReport.OperationMessage = string.Empty;
         }
 
         /// <summary>
@@ -169,7 +174,7 @@ namespace Common
         /// <param name="unpackToPath">Full path</param>
         /// <param name="variant">Fix variant</param>
         /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
-        public static List<string> GetListOfFilesInArchive(
+        public List<string> GetListOfFilesInArchive(
             string zipPath,
             string unpackToPath,
             string? fixInstallFolder,

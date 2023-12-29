@@ -7,8 +7,13 @@
              x:DataType="vm:IProgressBarViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.ProgressBar">
 
-    <ProgressBar Height="15"
-                 IsIndeterminate="{Binding IsInProgress}"
-                 Value="{Binding ProgressBarValue}"/>
+
+    <Grid RowDefinitions="auto">
+        <ProgressBar Height="20"
+                     IsIndeterminate="{Binding IsInProgress}"
+                     Value="{Binding ProgressBarValue}"/>
+
+        <TextBlock Text="{Binding ProgressBarText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Grid>
 
 </UserControl>

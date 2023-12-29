@@ -60,6 +60,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
+        public string ProgressBarText { get; set; }
+
 
         public string SelectedFixName
         {

@@ -21,12 +21,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         public MainViewModel(
             MainModel mainModel,
             ConfigProvider config,
-            PopupMessageViewModel popupMessage
+            PopupMessageViewModel popupMessage,
+            ProgressReport progressReport
             )
         {
             _mainModel = mainModel;
             _config = config.Config;
             _popupMessage = popupMessage;
+            _progressReport = progressReport;
 
             _searchBarText = string.Empty;
 
@@ -38,6 +40,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
+        private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
         private bool _lockButtons;
 
@@ -87,14 +90,17 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
 
-        public float ProgressBarValue { get; set; }
-
-
         [ObservableProperty]
         private string _mainTabHeader = "Main";
 
         [ObservableProperty]
         private string _launchGameButtonText = "Launch game...";
+
+        [ObservableProperty]
+        private string _progressBarText = string.Empty;
+
+        [ObservableProperty]
+        private float _progressBarValue;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
@@ -406,7 +412,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             UninstallFixCommand.NotifyCanExecuteChanged();
             OpenConfigCommand.NotifyCanExecuteChanged();
 
-            FileTools.Progress.ProgressChanged += Progress_ProgressChanged;
+            _progressReport.Progress.ProgressChanged += ProgressChanged;
+            _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
             Result result;
 
@@ -443,9 +450,11 @@ Do you still want to install the fix?",
             OpenConfigCommand.NotifyCanExecuteChanged();
             UpdateGamesCommand.NotifyCanExecuteChanged();
 
-            FileTools.Progress.ProgressChanged -= Progress_ProgressChanged;
+            _progressReport.Progress.ProgressChanged -= ProgressChanged;
+            _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
+
             ProgressBarValue = 0;
-            OnPropertyChanged(nameof(ProgressBarValue));
+            ProgressBarText = string.Empty;
 
             if (!result.IsSuccess)
             {
@@ -487,6 +496,7 @@ Do you still want to install the fix?",
         {
             await _locker.WaitAsync();
             IsInProgress = true;
+            ProgressBarText = "Updating...";
 
             var result = await _mainModel.UpdateGamesListAsync(useCache);
 
@@ -502,6 +512,7 @@ Do you still want to install the fix?",
             }
 
             IsInProgress = false;
+            ProgressBarText = string.Empty;
 
             _locker.Release();
         }
@@ -620,10 +631,14 @@ Do you still want to install the fix?",
             return string.Empty;
         }
 
-        private void Progress_ProgressChanged(object? sender, float e)
+        private void ProgressChanged(object? sender, float e)
         {
             ProgressBarValue = e;
-            OnPropertyChanged(nameof(ProgressBarValue));
+        }
+
+        private void OperationMessageChanged(string message)
+        {
+            ProgressBarText = message;
         }
 
         private async void NotifyParameterChanged(string parameterName)
