@@ -3,6 +3,8 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
+using Octodiff.Core;
+using Octodiff.Diagnostics;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
@@ -29,8 +31,11 @@ namespace Common.FixTools.FileFix
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
+            BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
 
             var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
+
+            await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -262,6 +267,44 @@ namespace Common.FixTools.FileFix
                 UseShellExecute = true,
                 WorkingDirectory = gameInstallPath
             });
+        }
+
+        private async Task PatchFilesAsync(List<string>? filesToPatch, string gameFolder, string backupFolder)
+        {
+            if (filesToPatch is null || filesToPatch.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var file in filesToPatch)
+            {
+                var newFilePath = Path.Combine(gameFolder, file);
+                var originalFilePath = Path.Combine(backupFolder, file);
+                var patchFilePath = newFilePath + ".octodiff";
+
+                if (!File.Exists(originalFilePath)||
+                    !File.Exists(patchFilePath))
+                {
+                    throw new Exception();
+                }
+
+                using FileStream originalFile = new(originalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using FileStream patchFile = new(patchFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                using FileStream newFile = new(newFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+
+                DeltaApplier deltaApplier = new()
+                { 
+                    SkipHashCheck = false 
+                };
+
+                await Task.Run(() =>
+                {
+                    deltaApplier.Apply(
+                        originalFile,
+                        new BinaryDeltaReader(patchFile, new ConsoleProgressReporter()),
+                        newFile);
+                });
+            }
         }
     }
 }

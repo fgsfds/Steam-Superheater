@@ -165,6 +165,26 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string SelectedFixFilesToPatch
+        {
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null ? string.Join(';', fileFix.FilesToPatch) : string.Empty;
+            set
+            {
+                if (SelectedFix is null)
+                {
+                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                }
+
+                if (SelectedFix is not FileFixEntity fileFix)
+                {
+                    ThrowHelper.ArgumentException(nameof(SelectedFix));
+                    return;
+                }
+
+                fileFix.FilesToPatch = [.. value.Split(';').Select(static x => x.Trim())];
+            }
+        }
+
         public string SelectedFixUrl
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
@@ -452,6 +472,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsTextFixType))]
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
@@ -837,6 +858,29 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
         private bool OpenFilesToBackupEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to patch editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenFilesToPatchEditorCanExecute))]
+        private async Task OpenFilesToPatchEditorAsync()
+        {
+            if (SelectedFix is not FileFixEntity fileFix)
+            {
+                ThrowHelper.NullReferenceException(nameof(SelectedFix));
+                return;
+            }
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch);
+
+            if (result is not null)
+            {
+                fileFix.FilesToPatch = result;
+                OnPropertyChanged(nameof(SelectedFixFilesToPatch));
+            }
+        }
+        private bool OpenFilesToPatchEditorCanExecute() => SelectedFix is FileFixEntity;
 
 
         /// <summary>

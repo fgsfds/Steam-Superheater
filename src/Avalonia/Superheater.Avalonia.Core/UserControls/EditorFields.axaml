@@ -30,6 +30,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -276,8 +277,28 @@
 
         </Grid>
 
+        <!--Files To Patch-->
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="17"
+              IsVisible="{Binding IsFileFixType}">
+
+            <TextBox Text="{Binding SelectedFixFilesToPatch, Mode=TwoWay}"
+                     Watermark="Files to patch"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToPatchEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
+
         <!--OSes and dependencies-->
-        <Grid Grid.Row="17"
+        <Grid Grid.Row="18"
               Margin="0,3"
               MinHeight="60" RowDefinitions="*,*,*" ColumnDefinitions="auto,auto,*,auto,*">
 

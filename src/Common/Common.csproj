@@ -11,6 +11,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Octopus.Octodiff" />
     <PackageReference Include="SharpCompress" />
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>

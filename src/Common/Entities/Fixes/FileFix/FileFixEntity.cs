@@ -24,6 +24,7 @@ namespace Common.Entities.Fixes.FileFix
             ConfigFile = null;
             FilesToDelete = null;
             FilesToBackup = null;
+            FilesToPatch = null;
             RunAfterInstall = null;
             MD5 = null;
         }
@@ -94,5 +95,10 @@ namespace Common.Entities.Fixes.FileFix
         /// Zip archive MD5
         /// </summary>
         public string? MD5 { get; set; }
+
+        /// <summary>
+        /// List of files that will be backed up and patched with filename.diff patch
+        /// </summary>
+        public List<string>? FilesToPatch { get; set; }
     }
 }
