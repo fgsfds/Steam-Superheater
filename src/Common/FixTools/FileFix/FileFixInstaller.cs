@@ -260,7 +260,7 @@ namespace Common.FixTools.FileFix
             string? runAfterInstall
             )
         {
-            if (runAfterInstall is null)
+            if (string.IsNullOrEmpty(runAfterInstall))
             {
                 return;
             }
