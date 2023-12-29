@@ -305,16 +305,26 @@ namespace Common.FixTools.FileFix
                     SkipHashCheck = false 
                 };
 
+                var reporter = new OctodiffProgressReporter();
+                reporter.NotifyProgressChanged += NotifyProgressChanged;
+
                 await Task.Run(() =>
                 {
                     deltaApplier.Apply(
                         originalFile,
-                        new BinaryDeltaReader(patchFile, new ConsoleProgressReporter()),
+                        new BinaryDeltaReader(patchFile, reporter),
                         newFile);
                 });
             }
 
             _progressReport.OperationMessage = string.Empty;
+
+            void NotifyProgressChanged(float value)
+            {
+                IProgress<float> progress = _progressReport.Progress;
+
+                progress.Report(value);
+            }
         }
     }
 }

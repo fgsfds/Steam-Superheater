@@ -73,7 +73,9 @@ namespace Common
                     {
                         await file.WriteAsync(buffer.AsMemory(0, bytesRead));
                         totalBytesRead += bytesRead;
-                        progress.Report((totalBytesRead / (long)contentLength * 100));
+
+                        var value = (totalBytesRead / (long)contentLength * 100);
+                        progress.Report(value);
                     }
 
                     await file.DisposeAsync();
@@ -157,7 +159,8 @@ namespace Common
                         await zipEntry.OpenEntryStream().CopyToAsync(target);
                     }
 
-                    progress.Report(i / count * 100);
+                    var value = i / count * 100;
+                    progress.Report(value);
 
                     i++;
                 }

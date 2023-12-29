@@ -1,4 +1,6 @@
-﻿namespace Common.Helpers
+﻿using Octodiff.Diagnostics;
+
+namespace Common.Helpers
 {
     /// <summary>
     /// Operation progress reporter
@@ -34,5 +36,20 @@
 
         public delegate void OperationMessageChanged(string message);
         public event OperationMessageChanged NotifyOperationMessageChanged;
+    }
+
+    /// <summary>
+    /// Progress reporter for Octodiff patcher
+    /// </summary>
+    public sealed class OctodiffProgressReporter : IProgressReporter
+    {
+        public delegate void ProgressChanged(float progress);
+        public event ProgressChanged NotifyProgressChanged;
+
+        public void ReportProgress(string operation, long currentPosition, long total)
+        {
+            var progress = currentPosition * 100 / total;
+            NotifyProgressChanged?.Invoke(progress);
+        }
     }
 }
