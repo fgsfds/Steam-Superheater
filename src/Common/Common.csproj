@@ -16,4 +16,10 @@
     <PackageReference Include="System.Text.Json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Generators\SourceGenerators.csproj"
+                            OutputItemType="Analyzer"
+                            ReferenceOutputAssembly="true"  />
+  </ItemGroup>
+
 </Project>

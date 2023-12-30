@@ -22,6 +22,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerators", "src\Generators\SourceGenerators.csproj", "{E5F52439-FD89-452D-86BC-813425CCF372}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,6 +82,18 @@ Global
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Release|x64.ActiveCfg = Release|Any CPU
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Release|x64.Build.0 = Release|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug|x64.Build.0 = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug-Linux|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug-Linux|Any CPU.Build.0 = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug-Linux|x64.ActiveCfg = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Debug-Linux|x64.Build.0 = Debug|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Release|x64.ActiveCfg = Release|Any CPU
+		{E5F52439-FD89-452D-86BC-813425CCF372}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
