@@ -33,7 +33,7 @@ namespace Superheater.Avalonia.Core.Pages
         {
             Process.Start(new ProcessStartInfo
             {
-                FileName = "https://github.com/fgsfds/Steam-Superheater/wiki/Useful-links",
+                FileName = "https://discord.gg/mWvKyxR4et",
                 UseShellExecute = true
             });
         }
