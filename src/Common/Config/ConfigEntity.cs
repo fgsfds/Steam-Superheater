@@ -1,4 +1,6 @@
 ﻿using Common.Enums;
+using Common.Helpers;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 
 namespace Common.Config
@@ -29,149 +31,93 @@ namespace Common.Config
         public bool DeleteZipsAfterInstall
         {
             get => _deleteZipsAfterInstall;
-            set
-            {
-                if (_deleteZipsAfterInstall != value)
-                {
-                    _deleteZipsAfterInstall = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(DeleteZipsAfterInstall));
-                }
-            }
+            set => SetConfigParameter(ref _deleteZipsAfterInstall, value);
         }
 
         private bool _openConfigAfterInstall;
         public bool OpenConfigAfterInstall
         {
             get => _openConfigAfterInstall;
-            set
-            {
-                if (_openConfigAfterInstall != value)
-                {
-                    _openConfigAfterInstall = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(OpenConfigAfterInstall));
-                }
-            }
+            set => SetConfigParameter(ref _openConfigAfterInstall, value);
         }
 
         private DateTime _lastReadNewsDate;
         public DateTime LastReadNewsDate
         {
             get => _lastReadNewsDate;
-            set
-            {
-                if (_lastReadNewsDate != value)
-                {
-                    _lastReadNewsDate = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(LastReadNewsDate));
-                }
-            }
+            set => SetConfigParameter(ref _lastReadNewsDate, value);
         }
 
         private bool _useLocalRepo;
         public bool UseLocalRepo
         {
             get => _useLocalRepo;
-            set
-            {
-                if (_useLocalRepo != value)
-                {
-                    _useLocalRepo = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(UseLocalRepo));
-                }
-            }
+            set => SetConfigParameter(ref _useLocalRepo, value);
         }
 
         private string _localRepoPath;
         public string LocalRepoPath
         {
             get => _localRepoPath;
-            set
-            {
-                if (_localRepoPath != value)
-                {
-                    _localRepoPath = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(LocalRepoPath));
-                }
-            }
+            set => SetConfigParameter(ref _localRepoPath, value);
         }
 
         private ThemeEnum _theme;
         public ThemeEnum Theme
         {
             get => _theme;
-            set
-            {
-                if (_theme != value)
-                {
-                    _theme = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(Theme));
-                }
-            }
+            set => SetConfigParameter(ref _theme, value);
         }
 
         private bool _showUninstalledGames;
         public bool ShowUninstalledGames
         {
             get => _showUninstalledGames;
-            set
-            {
-                if (_showUninstalledGames != value)
-                {
-                    _showUninstalledGames = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(ShowUninstalledGames));
-                }
-            }
+            set => SetConfigParameter(ref _showUninstalledGames, value);
         }
 
         private bool _useTestRepoBranch;
         public bool UseTestRepoBranch
         {
             get => _useTestRepoBranch;
-            set
-            {
-                if (_useTestRepoBranch != value)
-                {
-                    _useTestRepoBranch = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(UseTestRepoBranch));
-                }
-            }
+            set => SetConfigParameter(ref _useTestRepoBranch, value);
         }
 
         private bool _showUnsupportedFixes;
         public bool ShowUnsupportedFixes
         {
             get => _showUnsupportedFixes;
-            set
-            {
-                if (_showUnsupportedFixes != value)
-                {
-                    _showUnsupportedFixes = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(ShowUnsupportedFixes));
-                }
-            }
+            set => SetConfigParameter(ref _showUnsupportedFixes, value);
         }
 
         private List<string> _hiddenTags;
         public List<string> HiddenTags
         {
             get => _hiddenTags;
-            set
+            set => SetConfigParameter(ref _hiddenTags, value);
+        }
+
+        /// <summary>
+        /// Sets config parameter if changed and invokes notifier
+        /// </summary>
+        /// <param name="fieldName">Parameter field to change</param>
+        /// <param name="value">New value</param>
+        private void SetConfigParameter<T>(ref T fieldName, T value, [CallerMemberName] string callerName = "")
+        {
+            if (fieldName is null)
             {
-                if (_hiddenTags != value)
-                {
-                    _hiddenTags = value;
-                    NotifyConfigChanged?.Invoke();
-                    NotifyParameterChanged?.Invoke(nameof(HiddenTags));
-                }
+                ThrowHelper.NullReferenceException(nameof(fieldName));
+            }
+            if (string.IsNullOrEmpty(callerName))
+            {
+                ThrowHelper.NullReferenceException(nameof(callerName));
+            }
+
+            if (!fieldName.Equals(value))
+            {
+                fieldName = value;
+                NotifyConfigChanged?.Invoke();
+                NotifyParameterChanged?.Invoke(callerName);
             }
         }
     }
