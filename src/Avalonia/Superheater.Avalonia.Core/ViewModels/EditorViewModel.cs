@@ -89,62 +89,74 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixTags
         {
-            get => SelectedFix?.Tags is null ? string.Empty : string.Join(';', SelectedFix.Tags);
+            get => SelectedFix?.Tags is null
+                ? string.Empty 
+                : string.Join(';', SelectedFix.Tags);
             set
             {
                 SelectedFix.ThrowIfNull();
 
-                SelectedFix.Tags = [.. value.Split(';').Select(static x => x.Trim())];
+                SelectedFix.Tags = value.SplitSemicolonSeparatedString();
             }
         }
 
         public string SelectedFixVariants
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? string.Join(';', fileFix.Variants) : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null 
+                ? string.Join(';', fileFix.Variants) 
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-                fileFix.Variants = [.. value.Split(';').Select(static x => x.Trim())];
+                fileFix.Variants = value.SplitSemicolonSeparatedString();
             }
         }
 
         public string SelectedFixFilesToDelete
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null ? string.Join(';', fileFix.FilesToDelete) : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null
+                ? string.Join(';', fileFix.FilesToDelete)
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-                fileFix.FilesToDelete = [.. value.Split(';').Select(static x => x.Trim())];
+                fileFix.FilesToDelete = value.SplitSemicolonSeparatedString();
             }
         }
 
         public string SelectedFixFilesToBackup
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null ? string.Join(';', fileFix.FilesToBackup) : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null
+                ? string.Join(';', fileFix.FilesToBackup)
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-                fileFix.FilesToBackup = [.. value.Split(';').Select(static x => x.Trim())];
+                fileFix.FilesToBackup = value.SplitSemicolonSeparatedString();
             }
         }
 
         public string SelectedFixFilesToPatch
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null ? string.Join(';', fileFix.FilesToPatch) : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null
+                ? string.Join(';', fileFix.FilesToPatch)
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-                fileFix.FilesToPatch = [.. value.Split(';').Select(static x => x.Trim())];
+                fileFix.FilesToPatch = value.SplitSemicolonSeparatedString();
             }
         }
 
         public string SelectedFixUrl
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null
+                ? fileFix.Url
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
@@ -157,7 +169,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixMD5
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null ? fileFix.MD5 : string.Empty;
+            get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null 
+                ? fileFix.MD5 
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
@@ -170,12 +184,14 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixEntries
         {
-            get => SelectedFix is HostsFixEntity hostsFix ? string.Join(';', hostsFix.Entries) : string.Empty;
+            get => SelectedFix is HostsFixEntity hostsFix
+                ? string.Join(';', hostsFix.Entries)
+                : string.Empty;
             set
             {
                 SelectedFix.ThrowIfNotType<HostsFixEntity>(out var hostsFix);
 
-                hostsFix.Entries = [.. value.Split(';')];
+                hostsFix.Entries = value.SplitSemicolonSeparatedString() ?? [];
             }
         }
 

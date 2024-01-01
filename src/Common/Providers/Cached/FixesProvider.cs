@@ -1,6 +1,7 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
@@ -119,6 +120,19 @@ namespace Common.Providers
                                 return new Result(ResultEnum.ConnectionError, ex.Message);
                             }
                         }
+                    }
+
+                    if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
+                    {
+                        fileFix.RunAfterInstall = null;
+                    }
+                    if (string.IsNullOrWhiteSpace(fileFix.InstallFolder))
+                    {
+                        fileFix.InstallFolder = null;
+                    }
+                    if (string.IsNullOrWhiteSpace(fileFix.ConfigFile))
+                    {
+                        fileFix.ConfigFile = null;
                     }
                 }
             }

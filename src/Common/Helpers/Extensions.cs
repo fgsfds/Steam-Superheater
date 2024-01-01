@@ -42,5 +42,15 @@ namespace Common.Helpers
 
             return list;
         }
+
+        public static List<string>? SplitSemicolonSeparatedString(this string? str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return null;
+            }
+
+            return [.. str.Split(';').Select(static x => x.Trim())];
+        }
     }
 }
