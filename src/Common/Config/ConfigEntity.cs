@@ -2,6 +2,7 @@
 using Common.Helpers;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Common.Config
 {
@@ -104,14 +105,8 @@ namespace Common.Config
         /// <param name="value">New value</param>
         private void SetConfigParameter<T>(ref T fieldName, T value, [CallerMemberName] string callerName = "")
         {
-            if (fieldName is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fieldName));
-            }
-            if (string.IsNullOrEmpty(callerName))
-            {
-                ThrowHelper.NullReferenceException(nameof(callerName));
-            }
+            fieldName.ThrowIfNull();
+            callerName.ThrowIfNullOrEmpty();
 
             if (!fieldName.Equals(value))
             {

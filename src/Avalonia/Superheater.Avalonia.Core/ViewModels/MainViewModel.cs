@@ -208,15 +208,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
         private void UninstallFix()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
-
-            if (SelectedGame?.Game is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            }
+            SelectedFix.ThrowIfNull();
+            SelectedGame.ThrowIfNull();
+            SelectedGame.Game.ThrowIfNull();
 
             IsInProgress = true;
 
@@ -261,10 +255,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
         private void OpenGameFolder()
         {
-            if (SelectedGame?.Game is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            }
+            SelectedGame.ThrowIfNull();
+            SelectedGame.Game.ThrowIfNull();
 
             Process.Start(new ProcessStartInfo
             {
@@ -297,10 +289,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
         private void OpenPCGamingWiki()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
 
             Process.Start(new ProcessStartInfo
             {
@@ -328,10 +317,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(LaunchGameCanExecute)))]
         private void LaunchGame()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
 
             if (SelectedGame.IsGameInstalled)
             {
@@ -394,15 +380,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="isUpdate">Update fix</param>
         private async Task InstallUpdateFixAsync(bool isUpdate)
         {
-            if (SelectedGame?.Game is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            }
-
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
+            SelectedFix.ThrowIfNull();
+            SelectedGame.ThrowIfNull();
+            SelectedGame.Game.ThrowIfNull();
 
             _lockButtons = true;
 
@@ -560,19 +540,10 @@ Do you still want to install the fix?",
         /// </summary>
         private void OpenConfigXml()
         {
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                return;
-            }
-            if (SelectedGame?.Game is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame.Game));
-            }
-
-            if (fileFix.ConfigFile is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fileFix.ConfigFile));
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+            SelectedGame.ThrowIfNull();
+            SelectedGame.Game.ThrowIfNull();
+            fileFix.ConfigFile.ThrowIfNull();
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
 

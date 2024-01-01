@@ -135,10 +135,7 @@ namespace Common.Providers
         /// <exception cref="Exception">Http response error</exception>
         private async Task<string> GetMD5(HttpClient client, FileFixEntity fix)
         {
-            if (fix.Url is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fix.Url));
-            }
+            fix.Url.ThrowIfNull();
 
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
@@ -232,10 +229,7 @@ namespace Common.Providers
         {
             var fixesList = JsonSerializer.Deserialize(fixes, FixesListContext.Default.ListFixesList);
 
-            if (fixesList is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fixesList));
-            }
+            fixesList.ThrowIfNull();
 
             return [.. fixesList];
         }

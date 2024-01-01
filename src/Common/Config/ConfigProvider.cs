@@ -40,10 +40,7 @@ namespace Common.Config
                 config = JsonSerializer.Deserialize(fs, ConfigEntityContext.Default.ConfigEntity);
             }
 
-            if (config is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(config));
-            }
+            config.ThrowIfNull();
 
             return config;
         }

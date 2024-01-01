@@ -65,17 +65,11 @@ namespace Common.Providers
 
             var text = await File.ReadAllTextAsync(Consts.InstalledFile);
 
-            if (text is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(text));
-            }
+            text.ThrowIfNull();
 
             var fixesDatabase = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity);
 
-            if (fixesDatabase is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fixesDatabase));
-            }
+            fixesDatabase.ThrowIfNull();
 
             _cache = [.. fixesDatabase];
 

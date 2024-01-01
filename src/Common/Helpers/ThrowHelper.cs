@@ -67,4 +67,43 @@ namespace Common.Helpers
         [DoesNotReturn]
         public static T ArgumentException<T>(string? message = "") => throw new ArgumentException(message);
     }
+
+    public static class Guard
+    {
+        /// <summary>
+        /// Throw <see cref="NullReferenceException"/> if <paramref name="obj"/> is null
+        /// </summary>
+        public static void ThrowIfNull([NotNull] this object? obj)
+        {
+            if (obj is null)
+            {
+                throw new NullReferenceException(nameof(obj));
+            }
+        }
+
+        /// <summary>
+        /// Throw <see cref="ArgumentException"/> if <paramref name="obj"/> is not of type <typeparamref name="T"/>
+        /// otherwise, return <paramref name="obj"/> cast to <typeparamref name="T"/>
+        /// </summary>
+        public static void ThrowIfNotType<T>([NotNull] this object? obj, out T ret)
+        {
+            if (obj is not T objT)
+            {
+                throw new ArgumentException(nameof(obj));
+            }
+
+            ret = objT; 
+        }
+
+        /// <summary>
+        /// Throw <see cref="NullReferenceException"/> if string is null or empty
+        /// </summary>
+        public static void ThrowIfNullOrEmpty([NotNull] this string? obj)
+        {
+            if (string.IsNullOrEmpty(obj))
+            {
+                throw new NullReferenceException(nameof(obj));
+            }
+        }
+    }
 }

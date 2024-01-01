@@ -123,10 +123,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetDefaultTheme()
         {
-            if (Application.Current is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(Application.Current));
-            }
+            Application.Current.ThrowIfNull();
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Default;
             _config.Theme = ThemeEnum.System;
@@ -135,10 +132,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetLightTheme()
         {
-            if (Application.Current is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(Application.Current));
-            }
+            Application.Current.ThrowIfNull();
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Light;
             _config.Theme = ThemeEnum.Light;
@@ -147,10 +141,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void SetDarkTheme()
         {
-            if (Application.Current is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(Application.Current));
-            }
+            Application.Current.ThrowIfNull();
 
             Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
             _config.Theme = ThemeEnum.Dark;

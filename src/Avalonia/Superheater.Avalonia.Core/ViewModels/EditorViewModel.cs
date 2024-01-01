@@ -68,10 +68,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.Name ?? string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedFix.ThrowIfNull();
 
                 SelectedFix.Name = value;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -83,10 +80,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.Version ?? 0;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedFix.ThrowIfNull();
 
                 SelectedFix.Version = value;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -98,10 +92,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.Tags is null ? string.Empty : string.Join(';', SelectedFix.Tags);
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedFix.ThrowIfNull();
 
                 SelectedFix.Tags = [.. value.Split(';').Select(static x => x.Trim())];
             }
@@ -112,16 +103,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? string.Join(';', fileFix.Variants) : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.Variants = [.. value.Split(';').Select(static x => x.Trim())];
             }
@@ -132,16 +114,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null ? string.Join(';', fileFix.FilesToDelete) : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.FilesToDelete = [.. value.Split(';').Select(static x => x.Trim())];
             }
@@ -152,16 +125,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null ? string.Join(';', fileFix.FilesToBackup) : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.FilesToBackup = [.. value.Split(';').Select(static x => x.Trim())];
             }
@@ -172,16 +136,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null ? string.Join(';', fileFix.FilesToPatch) : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.FilesToPatch = [.. value.Split(';').Select(static x => x.Trim())];
             }
@@ -192,16 +147,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null ? fileFix.Url : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.Url = string.IsNullOrWhiteSpace(value)
                     ? null
@@ -214,16 +160,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null ? fileFix.MD5 : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not FileFixEntity fileFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
                 fileFix.MD5 = string.IsNullOrWhiteSpace(value)
                     ? null
@@ -236,16 +173,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is HostsFixEntity hostsFix ? string.Join(';', hostsFix.Entries) : string.Empty;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedFix is not HostsFixEntity hostsFix)
-                {
-                    ThrowHelper.ArgumentException(nameof(SelectedFix));
-                    return;
-                }
+                SelectedFix.ThrowIfNotType<HostsFixEntity>(out var hostsFix);
 
                 hostsFix.Entries = [.. value.Split(';')];
             }
@@ -256,10 +184,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedFix.ThrowIfNull();
 
                 SelectedFix.SupportedOSes = value
                     ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows)
@@ -272,10 +197,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedFix.ThrowIfNull();
 
                 SelectedFix.SupportedOSes = value
                     ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux)
@@ -288,15 +210,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is FileFixEntity;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedGame is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedGame.ThrowIfNull();
+                SelectedFix.ThrowIfNull();
 
                 if (value)
                 {
@@ -314,15 +229,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is RegistryFixEntity;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedGame is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedGame.ThrowIfNull();
+                SelectedFix.ThrowIfNull();
 
                 if (value)
                 {
@@ -340,15 +248,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is HostsFixEntity;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedGame is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedGame.ThrowIfNull();
+                SelectedFix.ThrowIfNull();
 
                 if (value)
                 {
@@ -366,15 +267,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             get => SelectedFix is TextFixEntity;
             set
             {
-                if (SelectedFix is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
-
-                if (SelectedGame is null)
-                {
-                    ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                }
+                SelectedGame.ThrowIfNull();
+                SelectedFix.ThrowIfNull();
 
                 if (value)
                 {
@@ -437,10 +331,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public float ProgressBarValue { get; set; }
 
+
         #region Not Implemented
+
         public HashSet<string> TagsComboboxList => [];
         public string SelectedTagFilter { get; set; } = string.Empty;
         public bool IsTagsComboboxVisible => false;
+
         #endregion Not Implemented
 
 
@@ -533,10 +430,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
         private void AddNewFix()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
 
             var newFix = EditorModel.AddNewFix(SelectedGame);
 
@@ -554,15 +448,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(RemoveFixCanExecute))]
         private void RemoveFix()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
-
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
+            SelectedGame.ThrowIfNull();
+            SelectedFix.ThrowIfNull();
 
             _editorModel.RemoveFix(SelectedGame, SelectedFix);
 
@@ -618,10 +505,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddDependencyCanExecute))]
         private void AddDependency()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
+            SelectedFix.ThrowIfNull();
 
             EditorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
 
@@ -637,10 +521,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(RemoveDependencyCanExecute))]
         private void RemoveDependency()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
+            SelectedFix.ThrowIfNull();
 
             EditorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
 
@@ -656,10 +537,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(AddNewGameCanExecute))]
         private void AddNewGame()
         {
-            if (SelectedAvailableGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedAvailableGame));
-            }
+            SelectedAvailableGame.ThrowIfNull();
 
             var newGame = _editorModel.AddNewGame(SelectedAvailableGame);
 
@@ -677,10 +555,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixUpCanExecute))]
         private void MoveFixUp()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
 
             EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
@@ -697,10 +572,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(MoveFixDownCanExecute))]
         private void MoveFixDown()
         {
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
 
             EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
@@ -717,15 +589,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
         private async Task UploadFixAsync()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
-
-            if (SelectedGame is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedGame));
-            }
+            SelectedGame.ThrowIfNull();
+            SelectedFix.ThrowIfNull();
 
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
 
@@ -757,15 +622,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenFilePickerCanExecute))]
         private async Task OpenFilePickerAsync()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-            }
-
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                return;
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
             var topLevel = Properties.TopLevel;
 
@@ -799,11 +656,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
         private async Task OpenTagsEditorAsync()
         {
-            if (SelectedFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNull();
 
             var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags);
 
@@ -822,11 +675,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenFilesToDeleteEditorCanExecute))]
         private async Task OpenFilesToDeleteEditorAsync()
         {
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
             var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete);
 
@@ -845,11 +694,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenFilesToBackupEditorCanExecute))]
         private async Task OpenFilesToBackupEditorAsync()
         {
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
             var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup);
 
@@ -868,11 +713,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenFilesToPatchEditorCanExecute))]
         private async Task OpenFilesToPatchEditorAsync()
         {
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
             var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch);
 
@@ -891,11 +732,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
         private async Task OpenVariantsEditorAsync()
         {
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
             var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants);
 
@@ -914,17 +751,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(OpenHostsEditorCanExecute))]
         private async Task OpenHostsEditorAsync()
         {
-            if (SelectedFix is not HostsFixEntity fileFix)
-            {
-                ThrowHelper.NullReferenceException(nameof(SelectedFix));
-                return;
-            }
+            SelectedFix.ThrowIfNotType<HostsFixEntity>(out var hostsFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", fileFix.Entries);
+            var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", hostsFix.Entries);
 
             if (result is not null)
             {
-                fileFix.Entries = result;
+                hostsFix.Entries = result;
                 OnPropertyChanged(nameof(SelectedFixEntries));
             }
         }
