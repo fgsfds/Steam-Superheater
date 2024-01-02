@@ -56,12 +56,12 @@ namespace Common.Entities.Fixes.FileFix
 
         /// <summary>
         /// List of fix's variants
-        /// Names of folders inside a fix's archive, separated by ;
+        /// Names of folders inside a fix's archive
         /// </summary>
         public List<string>? Variants { get; set; }
 
         /// <summary>
-        /// Folder to unpack ZIP
+        /// Folder to unpack archive
         /// Relative to the game folder
         /// </summary>
         public string? InstallFolder { get; set; }
@@ -75,13 +75,13 @@ namespace Common.Entities.Fixes.FileFix
 
         /// <summary>
         /// List of files that will be backed up and deleted before the fix is installed
-        /// Paths are relative to the game folder, separated by ;
+        /// Paths are relative to the game folder
         /// </summary>
         public List<string>? FilesToDelete { get; set; }
 
         /// <summary>
         /// List of files that will be backed up before the fix is installed, and the original file will remain
-        /// Paths are relative to the game folder, separated by ;
+        /// Paths are relative to the game folder
         /// </summary>
         public List<string>? FilesToBackup { get; set; }
 
@@ -97,7 +97,7 @@ namespace Common.Entities.Fixes.FileFix
         public string? MD5 { get; set; }
 
         /// <summary>
-        /// List of files that will be backed up and patched with filename.diff patch
+        /// List of files that will be backed up and patched with filename.octodiff patch
         /// </summary>
         public List<string>? FilesToPatch { get; set; }
     }

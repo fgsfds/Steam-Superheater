@@ -53,12 +53,6 @@ namespace Common.Entities.Fixes
         public List<string>? Tags { get; set; }
 
         /// <summary>
-        /// Is there a newer version of the fix
-        /// </summary>
-        [JsonIgnore]
-        public bool HasNewerVersion => InstalledFix is not null && InstalledFix.Version < Version;
-
-        /// <summary>
         /// Installed fix entity
         /// </summary>
         [JsonIgnore]
@@ -75,6 +69,12 @@ namespace Common.Entities.Fixes
         /// </summary>
         [JsonIgnore]
         public bool IsInstalled => InstalledFix is not null;
+
+        /// <summary>
+        /// Is there a newer version of the fix
+        /// </summary>
+        [JsonIgnore]
+        public bool IsOutdated => InstalledFix?.IsOutdated ?? false;
 
         public override string ToString() => Name;
     }

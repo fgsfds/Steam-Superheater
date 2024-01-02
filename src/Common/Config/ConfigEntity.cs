@@ -2,7 +2,6 @@
 using Common.Helpers;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Common.Config
 {

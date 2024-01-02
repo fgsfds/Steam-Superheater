@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace Common.Enums
+﻿namespace Common.Enums
 {
     public enum ThemeEnum: byte
     {

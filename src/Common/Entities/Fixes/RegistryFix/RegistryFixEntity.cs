@@ -39,12 +39,25 @@ namespace Common.Entities.Fixes.RegistryFix
             ValueType = RegistryValueTypeEnum.String;
         }
 
+        /// <summary>
+        /// Registry key
+        /// </summary>
         public string Key { get; set; }
 
+        /// <summary>
+        /// Registry value name
+        /// </summary>
         public string ValueName { get; set; }
 
+
+        /// <summary>
+        /// Registry value
+        /// </summary>
         public string NewValueData { get; set; }
 
+        /// <summary>
+        /// Value type
+        /// </summary>
         public required RegistryValueTypeEnum ValueType { get; set; }
     }
 }

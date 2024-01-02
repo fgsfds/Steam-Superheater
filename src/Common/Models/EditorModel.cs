@@ -10,7 +10,6 @@ using System.Collections.Immutable;
 using Common.Config;
 using System.Text;
 using System.Text.Json;
-using System.Xml;
 
 namespace Common.Models
 {
@@ -38,7 +37,7 @@ namespace Common.Models
                 await GetListOfFixesAsync(useCache);
                 await UpdateListOfAvailableGamesAsync(useCache);
 
-                return new(ResultEnum.Ok, string.Empty);
+                return new(ResultEnum.Success, string.Empty);
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
@@ -240,9 +239,9 @@ namespace Common.Models
 
             File.Delete(fixFilePath);
 
-            if (result == ResultEnum.Ok)
+            if (result == ResultEnum.Success)
             {
-                return new(ResultEnum.Ok, """
+                return new(ResultEnum.Success, """
                     Fix successfully uploaded.
                     It will be added to the database after developer's review.
 
@@ -290,7 +289,7 @@ namespace Common.Models
                 }
             }
 
-            return new(ResultEnum.Ok, string.Empty);
+            return new(ResultEnum.Success, string.Empty);
         }
 
         public static void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)

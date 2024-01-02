@@ -1,7 +1,6 @@
 ﻿using Common.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Security.Cryptography;
@@ -46,7 +45,7 @@ namespace Common.Providers
 
             var fileFixResult = await PrepareFixes(fixesList);
 
-            if (fileFixResult != ResultEnum.Ok)
+            if (fileFixResult != ResultEnum.Success)
             {
                 return fileFixResult;
             }
@@ -69,7 +68,7 @@ namespace Common.Providers
             }
 
             Logger.Info("Fixes list saved successfully!");
-            return new(ResultEnum.Ok, "Fixes list saved successfully!");   
+            return new(ResultEnum.Success, "Fixes list saved successfully!");   
         }
 
         /// <summary>
@@ -85,7 +84,7 @@ namespace Common.Providers
             {
                 _locker.Release();
 
-                return await CreateCache();
+                return await CreateCacheAsync();
             }
 
             _locker.Release();
@@ -134,10 +133,35 @@ namespace Common.Providers
                     {
                         fileFix.ConfigFile = null;
                     }
+                    if (fileFix.FilesToBackup?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+                    {
+                        fileFix.FilesToBackup = null;
+                    }
+                    if (fileFix.FilesToDelete?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+                    {
+                        fileFix.FilesToDelete = null;
+                    }
+                    if (fileFix.FilesToPatch?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+                    {
+                        fileFix.FilesToPatch = null;
+                    }
+                }
+
+                if (string.IsNullOrWhiteSpace(fix.Description))
+                {
+                    fix.Description = null;
+                }
+                if (fix.Dependencies?.Count == 0)
+                {
+                    fix.Dependencies = null;
+                }
+                if (fix.Tags?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+                {
+                    fix.Tags = null;
                 }
             }
 
-            return new Result(ResultEnum.Ok, string.Empty);
+            return new Result(ResultEnum.Success, string.Empty);
         }
 
         /// <summary>
@@ -211,7 +235,7 @@ namespace Common.Providers
         /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
-        internal override async Task<ImmutableList<FixesList>> CreateCache()
+        internal override async Task<ImmutableList<FixesList>> CreateCacheAsync()
         {
             Logger.Info("Creating fixes cache");
 

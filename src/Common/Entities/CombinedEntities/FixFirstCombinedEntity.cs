@@ -1,41 +1,12 @@
 ﻿using Common.Entities.Fixes;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.CombinedEntities
 {
     /// <summary>
-    /// Object that combines fixes list with installed game
+    /// Object that combines fixes list with its respective game
     /// </summary>
     public sealed class FixFirstCombinedEntity
     {
-        [SetsRequiredMembers]
-        public FixFirstCombinedEntity(
-            FixesList fixesList,
-            GameEntity? game,
-            IEnumerable<BaseInstalledFixEntity>? installedFixes
-            )
-        {
-            FixesList = fixesList;
-            Game = game;
-
-            if (installedFixes is null)
-            {
-                return;
-            }
-
-            foreach (var installedFix in installedFixes)
-            {
-                var guid = installedFix.Guid;
-
-                var fix = FixesList.Fixes.FirstOrDefault(x => x.Guid == guid);
-
-                if (fix is not null)
-                {
-                    fix.InstalledFix = installedFix;
-                }
-            }
-        }
-
         /// <summary>
         /// List of fixes
         /// </summary>
@@ -69,7 +40,7 @@ namespace Common.Entities.CombinedEntities
         /// <summary>
         /// Does this game have newer version of fixes
         /// </summary>
-        public bool HasUpdates => FixesList.Fixes.Exists(static x => x.HasNewerVersion);
+        public bool HasUpdates => FixesList.Fixes.Exists(static x => x.IsOutdated);
 
         public override string ToString() => GameName;
     }

@@ -1,5 +1,4 @@
 using Avalonia.Input.Platform;
-using Common;
 using Common.Config;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
@@ -64,7 +63,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty;
 
-        public bool DoesSelectedFixHaveUpdates => SelectedFix?.HasNewerVersion ?? false;
+        public bool DoesSelectedFixHaveUpdates => SelectedFix?.IsOutdated ?? false;
 
         public bool SelectedFixHasTags => !SelectedFixTags.IsEmpty;
 
@@ -362,14 +361,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Hide selected tag
         /// </summary>
         [RelayCommand]
-        private void HideTag(string value)
-        {
-            List<string> tags = [.. _config.HiddenTags];
-            tags.Add(value);
-            tags = [.. tags.OrderBy(static x => x)];
-
-            _config.HiddenTags = tags;
-        }
+        private void HideTag(string tag) => _mainModel.HideTag(tag);
 
         #endregion Relay Commands
 

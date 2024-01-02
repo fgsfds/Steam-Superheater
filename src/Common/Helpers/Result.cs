@@ -21,7 +21,7 @@
         /// <summary>
         /// Is operation successful
         /// </summary>
-        public bool IsSuccess => ResultEnum is ResultEnum.Ok;
+        public bool IsSuccess => ResultEnum is ResultEnum.Success;
 
         public override bool Equals(object? obj)
         {
@@ -59,7 +59,7 @@
         /// <summary>
         /// Successful operation
         /// </summary>
-        Ok,
+        Success,
         /// <summary>
         /// Error while validating MD5
         /// </summary>
@@ -79,6 +79,11 @@
         /// <summary>
         /// General error
         /// </summary>
-        Error
+        Error,
+        /// <summary>
+        /// Backwards compatibility error
+        /// </summary>
+        [Obsolete("Remove in version 1.0")]
+        BackwardsCompatibility
     }
 }

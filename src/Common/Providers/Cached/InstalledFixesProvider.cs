@@ -1,5 +1,4 @@
-﻿using Common.Entities.CombinedEntities;
-using Common.Entities.Fixes;
+﻿using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
@@ -10,68 +9,91 @@ using System.Xml.Linq;
 
 namespace Common.Providers
 {
-    public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
+    public sealed class InstalledFixesProvider(FixesProvider fixesProvider) : CachedProviderBase<BaseInstalledFixEntity>
     {
-        /// <summary>
-        /// Save list of installed fixes from combined entities list
-        /// </summary>
-        /// <param name="combinedEntitiesList">List of combined entities</param>
-        /// <returns>Result struct</returns>
-        public Result SaveInstalledFixes(ImmutableList<FixFirstCombinedEntity> combinedEntitiesList)
-        {
-            var installedFixes = CombinedEntitiesProvider.GetInstalledFixesFromCombined(combinedEntitiesList);
-
-            var result = SaveInstalledFixes(installedFixes);
-
-            return result;
-        }
+        private readonly FixesProvider _fixesProvider = fixesProvider;
 
         /// <summary>
         /// Save installed fixes to XML
         /// </summary>
         /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>Result struct</returns>
-        public Result SaveInstalledFixes(ImmutableList<BaseInstalledFixEntity> fixesList)
+        public Result SaveInstalledFixes()
         {
             Logger.Info("Saving installed fixes list");
 
             try
             {
+                _cache.ThrowIfNull();
+
                 var json = JsonSerializer.Serialize(
-                    fixesList,
+                    _cache,
                     InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity
                     );
 
                 File.WriteAllText(Consts.InstalledFile, json);
 
-                return new(ResultEnum.Ok, string.Empty);
+                Logger.Info("Fixes list saved successfully");
+
+                return new(ResultEnum.Success, string.Empty);
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
                 Logger.Error(ex.Message);
                 return new Result(ResultEnum.NotFound, ex.Message);
             }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                return new Result(ResultEnum.Error, ex.Message);
+            }
+        }
+
+        /// <summary>
+        /// Add installed fix to cache
+        /// </summary>
+        /// <param name="installedFix">Installed fix entity</param>
+        internal void AddToCache(BaseInstalledFixEntity installedFix)
+        {
+            _cache.ThrowIfNull();
+
+            _cache = _cache.Add(installedFix);
+        }
+
+        /// <summary>
+        /// Remove installed fix from cache
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="fixGuid">Fix guid</param>
+        internal void RemoveFromCache(int gameId, Guid fixGuid)
+        {
+            _cache.ThrowIfNull();
+
+            var toRemove = _cache.First(x => x.GameId == gameId && x.Guid == fixGuid);
+            _cache = _cache.Remove(toRemove);
         }
 
         /// <inheritdoc/>
-        internal override async Task<ImmutableList<BaseInstalledFixEntity>> CreateCache()
+        internal override async Task<ImmutableList<BaseInstalledFixEntity>> CreateCacheAsync()
         {
             Logger.Info("Requesting installed fixes");
 
             if (!File.Exists(Consts.InstalledFile))
             {
-                return ConvertXmlToJson();
+                _cache = ConvertXmlToJson();
             }
+            else
+            {
+                var text = await File.ReadAllTextAsync(Consts.InstalledFile);
 
-            var text = await File.ReadAllTextAsync(Consts.InstalledFile);
+                text.ThrowIfNull();
 
-            text.ThrowIfNull();
+                var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity);
 
-            var fixesDatabase = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity);
+                installedFixes.ThrowIfNull();
 
-            fixesDatabase.ThrowIfNull();
-
-            _cache = [.. fixesDatabase];
+                _cache = [.. installedFixes];
+            }
 
             return _cache;
         }
@@ -82,6 +104,7 @@ namespace Common.Providers
         [Obsolete("Remove in version 1.0")]
         private ImmutableList<BaseInstalledFixEntity> ConvertXmlToJson()
         {
+#pragma warning disable CS8602
             if (!File.Exists("installed.xml"))
             {
                 return [];
@@ -153,9 +176,10 @@ namespace Common.Providers
                 });
             }
 
-            SaveInstalledFixes([.. result]);
+            SaveInstalledFixes();
 
             return [.. result];
+#pragma warning restore CS8602
         }
     }
 }

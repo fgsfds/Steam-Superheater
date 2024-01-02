@@ -7,6 +7,7 @@ using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
 using Common.Providers;
+using SharpCompress.Common;
 using System.Collections.Immutable;
 
 namespace Common.Models
@@ -76,7 +77,7 @@ namespace Common.Models
 
                 _combinedEntitiesList = [.. games];
 
-                return new(ResultEnum.Ok, "Games list updated successfully");
+                return new(ResultEnum.Success, "Games list updated successfully");
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
@@ -261,36 +262,8 @@ namespace Common.Models
         /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
-        {
-            BaseInstalledFixEntity? installedFix;
-
-            try
-            {
-                installedFix = await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
-            }
-            catch (HashCheckFailedException ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
-            }
-
-            fix.InstalledFix = installedFix;
-
-            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
-
-            if (result.IsSuccess)
-            {
-                return new(ResultEnum.Ok, "Fix installed successfully!");
-            }
-
-            return new(ResultEnum.Error, result.Message);
-        }
+        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
+            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
 
         /// <summary>
         /// Uninstall fix
@@ -298,46 +271,8 @@ namespace Common.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to delete</param>
         /// <returns>Result message</returns>
-        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
-        {
-            if (fix.InstalledFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
-            }
-
-            var backupRestoreFailed = false;
-
-            try
-            {
-                _fixManager.UninstallFix(game, fix);
-            }
-            catch (BackwardsCompatibilityException ex)
-            {
-                Logger.Error(ex.Message);
-                backupRestoreFailed = true;
-            }
-            catch (IOException ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.FileAccessError, ex.Message);
-            }
-
-            fix.InstalledFix = null;
-
-            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
-
-            if (backupRestoreFailed)
-            {
-                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
-            }
-
-            if (result.IsSuccess)
-            {
-                return new(ResultEnum.Ok, "Fix uninstalled successfully!");
-            }
-
-            return new(ResultEnum.Error, result.Message);
-        }
+        public Result UninstallFix(GameEntity game, BaseFixEntity fix) =>
+            _fixManager.UninstallFix(game, fix);
 
         /// <summary>
         /// Update fix
@@ -347,51 +282,16 @@ namespace Common.Models
         /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
-        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
+            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
+
+        public void HideTag(string tag)
         {
-            if (fix.InstalledFix is null)
-            {
-                ThrowHelper.NullReferenceException(nameof(fix.InstalledFix));
-            }
+            var tags = _config.HiddenTags;
+            tags.Add(tag);
+            tags = [.. tags.OrderBy(static x => x)];
 
-            BaseInstalledFixEntity? installedFix;
-
-            try
-            {
-                installedFix = await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
-            }
-            catch (BackwardsCompatibilityException ex)
-            {
-                Logger.Error(ex.Message);
-                fix.InstalledFix = null;
-                return new(ResultEnum.Error, "Error while restoring backed up files. Verify integrity of game files on Steam.");
-            }
-            catch (HashCheckFailedException ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
-            }
-            catch (IOException ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.FileAccessError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.Error, "Error while installing fix: " + Environment.NewLine + Environment.NewLine + ex.Message);
-            }
-
-            fix.InstalledFix = installedFix;
-
-            var result = _installedFixesProvider.SaveInstalledFixes(_combinedEntitiesList);
-
-            if (result.IsSuccess)
-            {
-                return new(ResultEnum.Ok, "Fix updated successfully!");
-            }
-
-            return new(ResultEnum.Error, result.Message);
+            _config.HiddenTags = tags;
         }
     }
 }

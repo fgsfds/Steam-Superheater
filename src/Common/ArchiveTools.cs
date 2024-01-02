@@ -4,6 +4,9 @@ using System.Security.Cryptography;
 
 namespace Common
 {
+    /// <summary>
+    /// Class for working with archives
+    /// </summary>
     public class ArchiveTools (ProgressReport progressReport)
     {
         private readonly ProgressReport _progressReport = progressReport;

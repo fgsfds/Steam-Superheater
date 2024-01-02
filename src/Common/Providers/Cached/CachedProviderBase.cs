@@ -17,7 +17,7 @@ namespace Common.Providers
             ? await GetCachedListAsync()
             : await GetNewListAsync();
 
-        internal abstract Task<ImmutableList<T>> CreateCache();
+        internal abstract Task<ImmutableList<T>> CreateCacheAsync();
 
         /// <summary>
         /// Get cached list of entities from online or local repo or create new cache if it wasn't created yet
@@ -29,7 +29,7 @@ namespace Common.Providers
 
             await _locker.WaitAsync();
 
-            var result = _cache ?? await CreateCache();
+            var result = _cache ?? await CreateCacheAsync();
 
             _locker.Release();
 

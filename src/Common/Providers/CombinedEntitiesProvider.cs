@@ -1,6 +1,4 @@
 ﻿using Common.Entities.CombinedEntities;
-using Common.Entities.Fixes;
-using System.Collections.Immutable;
 
 namespace Common.Providers
 {
@@ -19,50 +17,40 @@ namespace Common.Providers
         /// </summary>
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            var fixes = await _fixesProvider.GetListAsync(useCache);
+            var fixesLists = await _fixesProvider.GetListAsync(useCache);
             var games = await _gamesProvider.GetListAsync(useCache);
-            var installed = await _installedFixesProvider.GetListAsync(useCache);
+            var installedFixes = await _installedFixesProvider.GetListAsync(useCache);
 
-            List<FixFirstCombinedEntity> result = new(fixes.Count);
+            List<FixFirstCombinedEntity> result = new(fixesLists.Count);
 
-            foreach (var fix in fixes)
+            foreach (var fixesList in fixesLists)
             {
-                var id = fix.GameId;
+                var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
 
-                var game = games.FirstOrDefault(x => x.Id == id);
-                var installedForGame = installed.Where(x => x.GameId == id);
+                foreach (var fix in fixesList.Fixes)
+                {
+                    var installed = installedFixes.FirstOrDefault(x => x.GameId == fixesList.GameId && x.Guid == fix.Guid);
 
-                result.Add(new FixFirstCombinedEntity(fix, game, installedForGame));
+                    if (installed is null)
+                    {
+                        continue;
+                    }
+
+                    installed.IsOutdated = installed.Version < fix.Version;
+
+                    fix.InstalledFix = installed;
+                }
+
+                result.Add(new FixFirstCombinedEntity()
+                { 
+                    FixesList = fixesList,
+                    Game = game
+                });
             }
 
             result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
 
             return result;
-        }
-
-        /// <summary>
-        /// Get list of installed fixes from the list of combined entities
-        /// </summary>
-        /// <param name="combinedList">List of combined entities</param>
-        /// <returns>List of installed fixes</returns>
-        public static ImmutableList<BaseInstalledFixEntity> GetInstalledFixesFromCombined(ImmutableList<FixFirstCombinedEntity> combinedList)
-        {
-            List<BaseInstalledFixEntity> result = [];
-
-            foreach (var combined in combinedList)
-            {
-                foreach (var fix in combined.FixesList.Fixes)
-                {
-                    if (fix.InstalledFix is null)
-                    {
-                        continue;
-                    }
-
-                    result.Add(fix.InstalledFix);
-                }
-            }
-
-            return [.. result];
         }
     }
 }

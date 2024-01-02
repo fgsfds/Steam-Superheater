@@ -42,7 +42,7 @@ namespace Common.Models
 
             UpdateReadStatusOfExistingNews();
 
-            return new(ResultEnum.Ok, string.Empty);
+            return new(ResultEnum.Success, string.Empty);
         }
 
         /// <summary>

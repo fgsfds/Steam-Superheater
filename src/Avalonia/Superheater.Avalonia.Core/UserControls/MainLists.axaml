@@ -122,7 +122,7 @@
                                    Foreground="{DynamicResource SystemAccentColor}"
                                    VerticalAlignment="Center"
                                    FontWeight="Bold"
-                                   IsVisible="{Binding HasNewerVersion}"/>
+                                   IsVisible="{Binding IsOutdated}"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

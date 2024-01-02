@@ -55,7 +55,7 @@ namespace Common
                 return new(ResultEnum.Error, ex.Message);
             }
 
-            return new(ResultEnum.Ok, string.Empty);
+            return new(ResultEnum.Success, string.Empty);
         }
     }
 }

@@ -3,7 +3,6 @@ using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.FixTools;
-using Common.FixTools.HostsFix;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
@@ -45,6 +44,7 @@ namespace Tests
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
             container.AddScoped<InstalledFixesProvider>();
+            container.AddScoped<FixesProvider>();
             CommonBindings.Load(container);
 
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
@@ -52,6 +52,8 @@ namespace Tests
 
             File.Copy("Resources\\hosts", _hostsFilePath, true);
 
+            //create cache;
+            _ = _installedFixesProvider.GetListAsync(false).Result;
         }
 
         public void Dispose()
@@ -82,15 +84,9 @@ namespace Tests
             var fixEntity = _fixEntity;
 
             //Install Fix
-            var installedFix = await _fixManager.InstallFixAsync(gameEntity, fixEntity, _hostsFilePath, true);
+            await _fixManager.InstallFixAsync(gameEntity, fixEntity, _hostsFilePath, true);
 
-            _installedFixesProvider.SaveInstalledFixes([installedFix]);
-
-            if (installedFix is not HostsInstalledFixEntity)
-            {
-                Assert.Fail();
-                return;
-            }
+            _installedFixesProvider.SaveInstalledFixes();
 
             using (var md5 = MD5.Create())
             {
@@ -101,8 +97,6 @@ namespace Tests
                     Assert.Equal("B431935EBF5DA06DC87E5032454F5E29", hash);
                 }
             }
-
-            fixEntity.InstalledFix = installedFix;
 
             _fixManager.UninstallFix(gameEntity, fixEntity);
 

@@ -7,7 +7,7 @@ namespace Common.Providers
     public sealed class GamesProvider : CachedProviderBase<GameEntity>
     {
         /// <inheritdoc/>
-        internal override async Task<ImmutableList<GameEntity>> CreateCache()
+        internal override async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
             Logger.Info("Creating games cache list");
 

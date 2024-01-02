@@ -7,12 +7,12 @@ namespace Common.Entities
         /// <summary>
         /// Date of the news article
         /// </summary>
-        public DateTime Date { get; init; }
+        public required DateTime Date { get; init; }
 
         /// <summary>
         /// News article text
         /// </summary>
-        public string Content { get; init; }
+        public required string Content { get; init; }
 
         /// <summary>
         /// Is newer than the last read version
