@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace Common
 {
-    public class FileTools (ProgressReport progressReport)
+    public class ArchiveTools (ProgressReport progressReport)
     {
         private readonly ProgressReport _progressReport = progressReport;
 

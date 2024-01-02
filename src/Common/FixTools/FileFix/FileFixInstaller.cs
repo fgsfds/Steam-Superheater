@@ -4,7 +4,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Octodiff.Core;
-using Octodiff.Diagnostics;
 using System.Diagnostics;
 using System.Security.Cryptography;
 
@@ -12,12 +11,12 @@ namespace Common.FixTools.FileFix
 {
     public sealed class FileFixInstaller(
         ConfigProvider config,
-        FileTools fileTools,
+        ArchiveTools archiveTools,
         ProgressReport progressReport
         )
     {
         private readonly ConfigEntity _configEntity = config.Config;
-        private readonly FileTools _fileTools = fileTools;
+        private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly ProgressReport _progressReport = progressReport;
 
         /// <summary>
@@ -31,15 +30,31 @@ namespace Common.FixTools.FileFix
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
-            await CheckAndDownloadFileAsync(fix.Url, skipMD5Check ? null : fix.MD5);
-
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
+            List<string> filesInArchive = [];
+
+            if (fix.Url is not null)
+            {
+                var unpackToPath = fix.InstallFolder is null
+                    ? game.InstallDir
+                    : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+
+                var pathToArchive = _configEntity.UseLocalRepo
+                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
+
+                await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5);
+
+                filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
+
+                BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
+
+                await UnpackArchiveAsync(pathToArchive, unpackToPath, variant);
+            }
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
             BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
-
-            var filesInArchive = await BackupFilesAndUnpackZIPAsync(game.InstallDir, fix.InstallFolder, fix.Url, backupFolderPath, variant);
 
             await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
 
@@ -69,17 +84,8 @@ namespace Common.FixTools.FileFix
         /// <param name="fixMD5">MD5 of the file</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        private Task CheckAndDownloadFileAsync(string? fixUrl, string? fixMD5)
+        private Task CheckAndDownloadFileAsync(string zipFullPath, string fixUrl, string? fixMD5)
         {
-            if (fixUrl is null)
-            {
-                return Task.CompletedTask;
-            }
-
-            var zipFullPath = _configEntity.UseLocalRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
-
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
@@ -108,7 +114,7 @@ namespace Common.FixTools.FileFix
                 url = url.Replace("/master/", "/test/");
             }
 
-            return _fileTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
+            return _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
 
         }
 
@@ -209,45 +215,21 @@ namespace Common.FixTools.FileFix
         /// <summary>
         /// Backup files that will be replaced and unpack Zip
         /// </summary>
-        /// <param name="gameDir">Game install folder</param>
-        /// <param name="fixInstallFolder">Fix install folder</param>
-        /// <param name="fixUrl">Url to fix file</param>
-        /// <param name="backupFolderPath">Path to backup folder</param>
-        /// <param name="variant"></param>
-        /// <returns>List of files in the archive</returns>
-        private async Task<List<string>?> BackupFilesAndUnpackZIPAsync(
-            string gameDir,
-            string? fixInstallFolder,
-            string? fixUrl,
-            string backupFolderPath,
+        /// <param name="archiveFullPath">Path to archive file</param>
+        /// <param name="unpackToPath">Where to unpack archive</param>
+        /// <param name="variant">Fix variant</param>
+        private async Task UnpackArchiveAsync(
+            string archiveFullPath,
+            string unpackToPath,
             string? variant)
         {
-            if (fixUrl is null)
-            {
-                return null;
-            }
-
-            var unpackToPath = fixInstallFolder is null
-                ? gameDir
-                : Path.Combine(gameDir, fixInstallFolder) + Path.DirectorySeparatorChar;
-
-            var zipFullPath = _configEntity.UseLocalRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl))
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl));
-
-            var filesInArchive = _fileTools.GetListOfFilesInArchive(zipFullPath, unpackToPath, fixInstallFolder, variant);
-
-            BackupFiles(filesInArchive, gameDir, backupFolderPath, true);
-
-            await _fileTools.UnpackArchiveAsync(zipFullPath, unpackToPath, variant);
+            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant);
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalRepo)
             {
-                File.Delete(zipFullPath);
+                File.Delete(archiveFullPath);
             }
-
-            return filesInArchive;
         }
 
         /// <summary>

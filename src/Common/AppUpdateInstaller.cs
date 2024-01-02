@@ -5,9 +5,9 @@ using System.IO.Compression;
 
 namespace Common
 {
-    public sealed class AppUpdateInstaller(FileTools fileTools)
+    public sealed class AppUpdateInstaller(ArchiveTools archiveTools)
     {
-        private readonly FileTools _fileTools = fileTools;
+        private readonly ArchiveTools _archiveTools = archiveTools;
 
         private List<AppUpdateEntity> _updates = [];
 
@@ -46,7 +46,7 @@ namespace Common
                 File.Delete(fileName);
             }
 
-            await _fileTools.CheckAndDownloadFileAsync(updateUrl, fileName);
+            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 

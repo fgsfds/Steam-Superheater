@@ -27,7 +27,7 @@ namespace Common.DI
 
             container.AddTransient<FixManager>();
 
-            container.AddTransient<FileTools>();
+            container.AddTransient<ArchiveTools>();
 
             container.AddSingleton<ProgressReport>();
         }
