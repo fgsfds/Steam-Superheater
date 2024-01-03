@@ -71,6 +71,11 @@ namespace Common.Models
         public ImmutableList<GameEntity> GetAvailableGamesList() => [.. _availableGamesList];
 
         /// <summary>
+        /// Get list of fixes optionally filtered by a search string
+        /// </summary>
+        public ImmutableList<BaseFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes();
+
+        /// <summary>
         /// Add new game with empty fix
         /// </summary>
         /// <param name="game">Game entity</param>

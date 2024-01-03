@@ -74,7 +74,7 @@ namespace Common.Entities.Fixes
         /// Is there a newer version of the fix
         /// </summary>
         [JsonIgnore]
-        public bool IsOutdated => InstalledFix?.IsOutdated ?? false;
+        public virtual bool IsOutdated => InstalledFix is not null && InstalledFix.Version < Version;
 
         public override string ToString() => Name;
     }

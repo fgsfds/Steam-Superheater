@@ -1,4 +1,5 @@
 ﻿using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes.FileFix;
 
 namespace Common.Providers
 {
@@ -18,6 +19,7 @@ namespace Common.Providers
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
             var fixesLists = await _fixesProvider.GetListAsync(useCache);
+            var sharedFixes = _fixesProvider.GetSharedFixes();
             var games = await _gamesProvider.GetListAsync(useCache);
             var installedFixes = await _installedFixesProvider.GetListAsync(useCache);
 
@@ -31,14 +33,25 @@ namespace Common.Providers
                 {
                     var installed = installedFixes.FirstOrDefault(x => x.GameId == fixesList.GameId && x.Guid == fix.Guid);
 
-                    if (installed is null)
+                    if (fix is FileFixEntity fileFix &&
+                        fileFix.SharedFixGuid is not null)
                     {
-                        continue;
+                        var sharedFix = (FileFixEntity)sharedFixes.First(x => ((FileFixEntity)x).Guid == fileFix.SharedFixGuid);
+
+                        sharedFix.InstallFolder = fileFix.SharedFixInstallFolder;
+
+                        if (installed is FileInstalledFixEntity fileInstalled)
+                        {
+                            sharedFix.InstalledFix = fileInstalled.InstalledSharedFix;
+                        }
+
+                        fileFix.SharedFix = sharedFix;
                     }
 
-                    installed.IsOutdated = installed.Version < fix.Version;
-
-                    fix.InstalledFix = installed;
+                    if (installed is not null)
+                    {
+                        fix.InstalledFix = installed;
+                    }
                 }
 
                 result.Add(new FixFirstCombinedEntity()

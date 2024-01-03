@@ -25,12 +25,6 @@ namespace Common.Entities.Fixes
         /// Installed version
         /// </summary>
         public required int Version { get; init; }
-
-        /// <summary>
-        /// Is there a newer version of the fix
-        /// </summary>
-        [JsonIgnore]
-        public bool IsOutdated { get; set; }
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
