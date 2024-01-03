@@ -1,4 +1,5 @@
 ﻿using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 
@@ -11,22 +12,18 @@ namespace Common.FixTools.FileFix
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(GameEntity game, FileFixEntity fix)
+        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, string? fixUrl)
         {
-            if (fix is not FileFixEntity fileFix)
+            installedFix.ThrowIfNotType<FileInstalledFixEntity>(out var installedFileFix);
+
+            if (installedFileFix.InstalledSharedFix is not null)
             {
-                ThrowHelper.ArgumentException(nameof(fix));
-                return;
-            }
-            if (fix.InstalledFix is not FileInstalledFixEntity fileInstalledFix)
-            {
-                ThrowHelper.ArgumentException(nameof(fix));
-                return;
+                UninstallFix(game, installedFileFix.InstalledSharedFix, null);
             }
 
-            DeleteFiles(game.InstallDir, fileInstalledFix.FilesList);
+            DeleteFiles(game.InstallDir, installedFileFix.FilesList);
 
-            RestoreBackup(game.InstallDir, fileInstalledFix, fileFix.Url);
+            RestoreBackup(game.InstallDir, installedFileFix, fixUrl);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
         }

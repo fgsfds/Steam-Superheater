@@ -88,6 +88,25 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string? SelectedFixDescription
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return string.Empty;
+                }
+
+                if (SelectedFix is FileFixEntity fileFix &&
+                    fileFix.SharedFix is not null)
+                {
+                    return fileFix.SharedFix.Description + Environment.NewLine + Environment.NewLine + fileFix.Description;
+                }
+
+                return SelectedFix.Description;
+            }
+        }
+
 
         [ObservableProperty]
         private string _mainTabHeader = "Main";
@@ -118,6 +137,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
         [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]

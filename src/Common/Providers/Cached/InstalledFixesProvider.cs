@@ -131,7 +131,8 @@ namespace Common.Providers
                     Guid = new Guid(guid),
                     Version = int.Parse(version),
                     BackupFolder = backupFolder,
-                    FilesList = [.. filesList]
+                    FilesList = [.. filesList],
+                    InstalledSharedFix = null
                 });
             }
 

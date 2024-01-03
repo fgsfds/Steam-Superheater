@@ -1,5 +1,6 @@
 ﻿using Common.Enums;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.FileFix
 {
@@ -27,6 +28,8 @@ namespace Common.Entities.Fixes.FileFix
             FilesToPatch = null;
             RunAfterInstall = null;
             MD5 = null;
+            SharedFix = null;
+            SharedFixInstallFolder = null;
         }
 
         [SetsRequiredMembers]
@@ -47,6 +50,8 @@ namespace Common.Entities.Fixes.FileFix
             FilesToBackup = null;
             RunAfterInstall = null;
             MD5 = null;
+            SharedFix = null;
+            SharedFixInstallFolder = null;
         }
 
         /// <summary>
@@ -100,5 +105,41 @@ namespace Common.Entities.Fixes.FileFix
         /// List of files that will be backed up and patched with filename.octodiff patch
         /// </summary>
         public List<string>? FilesToPatch { get; set; }
+
+        /// <summary>
+        /// Guid of the fix that will be installed alongside
+        /// </summary>
+        public Guid? SharedFixGuid { get; set; }
+
+        /// <summary>
+        /// Folder to unpack shared fix to
+        /// Relative to the game folder
+        /// </summary>
+        public string? SharedFixInstallFolder { get; set; }
+
+        [JsonIgnore]
+        public FileFixEntity? SharedFix { get; set; }
+
+        /// <summary>
+        /// Is there a newer version of the fix or shared fix
+        /// </summary>
+        [JsonIgnore]
+        public override bool IsOutdated
+        {
+            get
+            {
+                if (InstalledFix is not null && InstalledFix.Version < Version)
+                {
+                    return true;
+                }
+
+                if (SharedFix is not null && SharedFix.IsOutdated)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
     }
 }

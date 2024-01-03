@@ -11,6 +11,7 @@ namespace Common.Providers
     public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<FixesList>
     {
         private string? _fixesCachedString;
+        private ImmutableList<BaseFixEntity> _sharedFixes;
         private readonly ConfigEntity _config = config.Config;
 
         /// <summary>
@@ -33,6 +34,8 @@ namespace Common.Providers
                 return await GetCachedListAsync();
             }
         }
+
+        public ImmutableList<BaseFixEntity> GetSharedFixes() => _sharedFixes;
 
         /// <summary>
         /// Save list of fixes to XML
@@ -145,6 +148,10 @@ namespace Common.Providers
                     {
                         fileFix.FilesToPatch = null;
                     }
+                    if (string.IsNullOrWhiteSpace(fileFix.SharedFixInstallFolder))
+                    {
+                        fileFix.SharedFixInstallFolder = null;
+                    }
                 }
 
                 if (string.IsNullOrWhiteSpace(fix.Description))
@@ -255,7 +262,11 @@ namespace Common.Providers
                 _fixesCachedString = await DownloadFixesXMLAsync();
             }
 
-            return DeserializeCachedString(_fixesCachedString);
+            var fixes = DeserializeCachedString(_fixesCachedString);
+
+            _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.ToImmutableList() ?? [];
+
+            return fixes;
         }
 
         /// <summary>

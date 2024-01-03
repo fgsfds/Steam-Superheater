@@ -132,7 +132,7 @@
         <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto">
 
             <!--Description-->
-            <md:MarkdownScrollViewer Markdown="{Binding SelectedFix.Description}"
+            <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"
                                      Grid.Row="0">
 
                 <md:MarkdownScrollViewer.Styles>

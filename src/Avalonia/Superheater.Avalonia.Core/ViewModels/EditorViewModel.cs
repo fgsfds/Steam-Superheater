@@ -55,6 +55,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
+        public ImmutableList<BaseFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
@@ -192,6 +194,21 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.ThrowIfNotType<HostsFixEntity>(out var hostsFix);
 
                 hostsFix.Entries = value.SplitSemicolonSeparatedString() ?? [];
+            }
+        }
+
+        public BaseFixEntity? SelectedSharedFix
+        {
+            get => SelectedFix is not FileFixEntity fileFix ? null : SharedFixesList.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
+            set
+            {
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+
+                fileFix.SharedFixGuid = value?.Guid;
+
+                OnPropertyChanged(nameof(SelectedSharedFix));
+                OnPropertyChanged(nameof(IsSharedFixSelected));
+                ResetSelectedSharedFixCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -345,6 +362,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsSharedFixSelected => SelectedSharedFix is not null;
+
         public float ProgressBarValue { get; set; }
 
 
@@ -388,6 +407,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
         [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
+        [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
+        [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
@@ -398,6 +419,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -779,6 +801,23 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool OpenHostsEditorCanExecute() => SelectedFix is HostsFixEntity;
 
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(ResetSelectedSharedFixCanExecute))]
+        private void ResetSelectedSharedFix()
+        {
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+
+            SelectedSharedFix = null;
+            fileFix.SharedFixInstallFolder = null;
+
+            OnPropertyChanged(nameof(SelectedSharedFix));
+            OnPropertyChanged(nameof(IsSharedFixSelected));
+        }
+        private bool ResetSelectedSharedFixCanExecute() => SelectedSharedFix is not null;
+
         #endregion Relay Commands
 
 
@@ -817,6 +856,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             OnPropertyChanged(nameof(FilteredGamesList));
             OnPropertyChanged(nameof(AvailableGamesList));
+            OnPropertyChanged(nameof(SharedFixesList));
 
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {

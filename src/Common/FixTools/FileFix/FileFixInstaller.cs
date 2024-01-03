@@ -3,6 +3,7 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
+using Common.Providers;
 using Octodiff.Core;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -12,12 +13,14 @@ namespace Common.FixTools.FileFix
     public sealed class FileFixInstaller(
         ConfigProvider config,
         ArchiveTools archiveTools,
-        ProgressReport progressReport
+        ProgressReport progressReport,
+        FixesProvider fixProvider
         )
     {
         private readonly ConfigEntity _configEntity = config.Config;
         private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly ProgressReport _progressReport = progressReport;
+        private readonly FixesProvider _fixProvider = fixProvider;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events
@@ -30,6 +33,13 @@ namespace Common.FixTools.FileFix
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
+            FileInstalledFixEntity? installedSharedFix = null;
+
+            if (fix.SharedFix is not null)
+            {
+                installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
+            }
+
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
             List<string> filesInArchive = [];
 
@@ -71,7 +81,8 @@ namespace Common.FixTools.FileFix
                 Guid = fix.Guid,
                 Version = fix.Version,
                 BackupFolder = backupFolderPath is null ? null : new DirectoryInfo(backupFolderPath).Name,
-                FilesList = filesInArchive
+                FilesList = filesInArchive,
+                InstalledSharedFix = installedSharedFix
             };
 
             return installedFix;
