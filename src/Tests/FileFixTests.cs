@@ -7,7 +7,6 @@ using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
-using System.Security.Cryptography;
 
 namespace Tests
 {
@@ -18,7 +17,15 @@ namespace Tests
     public sealed class FileFixTests : IDisposable
     {
         private const string TestTempFolder = "test_temp";
-        private readonly string _currentDirectory;
+        private const string TestFixZip = "test_fix.zip";
+        private const string TestFixV2Zip = "test_fix_v2.zip";
+        private const string TestFixVariantZip = "test_fix_variant.zip";
+
+        private readonly string _rootDirectory;
+        private readonly string _testDirectory;
+
+        private readonly GameEntity _gameEntity;
+        private readonly FileFixEntity _fileFixEntity;
 
         private readonly FixManager _fixManager;
         private readonly InstalledFixesProvider _installedFixesProvider;
@@ -34,10 +41,8 @@ namespace Tests
             container.AddScoped<FixesProvider>();
             CommonBindings.Load(container);
 
-            _currentDirectory = Directory.GetCurrentDirectory();
-
-            _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
-            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
+            _rootDirectory = Directory.GetCurrentDirectory();
+            _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
 
             if (Directory.Exists(TestTempFolder))
             {
@@ -45,8 +50,29 @@ namespace Tests
             }
 
             Directory.CreateDirectory(TestTempFolder);
+            Directory.SetCurrentDirectory(_testDirectory);
 
-            Directory.SetCurrentDirectory(Path.Combine(Directory.GetCurrentDirectory(), TestTempFolder));
+            _gameEntity = new()
+            {
+                Id = 1,
+                Name = "test game",
+                InstallDir = PrepareGameFolder()
+            };
+
+            _fileFixEntity = new()
+            {
+                Name = "test fix",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = TestFixZip,
+                InstallFolder = "install folder",
+                FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
+                FilesToBackup = ["install folder\\file to backup.txt"],
+                MD5 = "4E9DE15FC40592B26421E05882C2F6F7"
+            };
+
+            _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
+            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
             //create cache;
             _ = _installedFixesProvider.GetListAsync(false).Result;
@@ -54,13 +80,16 @@ namespace Tests
 
         public void Dispose()
         {
-            Directory.SetCurrentDirectory(_currentDirectory);
+            Directory.SetCurrentDirectory(_rootDirectory);
 
             Directory.Delete(TestTempFolder, true);
 
-            if (File.Exists("test_fix.zip"))
+            foreach (var file in Directory.GetFiles(_rootDirectory))
             {
-                File.Delete("test_fix.zip");
+                if (file.EndsWith(".zip"))
+                {
+                    File.Delete(file);
+                }
             }
         }
 
@@ -69,24 +98,34 @@ namespace Tests
         #region Tests
 
         [Fact]
-        public Task InstallUninstallFixTest() => InstallUninstallFixAsync(variant: null, update: false);
+        public async Task InstallUninstallFixTest()
+        {  
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
+
+            UninstallFix(_fileFixEntity);
+        }
 
         [Fact]
-        public Task InstallUninstallFixVariantTest() => InstallUninstallFixAsync(variant: "variant2", update: false);
+        public async Task InstallUninstallFixVariantTest()
+        {
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: "variant2");
+
+            UninstallFix(_fileFixEntity);
+        }
 
         [Fact]
-        public Task UpdateFixTest() => InstallUninstallFixAsync(variant: null, update: true);
+        public async Task UpdateFixTest()
+        {
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
+
+            await UpdateFixAsync(_gameEntity, _fileFixEntity);
+
+            UninstallFix(_fileFixEntity);
+        }
 
         [Fact]
         public async Task InstallCompromisedFixTest()
         {
-            GameEntity gameEntity = new()
-            {
-                Id = 1,
-                Name = "test game",
-                InstallDir = "game folder"
-            };
-
             FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
@@ -96,109 +135,75 @@ namespace Tests
                 MD5 = "badMD5"
             };
 
-            var installResult = await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, false);
+            var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false);
 
+            Assert.False(File.Exists(Consts.InstalledFile));
             Assert.True(installResult == ResultEnum.MD5Error);
         }
 
         [Fact]
-        public async Task InstallFixToANewFolder()
+        public async Task InstallFixToANewFolderTest()
         {
-            var gameFolder = PrepareGameFolder();
-
-            File.Copy("..\\Resources\\test_fix.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
-
-            GameEntity gameEntity = new()
-            {
-                Id = 1,
-                Name = "test game",
-                InstallDir = gameFolder
-            };
+            File.Copy(
+                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"), 
+                Path.Combine(_rootDirectory, TestFixZip), 
+                true
+                );
 
             FileFixEntity fixEntity = new()
             {
                 Name = "test fix",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = "test_fix.zip",
+                Url = TestFixZip,
                 InstallFolder = "new folder"
             };
 
-            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
 
-            _installedFixesProvider.SaveInstalledFixes();
+            Assert.True(File.Exists("game\\new folder\\start game.exe"));
 
-            var exeExists = File.Exists("game\\new folder\\start game.exe");
-            Assert.True(exeExists);
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
 
-            _fixManager.UninstallFix(gameEntity, fixEntity);
-
-            var newDirExists = Directory.Exists("game\\new folder");
-            Assert.False(newDirExists);
+            Assert.False(Directory.Exists("game\\new folder"));
         }
 
         #endregion Tests
 
         #region Private Methods
 
-        private async Task InstallUninstallFixAsync(string? variant, bool update)
+        private async Task InstallFixAsync(FileFixEntity fixEntity, string? variant)
         {
-            var fixArchive = variant is null ? "test_fix.zip" : "test_fix_variant.zip";
+            var fixArchive = variant is null ? TestFixZip : TestFixVariantZip;
 
-            var fixArchiveMD5 = variant is null ? "4E9DE15FC40592B26421E05882C2F6F7" : "DA2D7701D2EB5BC9A35FB58B3B04C5B9";
+            File.Copy(
+                Path.Combine(_rootDirectory, $"Resources\\{fixArchive}"),
+                Path.Combine(_rootDirectory, TestFixZip),
+                true
+                );
 
-            var gameFolder = PrepareGameFolder();
-
-            File.Copy($"..\\Resources\\{fixArchive}", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix.zip"), true);
-
-            GameEntity gameEntity = new()
-            {
-                Id = 1,
-                Name = "test game",
-                InstallDir = gameFolder
-            };
-
-            FileFixEntity fixEntity = new()
-            {
-                Name = "test fix",
-                Version = 1,
-                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = "test_fix.zip",
-                InstallFolder = "install folder",
-                FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
-                FilesToBackup = ["install folder\\file to backup.txt"],
-                MD5 = fixArchiveMD5
-            };
-
-            await _fixManager.InstallFixAsync(gameEntity, fixEntity, variant, true);
-
-            _installedFixesProvider.SaveInstalledFixes();
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, variant, true);
 
             CheckNewFiles();
 
             //modify backed up file
             await File.WriteAllTextAsync("game\\install folder\\file to backup.txt", "modified");
-
-            if (update)
-            {
-                await UpdateFixAsync(gameEntity, fixEntity);
-            }
-
-            _fixManager.UninstallFix(gameEntity, fixEntity);
-
-            CheckOriginalFiles();
         }
 
         private async Task UpdateFixAsync(GameEntity gameEntity, FileFixEntity fileFix)
         {
-            File.Copy("..\\Resources\\test_fix_v2.zip", Path.Combine(Directory.GetCurrentDirectory(), "..\\test_fix_v2.zip"), true);
+            File.Copy(
+                Path.Combine(_rootDirectory, $"Resources\\{TestFixV2Zip}"),
+                Path.Combine(_rootDirectory, TestFixV2Zip),
+                true
+                );
 
             FileFixEntity newFileFix = new()
             {
                 Name = "test fix",
                 Version = 2,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = "test_fix_v2.zip",
+                Url = TestFixV2Zip,
                 InstallFolder = "install folder",
                 FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
                 FilesToBackup = ["install folder\\file to backup.txt"],
@@ -207,11 +212,16 @@ namespace Tests
 
             await _fixManager.UpdateFixAsync(gameEntity, newFileFix, null, true);
 
-            _installedFixesProvider.SaveInstalledFixes();
-
             fileFix.InstalledFix = newFileFix.InstalledFix;
 
             CheckUpdatedFiles();
+        }
+
+        private void UninstallFix(FileFixEntity fixEntity)
+        {
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
+
+            CheckOriginalFiles();
         }
 
         private static void CheckOriginalFiles()
@@ -220,13 +230,13 @@ namespace Tests
             var exeExists = File.Exists("game\\install folder\\start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
+            var fi = File.ReadAllText("game\\install folder\\start game.exe");
             Assert.Equal("original", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
+            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
             Assert.Equal("original", fi2);
 
             //check deleted files
@@ -243,7 +253,7 @@ namespace Tests
             var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
             Assert.True(fileToBackupExists);
 
-            var fi3 = File.ReadAllTextAsync("game\\install folder\\file to backup.txt").Result;
+            var fi3 = File.ReadAllText("game\\install folder\\file to backup.txt");
             Assert.Equal("original", fi3);
         }
 
@@ -253,13 +263,13 @@ namespace Tests
             var exeExists = File.Exists("game\\install folder\\start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
+            var fi = File.ReadAllText("game\\install folder\\start game.exe");
             Assert.Equal("fix_v1", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
+            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
             Assert.Equal("fix_v1", fi2);
 
             //check deleted files
@@ -280,15 +290,23 @@ namespace Tests
             Assert.True(backedUpFileExists);
 
             //check installed.xml
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(Consts.InstalledFile))
-                {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
+            var textActual = File.ReadAllText(Consts.InstalledFile);
+            var textExpected = @$"[
+  {{
+    ""$type"": ""FileFix"",
+    ""BackupFolder"": ""test_fix"",
+    ""FilesList"": [
+      ""install folder\\start game.exe"",
+      ""install folder\\subfolder\\file.txt""
+    ],
+    ""InstalledSharedFix"": null,
+    ""GameId"": 1,
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Version"": 1
+  }}
+]";
 
-                    Assert.Equal("1502A6F4AA59003053A625B117E0E3E9", hash);
-                }
-            }
+            Assert.Equal(textActual, textExpected);
         }
 
         private static void CheckUpdatedFiles()
@@ -297,13 +315,13 @@ namespace Tests
             var exeExists = File.Exists("game\\install folder\\start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllTextAsync("game\\install folder\\start game.exe").Result;
+            var fi = File.ReadAllText("game\\install folder\\start game.exe");
             Assert.Equal("fix_v2", fi);
 
             var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllTextAsync("game\\install folder\\subfolder\\file.txt").Result;
+            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
             Assert.Equal("original", fi2);
 
             //check deleted files
@@ -324,22 +342,29 @@ namespace Tests
             Assert.True(backedUpFileExists);
 
             //check installed.xml
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(Consts.InstalledFile))
-                {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
+            var textActual = File.ReadAllText(Consts.InstalledFile);
+            var textExpected = @$"[
+  {{
+    ""$type"": ""FileFix"",
+    ""BackupFolder"": ""test_fix"",
+    ""FilesList"": [
+      ""install folder\\start game.exe""
+    ],
+    ""InstalledSharedFix"": null,
+    ""GameId"": 1,
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Version"": 2
+  }}
+]";
 
-                    Assert.Equal("ADF140DCDB5C629F347CC8D1F288D188", hash);
-                }
-            }
+            Assert.Equal(textActual, textExpected);
         }
 
-        private static string PrepareGameFolder()
+        private string PrepareGameFolder()
         {
-            var gameFolder = Path.Combine(Directory.GetCurrentDirectory(), "game");
+            var gameFolder = Path.Combine(_testDirectory, "game");
 
-            ZipFile.ExtractToDirectory("..\\Resources\\test_game.zip", gameFolder);
+            ZipFile.ExtractToDirectory(Path.Combine(_rootDirectory, "Resources\\test_game.zip"), gameFolder);
 
             return gameFolder;
         }

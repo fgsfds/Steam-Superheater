@@ -41,7 +41,7 @@ namespace Common.FixTools
 
         private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
 
-        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
         {
             Logger.Info($"Installing {fix.Name} for {game.Name}");
 
@@ -58,7 +58,7 @@ namespace Common.FixTools
                         installedFix = _registryFixInstaller.InstallFix(game, registryFix);
                         break;
                     case HostsFixEntity hostsFix:
-                        installedFix = _hostsFixInstaller.InstallFix(game, hostsFix);
+                        installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
                         break;
                     default:
                         ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Installer for this fix type is not implemented");
@@ -89,7 +89,7 @@ namespace Common.FixTools
             return new(ResultEnum.Success, "Fix installed successfully!");
         }
 
-        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
+        public Result UninstallFix(GameEntity game, BaseFixEntity fix, string hostsFile = Consts.Hosts)
         {
             Logger.Info($"Uninstalling {fix.Name} for {game.Name}");
 
@@ -104,7 +104,7 @@ namespace Common.FixTools
                         _registryFixUninstaller.UninstallFix(regFix);
                         break;
                     case HostsFixEntity hostsFix:
-                        _hostsFixUninstaller.UninstallFix(hostsFix);
+                        _hostsFixUninstaller.UninstallFix(hostsFix, hostsFile);
                         break;
                     default:
                         ThrowHelper.NotImplementedException("Uninstaller for this fix type is not implemented");
@@ -149,7 +149,7 @@ namespace Common.FixTools
             return new(ResultEnum.Success, "Fix uninstalled successfully!");
         }
 
-        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check)
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
         {
             Logger.Info($"Updating {fix.Name} for {game.Name}");
 
@@ -166,7 +166,7 @@ namespace Common.FixTools
                         installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
                         break;
                     case HostsFixEntity hostsFix:
-                        installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix);
+                        installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
                         break;
                     default:
                         ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Updater for this fix type is not implemented");
