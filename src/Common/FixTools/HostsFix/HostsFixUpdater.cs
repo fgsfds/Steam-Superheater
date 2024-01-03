@@ -12,11 +12,11 @@ namespace Common.FixTools.HostsFix
         private readonly HostsFixInstaller _fixInstaller = fixInstaller;
         private readonly HostsFixUninstaller _fixUninstaller = fixUninstaller;
 
-        public BaseInstalledFixEntity UpdateFix(GameEntity game, HostsFixEntity hostsFix)
+        public BaseInstalledFixEntity UpdateFix(GameEntity game, HostsFixEntity hostsFix, string hostsFile)
         {
-            _fixUninstaller.UninstallFix(hostsFix);
+            _fixUninstaller.UninstallFix(hostsFix, hostsFile);
 
-            var result = _fixInstaller.InstallFix(game, hostsFix);
+            var result = _fixInstaller.InstallFix(game, hostsFix, hostsFile);
 
             return result;
         }

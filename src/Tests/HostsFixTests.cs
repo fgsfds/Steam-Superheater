@@ -3,10 +3,10 @@ using Common.DI;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.FixTools;
+using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
-using System.Security.Cryptography;
 
 namespace Tests
 {
@@ -16,10 +16,13 @@ namespace Tests
     [Collection("Sync")]
     public sealed class HostsFixTests : IDisposable
     {
+        private const string TestTempFolder = "test_temp";
+        private readonly string _rootDirectory;
+        private readonly string _testDirectory;
+        private readonly string _hostsFilePath;
+
         private readonly FixManager _fixManager;
         private readonly InstalledFixesProvider _installedFixesProvider;
-
-        private readonly string _hostsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "hosts");
 
         private readonly GameEntity _gameEntity = new()
         {
@@ -47,13 +50,29 @@ namespace Tests
             container.AddScoped<FixesProvider>();
             CommonBindings.Load(container);
 
+            _rootDirectory = Directory.GetCurrentDirectory();
+            _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
+            _hostsFilePath = Path.Combine(_testDirectory, "hosts");
+
+            if (Directory.Exists(TestTempFolder))
+            {
+                Directory.Delete(TestTempFolder, true);
+            }
+
+            Directory.CreateDirectory(TestTempFolder);
+            Directory.SetCurrentDirectory(_testDirectory);
+
             _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
             _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
-            File.Copy("Resources\\hosts", _hostsFilePath, true);
-
             //create cache;
             _ = _installedFixesProvider.GetListAsync(false).Result;
+
+            File.Copy(
+                Path.Combine(_rootDirectory, "Resources\\hosts"), 
+                _hostsFilePath, 
+                true
+                );
         }
 
         public void Dispose()
@@ -63,7 +82,9 @@ namespace Tests
                 return;
             }
 
-            File.Delete(_hostsFilePath);
+            Directory.SetCurrentDirectory(_rootDirectory);
+
+            Directory.Delete(TestTempFolder, true);
         }
 
         #endregion Test Preparations
@@ -71,7 +92,7 @@ namespace Tests
         #region Tests
 
         [Fact]
-        public async Task InstallUninstallFixTestAsync()
+        public async Task InstallUninstallFixTest()
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -84,33 +105,66 @@ namespace Tests
             var fixEntity = _fixEntity;
 
             //Install Fix
-            await _fixManager.InstallFixAsync(gameEntity, fixEntity, _hostsFilePath, true);
+            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, _hostsFilePath);
 
-            _installedFixesProvider.SaveInstalledFixes();
+            CheckInstalled();
 
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(_hostsFilePath))
-                {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
+            _fixManager.UninstallFix(gameEntity, fixEntity, _hostsFilePath);
 
-                    Assert.Equal("B431935EBF5DA06DC87E5032454F5E29", hash);
-                }
-            }
-
-            _fixManager.UninstallFix(gameEntity, fixEntity);
-
-            using (var md5 = MD5.Create())
-            {
-                using (var stream = File.OpenRead(_hostsFilePath))
-                {
-                    var hash = Convert.ToHexString(md5.ComputeHash(stream));
-
-                    Assert.Equal("B431935EBF5DA06DC87E5032454F5E29", hash);
-                }
-            }
+            CheckUninstalled();
         }
 
         #endregion Tests
+
+        #region Private Methods
+
+        private void CheckInstalled()
+        {
+            var hostsActual1 = File.ReadAllText(_hostsFilePath);
+            var hostsExpected1 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
+
+0.0.0.0 google.com
+
+0.0.0.0 test.site
+0.0.0.0 testtesttest # comment
+
+123 added entry  #c0650f19-f670-4f8a-8545-70f6c5171fa5";
+
+            var instActual1 = File.ReadAllText(Consts.InstalledFile);
+            var instExpected1 = $@"[
+  {{
+    ""$type"": ""HostsFix"",
+    ""Entries"": [
+      ""123 added entry ""
+    ],
+    ""GameId"": 1,
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Version"": 1
+  }}
+]";
+
+            Assert.Equal(hostsActual1, hostsExpected1);
+            Assert.Equal(instActual1, instExpected1);
+        }
+
+        private void CheckUninstalled()
+        {
+            var hostsActual2 = File.ReadAllText(_hostsFilePath);
+            var hostsExpected2 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
+
+0.0.0.0 google.com
+
+0.0.0.0 test.site
+0.0.0.0 testtesttest # comment
+";
+
+            var instActual2 = File.ReadAllText(Consts.InstalledFile);
+            var instExpected2 = $@"[]";
+
+            Assert.Equal(hostsActual2, hostsExpected2);
+            Assert.Equal(instActual2, instExpected2);
+        }
+
+        #endregion Private Methods
     }
 }

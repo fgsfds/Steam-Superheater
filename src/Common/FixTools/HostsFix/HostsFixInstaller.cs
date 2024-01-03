@@ -16,7 +16,7 @@ namespace Common.FixTools.HostsFix
         /// <param name="fix">Fix entity</param>
         /// <param name="hostsFilePath">Path to hosts file</param>
         /// <returns>Installed fix entity</returns>
-        public BaseInstalledFixEntity InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath = Consts.Hosts)
+        public BaseInstalledFixEntity InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
