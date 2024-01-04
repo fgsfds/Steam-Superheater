@@ -20,6 +20,7 @@ namespace Tests
         private const string TestFixZip = "test_fix.zip";
         private const string TestFixV2Zip = "test_fix_v2.zip";
         private const string TestFixVariantZip = "test_fix_variant.zip";
+        private const string TestFixPatchZip = "test_fix_patch.zip";
 
         private readonly string _rootDirectory;
         private readonly string _testDirectory;
@@ -97,6 +98,9 @@ namespace Tests
 
         #region Tests
 
+        /// <summary>
+        /// Simple install and uninstall of a fix
+        /// </summary>
         [Fact]
         public async Task InstallUninstallFixTest()
         {  
@@ -105,6 +109,9 @@ namespace Tests
             UninstallFix(_fileFixEntity);
         }
 
+        /// <summary>
+        /// Install and uninstall fix variant
+        /// </summary>
         [Fact]
         public async Task InstallUninstallFixVariantTest()
         {
@@ -113,6 +120,9 @@ namespace Tests
             UninstallFix(_fileFixEntity);
         }
 
+        /// <summary>
+        /// Install, update and uninstall fix
+        /// </summary>
         [Fact]
         public async Task UpdateFixTest()
         {
@@ -123,12 +133,15 @@ namespace Tests
             UninstallFix(_fileFixEntity);
         }
 
+        /// <summary>
+        /// Install fix with incorrect MD5
+        /// </summary>
         [Fact]
         public async Task InstallCompromisedFixTest()
         {
             FileFixEntity fixEntity = new()
             {
-                Name = "test fix",
+                Name = "test fix compromised",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/fixes/bsp_nointro_v1.zip",
@@ -141,6 +154,9 @@ namespace Tests
             Assert.True(installResult == ResultEnum.MD5Error);
         }
 
+        /// <summary>
+        /// Install fix to a new folder
+        /// </summary>
         [Fact]
         public async Task InstallFixToANewFolderTest()
         {
@@ -152,7 +168,7 @@ namespace Tests
 
             FileFixEntity fixEntity = new()
             {
-                Name = "test fix",
+                Name = "test fix new folder",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
                 Url = TestFixZip,
@@ -166,6 +182,54 @@ namespace Tests
             _fixManager.UninstallFix(_gameEntity, fixEntity);
 
             Assert.False(Directory.Exists("game\\new folder"));
+        }
+
+        /// <summary>
+        /// Install and uninstall fix that includes octodiff patch
+        /// </summary>
+        [Fact]
+        public async Task InstallFixWithPatching()
+        {
+            File.Copy(
+                Path.Combine(_rootDirectory, $"Resources\\{TestFixPatchZip}"),
+                Path.Combine(_rootDirectory, TestFixPatchZip),
+                true
+                );
+
+            FileFixEntity fixEntity = new()
+            {
+                Name = "test fix with patch",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = TestFixPatchZip,
+                InstallFolder = "install folder",
+                FilesToPatch = ["install folder\\start game.exe"]
+            };
+
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+
+            var installedActual = File.ReadAllText(Consts.InstalledFile);
+            var installedExpected = $@"[
+  {{
+    ""$type"": ""FileFix"",
+    ""BackupFolder"": ""test_fix_with_patch"",
+    ""FilesList"": [
+      ""install folder\\start game.exe.octodiff""
+    ],
+    ""InstalledSharedFix"": null,
+    ""GameId"": 1,
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Version"": 1
+  }}
+]";
+
+            var exeActual = File.ReadAllText("game\\install folder\\start game.exe");
+            var exeExpected = "original_patched";
+
+            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(exeActual, exeExpected);
+
+            UninstallFix(fixEntity);
         }
 
         #endregion Tests
