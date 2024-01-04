@@ -122,7 +122,7 @@ namespace Common.Models
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
-                            if (fix.Tags is not null &&
+                            if (fix.Tags is null ||
                                 !fix.Tags.Exists(x => x.Equals(tag)))
                             {
                                 fix.IsHidden = true;
