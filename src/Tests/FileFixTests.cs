@@ -14,13 +14,12 @@ namespace Tests
     /// Tests that use instance data and should be run in a single thread
     /// </summary>
     [Collection("Sync")]
-    public sealed class FileFixTests : IDisposable
+    public sealed partial class FileFixTests : IDisposable
     {
         private const string TestTempFolder = "test_temp";
         private const string TestFixZip = "test_fix.zip";
         private const string TestFixV2Zip = "test_fix_v2.zip";
         private const string TestFixVariantZip = "test_fix_variant.zip";
-        private const string TestFixPatchZip = "test_fix_patch.zip";
 
         private readonly string _rootDirectory;
         private readonly string _testDirectory;
@@ -102,7 +101,7 @@ namespace Tests
         /// Simple install and uninstall of a fix
         /// </summary>
         [Fact]
-        public async Task InstallUninstallFixTest()
+        public async Task InstallUninstallFix()
         {  
             await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
 
@@ -113,7 +112,7 @@ namespace Tests
         /// Install and uninstall fix variant
         /// </summary>
         [Fact]
-        public async Task InstallUninstallFixVariantTest()
+        public async Task InstallUninstallFixVariant()
         {
             await InstallFixAsync(fixEntity: _fileFixEntity, variant: "variant2");
 
@@ -124,7 +123,7 @@ namespace Tests
         /// Install, update and uninstall fix
         /// </summary>
         [Fact]
-        public async Task UpdateFixTest()
+        public async Task UpdateFix()
         {
             await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
 
@@ -137,7 +136,7 @@ namespace Tests
         /// Install fix with incorrect MD5
         /// </summary>
         [Fact]
-        public async Task InstallCompromisedFixTest()
+        public async Task InstallCompromisedFix()
         {
             FileFixEntity fixEntity = new()
             {
@@ -158,7 +157,7 @@ namespace Tests
         /// Install fix to a new folder
         /// </summary>
         [Fact]
-        public async Task InstallFixToANewFolderTest()
+        public async Task InstallFixToANewFolder()
         {
             File.Copy(
                 Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"), 
@@ -179,42 +178,16 @@ namespace Tests
 
             Assert.True(File.Exists("game\\new folder\\start game.exe"));
 
-            _fixManager.UninstallFix(_gameEntity, fixEntity);
-
-            Assert.False(Directory.Exists("game\\new folder"));
-        }
-
-        /// <summary>
-        /// Install and uninstall fix that includes octodiff patch
-        /// </summary>
-        [Fact]
-        public async Task InstallFixWithPatching()
-        {
-            File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixPatchZip}"),
-                Path.Combine(_rootDirectory, TestFixPatchZip),
-                true
-                );
-
-            FileFixEntity fixEntity = new()
-            {
-                Name = "test fix with patch",
-                Version = 1,
-                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = TestFixPatchZip,
-                InstallFolder = "install folder",
-                FilesToPatch = ["install folder\\start game.exe"]
-            };
-
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
-
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[
   {{
     ""$type"": ""FileFix"",
-    ""BackupFolder"": ""test_fix_with_patch"",
+    ""BackupFolder"": null,
     ""FilesList"": [
-      ""install folder\\start game.exe.octodiff""
+      ""new folder\\"",
+      ""new folder\\start game.exe"",
+      ""new folder\\subfolder\\"",
+      ""new folder\\subfolder\\file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""GameId"": 1,
@@ -223,14 +196,12 @@ namespace Tests
   }}
 ]";
 
-            var exeActual = File.ReadAllText("game\\install folder\\start game.exe");
-            var exeExpected = "original_patched";
-
             Assert.Equal(installedActual, installedExpected);
-            Assert.Equal(exeActual, exeExpected);
 
-            UninstallFix(fixEntity);
-        }
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
+
+            Assert.False(Directory.Exists("game\\new folder"));
+        }        
 
         #endregion Tests
 

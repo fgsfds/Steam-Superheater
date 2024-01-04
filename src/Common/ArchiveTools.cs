@@ -191,9 +191,10 @@ namespace Common
             List<string> files = new(reader.Entries.Count() + 1);
 
             //if directory that the archive will be extracted to doesn't exist, add it to the list too
-            if (!Directory.Exists(unpackToPath))
+            if (!Directory.Exists(unpackToPath) &&
+                fixInstallFolder is not null)
             {
-                files.Add(unpackToPath);
+                files.Add(fixInstallFolder + Path.DirectorySeparatorChar);
             }
 
             foreach (var entry in reader.Entries)

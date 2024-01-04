@@ -98,7 +98,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
-                        _fileFixUninstaller.UninstallFix(game, fileFix.InstalledFix, fileFix.Url);
+                        _fileFixUninstaller.UninstallFix(game, fileFix.InstalledFix);
                         break;
                     case RegistryFixEntity regFix:
                         _registryFixUninstaller.UninstallFix(regFix);
