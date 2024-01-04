@@ -143,7 +143,7 @@ namespace Tests
                 Name = "test fix compromised",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/fixes/bsp_nointro_v1.zip",
+                Url = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/master/fixes/nointro/bsp_nointro.zip",
                 MD5 = "badMD5"
             };
 
