@@ -27,6 +27,11 @@ namespace Common.Providers
 
             foreach (var fixesList in fixesLists)
             {
+                if (fixesList.GameId == 0)
+                {
+                    continue;
+                }
+
                 var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
 
                 foreach (var fix in fixesList.Fixes)
