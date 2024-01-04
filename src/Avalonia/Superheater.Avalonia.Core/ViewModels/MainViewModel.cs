@@ -118,7 +118,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _progressBarText = string.Empty;
 
         [ObservableProperty]
-        private float _progressBarValue;
+        private float _progressBarValue = 0;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
@@ -503,6 +503,8 @@ Do you still want to install the fix?",
                     );
             }
 
+            OnPropertyChanged(nameof(TagsComboboxList));
+
             IsInProgress = false;
             ProgressBarText = string.Empty;
 
@@ -529,13 +531,11 @@ Do you still want to install the fix?",
             var selectedGameId = SelectedGame?.GameId;
 
             OnPropertyChanged(nameof(FilteredGamesList));
-            OnPropertyChanged(nameof(TagsComboboxList));
 
             UpdateHeader();
 
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
-                var selectedFixGuid = SelectedFix?.Guid;
 
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
