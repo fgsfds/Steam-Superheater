@@ -45,6 +45,12 @@ namespace Common.FixTools
         {
             Logger.Info($"Installing {fix.Name} for {game.Name}");
 
+            if (fix is FileFixEntity &&
+                !Directory.Exists(game.InstallDir))
+            {
+                return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
+            }
+
             BaseInstalledFixEntity? installedFix = null;
 
             try
@@ -92,6 +98,12 @@ namespace Common.FixTools
         public Result UninstallFix(GameEntity game, BaseFixEntity fix, string hostsFile = Consts.Hosts)
         {
             Logger.Info($"Uninstalling {fix.Name} for {game.Name}");
+
+            if (fix is FileFixEntity &&
+                !Directory.Exists(game.InstallDir))
+            {
+                return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
+            }
 
             try
             {
@@ -152,6 +164,12 @@ namespace Common.FixTools
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
         {
             Logger.Info($"Updating {fix.Name} for {game.Name}");
+
+            if (fix is FileFixEntity &&
+                !Directory.Exists(game.InstallDir))
+            {
+                return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
+            }
 
             BaseInstalledFixEntity? installedFix = null;
 
