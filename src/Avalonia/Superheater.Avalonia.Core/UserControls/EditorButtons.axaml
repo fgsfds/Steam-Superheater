@@ -72,7 +72,7 @@
                     Padding="8"
                     Command="{Binding OpenXmlFileCommand}"
                     IsVisible="{Binding IsDeveloperMode}">
-                Open XML...
+                Open fixes.json...
             </Button>
 
         </StackPanel>
