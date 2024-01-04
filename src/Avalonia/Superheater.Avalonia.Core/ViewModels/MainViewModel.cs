@@ -529,6 +529,7 @@ Do you still want to install the fix?",
         private void FillGamesList()
         {
             var selectedGameId = SelectedGame?.GameId;
+            var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
 

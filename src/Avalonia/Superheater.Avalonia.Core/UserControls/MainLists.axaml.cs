@@ -8,5 +8,17 @@ namespace Superheater.Avalonia.Core.UserControls
         {
             InitializeComponent();
         }
+
+        /// <summary>
+        /// Stupid hack that resets scroll in the games list to the selected game
+        /// </summary>
+        private void ListBox_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+        {
+            if (GamesListBox.SelectedIndex !=  -1)
+            {
+                GamesListBox.ScrollIntoView(GamesListBox.SelectedIndex);
+                GamesListBox.ScrollIntoView(GamesListBox.SelectedIndex);
+            }
+        }
     }
 }

@@ -24,6 +24,7 @@
         <!--Games list-->
         <ListBox ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
+                 SelectionChanged="ListBox_SelectionChanged"
                  Grid.Column="0"
                  Margin="0,0,3,0"
                  Name="GamesListBox"
