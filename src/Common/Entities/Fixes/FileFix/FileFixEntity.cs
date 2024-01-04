@@ -141,5 +141,29 @@ namespace Common.Entities.Fixes.FileFix
                 return false;
             }
         }
+
+        public FileFixEntity Clone()
+        {
+            return new()
+            {
+                Name = this.Name,
+                Version = this.Version,
+                Guid = this.Guid,
+                Description = this.Description,
+                Dependencies = this.Dependencies,
+                Tags = this.Tags,
+                SupportedOSes = this.SupportedOSes,
+                Url = this.Url,
+                InstallFolder = this.InstallFolder,
+                ConfigFile = this.ConfigFile,
+                FilesToDelete = this.FilesToDelete,
+                FilesToBackup = this.FilesToBackup,
+                FilesToPatch = this.FilesToPatch,
+                RunAfterInstall = this.RunAfterInstall,
+                MD5 = this.MD5,
+                SharedFix = this.SharedFix,
+                SharedFixInstallFolder = this.SharedFixInstallFolder
+            };
+        }
     }
 }

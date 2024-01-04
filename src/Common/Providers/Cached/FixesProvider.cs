@@ -11,7 +11,7 @@ namespace Common.Providers
     public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<FixesList>
     {
         private string? _fixesCachedString;
-        private ImmutableList<BaseFixEntity> _sharedFixes;
+        private ImmutableList<FileFixEntity> _sharedFixes;
         private readonly ConfigEntity _config = config.Config;
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Common.Providers
             }
         }
 
-        public ImmutableList<BaseFixEntity> GetSharedFixes() => _sharedFixes;
+        public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
         /// <summary>
         /// Save list of fixes to XML
@@ -264,7 +264,7 @@ namespace Common.Providers
 
             var fixes = DeserializeCachedString(_fixesCachedString);
 
-            _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.ToImmutableList() ?? [];
+            _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
 
             return fixes;
         }

@@ -23,7 +23,7 @@ namespace Common.Providers
             var games = await _gamesProvider.GetListAsync(useCache);
             var installedFixes = await _installedFixesProvider.GetListAsync(useCache);
 
-            List<FixFirstCombinedEntity> result = new(fixesLists.Count);
+            List<FixFirstCombinedEntity> result = new(fixesLists.Count - 1);
 
             foreach (var fixesList in fixesLists)
             {
@@ -32,8 +32,6 @@ namespace Common.Providers
                     continue;
                 }
 
-                var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
-
                 foreach (var fix in fixesList.Fixes)
                 {
                     var installed = installedFixes.FirstOrDefault(x => x.GameId == fixesList.GameId && x.Guid == fix.Guid);
@@ -41,7 +39,7 @@ namespace Common.Providers
                     if (fix is FileFixEntity fileFix &&
                         fileFix.SharedFixGuid is not null)
                     {
-                        var sharedFix = (FileFixEntity)sharedFixes.First(x => ((FileFixEntity)x).Guid == fileFix.SharedFixGuid);
+                        var sharedFix = sharedFixes.First(x => x.Guid == fileFix.SharedFixGuid).Clone();
 
                         sharedFix.InstallFolder = fileFix.SharedFixInstallFolder;
 
@@ -58,6 +56,8 @@ namespace Common.Providers
                         fix.InstalledFix = installed;
                     }
                 }
+
+                var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
 
                 result.Add(new FixFirstCombinedEntity()
                 { 

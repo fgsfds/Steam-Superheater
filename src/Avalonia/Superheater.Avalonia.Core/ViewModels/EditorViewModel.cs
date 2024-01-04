@@ -55,7 +55,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public ImmutableList<BaseFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+        public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
 
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;

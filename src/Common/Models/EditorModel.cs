@@ -73,7 +73,7 @@ namespace Common.Models
         /// <summary>
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
-        public ImmutableList<BaseFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes();
+        public ImmutableList<FileFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes();
 
         /// <summary>
         /// Add new game with empty fix
