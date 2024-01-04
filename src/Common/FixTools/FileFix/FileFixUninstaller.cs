@@ -12,18 +12,18 @@ namespace Common.FixTools.FileFix
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix, string? fixUrl)
+        public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix)
         {
             installedFix.ThrowIfNotType<FileInstalledFixEntity>(out var installedFileFix);
 
             if (installedFileFix.InstalledSharedFix is not null)
             {
-                UninstallFix(game, installedFileFix.InstalledSharedFix, null);
+                UninstallFix(game, installedFileFix.InstalledSharedFix);
             }
 
             DeleteFiles(game.InstallDir, installedFileFix.FilesList);
 
-            RestoreBackup(game.InstallDir, installedFileFix, fixUrl);
+            RestoreBackup(game.InstallDir, installedFileFix);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
         }
@@ -74,28 +74,17 @@ namespace Common.FixTools.FileFix
         /// </summary>
         /// <param name="gameDir">Game install folder</param>
         /// <param name="fix">Installed fix</param>
-        /// <param name="fixUrl">Url to fix file</param>
+        /// 
         private static void RestoreBackup(
             string gameDir,
-            FileInstalledFixEntity fix,
-            string? fixUrl)
+            FileInstalledFixEntity fix)
         {
-            string backupFolder;
-
-            if (fix.BackupFolder is not null)
+            if (fix.BackupFolder is null)
             {
-                backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
+                return;
             }
-            //TODO: Added for backwards compatibility, need to remove some time later
-            else
-            {
-                if (fixUrl is null)
-                {
-                    ThrowHelper.BackwardsCompatibilityException("Can't get backup folder.");
-                }
 
-                backupFolder = Path.Combine(gameDir, Consts.BackupFolder, Path.GetFileNameWithoutExtension(fixUrl));
-            }
+            string backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder); ;
 
             if (!Directory.Exists(backupFolder))
             {

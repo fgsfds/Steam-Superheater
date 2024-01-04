@@ -9,6 +9,8 @@
   <ItemGroup>
     <None Remove="Resources\hosts" />
     <None Remove="Resources\test_fix_patch.zip" />
+    <None Remove="Resources\test_fix_shared.zip" />
+    <None Remove="Resources\test_fix_shared_v2.zip" />
     <None Remove="Resources\test_fix_v2.zip" />
   </ItemGroup>
 
@@ -20,6 +22,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_fix_patch.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\test_fix_shared_v2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_fix_v2.zip">
@@ -51,6 +56,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Resources\test_fix_shared.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>

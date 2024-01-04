@@ -37,6 +37,8 @@ namespace Common.FixTools.FileFix
 
             if (fix.SharedFix is not null)
             {
+                fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
+
                 installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
             }
 
