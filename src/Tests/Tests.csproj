@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <None Remove="Resources\hosts" />
+    <None Remove="Resources\test_fix_patch.zip" />
     <None Remove="Resources\test_fix_v2.zip" />
   </ItemGroup>
 
@@ -16,6 +17,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_fix.zip">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\test_fix_patch.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\test_fix_v2.zip">
