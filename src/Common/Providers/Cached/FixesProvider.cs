@@ -185,7 +185,8 @@ namespace Common.Providers
             if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
             {
                 var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
-                var fileName = Path.GetFileName(fix.Url);
+                var fileName = Path.GetRelativePath(Consts.MainFixesRepo + "/raw/master/fixes", fix.Url);
+                //var fileName = Path.GetFileName(fix.Url);
                 var pathToFile = Path.Combine(currentDir, fileName);
 
                 using (var md5 = MD5.Create())
