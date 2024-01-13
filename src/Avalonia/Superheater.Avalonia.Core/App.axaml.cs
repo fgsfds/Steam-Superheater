@@ -26,49 +26,63 @@ public sealed class App : Application
     {
         if (!DoesHaveWriteAccess(Directory.GetCurrentDirectory()))
         {
-            var messageBox = new MessageBox();
+            var messageBox = new MessageBox($"""
+Superheater doesn't have write access to
+{Directory.GetCurrentDirectory()}
+and can't be launched. 
+Move it to the folder where you have write access.
+"""
+);
             messageBox.Show();
         }
         else
         {
-            var container = BindingsManager.Instance;
-
-            ModelsBindings.Load(container);
-            ViewModelsBindings.Load(container);
-            CommonBindings.Load(container);
-            ProvidersBindings.Load(container);
-
-            var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
-
-            var themeEnum = theme switch
+            try 
             {
-                ThemeEnum.System => ThemeVariant.Default,
-                ThemeEnum.Light => ThemeVariant.Light,
-                ThemeEnum.Dark => ThemeVariant.Dark,
-                _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
-            };
+                var container = BindingsManager.Instance;
 
-            RequestedThemeVariant = themeEnum;
+                ModelsBindings.Load(container);
+                ViewModelsBindings.Load(container);
+                CommonBindings.Load(container);
+                ProvidersBindings.Load(container);
 
-            if (Properties.IsDeveloperMode)
-            {
-                Common.Logger.Info("Started in developer mode");
+                var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
+
+                var themeEnum = theme switch
+                {
+                    ThemeEnum.System => ThemeVariant.Default,
+                    ThemeEnum.Light => ThemeVariant.Light,
+                    ThemeEnum.Dark => ThemeVariant.Dark,
+                    _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+                };
+
+                RequestedThemeVariant = themeEnum;
+
+                if (Properties.IsDeveloperMode)
+                {
+                    Common.Logger.Info("Started in developer mode");
+                }
+
+                // Line below is needed to remove Avalonia data validation.
+                // Without this line you will get duplicate validations from both Avalonia and CT
+                BindingPlugins.DataValidators.RemoveAt(0);
+
+                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+                {
+                    desktop.MainWindow = new MainWindow();
+                }
+                else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+                {
+                    singleViewPlatform.MainView = new MainPage();
+                }
+
+                base.OnFrameworkInitializationCompleted();
             }
-
-            // Line below is needed to remove Avalonia data validation.
-            // Without this line you will get duplicate validations from both Avalonia and CT
-            BindingPlugins.DataValidators.RemoveAt(0);
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            catch (Exception ex)
             {
-                desktop.MainWindow = new MainWindow();
+                var messageBox = new MessageBox(ex.Message);
+                messageBox.Show();
             }
-            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-            {
-                singleViewPlatform.MainView = new MainPage();
-            }
-
-            base.OnFrameworkInitializationCompleted();
         }
     }
 
