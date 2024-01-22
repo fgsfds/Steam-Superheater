@@ -405,13 +405,13 @@
         </Grid>
 
         <!--Description-->
-        <TextBox Text="{Binding SelectedFix.Description, Mode=TwoWay}"
+        <TextBox Text="{Binding SelectedFixDescription, Mode=TwoWay}"
                  Grid.Row="999"
                  TextWrapping="Wrap"
                  AcceptsReturn="True"
                  IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
 
-        <md:MarkdownScrollViewer Markdown="{Binding SelectedFix.Description}"
+        <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"
                                  Grid.Row="999"
                                  IsVisible="{Binding IsChecked, ElementName=MdToggle}">
 

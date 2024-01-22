@@ -197,6 +197,18 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string SelectedFixDescription
+        {
+            get => SelectedFix?.Description ?? string.Empty;
+            set
+            {
+                SelectedFix.ThrowIfNull();
+
+                SelectedFix.Description = value;
+                OnPropertyChanged(nameof(SelectedFixDescription));
+            }
+        }
+
         public BaseFixEntity? SelectedSharedFix
         {
             get => SelectedFix is not FileFixEntity fileFix ? null : SharedFixesList.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
@@ -409,6 +421,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
         [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
         [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
         [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
