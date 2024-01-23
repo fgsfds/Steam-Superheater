@@ -115,10 +115,12 @@ namespace Tests
         ""shared install folder\\shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
+      ""WineDllOverrides"": null,
       ""GameId"": 1,
       ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
       ""Version"": 1
     }},
+    ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
     ""Version"": 1
@@ -167,10 +169,12 @@ namespace Tests
         ""shared install folder\\shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
+      ""WineDllOverrides"": null,
       ""GameId"": 1,
       ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
       ""Version"": 1
     }},
+    ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
     ""Version"": 2
@@ -226,10 +230,12 @@ namespace Tests
         ""shared install folder\\shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
+      ""WineDllOverrides"": null,
       ""GameId"": 1,
       ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
       ""Version"": 2
     }},
+    ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
     ""Version"": 1

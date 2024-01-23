@@ -30,6 +30,7 @@ namespace Common.Entities.Fixes.FileFix
             MD5 = null;
             SharedFix = null;
             SharedFixInstallFolder = null;
+            WineDllOverrides = null;
         }
 
         [SetsRequiredMembers]
@@ -52,6 +53,7 @@ namespace Common.Entities.Fixes.FileFix
             MD5 = null;
             SharedFix = null;
             SharedFixInstallFolder = null;
+            WineDllOverrides = null;
         }
 
         /// <summary>
@@ -116,6 +118,8 @@ namespace Common.Entities.Fixes.FileFix
         /// Relative to the game folder
         /// </summary>
         public string? SharedFixInstallFolder { get; set; }
+
+        public List<string>? WineDllOverrides { get; set; }
 
         [JsonIgnore]
         public FileFixEntity? SharedFix { get; set; }

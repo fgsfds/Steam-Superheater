@@ -43,6 +43,7 @@ namespace Tests
       ""install folder\\start game.exe.octodiff""
     ],
     ""InstalledSharedFix"": null,
+    ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
     ""Version"": 1

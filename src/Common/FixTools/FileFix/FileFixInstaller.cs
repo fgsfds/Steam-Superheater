@@ -6,6 +6,7 @@ using Common.Helpers;
 using Common.Providers;
 using Octodiff.Core;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 
 namespace Common.FixTools.FileFix
@@ -70,6 +71,8 @@ namespace Common.FixTools.FileFix
 
             await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
 
+            var dllOverrides = await ApplyWineDllOverrides(game.Id, fix.WineDllOverrides);
+
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
             if (!Directory.Exists(backupFolderPath))
@@ -84,10 +87,48 @@ namespace Common.FixTools.FileFix
                 Version = fix.Version,
                 BackupFolder = backupFolderPath is null ? null : new DirectoryInfo(backupFolderPath).Name,
                 FilesList = filesInArchive,
-                InstalledSharedFix = installedSharedFix
+                InstalledSharedFix = installedSharedFix,
+                WineDllOverrides = dllOverrides
             };
 
             return installedFix;
+        }
+
+        /// <summary>
+        /// Add dll overrides to the registry
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="dllList">List of DLLs to add</param>
+        /// <returns>List of added lines</returns>
+        private async Task<List<string>?> ApplyWineDllOverrides(
+            int gameId,
+            List<string>? dllList)
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+                dllList is null)
+            {
+                return null;
+            }
+
+            string file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+
+            var linesList = File.ReadAllLines(file).ToList();
+
+            var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
+
+            List<string> addedLines = [];
+
+            foreach (var dll in dllList)
+            {
+                var line = @$"""{dll}""=""native,builtin""";
+
+                addedLines.Add(line);
+                linesList.Insert(startIndex + 1, line);
+            }
+
+            await File.WriteAllLinesAsync(file, linesList);
+
+            return addedLines;
         }
 
         /// <summary>

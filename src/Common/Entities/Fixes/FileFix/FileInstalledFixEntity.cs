@@ -13,5 +13,7 @@
         public required List<string>? FilesList { get; init; }
 
         public FileInstalledFixEntity? InstalledSharedFix { get; init; }
+
+        public List<string>? WineDllOverrides { get; init; }
     }
 }

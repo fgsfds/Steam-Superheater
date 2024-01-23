@@ -154,6 +154,19 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string SelectedFixWineDllsOverrides
+        {
+            get => SelectedFix is FileFixEntity fileFix && fileFix.WineDllOverrides is not null
+                ? string.Join(';', fileFix.WineDllOverrides)
+                : string.Empty;
+            set
+            {
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+
+                fileFix.WineDllOverrides = value.SplitSemicolonSeparatedString();
+            }
+        }
+
         public string SelectedFixUrl
         {
             get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null
@@ -419,6 +432,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsStringValueType))]
         [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
         [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixWineDllsOverrides))]
         [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
         [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
@@ -430,6 +444,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenFilesToPatchEditorCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenWineDllsOverridesEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
@@ -775,6 +791,25 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
         private bool OpenFilesToPatchEditorCanExecute() => SelectedFix is FileFixEntity;
+
+
+        /// <summary>
+        /// Open files to patch editor
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(OpenWineDllsOverridesEditorCanExecute))]
+        private async Task OpenWineDllsOverridesEditorAsync()
+        {
+            SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.WineDllOverrides);
+
+            if (result is not null)
+            {
+                fileFix.WineDllOverrides = result;
+                OnPropertyChanged(nameof(SelectedFixWineDllsOverrides));
+            }
+        }
+        private bool OpenWineDllsOverridesEditorCanExecute() => SelectedFix is FileFixEntity;
 
 
         /// <summary>

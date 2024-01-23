@@ -33,6 +33,7 @@
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="auto"></RowDefinition>
+            <RowDefinition Height="auto"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -319,6 +320,7 @@
 
         </Grid>
 
+        <!--Shared fix unpack folder-->
         <TextBox Grid.Row="19"
                  HorizontalAlignment="Stretch"
                  Watermark="Shared fix unpack folder"
@@ -326,8 +328,28 @@
                  IsVisible="{Binding IsSharedFixSelected}"
                  Margin="0,3"/>
 
+        <!--Wine dlls overrides-->
+        <Grid ColumnDefinitions="*,auto"
+              Grid.Row="20"
+              IsVisible="{Binding IsFileFixType}">
+
+            <TextBox Text="{Binding SelectedFixWineDllsOverrides, Mode=TwoWay}"
+                     Watermark="Wine DLL overrides"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="1"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenWineDllsOverridesEditorCommand}">
+                ...
+            </Button>
+
+        </Grid>
+
         <!--OSes and dependencies-->
-        <Grid Grid.Row="20"
+        <Grid Grid.Row="21"
               Margin="0,3"
               MinHeight="60" RowDefinitions="*,*,*" ColumnDefinitions="auto,auto,*,auto,*">
 

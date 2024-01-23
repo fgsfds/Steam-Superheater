@@ -2,6 +2,8 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Common.FixTools.FileFix
 {
@@ -26,6 +28,54 @@ namespace Common.FixTools.FileFix
             RestoreBackup(game.InstallDir, installedFileFix);
 
             DeleteBackupFolderIfEmpty(game.InstallDir);
+
+            RemoveWineDllOverrides(game.Id, installedFileFix.WineDllOverrides);
+        }
+
+        /// <summary>
+        /// Remove dll overrides from the registry
+        /// </summary>
+        /// <param name="gameId">Game id</param>
+        /// <param name="dllList">List of added lines</param>
+        private void RemoveWineDllOverrides(
+            int gameId,
+            List<string>? dllList)
+        {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
+                dllList is null)
+            {
+                return;
+            }
+
+            string file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+
+            var linesList = File.ReadAllLines(file).ToList();
+
+            var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
+
+            List<int> indexes = [];
+
+            for (int i = startIndex; i < linesList.Count; i++)
+            {
+                if (linesList[i].Equals(""))
+                {
+                    break;
+                }
+
+                if (dllList.Contains(linesList[i]))
+                {
+                    indexes.Add(i);
+                }
+            }
+
+            indexes.Reverse();
+
+            foreach (var ind in indexes)
+            {
+                linesList.RemoveAt(ind);
+            }
+
+            File.WriteAllLines(file, linesList);
         }
 
         /// <summary>
