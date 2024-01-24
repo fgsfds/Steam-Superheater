@@ -1,5 +1,6 @@
 ﻿using Common.Helpers;
 using SharpCompress.Archives;
+using System;
 using System.Security.Cryptography;
 
 namespace Common
@@ -36,73 +37,69 @@ namespace Common
 
             _progressReport.OperationMessage = "Downloading...";
 
-            using (HttpClient client = new())
+            using HttpClient client = new();
+
+            client.Timeout = TimeSpan.FromSeconds(10);
+
+            using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+            if (!response.IsSuccessStatusCode)
             {
+                ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode.ToString());
+            }
 
-                client.Timeout = TimeSpan.FromSeconds(10);
-
-                using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-
-                if (!response.IsSuccessStatusCode)
+            if (hash is not null)
+            {
+                if (response.Content.Headers.ContentMD5 is not null &&
+                    !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
                 {
-                    ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode.ToString());
+                    ThrowHelper.HashCheckFailedException("File hash doesn't match");
+                }
+            }
+
+            await using var source = await response.Content.ReadAsStreamAsync();
+            var contentLength = response.Content.Headers.ContentLength;
+
+            await using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+
+            if (!contentLength.HasValue)
+            {
+                await source.CopyToAsync(file);
+            }
+            else
+            {
+                var buffer = new byte[81920];
+                var totalBytesRead = 0f;
+                int bytesRead;
+
+                while ((bytesRead = await source.ReadAsync(buffer)) != 0)
+                {
+                    await file.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    totalBytesRead += bytesRead;
+
+                    var value = (totalBytesRead / (long)contentLength * 100);
+                    progress.Report(value);
                 }
 
-                if (hash is not null)
+                await file.DisposeAsync();
+
+                File.Move(tempFile, filePath);
+            }
+
+            if (hash is not null)
+            {
+                using var md5 = MD5.Create();
+                await using var stream = File.OpenRead(filePath);
+
+                var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
+
+                if (!hash.Equals(fileHash))
                 {
-                    if (response.Content.Headers.ContentMD5 is not null &&
-                        !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
-                    {
-                        ThrowHelper.HashCheckFailedException("File hash doesn't match");
-                    }
-                }
+                    await stream.DisposeAsync();
 
-                await using var source = await response.Content.ReadAsStreamAsync();
-                var contentLength = response.Content.Headers.ContentLength;
+                    File.Delete(filePath);
 
-                await using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
-
-                if (!contentLength.HasValue)
-                {
-                    await source.CopyToAsync(file);
-                }
-                else
-                {
-                    var buffer = new byte[81920];
-                    var totalBytesRead = 0f;
-                    int bytesRead;
-
-                    while ((bytesRead = await source.ReadAsync(buffer)) != 0)
-                    {
-                        await file.WriteAsync(buffer.AsMemory(0, bytesRead));
-                        totalBytesRead += bytesRead;
-
-                        var value = (totalBytesRead / (long)contentLength * 100);
-                        progress.Report(value);
-                    }
-
-                    await file.DisposeAsync();
-
-                    File.Move(tempFile, filePath);
-                }
-
-                if (hash is not null)
-                {
-                    using (var md5 = MD5.Create())
-                    {
-                        await using var stream = File.OpenRead(filePath);
-
-                        var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
-
-                        if (!hash.Equals(fileHash))
-                        {
-                            await stream.DisposeAsync();
-
-                            File.Delete(filePath);
-
-                            ThrowHelper.HashCheckFailedException("File hash doesn't match");
-                        }
-                    }
+                    ThrowHelper.HashCheckFailedException("File hash doesn't match");
                 }
             }
 
@@ -122,28 +119,33 @@ namespace Common
         {
             IProgress<float> progress = _progressReport.Progress;
             _progressReport.OperationMessage = "Unpacking...";
+            var subfolder = variant + "/";
 
-            using (var archive = ArchiveFactory.Open(pathToArchive))
+            using var archive = ArchiveFactory.Open(pathToArchive);
+
+            var entriesCount = variant is null
+            ? archive.Entries.Count()
+            : archive.Entries.Count(x => x.Key.StartsWith(subfolder));
+
+            var entryNumber = 1f;
+
+            await Task.Run(() =>
             {
-                var sub = variant + "/";
+                using var reader = archive.ExtractAllEntries();
 
-                var count = variant is null
-                    ? archive.Entries.Count()
-                    : archive.Entries.Count(x => x.Key.StartsWith(sub));
-
-                var i = 1f;
-
-                foreach (var zipEntry in archive.Entries)
+                while (reader.MoveToNextEntry())
                 {
+                    var entry = reader.Entry;
+
                     if (variant is not null &&
-                        !zipEntry.Key.StartsWith(variant + "/"))
+                        !entry.Key.StartsWith(variant + "/"))
                     {
                         continue;
                     }
 
                     var fullName = variant is null
-                        ? Path.Combine(unpackTo, zipEntry.Key)
-                        : Path.Combine(unpackTo, zipEntry.Key.Replace(variant + "/", string.Empty));
+                        ? Path.Combine(unpackTo, entry.Key)
+                        : Path.Combine(unpackTo, entry.Key.Replace(variant + "/", string.Empty));
 
                     if (!Directory.Exists(Path.GetDirectoryName(fullName)))
                     {
@@ -151,23 +153,24 @@ namespace Common
                         Directory.CreateDirectory(dirName);
                     }
 
-                    if (zipEntry.IsDirectory)
+                    if (entry.IsDirectory)
                     {
                         //it's a directory
                         Directory.CreateDirectory(fullName);
                     }
                     else
                     {
-                        await using FileStream target = new(fullName, FileMode.Create);
-                        await zipEntry.OpenEntryStream().CopyToAsync(target);
+                        using FileStream writableStream = File.OpenWrite(fullName);
+                        reader.WriteEntryTo(writableStream);
                     }
 
-                    var value = i / count * 100;
+                    var value = entryNumber / entriesCount * 100;
                     progress.Report(value);
 
-                    i++;
+                    entryNumber++;
                 }
             }
+            );
 
             _progressReport.OperationMessage = string.Empty;
         }
