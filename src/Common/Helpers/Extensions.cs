@@ -52,5 +52,7 @@ namespace Common.Helpers
 
             return [.. str.Split(';').Select(static x => x.Trim())];
         }
+
+        public static string ReplaceDirectorySeparatorChar(this string str) => str.Replace('\\', Path.DirectorySeparatorChar);
     }
 }

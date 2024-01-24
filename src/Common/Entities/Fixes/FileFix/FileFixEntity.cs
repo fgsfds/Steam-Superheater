@@ -1,5 +1,7 @@
 ﻿using Common.Enums;
+using Common.Helpers;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.FileFix
@@ -71,32 +73,87 @@ namespace Common.Entities.Fixes.FileFix
         /// Folder to unpack archive
         /// Relative to the game folder
         /// </summary>
-        public string? InstallFolder { get; set; }
+        private string? _installFolder;
+        public string? InstallFolder
+        { 
+            get
+            {
+                return _installFolder?.ReplaceDirectorySeparatorChar();
+            }
+           
+            set => _installFolder = value; 
+        }
 
         /// <summary>
         /// Fix configuration file
         /// Can be any file including .exe
         /// Path is relative to the game folder
         /// </summary>
-        public string? ConfigFile { get; set; }
+        private string? _configFile;
+        public string? ConfigFile
+        {
+            get
+            {
+                return _configFile?.ReplaceDirectorySeparatorChar();
+            }
+
+            set => _configFile = value;
+        }
 
         /// <summary>
         /// List of files that will be backed up and deleted before the fix is installed
         /// Paths are relative to the game folder
         /// </summary>
-        public List<string>? FilesToDelete { get; set; }
+        private List<string>? _filesToDelete;
+        public List<string>? FilesToDelete
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return _filesToDelete;
+                }
+
+                return _filesToDelete?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
+            }
+
+            set => _filesToDelete = value;
+        }
 
         /// <summary>
         /// List of files that will be backed up before the fix is installed, and the original file will remain
         /// Paths are relative to the game folder
         /// </summary>
-        public List<string>? FilesToBackup { get; set; }
+        private List<string>? _filesToBackup;
+        public List<string>? FilesToBackup
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return _filesToBackup;
+                }
+
+                return _filesToBackup?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
+            }
+
+            set => _filesToBackup = value;
+        }
 
         /// <summary>
         /// File that will be run after the fix is installed
         /// Path is relative to the game folder
         /// </summary>
-        public string? RunAfterInstall { get; set; }
+        private string? _runAfterInstall;
+        public string? RunAfterInstall
+        {
+            get
+            {
+                return _runAfterInstall?.ReplaceDirectorySeparatorChar();
+            }
+
+            set => _runAfterInstall = value;
+        }
 
         /// <summary>
         /// Zip archive MD5
@@ -106,7 +163,21 @@ namespace Common.Entities.Fixes.FileFix
         /// <summary>
         /// List of files that will be backed up and patched with filename.octodiff patch
         /// </summary>
-        public List<string>? FilesToPatch { get; set; }
+        private List<string>? _filesToPatch;
+        public List<string>? FilesToPatch
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return _filesToPatch;
+                }
+
+                return _filesToPatch?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
+            }
+
+            set => _filesToPatch = value;
+        }
 
         /// <summary>
         /// Guid of the fix that will be installed alongside
@@ -117,8 +188,20 @@ namespace Common.Entities.Fixes.FileFix
         /// Folder to unpack shared fix to
         /// Relative to the game folder
         /// </summary>
-        public string? SharedFixInstallFolder { get; set; }
+        private string? _sharedFixInstallFolder;
+        public string? SharedFixInstallFolder
+        {
+            get
+            {
+                return _sharedFixInstallFolder?.ReplaceDirectorySeparatorChar();
+            }
 
+            set => _sharedFixInstallFolder = value;
+        }
+
+        /// <summary>
+        /// Dlls that will be added to windlloverrides
+        /// </summary>
         public List<string>? WineDllOverrides { get; set; }
 
         [JsonIgnore]
