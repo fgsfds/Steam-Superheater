@@ -377,16 +377,19 @@ namespace Common.Models
         /// </summary>
         private void CreateReadme()
         {
-            var result = "**CURRENTLY AVAILABLE FIXES**" + Environment.NewLine + Environment.NewLine;
+            var result = string.Empty;
+            var first = true;
+            var fixesCount = 0;
 
             StringBuilder sb = new("No Intro Fixes for: ");
-            var first = true;
 
             foreach (var fix in _fixesList)
             {
                 var woNoIntro = fix.Fixes.Where(x => !x.Name.StartsWith("No Intro Fix"));
+                var count = woNoIntro.Count();
+                fixesCount += count;
 
-                if (woNoIntro.Any())
+                if (count > 0)
                 {
                     result += fix.GameName + Environment.NewLine;
 
@@ -398,7 +401,7 @@ namespace Common.Models
                     result += Environment.NewLine;
                 }
 
-                if (fix.Fixes.Exists(x => x.Name.StartsWith("No Intro Fix")))
+                if (fix.Fixes.Count - count > 0)
                 {
                     if (first)
                     {
@@ -410,7 +413,9 @@ namespace Common.Models
                 }
             }
 
-            result += sb;
+            var topLine = $"**CURRENTLY AVAILABLE FIXES: {fixesCount}**" + Environment.NewLine + Environment.NewLine;
+
+            result = topLine + result + sb;
 
             File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result);
         }
