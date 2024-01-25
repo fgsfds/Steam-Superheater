@@ -24,7 +24,7 @@
             ? string.Empty
             : Path.Combine(
                 SteamTools.SteamInstallPath,
-                $"appcache{Path.DirectorySeparatorChar}librarycache{Path.DirectorySeparatorChar}{Id}_icon.jpg"
+                Path.Combine("appcache", "librarycache", $"{Id}_icon.jpg")
                 );
 
         public override string ToString() => Name;

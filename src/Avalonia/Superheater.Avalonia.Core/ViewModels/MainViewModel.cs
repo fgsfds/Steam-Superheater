@@ -84,6 +84,30 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return "Restart as admin...";
                 }
 
+                if (SelectedFix is FileFixEntity fileFix)
+                {
+                    if (fileFix.Url is null)
+                    {
+                        return "Install";
+                    }
+
+                    var pathToArchive = _config.UseLocalRepo
+                    ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
+
+                    if (File.Exists(pathToArchive))
+                    {
+                        return "Install";
+                    }
+
+                    if (fileFix.FileSize is not null)
+                    {
+                        return $"Download ({fileFix.FileSize.ToSizeString()}) and install";
+                    }
+
+                    return $"Download and install";
+                }
+
                 return "Install";
             }
         }

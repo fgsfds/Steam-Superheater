@@ -23,6 +23,7 @@ namespace Common.Entities.Fixes.FileFix
             SupportedOSes = OSEnum.Windows;
 
             Url = null;
+            FileSize = null;
             InstallFolder = null;
             ConfigFile = null;
             FilesToDelete = null;
@@ -47,6 +48,7 @@ namespace Common.Entities.Fixes.FileFix
             SupportedOSes = fix.SupportedOSes;
 
             Url = null;
+            FileSize = null;
             InstallFolder = null;
             ConfigFile = null;
             FilesToDelete = null;
@@ -62,6 +64,8 @@ namespace Common.Entities.Fixes.FileFix
         /// Download URL
         /// </summary>
         public string? Url { get; set; }
+
+        public long? FileSize {  get; set; }
 
         /// <summary>
         /// List of fix's variants

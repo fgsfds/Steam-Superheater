@@ -20,7 +20,7 @@
 
         public const string UpdateFolder = "update";
 
-        internal const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
+        public const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
 
         internal const string CrashlogsFolder = "crashlogs";
 

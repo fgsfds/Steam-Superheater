@@ -3,7 +3,6 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
-using Common.Providers;
 using Octodiff.Core;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -14,14 +13,12 @@ namespace Common.FixTools.FileFix
     public sealed class FileFixInstaller(
         ConfigProvider config,
         ArchiveTools archiveTools,
-        ProgressReport progressReport,
-        FixesProvider fixProvider
+        ProgressReport progressReport
         )
     {
         private readonly ConfigEntity _configEntity = config.Config;
         private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly ProgressReport _progressReport = progressReport;
-        private readonly FixesProvider _fixProvider = fixProvider;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events

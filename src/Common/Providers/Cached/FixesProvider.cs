@@ -122,6 +122,11 @@ namespace Common.Providers
                                 return new Result(ResultEnum.ConnectionError, ex.Message);
                             }
                         }
+
+                        if (fileFix.FileSize is null)
+                        {
+                            fileFix.FileSize = await GetFileSize(client, fileFix);
+                        }
                     }
 
                     if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
@@ -236,6 +241,45 @@ namespace Common.Providers
 
                     File.Delete(pathToFile);
                     return hash;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Get the size the local or online file
+        /// </summary>
+        /// <param name="client">Http client</param>
+        /// <param name="fix">Fix entity</param>
+        /// <returns>Size of the file in bytes</returns>
+        /// <exception cref="Exception">Http response error</exception>
+        private async Task<long?> GetFileSize(HttpClient client, FileFixEntity fix)
+        {
+            fix.Url.ThrowIfNull();
+
+            if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
+            {
+                var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
+                var fileName = Path.GetRelativePath(Consts.MainFixesRepo + "/raw/master/fixes", fix.Url);
+                var pathToFile = Path.Combine(currentDir, fileName);
+
+                FileInfo info = new(pathToFile);
+                return info.Length;
+            }
+            else
+            {
+                using var response = await client.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return ThrowHelper.Exception<long>($"Error while getting response for {fix.Url}: {response.StatusCode}");
+                }
+                else if (response.Content.Headers.ContentMD5 is not null)
+                {
+                    return response.Content.Headers.ContentLength;
+                }
+                else
+                {
+                    return null;
                 }
             }
         }
