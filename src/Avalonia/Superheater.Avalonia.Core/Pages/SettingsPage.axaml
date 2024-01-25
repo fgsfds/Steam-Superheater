@@ -14,7 +14,7 @@
         <StackPanel Grid.Row="0" Orientation="Vertical">
 
             <!--Delete archive switch-->
-            <Grid ColumnDefinitions="auto,*">
+            <Grid ColumnDefinitions="auto,auto,auto">
 
                 <ToggleSwitch IsChecked="{Binding DeleteArchivesCheckbox}"
                               Grid.Column="0"
@@ -28,6 +28,12 @@
                            Margin="5">
                     Delete archive after installing a fix
                 </TextBlock>
+
+                <Button Grid.Column="2"
+                        Margin="5"
+                        Content="{Binding DeleteButtonText}"
+                        IsVisible="{Binding ZipFilesCount, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Command="{Binding DeleteFilesCommand}"/>
 
             </Grid>
 
@@ -241,6 +247,7 @@
 
                 </StackPanel>
             </Expander>
+
         </StackPanel>
 
         <Button Grid.Row="2"

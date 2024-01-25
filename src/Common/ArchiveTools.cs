@@ -1,6 +1,5 @@
 ﻿using Common.Helpers;
 using SharpCompress.Archives;
-using System;
 using System.Security.Cryptography;
 
 namespace Common

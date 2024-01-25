@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Common;
 using Common.Config;
 using Common.Enums;
 using Common.Helpers;
@@ -28,9 +29,18 @@ namespace Superheater.Avalonia.Core.ViewModels
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
+
+            _watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
+            _watcher.NotifyFilter = NotifyFilters.FileName;
+            _watcher.Renamed += NotifyFileDownloaded;
+            _watcher.EnableRaisingEvents = true;
         }
 
         private readonly ConfigEntity _config;
+        private readonly ArchiveTools _archiveTools;
+        private readonly FileSystemWatcher _watcher;
+
+        private readonly List<string> ArchivesExtensions = [".zip", ".7z"];
 
         #region Binding Properties
 
@@ -43,6 +53,37 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsLightTheme => _config.Theme is ThemeEnum.Light;
 
         public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
+
+        public int? ZipFilesCount
+        {
+            get
+            {
+                var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+
+                var count = files.Where(x => ArchivesExtensions.Any(y => x.EndsWith(y))).Count();
+
+                return count > 0 ? count : null;
+            }
+        }
+
+        public string DeleteButtonText
+        {
+            get
+            {
+                if (ZipFilesCount is null)
+                {
+                    return string.Empty;
+                }
+                else if (ZipFilesCount == 1)
+                {
+                    return $"Delete 1 downloaded file";
+                }
+                else
+                {
+                    return $"Delete {ZipFilesCount} downloaded files";
+                }
+            }
+        }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(SaveLocalRepoPathCommand))]
@@ -188,6 +229,22 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(HiddenTagsList));
         }
 
+
+        [RelayCommand]
+        private void DeleteFiles()
+        {
+            var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+
+            var archives = files.Where(x => ArchivesExtensions.Any(y => x.EndsWith(y)));
+
+            foreach (var archive in archives)
+            {
+                File.Delete(archive);
+            }
+
+            OnPropertyChanged(nameof(ZipFilesCount));
+        }
+
         #endregion Relay Commands
 
 
@@ -197,6 +254,17 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 OnPropertyChanged(nameof(HiddenTagsList));
             }
+        }
+
+        private void NotifyFileDownloaded(object sender, FileSystemEventArgs e)
+        {
+            if (!ArchivesExtensions.Any(y => e.FullPath.EndsWith(y)))
+            {
+                return;
+            }
+
+            OnPropertyChanged(nameof(ZipFilesCount));
+            OnPropertyChanged(nameof(DeleteButtonText));
         }
     }
 }
