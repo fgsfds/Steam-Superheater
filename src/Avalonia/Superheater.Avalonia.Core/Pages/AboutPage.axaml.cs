@@ -20,15 +20,6 @@ namespace Superheater.Avalonia.Core.Pages
             vm.InitializeCommand.Execute(null);
         }
 
-        private void SteamClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://steamcommunity.com/id/hasnogames/",
-                UseShellExecute = true
-            });
-        }
-
         private void DiscordClick(object sender, RoutedEventArgs e)
         {
             Process.Start(new ProcessStartInfo

@@ -35,20 +35,6 @@
                 </Grid>
             </Border>
 
-            <!--Steam-->
-            <Button Padding="10"
-                    Margin="10"
-                    HorizontalAlignment="Stretch"
-                    Click="SteamClick">
-                <StackPanel Orientation="Horizontal">
-                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/avatar.jpg" Width="48" />
-                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Dev's Steam profile</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Want to help fixes database grow? Game donations are appreciated.</TextBlock>
-                    </StackPanel>
-                </StackPanel>
-            </Button>
-
             <!--Discord-->
             <Button Padding="10"
                     Margin="10"
@@ -58,7 +44,7 @@
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/discord.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Discord server</TextBlock>
-                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Join discussions on Discord</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Join discussion on Discord</TextBlock>
                     </StackPanel>
                 </StackPanel>
             </Button>
@@ -87,6 +73,7 @@
                     <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Create issue on GitHub</TextBlock>
                     </StackPanel>
                 </StackPanel>
 
