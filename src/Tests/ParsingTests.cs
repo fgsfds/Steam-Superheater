@@ -17,7 +17,7 @@ namespace Tests
 
             Assert.NotNull(method);
 
-            var result = method.Invoke(new GamesProvider(), ["Resources\\test_manifest.acf"]);
+            var result = method.Invoke(new GamesProvider(), [Path.Combine("Resources", "test_manifest.acf")]);
 
             Assert.NotNull(result);
             Assert.IsType<GameEntity>(result);
@@ -26,7 +26,7 @@ namespace Tests
 
             Assert.Equal("DOOM (1993)", gameEntity.Name);
             Assert.Equal(2280, gameEntity.Id);
-            Assert.Equal("Resources\\common\\Ultimate Doom\\", gameEntity.InstallDir);
+            Assert.Equal($"Resources{Path.DirectorySeparatorChar}common{Path.DirectorySeparatorChar}Ultimate Doom{Path.DirectorySeparatorChar}", gameEntity.InstallDir);
         }
     }
 }

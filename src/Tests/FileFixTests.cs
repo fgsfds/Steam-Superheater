@@ -7,6 +7,7 @@ using Common.Helpers;
 using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
+using System.Runtime.InteropServices;
 
 namespace Tests
 {
@@ -16,6 +17,19 @@ namespace Tests
     [Collection("Sync")]
     public sealed partial class FileFixTests : IDisposable
     {
+        private static string SeparatorForJson
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return "\\\\";
+                }
+
+                return "/";
+            }
+        }
+
         private const string TestTempFolder = "test_temp";
         private const string TestFixZip = "test_fix.zip";
         private const string TestFixV2Zip = "test_fix_v2.zip";
@@ -160,7 +174,7 @@ namespace Tests
         public async Task InstallFixToANewFolder()
         {
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"), 
+                Path.Combine(_rootDirectory, "Resources", TestFixZip), 
                 Path.Combine(_rootDirectory, TestFixZip), 
                 true
                 );
@@ -176,7 +190,7 @@ namespace Tests
 
             await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
 
-            Assert.True(File.Exists("game\\new folder\\start game.exe"));
+            Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[
@@ -184,10 +198,10 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": null,
     ""FilesList"": [
-      ""new folder\\"",
-      ""new folder\\start game.exe"",
-      ""new folder\\subfolder\\"",
-      ""new folder\\subfolder\\file.txt""
+      ""new folder{SeparatorForJson}"",
+      ""new folder{SeparatorForJson}start game.exe"",
+      ""new folder{SeparatorForJson}subfolder{SeparatorForJson}"",
+      ""new folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -197,11 +211,11 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(installedExpected, installedActual);
 
             _fixManager.UninstallFix(_gameEntity, fixEntity);
 
-            Assert.False(Directory.Exists("game\\new folder"));
+            Assert.False(Directory.Exists(Path.Combine("game", "new folder")));
         }        
 
         /// <summary>
@@ -211,7 +225,7 @@ namespace Tests
         public async Task UninstallFixAndKeepNonEmptyFolder()
         {
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"), 
+                Path.Combine(_rootDirectory, "Resources", TestFixZip), 
                 Path.Combine(_rootDirectory, TestFixZip), 
                 true
                 );
@@ -227,7 +241,7 @@ namespace Tests
 
             await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
 
-            Assert.True(File.Exists("game\\new folder\\start game.exe"));
+            Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[
@@ -235,10 +249,10 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": null,
     ""FilesList"": [
-      ""new folder\\"",
-      ""new folder\\start game.exe"",
-      ""new folder\\subfolder\\"",
-      ""new folder\\subfolder\\file.txt""
+      ""new folder{SeparatorForJson}"",
+      ""new folder{SeparatorForJson}start game.exe"",
+      ""new folder{SeparatorForJson}subfolder{SeparatorForJson}"",
+      ""new folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -248,15 +262,15 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(installedExpected, installedActual);
 
-            File.WriteAllText("game\\new folder\\new file.txt", "new file");
+            File.WriteAllText(Path.Combine("game", "new folder", "new file.txt"), "new file");
 
-            Assert.True(File.Exists("game\\new folder\\new file.txt"));
+            Assert.True(File.Exists(Path.Combine("game", "new folder", "new file.txt")));
 
             _fixManager.UninstallFix(_gameEntity, fixEntity);
 
-            Assert.True(Directory.Exists("game\\new folder"));
+            Assert.True(Directory.Exists(Path.Combine("game", "new folder")));
         }        
 
         #endregion Tests
@@ -268,7 +282,7 @@ namespace Tests
             var fixArchive = variant is null ? TestFixZip : TestFixVariantZip;
 
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{fixArchive}"),
+                Path.Combine(_rootDirectory, "Resources", fixArchive),
                 Path.Combine(_rootDirectory, TestFixZip),
                 true
                 );
@@ -278,13 +292,13 @@ namespace Tests
             CheckNewFiles();
 
             //modify backed up file
-            await File.WriteAllTextAsync("game\\install folder\\file to backup.txt", "modified");
+            await File.WriteAllTextAsync(Path.Combine("game", "install folder", "file to backup.txt"), "modified");
         }
 
         private async Task UpdateFixAsync(GameEntity gameEntity, FileFixEntity fileFix)
         {
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixV2Zip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixV2Zip),
                 Path.Combine(_rootDirectory, TestFixV2Zip),
                 true
                 );
@@ -318,66 +332,66 @@ namespace Tests
         private static void CheckOriginalFiles()
         {
             //check original files
-            var exeExists = File.Exists("game\\install folder\\start game.exe");
+            var exeExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllText("game\\install folder\\start game.exe");
+            var fi = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.Equal("original", fi);
 
-            var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
+            var fileExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
+            var fi2 = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.Equal("original", fi2);
 
             //check deleted files
-            var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
+            var fileToDeleteExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to delete.txt");
             Assert.True(fileToDeleteExists);
 
-            var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
+            var fileToDeleteSubExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file to delete in subfolder.txt");
             Assert.True(fileToDeleteSubExists);
 
-            var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
+            var fileToDeleteParentExists = File.Exists($"game{Path.DirectorySeparatorChar}file to delete in parent folder.txt");
             Assert.True(fileToDeleteParentExists);
 
             //check backed up files
-            var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
+            var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.True(fileToBackupExists);
 
-            var fi3 = File.ReadAllText("game\\install folder\\file to backup.txt");
+            var fi3 = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.Equal("original", fi3);
         }
 
         private static void CheckNewFiles()
         {
             //check replaced files
-            var exeExists = File.Exists("game\\install folder\\start game.exe");
+            var exeExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllText("game\\install folder\\start game.exe");
+            var fi = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.Equal("fix_v1", fi);
 
-            var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
+            var fileExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
+            var fi2 = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.Equal("fix_v1", fi2);
 
             //check deleted files
-            var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
+            var fileToDeleteExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to delete.txt");
             Assert.False(fileToDeleteExists);
 
-            var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
+            var fileToDeleteSubExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file to delete in subfolder.txt");
             Assert.False(fileToDeleteSubExists);
 
-            var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
+            var fileToDeleteParentExists = File.Exists($"game{Path.DirectorySeparatorChar}file to delete in parent folder.txt");
             Assert.False(fileToDeleteParentExists);
 
             //check backed up files
-            var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
+            var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.True(fileToBackupExists);
 
-            var backedUpFileExists = File.Exists("game\\.sfd\\test_fix\\install folder\\file to backup.txt");
+            var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}.sfd{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.True(backedUpFileExists);
 
             //check installed.xml
@@ -387,8 +401,8 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix"",
     ""FilesList"": [
-      ""install folder\\start game.exe"",
-      ""install folder\\subfolder\\file.txt""
+      ""install folder{SeparatorForJson}start game.exe"",
+      ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -398,39 +412,39 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(textActual, textExpected);
+            Assert.Equal(textExpected, textActual);
         }
 
         private static void CheckUpdatedFiles()
         {
             //check replaced files
-            var exeExists = File.Exists("game\\install folder\\start game.exe");
+            var exeExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.True(exeExists);
 
-            var fi = File.ReadAllText("game\\install folder\\start game.exe");
+            var fi = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}start game.exe");
             Assert.Equal("fix_v2", fi);
 
-            var fileExists = File.Exists("game\\install folder\\subfolder\\file.txt");
+            var fileExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.True(fileExists);
 
-            var fi2 = File.ReadAllText("game\\install folder\\subfolder\\file.txt");
+            var fi2 = File.ReadAllText($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file.txt");
             Assert.Equal("original", fi2);
 
             //check deleted files
-            var fileToDeleteExists = File.Exists("game\\install folder\\file to delete.txt");
+            var fileToDeleteExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to delete.txt");
             Assert.False(fileToDeleteExists);
 
-            var fileToDeleteSubExists = File.Exists("game\\install folder\\subfolder\\file to delete in subfolder.txt");
+            var fileToDeleteSubExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}subfolder{Path.DirectorySeparatorChar}file to delete in subfolder.txt");
             Assert.False(fileToDeleteSubExists);
 
-            var fileToDeleteParentExists = File.Exists("game\\file to delete in parent folder.txt");
+            var fileToDeleteParentExists = File.Exists($"game{Path.DirectorySeparatorChar}file to delete in parent folder.txt");
             Assert.False(fileToDeleteParentExists);
 
             //check backed up files
-            var fileToBackupExists = File.Exists("game\\install folder\\file to backup.txt");
+            var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.True(fileToBackupExists);
 
-            var backedUpFileExists = File.Exists("game\\.sfd\\test_fix\\install folder\\file to backup.txt");
+            var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}.sfd{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
             Assert.True(backedUpFileExists);
 
             //check installed.xml
@@ -440,7 +454,7 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix"",
     ""FilesList"": [
-      ""install folder\\start game.exe""
+      ""install folder{SeparatorForJson}start game.exe""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -450,14 +464,14 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(textActual, textExpected);
+            Assert.Equal(textExpected, textActual);
         }
 
         private string PrepareGameFolder()
         {
             var gameFolder = Path.Combine(_testDirectory, "game");
 
-            ZipFile.ExtractToDirectory(Path.Combine(_rootDirectory, "Resources\\test_game.zip"), gameFolder);
+            ZipFile.ExtractToDirectory(Path.Combine(_rootDirectory, "Resources", "test_game.zip"), gameFolder);
 
             return gameFolder;
         }

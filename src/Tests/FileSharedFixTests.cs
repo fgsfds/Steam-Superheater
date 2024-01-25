@@ -85,19 +85,19 @@ namespace Tests
         {
             //install
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixZip),
                 Path.Combine(_rootDirectory, TestFixZip),
                 true
                 );
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixSharedZip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixSharedZip),
                 Path.Combine(_rootDirectory, TestFixSharedZip),
                 true
                 );
 
             await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
 
-            Assert.True(File.Exists("game\\shared install folder\\shared fix file.txt"));
+            Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[
@@ -105,14 +105,14 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix"",
     ""FilesList"": [
-      ""install folder\\start game.exe"",
-      ""install folder\\subfolder\\file.txt""
+      ""install folder{SeparatorForJson}start game.exe"",
+      ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
     ],
     ""InstalledSharedFix"": {{
       ""BackupFolder"": null,
       ""FilesList"": [
-        ""shared install folder\\"",
-        ""shared install folder\\shared fix file.txt""
+        ""shared install folder{SeparatorForJson}"",
+        ""shared install folder{SeparatorForJson}shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
       ""WineDllOverrides"": null,
@@ -127,7 +127,7 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(installedExpected, installedActual);
         }
 
         private async Task UpdateMainFixAsync(FileFixEntity fixEntity)
@@ -137,21 +137,21 @@ namespace Tests
 
             //update
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixSharedZip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixSharedZip),
                 Path.Combine(_rootDirectory, TestFixSharedZip),
                 true
                 );
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixV2Zip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixV2Zip),
                 Path.Combine(_rootDirectory, TestFixV2Zip),
                 true
                 );
 
             await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true);
 
-            Assert.True(File.Exists("game\\shared install folder\\shared fix file.txt"));
+            Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
-            var newFileActual = File.ReadAllText("game\\install folder\\start game.exe");
+            var newFileActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
             var newFileExpected = "fix_v2";
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
@@ -160,13 +160,13 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix"",
     ""FilesList"": [
-      ""install folder\\start game.exe""
+      ""install folder{SeparatorForJson}start game.exe""
     ],
     ""InstalledSharedFix"": {{
       ""BackupFolder"": null,
       ""FilesList"": [
-        ""shared install folder\\"",
-        ""shared install folder\\shared fix file.txt""
+        ""shared install folder{SeparatorForJson}"",
+        ""shared install folder{SeparatorForJson}shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
       ""WineDllOverrides"": null,
@@ -181,8 +181,8 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(newFileActual, newFileExpected);
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(newFileExpected, newFileActual);
+            Assert.Equal(installedExpected, installedActual);
         }
 
         private async Task UpdateSharedFixAsync(FileFixEntity fixEntity)
@@ -199,19 +199,19 @@ namespace Tests
 
             //update
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixZip),
                 Path.Combine(_rootDirectory, TestFixZip),
                 true
                 );
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixShared2Zip}"),
+                Path.Combine(_rootDirectory, "Resources", TestFixShared2Zip),
                 Path.Combine(_rootDirectory, TestFixShared2Zip),
                 true
                 );
 
             await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true);
 
-            Assert.True(File.Exists("game\\shared install folder\\shared fix file 2.txt"));
+            Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[
@@ -219,15 +219,15 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix"",
     ""FilesList"": [
-      ""install folder\\start game.exe"",
-      ""install folder\\subfolder\\file.txt""
+      ""install folder{SeparatorForJson}start game.exe"",
+      ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
     ],
     ""InstalledSharedFix"": {{
       ""BackupFolder"": null,
       ""FilesList"": [
-        ""shared install folder\\"",
-        ""shared install folder\\shared fix file 2.txt"",
-        ""shared install folder\\shared fix file.txt""
+        ""shared install folder{SeparatorForJson}"",
+        ""shared install folder{SeparatorForJson}shared fix file 2.txt"",
+        ""shared install folder{SeparatorForJson}shared fix file.txt""
       ],
       ""InstalledSharedFix"": null,
       ""WineDllOverrides"": null,
@@ -242,7 +242,7 @@ namespace Tests
   }}
 ]";
 
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(installedExpected, installedActual);
         }
 
         private void Uninstall(FileFixEntity fixEntity)
@@ -250,14 +250,14 @@ namespace Tests
             //uninstall
             _fixManager.UninstallFix(_gameEntity, fixEntity);
 
-            Assert.False(Directory.Exists("game\\shared install folder\\"));
+            Assert.False(Directory.Exists(Path.Combine("game", "shared install folder")));
 
             CheckOriginalFiles();
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[]";
 
-            Assert.Equal(installedActual, installedExpected);
+            Assert.Equal(installedExpected, installedActual);
         }
     }
 }

@@ -43,6 +43,11 @@ namespace Tests
 
         public HostsFixTests()
         {
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                return;
+            }
+
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddScoped<ConfigProvider>();
@@ -96,7 +101,6 @@ namespace Tests
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                Assert.Fail();
                 return;
             }
 

@@ -7,36 +7,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Resources\hosts" />
-    <None Remove="Resources\test_fix_patch.zip" />
-    <None Remove="Resources\test_fix_shared.zip" />
-    <None Remove="Resources\test_fix_shared_v2.zip" />
-    <None Remove="Resources\test_fix_v2.zip" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="Resources\hosts">
+    <Content Include="Resources/hosts">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_fix.zip">
+    <Content Include="Resources/test_fix.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_fix_patch.zip">
+    <Content Include="Resources/test_fix_patch.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_fix_shared_v2.zip">
+    <Content Include="Resources/test_fix_shared_v2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_fix_v2.zip">
+    <Content Include="Resources/test_fix_v2.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_fix_variant.zip">
+    <Content Include="Resources/test_fix_variant.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_game.zip">
+    <Content Include="Resources/test_game.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\test_manifest.acf">
+    <Content Include="Resources/test_manifest.acf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

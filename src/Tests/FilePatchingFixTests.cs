@@ -17,7 +17,7 @@ namespace Tests
         public async Task InstallFixWithPatching()
         {
             File.Copy(
-                Path.Combine(_rootDirectory, $"Resources\\{TestFixPatchZip}"),
+                Path.Combine(_rootDirectory, Path.Combine("Resources", TestFixPatchZip)),
                 Path.Combine(_rootDirectory, TestFixPatchZip),
                 true
                 );
@@ -40,7 +40,7 @@ namespace Tests
     ""$type"": ""FileFix"",
     ""BackupFolder"": ""test_fix_with_patch"",
     ""FilesList"": [
-      ""install folder\\start game.exe.octodiff""
+      ""install folder{SeparatorForJson}start game.exe.octodiff""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -50,11 +50,11 @@ namespace Tests
   }}
 ]";
 
-            var exeActual = File.ReadAllText("game\\install folder\\start game.exe");
+            var exeActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
             var exeExpected = "original_patched";
 
-            Assert.Equal(installedActual, installedExpected);
-            Assert.Equal(exeActual, exeExpected);
+            Assert.Equal(installedExpected, installedActual);
+            Assert.Equal(exeExpected, exeActual);
 
             UninstallFix(fixEntity);
         }
