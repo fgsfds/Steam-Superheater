@@ -7,7 +7,6 @@ using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
 using Common.Providers;
-using SharpCompress.Common;
 using System.Collections.Immutable;
 
 namespace Common.Models

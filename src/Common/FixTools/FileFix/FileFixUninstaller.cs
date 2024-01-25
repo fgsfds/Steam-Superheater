@@ -2,7 +2,6 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
-using System;
 using System.Runtime.InteropServices;
 
 namespace Common.FixTools.FileFix
@@ -96,6 +95,7 @@ namespace Common.FixTools.FileFix
                 var fullPath = Path.Combine(gameInstallDir, file);
 
                 if (!file.EndsWith('/') &&
+                    !file.EndsWith('\\') &&
                     File.Exists(fullPath))
                 {
                     var stream = File.Open(fullPath, FileMode.Open);
@@ -103,18 +103,32 @@ namespace Common.FixTools.FileFix
                 }
             }
 
+            //deleting files and adding folders to the list
+            List<string> directories = new();
             foreach (var file in fixFiles)
             {
                 var fullPath = Path.Combine(gameInstallDir, file);
 
                 if (!file.EndsWith('/') &&
+                    !file.EndsWith('\\') &&
                     File.Exists(fullPath))
                 {
                     File.Delete(fullPath);
                 }
                 else if (Directory.Exists(fullPath))
                 {
-                    Directory.Delete(fullPath, true);
+                    directories.Add(fullPath);
+                }
+            }
+
+            //removing empty folders
+            foreach (var dir in directories)
+            {
+                var files = Directory.GetFiles(dir);
+
+                if (files.Length == 0)
+                {
+                    Directory.Delete(dir, true);
                 }
             }
         }

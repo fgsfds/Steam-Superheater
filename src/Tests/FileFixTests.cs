@@ -204,6 +204,61 @@ namespace Tests
             Assert.False(Directory.Exists("game\\new folder"));
         }        
 
+        /// <summary>
+        /// Install fix to a new folder
+        /// </summary>
+        [Fact]
+        public async Task UninstallFixAndKeepNonEmptyFolder()
+        {
+            File.Copy(
+                Path.Combine(_rootDirectory, $"Resources\\{TestFixZip}"), 
+                Path.Combine(_rootDirectory, TestFixZip), 
+                true
+                );
+
+            FileFixEntity fixEntity = new()
+            {
+                Name = "test fix new folder",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = TestFixZip,
+                InstallFolder = "new folder"
+            };
+
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+
+            Assert.True(File.Exists("game\\new folder\\start game.exe"));
+
+            var installedActual = File.ReadAllText(Consts.InstalledFile);
+            var installedExpected = $@"[
+  {{
+    ""$type"": ""FileFix"",
+    ""BackupFolder"": null,
+    ""FilesList"": [
+      ""new folder\\"",
+      ""new folder\\start game.exe"",
+      ""new folder\\subfolder\\"",
+      ""new folder\\subfolder\\file.txt""
+    ],
+    ""InstalledSharedFix"": null,
+    ""WineDllOverrides"": null,
+    ""GameId"": 1,
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Version"": 1
+  }}
+]";
+
+            Assert.Equal(installedActual, installedExpected);
+
+            File.WriteAllText("game\\new folder\\new file.txt", "new file");
+
+            Assert.True(File.Exists("game\\new folder\\new file.txt"));
+
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
+
+            Assert.True(Directory.Exists("game\\new folder"));
+        }        
+
         #endregion Tests
 
         #region Private Methods
