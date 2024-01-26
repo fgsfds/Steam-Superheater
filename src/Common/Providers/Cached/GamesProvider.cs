@@ -2,7 +2,7 @@
 using Common.Helpers;
 using System.Collections.Immutable;
 
-namespace Common.Providers
+namespace Common.Providers.Cached
 {
     public sealed class GamesProvider : CachedProviderBase<GameEntity>
     {

@@ -1,8 +1,6 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
-using Common;
 using Common.Config;
 using Common.Enums;
 using Common.Helpers;
@@ -37,10 +35,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         private readonly ConfigEntity _config;
-        private readonly ArchiveTools _archiveTools;
         private readonly FileSystemWatcher _watcher;
-
-        private readonly List<string> ArchivesExtensions = [".zip", ".7z"];
+        private readonly List<string> _archivesExtensions = [".zip", ".7z"];
 
         #region Binding Properties
 
@@ -60,7 +56,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 var files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
-                var count = files.Where(x => ArchivesExtensions.Any(y => x.EndsWith(y))).Count();
+                var count = files.Count(x => _archivesExtensions.Any(x.EndsWith));
 
                 return count > 0 ? count : null;
             }
@@ -68,21 +64,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string DeleteButtonText
         {
-            get
-            {
-                if (ZipFilesCount is null)
+            get => ZipFilesCount switch
                 {
-                    return string.Empty;
-                }
-                else if (ZipFilesCount == 1)
-                {
-                    return $"Delete 1 downloaded file";
-                }
-                else
-                {
-                    return $"Delete {ZipFilesCount} downloaded files";
-                }
-            }
+                    null => string.Empty,
+                    1 => "Delete 1 downloaded file",
+                    _ => $"Delete {ZipFilesCount} downloaded files"
+                };
         }
 
         [ObservableProperty]
@@ -201,9 +188,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var topLevel = Properties.TopLevel ?? ThrowHelper.ArgumentNullException<TopLevel>(nameof(Properties.TopLevel));
-
-            var files = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var files = await Properties.TopLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Choose local repo folder",
                 AllowMultiple = false
@@ -235,7 +220,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             var files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
-            var archives = files.Where(x => ArchivesExtensions.Any(y => x.EndsWith(y)));
+            var archives = files.Where(x => _archivesExtensions.Any(x.EndsWith));
 
             foreach (var archive in archives)
             {
@@ -258,7 +243,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private void NotifyFileDownloaded(object sender, FileSystemEventArgs e)
         {
-            if (!ArchivesExtensions.Any(y => e.FullPath.EndsWith(y)))
+            if (!_archivesExtensions.Any(y => e.FullPath.EndsWith(y)))
             {
                 return;
             }

@@ -1,6 +1,6 @@
-﻿using Common.Entities;
+﻿using System.Text.Json;
+using Common.Entities;
 using Common.Helpers;
-using System.Text.Json;
 
 namespace Common.Providers
 {

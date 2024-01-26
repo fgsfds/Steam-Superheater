@@ -28,7 +28,7 @@ namespace Common.Entities.Fixes
         WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Converters = [typeof(JsonStringEnumConverter<OSEnum>), typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)]
-        )]
+    )]
     [JsonSerializable(typeof(List<FixesList>))]
-    public sealed partial class FixesListContext : JsonSerializerContext { }
+    public sealed partial class FixesListContext : JsonSerializerContext;
 }

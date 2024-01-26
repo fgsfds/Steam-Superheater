@@ -22,10 +22,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool _isOkOnly;
 
         [ObservableProperty]
-        private string _titleText;
+        private string _titleText = string.Empty;
 
         [ObservableProperty]
-        private string _messageText;
+        private string _messageText = string.Empty;
 
         #endregion Binding Properties
 

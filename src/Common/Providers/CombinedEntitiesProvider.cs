@@ -1,5 +1,6 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes.FileFix;
+using Common.Providers.Cached;
 
 namespace Common.Providers
 {

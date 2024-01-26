@@ -1,6 +1,6 @@
 ﻿namespace Common.Entities.Fixes.FileFix
 {
-    public sealed class FileInstalledFixEntity() : BaseInstalledFixEntity
+    public sealed class FileInstalledFixEntity : BaseInstalledFixEntity
     {
         /// <summary>
         /// Name of the backup folder

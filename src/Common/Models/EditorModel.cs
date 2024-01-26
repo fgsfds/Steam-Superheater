@@ -5,7 +5,7 @@ using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Helpers;
-using Common.Providers;
+using Common.Providers.Cached;
 using System.Collections.Immutable;
 using Common.Config;
 using System.Text;
@@ -385,7 +385,7 @@ namespace Common.Models
 
             foreach (var fix in _fixesList)
             {
-                var woNoIntro = fix.Fixes.Where(x => !x.Name.StartsWith("No Intro Fix"));
+                var woNoIntro = fix.Fixes.Where(static x => !x.Name.StartsWith("No Intro Fix"));
                 var count = woNoIntro.Count();
                 fixesCount += count;
 
@@ -413,7 +413,8 @@ namespace Common.Models
                 }
             }
 
-            var topLine = $"**CURRENTLY AVAILABLE FIXES: {fixesCount}**" + Environment.NewLine + Environment.NewLine;
+            var gamesCount = _fixesList.Where(static x => x.Fixes.Any(static y => !y.Name.StartsWith("No Intro Fix"))).Count();
+            var topLine = $"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**" + Environment.NewLine + Environment.NewLine;
 
             result = topLine + result + sb;
 

@@ -4,7 +4,7 @@ using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Providers;
+using Common.Providers.Cached;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
 

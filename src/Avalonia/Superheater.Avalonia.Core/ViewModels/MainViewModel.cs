@@ -142,7 +142,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _progressBarText = string.Empty;
 
         [ObservableProperty]
-        private float _progressBarValue = 0;
+        private float _progressBarValue;
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]

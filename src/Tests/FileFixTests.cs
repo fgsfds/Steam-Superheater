@@ -4,7 +4,7 @@ using Common.Entities;
 using Common.Entities.Fixes.FileFix;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Providers;
+using Common.Providers.Cached;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -15,7 +15,7 @@ namespace Tests
     /// Tests that use instance data and should be run in a single thread
     /// </summary>
     [Collection("Sync")]
-    public sealed partial class FileFixTests : IDisposable
+    public sealed partial class FileFixTests
     {
         private static string SeparatorForJson
         {

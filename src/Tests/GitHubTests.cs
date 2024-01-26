@@ -1,6 +1,7 @@
 ﻿using Common.Config;
 using Common.DI;
 using Common.Providers;
+using Common.Providers.Cached;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests

@@ -6,7 +6,7 @@ using System.Collections.Immutable;
 using System.Security.Cryptography;
 using System.Text.Json;
 
-namespace Common.Providers
+namespace Common.Providers.Cached
 {
     public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<FixesList>
     {

@@ -1,6 +1,6 @@
 ﻿namespace Common.Entities.Fixes.RegistryFix
 {
-    public sealed class RegistryInstalledFixEntity() : BaseInstalledFixEntity
+    public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
     {
         /// <summary>
         /// Registry key

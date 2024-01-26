@@ -1,6 +1,6 @@
 ﻿using System.Collections.Immutable;
 
-namespace Common.Providers
+namespace Common.Providers.Cached
 {
     public abstract class CachedProviderBase<T>
     {

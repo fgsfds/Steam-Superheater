@@ -7,16 +7,13 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace Common.Providers
+namespace Common.Providers.Cached
 {
-    public sealed class InstalledFixesProvider(FixesProvider fixesProvider) : CachedProviderBase<BaseInstalledFixEntity>
+    public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
     {
-        private readonly FixesProvider _fixesProvider = fixesProvider;
-
         /// <summary>
         /// Save installed fixes to XML
         /// </summary>
-        /// <param name="fixesList">List of installed fix entities</param>
         /// <returns>Result struct</returns>
         public Result SaveInstalledFixes()
         {
@@ -118,7 +115,7 @@ namespace Common.Providers
 
             foreach (var fix in fileFixes)
             {
-                var gameid = fix.Element("GameId").Value;
+                var gameId = fix.Element("GameId").Value;
                 var guid = fix.Element("Guid").Value;
                 var version = fix.Element("Version").Value;
                 var backupFolder = fix.Element("BackupFolder")?.Value;
@@ -127,7 +124,7 @@ namespace Common.Providers
 
                 result.Add(new FileInstalledFixEntity()
                 {
-                    GameId = int.Parse(gameid),
+                    GameId = int.Parse(gameId),
                     Guid = new Guid(guid),
                     Version = int.Parse(version),
                     BackupFolder = backupFolder,
@@ -140,7 +137,7 @@ namespace Common.Providers
 
             foreach (var fix in hostsFixes)
             {
-                var gameid = fix.Element("GameId").Value;
+                var gameId = fix.Element("GameId").Value;
                 var guid = fix.Element("Guid").Value;
                 var version = fix.Element("Version").Value;
 
@@ -148,7 +145,7 @@ namespace Common.Providers
 
                 result.Add(new HostsInstalledFixEntity()
                 {
-                    GameId = int.Parse(gameid),
+                    GameId = int.Parse(gameId),
                     Guid = new Guid(guid),
                     Version = int.Parse(version),
                     Entries = [.. entriesList]
@@ -159,7 +156,7 @@ namespace Common.Providers
 
             foreach (var fix in registryFixes)
             {
-                var gameid = fix.Element("GameId").Value;
+                var gameId = fix.Element("GameId").Value;
                 var guid = fix.Element("Guid").Value;
                 var version = fix.Element("Version").Value;
                 var key = fix.Element("Key").Value;
@@ -168,7 +165,7 @@ namespace Common.Providers
 
                 result.Add(new RegistryInstalledFixEntity()
                 {
-                    GameId = int.Parse(gameid),
+                    GameId = int.Parse(gameId),
                     Guid = new Guid(guid),
                     Version = int.Parse(version),
                     Key = key,

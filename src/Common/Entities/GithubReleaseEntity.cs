@@ -29,7 +29,7 @@ namespace Common.Entities
     }
 
     [JsonSerializable(typeof(List<GitHubRelease>))]
-    internal sealed partial class GitHubReleaseContext : JsonSerializerContext { }
+    internal sealed partial class GitHubReleaseContext : JsonSerializerContext;
 }
 #pragma warning restore IDE1006 // Naming Styles
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

@@ -6,7 +6,7 @@ namespace Tests
     /// <summary>
     /// Tests that use instance data and should be run in a single thread
     /// </summary>
-    public sealed partial class FileFixTests : IDisposable
+    public sealed partial class FileFixTests
     {
         private const string TestFixPatchZip = "test_fix_patch.zip";
 

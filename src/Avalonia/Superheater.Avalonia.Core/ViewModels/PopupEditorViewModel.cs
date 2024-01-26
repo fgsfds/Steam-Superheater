@@ -15,10 +15,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool _isPopupEditorVisible;
 
         [ObservableProperty]
-        private string _titleText;
+        private string _titleText = string.Empty;
 
         [ObservableProperty]
-        private string _text;
+        private string _text = string.Empty;
 
         #endregion Binding Properties
 

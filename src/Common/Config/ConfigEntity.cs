@@ -120,7 +120,7 @@ namespace Common.Config
         WriteIndented = true,
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Converters = [typeof(JsonStringEnumConverter<ThemeEnum>)]
-        )]
+    )]
     [JsonSerializable(typeof(ConfigEntity))]
-    internal sealed partial class ConfigEntityContext : JsonSerializerContext { }
+    internal sealed partial class ConfigEntityContext : JsonSerializerContext;
 }

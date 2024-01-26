@@ -218,7 +218,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.ThrowIfNull();
 
                 SelectedFix.Description = value;
-                OnPropertyChanged(nameof(SelectedFixDescription));
+                OnPropertyChanged();
             }
         }
 
@@ -231,7 +231,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 fileFix.SharedFixGuid = value?.Guid;
 
-                OnPropertyChanged(nameof(SelectedSharedFix));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(IsSharedFixSelected));
                 ResetSelectedSharedFixCommand.NotifyCanExecuteChanged();
             }

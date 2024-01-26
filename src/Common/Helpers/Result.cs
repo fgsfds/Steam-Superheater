@@ -39,12 +39,12 @@
 
         public static bool operator == (Result obj1, ResultEnum obj2)
         {
-            return obj1.Equals(obj2);
+            return obj1.ResultEnum == obj2;
         }
 
         public static bool operator != (Result obj1, ResultEnum obj2)
         {
-            return !obj1.Equals(obj2);
+            return obj1.ResultEnum != obj2;
         }
 
         public override int GetHashCode()

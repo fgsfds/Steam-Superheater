@@ -7,7 +7,7 @@ using Common.FixTools.FileFix;
 using Common.FixTools.HostsFix;
 using Common.FixTools.RegistryFix;
 using Common.Helpers;
-using Common.Providers;
+using Common.Providers.Cached;
 
 namespace Common.FixTools
 {
@@ -110,6 +110,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
+                        fileFix.InstalledFix.ThrowIfNull();
                         _fileFixUninstaller.UninstallFix(game, fileFix.InstalledFix);
                         break;
                     case RegistryFixEntity regFix:

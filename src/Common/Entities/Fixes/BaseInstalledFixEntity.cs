@@ -29,5 +29,5 @@ namespace Common.Entities.Fixes
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(ImmutableList<BaseInstalledFixEntity>))]
-    internal sealed partial class InstalledFixesListContext : JsonSerializerContext { }
+    internal sealed partial class InstalledFixesListContext : JsonSerializerContext;
 }

@@ -131,6 +131,7 @@ namespace Common.FixTools.FileFix
         /// <summary>
         /// Check file's MD5 and download if MD5 is correct
         /// </summary>
+        /// <param name="zipFullPath">Full path to the archive</param>
         /// <param name="fixUrl">Url to the file</param>
         /// <param name="fixMD5">MD5 of the file</param>
         /// <exception cref="Exception">Error while downloading file</exception>

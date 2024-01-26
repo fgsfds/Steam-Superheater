@@ -6,21 +6,19 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Providers;
 using System.Collections.Immutable;
+using Common.Providers;
 
 namespace Common.Models
 {
     public sealed class MainModel(
         ConfigProvider configProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
-        InstalledFixesProvider installedFixesProvider,
         FixManager fixManager
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
-        private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
         private readonly FixManager _fixManager = fixManager;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];

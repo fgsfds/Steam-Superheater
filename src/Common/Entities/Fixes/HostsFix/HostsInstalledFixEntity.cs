@@ -1,6 +1,6 @@
 ﻿namespace Common.Entities.Fixes.HostsFix
 {
-    public sealed class HostsInstalledFixEntity() : BaseInstalledFixEntity
+    public sealed class HostsInstalledFixEntity : BaseInstalledFixEntity
     {
         /// <summary>
         /// List of entries that were added to the hosts file

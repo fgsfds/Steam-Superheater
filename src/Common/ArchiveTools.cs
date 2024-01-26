@@ -7,7 +7,7 @@ namespace Common
     /// <summary>
     /// Class for working with archives
     /// </summary>
-    public class ArchiveTools (ProgressReport progressReport)
+    public sealed class ArchiveTools (ProgressReport progressReport)
     {
         private readonly ProgressReport _progressReport = progressReport;
 
@@ -59,11 +59,13 @@ namespace Common
             await using var source = await response.Content.ReadAsStreamAsync();
             var contentLength = response.Content.Headers.ContentLength;
 
-            await using FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
             if (!contentLength.HasValue)
             {
                 await source.CopyToAsync(file);
+
+                await file.DisposeAsync();
             }
             else
             {
@@ -88,7 +90,7 @@ namespace Common
             if (hash is not null)
             {
                 using var md5 = MD5.Create();
-                await using var stream = File.OpenRead(filePath);
+                var stream = File.OpenRead(filePath);
 
                 var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
 
@@ -100,6 +102,8 @@ namespace Common
 
                     ThrowHelper.HashCheckFailedException("File hash doesn't match");
                 }
+                
+                await stream.DisposeAsync();
             }
 
             _progressReport.OperationMessage = string.Empty;

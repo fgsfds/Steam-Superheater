@@ -1,7 +1,7 @@
 ﻿using Common.Entities;
 using Common.Helpers;
-using Common.Providers;
 using System.IO.Compression;
+using Common.Providers;
 
 namespace Common
 {

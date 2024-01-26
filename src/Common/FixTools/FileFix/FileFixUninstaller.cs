@@ -12,7 +12,7 @@ namespace Common.FixTools.FileFix
         /// Uninstall fix: delete files, restore backup
         /// </summary>
         /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix entity</param>
+        /// <param name="installedFix">Fix entity</param>
         public void UninstallFix(GameEntity game, BaseInstalledFixEntity installedFix)
         {
             installedFix.ThrowIfNotType<FileInstalledFixEntity>(out var installedFileFix);
@@ -148,7 +148,7 @@ namespace Common.FixTools.FileFix
                 return;
             }
 
-            string backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder); ;
+            string backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
 
             if (!Directory.Exists(backupFolder))
             {

@@ -40,8 +40,7 @@
                                     </Style>
                                 </Expander.Styles>
 
-                                <md:MarkdownScrollViewer Markdown="{Binding Content}"
-                                                         Grid.Row="0">
+                                <md:MarkdownScrollViewer Markdown="{Binding Content}">
 
                                     <md:MarkdownScrollViewer.Styles>
                                         <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
@@ -56,8 +55,7 @@
                                       Margin="2"
                                       IsVisible="{Binding !IsNewer}">
 
-                                <md:MarkdownScrollViewer Markdown="{Binding Content}"
-                                                         Grid.Row="0">
+                                <md:MarkdownScrollViewer Markdown="{Binding Content}">
 
                                     <md:MarkdownScrollViewer.Styles>
                                         <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>

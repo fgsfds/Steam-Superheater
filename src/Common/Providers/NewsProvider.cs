@@ -1,8 +1,8 @@
-﻿using Common.Config;
+﻿using System.Collections.Immutable;
+using System.Text.Json;
+using Common.Config;
 using Common.Entities;
 using Common.Helpers;
-using System.Collections.Immutable;
-using System.Text.Json;
 
 namespace Common.Providers
 {

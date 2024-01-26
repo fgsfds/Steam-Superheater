@@ -2,7 +2,7 @@
 
 namespace Common.Entities
 {
-    public sealed class NewsEntity()
+    public sealed class NewsEntity
     {
         /// <summary>
         /// Date of the news article
@@ -23,5 +23,5 @@ namespace Common.Entities
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(List<NewsEntity>))]
-    internal sealed partial class NewsEntityContext : JsonSerializerContext { }
+    internal sealed partial class NewsEntityContext : JsonSerializerContext;
 }

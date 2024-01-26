@@ -1,5 +1,5 @@
 using Common.Entities;
-using Common.Providers;
+using Common.Providers.Cached;
 using System.Reflection;
 
 namespace Tests
