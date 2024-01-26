@@ -197,6 +197,16 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public long? SelectedFixSize
+        {
+            get => SelectedFix is FileFixEntity fileFix ? fileFix.FileSize : null;
+            set
+            {
+                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
+                fileFix.FileSize = value;
+            }
+        }
+
         public string SelectedFixEntries
         {
             get => SelectedFix is HostsFixEntity hostsFix
@@ -424,6 +434,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixSize))]
         [NotifyPropertyChangedFor(nameof(SelectedFixEntries))]
         [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
         [NotifyPropertyChangedFor(nameof(IsFileFixType))]
@@ -544,6 +555,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             var result = await _editorModel.SaveFixesListAsync();
 
             OnPropertyChanged(nameof(SelectedFixMD5));
+            OnPropertyChanged(nameof(SelectedFixSize));
             OnPropertyChanged(nameof(SelectedFixUrl));
 
             _popupMessage.Show(
