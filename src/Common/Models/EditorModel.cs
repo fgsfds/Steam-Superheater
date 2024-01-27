@@ -377,48 +377,41 @@ namespace Common.Models
         /// </summary>
         private void CreateReadme()
         {
-            var result = string.Empty;
-            var first = true;
+            StringBuilder fixesList = new();
+            List<string> noIntroGames = [];
+            
+            var gamesCount = 0;
             var fixesCount = 0;
 
-            StringBuilder sb = new("No Intro Fixes for: ");
-
-            foreach (var fix in _fixesList)
+            foreach (var game in _fixesList)
             {
-                var woNoIntro = fix.Fixes.Where(static x => !x.Name.StartsWith("No Intro Fix"));
-                var count = woNoIntro.Count();
-                fixesCount += count;
-
-                if (count > 0)
+                var first = true;
+                    
+                foreach (var fix in game.Fixes)
                 {
-                    result += fix.GameName + Environment.NewLine;
-
-                    foreach (var f in woNoIntro)
+                    if (fix.Name.StartsWith("No Intro"))
                     {
-                        result += "- " + f.Name + Environment.NewLine;
+                        noIntroGames.Add(game.GameName);
+                        continue;
                     }
 
-                    result += Environment.NewLine;
-                }
-
-                if (fix.Fixes.Count - count > 0)
-                {
                     if (first)
                     {
-                        sb.Append(fix.GameName);
+                        fixesList.Append($"{Environment.NewLine}{game.GameName}{Environment.NewLine}");
+                        gamesCount++;
                         first = false;
                     }
 
-                    sb.Append(", ").Append(fix.GameName);
+                    fixesList.Append($"- {fix.Name}{Environment.NewLine}");
+                    fixesCount++;
                 }
             }
 
-            var gamesCount = _fixesList.Where(static x => x.Fixes.Any(static y => !y.Name.StartsWith("No Intro Fix"))).Count();
-            var topLine = $"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**" + Environment.NewLine + Environment.NewLine;
-
-            result = topLine + result + sb;
-
-            File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result);
+            StringBuilder result = new($"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**{Environment.NewLine}{Environment.NewLine}");
+            result.Append(fixesList);
+            result.Append($"No Intro Fixes for: {string.Join(", ", noIntroGames)}");
+            
+            File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result.ToString());
         }
     }
 }
