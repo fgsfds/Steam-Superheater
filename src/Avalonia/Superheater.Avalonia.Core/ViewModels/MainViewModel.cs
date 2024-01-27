@@ -100,12 +100,21 @@ namespace Superheater.Avalonia.Core.ViewModels
                         return "Install";
                     }
 
-                    if (fileFix.FileSize is not null)
+                    if (fileFix.Url is null ||
+                        fileFix.FileSize is null)
                     {
-                        return $"Download ({fileFix.FileSize.ToSizeString()}) and install";
+                        return $"Download and install";
                     }
 
-                    return $"Download and install";
+                    var size = fileFix.FileSize;
+
+                    if (fileFix.SharedFix?.FileSize is not null)
+                    {
+                        size += fileFix.SharedFix.FileSize;
+                    }
+                        
+                    return $"Download ({size.ToSizeString()}) and install";
+
                 }
 
                 return "Install";

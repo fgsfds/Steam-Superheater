@@ -109,7 +109,7 @@ namespace Common.FixTools.FileFix
 
             string file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
-            var linesList = File.ReadAllLines(file).ToList();
+            var linesList = (await File.ReadAllLinesAsync(file)).ToList();
 
             var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
 
@@ -330,9 +330,9 @@ namespace Common.FixTools.FileFix
                     throw new Exception();
                 }
 
-                using FileStream originalFile = new(originalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                using FileStream patchFile = new(patchFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
-                using FileStream newFile = new(newFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+                await using FileStream originalFile = new(originalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                await using FileStream patchFile = new(patchFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                await using FileStream newFile = new(newFilePath, FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
 
                 DeltaApplier deltaApplier = new()
                 { 
