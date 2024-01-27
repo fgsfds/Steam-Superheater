@@ -179,11 +179,11 @@
 
                                 <TextBlock Text="{Binding}"
                                            VerticalAlignment="Center"
-                                           Margin="10"/>
+                                           Margin="5"/>
 
                                 <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:MainViewModel)DataContext).HideTagCommand}"
                                         CommandParameter="{Binding}"
-                                        Margin="0,0,3,0"
+                                        Margin="0"
                                         Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
