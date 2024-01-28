@@ -15,8 +15,7 @@
                   Margin="0,0,4,0"
                   Padding="5"
                   ItemsSource="{Binding TagsComboboxList}"
-                  SelectedItem="{Binding SelectedTagFilter}"
-                  IsVisible="{Binding IsTagsComboboxVisible, FallbackValue=False}"/>
+                  SelectedItem="{Binding SelectedTagFilter}"/>
 
         <TextBox Text="{Binding SearchBarText, Mode=TwoWay}"
                  Grid.Column="1"

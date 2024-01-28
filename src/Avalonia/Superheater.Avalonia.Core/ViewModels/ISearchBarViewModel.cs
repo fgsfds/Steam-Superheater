@@ -8,8 +8,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         string SelectedTagFilter { get; set; }
 
-        bool IsTagsComboboxVisible { get; }
-
         string SearchBarText { get; set; }
 
         IRelayCommand ClearSearchCommand { get; }

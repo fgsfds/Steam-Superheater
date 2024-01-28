@@ -33,8 +33,14 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _searchBarText = string.Empty;
 
+            SelectedTagFilter = TagsComboboxList.First();
+
             _config.NotifyParameterChanged += NotifyParameterChanged;
         }
+
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
 
         private readonly EditorModel _editorModel;
         private readonly ConfigEntity _config;
@@ -45,17 +51,19 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText);
+        public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes];
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
 
         public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
         public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+
+        public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly];
 
 
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
@@ -400,15 +408,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsSharedFixSelected => SelectedSharedFix is not null;
 
         public float ProgressBarValue { get; set; }
-
-
-        #region Not Implemented
-
-        public HashSet<string> TagsComboboxList => [];
-        public string SelectedTagFilter { get; set; } = string.Empty;
-        public bool IsTagsComboboxVisible => false;
-
-        #endregion Not Implemented
 
 
         [ObservableProperty]

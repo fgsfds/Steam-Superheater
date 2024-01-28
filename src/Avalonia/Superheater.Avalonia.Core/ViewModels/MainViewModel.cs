@@ -57,8 +57,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public ImmutableList<string> SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : [];
 
 
-        public bool IsTagsComboboxVisible => true;
-
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
         public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty;
@@ -570,7 +568,6 @@ Do you still want to install the fix?",
 
             if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
             {
-
                 SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
 
                 if (selectedFixGuid is not null &&

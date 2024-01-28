@@ -113,7 +113,7 @@ namespace Common.Models
 
             if (!string.IsNullOrEmpty(tag))
             {
-                if (!tag.Equals("All tags"))
+                if (!tag.Equals(ConstStrings.All))
                 {
                     foreach (var entity in result.ToArray())
                     {
@@ -188,7 +188,7 @@ namespace Common.Models
                 list = [.. list.OrderBy(static x => x)];
             }
 
-            return ["All tags", .. list];
+            return [ConstStrings.All, .. list];
         }
 
         /// <summary>

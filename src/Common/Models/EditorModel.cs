@@ -10,6 +10,7 @@ using System.Collections.Immutable;
 using Common.Config;
 using System.Text;
 using System.Text.Json;
+using Common.Enums;
 
 namespace Common.Models
 {
@@ -55,14 +56,56 @@ namespace Common.Models
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
         /// <param name="search">Search string</param>
-        public ImmutableList<FixesList> GetFilteredGamesList(string? search = null)
+        public ImmutableList<FixesList> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            if (!string.IsNullOrEmpty(search))
+            List<FixesList> result = [.. _fixesList];
+
+            foreach (var entity in result.ToArray())
             {
-                return [.. _fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
+                foreach (var fix in entity.Fixes)
+                {
+                    fix.IsHidden = false;
+                }
             }
 
-            return [.. _fixesList];
+            if (string.IsNullOrEmpty(search) &&
+                string.IsNullOrEmpty(tag))
+            {
+                return [.. result];
+            }
+
+            if (!string.IsNullOrEmpty(tag))
+            {
+                if (!tag.Equals(ConstStrings.All))
+                {
+                    foreach (var entity in result.ToArray())
+                    {
+                        foreach (var fix in entity.Fixes)
+                        {
+                            if (tag.Equals(ConstStrings.WindowsOnly) && fix.SupportedOSes != OSEnum.Windows)
+                            {
+                                fix.IsHidden = true;
+                            }
+                            if (tag.Equals(ConstStrings.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
+                            {
+                                fix.IsHidden = true;
+                            }
+                        }
+
+                        if (!entity.Fixes.Exists(static x => !x.IsHidden))
+                        {
+                            result.Remove(entity);
+                        }
+                    }
+                }
+            }
+
+            if (search is null)
+            {
+                return [.. result];
+            }
+
+            return [.. result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
         }
 
         /// <summary>
