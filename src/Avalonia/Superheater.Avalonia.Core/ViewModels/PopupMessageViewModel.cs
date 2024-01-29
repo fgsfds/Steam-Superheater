@@ -121,7 +121,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             IsPopupMessageVisible = false;
 
             _semaphore?.Release();
-
             _semaphore = null;
         }
     }

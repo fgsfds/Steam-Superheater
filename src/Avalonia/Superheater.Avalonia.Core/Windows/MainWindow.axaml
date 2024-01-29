@@ -67,6 +67,11 @@
                 x:Name="PopupEditor"
                 IsVisible="{Binding ElementName=PopupEditor, Path=((vm:PopupEditorViewModel)DataContext).IsPopupEditorVisible, FallbackValue='False'}"/>
 
+            <controls:PopupStack
+                Grid.Row="0" Grid.RowSpan="2"
+                x:Name="PopupStack"
+                IsVisible="{Binding ElementName=PopupStack, Path=((vm:PopupStackViewModel)DataContext).IsPopupStackVisible, FallbackValue='False'}"/>
+
         </Grid>
 
     </Border>

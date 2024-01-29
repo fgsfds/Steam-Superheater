@@ -10,6 +10,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         string SearchBarText { get; set; }
 
+        string ShowPopupStackButtonText { get; }
+
+        bool IsSteamGameMode { get; }
+
         IRelayCommand ClearSearchCommand { get; }
+
+        IAsyncRelayCommand ShowFiltersPopupCommand { get; }
     }
 }

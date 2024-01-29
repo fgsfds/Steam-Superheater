@@ -22,7 +22,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             ConfigProvider config,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor,
-            ProgressReport progressReport
+            ProgressReport progressReport,
+            PopupStackViewModel popupStack
             )
         {
             _mainModel = mainModel;
@@ -30,6 +31,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
             _progressReport = progressReport;
+            _popupStack = popupStack;
 
             _searchBarText = string.Empty;
 
@@ -42,6 +44,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
+        private readonly PopupStackViewModel _popupStack;
         private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
         private bool _lockButtons;
@@ -62,7 +65,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
-        public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty;
+        public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty ;
+
+        public bool IsVariantSelectorEnabled => DoesSelectedFixHaveVariants && !IsSteamGameMode;
+
+        public bool IsDeckVariantSelectorEnabled => DoesSelectedFixHaveVariants && IsSteamGameMode;
 
         public bool DoesSelectedFixHaveUpdates => SelectedFix?.IsOutdated ?? false;
 
@@ -71,9 +78,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !CommonProperties.IsAdmin;
 
 
+        public string ShowVariantsPopupButtonText => SelectedFixVariant is null ? "Select variant..." : SelectedFixVariant;
+
         public string SelectedFixRequirements => GetRequirementsString();
 
         public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
+
+        public string ShowPopupStackButtonText => SelectedTagFilter;
 
         public string InstallButtonText
         {
@@ -165,7 +176,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
         [NotifyPropertyChangedFor(nameof(DoesSelectedFixHaveUpdates))]
         [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
-        [NotifyPropertyChangedFor(nameof(DoesSelectedFixHaveVariants))]
+        [NotifyPropertyChangedFor(nameof(IsVariantSelectorEnabled))]
+        [NotifyPropertyChangedFor(nameof(IsDeckVariantSelectorEnabled))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
         [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
@@ -179,6 +191,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(ShowVariantsPopupButtonText))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         private string? _selectedFixVariant;
 
@@ -416,6 +429,34 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand]
         private void HideTag(string tag) => _mainModel.HideTag(tag);
+
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand]
+        private async Task ShowFiltersPopup()
+        {
+            var selectedTag = await _popupStack.ShowAndGetResultAsync("Tags", TagsComboboxList);
+
+            SelectedTagFilter = selectedTag;
+
+            OnPropertyChanged(nameof(ShowPopupStackButtonText));
+        }
+
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand]
+        private async Task ShowVariantsPopup()
+        {
+            var selectedTag = await _popupStack.ShowAndGetResultAsync("Variants", SelectedFixVariants);
+
+            SelectedFixVariant = selectedTag;
+
+            OnPropertyChanged(nameof(ShowPopupStackButtonText));
+        }
 
         #endregion Relay Commands
 

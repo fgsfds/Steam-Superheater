@@ -22,5 +22,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="UserControls\PopupStack.axaml.cs">
+      <DependentUpon>PopupStack.axaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
   
 </Project>

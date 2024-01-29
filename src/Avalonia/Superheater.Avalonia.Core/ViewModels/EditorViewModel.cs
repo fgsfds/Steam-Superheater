@@ -1,4 +1,5 @@
-﻿using Avalonia.Platform.Storage;
+﻿using Avalonia.Layout;
+using Avalonia.Platform.Storage;
 using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -23,13 +24,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             EditorModel editorModel,
             ConfigProvider config,
             PopupEditorViewModel popupEditor,
-            PopupMessageViewModel popupMessage
+            PopupMessageViewModel popupMessage,
+            PopupStackViewModel popupStack
             )
         {
             _editorModel = editorModel;
             _config = config.Config;
             _popupEditor = popupEditor;
             _popupMessage = popupMessage;
+            _popupStack = popupStack;
 
             _searchBarText = string.Empty;
 
@@ -46,6 +49,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ConfigEntity _config;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
+        private readonly PopupStackViewModel _popupStack;
         private readonly SemaphoreSlim _locker = new(1);
 
 
@@ -66,11 +70,15 @@ namespace Superheater.Avalonia.Core.ViewModels
         public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly];
 
 
+        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
         public string ProgressBarText { get; set; } = string.Empty;
+
+        public string ShowPopupStackButtonText => SelectedTagFilter;
 
 
         public string SelectedFixName
@@ -876,6 +884,20 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(IsSharedFixSelected));
         }
         private bool ResetSelectedSharedFixCanExecute() => SelectedSharedFix is not null;
+
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand]
+        private async Task ShowFiltersPopup()
+        {
+            var selectedFilter = await _popupStack.ShowAndGetResultAsync("Filter", TagsComboboxList);
+
+            SelectedTagFilter = selectedFilter;
+
+            OnPropertyChanged(nameof(ShowPopupStackButtonText));
+        }
 
         #endregion Relay Commands
 
