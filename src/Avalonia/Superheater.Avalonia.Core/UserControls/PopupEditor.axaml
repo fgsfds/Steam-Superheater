@@ -9,8 +9,8 @@
              x:DataType="vm:PopupEditorViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.PopupEditor">
 
-    <Grid ColumnDefinitions="*,auto,*"
-          RowDefinitions="30,*,30">
+    <Grid ColumnDefinitions="100,*,100"
+          RowDefinitions="100,*,100">
 
         <Border Grid.ColumnSpan="3"
                 Grid.RowSpan="3"
@@ -20,9 +20,7 @@
         <Grid Grid.Row="1"
               Grid.Column="1"
               RowDefinitions="auto,*,auto"
-              ColumnDefinitions="*,*"
-              MinWidth="600"
-              MaxWidth="600">
+              ColumnDefinitions="*,*">
 
             <Border Grid.RowSpan="3"
                     Grid.ColumnSpan="2"
@@ -54,7 +52,7 @@
                   Grid.ColumnSpan="2" Grid.Column="0">
 
                 <Button Grid.Column="0"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Right"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
                         Margin="30"
@@ -68,7 +66,7 @@
                 </Button>
 
                 <Button Grid.Column="1"
-                        HorizontalAlignment="Center"
+                        HorizontalAlignment="Left"
                         VerticalContentAlignment="Center"
                         HorizontalContentAlignment="Center"
                         Margin="30"

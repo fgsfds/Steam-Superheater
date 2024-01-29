@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Common.Helpers
 {
@@ -51,6 +52,27 @@ namespace Common.Helpers
             }
 
             return [.. str.Split(';').Select(static x => x.Trim())];
+        }
+
+        public static List<string>? ToListOfString(this string? str)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return null;
+            }
+
+            List<string> result = [];
+            var list = str.Split(Environment.NewLine);
+
+            foreach (var item in list)
+            {
+                if (!string.IsNullOrWhiteSpace(item))
+                {
+                    result.Add(item.Trim());
+                }
+            }
+
+            return result;
         }
 
         public static string ReplaceDirectorySeparatorChar(this string str) => str.Replace('\\', Path.DirectorySeparatorChar);

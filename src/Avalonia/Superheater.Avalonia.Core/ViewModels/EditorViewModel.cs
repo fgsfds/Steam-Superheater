@@ -740,7 +740,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                SelectedFix.Tags = result;
+                SelectedFix.Tags = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
         }
@@ -759,7 +759,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                fileFix.FilesToDelete = result;
+                fileFix.FilesToDelete = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixFilesToDelete));
             }
         }
@@ -778,7 +778,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                fileFix.FilesToBackup = result;
+                fileFix.FilesToBackup = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixFilesToBackup));
             }
         }
@@ -797,7 +797,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                fileFix.FilesToPatch = result;
+                fileFix.FilesToPatch = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixFilesToPatch));
             }
         }
@@ -816,7 +816,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                fileFix.WineDllOverrides = result;
+                fileFix.WineDllOverrides = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixWineDllsOverrides));
             }
         }
@@ -835,7 +835,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                fileFix.Variants = result;
+                fileFix.Variants = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixVariants));
             }
         }
@@ -854,7 +854,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                hostsFix.Entries = result;
+                hostsFix.Entries = result.ToListOfString()!;
                 OnPropertyChanged(nameof(SelectedFixEntries));
             }
         }

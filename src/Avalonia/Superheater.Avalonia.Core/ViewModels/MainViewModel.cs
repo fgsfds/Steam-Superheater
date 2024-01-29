@@ -21,12 +21,14 @@ namespace Superheater.Avalonia.Core.ViewModels
             MainModel mainModel,
             ConfigProvider config,
             PopupMessageViewModel popupMessage,
+            PopupEditorViewModel popupEditor,
             ProgressReport progressReport
             )
         {
             _mainModel = mainModel;
             _config = config.Config;
             _popupMessage = popupMessage;
+            _popupEditor = popupEditor;
             _progressReport = progressReport;
 
             _searchBarText = string.Empty;
@@ -39,6 +41,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
+        private readonly PopupEditorViewModel _popupEditor;
         private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
         private bool _lockButtons;
@@ -329,7 +332,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Open config file for selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
-        private void OpenConfig() => OpenConfigXml();
+        private void OpenConfig() => OpenConfigFileAsync();
         private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
 
 
@@ -498,7 +501,7 @@ Do you still want to install the fix?",
                     "Success",
                     result.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
                     PopupMessageType.YesNo,
-                    OpenConfigXml
+                    OpenConfigFileAsync
                     );
             }
             else
@@ -581,7 +584,7 @@ Do you still want to install the fix?",
         /// <summary>
         /// Open config file for selected fix
         /// </summary>
-        private void OpenConfigXml()
+        private async void OpenConfigFileAsync()
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
             SelectedGame.ThrowIfNull();
@@ -590,14 +593,28 @@ Do you still want to install the fix?",
 
             var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
 
-            var workingDir = fileFix.ConfigFile.EndsWith(".exe") ? Path.GetDirectoryName(pathToConfig) : Directory.GetCurrentDirectory();
-
-            Process.Start(new ProcessStartInfo
+            if (fileFix.ConfigFile.EndsWith(".exe"))
             {
-                FileName = Path.Combine(pathToConfig),
-                UseShellExecute = true,
-                WorkingDirectory = workingDir
-            });
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(pathToConfig),
+                    UseShellExecute = true,
+                    WorkingDirectory = Path.GetDirectoryName(pathToConfig)
+                });
+            }
+            else
+            {
+                var config = await File.ReadAllTextAsync(pathToConfig);
+
+                var result = await _popupEditor.ShowAndGetResultAsync("Config", config);
+
+                if (result is null)
+                {
+                    return;
+                }
+
+                await File.WriteAllTextAsync(pathToConfig, result);
+            }
         }
 
         /// <summary>

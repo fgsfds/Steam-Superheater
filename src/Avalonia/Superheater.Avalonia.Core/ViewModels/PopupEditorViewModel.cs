@@ -5,7 +5,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class PopupEditorViewModel : ObservableObject
     {
-        private List<string>? _result;
+        private string? _result;
         private SemaphoreSlim? _semaphore;
 
 
@@ -36,18 +36,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void Save()
         {
-            List<string> result = [];
-            var list = Text.Split(Environment.NewLine);
-
-            foreach (var item in list)
+            if (string.IsNullOrWhiteSpace(Text))
             {
-                if (!string.IsNullOrWhiteSpace(item))
-                {
-                    result.Add(item.Trim());
-                }
+                _result = null;
             }
-
-            _result = result;
+            else
+            {
+                _result = Text;
+            }
 
             Reset();
         }
@@ -59,7 +55,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Show popup window and return result
         /// </summary>
         /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
-        public async Task<List<string>?> ShowAndGetResultAsync(string title, List<string>? text)
+        public async Task<string?> ShowAndGetResultAsync(string title, IEnumerable<string>? text)
         {
             var textString = string.Empty;
 
@@ -70,6 +66,23 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             TitleText = title;
             Text = textString;
+            IsPopupEditorVisible = true;
+
+            _semaphore = new(0);
+            await _semaphore.WaitAsync();
+
+            return _result;
+        }
+
+
+        /// <summary>
+        /// Show popup window and return result
+        /// </summary>
+        /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
+        public async Task<string?> ShowAndGetResultAsync(string title, string? text)
+        {
+            TitleText = title;
+            Text = text ?? string.Empty;
             IsPopupEditorVisible = true;
 
             _semaphore = new(0);
