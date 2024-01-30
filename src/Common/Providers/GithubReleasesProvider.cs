@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Runtime.InteropServices;
+using System.Text.Json;
 using Common.Entities;
 using Common.Helpers;
 
@@ -7,10 +8,10 @@ namespace Common.Providers
     public static class GitHubReleasesProvider
     {
         /// <summary>
-        /// Return a list of releases from GitHub repo that have higher version than the current
+        /// Return the latest new release or null if there's not newer releases
         /// </summary>
         /// <param name="currentVersion">current release version</param>
-        public static async Task<IEnumerable<AppUpdateEntity>> GetNewerReleasesListAsync(Version currentVersion)
+        public static async Task<AppUpdateEntity?> GetLatestUpdateAsync(Version currentVersion)
         {
             Logger.Info("Requesting newer releases from GitHub");
 
@@ -25,17 +26,52 @@ namespace Common.Providers
 
                 releases = [.. releases.Where(static x => x.draft is false && x.prerelease is false)];
 
-                var updates = releases.ConvertAll(static x => new AppUpdateEntity()
+                string osPostfix = string.Empty;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    Version = new Version(x.tag_name),
-                    Description = x.body,
-                    DownloadUrl = new Uri(x.assets.First(static x => x.name.EndsWith("win-x64.zip")).browser_download_url)
+                    osPostfix = "win-x64.zip";
                 }
-                );
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    osPostfix = "linux-x64.zip";
+                }
+                else
+                {
+                    ThrowHelper.PlatformNotSupportedException();
+                }
 
-                var newVersions = updates.Where(x => x.Version > currentVersion);
+                AppUpdateEntity? update = null;
 
-                return newVersions;
+                foreach (var release in releases)
+                {
+                    var asset = release.assets.FirstOrDefault(x => x.name.EndsWith(osPostfix));
+
+                    if (asset is null)
+                    {
+                        continue;
+                    }
+
+                    var version = new Version(release.tag_name);
+
+                    if (version <= currentVersion ||
+                        version < update?.Version)
+                    {
+                        continue;
+                    }
+
+                    var description = release.body;
+                    var downloadUrl = new Uri(asset.browser_download_url);
+
+                    update = new()
+                    {
+                        Version = version,
+                        Description = description,
+                        DownloadUrl = downloadUrl
+                    };
+                }
+
+                return update;
             }
         }
     }

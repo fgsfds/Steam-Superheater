@@ -12,6 +12,8 @@ namespace Common.Helpers
     {
         private static readonly ConfigEntity _config = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config;
 
+        private static bool? _isSteamDeckGameMode = null;
+
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
@@ -25,7 +27,25 @@ namespace Common.Helpers
         /// <summary>
         /// Name of the executable file
         /// </summary>
-        public static string ExecutableName => Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
+        public static string ExecutableName
+        {
+            get
+            {
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    return Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
+                }
+                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                {
+                    return AppDomain.CurrentDomain.FriendlyName;
+                }
+                else
+                {
+                    ThrowHelper.PlatformNotSupportedException();
+                    return string.Empty;
+                }
+            }
+        }
 
         /// <summary>
         /// Is app run with admin privileges
@@ -48,6 +68,11 @@ namespace Common.Helpers
                 return false;
             }
 
+            if (_isSteamDeckGameMode is not null)
+            {
+                return (bool)_isSteamDeckGameMode;
+            }
+
             ProcessStartInfo processInfo = new()
             {
                 FileName = "bash",
@@ -59,7 +84,7 @@ namespace Common.Helpers
 
             var proc = Process.Start(processInfo) ?? ThrowHelper.Exception<Process>("Error starting process");
 
-            var result = proc.StandardOutput.ReadToEnd();
+            var result = proc.StandardOutput.ReadToEnd().Trim();
 
             proc.WaitForExit();
 
@@ -68,10 +93,15 @@ namespace Common.Helpers
             if (result.StartsWith("gamescope-wayland"))
             {
                 Logger.Info("Steam game mode detected");
-                return true;
+
+                _isSteamDeckGameMode = true;
+            }
+            else
+            {
+                _isSteamDeckGameMode = false;
             }
 
-            return false;
+            return (bool)_isSteamDeckGameMode;
         }
     }
 }

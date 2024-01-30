@@ -59,6 +59,8 @@ internal static class Program
     /// </summary>
     private static void Cleanup()
     {
+        Logger.Error("Starting cleanup");
+
         var files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
         foreach (var file in files)

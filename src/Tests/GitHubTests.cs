@@ -28,18 +28,13 @@ namespace Tests
         [Fact]
         public async Task GetGitHubReleasesTest()
         {
-            var releases = await GitHubReleasesProvider.GetNewerReleasesListAsync(new Version("0.0.0"));
-            var firstRelease = releases.Last();
+            var latestRelease = await GitHubReleasesProvider.GetLatestUpdateAsync(new Version("0.0.0"));
 
-            var versionActual = firstRelease.Version;
-            Version versionExpected = new("0.2.2");
-            var versionCompare = versionActual.CompareTo(versionExpected);
+            Assert.NotNull(latestRelease);
+
+            var versionCompare = latestRelease.Version.CompareTo(new("0.13.1"));
 
             Assert.Equal(0, versionCompare);
-
-            var descriptionActual = firstRelease.Description;
-
-            Assert.Equal("First public release", descriptionActual);
         }
     }
 }

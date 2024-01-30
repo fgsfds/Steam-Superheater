@@ -2,6 +2,7 @@
 using Common.Helpers;
 using System.IO.Compression;
 using Common.Providers;
+using System.Runtime.InteropServices;
 
 namespace Common
 {
@@ -9,7 +10,7 @@ namespace Common
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
 
-        private List<AppUpdateEntity> _updates = [];
+        private AppUpdateEntity? _update;
 
         /// <summary>
         /// Check GitHub for releases with version higher than current
@@ -20,11 +21,16 @@ namespace Common
         {
             Logger.Info("Checking for updates");
 
-            _updates = (await GitHubReleasesProvider.GetNewerReleasesListAsync(currentVersion)).ToList();
+            _update = await GitHubReleasesProvider.GetLatestUpdateAsync(currentVersion);
 
-            Logger.Info($"Found {_updates.Count} updates");
+            var hasUpdate = _update is not null;
 
-            return _updates.Count != 0;
+            if (hasUpdate)
+            {
+                Logger.Info($"Found new version {_update!.Version}");
+            }
+
+            return hasUpdate;
         }
 
         /// <summary>
@@ -33,11 +39,9 @@ namespace Common
         /// <returns></returns>
         public async Task DownloadAndUnpackLatestRelease()
         {
-            AppUpdateEntity latestUpdate = _updates.MaxBy(static x => x.Version) ?? ThrowHelper.NullReferenceException<AppUpdateEntity>("Error while getting newer release");
+            Logger.Info($"Downloading app update version {_update!.Version}");
 
-            Logger.Info($"Downloading app update version {latestUpdate.Version}");
-
-            var updateUrl = latestUpdate.DownloadUrl;
+            var updateUrl = _update.DownloadUrl;
 
             var fileName = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(updateUrl.ToString()).Trim());
 
@@ -76,9 +80,19 @@ namespace Common
             File.Delete(Path.Combine(dir, Consts.UpdateFile));
             Directory.Delete(Path.Combine(dir, Consts.UpdateFolder), true);
 
-            var exeName = Path.Combine(Directory.GetCurrentDirectory(), CommonProperties.ExecutableName);
-            System.Diagnostics.Process.Start(exeName);
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            {
+                //starting new version of the app
+                System.Diagnostics.Process.Start(oldExe);
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                //setting execute permission for user, otherwise the app won't run from game mode
+               var attributes = File.GetUnixFileMode(oldExe);
+               File.SetUnixFileMode(oldExe, attributes | UnixFileMode.UserExecute);
+            }
+            
             Environment.Exit(0);
         }
-    }
+    }   
 }

@@ -98,28 +98,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
         private async Task DownloadAndInstallAsync()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                IsInProgress = true;
+            IsInProgress = true;
 
-                await _updateInstaller.DownloadAndUnpackLatestRelease();
+            await _updateInstaller.DownloadAndUnpackLatestRelease();
 
-                AppUpdateInstaller.InstallUpdate();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
-                    UseShellExecute = true
-                });
-            }
-            else
-            {
-                ThrowHelper.PlatformNotSupportedException("Can't identify platform");
-            }
-
-
+            AppUpdateInstaller.InstallUpdate();
         }
         private bool DownloadAndInstallCanExecute() => IsUpdateAvailable;
 
