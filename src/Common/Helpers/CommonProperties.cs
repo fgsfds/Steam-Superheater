@@ -11,6 +11,7 @@ namespace Common.Helpers
     public static class CommonProperties
     {
         private static readonly ConfigEntity _config = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config;
+        private static readonly SemaphoreSlim _locker = new(1);
 
         private static bool? _isSteamDeckGameMode = null;
 
@@ -68,8 +69,11 @@ namespace Common.Helpers
                 return false;
             }
 
+            _locker.Wait();
+
             if (_isSteamDeckGameMode is not null)
             {
+                _locker.Release();
                 return (bool)_isSteamDeckGameMode;
             }
 
@@ -101,6 +105,7 @@ namespace Common.Helpers
                 _isSteamDeckGameMode = false;
             }
 
+            _locker.Release();
             return (bool)_isSteamDeckGameMode;
         }
     }
