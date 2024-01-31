@@ -32,7 +32,7 @@ namespace Tests
 
             Assert.NotNull(latestRelease);
 
-            var versionCompare = latestRelease.Version.CompareTo(new("0.13.1"));
+            var versionCompare = latestRelease.Version.CompareTo(new("0.14.0"));
 
             Assert.Equal(0, versionCompare);
         }

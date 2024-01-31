@@ -7,5 +7,7 @@
         public const string WindowsOnly = "Windows Only";
         
         public const string LinuxOnly = "Linux Only";
+
+        public const string AllSuppoted = "All supported OSes";
     }
 }

@@ -86,7 +86,11 @@ namespace Common.Models
                             {
                                 fix.IsHidden = true;
                             }
-                            if (tag.Equals(ConstStrings.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
+                            else if (tag.Equals(ConstStrings.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
+                            {
+                                fix.IsHidden = true;
+                            }
+                            else if (tag.Equals(ConstStrings.AllSuppoted) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
                             {
                                 fix.IsHidden = true;
                             }

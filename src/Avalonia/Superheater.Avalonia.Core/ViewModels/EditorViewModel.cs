@@ -67,7 +67,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
 
-        public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly];
+        public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly, ConstStrings.AllSuppoted];
 
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
