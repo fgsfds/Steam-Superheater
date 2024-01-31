@@ -53,6 +53,11 @@ namespace Common.Entities.Fixes
         public List<string>? Tags { get; set; }
 
         /// <summary>
+        /// Notes for the fix that are only visible in the editor
+        /// </summary>
+        public string? Notes { get; set; }
+
+        /// <summary>
         /// Installed fix entity
         /// </summary>
         [JsonIgnore]

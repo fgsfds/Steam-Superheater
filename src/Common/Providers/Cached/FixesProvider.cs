@@ -163,6 +163,10 @@ namespace Common.Providers.Cached
                 {
                     fix.Description = null;
                 }
+                if (string.IsNullOrWhiteSpace(fix.Notes))
+                {
+                    fix.Notes = null;
+                }
                 if (fix.Dependencies?.Count == 0)
                 {
                     fix.Dependencies = null;
