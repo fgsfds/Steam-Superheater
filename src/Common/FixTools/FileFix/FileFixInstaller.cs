@@ -31,6 +31,19 @@ namespace Common.FixTools.FileFix
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && fix.WineDllOverrides is not null)
+            {
+                if (!File.Exists(@$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
+                {
+                    throw new Exception("""
+                        Can't find 'compatdata' folder.
+                        
+                        Run the game at least once before installing this fix.
+                        """);
+                }
+            }
+
+
             FileInstalledFixEntity? installedSharedFix = null;
 
             if (fix.SharedFix is not null)
