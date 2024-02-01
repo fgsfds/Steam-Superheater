@@ -121,12 +121,20 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            //removing empty folders
-            foreach (var dir in directories)
-            {
-                var files = Directory.GetFiles(dir);
+            var sortedDirectories = directories.OrderByDescending(x => x.Length);
 
-                if (files.Length == 0)
+            //removing empty folders
+            foreach (var dir in sortedDirectories)
+            {
+                if (!Directory.Exists(dir))
+                {
+                    continue;
+                }
+
+                var files = Directory.GetFiles(dir);
+                var dirs = Directory.GetDirectories(dir);
+
+                if (files.Length == 0 && dirs.Length == 0)
                 {
                     Directory.Delete(dir, true);
                 }
