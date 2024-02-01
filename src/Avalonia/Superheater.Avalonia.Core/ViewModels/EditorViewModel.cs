@@ -425,6 +425,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
         [NotifyCanExecuteChangedFor(nameof(AddNewFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenSteamDBCommand))]
         private FixesList? _selectedGame;
 
         [ObservableProperty]
@@ -898,6 +899,23 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             OnPropertyChanged(nameof(ShowPopupStackButtonText));
         }
+
+
+        /// <summary>
+        /// Open SteamDB page for selected game
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(OpenSteamDBCanExecute)))]
+        private void OpenSteamDB()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = @$"https://steamdb.info/app/{SelectedGame.GameId}/config/",
+                UseShellExecute = true
+            });
+        }
+        private bool OpenSteamDBCanExecute() => SelectedGame is not null;
 
         #endregion Relay Commands
 

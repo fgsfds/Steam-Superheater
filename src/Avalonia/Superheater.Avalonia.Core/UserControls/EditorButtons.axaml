@@ -41,6 +41,12 @@
                 Update list
             </Button>
 
+            <Button Margin="3,0"
+                    Padding="8"
+                    Command="{Binding OpenSteamDBCommand}">
+                Open SteamDB...
+            </Button>
+
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
