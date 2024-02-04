@@ -253,8 +253,10 @@ namespace Common.Entities.Fixes.FileFix
                 RunAfterInstall = this.RunAfterInstall,
                 MD5 = this.MD5,
                 SharedFix = this.SharedFix,
-                SharedFixInstallFolder = this.SharedFixInstallFolder
-            };
+                SharedFixInstallFolder = this.SharedFixInstallFolder,
+                WineDllOverrides = this.WineDllOverrides,
+                FileSize = this.FileSize
+        };
         }
     }
 }
