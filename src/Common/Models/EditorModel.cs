@@ -456,7 +456,7 @@ namespace Common.Models
 
             StringBuilder result = new($"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**{Environment.NewLine}{Environment.NewLine}");
             result.Append(fixesList);
-            result.Append($"No Intro Fixes for: {string.Join(", ", noIntroGames)}");
+            result.Append($"{Environment.NewLine}No Intro Fixes for: {string.Join(", ", noIntroGames)}");
             
             File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result.ToString());
         }
