@@ -69,13 +69,13 @@ internal static class Program
             {
                 File.Delete(file);
             }
+        }
 
-            var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
+        var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
 
-            if (Directory.Exists(updateDir))
-            {
-                Directory.Delete(updateDir, true);
-            }
+        if (Directory.Exists(updateDir))
+        {
+            Directory.Delete(updateDir, true);
         }
     }
 }

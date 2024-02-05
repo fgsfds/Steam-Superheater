@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes.HostsFix;
+﻿using Common.Entities.Fixes;
+using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -10,9 +11,9 @@ namespace Common.FixTools.HostsFix
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
-        /// <param name="fix">Fix entity</param>
+        /// <param name="installedFix">Fix entity</param>
         /// <param name="hostsFilePath">Path to hosts file</param>
-        public void UninstallFix(HostsFixEntity fix, string hostsFilePath)
+        public void UninstallFix(BaseInstalledFixEntity installedFix, string hostsFilePath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -20,9 +21,9 @@ namespace Common.FixTools.HostsFix
                 return;
             }
 
-            if (fix.InstalledFix is not HostsInstalledFixEntity installedFix)
+            if (installedFix is not HostsInstalledFixEntity installedHostsFix)
             {
-                ThrowHelper.ArgumentException(nameof(fix.InstalledFix));
+                ThrowHelper.ArgumentException(nameof(installedFix));
                 return;
             }
 
@@ -44,7 +45,7 @@ namespace Common.FixTools.HostsFix
 
             foreach (var line in File.ReadAllLines(hostsFilePath))
             {
-                if (!line.EndsWith(installedFix.Guid.ToString()))
+                if (!line.EndsWith(installedHostsFix.Guid.ToString()))
                 {
                     hostsList.Add(line);
                 }

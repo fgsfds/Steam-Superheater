@@ -66,7 +66,8 @@ namespace Common.FixTools.RegistryFix
                 Version = fix.Version,
                 Key = fix.Key,
                 ValueName = valueName,
-                OriginalValue = oldValueStr
+                OriginalValue = oldValueStr,
+                ValueType = fix.ValueType
             };
         }
     }

@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace Common.Helpers
 {
@@ -73,11 +74,11 @@ namespace Common.Helpers
         /// <summary>
         /// Throw <see cref="NullReferenceException"/> if <paramref name="obj"/> is null
         /// </summary>
-        public static void ThrowIfNull([NotNull] this object? obj)
+        public static void ThrowIfNull([NotNull] this object? obj, [CallerArgumentExpression(nameof(obj))] string? name = null)
         {
             if (obj is null)
             {
-                throw new NullReferenceException(nameof(obj));
+                throw new NullReferenceException(name);
             }
         }
 
@@ -85,11 +86,11 @@ namespace Common.Helpers
         /// Throw <see cref="ArgumentException"/> if <paramref name="obj"/> is not of type <typeparamref name="T"/>
         /// otherwise, return <paramref name="obj"/> cast to <typeparamref name="T"/>
         /// </summary>
-        public static void ThrowIfNotType<T>([NotNull] this object? obj, out T ret)
+        public static void ThrowIfNotType<T>([NotNull] this object? obj, out T ret, [CallerArgumentExpression(nameof(obj))] string? name = null)
         {
             if (obj is not T objT)
             {
-                throw new ArgumentException(nameof(obj));
+                throw new ArgumentException(name);
             }
 
             ret = objT; 
@@ -98,11 +99,11 @@ namespace Common.Helpers
         /// <summary>
         /// Throw <see cref="NullReferenceException"/> if string is null or empty
         /// </summary>
-        public static void ThrowIfNullOrEmpty([NotNull] this string? obj)
+        public static void ThrowIfNullOrEmpty([NotNull] this string? obj, [CallerArgumentExpression(nameof(obj))] string? name = null)
         {
             if (string.IsNullOrEmpty(obj))
             {
-                throw new NullReferenceException(nameof(obj));
+                throw new NullReferenceException(name);
             }
         }
     }

@@ -169,14 +169,14 @@ namespace Common.Models
 
             foreach (var entity in _combinedEntitiesList)
             {
-                foreach (var game in entity.FixesList.Fixes)
+                foreach (var fix in entity.FixesList.Fixes)
                 {
-                    if (game.Tags is null)
+                    if (fix.Tags is null)
                     {
                         continue;
                     }
 
-                    foreach (var tag in game.Tags)
+                    foreach (var tag in fix.Tags)
                     {
                         if (!_config.HiddenTags.Contains(tag))
                         {

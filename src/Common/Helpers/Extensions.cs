@@ -1,6 +1,5 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Common.Helpers
 {

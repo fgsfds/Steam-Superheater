@@ -63,13 +63,13 @@ namespace Common.Providers.Cached
 
                     _ = int.TryParse(z, out id);
                 }
-                if (line.Contains("\"name\""))
+                else if (line.Contains("\"name\""))
                 {
                     var l = line.Split('"');
 
                     name = l.ElementAt(l.Length - 2).Trim();
                 }
-                if (line.Contains("\"installdir\""))
+                else if (line.Contains("\"installdir\""))
                 {
                     var l = line.Split('"');
 

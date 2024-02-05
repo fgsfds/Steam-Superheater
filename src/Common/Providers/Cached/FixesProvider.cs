@@ -97,65 +97,15 @@ namespace Common.Providers.Cached
 
         private async Task<Result> PrepareFixes(List<FixesList> fixesList)
         {
-            using HttpClient client = new();
-
             foreach (var fix in fixesList.SelectMany(static x => x.Fixes))
             {
                 if (fix is FileFixEntity fileFix)
                 {
-                    if (!string.IsNullOrEmpty(fileFix.Url))
-                    {
-                        if (!fileFix.Url.StartsWith("http"))
-                        {
-                            fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
-                        }
+                    var result = await PrepareFileFixes(fileFix);
 
-                        if (fileFix.MD5 is null)
-                        {
-                            try
-                            {
-                                fileFix.MD5 = await GetMD5(client, fileFix);
-                            }
-                            catch (Exception ex)
-                            {
-                                Logger.Error(ex.Message);
-                                return new Result(ResultEnum.ConnectionError, ex.Message);
-                            }
-                        }
-
-                        if (fileFix.FileSize is null)
-                        {
-                            fileFix.FileSize = await GetFileSize(client, fileFix);
-                        }
-                    }
-
-                    if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
+                    if (!result.IsSuccess)
                     {
-                        fileFix.RunAfterInstall = null;
-                    }
-                    if (string.IsNullOrWhiteSpace(fileFix.InstallFolder))
-                    {
-                        fileFix.InstallFolder = null;
-                    }
-                    if (string.IsNullOrWhiteSpace(fileFix.ConfigFile))
-                    {
-                        fileFix.ConfigFile = null;
-                    }
-                    if (fileFix.FilesToBackup?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
-                    {
-                        fileFix.FilesToBackup = null;
-                    }
-                    if (fileFix.FilesToDelete?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
-                    {
-                        fileFix.FilesToDelete = null;
-                    }
-                    if (fileFix.FilesToPatch?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
-                    {
-                        fileFix.FilesToPatch = null;
-                    }
-                    if (string.IsNullOrWhiteSpace(fileFix.SharedFixInstallFolder))
-                    {
-                        fileFix.SharedFixInstallFolder = null;
+                        return result;
                     }
                 }
 
@@ -175,6 +125,68 @@ namespace Common.Providers.Cached
                 {
                     fix.Tags = null;
                 }
+            }
+
+            return new Result(ResultEnum.Success, string.Empty);
+        }
+
+        private async Task<Result> PrepareFileFixes(FileFixEntity fileFix)
+        {
+            using HttpClient client = new();
+
+            if (!string.IsNullOrEmpty(fileFix.Url))
+            {
+                if (!fileFix.Url.StartsWith("http"))
+                {
+                    fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
+                }
+
+                if (fileFix.MD5 is null)
+                {
+                    try
+                    {
+                        fileFix.MD5 = await GetMD5(client, fileFix);
+                    }
+                    catch (Exception ex)
+                    {
+                        Logger.Error(ex.Message);
+                        return new Result(ResultEnum.ConnectionError, ex.Message);
+                    }
+                }
+
+                if (fileFix.FileSize is null)
+                {
+                    fileFix.FileSize = await GetFileSize(client, fileFix);
+                }
+            }
+
+            if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
+            {
+                fileFix.RunAfterInstall = null;
+            }
+            if (string.IsNullOrWhiteSpace(fileFix.InstallFolder))
+            {
+                fileFix.InstallFolder = null;
+            }
+            if (string.IsNullOrWhiteSpace(fileFix.ConfigFile))
+            {
+                fileFix.ConfigFile = null;
+            }
+            if (fileFix.FilesToBackup?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+            {
+                fileFix.FilesToBackup = null;
+            }
+            if (fileFix.FilesToDelete?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+            {
+                fileFix.FilesToDelete = null;
+            }
+            if (fileFix.FilesToPatch?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+            {
+                fileFix.FilesToPatch = null;
+            }
+            if (string.IsNullOrWhiteSpace(fileFix.SharedFixInstallFolder))
+            {
+                fileFix.SharedFixInstallFolder = null;
             }
 
             return new Result(ResultEnum.Success, string.Empty);

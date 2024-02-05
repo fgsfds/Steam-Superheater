@@ -40,12 +40,13 @@ namespace Common
                     createFolderRequest.GetResponse();
                 }
 
+                using WebClient uploadFileRequest = new();
+                uploadFileRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);
+
                 foreach (var file in files)
                 {
                     var fileName = remoteFileName ?? Path.GetFileName(file);
 
-                    using WebClient uploadFileRequest = new();
-                    uploadFileRequest.Credentials = new NetworkCredential(FtpUser, FtpPassword);
                     uploadFileRequest.UploadFile($"{FtpAddress}/{folder}/{fileName}", file);
                 }
             }

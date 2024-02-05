@@ -31,7 +31,7 @@ namespace Common.FixTools.FileFix
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public async Task<BaseInstalledFixEntity> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) && fix.WineDllOverrides is not null)
+            if (fix.WineDllOverrides is not null && RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 if (!File.Exists(@$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
                 {
@@ -43,37 +43,11 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-
-            FileInstalledFixEntity? installedSharedFix = null;
-
-            if (fix.SharedFix is not null)
-            {
-                fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
-
-                installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
-            }
+            var installedSharedFix = await InstallSharedFixAsync(game, fix, variant, skipMD5Check);
 
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
-            List<string> filesInArchive = [];
 
-            if (fix.Url is not null)
-            {
-                var unpackToPath = fix.InstallFolder is null
-                    ? game.InstallDir
-                    : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
-
-                var pathToArchive = _configEntity.UseLocalRepo
-                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
-
-                await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5);
-
-                filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
-
-                BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
-
-                await UnpackArchiveAsync(pathToArchive, unpackToPath, variant);
-            }
+            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
@@ -81,27 +55,61 @@ namespace Common.FixTools.FileFix
 
             await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
 
-            var dllOverrides = await ApplyWineDllOverrides(game.Id, fix.WineDllOverrides);
+            var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
-
-            if (!Directory.Exists(backupFolderPath))
-            {
-                backupFolderPath = null;
-            }
 
             FileInstalledFixEntity installedFix = new()
             {
                 GameId = game.Id,
                 Guid = fix.Guid,
                 Version = fix.Version,
-                BackupFolder = backupFolderPath is null ? null : new DirectoryInfo(backupFolderPath).Name,
-                FilesList = filesInArchive,
+                BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
+                FilesList = unpackedFiles,
                 InstalledSharedFix = installedSharedFix,
                 WineDllOverrides = dllOverrides
             };
 
             return installedFix;
+        }
+
+        private async Task<FileInstalledFixEntity?> InstallSharedFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check)
+        {
+            if (fix.SharedFix is null)
+            {
+                return null;
+            }
+
+            fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
+
+            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
+
+            return installedSharedFix;
+        }
+
+        private async Task<List<string>?> DownloadAndUnpackArchive(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, string? backupFolderPath)
+        {
+            if (fix.Url is null)
+            {
+                return null;
+            }
+
+            var unpackToPath = fix.InstallFolder is null
+                ? game.InstallDir
+                : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+
+            var pathToArchive = _configEntity.UseLocalRepo
+                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
+
+            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5);
+
+            var filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
+
+            BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
+
+            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant);
+            return filesInArchive;
         }
 
         /// <summary>
@@ -110,33 +118,33 @@ namespace Common.FixTools.FileFix
         /// <param name="gameId">Game id</param>
         /// <param name="dllList">List of DLLs to add</param>
         /// <returns>List of added lines</returns>
-        private async Task<List<string>?> ApplyWineDllOverrides(
+        private async Task<List<string>?> ApplyWineDllOverridesAsync(
             int gameId,
             List<string>? dllList)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-                dllList is null)
+            if (dllList is null ||
+                !RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return null;
             }
 
-            string file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+            string userRegFile = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
-            var linesList = (await File.ReadAllLinesAsync(file)).ToList();
+            var userRegLines = (await File.ReadAllLinesAsync(userRegFile)).ToList();
 
-            var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
+            var startIndex = userRegLines.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
 
-            List<string> addedLines = [];
+            List<string> addedLines = new(dllList.Count);
 
             foreach (var dll in dllList)
             {
                 var line = @$"""{dll}""=""native,builtin""";
 
                 addedLines.Add(line);
-                linesList.Insert(startIndex + 1, line);
             }
 
-            await File.WriteAllLinesAsync(file, linesList);
+            userRegLines.InsertRange(startIndex + 1, addedLines);
+            await File.WriteAllLinesAsync(userRegFile, userRegLines);
 
             return addedLines;
         }
@@ -262,16 +270,18 @@ namespace Common.FixTools.FileFix
         /// <returns>true if check is passed</returns>
         private static bool CheckFileMD5(string filePath, string? fixMD5)
         {
-            if (fixMD5 is null) { return true; }
+            if (fixMD5 is null)
+            { 
+                return true;
+            }
 
             string? hash;
 
             using (var md5 = MD5.Create())
             {
-                using (var stream = File.OpenRead(filePath))
-                {
-                    hash = Convert.ToHexString(md5.ComputeHash(stream));
-                }
+                using var stream = File.OpenRead(filePath);
+
+                hash = Convert.ToHexString(md5.ComputeHash(stream));
             }
 
             return fixMD5.Equals(hash);
@@ -340,7 +350,7 @@ namespace Common.FixTools.FileFix
                 if (!File.Exists(originalFilePath)||
                     !File.Exists(patchFilePath))
                 {
-                    throw new Exception();
+                    ThrowHelper.FileNotFoundException();
                 }
 
                 await using FileStream originalFile = new(originalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);

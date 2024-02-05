@@ -114,10 +114,12 @@ namespace Common.FixTools
                         _fileFixUninstaller.UninstallFix(game, fileFix.InstalledFix);
                         break;
                     case RegistryFixEntity regFix:
-                        _registryFixUninstaller.UninstallFix(regFix);
+                        regFix.InstalledFix.ThrowIfNull();
+                        _registryFixUninstaller.UninstallFix(regFix.InstalledFix);
                         break;
                     case HostsFixEntity hostsFix:
-                        _hostsFixUninstaller.UninstallFix(hostsFix, hostsFile);
+                        hostsFix.InstalledFix.ThrowIfNull();
+                        _hostsFixUninstaller.UninstallFix(hostsFix.InstalledFix, hostsFile);
                         break;
                     default:
                         ThrowHelper.NotImplementedException("Uninstaller for this fix type is not implemented");

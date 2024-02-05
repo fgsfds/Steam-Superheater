@@ -125,6 +125,7 @@ namespace Common
             var subfolder = variant + "/";
 
             using var archive = ArchiveFactory.Open(pathToArchive);
+            using var reader = archive.ExtractAllEntries();
 
             var entriesCount = variant is null
             ? archive.Entries.Count()
@@ -134,8 +135,6 @@ namespace Common
 
             await Task.Run(() =>
             {
-                using var reader = archive.ExtractAllEntries();
-
                 while (reader.MoveToNextEntry())
                 {
                     var entry = reader.Entry;
@@ -181,20 +180,21 @@ namespace Common
         /// <summary>
         /// Get list of files and new folders in the archive
         /// </summary>
-        /// <param name="zipPath">Path to ZIP</param>
+        /// <param name="pathToArchive">Path to ZIP</param>
         /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
         /// <param name="unpackToPath">Full path</param>
         /// <param name="variant">Fix variant</param>
         /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
         public List<string> GetListOfFilesInArchive(
-            string zipPath,
+            string pathToArchive,
             string unpackToPath,
             string? fixInstallFolder,
             string? variant)
         {
-            using var reader = ArchiveFactory.Open(zipPath);
+            using var archive = ArchiveFactory.Open(pathToArchive);
+            using var reader = archive.ExtractAllEntries();
 
-            List<string> files = new(reader.Entries.Count() + 1);
+            List<string> files = new(archive.Entries.Count() + 1);
 
             //if directory that the archive will be extracted to doesn't exist, add it to the list too
             if (!Directory.Exists(unpackToPath) &&
@@ -203,8 +203,10 @@ namespace Common
                 files.Add(fixInstallFolder + Path.DirectorySeparatorChar);
             }
 
-            foreach (var entry in reader.Entries)
+            while (reader.MoveToNextEntry())
             {
+                var entry = reader.Entry;
+
                 var path = entry.Key;
 
                 if (variant is not null)

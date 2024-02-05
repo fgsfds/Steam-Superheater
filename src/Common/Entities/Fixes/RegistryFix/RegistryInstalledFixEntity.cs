@@ -1,4 +1,6 @@
-﻿namespace Common.Entities.Fixes.RegistryFix
+﻿using Common.Enums;
+
+namespace Common.Entities.Fixes.RegistryFix
 {
     public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
     {
@@ -15,6 +17,12 @@
         /// <summary>
         /// Original value, null if the value was created
         /// </summary>
-        public required string? OriginalValue { get; init; }
+        public string? OriginalValue { get; init; }
+
+        /// <summary>
+        /// Value type
+        /// </summary>
+        [Obsolete("Make required some time later")]
+        public RegistryValueTypeEnum? ValueType { get; set; }
     }
 }

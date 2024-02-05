@@ -1,6 +1,7 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
+using Common.Helpers;
 
 namespace Common.FixTools.HostsFix
 {
@@ -14,7 +15,9 @@ namespace Common.FixTools.HostsFix
 
         public BaseInstalledFixEntity UpdateFix(GameEntity game, HostsFixEntity hostsFix, string hostsFile)
         {
-            _fixUninstaller.UninstallFix(hostsFix, hostsFile);
+            hostsFix.InstalledFix.ThrowIfNull();
+
+            _fixUninstaller.UninstallFix(hostsFix.InstalledFix, hostsFile);
 
             var result = _fixInstaller.InstallFix(game, hostsFix, hostsFile);
 

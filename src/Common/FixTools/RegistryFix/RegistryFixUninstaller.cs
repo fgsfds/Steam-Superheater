@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes.RegistryFix;
+﻿using Common.Entities.Fixes;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.Win32;
@@ -11,21 +12,21 @@ namespace Common.FixTools.RegistryFix
         /// <summary>
         /// Uninstall fix: delete files, restore backup
         /// </summary>
-        /// <param name="fix">Fix entity</param>
-        public void UninstallFix(RegistryFixEntity fix)
+        /// <param name="installedFix">Fix entity</param>
+        public void UninstallFix(BaseInstalledFixEntity installedFix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 ThrowHelper.PlatformNotSupportedException(string.Empty);
                 return;
             }
-            if (fix.InstalledFix is not RegistryInstalledFixEntity installedFix)
+            if (installedFix is not RegistryInstalledFixEntity installedRegFix)
             {
-                ThrowHelper.ArgumentException(nameof(fix.InstalledFix));
+                ThrowHelper.ArgumentException(nameof(installedFix));
                 return;
             }
 
-            var newKey = installedFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
+            var newKey = installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
 
             using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
             {
@@ -34,25 +35,25 @@ namespace Common.FixTools.RegistryFix
                     return;
                 }
 
-                if (installedFix.OriginalValue is null)
+                if (installedRegFix.OriginalValue is null)
                 {
-                    key.DeleteValue(installedFix.ValueName);
+                    key.DeleteValue(installedRegFix.ValueName);
                 }
                 else
                 {
-                    switch (fix.ValueType)
+                    switch (installedRegFix.ValueType)
                     {
                         case RegistryValueTypeEnum.String:
-                            key.SetValue(installedFix.ValueName, installedFix.OriginalValue);
+                            key.SetValue(installedRegFix.ValueName, installedRegFix.OriginalValue);
                             break;
                         case RegistryValueTypeEnum.Dword:
                         {
-                            var intValue = int.Parse(installedFix.OriginalValue);
-                            key.SetValue(installedFix.ValueName, intValue);
+                            var intValue = int.Parse(installedRegFix.OriginalValue);
+                            key.SetValue(installedRegFix.ValueName, intValue);
                             break;
                         }
                         default:
-                            ThrowHelper.ArgumentException($"Unknown type: {fix.ValueType.GetType()}");
+                            ThrowHelper.ArgumentException($"Unknown type: {installedRegFix.ValueType.GetType()}");
                             break;
                     }
                 }

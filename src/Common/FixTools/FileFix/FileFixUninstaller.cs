@@ -40,8 +40,8 @@ namespace Common.FixTools.FileFix
             int gameId,
             List<string>? dllList)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ||
-                dllList is null)
+            if (dllList is null ||
+                !RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
                 return;
             }
@@ -52,7 +52,7 @@ namespace Common.FixTools.FileFix
 
             var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
 
-            List<int> indexes = [];
+            List<int> indexes = new(dllList.Count);
 
             for (int i = startIndex; i < linesList.Count; i++)
             {
@@ -121,7 +121,7 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            var sortedDirectories = directories.OrderByDescending(x => x.Length);
+            var sortedDirectories = directories.OrderByDescending(static x => x.Length);
 
             //removing empty folders
             foreach (var dir in sortedDirectories)

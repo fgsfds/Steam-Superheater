@@ -118,7 +118,6 @@ namespace Common.Config
 
     [JsonSourceGenerationOptions(
         WriteIndented = true,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Converters = [typeof(JsonStringEnumConverter<ThemeEnum>)]
     )]
     [JsonSerializable(typeof(ConfigEntity))]

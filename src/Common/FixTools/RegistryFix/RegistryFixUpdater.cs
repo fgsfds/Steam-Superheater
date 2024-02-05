@@ -1,6 +1,7 @@
 ﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Helpers;
 
 namespace Common.FixTools.RegistryFix
 {
@@ -14,7 +15,9 @@ namespace Common.FixTools.RegistryFix
 
         public BaseInstalledFixEntity UpdateFix(GameEntity game, RegistryFixEntity regFix)
         {
-            _fixUninstaller.UninstallFix(regFix);
+            regFix.InstalledFix.ThrowIfNull();
+
+            _fixUninstaller.UninstallFix(regFix.InstalledFix);
 
             var result = _fixInstaller.InstallFix(game, regFix);
 

@@ -2,6 +2,7 @@
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -89,10 +90,46 @@ namespace Common.Providers.Cached
 
                 installedFixes.ThrowIfNull();
 
+                var needToSave = FixRegValueType(installedFixes);
+
                 _cache = [.. installedFixes];
+
+                if (needToSave)
+                {
+                    SaveInstalledFixes();
+                }
             }
 
             return _cache;
+        }
+
+        /// <summary>
+        /// Add value type to installed reg fix
+        /// </summary>
+        [Obsolete("Remove in version 1.0")]
+        private bool FixRegValueType(ImmutableList<BaseInstalledFixEntity> installedFixes)
+        {
+            var needToSave = false;
+
+            foreach (var fix in installedFixes)
+            {
+                if (fix is RegistryInstalledFixEntity regFix &&
+                    regFix.ValueType is null)
+                {
+                    if (regFix.Guid == Guid.Parse("6f768f0a-7233-4f64-8cb2-27f6b1edd7c4"))
+                    {
+                        regFix.ValueType = RegistryValueTypeEnum.Dword;
+                    }
+                    else
+                    {
+                        regFix.ValueType = RegistryValueTypeEnum.String;
+                    }
+
+                    needToSave = true;
+                }
+            }
+
+            return needToSave;
         }
 
         /// <summary>
@@ -170,7 +207,8 @@ namespace Common.Providers.Cached
                     Version = int.Parse(version),
                     Key = key,
                     ValueName = value,
-                    OriginalValue = original
+                    OriginalValue = original,
+                    ValueType = RegistryValueTypeEnum.Dword
                 });
             }
 
