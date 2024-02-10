@@ -57,6 +57,11 @@ namespace Common.Providers.Cached
 
             try
             {
+                if (!Directory.Exists(_config.LocalRepoPath))
+                {
+                    Directory.CreateDirectory(_config.LocalRepoPath);
+                }
+
                 await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
 
                 JsonSerializer.Serialize(
@@ -67,6 +72,7 @@ namespace Common.Providers.Cached
             }
             catch (Exception ex)
             {
+                Logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 

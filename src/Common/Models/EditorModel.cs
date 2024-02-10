@@ -182,11 +182,21 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> SaveFixesListAsync()
         {
-            var result = await _fixesProvider.SaveFixesAsync(_fixesList);
+            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList);
 
-            CreateReadme();
+            if (!saveXmlResult.IsSuccess)
+            {
+                return saveXmlResult;
+            }
 
-            return result;
+            var createReadmeResult = CreateReadme();
+
+            if (!createReadmeResult.IsSuccess)
+            {
+                return createReadmeResult;
+            }
+
+            return saveXmlResult;
         }
 
         /// <summary>
@@ -422,7 +432,7 @@ namespace Common.Models
         /// <summary>
         /// Create readme file containing list of fixes
         /// </summary>
-        private void CreateReadme()
+        private Result CreateReadme()
         {
             StringBuilder fixesList = new();
             List<string> noIntroGames = [];
@@ -457,8 +467,18 @@ namespace Common.Models
             StringBuilder result = new($"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**{Environment.NewLine}{Environment.NewLine}");
             result.Append(fixesList);
             result.Append($"{Environment.NewLine}No Intro Fixes for: {string.Join(", ", noIntroGames)}");
-            
-            File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result.ToString());
+
+            try
+            {
+                File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result.ToString());
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                return new(ResultEnum.Error, ex.Message);
+            }
+
+            return new(ResultEnum.Success, "Readme saved successfully");
         }
     }
 }
