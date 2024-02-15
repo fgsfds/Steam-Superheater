@@ -21,9 +21,9 @@ namespace Common.Models
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
         private readonly FixManager _fixManager = fixManager;
 
-        private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
+        private Dictionary<string, FixFirstCombinedEntity> _combinedEntitiesList = [];
 
-        public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
+        public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.Value.HasUpdates);
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
@@ -41,38 +41,38 @@ namespace Common.Models
                 {
                     //remove uninstalled games
                     if (!_config.ShowUninstalledGames &&
-                        !game.IsGameInstalled)
+                        !game.Value.IsGameInstalled)
                     {
-                        games.Remove(game);
+                        games.Remove(game.Key);
                     }
 
-                    foreach (var fix in game.FixesList.Fixes.ToArray())
+                    foreach (var fix in game.Value.FixesList.Fixes.ToArray())
                     {
                         //remove fixes with hidden tags
-                        if (fix.Tags is not null &&
-                            fix.Tags.Count != 0 &&
-                            fix.Tags.All(_config.HiddenTags.Contains))
+                        if (fix.Value.Tags is not null &&
+                            fix.Value.Tags.Count != 0 &&
+                            fix.Value.Tags.All(_config.HiddenTags.Contains))
                         {
-                            game.FixesList.Fixes.Remove(fix);
+                            game.Value.FixesList.Fixes.Remove(fix.Key);
                             continue;
                         }
 
                         //remove fixes for different OSes
                         if (!_config.ShowUnsupportedFixes &&
-                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
+                            !fix.Value.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
                         {
-                            game.FixesList.Fixes.Remove(fix);
+                            game.Value.FixesList.Fixes.Remove(fix.Key);
                         }
                     }
 
                     //remove games with no shown fixes
-                    if (!game.FixesList.Fixes.Exists(static x => !x.IsHidden))
+                    if (!game.Value.FixesList.Fixes.Values.Any(static x => !x.IsHidden))
                     {
-                        games.Remove(game);
+                        games.Remove(game.Key);
                     }
                 }
 
-                _combinedEntitiesList = [.. games];
+                _combinedEntitiesList = games;
 
                 return new(ResultEnum.Success, "Games list updated successfully");
             }
@@ -93,53 +93,67 @@ namespace Common.Models
         /// </summary>
         /// <param name="search">Search string</param>
         /// <param name="tag">Selected tag</param>
-        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
+        public IDictionary<string, FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            List<FixFirstCombinedEntity> result = [.. _combinedEntitiesList];
-
-            foreach (var entity in result.ToArray())
-            {
-                foreach (var fix in entity.FixesList.Fixes)
-                {
-                    fix.IsHidden = false;
-                }
-            }
-
             if (string.IsNullOrEmpty(search) &&
-                string.IsNullOrEmpty(tag))
+                (tag?.Equals(ConstStrings.All) ?? true))
             {
-                return [.. result];
-            }
-
-            if (!string.IsNullOrEmpty(tag))
-            {
-                if (!tag.Equals(ConstStrings.All))
+                foreach (var entity in _combinedEntitiesList)
                 {
-                    foreach (var entity in result.ToArray())
+                    foreach (var fix in entity.Value.FixesList.Fixes)
                     {
-                        foreach (var fix in entity.FixesList.Fixes)
-                        {
-                            if (fix.Tags is null ||
-                                !fix.Tags.Exists(x => x.Equals(tag)))
-                            {
-                                fix.IsHidden = true;
-                            }
-                        }
-
-                        if (!entity.FixesList.Fixes.Exists(static x => !x.IsHidden))
-                        {
-                            result.Remove(entity);
-                        }
+                        fix.Value.IsHidden = false;
                     }
                 }
+
+                return _combinedEntitiesList;
             }
 
-            if (search is null)
+            IDictionary<string, FixFirstCombinedEntity> result = new Dictionary<string, FixFirstCombinedEntity>();
+
+            foreach (var entity in _combinedEntitiesList)
             {
-                return [.. result];
+                if (!string.IsNullOrEmpty(search) &&
+                    !entity.Key.Contains(search, StringComparison.CurrentCultureIgnoreCase))
+                {
+                    continue;
+                }
+
+                var hasFixes = false;
+
+                foreach (var fix in entity.Value.FixesList.Fixes)
+                {
+                    if (tag is null ||
+                        tag.Equals(ConstStrings.All))
+                    {
+                        hasFixes = true;
+                        fix.Value.IsHidden = false;
+                        continue;
+                    }
+
+                    if (fix.Value.Tags is not null &&
+                        !fix.Value.Tags.Exists(x => x.Equals(tag)))
+                    {
+                        fix.Value.IsHidden = true;
+                    }
+                    else if (fix.Value.Tags is null && tag is not null)
+                    {
+                        fix.Value.IsHidden = true;
+                    }
+                    else
+                    {
+                        hasFixes = true;
+                        fix.Value.IsHidden = false;
+                    }
+                }
+
+                if (hasFixes)
+                {
+                    result.Add(entity);
+                }
             }
 
-            return [.. result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
+            return result;
         }
 
         /// <summary>
@@ -169,14 +183,14 @@ namespace Common.Models
 
             foreach (var entity in _combinedEntitiesList)
             {
-                foreach (var fix in entity.FixesList.Fixes)
+                foreach (var fix in entity.Value.FixesList.Fixes)
                 {
-                    if (fix.Tags is null)
+                    if (fix.Value.Tags is null)
                     {
                         continue;
                     }
 
-                    foreach (var tag in fix.Tags)
+                    foreach (var tag in fix.Value.Tags)
                     {
                         if (!_config.HiddenTags.Contains(tag))
                         {
@@ -205,13 +219,13 @@ namespace Common.Models
                 return [];
             }
 
-            var allGameFixes = _combinedEntitiesList.First(x => x.GameName == entity.GameName).FixesList;
+            var allGameFixes = _combinedEntitiesList[entity.GameName].FixesList;
 
             var allGameDeps = fix.Dependencies;
 
-            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Key)).Select(static x => x.Value);
 
-            return deps;
+            return deps.ToList();
         }
 
         /// <summary>

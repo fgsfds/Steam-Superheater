@@ -17,30 +17,30 @@ namespace Common.Providers
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>
-        public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
+        public async Task<Dictionary<string, FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
             var fixesLists = await _fixesProvider.GetListAsync(useCache);
             var sharedFixes = _fixesProvider.GetSharedFixes();
             var games = await _gamesProvider.GetListAsync(useCache);
             var installedFixes = await _installedFixesProvider.GetListAsync(useCache);
 
-            List<FixFirstCombinedEntity> result = new(fixesLists.Count - 1);
+            Dictionary<string, FixFirstCombinedEntity> result = new(fixesLists.Count);
 
             foreach (var fixesList in fixesLists)
             {
-                if (fixesList.GameId == 0)
+                if (fixesList.Key == 0)
                 {
                     continue;
                 }
 
-                foreach (var fix in fixesList.Fixes)
+                foreach (var fix in fixesList.Value.Fixes)
                 {
-                    var installed = installedFixes.FirstOrDefault(x => x.GameId == fixesList.GameId && x.Guid == fix.Guid);
+                    var installed = installedFixes[fix.Key];
 
-                    if (fix is FileFixEntity fileFix &&
+                    if (fix.Value is FileFixEntity fileFix &&
                         fileFix.SharedFixGuid is not null)
                     {
-                        var sharedFix = sharedFixes.First(x => x.Guid == fileFix.SharedFixGuid).Clone();
+                        var sharedFix = ((FileFixEntity)sharedFixes[(Guid)fileFix.SharedFixGuid]).Clone();
 
                         sharedFix.InstallFolder = fileFix.SharedFixInstallFolder;
 
@@ -54,20 +54,22 @@ namespace Common.Providers
 
                     if (installed is not null)
                     {
-                        fix.InstalledFix = installed;
+                        fix.Value.InstalledFix = installed;
                     }
                 }
 
-                var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
+                var game = games[fixesList.Key];
 
-                result.Add(new FixFirstCombinedEntity()
-                { 
-                    FixesList = fixesList,
-                    Game = game
-                });
+                result.Add(
+                    fixesList.Value.GameName,
+                        new FixFirstCombinedEntity()
+                    { 
+                        FixesList = fixesList.Value,
+                        Game = game
+                    });
             }
 
-            result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
+            //result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
 
             return result;
         }

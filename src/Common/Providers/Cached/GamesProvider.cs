@@ -1,13 +1,14 @@
 ﻿using Common.Entities;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 namespace Common.Providers.Cached
 {
-    public sealed class GamesProvider : CachedProviderBase<GameEntity>
+    public sealed class GamesProvider : CachedProviderBase<int, GameEntity>
     {
         /// <inheritdoc/>
-        internal override async Task<ImmutableList<GameEntity>> CreateCacheAsync()
+        internal override async Task<ImmutableDictionary<int, GameEntity>> CreateCacheAsync()
         {
             Logger.Info("Creating games cache list");
 
@@ -19,17 +20,17 @@ namespace Common.Providers.Cached
 
                 foreach (var file in files)
                 {
-                    var games = GetGameEntityFromAcf(file);
+                    var game = GetGameEntityFromAcf(file);
 
-                    if (games is null)
+                    if (game is null)
                     {
                         continue;
                     }
 
-                    result.Add(games);
+                    result.Add(game);
                 }
 
-                var cache = result.OrderBy(static x => x.Name).ToImmutableList();
+                var cache = result.OrderBy(static x => x.Name).ToImmutableDictionary(static x => x.Id, static x => x);
 
                 return cache;
             });

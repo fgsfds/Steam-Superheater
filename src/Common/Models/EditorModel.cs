@@ -64,7 +64,7 @@ namespace Common.Models
             {
                 foreach (var fix in entity.Fixes)
                 {
-                    fix.IsHidden = false;
+                    fix.Value.IsHidden = false;
                 }
             }
 
@@ -82,21 +82,21 @@ namespace Common.Models
                     {
                         foreach (var fix in entity.Fixes)
                         {
-                            if (tag.Equals(ConstStrings.WindowsOnly) && fix.SupportedOSes != OSEnum.Windows)
+                            if (tag.Equals(ConstStrings.WindowsOnly) && fix.Value.SupportedOSes != OSEnum.Windows)
                             {
-                                fix.IsHidden = true;
+                                fix.Value.IsHidden = true;
                             }
-                            else if (tag.Equals(ConstStrings.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
+                            else if (tag.Equals(ConstStrings.LinuxOnly) && fix.Value.SupportedOSes != OSEnum.Linux)
                             {
-                                fix.IsHidden = true;
+                                fix.Value.IsHidden = true;
                             }
-                            else if (tag.Equals(ConstStrings.AllSuppoted) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
+                            else if (tag.Equals(ConstStrings.AllSuppoted) && fix.Value.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
                             {
-                                fix.IsHidden = true;
+                                fix.Value.IsHidden = true;
                             }
                         }
 
-                        if (!entity.Fixes.Exists(static x => !x.IsHidden))
+                        if (!entity.Fixes.Values.Any(static x => !x.IsHidden))
                         {
                             result.Remove(entity);
                         }
@@ -120,7 +120,7 @@ namespace Common.Models
         /// <summary>
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
-        public ImmutableList<FileFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes();
+        public ImmutableList<BaseFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes().Select(static x => x.Value).ToImmutableList();
 
         /// <summary>
         /// Add new game with empty fix
@@ -129,11 +129,13 @@ namespace Common.Models
         /// <returns>New fixes list</returns>
         public FixesList AddNewGame(GameEntity game)
         {
+            BaseFixEntity newFileFix = new FileFixEntity();
+
             FixesList newFix = new()
             {
                 GameId = game.Id,
                 GameName = game.Name,
-                Fixes = [new FileFixEntity()]
+                Fixes = new() { { newFileFix.Guid, newFileFix } }
             };
 
             _fixesList.Add(newFix);
@@ -154,7 +156,7 @@ namespace Common.Models
         {
             FileFixEntity newFix = new();
 
-            game.Fixes.Add(newFix);
+            game.Fixes.Add(newFix.Guid, newFix);
 
             return newFix;
         }
@@ -166,7 +168,7 @@ namespace Common.Models
         /// <param name="fix">Fix entity</param>
         public async void RemoveFix(FixesList game, BaseFixEntity fix)
         {
-            game.Fixes.Remove(fix);
+            game.Fixes.Remove(fix.Guid);
 
             if (game.Fixes.Count == 0)
             {
@@ -215,7 +217,7 @@ namespace Common.Models
 
             var allGameDeps = fixEntity.Dependencies;
 
-            List<BaseFixEntity> deps = [.. fixesList.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            List<BaseFixEntity> deps = fixesList.Fixes.Values.Where(x => allGameDeps.Contains(x.Guid)).ToList();
 
             return [.. deps];
         }
@@ -241,14 +243,14 @@ namespace Common.Models
             foreach (var fix in fixesList.Fixes)
             {
                 if (//don't add itself
-                    fix.Guid != fixEntity.Guid &&
+                    fix.Key != fixEntity.Guid &&
                     //don't add fixes that depend on it
-                    (fix.Dependencies is null || !fix.Dependencies.Contains(fixEntity.Guid)) &&
+                    (fix.Value.Dependencies is null || !fix.Value.Dependencies.Contains(fixEntity.Guid)) &&
                     //don't add fixes that are already dependencies
-                    !fixDependencies.Exists(x => x.Guid == fix.Guid)
+                    !fixDependencies.Exists(x => x.Guid == fix.Key)
                     )
                 {
-                    result.Add(fix);
+                    result.Add(fix.Value);
                 }
             }
 
@@ -281,7 +283,7 @@ namespace Common.Models
             {
                 GameId = fixesList.GameId,
                 GameName = fixesList.GameName,
-                Fixes = [fix]
+                Fixes = new() { { fix.Guid, fix } }
             };
 
             var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
@@ -345,7 +347,7 @@ namespace Common.Models
             foreach (var onlineFix in onlineFixes)
             {
                 //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Exists(x => x.Guid == fix.Guid))
+                if (onlineFix.Value.Fixes[fix.Guid] is not null)
                 {
                     return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
                 }
@@ -375,29 +377,27 @@ namespace Common.Models
         /// <typeparam name="T">New fix type</typeparam>
         /// <param name="fixesList">List of fixes</param>
         /// <param name="fix">Fix to replace</param>
-        public static void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
+        public static void ChangeFixType<T>(Dictionary<Guid, BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
         {
-            var fixIndex = fixesList.IndexOf(fix);
-
             if (typeof(T) == typeof(RegistryFixEntity))
             {
                 RegistryFixEntity newFix = new(fix);
-                fixesList[fixIndex] = newFix;
+                fixesList[fix.Guid] = newFix;
             }
             else if (typeof(T) == typeof(FileFixEntity))
             {
                 FileFixEntity newFix = new(fix);
-                fixesList[fixIndex] = newFix;
+                fixesList[fix.Guid] = newFix;
             }
             else if (typeof(T) == typeof(HostsFixEntity))
             {
                 HostsFixEntity newFix = new(fix);
-                fixesList[fixIndex] = newFix;
+                fixesList[fix.Guid] = newFix;
             }
             else if (typeof(T) == typeof(TextFixEntity))
             {
                 TextFixEntity newFix = new(fix);
-                fixesList[fixIndex] = newFix;
+                fixesList[fix.Guid] = newFix;
             }
             else
             {
@@ -409,7 +409,7 @@ namespace Common.Models
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache)];
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = (await _fixesProvider.GetListAsync(useCache)).Select(static x=> x.Value).ToList();
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
@@ -422,9 +422,9 @@ namespace Common.Models
 
             foreach (var game in installedGames)
             {
-                if (!_fixesList.Exists(x => x.GameId == game.Id))
+                if (!_fixesList.Exists(x => x.GameId == game.Key))
                 {
-                    _availableGamesList.Add(game);
+                    _availableGamesList.Add(game.Value);
                 }
             }
         }
@@ -446,7 +446,7 @@ namespace Common.Models
                     
                 foreach (var fix in game.Fixes)
                 {
-                    if (fix.Name.StartsWith("No Intro"))
+                    if (fix.Value.Name.StartsWith("No Intro"))
                     {
                         noIntroGames.Add(game.GameName);
                         continue;
@@ -459,7 +459,7 @@ namespace Common.Models
                         first = false;
                     }
 
-                    fixesList.Append($"- {fix.Name}{Environment.NewLine}");
+                    fixesList.Append($"- {fix.Value.Name}{Environment.NewLine}");
                     fixesCount++;
                 }
             }

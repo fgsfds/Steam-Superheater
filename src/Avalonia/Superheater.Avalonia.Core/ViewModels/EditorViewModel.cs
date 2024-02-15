@@ -59,13 +59,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes.Where(static x => !x.Value.IsHidden).Select(static x => x.Value)];
 
         public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+        public ImmutableList<BaseFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
 
         public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly, ConstStrings.AllSuppoted];
 
@@ -631,7 +631,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             FillGamesList();
 
             SelectedGame = newGame;
-            SelectedFix = newGame.Fixes.First();
+            SelectedFix = newGame.Fixes.First().Value;
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
 
@@ -644,7 +644,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedGame.ThrowIfNull();
 
-            EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
+            //EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();
@@ -661,7 +661,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedGame.ThrowIfNull();
 
-            EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
+            //EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             MoveFixDownCommand.NotifyCanExecuteChanged();

@@ -52,9 +52,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
+        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter).Select(x => x.Value).ToImmutableList();
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden)];
+        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [ ..SelectedGame.FixesList.Fixes.Where(static x => !x.Value.IsHidden).Select(static x => x.Value)];
 
         public ImmutableList<string> SelectedFixTags => SelectedFix?.Tags is null ? [] : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
 

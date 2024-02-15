@@ -1,4 +1,6 @@
 ﻿using Common.Enums;
+using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes
@@ -21,7 +23,13 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// List of fixes
         /// </summary>
-        public required List<BaseFixEntity> Fixes { get; init; }
+        [JsonPropertyName("Fixes")]
+        private List<BaseFixEntity> Fixess { get; init; }
+
+        /// <summary>
+        /// List of fixes
+        /// </summary>
+        public Dictionary<Guid, BaseFixEntity> Fixes { get; init; }
     }
 
     [JsonSourceGenerationOptions(

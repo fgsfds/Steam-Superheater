@@ -8,10 +8,10 @@ using System.Text.Json;
 
 namespace Common.Providers.Cached
 {
-    public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<FixesList>
+    public sealed class FixesProvider(ConfigProvider config) : CachedProviderBase<int, FixesList>
     {
         private string? _fixesCachedString;
-        private ImmutableList<FileFixEntity> _sharedFixes;
+        private Dictionary<Guid, BaseFixEntity> _sharedFixes;
         private readonly ConfigEntity _config = config.Config;
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace Common.Providers.Cached
         /// </summary>
         /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
-        public async Task<ImmutableList<FixesList>> GetOnlineFixesListAsync()
+        public async Task<ImmutableDictionary<int, FixesList>> GetOnlineFixesListAsync()
         {
             Logger.Info("Requesting online fixes");
 
@@ -27,7 +27,7 @@ namespace Common.Providers.Cached
             {
                 var xmlString = await DownloadFixesXMLAsync();
 
-                return [.. DeserializeCachedString(xmlString)];
+                return DeserializeCachedString(xmlString);
             }
             else
             {
@@ -35,7 +35,7 @@ namespace Common.Providers.Cached
             }
         }
 
-        public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
+        public Dictionary<Guid, BaseFixEntity> GetSharedFixes() => _sharedFixes;
 
         /// <summary>
         /// Save list of fixes to XML
@@ -67,7 +67,7 @@ namespace Common.Providers.Cached
                 JsonSerializer.Serialize(
                     fs,
                     fixesList,
-                    FixesListContext.Default.ListFixesList
+                    FixesListContext.Default.FixesList
                     );
             }
             catch (Exception ex)
@@ -83,7 +83,7 @@ namespace Common.Providers.Cached
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        protected override async Task<ImmutableList<FixesList>> GetCachedListAsync()
+        protected override async Task<ImmutableDictionary<int, FixesList>> GetCachedListAsync()
         {
             Logger.Info("Requesting cached fixes list");
 
@@ -98,14 +98,14 @@ namespace Common.Providers.Cached
 
             _locker.Release();
 
-            return [.. DeserializeCachedString(_fixesCachedString)];
+            return DeserializeCachedString(_fixesCachedString);
         }
 
         private async Task<Result> PrepareFixes(List<FixesList> fixesList)
         {
             foreach (var fix in fixesList.SelectMany(static x => x.Fixes))
             {
-                if (fix is FileFixEntity fileFix)
+                if (fix.Value is FileFixEntity fileFix)
                 {
                     var result = await PrepareFileFixes(fileFix);
 
@@ -115,21 +115,21 @@ namespace Common.Providers.Cached
                     }
                 }
 
-                if (string.IsNullOrWhiteSpace(fix.Description))
+                if (string.IsNullOrWhiteSpace(fix.Value.Description))
                 {
-                    fix.Description = null;
+                    fix.Value.Description = null;
                 }
-                if (string.IsNullOrWhiteSpace(fix.Notes))
+                if (string.IsNullOrWhiteSpace(fix.Value.Notes))
                 {
-                    fix.Notes = null;
+                    fix.Value.Notes = null;
                 }
-                if (fix.Dependencies?.Count == 0)
+                if (fix.Value.Dependencies?.Count == 0)
                 {
-                    fix.Dependencies = null;
+                    fix.Value.Dependencies = null;
                 }
-                if (fix.Tags?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+                if (fix.Value.Tags?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
                 {
-                    fix.Tags = null;
+                    fix.Value.Tags = null;
                 }
             }
 
@@ -309,7 +309,7 @@ namespace Common.Providers.Cached
         /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
-        internal override async Task<ImmutableList<FixesList>> CreateCacheAsync()
+        internal override async Task<ImmutableDictionary<int, FixesList>> CreateCacheAsync()
         {
             Logger.Info("Creating fixes cache");
 
@@ -331,7 +331,7 @@ namespace Common.Providers.Cached
 
             var fixes = DeserializeCachedString(_fixesCachedString);
 
-            _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
+            _sharedFixes = fixes[0].Fixes;
 
             return fixes;
         }
@@ -341,13 +341,13 @@ namespace Common.Providers.Cached
         /// </summary>
         /// <param name="fixes">String to deserialize</param>
         /// <returns>List of fixes</returns>
-        private static ImmutableList<FixesList> DeserializeCachedString(string fixes)
+        private static ImmutableDictionary<int, FixesList> DeserializeCachedString(string fixes)
         {
             var fixesList = JsonSerializer.Deserialize(fixes, FixesListContext.Default.ListFixesList);
 
             fixesList.ThrowIfNull();
 
-            return [.. fixesList];
+            return fixesList.ToImmutableDictionary(static x => x.GameId, static x => x);
         }
 
         /// <summary>
@@ -373,7 +373,7 @@ namespace Common.Providers.Cached
         /// Remove current cache, then create new one and return list of entities
         /// </summary>
         /// <returns>List of entities</returns>
-        protected override Task<ImmutableList<FixesList>> GetNewListAsync()
+        protected override Task<ImmutableDictionary<int, FixesList>> GetNewListAsync()
         {
             Logger.Info($"Requesting new Fixes list");
 

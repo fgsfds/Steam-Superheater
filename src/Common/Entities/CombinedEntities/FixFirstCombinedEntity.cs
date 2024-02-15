@@ -35,12 +35,12 @@ namespace Common.Entities.CombinedEntities
         /// <summary>
         /// Does this game have installed fixes
         /// </summary>
-        public bool HasInstalledFixes => FixesList.Fixes.Exists(static x => x.IsInstalled);
+        public bool HasInstalledFixes => FixesList.Fixes.Values.Any(static x => x.IsInstalled);
 
         /// <summary>
         /// Does this game have newer version of fixes
         /// </summary>
-        public bool HasUpdates => FixesList.Fixes.Exists(static x => x.IsOutdated);
+        public bool HasUpdates => FixesList.Fixes.Values.Any(static x => x.IsOutdated);
 
         public override string ToString() => GameName;
     }
