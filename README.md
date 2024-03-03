@@ -84,7 +84,7 @@ Fixes are checked and verifyed for any malware or unwanted behaviour before bein
 
 ## How to use
 
-Download latest release for you platform from <a href="https://github.com/fgsfds/Steam-Superheater/releases">release page</a>
+Download latest release for your platform from <a href="https://github.com/fgsfds/Steam-Superheater/releases">release page</a>
 
 Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b> 
 
