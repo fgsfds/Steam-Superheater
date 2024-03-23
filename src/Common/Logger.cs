@@ -4,16 +4,19 @@ namespace Common
 {
     public static class Logger
     {
-        static Logger()
-        {
-            File.WriteAllText(LogFile, string.Empty);
-            Info(Environment.OSVersion.ToString());
-            Info(CommonProperties.CurrentVersion.ToString());
-        }
-
+        private static readonly object _lock = new();
+        private static readonly StreamWriter _textWriter;
         private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
 
-        private static readonly object _lock = new();
+        static Logger()
+        {
+            File.Delete(LogFile);
+
+            _textWriter = new(LogFile, true);
+            _textWriter.AutoFlush = true;
+
+            Info(Environment.OSVersion.ToString() + Environment.NewLine + CommonProperties.CurrentVersion.ToString());
+        }
 
         public static void Info(string message) => Log(message, "Info");
 
@@ -30,7 +33,7 @@ namespace Common
             {
                 message = $"[{DateTime.Now:dd.MM.yyyy HH.mm.ss}] [{type}] {message}";
 
-                File.AppendAllText(LogFile, message + Environment.NewLine);
+                _textWriter.WriteLine(message);
             }
         }
 

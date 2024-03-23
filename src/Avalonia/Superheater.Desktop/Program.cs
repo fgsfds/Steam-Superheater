@@ -59,7 +59,7 @@ internal static class Program
     /// </summary>
     private static void Cleanup()
     {
-        Logger.Error("Starting cleanup");
+        Logger.Info("Starting cleanup");
 
         var files = Directory.GetFiles(Directory.GetCurrentDirectory());
 
