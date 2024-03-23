@@ -5,17 +5,23 @@ namespace Common
     public static class Logger
     {
         private static readonly object _lock = new();
-        private static readonly StreamWriter _textWriter;
+        private static readonly List<string> _buffer = [];
+
         private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
 
         static Logger()
         {
-            File.Delete(LogFile);
+            try
+            {
+                File.Delete(LogFile);
 
-            _textWriter = new(LogFile, true);
-            _textWriter.AutoFlush = true;
-
-            Info(Environment.OSVersion.ToString() + Environment.NewLine + CommonProperties.CurrentVersion.ToString());
+                Info(Environment.OSVersion.ToString());
+                Info(CommonProperties.CurrentVersion.ToString());
+            }
+            catch
+            {
+                ThrowHelper.Exception("Error while creating log file");
+            }
         }
 
         public static void Info(string message) => Log(message, "Info");
@@ -32,8 +38,16 @@ namespace Common
             lock (_lock)
             {
                 message = $"[{DateTime.Now:dd.MM.yyyy HH.mm.ss}] [{type}] {message}";
+                _buffer.Add(message);
 
-                _textWriter.WriteLine(message);
+                try
+                {
+                    File.WriteAllLines(LogFile, _buffer);
+                    _buffer.Clear();
+                }
+                catch
+                {
+                }
             }
         }
 
