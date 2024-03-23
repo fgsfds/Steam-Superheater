@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Common;
 using Common.Config;
 using Common.DI;
 using Common.Enums;
@@ -17,6 +18,8 @@ namespace Superheater.Avalonia.Core;
 
 public sealed class App : Application
 {
+    private static readonly Mutex _mutex = new (false, "Superheater");
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -34,72 +37,116 @@ Move it to the folder where you have write access.
 """
 );
             messageBox.Show();
+            return;
         }
-        else
+        if (!_mutex.WaitOne(1000, false))
         {
-            try 
+            var messageBox = new MessageBox($"""
+You can't launch multiple instances of Superheater
+"""
+);
+            messageBox.Show();
+            return;
+        }
+
+        try
+        {
+            var container = BindingsManager.Instance;
+
+            ModelsBindings.Load(container);
+            ViewModelsBindings.Load(container);
+            CommonBindings.Load(container);
+            ProvidersBindings.Load(container);
+
+            var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
+
+            var themeEnum = theme switch
             {
-                var container = BindingsManager.Instance;
+                ThemeEnum.System => ThemeVariant.Default,
+                ThemeEnum.Light => ThemeVariant.Light,
+                ThemeEnum.Dark => ThemeVariant.Dark,
+                _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+            };
 
-                ModelsBindings.Load(container);
-                ViewModelsBindings.Load(container);
-                CommonBindings.Load(container);
-                ProvidersBindings.Load(container);
+            RequestedThemeVariant = themeEnum;
 
-                var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
-
-                var themeEnum = theme switch
-                {
-                    ThemeEnum.System => ThemeVariant.Default,
-                    ThemeEnum.Light => ThemeVariant.Light,
-                    ThemeEnum.Dark => ThemeVariant.Dark,
-                    _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
-                };
-
-                RequestedThemeVariant = themeEnum;
-
-                if (Properties.IsDeveloperMode)
-                {
-                    Common.Logger.Info("Started in developer mode");
-                }
-
-                // Line below is needed to remove Avalonia data validation.
-                // Without this line you will get duplicate validations from both Avalonia and CT
-                BindingPlugins.DataValidators.RemoveAt(0);
-
-                if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-                {
-                    desktop.MainWindow = new MainWindow();
-                }
-                else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-                {
-                    singleViewPlatform.MainView = new MainPage();
-                }
-
-                base.OnFrameworkInitializationCompleted();
+            if (Properties.IsDeveloperMode)
+            {
+                Logger.Info("Started in developer mode");
             }
-            catch (Exception ex)
+
+            Cleanup();
+
+            // Line below is needed to remove Avalonia data validation.
+            // Without this line you will get duplicate validations from both Avalonia and CT
+            BindingPlugins.DataValidators.RemoveAt(0);
+
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                var messageBox = new MessageBox(ex.Message);
-                messageBox.Show();
+                desktop.MainWindow = new MainWindow();
+            }
+            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+            {
+                singleViewPlatform.MainView = new MainPage();
+            }
+
+            base.OnFrameworkInitializationCompleted();
+        }
+        catch (Exception ex)
+        {
+            var messageBox = new MessageBox(ex.Message);
+            messageBox.Show();
+
+            Logger.Error(ex.ToString());
+
+            if (!Properties.IsDeveloperMode)
+            {
+                Logger.UploadLog();
             }
         }
     }
 
-    private bool DoesHaveWriteAccess(string folderPath)
+    /// <summary>
+    /// Check if you can write to the current directory
+    /// </summary>
+    private static bool DoesHaveWriteAccess(string folderPath)
     {
         try
         {
-            using (FileStream fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName())))
-            {
-                fs.Close();
-                File.Delete(fs.Name);
-                return true;
-            }
+            FileStream fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
+            fs.Close();
+            File.Delete(fs.Name);
+
+            return true;
         }
         catch
         {
             return false;
+        }
+    }
+
+    /// <summary>
+    /// Remove update leftovers
+    /// </summary>
+    private static void Cleanup()
+    {
+        Logger.Info("Starting cleanup");
+
+        var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+
+        foreach (var file in files)
+        {
+            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(Consts.UpdateFile))
+            {
+                File.Delete(file);
+            }
+        }
+
+        var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
+
+        if (Directory.Exists(updateDir))
+        {
+            Directory.Delete(updateDir, true);
         }
     }
 }

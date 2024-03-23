@@ -19,29 +19,18 @@ internal static class Program
             Properties.IsDeveloperMode = true;
         }
 
-        var dir = Directory.GetCurrentDirectory();
-
-        if (File.Exists(Path.Combine(dir, Consts.UpdateFile)))
+        if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();
         }
         else
         {
-            Cleanup();
-
             try
             {
                 BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.ToString());
-
-                if (!Properties.IsDeveloperMode)
-                {
-                    Logger.UploadLog();
-                }
-
                 Environment.FailFast(ex.ToString());
             }
         }
@@ -53,29 +42,4 @@ internal static class Program
             .UsePlatformDetect()
             //.WithInterFont()
             .LogToTrace();
-
-    /// <summary>
-    /// Remove update leftovers
-    /// </summary>
-    private static void Cleanup()
-    {
-        Logger.Info("Starting cleanup");
-
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory());
-
-        foreach (var file in files)
-        {
-            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(Consts.UpdateFile))
-            {
-                File.Delete(file);
-            }
-        }
-
-        var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
-
-        if (Directory.Exists(updateDir))
-        {
-            Directory.Delete(updateDir, true);
-        }
-    }
 }
