@@ -2,6 +2,7 @@ using Common.Config;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Superheater.Avalonia.Core.Helpers;
+using Superheater.Avalonia.Core.ViewModels.Popups;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {

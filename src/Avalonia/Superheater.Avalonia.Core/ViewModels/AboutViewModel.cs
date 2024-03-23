@@ -2,6 +2,7 @@ using Common;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 

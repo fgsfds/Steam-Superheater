@@ -5,7 +5,7 @@
              mc:Ignorable="d"
              d:DesignWidth="1000"
              d:DesignHeight="400"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels.Popups"
              x:DataType="vm:PopupStackViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.PopupStack">
 
@@ -13,9 +13,7 @@
           RowDefinitions="*,auto,*">
 
         <Border Grid.ColumnSpan="3"
-                Grid.RowSpan="3"
-                Background="{DynamicResource PopupBackground}"
-                Opacity="50"/>
+                Grid.RowSpan="3"/>
 
         <Border Grid.Column="1" Grid.Row="1"
                 CornerRadius="10"

@@ -5,7 +5,7 @@
              mc:Ignorable="d"
              d:DesignWidth="1000"
              d:DesignHeight="800"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels.Popups"
              x:DataType="vm:PopupEditorViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.PopupEditor">
 
@@ -13,9 +13,7 @@
           RowDefinitions="100,*,100">
 
         <Border Grid.ColumnSpan="3"
-                Grid.RowSpan="3"
-                Background="{DynamicResource PopupBackground}"
-                Opacity="50"/>
+                Grid.RowSpan="3"/>
 
         <Grid Grid.Row="1"
               Grid.Column="1"
@@ -29,13 +27,14 @@
                     BorderBrush="{DynamicResource SystemAccentColor}"
                     BorderThickness="1"
                     Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                    BoxShadow="{DynamicResource Shadow}"></Border>
+                    BoxShadow="{DynamicResource Shadow}"
+                    Effect="drop-shadow(0 0 2 Gray)"></Border>
 
             <TextBlock HorizontalAlignment="Center"
                        Grid.Row="0"
                        Grid.ColumnSpan="2" Grid.Column="0"
                        Margin="30,30,30,0"
-                       Foreground="{DynamicResource SystemAccentColor} "
+                       Foreground="{DynamicResource SystemAccentColor}"
                        FontWeight="Bold"
                        FontSize="25"
                        Text="{Binding TitleText, FallbackValue='Editor'}"/>

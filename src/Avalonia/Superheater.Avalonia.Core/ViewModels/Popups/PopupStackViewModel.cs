@@ -2,19 +2,22 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Superheater.Avalonia.Core.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels.Popups
 {
-    public sealed partial class PopupStackViewModel : ObservableObject
+    public sealed partial class PopupStackViewModel : ObservableObject, IPopup
     {
         private SemaphoreSlim? _semaphore;
         private string _result = ConstStrings.All;
+
+        public event Action<bool>? PopupShownEvent;
+
 
         #region Binding Properties
 
         public IEnumerable<string>? Items { get; set; }
 
         [ObservableProperty]
-        private bool _isPopupStackVisible;
+        private bool _isVisible;
 
         [ObservableProperty]
         private string _titleText = string.Empty;
@@ -31,7 +34,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             IEnumerable<string> itemsList)
         {
             TitleText = title;
-            IsPopupStackVisible = true;
+            IsVisible = true;
             Items = itemsList;
 
             OnPropertyChanged(nameof(Items));
@@ -55,7 +58,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         private void Reset()
         {
-            IsPopupStackVisible = false;
+            IsVisible = false;
 
             _semaphore?.Release();
             _semaphore = null;

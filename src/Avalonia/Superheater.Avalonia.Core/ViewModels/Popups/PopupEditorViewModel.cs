@@ -1,18 +1,20 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Superheater.Avalonia.Core.ViewModels
+namespace Superheater.Avalonia.Core.ViewModels.Popups
 {
-    internal sealed partial class PopupEditorViewModel : ObservableObject
+    internal sealed partial class PopupEditorViewModel : ObservableObject, IPopup
     {
         private string? _result;
         private SemaphoreSlim? _semaphore;
+
+        public event Action<bool>? PopupShownEvent;
 
 
         #region Binding Properties
 
         [ObservableProperty]
-        private bool _isPopupEditorVisible;
+        private bool _isVisible;
 
         [ObservableProperty]
         private string _titleText = string.Empty;
@@ -66,7 +68,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             TitleText = title;
             Text = textString;
-            IsPopupEditorVisible = true;
+            IsVisible = true;
+            PopupShownEvent?.Invoke(true);
 
             _semaphore = new(0);
             await _semaphore.WaitAsync();
@@ -83,7 +86,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             TitleText = title;
             Text = text ?? string.Empty;
-            IsPopupEditorVisible = true;
+
+            IsVisible = true;
+            PopupShownEvent?.Invoke(true);
 
             _semaphore = new(0);
             await _semaphore.WaitAsync();
@@ -96,7 +101,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         private void Reset()
         {
-            IsPopupEditorVisible = false;
+            IsVisible = false;
+            PopupShownEvent?.Invoke(false);
 
             _semaphore?.Release();
             _semaphore = null;

@@ -13,6 +13,7 @@ using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
+using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
 using System.Diagnostics;
 

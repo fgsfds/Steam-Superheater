@@ -6,6 +6,7 @@
         xmlns:controls="clr-namespace:Superheater.Avalonia.Core.UserControls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+        xmlns:vmp="clr-namespace:Superheater.Avalonia.Core.ViewModels.Popups"
         x:DataType="vm:MainWindowViewModel"
         x:Class="Superheater.Avalonia.Core.Windows.MainWindow"
         Icon="/Assets/icon.ico"
@@ -39,7 +40,7 @@
                        IsVisible="{Binding IsDeveloperMode}"
                        Text="{Binding RepositoryMessage}"/>
 
-            <TabControl Grid.Row="1" Margin="5">
+            <TabControl Grid.Row="1" Margin="5" Name="Tabs">
                 <TabItem Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
@@ -60,17 +61,17 @@
             <controls:PopupMessage
                 Grid.Row="0" Grid.RowSpan="2"
                 x:Name="PopupMessage"
-                IsVisible="{Binding ElementName=PopupMessage, Path=((vm:PopupMessageViewModel)DataContext).IsPopupMessageVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding ElementName=PopupMessage, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
 
             <controls:PopupEditor
                 Grid.Row="0" Grid.RowSpan="2"
                 x:Name="PopupEditor"
-                IsVisible="{Binding ElementName=PopupEditor, Path=((vm:PopupEditorViewModel)DataContext).IsPopupEditorVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding ElementName=PopupEditor, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
 
             <controls:PopupStack
                 Grid.Row="0" Grid.RowSpan="2"
                 x:Name="PopupStack"
-                IsVisible="{Binding ElementName=PopupStack, Path=((vm:PopupStackViewModel)DataContext).IsPopupStackVisible, FallbackValue='False'}"/>
+                IsVisible="{Binding ElementName=PopupStack, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
 
         </Grid>
 
