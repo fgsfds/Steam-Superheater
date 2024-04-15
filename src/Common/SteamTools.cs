@@ -45,16 +45,15 @@ namespace Common
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                var path = (string?)Registry
-                .GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
+                var path = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
 
-                if (path is null)
+                if (path is not string strPath)
                 {
                     Logger.Error("Can't find Steam install folder");
                     return null;
                 }
 
-                result = path.Replace('/', Path.DirectorySeparatorChar);
+                result = strPath.Replace('/', Path.DirectorySeparatorChar);
             }
             else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
             {
