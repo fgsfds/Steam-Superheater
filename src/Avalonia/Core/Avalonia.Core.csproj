@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
+    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
   
   <ItemGroup>

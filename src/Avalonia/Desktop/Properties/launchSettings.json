@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Windows": {
+      "commandName": "Project",
+      "commandLineArgs": "-dev"
+    },
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    }
+  }
+}

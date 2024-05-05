@@ -29,6 +29,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Common\Common.csproj" />
-    <ProjectReference Include="..\Superheater.Avalonia.Core\Superheater.Avalonia.Core.csproj" />
+    <ProjectReference Include="..\Core\Avalonia.Core.csproj" />
   </ItemGroup>
 </Project>
