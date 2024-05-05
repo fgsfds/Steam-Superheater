@@ -8,7 +8,7 @@
              x:DataType="vm:NewsViewModel"
              x:Class="Superheater.Avalonia.Core.Pages.NewsPage">
 
-    <Grid RowDefinitions="*,auto,auto" Margin="5">
+    <Grid RowDefinitions="*,auto,auto,auto" Margin="5">
 
         <ScrollViewer Grid.Row="0">
 
@@ -18,14 +18,12 @@
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
 
-
                         <StackPanel Orientation="Vertical">
 
                             <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
                                       HorizontalAlignment="Stretch"
                                       Margin="2"
                                       IsExpanded="{Binding IsNewer}"
-                                      IsVisible="{Binding IsNewer}"
                                       Classes.IsNew="{Binding IsNewer}">
 
                                 <Expander.Styles>
@@ -40,28 +38,26 @@
                                     </Style>
                                 </Expander.Styles>
 
-                                <md:MarkdownScrollViewer Markdown="{Binding Content}">
+                                <Grid RowDefinitions="*">
 
-                                    <md:MarkdownScrollViewer.Styles>
-                                        <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                                    </md:MarkdownScrollViewer.Styles>
+                                    <md:MarkdownScrollViewer Grid.Row="0" Markdown="{Binding Content}">
 
-                                </md:MarkdownScrollViewer>
+                                        <md:MarkdownScrollViewer.Styles>
+                                            <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+                                        </md:MarkdownScrollViewer.Styles>
 
-                            </Expander>
+                                    </md:MarkdownScrollViewer>
 
-                            <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
-                                      HorizontalAlignment="Stretch"
-                                      Margin="2"
-                                      IsVisible="{Binding !IsNewer}">
+                                    <Button Grid.Row="0"
+                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).EditNewsCommand}"
+                                            IsVisible="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).IsDeveloperMode}"
+                                            CommandParameter="{Binding Date}"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                        Edit...
+                                    </Button>
 
-                                <md:MarkdownScrollViewer Markdown="{Binding Content}">
-
-                                    <md:MarkdownScrollViewer.Styles>
-                                        <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                                    </md:MarkdownScrollViewer.Styles>
-
-                                </md:MarkdownScrollViewer>
+                                </Grid>
 
                             </Expander>
 
@@ -87,11 +83,21 @@
         <Button Grid.Row="2"
                 Margin="5"
                 Padding="8"
-                IsVisible="{Binding IsDeveloperMode}"
                 Command="{Binding InitializeCommand}"
+                IsVisible="{Binding IsDeveloperMode}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Update News
+        </Button>
+
+        <Button Grid.Row="3"
+                Margin="5"
+                Padding="8"
+                Command="{Binding AddNewsCommand}"
+                IsVisible="{Binding IsDeveloperMode}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center">
+            Add...
         </Button>
 
     </Grid>

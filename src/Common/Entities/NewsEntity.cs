@@ -12,7 +12,7 @@ namespace Common.Entities
         /// <summary>
         /// News article text
         /// </summary>
-        public required string Content { get; init; }
+        public required string Content { get; set; }
 
         /// <summary>
         /// Is newer than the last read version
