@@ -295,7 +295,7 @@ namespace Common.Providers.Cached
                 {
                     return ThrowHelper.Exception<long>($"Error while getting response for {fix.Url}: {response.StatusCode}");
                 }
-                else if (response.Content.Headers.ContentMD5 is not null)
+                else if (response.Content.Headers.ContentLength is not null)
                 {
                     return response.Content.Headers.ContentLength;
                 }
