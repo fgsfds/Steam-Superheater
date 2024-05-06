@@ -1,4 +1,5 @@
-namespace SuperheaterAPI
+
+namespace Superheater.Web.Server
 {
     public class Program
     {
@@ -13,11 +14,10 @@ namespace SuperheaterAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddSingleton<HttpClient>();
-
-            //builder.Services.AddHostedService<TimedHostedService>();
-
             var app = builder.Build();
+
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -30,7 +30,10 @@ namespace SuperheaterAPI
 
             app.UseAuthorization();
 
+
             app.MapControllers();
+
+            app.MapFallbackToFile("/index.html");
 
             app.Run();
         }

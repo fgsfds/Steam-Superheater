@@ -4,13 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>7dfe347d-ea28-4849-8633-93e1b051c47b</UserSecretsId>
+    <UserSecretsId>4097586b-f780-4bcb-b4de-aa6aa3b981c9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <SpaRoot>..\Site</SpaRoot>
+    <SpaRoot>..\superheater.web.client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
-    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
-    <DockerfileContext>..\..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Site\Web.Site.esproj">
+    <ProjectReference Include="..\superheater.web.client\superheater.web.client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>
