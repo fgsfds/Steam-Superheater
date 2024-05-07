@@ -30,6 +30,8 @@ namespace Common.DI
             container.AddTransient<ArchiveTools>();
 
             container.AddSingleton<ProgressReport>();
+
+            container.AddSingleton<HttpClientInstance>();
         }
     }
 }

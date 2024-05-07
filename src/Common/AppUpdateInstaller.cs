@@ -21,7 +21,7 @@ namespace Common
         {
             Logger.Info("Checking for updates");
 
-            _update = await GitHubReleasesProvider.GetLatestUpdateAsync(currentVersion);
+            //_update = await GitHubReleasesProvider.GetLatestUpdateAsync(currentVersion);
 
             var hasUpdate = _update is not null;
 

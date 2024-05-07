@@ -6,9 +6,13 @@ using System.Text.Json;
 
 namespace Common.Providers
 {
-    public sealed class NewsProvider(ConfigProvider config)
+    public sealed class NewsProvider(
+        ConfigProvider config, 
+        HttpClientInstance httpClient
+        )
     {
         private readonly ConfigEntity _config = config.Config;
+        private readonly HttpClientInstance _httpClient = httpClient;
         private List<NewsEntity> _news;
 
         /// <summary>
@@ -133,15 +137,9 @@ namespace Common.Providers
 
             try
             {
-                using (HttpClient client = new())
-                {
-                    client.Timeout = TimeSpan.FromSeconds(10);
-                    await using var stream = await client.GetStreamAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
-                    using StreamReader file = new(stream);
-                    var newsXml = await file.ReadToEndAsync();
+                var newsXml = await _httpClient.GetStringAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
 
-                    return newsXml;
-                }
+                return newsXml;
             }
             catch (Exception ex)
             {

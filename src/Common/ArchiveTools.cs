@@ -7,9 +7,10 @@ namespace Common
     /// <summary>
     /// Class for working with archives
     /// </summary>
-    public sealed class ArchiveTools (ProgressReport progressReport)
+    public sealed class ArchiveTools (ProgressReport progressReport, HttpClientInstance httpClient)
     {
         private readonly ProgressReport _progressReport = progressReport;
+        private readonly HttpClientInstance _httpClient = httpClient;
 
         /// <summary>
         /// Download ZIP
@@ -36,11 +37,7 @@ namespace Common
 
             _progressReport.OperationMessage = "Downloading...";
 
-            using HttpClient client = new();
-
-            client.Timeout = TimeSpan.FromSeconds(10);
-
-            using var response = await client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
             if (!response.IsSuccessStatusCode)
             {

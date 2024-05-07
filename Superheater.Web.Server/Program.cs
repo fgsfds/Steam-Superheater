@@ -1,3 +1,4 @@
+using Common;
 using Superheater.Web.Server.Providers;
 using Superheater.Web.Server.Tasks;
 
@@ -19,8 +20,11 @@ namespace Superheater.Web.Server
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddHostedService<FixesListUpdateTask>();
+            builder.Services.AddHostedService<AppReleasesTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
+            builder.Services.AddSingleton<AppReleasesProvider>();
+            builder.Services.AddSingleton<HttpClientInstance>();
 
             var app = builder.Build();
 

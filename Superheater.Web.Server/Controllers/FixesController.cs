@@ -13,7 +13,7 @@ namespace Superheater.Web.Server.Controllers
         private readonly FixesProvider _fixesProvider;
 
         public FixesController(
-            ILogger<FixesController> logger, 
+            ILogger<FixesController> logger,
             FixesProvider fixesProvider
             )
         {

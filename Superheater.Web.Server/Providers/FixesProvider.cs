@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes;
+﻿using Common;
+using Common.Entities.Fixes;
 using Superheater.Web.Server.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -7,8 +8,8 @@ namespace Superheater.Web.Server.Providers
 {
     public sealed class FixesProvider
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<FixesList> _logger;
+        private readonly HttpClientInstance _httpClient;
+        private readonly ILogger<FixesProvider> _logger;
         private readonly string _jsonUrl = $"{Properties.FilesBucketUrl}fixes.json";
 
         private DateTime? _fixesListLastModified;
@@ -24,16 +25,16 @@ namespace Superheater.Web.Server.Providers
         public int FixesCount => _fixesCount;
 
 
-        public FixesProvider(ILogger<FixesList> logger)
+        public FixesProvider(ILogger<FixesProvider> logger, HttpClientInstance httpClient)
         {
             _logger = logger;
-            _httpClient = new();
+            _httpClient = httpClient;
         }
 
 
         public async Task CreateFixesList()
         {
-            using var response = await _httpClient.GetAsync(_jsonUrl, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead);
 
             if (response.Content.Headers.LastModified is null)
             {
