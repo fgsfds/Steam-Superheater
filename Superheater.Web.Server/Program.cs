@@ -1,4 +1,3 @@
-
 namespace Superheater.Web.Server
 {
     public class Program
@@ -29,7 +28,6 @@ namespace Superheater.Web.Server
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 

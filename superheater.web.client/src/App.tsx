@@ -11,7 +11,16 @@ function App() {
             <img src="logo.png" width="200"></img>
             <h1 id="tabelLabel">Steam Superheater</h1>
 
-            <div className="horizontal-stack">
+            <div>
+                <a className="big-font" href="https://github.com/fgsfds/Steam-Superheater/releases/latest">
+                    Download from GitHub
+                </a>
+            </div>
+
+            <div>
+
+            <br/>
+            <br/>
 
                 <a href="https://github.com/fgsfds/Steam-Superheater">
                     <img className="with-margin" src="https://cdn-icons-png.flaticon.com/512/25/25231.png" height="100"></img>
