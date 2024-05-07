@@ -2,30 +2,30 @@
 
 namespace Superheater.Web.Server.Tasks
 {
-    public sealed class FixesListUpdateTask : IHostedService, IDisposable
+    public sealed class NewsListUpdateTask : IHostedService, IDisposable
     {
-        private readonly ILogger<FixesListUpdateTask> _logger;
-        private readonly FixesProvider _fixesProvider;
+        private readonly ILogger<NewsListUpdateTask> _logger;
+        private readonly NewsProvider _newsProvider;
 
         private bool _runOnce = false;
         private Timer _timer;
 
-        public FixesListUpdateTask(
-            ILogger<FixesListUpdateTask> logger,
-            FixesProvider fixesProvider
+        public NewsListUpdateTask(
+            ILogger<NewsListUpdateTask> logger,
+            NewsProvider newsProvider
             )
         {
             _logger = logger;
-            _fixesProvider = fixesProvider;
+            _newsProvider = newsProvider;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("FixesListUpdateTask is running");
+            _logger.LogInformation("NewsListUpdateTask is running");
 
             if (!_runOnce)
             {
-                _fixesProvider.CreateFixesList().Wait(stoppingToken);
+                _newsProvider.CreateNewsList().Wait(stoppingToken);
                 _runOnce = true;
             }
 
@@ -41,13 +41,13 @@ namespace Superheater.Web.Server.Tasks
 
         private void DoWork(object? state)
         {
-            _logger.LogInformation("FixesListUpdateTask is working");
-            _ = _fixesProvider.CreateFixesList();
+            _logger.LogInformation("NewsListUpdateTask is working");
+            _ = _newsProvider.CreateNewsList();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("FixesListUpdateTask is stopping");
+            _logger.LogInformation("NewsListUpdateTask is stopping");
             _timer.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;

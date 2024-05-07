@@ -21,9 +21,12 @@ namespace Superheater.Web.Server
 
             builder.Services.AddHostedService<FixesListUpdateTask>();
             builder.Services.AddHostedService<AppReleasesTask>();
+            builder.Services.AddHostedService<NewsListUpdateTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
+            builder.Services.AddSingleton<NewsProvider>();
             builder.Services.AddSingleton<AppReleasesProvider>();
+
             builder.Services.AddSingleton<HttpClientInstance>();
 
             var app = builder.Build();
