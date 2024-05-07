@@ -6,14 +6,25 @@
 }
 
 tr:nth-child(even) {
-    background: #F2F2F2;
+    background: #000;
 }
 
 tr:nth-child(odd) {
-    background: #FFF;
+    background: #000;
 }
 
 th, td {
     padding-left: 1rem;
     padding-right: 1rem;
+}
+
+.horizontal-stack,
+p {
+    display: inline-block;
+    margin: 10px;
+}
+
+.with-margin,
+p {
+    margin: 10px;
 }

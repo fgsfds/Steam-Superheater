@@ -1,56 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './App.css';
 
-interface Forecast {
-    date: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
-}
-
 function App() {
-    const [forecasts, setForecasts] = useState<Forecast[]>();
 
     useEffect(() => {
-        populateWeatherData();
     }, []);
-
-    const contents = forecasts === undefined
-        ? <p><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationreact">https://aka.ms/jspsintegrationreact</a> for more details.</em></p>
-        : <table className="table table-striped" aria-labelledby="tabelLabel">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-                {forecasts.map(forecast =>
-                    <tr key={forecast.date}>
-                        <td>{forecast.date}</td>
-                        <td>{forecast.temperatureC}</td>
-                        <td>{forecast.temperatureF}</td>
-                        <td>{forecast.summary}</td>
-                    </tr>
-                )}
-            </tbody>
-        </table>;
 
     return (
         <div>
-            <h1 id="tabelLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
-            {contents}
+            <img src="logo.png" width="200"></img>
+            <h1 id="tabelLabel">Steam Superheater</h1>
+
+            <div className="horizontal-stack">
+
+                <a href="https://github.com/fgsfds/Steam-Superheater">
+                    <img className="with-margin" src="https://cdn-icons-png.flaticon.com/512/25/25231.png" height="100"></img>
+                </a>
+
+                <a href="https://discord.gg/mWvKyxR4et">
+                    <img className="with-margin" src="https://static.vecteezy.com/system/resources/previews/023/741/066/original/discord-logo-icon-social-media-icon-free-png.png" height="100"></img>
+                </a>
+                
+            </div>
+
         </div>
     );
-
-    async function populateWeatherData() {
-        const response = await fetch('weatherforecast');
-        const data = await response.json();
-        setForecasts(data);
-    }
 }
 
 export default App;
