@@ -1,71 +1,36 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
+using Superheater.Web.Server.Providers;
 using System.Collections.Immutable;
-using System.Text.Json;
 
-namespace SuperheaterAPI.Controllers
+namespace Superheater.Web.Server.Controllers
 {
     [ApiController]
     [Route("api/fixes")]
-    public class FixesController : ControllerBase
+    public sealed class FixesController : ControllerBase
     {
         private readonly ILogger<FixesController> _logger;
-        private readonly HttpClient _httpClient;
-        private readonly string _jsonUrl = "https://github.com/fgsfds/SteamFD-Fixes-Repo/raw/test/fixes.json";
-        private ImmutableList<FixesList>? _fixesList;
+        private readonly FixesProvider _fixesProvider;
 
-        public FixesController(ILogger<FixesController> logger)
+        public FixesController(
+            ILogger<FixesController> logger, 
+            FixesProvider fixesProvider
+            )
         {
             _logger = logger;
-            _httpClient = new();
+            _fixesProvider = fixesProvider;
         }
+
+        [HttpGet]
+        public ImmutableList<FixesList> GetFixesList() => _fixesProvider.FixesList;
 
         [HttpGet("{id:int?}")]
-        public async Task<ImmutableList<FixesList>> Get(int? id)
-        {
-            if (_fixesList is null)
-            {
-                await CreateFixesList();
-            }
-
-            return _fixesList!;
-        }
+        public FixesList? GetFixById(int id) => _fixesProvider.FixesList.FirstOrDefault(x => x.GameId == id);
 
         [HttpGet("gamescount")]
-        public async Task<string> GetGamesCount()
-        {
-            if (_fixesList is null)
-            {
-                await CreateFixesList();
-            }
-
-            return _fixesList!.Count.ToString();
-        }
+        public int GetGamesCount() => _fixesProvider.GamesCount;
 
         [HttpGet("fixescount")]
-        public async Task<string> GetFixesCount()
-        {
-            if (_fixesList is null)
-            {
-                await CreateFixesList();
-            }
-
-            int count = 0;
-
-            foreach (var fix in _fixesList!)
-            {
-                count += fix.Fixes.Count;
-            }
-
-            return count.ToString();
-        }
-
-        private async Task CreateFixesList()
-        {
-            var json = await _httpClient.GetStringAsync(_jsonUrl);
-            var fixesList = JsonSerializer.Deserialize(json, FixesListContext.Default.ListFixesList);
-
-            _fixesList = [.. fixesList];
-        }
+        public int GetFixesCount() => _fixesProvider.FixesCount;
     }
 }

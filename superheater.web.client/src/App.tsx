@@ -10,6 +10,7 @@ function App() {
         <div>
             <img src="logo.png" width="200"></img>
             <h1 id="tabelLabel">Steam Superheater</h1>
+            <h4 id="tabelLabel">Fix old and broken Steam games with a couple of clicks</h4>
 
             <div>
                 <a className="big-font" href="https://github.com/fgsfds/Steam-Superheater/releases/latest">

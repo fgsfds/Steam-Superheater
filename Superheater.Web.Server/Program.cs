@@ -1,6 +1,9 @@
+using Superheater.Web.Server.Providers;
+using Superheater.Web.Server.Tasks;
+
 namespace Superheater.Web.Server
 {
-    public class Program
+    public sealed class Program
     {
         public static void Main(string[] args)
         {
@@ -12,6 +15,10 @@ namespace Superheater.Web.Server
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddHostedService<FixesListUpdateTask>();
+
+            builder.Services.AddSingleton<FixesProvider>();
 
             var app = builder.Build();
 
