@@ -359,10 +359,18 @@ namespace Common.Providers.Cached
         {
             Logger.Info("Downloading fixes xml from online repository");
 
-            var result = await _httpClient.GetAsync(new("https://superheater.fgsfds.link/api/fixes"));
-            var fixesXml = await result.Content.ReadAsStringAsync();
+            try
+            {
+                var result = await _httpClient.GetAsync(new("https://superheater.fgsfds.link/api/fixes"));
+                var fixesJson = await result.Content.ReadAsStringAsync();
 
-            return fixesXml;
+                return fixesJson;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex.Message);
+                throw;
+            }
         }
 
         /// <summary>

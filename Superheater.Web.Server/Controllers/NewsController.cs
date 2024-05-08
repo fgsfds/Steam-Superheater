@@ -22,6 +22,10 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpGet]
-        public ImmutableList<NewsEntity> GetFixesList() => _fixesProvider.NewsList;
+        public ImmutableList<NewsEntity> GetNewsList() => _fixesProvider.NewsList;
+
+        //Expected format 2020-09-22T18:07:13
+        [HttpGet("{date:DateTime?}")]
+        public ImmutableList<NewsEntity>? GetNewsByDate(DateTime date) => [.. _fixesProvider.NewsList.Where(x => x.Date > date)];
     }
 }

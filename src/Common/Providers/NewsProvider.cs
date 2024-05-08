@@ -137,9 +137,9 @@ namespace Common.Providers
 
             try
             {
-                var newsXml = await _httpClient.GetStringAsync(CommonProperties.CurrentFixesRepo + Consts.NewsFile);
+                var newsJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/news");
 
-                return newsXml;
+                return newsJson;
             }
             catch (Exception ex)
             {

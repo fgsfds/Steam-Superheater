@@ -1,14 +1,18 @@
 ﻿using Common.Entities;
 using Common.Helpers;
 using System.IO.Compression;
-using Common.Providers;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace Common
 {
-    public sealed class AppUpdateInstaller(ArchiveTools archiveTools)
+    public sealed class AppUpdateInstaller(
+        ArchiveTools archiveTools,
+        HttpClientInstance httpClient
+        )
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
+        private readonly HttpClientInstance _httpClient = httpClient;
 
         private AppUpdateEntity? _update;
 
@@ -16,27 +20,45 @@ namespace Common
         /// Check GitHub for releases with version higher than current
         /// </summary>
         /// <param name="currentVersion">Current SFD version</param>
-        /// <returns></returns>
+        /// <returns>Has newer version</returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
             Logger.Info("Checking for updates");
 
-            //_update = await GitHubReleasesProvider.GetLatestUpdateAsync(currentVersion);
+            string osName;
 
-            var hasUpdate = _update is not null;
-
-            if (hasUpdate)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
             {
-                Logger.Info($"Found new version {_update!.Version}");
+                osName = OSPlatform.Windows.ToString().ToLower();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                osName = OSPlatform.Linux.ToString().ToLower();
+            }
+            else
+            {
+                return false;
             }
 
-            return hasUpdate;
+            var releaseJson = await _httpClient.GetStringAsync($"https://superheater.fgsfds.link/api/release/{osName}");
+
+            var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
+
+            if (release is not null && release.Version > currentVersion)
+            {
+                Logger.Info($"Found new version {release.Version}");
+
+                _update = release;
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
         /// Download latest release from Github and create update lock file
         /// </summary>
-        /// <returns></returns>
         public async Task DownloadAndUnpackLatestRelease()
         {
             Logger.Info($"Downloading app update version {_update!.Version}");
