@@ -16,16 +16,7 @@
         /// Send a GET request to the specified Uri and return the response body as a string
         /// </summary>
         /// <param name="url">Uri</param>
-        public async Task<string> GetStringAsync(string url)
-        {
-            await _semaphore.WaitAsync();
-
-            var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-
-            _semaphore.Release();
-
-            return result;
-        }
+        public async Task<string> GetStringAsync(string url) => await GetStringAsync(new Uri(url)).ConfigureAwait(false);
 
         /// <summary>
         /// Send a GET request to the specified Uri and return the response body as a string
@@ -33,43 +24,45 @@
         /// <param name="url">Uri</param>
         public async Task<string> GetStringAsync(Uri url)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
-            var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            try
+            {
+                var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
 
-            _semaphore.Release();
-
-            return result;
         }
 
         /// <summary>
         /// Send a GET request to the specified Uri and return the response body as a string
         /// </summary>
         /// <param name="url">Uri</param>
-        public async Task<HttpResponseMessage> GetAsync(Uri url)
+        public async Task<HttpResponseMessage> GetAsync(Uri url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
         {
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
-            var result = await _httpClient.GetAsync(url).ConfigureAwait(false);
-
-            _semaphore.Release();
-
-            return result;
-        }
-
-        /// <summary>
-        /// Send a GET request to the specified Uri and return the response body as a string
-        /// </summary>
-        /// <param name="url">Uri</param>
-        public async Task<HttpResponseMessage> GetAsync(Uri url, HttpCompletionOption option)
-        {
-            await _semaphore.WaitAsync();
-
-            var result = await _httpClient.GetAsync(url, option).ConfigureAwait(false);
-
-            _semaphore.Release();
-
-            return result;
+            try
+            {
+                var result = await _httpClient.GetAsync(url, option).ConfigureAwait(false);
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
         }
 
         public void Dispose()

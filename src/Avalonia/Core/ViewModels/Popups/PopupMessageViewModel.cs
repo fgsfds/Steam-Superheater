@@ -75,7 +75,7 @@ namespace Superheater.Avalonia.Core.ViewModels.Popups
             PopupShownEvent?.Invoke(true);
 
             _semaphore = new(0);
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(true);
 
             return _result;
         }

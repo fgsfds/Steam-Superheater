@@ -43,19 +43,19 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            var installedSharedFix = await InstallSharedFixAsync(game, fix, variant, skipMD5Check);
+            var installedSharedFix = await InstallSharedFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
-            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath);
+            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath).ConfigureAwait(false);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
             BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
 
-            await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
+            await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath).ConfigureAwait(false);
 
-            var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides);
+            var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides).ConfigureAwait(false);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -82,7 +82,7 @@ namespace Common.FixTools.FileFix
 
             fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
 
-            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
+            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check).ConfigureAwait(false);
 
             return installedSharedFix;
         }
@@ -102,13 +102,13 @@ namespace Common.FixTools.FileFix
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
 
-            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5);
+            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5).ConfigureAwait(false);
 
             var filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
 
             BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
-            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant);
+            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant).ConfigureAwait(false);
             return filesInArchive;
         }
 
@@ -130,7 +130,7 @@ namespace Common.FixTools.FileFix
 
             string userRegFile = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
-            var userRegLines = (await File.ReadAllLinesAsync(userRegFile)).ToList();
+            var userRegLines = (await File.ReadAllLinesAsync(userRegFile).ConfigureAwait(false)).ToList();
 
             var startIndex = userRegLines.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
 
@@ -144,7 +144,7 @@ namespace Common.FixTools.FileFix
             }
 
             userRegLines.InsertRange(startIndex + 1, addedLines);
-            await File.WriteAllLinesAsync(userRegFile, userRegLines);
+            await File.WriteAllLinesAsync(userRegFile, userRegLines).ConfigureAwait(false);
 
             return addedLines;
         }
@@ -298,7 +298,7 @@ namespace Common.FixTools.FileFix
             string unpackToPath,
             string? variant)
         {
-            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant);
+            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant).ConfigureAwait(false);
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalRepo)
@@ -371,7 +371,7 @@ namespace Common.FixTools.FileFix
                         originalFile,
                         new BinaryDeltaReader(patchFile, reporter),
                         newFile);
-                });
+                }).ConfigureAwait(false);
             }
 
             _progressReport.OperationMessage = string.Empty;

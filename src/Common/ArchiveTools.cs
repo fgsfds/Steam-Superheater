@@ -37,7 +37,7 @@ namespace Common
 
             _progressReport.OperationMessage = "Downloading...";
 
-            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -53,16 +53,16 @@ namespace Common
                 }
             }
 
-            await using var source = await response.Content.ReadAsStreamAsync();
+            await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             var contentLength = response.Content.Headers.ContentLength;
 
             FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
             if (!contentLength.HasValue)
             {
-                await source.CopyToAsync(file);
+                await source.CopyToAsync(file).ConfigureAwait(false);
 
-                await file.DisposeAsync();
+                await file.DisposeAsync().ConfigureAwait(false);
             }
             else
             {
@@ -70,16 +70,16 @@ namespace Common
                 var totalBytesRead = 0f;
                 int bytesRead;
 
-                while ((bytesRead = await source.ReadAsync(buffer)) != 0)
+                while ((bytesRead = await source.ReadAsync(buffer).ConfigureAwait(false)) != 0)
                 {
-                    await file.WriteAsync(buffer.AsMemory(0, bytesRead));
+                    await file.WriteAsync(buffer.AsMemory(0, bytesRead)).ConfigureAwait(false);
                     totalBytesRead += bytesRead;
 
                     var value = (totalBytesRead / (long)contentLength * 100);
                     progress.Report(value);
                 }
 
-                await file.DisposeAsync();
+                await file.DisposeAsync().ConfigureAwait(false);
 
                 File.Move(tempFile, filePath);
             }
@@ -89,18 +89,18 @@ namespace Common
                 using var md5 = MD5.Create();
                 var stream = File.OpenRead(filePath);
 
-                var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
+                var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
 
                 if (!hash.Equals(fileHash))
                 {
-                    await stream.DisposeAsync();
+                    await stream.DisposeAsync().ConfigureAwait(false);
 
                     File.Delete(filePath);
 
                     ThrowHelper.HashCheckFailedException("File hash doesn't match");
                 }
                 
-                await stream.DisposeAsync();
+                await stream.DisposeAsync().ConfigureAwait(false);
             }
 
             _progressReport.OperationMessage = string.Empty;
@@ -168,8 +168,7 @@ namespace Common
 
                     entryNumber++;
                 }
-            }
-            );
+            }).ConfigureAwait(false);
 
             _progressReport.OperationMessage = string.Empty;
         }

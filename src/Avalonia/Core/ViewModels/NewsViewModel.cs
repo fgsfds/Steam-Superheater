@@ -50,7 +50,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
         private async Task MarkAllAsReadAsync()
         {
-            var result = await _newsModel.MarkAllAsReadAsync();
+            var result = await _newsModel.MarkAllAsReadAsync().ConfigureAwait(true);
 
             if (!result.IsSuccess)
             {
@@ -74,9 +74,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task AddNews()
         {
-            var newContent = await _popupEditor.ShowAndGetResultAsync("Add news entry", string.Empty);
+            var newContent = await _popupEditor.ShowAndGetResultAsync("Add news entry", string.Empty).ConfigureAwait(true);
 
-            var result = await _newsModel.AddNewsAsync(newContent!);
+            if (newContent is null)
+            {
+                return;
+            }
+
+            var result = await _newsModel.AddNewsAsync(newContent).ConfigureAwait(true);
 
             if (!result.IsSuccess)
             {
@@ -105,14 +110,14 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            var newContent = await _popupEditor.ShowAndGetResultAsync("Edit news entry", news.Content);
+            var newContent = await _popupEditor.ShowAndGetResultAsync("Edit news entry", news.Content).ConfigureAwait(true);
 
             if (newContent is null)
             {
                 return;
             }
 
-            var result = await _newsModel.ChangeNewsContentAsync(date, newContent!);
+            var result = await _newsModel.ChangeNewsContentAsync(date, newContent!).ConfigureAwait(true);
 
             if (!result.IsSuccess)
             {
@@ -135,9 +140,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         private async Task UpdateAsync()
         {
-            await _locker.WaitAsync();
+            await _locker.WaitAsync().ConfigureAwait(true);
 
-            var result = await _newsModel.UpdateNewsListAsync();
+            var result = await _newsModel.UpdateNewsListAsync().ConfigureAwait(true);
 
             if (!result.IsSuccess)
             {

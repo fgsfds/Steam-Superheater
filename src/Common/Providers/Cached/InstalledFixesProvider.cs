@@ -82,7 +82,7 @@ namespace Common.Providers.Cached
             }
             else
             {
-                var text = await File.ReadAllTextAsync(Consts.InstalledFile);
+                var text = await File.ReadAllTextAsync(Consts.InstalledFile).ConfigureAwait(false);
 
                 text.ThrowIfNull();
 

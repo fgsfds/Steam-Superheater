@@ -35,8 +35,8 @@ namespace Common.Models
         {
             try
             {
-                await GetListOfFixesAsync(useCache);
-                await UpdateListOfAvailableGamesAsync(useCache);
+                await GetListOfFixesAsync(useCache).ConfigureAwait(false);
+                await UpdateListOfAvailableGamesAsync(useCache).ConfigureAwait(false);
 
                 return new(ResultEnum.Success, string.Empty);
             }
@@ -172,7 +172,7 @@ namespace Common.Models
             {
                 _fixesList.Remove(game);
 
-                await UpdateListOfAvailableGamesAsync(true);
+                await UpdateListOfAvailableGamesAsync(true).ConfigureAwait(false);
             }
         }
 
@@ -182,7 +182,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> SaveFixesListAsync()
         {
-            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList);
+            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList).ConfigureAwait(false);
 
             if (!saveXmlResult.IsSuccess)
             {
@@ -340,7 +340,7 @@ namespace Common.Models
                 }
             }
 
-            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
+            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync().ConfigureAwait(false);
 
             foreach (var onlineFix in onlineFixes)
             {
@@ -409,14 +409,14 @@ namespace Common.Models
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache)];
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache).ConfigureAwait(false)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
-            var installedGames = await _gamesProvider.GetListAsync(useCache);
+            var installedGames = await _gamesProvider.GetListAsync(useCache).ConfigureAwait(false);
 
             _availableGamesList = new(installedGames.Count);
 

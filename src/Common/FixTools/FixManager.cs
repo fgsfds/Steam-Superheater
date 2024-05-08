@@ -58,7 +58,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
-                        installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check);
+                        installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check).ConfigureAwait(false);
                         break;
                     case RegistryFixEntity registryFix:
                         installedFix = _registryFixInstaller.InstallFix(game, registryFix);
@@ -181,7 +181,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
-                        installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check);
+                        installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check).ConfigureAwait(false);
                         break;
                     case RegistryFixEntity registryFix:
                         installedFix = _registryFixUpdater.UpdateFix(game, registryFix);

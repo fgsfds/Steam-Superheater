@@ -561,7 +561,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task SaveChangesAsync()
         {
-            var result = await _editorModel.SaveFixesListAsync();
+            var result = await _editorModel.SaveFixesListAsync().ConfigureAwait(true);
 
             OnPropertyChanged(nameof(SelectedFixMD5));
             OnPropertyChanged(nameof(SelectedFixSize));
@@ -680,7 +680,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedFix.ThrowIfNull();
 
-            var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix);
+            var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix).ConfigureAwait(true);
 
             if (!canUpload.IsSuccess)
             {
@@ -725,7 +725,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 Title = "Choose fix file",
                 AllowMultiple = false,
                 FileTypeFilter = new List<FilePickerFileType>() { zipType }
-            });
+            }).ConfigureAwait(true);
 
             if (files.Count == 0)
             {
@@ -746,7 +746,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags);
+            var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -765,7 +765,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete);
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -784,7 +784,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup);
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -803,7 +803,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch);
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -822,7 +822,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.WineDllOverrides);
+            var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.WineDllOverrides).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -841,7 +841,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants);
+            var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -860,7 +860,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<HostsFixEntity>(out var hostsFix);
 
-            var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", hostsFix.Entries);
+            var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", hostsFix.Entries).ConfigureAwait(true);
 
             if (result is not null)
             {
@@ -894,7 +894,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task ShowFiltersPopup()
         {
-            var selectedFilter = await _popupStack.ShowAndGetResultAsync("Filter", TagsComboboxList);
+            var selectedFilter = await _popupStack.ShowAndGetResultAsync("Filter", TagsComboboxList).ConfigureAwait(true);
 
             SelectedTagFilter = selectedFilter;
 
@@ -927,10 +927,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
-            await _locker.WaitAsync();
+            await _locker.WaitAsync().ConfigureAwait(true);
             IsInProgress = true;
 
-            var result = await _editorModel.UpdateListsAsync(useCache);
+            var result = await _editorModel.UpdateListsAsync(useCache).ConfigureAwait(true);
 
             FillGamesList();
 
@@ -978,7 +978,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await UpdateAsync(false);
+                await UpdateAsync(false).ConfigureAwait(true);
             }
         }
     }

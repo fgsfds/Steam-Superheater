@@ -29,13 +29,13 @@ namespace Common.Providers.Cached
 
             if (_config.UseLocalRepo)
             {
-                var xmlString = await DownloadFixesXMLAsync();
+                var xmlString = await DownloadFixesXMLAsync().ConfigureAwait(false);
 
                 return [.. DeserializeCachedString(xmlString)];
             }
             else
             {
-                return await GetCachedListAsync();
+                return await GetCachedListAsync().ConfigureAwait(false);
             }
         }
 
@@ -50,7 +50,7 @@ namespace Common.Providers.Cached
         {
             Logger.Info("Saving fixes list");
 
-            var fileFixResult = await PrepareFixes(fixesList);
+            var fileFixResult = await PrepareFixes(fixesList).ConfigureAwait(false);
 
             if (fileFixResult != ResultEnum.Success)
             {
@@ -91,13 +91,13 @@ namespace Common.Providers.Cached
         {
             Logger.Info("Requesting cached fixes list");
 
-            await _locker.WaitAsync();
+            await _locker.WaitAsync().ConfigureAwait(false);
 
             if (_fixesCachedString is null)
             {
                 _locker.Release();
 
-                return await CreateCacheAsync();
+                return await CreateCacheAsync().ConfigureAwait(false);
             }
 
             _locker.Release();
@@ -111,7 +111,7 @@ namespace Common.Providers.Cached
             {
                 if (fix is FileFixEntity fileFix)
                 {
-                    var result = await PrepareFileFixes(fileFix);
+                    var result = await PrepareFileFixes(fileFix).ConfigureAwait(false);
 
                     if (!result.IsSuccess)
                     {
@@ -153,7 +153,7 @@ namespace Common.Providers.Cached
                 {
                     try
                     {
-                        fileFix.MD5 = await GetMD5(fileFix);
+                        fileFix.MD5 = await GetMD5(fileFix).ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {
@@ -164,7 +164,7 @@ namespace Common.Providers.Cached
 
                 if (fileFix.FileSize is null)
                 {
-                    fileFix.FileSize = await GetFileSize(fileFix);
+                    fileFix.FileSize = await GetFileSize(fileFix).ConfigureAwait(false);
                 }
             }
 
@@ -221,13 +221,13 @@ namespace Common.Providers.Cached
                 {
                     await using (var stream = File.OpenRead(pathToFile))
                     {
-                        return Convert.ToHexString(await md5.ComputeHashAsync(stream));
+                        return Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
                     }
                 }
             }
             else
             {
-                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead);
+                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -246,9 +246,9 @@ namespace Common.Providers.Cached
 
                     await using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
                     {
-                        await using var source = await response.Content.ReadAsStreamAsync();
+                        await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                        await source.CopyToAsync(file);
+                        await source.CopyToAsync(file).ConfigureAwait(false);
                     }
 
                     response.Dispose();
@@ -259,7 +259,7 @@ namespace Common.Providers.Cached
                     {
                         await using var stream = File.OpenRead(pathToFile);
 
-                        hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
+                        hash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
                     }
 
                     File.Delete(pathToFile);
@@ -290,7 +290,7 @@ namespace Common.Providers.Cached
             }
             else
             {
-                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead);
+                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -327,7 +327,7 @@ namespace Common.Providers.Cached
             }
             else
             {
-                _fixesCachedString = await DownloadFixesXMLAsync();
+                _fixesCachedString = await DownloadFixesXMLAsync().ConfigureAwait(false);
             }
 
             var fixes = DeserializeCachedString(_fixesCachedString);
@@ -361,8 +361,7 @@ namespace Common.Providers.Cached
 
             try
             {
-                var result = await _httpClient.GetAsync(new("https://superheater.fgsfds.link/api/fixes"));
-                var fixesJson = await result.Content.ReadAsStringAsync();
+                var fixesJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/fixes").ConfigureAwait(false);
 
                 return fixesJson;
             }

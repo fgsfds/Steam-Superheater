@@ -35,7 +35,7 @@ namespace Common.Models
         {
             try
             {
-                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache).ConfigureAwait(false);
 
                 foreach (var game in games.ToArray())
                 {
@@ -260,7 +260,7 @@ namespace Common.Models
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
+            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
         /// <summary>
         /// Uninstall fix
@@ -280,7 +280,7 @@ namespace Common.Models
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
+            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
         public void HideTag(string tag)
         {

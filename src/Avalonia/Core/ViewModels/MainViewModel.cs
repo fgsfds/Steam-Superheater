@@ -228,7 +228,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
         private async Task UpdateGamesAsync()
         {
-            await UpdateAsync(false);
+            await UpdateAsync(false).ConfigureAwait(true);
 
             InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
@@ -438,7 +438,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task ShowFiltersPopup()
         {
-            var selectedTag = await _popupStack.ShowAndGetResultAsync("Tags", TagsComboboxList);
+            var selectedTag = await _popupStack.ShowAndGetResultAsync("Tags", TagsComboboxList).ConfigureAwait(true);
 
             SelectedTagFilter = selectedTag;
 
@@ -452,7 +452,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task ShowVariantsPopup()
         {
-            var selectedTag = await _popupStack.ShowAndGetResultAsync("Variants", SelectedFixVariants);
+            var selectedTag = await _popupStack.ShowAndGetResultAsync("Variants", SelectedFixVariants).ConfigureAwait(true);
 
             SelectedFixVariant = selectedTag;
 
@@ -487,11 +487,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (isUpdate)
             {
-                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false).ConfigureAwait(true);
             }
             else
             {
-                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false);
+                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false).ConfigureAwait(true);
             }
 
             if (result == ResultEnum.MD5Error)
@@ -502,11 +502,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 Do you still want to install the fix?",
                     PopupMessageType.YesNo
-                    );
+                    ).ConfigureAwait(true);
 
                 if (popupResult)
                 {
-                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true);
+                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true).ConfigureAwait(true);
                 }
             }
 
@@ -562,11 +562,11 @@ Do you still want to install the fix?",
         /// <param name="useCache">Use cached list</param>
         private async Task UpdateAsync(bool useCache)
         {
-            await _locker.WaitAsync();
+            await _locker.WaitAsync().ConfigureAwait(true);
             IsInProgress = true;
             ProgressBarText = "Updating...";
 
-            var result = await _mainModel.UpdateGamesListAsync(useCache);
+            var result = await _mainModel.UpdateGamesListAsync(useCache).ConfigureAwait(true);
 
             FillGamesList();
 
@@ -646,16 +646,16 @@ Do you still want to install the fix?",
             }
             else
             {
-                var config = await File.ReadAllTextAsync(pathToConfig);
+                var config = await File.ReadAllTextAsync(pathToConfig).ConfigureAwait(true);
 
-                var result = await _popupEditor.ShowAndGetResultAsync("Config", config);
+                var result = await _popupEditor.ShowAndGetResultAsync("Config", config).ConfigureAwait(true);
 
                 if (result is null)
                 {
                     return;
                 }
 
-                await File.WriteAllTextAsync(pathToConfig, result);
+                await File.WriteAllTextAsync(pathToConfig, result).ConfigureAwait(true);
             }
         }
 
@@ -718,13 +718,13 @@ Do you still want to install the fix?",
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
-                await UpdateAsync(true);
+                await UpdateAsync(true).ConfigureAwait(true);
             }
 
             if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
                 parameterName.Equals(nameof(_config.HiddenTags)))
             {
-                await UpdateAsync(true);
+                await UpdateAsync(true).ConfigureAwait(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
@@ -733,7 +733,7 @@ Do you still want to install the fix?",
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await UpdateAsync(false);
+                await UpdateAsync(false).ConfigureAwait(true);
             }
         }
     }

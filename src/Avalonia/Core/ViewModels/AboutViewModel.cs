@@ -59,7 +59,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             try
             {
                 CheckForUpdatesButtonText = "Checking...";
-                updates = await _updateInstaller.CheckForUpdates(CurrentVersion);
+                updates = await _updateInstaller.CheckForUpdates(CurrentVersion).ConfigureAwait(true);
             }
             catch (Exception ex)
             {
@@ -101,7 +101,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             IsInProgress = true;
 
-            await _updateInstaller.DownloadAndUnpackLatestRelease();
+            await _updateInstaller.DownloadAndUnpackLatestRelease().ConfigureAwait(true);
 
             AppUpdateInstaller.InstallUpdate();
         }

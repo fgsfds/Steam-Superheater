@@ -18,13 +18,12 @@ namespace Common.Providers
         /// <summary>
         /// Get list of news
         /// </summary>
-        /// <returns></returns>
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
             Logger.Info("Requesting news");
 
-            await CreateNewsListAsync();
+            await CreateNewsListAsync().ConfigureAwait(false);
 
             return [.. _news];
         }
@@ -34,7 +33,7 @@ namespace Common.Providers
         /// </summary>
         /// <param name="date">Date of the news</param>
         /// <param name="content">Content</param>
-        public async Task<Result> ChangeNewsContentAsync(DateTime date, string content)
+        public Result ChangeNewsContent(DateTime date, string content)
         {
             var news = _news.FirstOrDefault(s => s.Date == date);
 
@@ -44,7 +43,7 @@ namespace Common.Providers
             }
 
             news.Content = content;
-            var result = await SaveNewsJsonAsync();
+            var result = SaveNewsJson();
 
             return result;
         }
@@ -53,13 +52,13 @@ namespace Common.Providers
         /// Add news
         /// </summary>
         /// <param name="content">News content</param>
-        public async Task<Result> AddNewsAsync(string content)
+        public Result AddNews(string content)
         {
             _news.Add(new() { Date = DateTime.Now, Content = content });
 
             _news = [.. _news.OrderByDescending(x => x.Date)];
 
-            var result = await SaveNewsJsonAsync();
+            var result = SaveNewsJson();
 
             return result;
         }
@@ -67,7 +66,7 @@ namespace Common.Providers
         /// <summary>
         /// Save news.json
         /// </summary>
-        private async Task<Result> SaveNewsJsonAsync()
+        private Result SaveNewsJson()
         {
             try
             {
@@ -106,11 +105,11 @@ namespace Common.Providers
                     ThrowHelper.FileNotFoundException(file);
                 }
 
-                news = await File.ReadAllTextAsync(file);
+                news = await File.ReadAllTextAsync(file).ConfigureAwait(false);
             }
             else
             {
-                news = await DownloadNewsXMLAsync();
+                news = await DownloadNewsXMLAsync().ConfigureAwait(false);
             }
 
             var list = JsonSerializer.Deserialize(
@@ -137,7 +136,7 @@ namespace Common.Providers
 
             try
             {
-                var newsJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/news");
+                var newsJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/news").ConfigureAwait(false);
 
                 return newsJson;
             }

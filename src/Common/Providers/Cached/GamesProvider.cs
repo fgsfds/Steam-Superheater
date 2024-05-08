@@ -32,7 +32,7 @@ namespace Common.Providers.Cached
                 var cache = result.OrderBy(static x => x.Name).ToImmutableList();
 
                 return cache;
-            });
+            }).ConfigureAwait(false);
 
             Logger.Info($"Added {_cache.Count} games to the cache");
 

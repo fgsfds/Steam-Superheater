@@ -40,7 +40,7 @@ namespace Common
                 return false;
             }
 
-            var releaseJson = await _httpClient.GetStringAsync($"https://superheater.fgsfds.link/api/release/{osName}");
+            var releaseJson = await _httpClient.GetStringAsync($"https://superheater.fgsfds.link/api/release/{osName}").ConfigureAwait(false);
 
             var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
 
@@ -72,13 +72,13 @@ namespace Common
                 File.Delete(fileName);
             }
 
-            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName);
+            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName).ConfigureAwait(false);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 
             File.Delete(fileName);
 
-            await File.Create(Consts.UpdateFile).DisposeAsync();
+            await File.Create(Consts.UpdateFile).DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>

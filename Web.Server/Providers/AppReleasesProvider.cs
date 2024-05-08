@@ -26,7 +26,7 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         public async Task GetLatestVersionAsync()
         {
-            var releasesJson = await _httpClient.GetStringAsync(Consts.GitHubReleases);
+            var releasesJson = await _httpClient.GetStringAsync(Consts.GitHubReleases).ConfigureAwait(false);
 
             _logger.LogInformation("Requesting newer releases from GitHub");
 

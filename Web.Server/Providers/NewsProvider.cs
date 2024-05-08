@@ -27,7 +27,7 @@ namespace Superheater.Web.Server.Providers
 
         public async Task CreateNewsList()
         {
-            using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead);
+            using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
             if (response.Content.Headers.LastModified is null)
             {
@@ -41,7 +41,7 @@ namespace Superheater.Web.Server.Providers
                 return;
             }
 
-            var json = await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newsList = JsonSerializer.Deserialize(json, NewsEntityContext.Default.ListNewsEntity);
 

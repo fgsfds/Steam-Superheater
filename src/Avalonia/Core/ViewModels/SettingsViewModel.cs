@@ -192,7 +192,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 Title = "Choose local repo folder",
                 AllowMultiple = false
-            });
+            }).ConfigureAwait(true);
 
             if (files.Count == 0)
             {

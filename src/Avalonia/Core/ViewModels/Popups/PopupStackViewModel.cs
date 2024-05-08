@@ -40,7 +40,7 @@ namespace Superheater.Avalonia.Core.ViewModels.Popups
             OnPropertyChanged(nameof(Items));
 
             _semaphore = new(0);
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync().ConfigureAwait(true);
 
             return _result;
         }

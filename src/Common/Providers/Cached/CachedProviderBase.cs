@@ -14,8 +14,8 @@ namespace Common.Providers.Cached
         /// <returns>List of entities</returns>
         public async Task<ImmutableList<T>> GetListAsync(bool useCache) =>
             useCache
-            ? await GetCachedListAsync()
-            : await GetNewListAsync();
+            ? await GetCachedListAsync().ConfigureAwait(false)
+            : await GetNewListAsync().ConfigureAwait(false);
 
         internal abstract Task<ImmutableList<T>> CreateCacheAsync();
 
@@ -27,9 +27,9 @@ namespace Common.Providers.Cached
         {
             Logger.Info($"Requesting cached {typeof(T)} list");
 
-            await _locker.WaitAsync();
+            await _locker.WaitAsync().ConfigureAwait(false);
 
-            var result = _cache ?? await CreateCacheAsync();
+            var result = _cache ?? await CreateCacheAsync().ConfigureAwait(false);
 
             _locker.Release();
 
