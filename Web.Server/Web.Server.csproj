@@ -6,9 +6,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>4097586b-f780-4bcb-b4de-aa6aa3b981c9</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
-    <SpaRoot>..\superheater.web.client</SpaRoot>
+    <SpaRoot>..\Web.Client</SpaRoot>
     <SpaProxyLaunchCommand>npm run dev</SpaProxyLaunchCommand>
     <SpaProxyServerUrl>https://localhost:5173</SpaProxyServerUrl>
+    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\src\Common\Common.csproj" />
-    <ProjectReference Include="..\superheater.web.client\superheater.web.client.esproj">
+    <ProjectReference Include="..\Web.Client\Web.Client.esproj">
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
   </ItemGroup>

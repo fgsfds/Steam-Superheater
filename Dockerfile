@@ -16,16 +16,15 @@ RUN apt-get -y install nodejs
 FROM with-node AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Superheater.Web.Server/Superheater.Web.Server.csproj", "Superheater.Web.Server/"]
-COPY ["superheater.web.client/superheater.web.client.esproj", "superheater.web.client/"]
-RUN dotnet restore "./Superheater.Web.Server/Superheater.Web.Server.csproj"
+COPY ["Web.Server/Web.Server.csproj", "Web.Server/"]
+RUN dotnet restore "./Web.Server/Web.Server.csproj"
 COPY . .
-WORKDIR "/src/Superheater.Web.Server"
-RUN dotnet build "./Superheater.Web.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+WORKDIR "/src/Web.Server"
+RUN dotnet build "./Web.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Superheater.Web.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "./Web.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
