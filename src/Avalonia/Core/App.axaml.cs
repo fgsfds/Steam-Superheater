@@ -84,6 +84,8 @@ You can't launch multiple instances of Superheater
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
+
+                desktop.Exit += OnAppExit;
             }
             else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
             {
@@ -104,6 +106,12 @@ You can't launch multiple instances of Superheater
                 Logger.UploadLog();
             }
         }
+    }
+
+    private void OnAppExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    {
+        var httpClient = BindingsManager.Provider.GetRequiredService<HttpClientInstance>();
+        httpClient?.Dispose();
     }
 
     /// <summary>
