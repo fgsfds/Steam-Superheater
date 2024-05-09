@@ -41,15 +41,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         private void UpdateRepoMessage()
         {
-            RepositoryMessage = _config.UseLocalRepo
+            RepositoryMessage = _config.UseLocalApiAndRepo
                 ? $"Local repo: {_config.LocalRepoPath}"
                 : $"Online repo: {CommonProperties.CurrentFixesRepo}";
         }
 
         private void NotifyParameterChanged(string parameterName)
         {
-            if (parameterName.Equals(nameof(_config.UseLocalRepo)) ||
-                parameterName.Equals(nameof(_config.UseLocalApi)) ||
+            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
                 UpdateRepoMessage();

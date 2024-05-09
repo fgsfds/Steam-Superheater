@@ -182,6 +182,24 @@
 
                 <StackPanel Orientation="Vertical">
 
+                    <!--Local API switch-->
+                    <Grid ColumnDefinitions="auto,*">
+
+                        <ToggleSwitch IsChecked="{Binding UseLocalApiCheckbox}"
+                                      Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      OnContent=""
+                                      OffContent=""
+                                      Margin="5"/>
+
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            Use localhost for API and local folder for files repo
+                        </TextBlock>
+
+                    </Grid>
+
                     <!--Path to local repo-->
                     <Grid ColumnDefinitions="auto,*,auto,auto">
 
@@ -206,42 +224,6 @@
                                 Grid.Column="3">
                             Save
                         </Button>
-
-                    </Grid>
-
-                    <!--Local repo switch-->
-                    <Grid ColumnDefinitions="auto,*">
-
-                        <ToggleSwitch IsChecked="{Binding UseLocalRepoCheckbox}"
-                                      Grid.Column="0"
-                                      VerticalAlignment="Center"
-                                      OnContent=""
-                                      OffContent=""
-                                      Margin="5"/>
-
-                        <TextBlock Grid.Column="1"
-                                   VerticalAlignment="Center"
-                                   Margin="5">
-                            Load fixes and news from local repository (testing purposes only)
-                        </TextBlock>
-
-                    </Grid>
-
-                    <!--Local API switch-->
-                    <Grid ColumnDefinitions="auto,*">
-
-                        <ToggleSwitch IsChecked="{Binding UseLocalApiCheckbox}"
-                                      Grid.Column="0"
-                                      VerticalAlignment="Center"
-                                      OnContent=""
-                                      OffContent=""
-                                      Margin="5"/>
-
-                        <TextBlock Grid.Column="1"
-                                   VerticalAlignment="Center"
-                                   Margin="5">
-                            Use localhost for API
-                        </TextBlock>
 
                     </Grid>
 

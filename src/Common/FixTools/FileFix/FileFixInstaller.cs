@@ -98,7 +98,7 @@ namespace Common.FixTools.FileFix
                 ? game.InstallDir
                 : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
 
-            var pathToArchive = _configEntity.UseLocalRepo
+            var pathToArchive = _configEntity.UseLocalApiAndRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
 
@@ -296,7 +296,7 @@ namespace Common.FixTools.FileFix
             await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant).ConfigureAwait(false);
 
             if (_configEntity.DeleteZipsAfterInstall &&
-                !_configEntity.UseLocalRepo)
+                !_configEntity.UseLocalApiAndRepo)
             {
                 File.Delete(archiveFullPath);
             }

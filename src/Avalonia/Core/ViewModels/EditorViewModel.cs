@@ -974,8 +974,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async void NotifyParameterChanged(string parameterName)
         {
-            if (parameterName.Equals(nameof(_config.UseLocalApi)) ||
-                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
                 await UpdateAsync(false).ConfigureAwait(true);

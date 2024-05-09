@@ -32,5 +32,19 @@ namespace Superheater.Web.Server.Controllers
 
         [HttpGet("fixescount")]
         public int GetFixesCount() => _fixesProvider.FixesCount;
+
+        [HttpGet("{guid:Guid?}")]
+        public bool GetFixById(Guid guid)
+        {
+            foreach (var fixesList in _fixesProvider.FixesList)
+            {
+                if (fixesList.Fixes.Any(x => x.Guid == guid))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

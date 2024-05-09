@@ -37,7 +37,7 @@ namespace Common.Models
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
                 Logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
+                return new(ResultEnum.ConnectionError, "API is not responding");
             }
             catch (Exception ex)
             {

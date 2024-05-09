@@ -104,7 +104,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                         return "Install";
                     }
 
-                    var pathToArchive = _config.UseLocalRepo
+                    var pathToArchive = _config.UseLocalApiAndRepo
                     ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
                     : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
 
@@ -729,8 +729,7 @@ Do you still want to install the fix?",
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
 
-            if (parameterName.Equals(nameof(_config.UseLocalApi)) ||
-                parameterName.Equals(nameof(_config.UseLocalRepo)) ||
+            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
                 await UpdateAsync(false).ConfigureAwait(true);

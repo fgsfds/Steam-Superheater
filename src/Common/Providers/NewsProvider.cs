@@ -94,23 +94,7 @@ namespace Common.Providers
         {
             Logger.Info("Creating news list");
 
-            string? news;
-
-            if (_config.UseLocalRepo)
-            {
-                var file = Path.Combine(_config.LocalRepoPath, Consts.NewsFile);
-
-                if (!File.Exists(file))
-                {
-                    ThrowHelper.FileNotFoundException(file);
-                }
-
-                news = await File.ReadAllTextAsync(file).ConfigureAwait(false);
-            }
-            else
-            {
-                news = await DownloadNewsXMLAsync().ConfigureAwait(false);
-            }
+            var news = await DownloadNewsXMLAsync().ConfigureAwait(false);
 
             var list = JsonSerializer.Deserialize(
                 news,

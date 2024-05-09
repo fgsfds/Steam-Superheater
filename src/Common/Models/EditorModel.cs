@@ -48,7 +48,7 @@ namespace Common.Models
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
                 Logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
+                return new(ResultEnum.ConnectionError, "API is not responding");
             }
         }
 
@@ -319,6 +319,13 @@ namespace Common.Models
         /// </summary>
         public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
         {
+            var doesFixExists = await _fixesProvider.CheckIfFixExistsInTheDatabase(fix.Guid).ConfigureAwait(false);
+
+            if (doesFixExists)
+            {
+                return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+            }
+
             if (string.IsNullOrEmpty(fix.Name) ||
                 fix.Version < 1)
             {
@@ -337,17 +344,6 @@ namespace Common.Models
                 if (new FileInfo(fileFix.Url).Length > 1e+8)
                 {
                     return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
-                }
-            }
-
-            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync().ConfigureAwait(false);
-
-            foreach (var onlineFix in onlineFixes)
-            {
-                //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Exists(x => x.Guid == fix.Guid))
-                {
-                    return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
                 }
             }
 

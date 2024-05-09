@@ -12,8 +12,7 @@ namespace Common.Config
             _deleteZipsAfterInstall = true;
             _openConfigAfterInstall = false;
             _lastReadNewsDate = DateTime.MinValue;
-            _useLocalRepo = false;
-            _useLocalApi = false;
+            _useLocalApiAndRepo = false;
             _localRepoPath = "LocalRepo";
             _theme = ThemeEnum.System;
             _hiddenTags = [];
@@ -48,18 +47,11 @@ namespace Common.Config
             set => SetConfigParameter(ref _lastReadNewsDate, value);
         }
 
-        private bool _useLocalRepo;
-        public bool UseLocalRepo
+        private bool _useLocalApiAndRepo;
+        public bool UseLocalApiAndRepo
         {
-            get => _useLocalRepo;
-            set => SetConfigParameter(ref _useLocalRepo, value);
-        }
-
-        private bool _useLocalApi;
-        public bool UseLocalApi
-        {
-            get => _useLocalApi;
-            set => SetConfigParameter(ref _useLocalApi, value);
+            get => _useLocalApiAndRepo;
+            set => SetConfigParameter(ref _useLocalApiAndRepo, value);
         }
 
         private string _localRepoPath;

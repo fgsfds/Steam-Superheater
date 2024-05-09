@@ -20,8 +20,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
-            UseLocalRepoCheckbox = _config.UseLocalRepo;
-            UseLocalApiCheckbox = _config.UseLocalApi;
+            UseLocalApiCheckbox = _config.UseLocalApiAndRepo;
             PathToLocalRepoTextBox = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
@@ -91,17 +90,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        private bool _useLocalRepoCheckbox;
-        partial void OnUseLocalRepoCheckboxChanged(bool value)
-        {
-            _config.UseLocalRepo = value;
-        }
-
-        [ObservableProperty]
         private bool _useLocalApiCheckbox;
         partial void OnUseLocalApiCheckboxChanged(bool value)
         {
-            _config.UseLocalApi = value;
+            _config.UseLocalApiAndRepo = value;
         }
 
         [ObservableProperty]

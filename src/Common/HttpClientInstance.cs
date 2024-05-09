@@ -42,6 +42,12 @@
 
         }
 
+        public async Task<HttpResponseMessage> GetAsync(string url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
+        {
+            return await GetAsync(new Uri(url), option).ConfigureAwait(false);
+        }
+
+
         /// <summary>
         /// Send a GET request to the specified Uri and return the response body as a string
         /// </summary>

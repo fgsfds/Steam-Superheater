@@ -19,24 +19,17 @@ namespace Common.Providers.Cached
         private readonly HttpClientInstance _httpClient = httpClient;
 
         /// <summary>
-        /// Get cached fixes list from online repo or create new cache if it wasn't created yet
+        /// Check if fix with the same GUID already exists in the database
         /// </summary>
-        /// <returns></returns>
-        /// <exception cref="NullReferenceException"></exception>
-        public async Task<ImmutableList<FixesList>> GetOnlineFixesListAsync()
+        /// <returns>true if fix exists</returns>
+        public async Task<bool> CheckIfFixExistsInTheDatabase(Guid guid)
         {
             Logger.Info("Requesting online fixes");
 
-            if (_config.UseLocalRepo)
-            {
-                var xmlString = await DownloadFixesXMLAsync().ConfigureAwait(false);
+            var str = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);
+            var result = bool.TryParse(str, out var doesExist);
 
-                return [.. DeserializeCachedString(xmlString)];
-            }
-            else
-            {
-                return await GetCachedListAsync().ConfigureAwait(false);
-            }
+            return result ? doesExist : true;
         }
 
         public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
@@ -45,7 +38,6 @@ namespace Common.Providers.Cached
         /// Save list of fixes to XML
         /// </summary>
         /// <param name="fixesList"></param>
-        /// <returns></returns>
         public async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
             Logger.Info("Saving fixes list");
@@ -162,10 +154,7 @@ namespace Common.Providers.Cached
                     }
                 }
 
-                if (fileFix.FileSize is null)
-                {
-                    fileFix.FileSize = await GetFileSize(fileFix).ConfigureAwait(false);
-                }
+                fileFix.FileSize ??= await GetFileSize(fileFix).ConfigureAwait(false);
             }
 
             if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
@@ -227,7 +216,7 @@ namespace Common.Providers.Cached
             }
             else
             {
-                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                using var response = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -290,7 +279,7 @@ namespace Common.Providers.Cached
             }
             else
             {
-                using var response = await _httpClient.GetAsync(new(fix.Url), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                using var response = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -314,21 +303,7 @@ namespace Common.Providers.Cached
         {
             Logger.Info("Creating fixes cache");
 
-            if (_config.UseLocalRepo)
-            {
-                var file = Path.Combine(_config.LocalRepoPath, Consts.FixesFile);
-
-                if (!File.Exists(file))
-                {
-                    ThrowHelper.FileNotFoundException(file);
-                }
-
-                _fixesCachedString = File.ReadAllText(file);
-            }
-            else
-            {
-                _fixesCachedString = await DownloadFixesXMLAsync().ConfigureAwait(false);
-            }
+            _fixesCachedString = await DownloadFixesXMLAsync().ConfigureAwait(false);
 
             var fixes = DeserializeCachedString(_fixesCachedString);
 
