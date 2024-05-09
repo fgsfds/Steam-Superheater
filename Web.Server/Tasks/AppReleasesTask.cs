@@ -21,11 +21,9 @@ namespace Superheater.Web.Server.Tasks
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("AppReleasesProvider running");
-
             if (!_runOnce)
             {
-                _fixesProvider.GetLatestVersionAsync().Wait(stoppingToken);
+                DoWork(null);
                 _runOnce = true;
             }
 

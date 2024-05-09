@@ -146,7 +146,7 @@ namespace Common.Providers.Cached
             {
                 if (!fileFix.Url.StartsWith("http"))
                 {
-                    fileFix.Url = Consts.MainFixesRepo + "/raw/master/fixes/" + fileFix.Url;
+                    fileFix.Url = Consts.FilesBucketUrl + fileFix.Url;
                 }
 
                 if (fileFix.MD5 is null)
@@ -210,10 +210,10 @@ namespace Common.Providers.Cached
         {
             fix.Url.ThrowIfNull();
 
-            if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
+            if (fix.Url.StartsWith(Consts.FilesBucketUrl))
             {
                 var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
-                var fileName = Path.GetRelativePath(Consts.MainFixesRepo + "/raw/master/fixes", fix.Url);
+                var fileName = Path.GetRelativePath(Consts.FilesBucketUrl + "fixes", fix.Url);
                 //var fileName = Path.GetFileName(fix.Url);
                 var pathToFile = Path.Combine(currentDir, fileName);
 
@@ -279,10 +279,10 @@ namespace Common.Providers.Cached
         {
             fix.Url.ThrowIfNull();
 
-            if (fix.Url.StartsWith(Consts.MainFixesRepo + "/raw"))
+            if (fix.Url.StartsWith(Consts.FilesBucketUrl))
             {
                 var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
-                var fileName = Path.GetRelativePath(Consts.MainFixesRepo + "/raw/master/fixes", fix.Url);
+                var fileName = Path.GetRelativePath(Consts.FilesBucketUrl + "/fixes", fix.Url);
                 var pathToFile = Path.Combine(currentDir, fileName);
 
                 FileInfo info = new(pathToFile);

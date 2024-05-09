@@ -23,7 +23,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             UseLocalRepoCheckbox = _config.UseLocalRepo;
             PathToLocalRepoTextBox = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
-            UseTestRepoBranchCheckbox = _config.UseTestRepoBranch;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
@@ -98,10 +97,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        private bool _useTestRepoBranchCheckbox;
-        partial void OnUseTestRepoBranchCheckboxChanged(bool value)
+        private bool _useLocalApiCheckbox;
+        partial void OnUseLocalApiCheckboxChanged(bool value)
         {
-            _config.UseTestRepoBranch = value;
+            _config.UseLocalApi = value;
         }
 
         [ObservableProperty]

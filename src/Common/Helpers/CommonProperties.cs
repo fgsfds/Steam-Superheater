@@ -18,7 +18,7 @@ namespace Common.Helpers
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
-        public static string CurrentFixesRepo => Consts.MainFixesRepo + "/raw/" + (_config.UseTestRepoBranch ? "test/" : "master/");
+        public static string CurrentFixesRepo => Consts.FilesBucketUrl;
 
         /// <summary>
         /// Current app version

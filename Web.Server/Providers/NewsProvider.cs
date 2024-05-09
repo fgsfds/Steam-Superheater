@@ -1,6 +1,6 @@
 ﻿using Common;
 using Common.Entities;
-using Superheater.Web.Server.Helpers;
+using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
 
@@ -10,7 +10,7 @@ namespace Superheater.Web.Server.Providers
     {
         private readonly HttpClientInstance _httpClient;
         private readonly ILogger<NewsProvider> _logger;
-        private readonly string _jsonUrl = $"{Properties.FilesBucketUrl}news.json";
+        private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}news.json";
 
         private DateTime? _newsListLastModified;
         private ImmutableList<NewsEntity> _newsList;
@@ -31,14 +31,14 @@ namespace Superheater.Web.Server.Providers
 
             if (response.Content.Headers.LastModified is null)
             {
-                _logger.LogError("Can't get last modified date");
-                return;
-            }
+                _logger.LogError("Can't get news last modified date");
 
-            if (_newsListLastModified is not null &&
-                response.Content.Headers.LastModified <= _newsListLastModified)
-            {
-                return;
+                if (_newsListLastModified is not null &&
+                    response.Content.Headers.LastModified <= _newsListLastModified)
+                {
+                    _logger.LogInformation("No new news found");
+                    return;
+                }
             }
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
@@ -51,6 +51,8 @@ namespace Superheater.Web.Server.Providers
             {
                 _newsListLastModified = response.Content.Headers.LastModified.Value.UtcDateTime;
             }
+
+            _logger.LogInformation("Found new news");
         }
     }
 }

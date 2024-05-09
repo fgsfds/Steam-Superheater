@@ -729,7 +729,7 @@ Do you still want to install the fix?",
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
 
-            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+            if (parameterName.Equals(nameof(_config.UseLocalApi)) ||
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {

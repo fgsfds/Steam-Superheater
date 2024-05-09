@@ -182,11 +182,6 @@ namespace Common.FixTools.FileFix
 
             var url = fixUrl;
 
-            if (_configEntity.UseTestRepoBranch)
-            {
-                url = url.Replace("/master/", "/test/");
-            }
-
             return _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
 
         }

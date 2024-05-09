@@ -13,11 +13,11 @@ namespace Common.Config
             _openConfigAfterInstall = false;
             _lastReadNewsDate = DateTime.MinValue;
             _useLocalRepo = false;
+            _useLocalApi = false;
             _localRepoPath = "LocalRepo";
             _theme = ThemeEnum.System;
             _hiddenTags = [];
             _showUninstalledGames = true;
-            _useTestRepoBranch = false;
             _showUnsupportedFixes = false;
         }
 
@@ -55,6 +55,13 @@ namespace Common.Config
             set => SetConfigParameter(ref _useLocalRepo, value);
         }
 
+        private bool _useLocalApi;
+        public bool UseLocalApi
+        {
+            get => _useLocalApi;
+            set => SetConfigParameter(ref _useLocalApi, value);
+        }
+
         private string _localRepoPath;
         public string LocalRepoPath
         {
@@ -74,13 +81,6 @@ namespace Common.Config
         {
             get => _showUninstalledGames;
             set => SetConfigParameter(ref _showUninstalledGames, value);
-        }
-
-        private bool _useTestRepoBranch;
-        public bool UseTestRepoBranch
-        {
-            get => _useTestRepoBranch;
-            set => SetConfigParameter(ref _useTestRepoBranch, value);
         }
 
         private bool _showUnsupportedFixes;

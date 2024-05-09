@@ -153,11 +153,12 @@ namespace Common.Models
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(fileFix.Url)) { return string.Empty; }
+            if (string.IsNullOrEmpty(fileFix.Url)) 
+            {
+                return string.Empty;
+            }
 
-            return !_config.UseTestRepoBranch
-                ? fileFix.Url
-                : fileFix.Url.Replace("/master/", "/test/");
+            return fileFix.Url;
         }
 
         /// <summary>

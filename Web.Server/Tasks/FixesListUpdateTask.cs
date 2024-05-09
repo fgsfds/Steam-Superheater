@@ -21,11 +21,9 @@ namespace Superheater.Web.Server.Tasks
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("FixesListUpdateTask is running");
-
             if (!_runOnce)
             {
-                _fixesProvider.CreateFixesList().Wait(stoppingToken);
+                DoWork(null);
                 _runOnce = true;
             }
 

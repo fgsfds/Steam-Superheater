@@ -974,7 +974,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         private async void NotifyParameterChanged(string parameterName)
         {
-            if (parameterName.Equals(nameof(_config.UseTestRepoBranch)) ||
+            if (parameterName.Equals(nameof(_config.UseLocalApi)) ||
                 parameterName.Equals(nameof(_config.UseLocalRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {

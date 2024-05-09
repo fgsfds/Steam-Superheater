@@ -21,11 +21,9 @@ namespace Superheater.Web.Server.Tasks
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("NewsListUpdateTask is running");
-
             if (!_runOnce)
             {
-                _newsProvider.CreateNewsList().Wait(stoppingToken);
+                DoWork(null);
                 _runOnce = true;
             }
 

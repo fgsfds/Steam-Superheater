@@ -10,8 +10,6 @@
 
         internal const string NewsFile = "news.json";
 
-        public const string GitHubReleases = "https://api.github.com/repos/fgsfds/Steam-Superheater/releases";
-
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
 
         public const string BackupFolder = ".sfd";
@@ -20,7 +18,7 @@
 
         public const string UpdateFolder = "update";
 
-        public const string MainFixesRepo = "https://github.com/fgsfds/SteamFD-Fixes-Repo";
+        public const string FilesBucketUrl = "https://files.fgsfds.link/superheater/";
 
         internal const string CrashlogsFolder = "crashlogs";
 

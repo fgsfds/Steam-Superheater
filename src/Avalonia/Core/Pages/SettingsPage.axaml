@@ -73,24 +73,6 @@
 
             </Grid>
 
-            <!--Test branch switch-->
-            <Grid ColumnDefinitions="auto,*">
-
-                <ToggleSwitch IsChecked="{Binding UseTestRepoBranchCheckbox}"
-                              Grid.Column="0"
-                              VerticalAlignment="Center"
-                              OnContent=""
-                              OffContent=""
-                              Margin="5"/>
-
-                <TextBlock Grid.Column="1"
-                           VerticalAlignment="Center"
-                           Margin="5">
-                    Use test branch for fixes (includes unstable and untested fixes)
-                </TextBlock>
-
-            </Grid>
-
             <!--Unsupported fixes-->
             <Grid ColumnDefinitions="auto,*">
 
@@ -241,6 +223,24 @@
                                    VerticalAlignment="Center"
                                    Margin="5">
                             Load fixes and news from local repository (testing purposes only)
+                        </TextBlock>
+
+                    </Grid>
+
+                    <!--Local API switch-->
+                    <Grid ColumnDefinitions="auto,*">
+
+                        <ToggleSwitch IsChecked="{Binding UseLocalApiCheckbox}"
+                                      Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      OnContent=""
+                                      OffContent=""
+                                      Margin="5"/>
+
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            Use localhost for API
                         </TextBlock>
 
                     </Grid>

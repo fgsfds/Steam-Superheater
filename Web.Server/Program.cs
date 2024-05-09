@@ -26,7 +26,6 @@ namespace Superheater.Web.Server
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();
             builder.Services.AddSingleton<AppReleasesProvider>();
-
             builder.Services.AddSingleton<HttpClientInstance>();
 
             var app = builder.Build();
