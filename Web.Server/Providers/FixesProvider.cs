@@ -32,6 +32,8 @@ namespace Superheater.Web.Server.Providers
 
         public async Task CreateFixesListAsync()
         {
+            _logger.LogInformation("Looking for new fixes");
+
             using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
             if (response.Content.Headers.LastModified is null)

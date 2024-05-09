@@ -26,9 +26,9 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         public async Task GetLatestVersionAsync()
         {
-            var releasesJson = await _httpClient.GetStringAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases").ConfigureAwait(false);
+            _logger.LogInformation("Looking for new releases");
 
-            _logger.LogInformation("Requesting newer releases from GitHub");
+            var releasesJson = await _httpClient.GetStringAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases").ConfigureAwait(false);
 
             var releases =
                 JsonSerializer.Deserialize(releasesJson, GitHubReleaseContext.Default.ListGitHubRelease)

@@ -23,7 +23,6 @@ namespace Superheater.Web.Server.Tasks
         {
             if (!_runOnce)
             {
-                _logger.LogInformation("AppReleasesProvider is working");
                 _fixesProvider.GetLatestVersionAsync().Wait(stoppingToken);
                 _runOnce = true;
                 return Task.CompletedTask;
@@ -41,13 +40,11 @@ namespace Superheater.Web.Server.Tasks
 
         private void DoWork(object? state)
         {
-            _logger.LogInformation("AppReleasesProvider is working");
             _ = _fixesProvider.GetLatestVersionAsync();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("AppReleasesProvider is stopping");
             _timer.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;

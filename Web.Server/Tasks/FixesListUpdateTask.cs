@@ -23,7 +23,6 @@ namespace Superheater.Web.Server.Tasks
         {
             if (!_runOnce)
             {
-                _logger.LogInformation("FixesListUpdateTask is working");
                 _fixesProvider.CreateFixesListAsync().Wait(stoppingToken);
                 _runOnce = true;
                 return Task.CompletedTask;
@@ -41,13 +40,11 @@ namespace Superheater.Web.Server.Tasks
 
         private void DoWork(object? state)
         {
-            _logger.LogInformation("FixesListUpdateTask is working");
             _ = _fixesProvider.CreateFixesListAsync();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _logger.LogInformation("FixesListUpdateTask is stopping");
             _timer.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;

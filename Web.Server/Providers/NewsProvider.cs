@@ -27,6 +27,8 @@ namespace Superheater.Web.Server.Providers
 
         public async Task CreateNewsListAsync()
         {
+            _logger.LogInformation("Looking for new news");
+
             using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
             if (response.Content.Headers.LastModified is null)
