@@ -39,13 +39,12 @@ namespace Superheater.Web.Server.Providers
             if (response.Content.Headers.LastModified is null)
             {
                 _logger.LogError("Can't get fixes last modified date");
+            }
 
-                if (_fixesListLastModified is not null &&
-                    response.Content.Headers.LastModified <= _fixesListLastModified)
-                {
-                    _logger.LogInformation("No new fixes found");
-                    return;
-                }
+            if (response.Content.Headers.LastModified <= _fixesListLastModified)
+            {
+                _logger.LogInformation("No new fixes found");
+                return;
             }
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);

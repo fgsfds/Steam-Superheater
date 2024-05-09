@@ -25,7 +25,6 @@ namespace Superheater.Web.Server.Tasks
             {
                 _newsProvider.CreateNewsListAsync().Wait(stoppingToken);
                 _runOnce = true;
-                return Task.CompletedTask;
             }
 
             _timer = new Timer(

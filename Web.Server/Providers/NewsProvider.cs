@@ -34,13 +34,12 @@ namespace Superheater.Web.Server.Providers
             if (response.Content.Headers.LastModified is null)
             {
                 _logger.LogError("Can't get news last modified date");
+            }
 
-                if (_newsListLastModified is not null &&
-                    response.Content.Headers.LastModified <= _newsListLastModified)
-                {
-                    _logger.LogInformation("No new news found");
-                    return;
-                }
+            if (response.Content.Headers.LastModified <= _newsListLastModified)
+            {
+                _logger.LogInformation("No new news found");
+                return;
             }
 
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
