@@ -8,11 +8,13 @@ namespace Common.Models
 {
     public sealed class NewsModel(
         ConfigProvider config,
-        NewsProvider newsProvider
+        NewsProvider newsProvider,
+        Logger logger
         )
     {
         private readonly ConfigEntity _config = config.Config;
         private readonly NewsProvider _newsProvider = newsProvider;
+        private readonly Logger _logger = logger;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
 
@@ -31,17 +33,17 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "API is not responding");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, ex.Message);
             }
 

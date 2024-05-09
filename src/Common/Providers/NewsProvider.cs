@@ -8,11 +8,13 @@ namespace Common.Providers
 {
     public sealed class NewsProvider(
         ConfigProvider config, 
-        HttpClientInstance httpClient
+        HttpClientInstance httpClient,
+        Logger logger
         )
     {
         private readonly ConfigEntity _config = config.Config;
         private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly Logger _logger = logger;
         private List<NewsEntity> _news;
 
         /// <summary>
@@ -21,7 +23,7 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
-            Logger.Info("Requesting news");
+            _logger.Info("Requesting news");
 
             await CreateNewsListAsync().ConfigureAwait(false);
 
@@ -92,7 +94,7 @@ namespace Common.Providers
         /// </summary>
         private async Task CreateNewsListAsync()
         {
-            Logger.Info("Creating news list");
+            _logger.Info("Creating news list");
 
             var news = await DownloadNewsXMLAsync().ConfigureAwait(false);
 
@@ -103,7 +105,7 @@ namespace Common.Providers
 
             if (list is null)
             {
-                Logger.Error("Error while deserializing news...");
+                _logger.Error("Error while deserializing news...");
 
                 ThrowHelper.Exception("Error while deserializing news");
             }
@@ -116,7 +118,7 @@ namespace Common.Providers
         /// </summary>
         private async Task<string> DownloadNewsXMLAsync()
         {
-            Logger.Info("Downloading news xml from online repository");
+            _logger.Info("Downloading news xml from online repository");
 
             try
             {
@@ -126,7 +128,7 @@ namespace Common.Providers
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 throw;
             }
         }

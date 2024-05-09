@@ -3,18 +3,14 @@ using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.ViewModels.Popups;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    public sealed partial class AboutViewModel(
-        AppUpdateInstaller updateInstaller,
-        PopupMessageViewModel popupMessage
-        ) : ObservableObject
+    public sealed partial class AboutViewModel : ObservableObject
     {
-        private readonly AppUpdateInstaller _updateInstaller = updateInstaller;
-        private readonly PopupMessageViewModel _popupMessage = popupMessage;
+        private readonly AppUpdateInstaller _updateInstaller;
+        private readonly PopupMessageViewModel _popupMessage;
+        private readonly Logger _logger;
 
 
         #region Binding Properties
@@ -36,6 +32,17 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool _isInProgress;
 
         #endregion Binding Properties
+
+
+        public AboutViewModel(
+            AppUpdateInstaller updateInstaller,
+            PopupMessageViewModel popupMessage,
+            Logger logger)
+        {
+            _updateInstaller = updateInstaller;
+            _popupMessage = popupMessage;
+            _logger = logger;
+        }
 
 
         #region Relay Commands
@@ -75,7 +82,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     PopupMessageType.OkOnly
                     );
 
-                Logger.Error(message);
+                _logger.Error(message);
             }
 
             if (updates)

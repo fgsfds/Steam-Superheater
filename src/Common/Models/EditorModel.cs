@@ -17,12 +17,16 @@ namespace Common.Models
     public sealed class EditorModel(
         FixesProvider fixesProvider,
         GamesProvider gamesProvider,
-        ConfigProvider configProvider
+        ConfigProvider configProvider,
+        FilesUploader filesUploader,
+        Logger logger
         )
     {
         private readonly FixesProvider _fixesProvider = fixesProvider;
         private readonly GamesProvider _gamesProvider = gamesProvider;
         private readonly ConfigEntity _config = configProvider.Config;
+        private readonly FilesUploader _filesUploader = filesUploader;
+        private readonly Logger _logger = logger;
 
         private List<FixesList> _fixesList = [];
         private List<GameEntity> _availableGamesList = [];
@@ -42,12 +46,12 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, $"File not found: {ex.Message}");
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "API is not responding");
             }
         }
@@ -261,7 +265,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
+        public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix)
         {
             string? fileToUpload = null;
 
@@ -297,7 +301,7 @@ namespace Common.Models
                 filesToUpload.Add(fileToUpload);
             }
 
-            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
+            var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload).ConfigureAwait(false);
 
             File.Delete(fixFilePath);
 
@@ -470,7 +474,7 @@ namespace Common.Models
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 

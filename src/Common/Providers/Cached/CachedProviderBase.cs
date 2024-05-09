@@ -4,8 +4,14 @@ namespace Common.Providers.Cached
 {
     public abstract class CachedProviderBase<T>
     {
+        protected readonly Logger _logger;
         protected readonly SemaphoreSlim _locker = new(1);
         protected ImmutableList<T>? _cache;
+
+        protected CachedProviderBase(Logger logger)
+        {
+            _logger = logger;
+        }
 
         /// <summary>
         /// Get list of entities
@@ -25,7 +31,7 @@ namespace Common.Providers.Cached
         /// <returns>List of entities</returns>
         protected virtual async Task<ImmutableList<T>> GetCachedListAsync()
         {
-            Logger.Info($"Requesting cached {typeof(T)} list");
+            _logger.Info($"Requesting cached {typeof(T)} list");
 
             await _locker.WaitAsync().ConfigureAwait(false);
 
@@ -42,7 +48,7 @@ namespace Common.Providers.Cached
         /// <returns>List of entities</returns>
         protected virtual Task<ImmutableList<T>> GetNewListAsync()
         {
-            Logger.Info($"Requesting new {typeof(T)} list");
+            _logger.Info($"Requesting new {typeof(T)} list");
 
             _cache = null;
 

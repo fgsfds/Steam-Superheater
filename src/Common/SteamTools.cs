@@ -4,20 +4,23 @@ using System.Runtime.InteropServices;
 
 namespace Common
 {
-    internal static class SteamTools
+    public class SteamTools
     {
-        static SteamTools()
+        public readonly Logger _logger;
+
+        public SteamTools(Logger logger)
         {
+            _logger = logger;
             SteamInstallPath = GetSteamInstallPath();
         }
 
-        public static string? SteamInstallPath { get; }
+        public string? SteamInstallPath { get; }
 
         /// <summary>
         /// Get list of ACF files from all Steam libraries
         /// </summary>
         /// <returns></returns>
-        public static List<string> GetAcfsList()
+        public List<string> GetAcfsList()
         {
             var libraries = GetSteamLibraries();
 
@@ -39,7 +42,7 @@ namespace Common
         /// Get Steam install path
         /// </summary>
         /// <returns></returns>
-        private static string? GetSteamInstallPath()
+        private string? GetSteamInstallPath()
         {
             string? result;
 
@@ -49,7 +52,7 @@ namespace Common
 
                 if (path is not string strPath)
                 {
-                    Logger.Error("Can't find Steam install folder");
+                    _logger.Error("Can't find Steam install folder");
                     return null;
                 }
 
@@ -68,11 +71,11 @@ namespace Common
 
             if (!Directory.Exists(result))
             {
-                Logger.Error($"Steam install folder {result} doesn't exist");
+                _logger.Error($"Steam install folder {result} doesn't exist");
                 return null;
             }
 
-            Logger.Info($"Steam install folder is {result}");
+            _logger.Info($"Steam install folder is {result}");
             return result;
         }
 
@@ -80,7 +83,7 @@ namespace Common
         /// Get list of Steam libraries
         /// </summary>
         /// <returns>List of paths to Steam libraries</returns>
-        private static List<string> GetSteamLibraries()
+        private List<string> GetSteamLibraries()
         {
             var steamInstallPath = SteamInstallPath;
 

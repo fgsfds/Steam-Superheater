@@ -16,6 +16,30 @@
         /// Send a GET request to the specified Uri and return the response body as a string
         /// </summary>
         /// <param name="url">Uri</param>
+        public async Task<HttpResponseMessage> PutAsync(string url, HttpContent content)
+        {
+            await _semaphore.WaitAsync().ConfigureAwait(false);
+
+            try
+            {
+                var result = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
+                return result;
+            }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                _semaphore.Release();
+            }
+
+        }
+
+        /// <summary>
+        /// Send a GET request to the specified Uri and return the response body as a string
+        /// </summary>
+        /// <param name="url">Uri</param>
         public async Task<string> GetStringAsync(string url) => await GetStringAsync(new Uri(url)).ConfigureAwait(false);
 
         /// <summary>

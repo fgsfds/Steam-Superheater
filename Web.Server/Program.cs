@@ -1,6 +1,7 @@
 using Common;
 using Superheater.Web.Server.Providers;
 using Superheater.Web.Server.Tasks;
+using Web.Server.Helpers;
 
 namespace Superheater.Web.Server
 {
@@ -27,6 +28,7 @@ namespace Superheater.Web.Server
             builder.Services.AddSingleton<NewsProvider>();
             builder.Services.AddSingleton<AppReleasesProvider>();
             builder.Services.AddSingleton<HttpClientInstance>();
+            builder.Services.AddSingleton<S3Client>();
 
             var app = builder.Build();
 

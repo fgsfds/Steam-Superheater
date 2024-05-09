@@ -94,11 +94,11 @@ namespace Common.Helpers
 
             proc.WaitForExit();
 
-            Logger.Info($"DESKTOP_SESSION result {result}");
+            //Logger.Info($"DESKTOP_SESSION result {result}");
 
             if (result.StartsWith("gamescope-wayland"))
             {
-                Logger.Info("Steam game mode detected");
+                //.Info("Steam game mode detected");
 
                 _isSteamDeckGameMode = true;
             }

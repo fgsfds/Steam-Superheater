@@ -24,7 +24,9 @@ namespace Common.FixTools
         HostsFixUninstaller hostsFixUninstaller,
         HostsFixUpdater hostsFixUpdater,
 
-        InstalledFixesProvider installedFixesProvider
+        InstalledFixesProvider installedFixesProvider,
+
+        Logger logger
         )
     {
         private readonly FileFixInstaller _fileFixInstaller = fileFixInstaller;
@@ -41,9 +43,11 @@ namespace Common.FixTools
 
         private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
 
+        private readonly Logger _logger = logger;
+
         public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
         {
-            Logger.Info($"Installing {fix.Name} for {game.Name}");
+            _logger.Info($"Installing {fix.Name} for {game.Name}");
 
             if (fix is FileFixEntity &&
                 !Directory.Exists(game.InstallDir))
@@ -73,12 +77,12 @@ namespace Common.FixTools
             }
             catch (HashCheckFailedException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 
@@ -97,7 +101,7 @@ namespace Common.FixTools
 
         public Result UninstallFix(GameEntity game, BaseFixEntity fix, string hostsFile = Consts.Hosts)
         {
-            Logger.Info($"Uninstalling {fix.Name} for {game.Name}");
+            _logger.Info($"Uninstalling {fix.Name} for {game.Name}");
 
             if (fix is FileFixEntity &&
                 !Directory.Exists(game.InstallDir))
@@ -128,7 +132,7 @@ namespace Common.FixTools
             }
             catch (BackwardsCompatibilityException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 fix.InstalledFix = null;
 
                 var saveResultInner = _installedFixesProvider.SaveInstalledFixes();
@@ -142,12 +146,12 @@ namespace Common.FixTools
             }
             catch (IOException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 
@@ -166,7 +170,7 @@ namespace Common.FixTools
 
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
         {
-            Logger.Info($"Updating {fix.Name} for {game.Name}");
+            _logger.Info($"Updating {fix.Name} for {game.Name}");
 
             if (fix is FileFixEntity &&
                 !Directory.Exists(game.InstallDir))
@@ -196,7 +200,7 @@ namespace Common.FixTools
             }
             catch (BackwardsCompatibilityException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 fix.InstalledFix = null;
 
                 var saveResultInner = _installedFixesProvider.SaveInstalledFixes();
@@ -210,17 +214,17 @@ namespace Common.FixTools
             }
             catch (HashCheckFailedException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
             }
             catch (IOException ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 

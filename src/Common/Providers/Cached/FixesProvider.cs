@@ -8,15 +8,22 @@ using System.Text.Json;
 
 namespace Common.Providers.Cached
 {
-    public sealed class FixesProvider(
-        ConfigProvider config,
-        HttpClientInstance httpClient 
-        ) : CachedProviderBase<FixesList>
+    public sealed class FixesProvider : CachedProviderBase<FixesList>
     {
         private string? _fixesCachedString;
         private ImmutableList<FileFixEntity> _sharedFixes;
-        private readonly ConfigEntity _config = config.Config;
-        private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly ConfigEntity _config;
+        private readonly HttpClientInstance _httpClient;
+
+        public FixesProvider(
+            ConfigProvider config,
+            HttpClientInstance httpClient,
+            Logger logger
+            ) : base(logger)
+        {
+            _config = config.Config;
+            _httpClient = httpClient;
+        }
 
         /// <summary>
         /// Check if fix with the same GUID already exists in the database
@@ -24,7 +31,7 @@ namespace Common.Providers.Cached
         /// <returns>true if fix exists</returns>
         public async Task<bool> CheckIfFixExistsInTheDatabase(Guid guid)
         {
-            Logger.Info("Requesting online fixes");
+            _logger.Info("Requesting online fixes");
 
             var str = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);
             var result = bool.TryParse(str, out var doesExist);
@@ -40,7 +47,7 @@ namespace Common.Providers.Cached
         /// <param name="fixesList"></param>
         public async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
         {
-            Logger.Info("Saving fixes list");
+            _logger.Info("Saving fixes list");
 
             var fileFixResult = await PrepareFixes(fixesList).ConfigureAwait(false);
 
@@ -68,11 +75,11 @@ namespace Common.Providers.Cached
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 
-            Logger.Info("Fixes list saved successfully!");
+            _logger.Info("Fixes list saved successfully!");
             return new(ResultEnum.Success, "Fixes list saved successfully!");   
         }
 
@@ -81,7 +88,7 @@ namespace Common.Providers.Cached
         /// </summary>
         protected override async Task<ImmutableList<FixesList>> GetCachedListAsync()
         {
-            Logger.Info("Requesting cached fixes list");
+            _logger.Info("Requesting cached fixes list");
 
             await _locker.WaitAsync().ConfigureAwait(false);
 
@@ -149,7 +156,7 @@ namespace Common.Providers.Cached
                     }
                     catch (Exception ex)
                     {
-                        Logger.Error(ex.Message);
+                        _logger.Error(ex.Message);
                         return new Result(ResultEnum.ConnectionError, ex.Message);
                     }
                 }
@@ -301,7 +308,7 @@ namespace Common.Providers.Cached
         /// </summary>
         internal override async Task<ImmutableList<FixesList>> CreateCacheAsync()
         {
-            Logger.Info("Creating fixes cache");
+            _logger.Info("Creating fixes cache");
 
             _fixesCachedString = await DownloadFixesXMLAsync().ConfigureAwait(false);
 
@@ -332,7 +339,7 @@ namespace Common.Providers.Cached
         /// <returns></returns>
         private async Task<string> DownloadFixesXMLAsync()
         {
-            Logger.Info("Downloading fixes xml from online repository");
+            _logger.Info("Downloading fixes xml from online repository");
 
             try
             {
@@ -342,7 +349,7 @@ namespace Common.Providers.Cached
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 throw;
             }
         }
@@ -353,7 +360,7 @@ namespace Common.Providers.Cached
         /// <returns>List of entities</returns>
         protected override Task<ImmutableList<FixesList>> GetNewListAsync()
         {
-            Logger.Info($"Requesting new Fixes list");
+            _logger.Info($"Requesting new Fixes list");
 
             _cache = null;
             _fixesCachedString = null;

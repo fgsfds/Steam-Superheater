@@ -12,13 +12,20 @@ namespace Common.Providers.Cached
 {
     public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
     {
+        private readonly Logger _logger;
+
+        public InstalledFixesProvider(Logger logger) : base(logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         /// Save installed fixes to XML
         /// </summary>
         /// <returns>Result struct</returns>
         public Result SaveInstalledFixes()
         {
-            Logger.Info("Saving installed fixes list");
+            _logger.Info("Saving installed fixes list");
 
             try
             {
@@ -31,18 +38,18 @@ namespace Common.Providers.Cached
 
                 File.WriteAllText(Consts.InstalledFile, json);
 
-                Logger.Info("Fixes list saved successfully");
+                _logger.Info("Fixes list saved successfully");
 
                 return new(ResultEnum.Success, string.Empty);
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new Result(ResultEnum.NotFound, ex.Message);
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new Result(ResultEnum.Error, ex.Message);
             }
         }
@@ -74,7 +81,7 @@ namespace Common.Providers.Cached
         /// <inheritdoc/>
         internal override async Task<ImmutableList<BaseInstalledFixEntity>> CreateCacheAsync()
         {
-            Logger.Info("Requesting installed fixes");
+            _logger.Info("Requesting installed fixes");
 
             if (!File.Exists(Consts.InstalledFile))
             {

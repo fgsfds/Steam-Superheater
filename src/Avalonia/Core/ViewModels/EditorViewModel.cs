@@ -693,7 +693,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            var result = EditorModel.UploadFix(SelectedGame, SelectedFix);
+            var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix).ConfigureAwait(true);
 
             _popupMessage.Show(
                     result.IsSuccess ? "Success" : "Error",

@@ -7,10 +7,15 @@ namespace Common
     /// <summary>
     /// Class for working with archives
     /// </summary>
-    public sealed class ArchiveTools (ProgressReport progressReport, HttpClientInstance httpClient)
+    public sealed class ArchiveTools (
+        ProgressReport progressReport, 
+        HttpClientInstance httpClient,
+        Logger logger
+        )
     {
         private readonly ProgressReport _progressReport = progressReport;
         private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly Logger _logger = logger;
 
         /// <summary>
         /// Download ZIP
@@ -25,7 +30,7 @@ namespace Common
             string filePath,
             string? hash = null)
         {
-            Logger.Info($"Started downloading file {url}");
+            _logger.Info($"Started downloading file {url}");
 
             IProgress<float> progress = _progressReport.Progress;
             var tempFile = filePath + ".temp";

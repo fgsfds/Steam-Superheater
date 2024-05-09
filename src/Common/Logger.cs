@@ -2,14 +2,14 @@
 
 namespace Common
 {
-    public static class Logger
+    public class Logger
     {
-        private static readonly object _lock = new();
-        private static readonly List<string> _buffer = [];
+        private readonly object _lock = new();
+        private readonly List<string> _buffer = [];
 
-        private static string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+        private string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
 
-        static Logger()
+        public Logger()
         {
             try
             {
@@ -24,16 +24,16 @@ namespace Common
             }
         }
 
-        public static void Info(string message) => Log(message, "Info");
+        public void Info(string message) => Log(message, "Info");
 
-        public static void Error(string message) => Log(message, "Error");
+        public void Error(string message) => Log(message, "Error");
 
         /// <summary>
         /// Add message to the log file
         /// </summary>
         /// <param name="message"></param>
         /// <param name="type">Type of log message</param>
-        private static void Log(string message, string type)
+        private void Log(string message, string type)
         {
             lock (_lock)
             {
@@ -54,9 +54,9 @@ namespace Common
         /// <summary>
         /// Upload log file to ftp
         /// </summary>
-        public static void UploadLog()
+        public async Task UploadLogAsync()
         {
-            FilesUploader.UploadFileToFtp(Consts.CrashlogsFolder, LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log");
+            //await _filesUploader.UploadFilesToFtpAsync(Consts.CrashlogsFolder, LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log").ConfigureAwait(false);
         }
     }
 }

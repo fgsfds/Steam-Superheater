@@ -8,11 +8,13 @@ namespace Common
 {
     public sealed class AppUpdateInstaller(
         ArchiveTools archiveTools,
-        HttpClientInstance httpClient
+        HttpClientInstance httpClient,
+        Logger logger
         )
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly Logger _logger = logger;
 
         private AppUpdateEntity? _update;
 
@@ -23,7 +25,7 @@ namespace Common
         /// <returns>Has newer version</returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
-            Logger.Info("Checking for updates");
+            _logger.Info("Checking for updates");
 
             string osName;
 
@@ -46,7 +48,7 @@ namespace Common
 
             if (release is not null && release.Version > currentVersion)
             {
-                Logger.Info($"Found new version {release.Version}");
+                _logger.Info($"Found new version {release.Version}");
 
                 _update = release;
 
@@ -61,7 +63,7 @@ namespace Common
         /// </summary>
         public async Task DownloadAndUnpackLatestRelease()
         {
-            Logger.Info($"Downloading app update version {_update!.Version}");
+            _logger.Info($"Downloading app update version {_update!.Version}");
 
             var updateUrl = _update.DownloadUrl;
 
@@ -86,7 +88,7 @@ namespace Common
         /// </summary>
         public static void InstallUpdate()
         {
-            Logger.Info("Starting app update");
+            //_logger.Info("Starting app update");
 
             var dir = Directory.GetCurrentDirectory();
             var updateDir = Path.Combine(dir, Consts.UpdateFolder);

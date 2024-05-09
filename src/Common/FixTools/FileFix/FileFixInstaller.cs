@@ -13,12 +13,14 @@ namespace Common.FixTools.FileFix
     public sealed class FileFixInstaller(
         ConfigProvider config,
         ArchiveTools archiveTools,
-        ProgressReport progressReport
+        ProgressReport progressReport,
+        Logger logger
         )
     {
         private readonly ConfigEntity _configEntity = config.Config;
         private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly ProgressReport _progressReport = progressReport;
+        private readonly Logger _logger = logger;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events
@@ -162,13 +164,13 @@ namespace Common.FixTools.FileFix
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
-                Logger.Info($"Using local file {zipFullPath}");
+                _logger.Info($"Using local file {zipFullPath}");
 
                 var result = CheckFileMD5(zipFullPath, fixMD5);
 
                 if (!result)
                 {
-                    Logger.Info("MD5 of the local file doesn't match, removing it");
+                    _logger.Info("MD5 of the local file doesn't match, removing it");
                     File.Delete(zipFullPath);
                 }
             }
@@ -178,7 +180,7 @@ namespace Common.FixTools.FileFix
                 return Task.CompletedTask;
             }
 
-            Logger.Info($"Local file {zipFullPath} not found");
+            _logger.Info($"Local file {zipFullPath} not found");
 
             var url = fixUrl;
 

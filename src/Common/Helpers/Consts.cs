@@ -20,6 +20,8 @@
 
         public const string FilesBucketUrl = "https://files.fgsfds.link/superheater/";
 
+        public const string Bucket = "b70f50a9-files";
+
         internal const string CrashlogsFolder = "crashlogs";
 
         internal const string Hosts = @"C:\Windows\System32\drivers\etc\hosts";

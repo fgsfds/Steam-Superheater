@@ -19,6 +19,7 @@ namespace Superheater.Avalonia.Core;
 public sealed class App : Application
 {
     private static readonly Mutex _mutex = new (false, "Superheater");
+    private static Common.Logger? _logger = null;
 
     public override void Initialize()
     {
@@ -59,6 +60,7 @@ You can't launch multiple instances of Superheater
             ProvidersBindings.Load(container);
 
             var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
+            _logger = BindingsManager.Provider.GetRequiredService<Logger>();
 
             var themeEnum = theme switch
             {
@@ -72,7 +74,7 @@ You can't launch multiple instances of Superheater
 
             if (Properties.IsDeveloperMode)
             {
-                Logger.Info("Started in developer mode");
+                _logger.Info("Started in developer mode");
             }
 
             Cleanup();
@@ -99,11 +101,11 @@ You can't launch multiple instances of Superheater
             var messageBox = new MessageBox(ex.Message);
             messageBox.Show();
 
-            Logger.Error(ex.ToString());
+            _logger?.Error(ex.ToString());
 
             if (!Properties.IsDeveloperMode)
             {
-                Logger.UploadLog();
+                _logger?.UploadLogAsync().Wait();
             }
         }
     }
@@ -121,7 +123,7 @@ You can't launch multiple instances of Superheater
     {
         try
         {
-            FileStream fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
+            var fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
             fs.Close();
             File.Delete(fs.Name);
 
@@ -138,7 +140,7 @@ You can't launch multiple instances of Superheater
     /// </summary>
     private static void Cleanup()
     {
-        Logger.Info("Starting cleanup");
+        _logger?.Info("Starting cleanup");
 
         var files = Directory.GetFiles(Directory.GetCurrentDirectory());
 

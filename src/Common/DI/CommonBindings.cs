@@ -26,12 +26,13 @@ namespace Common.DI
             container.AddTransient<HostsFixUninstaller>();
 
             container.AddTransient<FixManager>();
-
             container.AddTransient<ArchiveTools>();
 
             container.AddSingleton<ProgressReport>();
-
             container.AddSingleton<HttpClientInstance>();
+            container.AddSingleton<FilesUploader>();
+            container.AddSingleton<SteamTools>();
+            container.AddSingleton<Logger>();
         }
     }
 }

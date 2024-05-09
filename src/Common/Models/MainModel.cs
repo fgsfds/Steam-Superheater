@@ -14,12 +14,14 @@ namespace Common.Models
     public sealed class MainModel(
         ConfigProvider configProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
-        FixManager fixManager
+        FixManager fixManager,
+        Logger logger
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
         private readonly FixManager _fixManager = fixManager;
+        private readonly Logger _logger = logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
@@ -78,12 +80,12 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, "API is not responding");
             }
         }
