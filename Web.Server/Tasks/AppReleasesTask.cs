@@ -23,8 +23,10 @@ namespace Superheater.Web.Server.Tasks
         {
             if (!_runOnce)
             {
-                DoWork(null);
+                _logger.LogInformation("AppReleasesProvider is working");
+                _fixesProvider.GetLatestVersionAsync().Wait(stoppingToken);
                 _runOnce = true;
+                return Task.CompletedTask;
             }
 
             _timer = new Timer(

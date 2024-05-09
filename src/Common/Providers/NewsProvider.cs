@@ -136,7 +136,7 @@ namespace Common.Providers
 
             try
             {
-                var newsJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/news").ConfigureAwait(false);
+                var newsJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/news").ConfigureAwait(false);
 
                 return newsJson;
             }

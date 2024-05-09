@@ -30,7 +30,7 @@ namespace Superheater.Web.Server.Providers
         }
 
 
-        public async Task CreateFixesList()
+        public async Task CreateFixesListAsync()
         {
             using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 

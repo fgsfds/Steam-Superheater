@@ -18,7 +18,9 @@ namespace Common.Helpers
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
-        public static string CurrentFixesRepo => Consts.FilesBucketUrl;
+        public static string CurrentFixesRepo => _config.UseLocalApi ? _config.LocalRepoPath : Consts.FilesBucketUrl;
+
+        public static string ApiUrl => _config.UseLocalApi ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
 
         /// <summary>
         /// Current app version

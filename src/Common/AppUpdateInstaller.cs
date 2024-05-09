@@ -40,7 +40,7 @@ namespace Common
                 return false;
             }
 
-            var releaseJson = await _httpClient.GetStringAsync($"https://superheater.fgsfds.link/api/release/{osName}").ConfigureAwait(false);
+            var releaseJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
 
             var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
 

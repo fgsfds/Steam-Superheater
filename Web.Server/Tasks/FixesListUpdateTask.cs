@@ -23,8 +23,10 @@ namespace Superheater.Web.Server.Tasks
         {
             if (!_runOnce)
             {
-                DoWork(null);
+                _logger.LogInformation("FixesListUpdateTask is working");
+                _fixesProvider.CreateFixesListAsync().Wait(stoppingToken);
                 _runOnce = true;
+                return Task.CompletedTask;
             }
 
             _timer = new Timer(
@@ -40,7 +42,7 @@ namespace Superheater.Web.Server.Tasks
         private void DoWork(object? state)
         {
             _logger.LogInformation("FixesListUpdateTask is working");
-            _ = _fixesProvider.CreateFixesList();
+            _ = _fixesProvider.CreateFixesListAsync();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

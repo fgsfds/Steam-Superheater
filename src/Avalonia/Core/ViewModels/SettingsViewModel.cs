@@ -21,6 +21,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
             OpenConfigCheckbox = _config.OpenConfigAfterInstall;
             UseLocalRepoCheckbox = _config.UseLocalRepo;
+            UseLocalApiCheckbox = _config.UseLocalApi;
             PathToLocalRepoTextBox = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;

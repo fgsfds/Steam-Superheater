@@ -361,7 +361,7 @@ namespace Common.Providers.Cached
 
             try
             {
-                var fixesJson = await _httpClient.GetStringAsync("https://superheater.fgsfds.link/api/fixes").ConfigureAwait(false);
+                var fixesJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes").ConfigureAwait(false);
 
                 return fixesJson;
             }

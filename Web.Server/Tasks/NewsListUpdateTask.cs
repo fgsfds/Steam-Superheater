@@ -23,13 +23,15 @@ namespace Superheater.Web.Server.Tasks
         {
             if (!_runOnce)
             {
-                DoWork(null);
+                _logger.LogInformation("NewsListUpdateTask is working");
+                _newsProvider.CreateNewsListAsync().Wait(stoppingToken);
                 _runOnce = true;
+                return Task.CompletedTask;
             }
 
             _timer = new Timer(
-                DoWork, 
-                null, 
+                DoWork,
+                null,
                 TimeSpan.Zero,
                 TimeSpan.FromMinutes(5)
                 );
@@ -40,7 +42,7 @@ namespace Superheater.Web.Server.Tasks
         private void DoWork(object? state)
         {
             _logger.LogInformation("NewsListUpdateTask is working");
-            _ = _newsProvider.CreateNewsList();
+            _ = _newsProvider.CreateNewsListAsync();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

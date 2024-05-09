@@ -25,7 +25,7 @@ namespace Superheater.Web.Server.Providers
         }
 
 
-        public async Task CreateNewsList()
+        public async Task CreateNewsListAsync()
         {
             using var response = await _httpClient.GetAsync(new(_jsonUrl), HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
