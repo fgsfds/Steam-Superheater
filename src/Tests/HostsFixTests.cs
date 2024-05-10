@@ -28,7 +28,8 @@ namespace Tests
         {
             Id = 1,
             Name = "test game",
-            InstallDir = "C:\\games\\test game\\"
+            InstallDir = "C:\\games\\test game\\",
+            Icon = string.Empty
         };
 
         private readonly HostsFixEntity _fixEntity = new()

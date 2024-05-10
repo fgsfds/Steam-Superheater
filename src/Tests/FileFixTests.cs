@@ -70,7 +70,8 @@ namespace Tests
             {
                 Id = 1,
                 Name = "test game",
-                InstallDir = PrepareGameFolder()
+                InstallDir = PrepareGameFolder(),
+                Icon = string.Empty
             };
 
             _fileFixEntity = new()

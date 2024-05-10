@@ -1,5 +1,8 @@
+using Common;
+using Common.DI;
 using Common.Entities;
 using Common.Providers.Cached;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace Tests
@@ -10,14 +13,25 @@ namespace Tests
     [Collection("Sync")]
     public sealed class ParsingTests
     {
+        public ParsingTests()
+        {
+            BindingsManager.Reset();
+            var container = BindingsManager.Instance;
+            container.AddTransient<SteamTools>();
+            container.AddTransient<Logger>();
+        }
+
         [Fact]
         public void GetGameEntityFromAcfTest()
         {
-            var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Static);
+            var steamTools = BindingsManager.Provider.GetRequiredService<SteamTools>();
+            var logger = BindingsManager.Provider.GetRequiredService<Logger>();
+
+            var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
 
             Assert.NotNull(method);
 
-            var result = method.Invoke(new GamesProvider(), [Path.Combine("Resources", "test_manifest.acf")]);
+            var result = method.Invoke(new GamesProvider(steamTools, logger), [Path.Combine("Resources", "test_manifest.acf")]);
 
             Assert.NotNull(result);
             Assert.IsType<GameEntity>(result);

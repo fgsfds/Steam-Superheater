@@ -1,24 +1,33 @@
-﻿using Common.Config;
+﻿using Common;
+using Common.Config;
 using Common.DI;
-using Common.Providers;
-using Common.Providers.Cached;
+using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
+using FixesProvider = Common.Providers.Cached.FixesProvider;
 
 namespace Tests
 {
     [Collection("Sync")]
     public sealed class GitHubTests
     {
-        [Fact]
-        public async Task GetFixesFromGitHubTest()
+        public GitHubTests()
         {
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddTransient<FixesProvider>();
             container.AddTransient<ConfigProvider>();
+            container.AddTransient<AppUpdateInstaller>();
+            container.AddTransient<HttpClient>();
+            container.AddTransient<Logger>();
+            container.AddTransient<ArchiveTools>();
+            container.AddTransient<ProgressReport>();
+        }
 
+        [Fact]
+        public async Task GetFixesFromGitHubTest()
+        {
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
-            var fixes = await fixesProvider.GetListAsync(false);
+            var fixes = await fixesProvider.GetListAsync(false).ConfigureAwait(true);
 
             //Looking for Alan Wake fixes list
             var result = fixes.Exists(static x => x.GameId == 108710);
@@ -28,13 +37,10 @@ namespace Tests
         [Fact]
         public async Task GetGitHubReleasesTest()
         {
-            var latestRelease = await GitHubReleasesProvider.GetLatestUpdateAsync(new Version("0.0.0"));
+            var fixesProvider = BindingsManager.Provider.GetRequiredService<AppUpdateInstaller>();
+            var release = await fixesProvider.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);
 
-            Assert.NotNull(latestRelease);
-
-            var versionCompare = latestRelease.Version.CompareTo(new("0.14.2"));
-
-            Assert.Equal(0, versionCompare);
+            Assert.True(release);
         }
     }
 }
