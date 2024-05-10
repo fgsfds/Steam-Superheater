@@ -7,10 +7,12 @@ namespace Common
         private readonly object _lock = new();
         private readonly List<string> _buffer = [];
 
-        private string LogFile => Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+        public string LogFile { get; init; }
 
         public Logger()
         {
+            LogFile = Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+
             try
             {
                 File.Delete(LogFile);
@@ -49,14 +51,6 @@ namespace Common
                 {
                 }
             }
-        }
-
-        /// <summary>
-        /// Upload log file to ftp
-        /// </summary>
-        public async Task UploadLogAsync()
-        {
-            //await _filesUploader.UploadFilesToFtpAsync(Consts.CrashlogsFolder, LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log").ConfigureAwait(false);
         }
     }
 }

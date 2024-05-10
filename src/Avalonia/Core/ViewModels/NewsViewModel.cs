@@ -151,8 +151,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                     result.Message,
                     PopupMessageType.OkOnly
                     );
-
-                return;
             }
 
             OnPropertyChanged(nameof(NewsList));

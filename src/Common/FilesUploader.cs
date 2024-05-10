@@ -23,8 +23,10 @@ namespace Common
         /// <param name="filePath">Path to file to upload</param>
         /// <param name="remoteFileName">File name on the s3 server</param>
         /// <returns>True if successfully uploaded</returns>
-        public async Task<Result> UploadFilesToFtpAsync(string folder, string filePath, string remoteFileName) =>
-            await UploadFilesToFtpAsync(folder, [filePath], remoteFileName).ConfigureAwait(false);
+        public async Task<Result> UploadFilesToFtpAsync(string folder, string filePath, string remoteFileName)
+        {
+            return await UploadFilesToFtpAsync(folder, [filePath], remoteFileName).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Upload multiple files to S3
@@ -60,6 +62,14 @@ namespace Common
             }
 
             return new(ResultEnum.Success, string.Empty);
+        }
+
+        /// <summary>
+        /// Upload log file to S3
+        /// </summary>
+        public async Task UploadLogAsync()
+        {
+            await UploadFilesToFtpAsync(Consts.CrashlogsFolder, _logger.LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log").ConfigureAwait(false);
         }
     }
 }
