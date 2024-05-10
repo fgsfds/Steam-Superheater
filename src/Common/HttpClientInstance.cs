@@ -3,7 +3,6 @@
     public sealed class HttpClientInstance : IDisposable
     {
         private readonly HttpClient _httpClient;
-        private readonly SemaphoreSlim _semaphore = new(1);
 
         public HttpClientInstance()
         {
@@ -18,22 +17,8 @@
         /// <param name="url">Uri</param>
         public async Task<HttpResponseMessage> PutAsync(string url, HttpContent content)
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
-
-            try
-            {
-                var result = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
-                return result;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-
+            var result = await _httpClient.PutAsync(url, content).ConfigureAwait(false);
+            return result;
         }
 
         /// <summary>
@@ -48,22 +33,8 @@
         /// <param name="url">Uri</param>
         public async Task<string> GetStringAsync(Uri url)
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
-
-            try
-            {
-                var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
-                return result;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
-
+            var result = await _httpClient.GetStringAsync(url).ConfigureAwait(false);
+            return result;
         }
 
         public async Task<HttpResponseMessage> GetAsync(string url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
@@ -78,21 +49,8 @@
         /// <param name="url">Uri</param>
         public async Task<HttpResponseMessage> GetAsync(Uri url, HttpCompletionOption option = HttpCompletionOption.ResponseContentRead)
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
-
-            try
-            {
-                var result = await _httpClient.GetAsync(url, option).ConfigureAwait(false);
-                return result;
-            }
-            catch
-            {
-                throw;
-            }
-            finally
-            {
-                _semaphore.Release();
-            }
+            var result = await _httpClient.GetAsync(url, option).ConfigureAwait(false);
+            return result;
         }
 
         public void Dispose()

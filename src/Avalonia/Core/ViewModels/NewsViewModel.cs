@@ -9,17 +9,12 @@ using System.Collections.Immutable;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
-    internal sealed partial class NewsViewModel(
-        NewsModel newsModel,
-        ConfigProvider configProvider,
-        PopupMessageViewModel popupMessage,
-        PopupEditorViewModel popupEditor
-        ) : ObservableObject
+    internal sealed partial class NewsViewModel : ObservableObject
     {
-        private readonly NewsModel _newsModel = newsModel;
-        private readonly ConfigEntity _config = configProvider.Config;
-        private readonly PopupMessageViewModel _popupMessage = popupMessage;
-        private readonly PopupEditorViewModel _popupEditor = popupEditor;
+        private readonly NewsModel _newsModel;
+        private readonly ConfigEntity _config;
+        private readonly PopupMessageViewModel _popupMessage;
+        private readonly PopupEditorViewModel _popupEditor;
         private readonly SemaphoreSlim _locker = new(1);
 
 
@@ -34,6 +29,22 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _newsTabHeader = "News";
 
         #endregion Binding Properties
+
+
+        public NewsViewModel(
+            NewsModel newsModel,
+            ConfigProvider configProvider,
+            PopupMessageViewModel popupMessage,
+            PopupEditorViewModel popupEditor
+        )
+        {
+            _newsModel = newsModel;
+            _config = configProvider.Config;
+            _popupMessage = popupMessage;
+            _popupEditor = popupEditor;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
 
 
         #region Relay Commands
@@ -167,6 +178,14 @@ namespace Superheater.Avalonia.Core.ViewModels
             NewsTabHeader = "News" + (_newsModel.HasUnreadNews
                 ? $" ({_newsModel.UnreadNewsCount} unread)"
                 : string.Empty);
+        }
+
+        private async void NotifyParameterChanged(string parameterName)
+        {
+            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
+            {
+                await UpdateAsync().ConfigureAwait(true);
+            }
         }
     }
 }
