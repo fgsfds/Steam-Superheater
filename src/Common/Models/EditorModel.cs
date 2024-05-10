@@ -267,20 +267,6 @@ namespace Common.Models
         /// <returns>true if uploaded successfully</returns>
         public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix)
         {
-            string? fileToUpload = null;
-
-            if (fix is FileFixEntity fileFix)
-            {
-                var url = fileFix.Url;
-
-                if (!string.IsNullOrEmpty(url) &&
-                    !url.StartsWith("http"))
-                {
-                    fileToUpload = fileFix.Url;
-                    fileFix.Url = Path.GetFileName(fileToUpload);
-                }
-            }
-
             var newFixesList = new FixesList()
             {
                 GameId = fixesList.GameId,
@@ -296,9 +282,15 @@ namespace Common.Models
 
             List<string> filesToUpload = [fixFilePath];
 
-            if (fileToUpload is not null)
+            if (fix is FileFixEntity fileFix)
             {
-                filesToUpload.Add(fileToUpload);
+                var url = fileFix.Url;
+
+                if (!string.IsNullOrEmpty(url) &&
+                    !url.StartsWith("http"))
+                {
+                    filesToUpload.Add(url);
+                }
             }
 
             var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload).ConfigureAwait(false);
