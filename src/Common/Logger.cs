@@ -44,7 +44,7 @@ namespace Common
 
                 try
                 {
-                    File.WriteAllLines(LogFile, _buffer);
+                    File.AppendAllLines(LogFile, _buffer);
                     _buffer.Clear();
                 }
                 catch
