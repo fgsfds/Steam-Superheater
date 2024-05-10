@@ -8,7 +8,7 @@ namespace Superheater.Web.Server.Providers
 {
     public sealed class NewsProvider
     {
-        private readonly HttpClientInstance _httpClient;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<NewsProvider> _logger;
         private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}news.json";
 
@@ -18,7 +18,7 @@ namespace Superheater.Web.Server.Providers
         public ImmutableList<NewsEntity> NewsList => _newsList;
 
 
-        public NewsProvider(ILogger<NewsProvider> logger, HttpClientInstance httpClient)
+        public NewsProvider(ILogger<NewsProvider> logger, HttpClient httpClient)
         {
             _logger = logger;
             _httpClient = httpClient;

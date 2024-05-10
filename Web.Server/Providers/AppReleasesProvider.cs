@@ -8,14 +8,14 @@ namespace Superheater.Web.Server.Providers
     public sealed class AppReleasesProvider
     {
         private readonly ILogger<AppReleasesProvider> _logger;
-        private readonly HttpClientInstance _httpClient;
+        private readonly HttpClient _httpClient;
 
         public AppUpdateEntity WindowsRelease { get; private set; }
         public AppUpdateEntity LinuxRelease { get; private set; }
 
         public AppReleasesProvider(
             ILogger<AppReleasesProvider> logger,
-            HttpClientInstance httpClient)
+            HttpClient httpClient)
         {
             _logger = logger;
             _httpClient = httpClient;

@@ -8,12 +8,12 @@ namespace Common.Providers
 {
     public sealed class NewsProvider(
         ConfigProvider config, 
-        HttpClientInstance httpClient,
+        HttpClient httpClient,
         Logger logger
         )
     {
         private readonly ConfigEntity _config = config.Config;
-        private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
         private List<NewsEntity> _news;
 

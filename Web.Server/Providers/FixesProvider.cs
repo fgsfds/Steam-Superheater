@@ -8,7 +8,7 @@ namespace Superheater.Web.Server.Providers
 {
     public sealed class FixesProvider
     {
-        private readonly HttpClientInstance _httpClient;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<FixesProvider> _logger;
         private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}fixes.json";
 
@@ -23,7 +23,7 @@ namespace Superheater.Web.Server.Providers
         public int FixesCount { get; private set; }
 
 
-        public FixesProvider(ILogger<FixesProvider> logger, HttpClientInstance httpClient)
+        public FixesProvider(ILogger<FixesProvider> logger, HttpClient httpClient)
         {
             _logger = logger;
             _httpClient = httpClient;

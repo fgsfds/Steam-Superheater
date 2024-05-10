@@ -1,16 +1,17 @@
 ﻿using Common.Helpers;
+using System.Net.Http;
 using System.Web;
 
 namespace Common
 {
     public class FilesUploader
     {
-        private readonly HttpClientInstance _httpClient;
+        private readonly HttpClient _httpClient;
         private readonly Logger _logger;
         private readonly ProgressReport _progressReport;
 
         public FilesUploader(
-            HttpClientInstance httpClient,
+            HttpClient httpClient,
             Logger logger,
             ProgressReport progressReport)
         {

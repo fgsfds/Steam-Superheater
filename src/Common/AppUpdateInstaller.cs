@@ -8,12 +8,12 @@ namespace Common
 {
     public sealed class AppUpdateInstaller(
         ArchiveTools archiveTools,
-        HttpClientInstance httpClient,
+        HttpClient httpClient,
         Logger logger
         )
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
-        private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
 
         private AppUpdateEntity? _update;

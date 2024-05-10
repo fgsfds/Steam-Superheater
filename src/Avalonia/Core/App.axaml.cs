@@ -107,7 +107,7 @@ You can't launch multiple instances of Superheater
 
     private void OnAppExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
     {
-        var httpClient = BindingsManager.Provider.GetRequiredService<HttpClientInstance>();
+        var httpClient = BindingsManager.Provider.GetRequiredService<HttpClient>();
         httpClient?.Dispose();
     }
 

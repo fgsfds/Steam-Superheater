@@ -71,7 +71,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             catch (Exception ex)
             {
                 var message = $"""
-                               Cannot retrieve latest releases from GitHub:
+                               Cannot retrieve latest releases:
                                                    
                                {ex.Message}
                                """;

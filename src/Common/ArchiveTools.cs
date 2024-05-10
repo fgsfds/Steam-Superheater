@@ -9,12 +9,12 @@ namespace Common
     /// </summary>
     public sealed class ArchiveTools (
         ProgressReport progressReport, 
-        HttpClientInstance httpClient,
+        HttpClient httpClient,
         Logger logger
         )
     {
         private readonly ProgressReport _progressReport = progressReport;
-        private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
 
         /// <summary>

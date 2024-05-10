@@ -13,11 +13,11 @@ namespace Common.Providers.Cached
         private string? _fixesCachedString;
         private ImmutableList<FileFixEntity> _sharedFixes;
         private readonly ConfigEntity _config;
-        private readonly HttpClientInstance _httpClient;
+        private readonly HttpClient _httpClient;
 
         public FixesProvider(
             ConfigProvider config,
-            HttpClientInstance httpClient,
+            HttpClient httpClient,
             Logger logger
             ) : base(logger)
         {

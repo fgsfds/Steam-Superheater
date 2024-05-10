@@ -29,7 +29,7 @@ namespace Common.DI
             container.AddTransient<ArchiveTools>();
 
             container.AddSingleton<ProgressReport>();
-            container.AddSingleton<HttpClientInstance>();
+            container.AddSingleton<HttpClient>();
             container.AddSingleton<FilesUploader>();
             container.AddSingleton<SteamTools>();
             container.AddSingleton<Logger>();
