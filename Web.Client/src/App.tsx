@@ -8,7 +8,8 @@ function App() {
 
     return (
         <div>
-            <img src="https://raw.githubusercontent.com/fgsfds/Steam-Superheater/master/img/logo.png" width="700"></img>
+            <img src="logo.png" width="300"></img>
+            <h1 id="tabelLabel">Steam Superheater</h1>
             <h4 id="tabelLabel">Fix old and broken Steam games with a couple of clicks</h4>
 
             <div>

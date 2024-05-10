@@ -31,8 +31,6 @@ namespace Common.Providers.Cached
         /// <returns>true if fix exists</returns>
         public async Task<bool> CheckIfFixExistsInTheDatabase(Guid guid)
         {
-            throw new Exception();
-
             _logger.Info("Requesting online fixes");
 
             var str = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);

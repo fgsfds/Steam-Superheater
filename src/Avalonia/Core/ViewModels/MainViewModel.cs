@@ -18,29 +18,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
-        public MainViewModel(
-            MainModel mainModel,
-            ConfigProvider config,
-            PopupMessageViewModel popupMessage,
-            PopupEditorViewModel popupEditor,
-            ProgressReport progressReport,
-            PopupStackViewModel popupStack
-            )
-        {
-            _mainModel = mainModel;
-            _config = config.Config;
-            _popupMessage = popupMessage;
-            _popupEditor = popupEditor;
-            _progressReport = progressReport;
-            _popupStack = popupStack;
-
-            _searchBarText = string.Empty;
-
-            SelectedTagFilter = TagsComboboxList.First();
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
-
         private readonly MainModel _mainModel;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
@@ -151,6 +128,30 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 return SelectedFix.Description;
             }
+        }
+
+
+        public MainViewModel(
+            MainModel mainModel,
+            ConfigProvider config,
+            PopupMessageViewModel popupMessage,
+            PopupEditorViewModel popupEditor,
+            ProgressReport progressReport,
+            PopupStackViewModel popupStack
+            )
+        {
+            _mainModel = mainModel;
+            _config = config.Config;
+            _popupMessage = popupMessage;
+            _popupEditor = popupEditor;
+            _progressReport = progressReport;
+            _popupStack = popupStack;
+
+            _searchBarText = string.Empty;
+
+            SelectedTagFilter = TagsComboboxList.First();
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
         }
 
 

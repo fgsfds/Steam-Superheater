@@ -20,7 +20,6 @@ public sealed class App : Application
 {
     private static readonly Mutex _mutex = new(false, "Superheater");
     private static Logger? _logger = null;
-    private static FilesUploader? _filesUploader = null;
 
     public override void Initialize()
     {
@@ -62,7 +61,6 @@ You can't launch multiple instances of Superheater
 
             var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
             _logger = BindingsManager.Provider.GetRequiredService<Logger>();
-            _filesUploader = BindingsManager.Provider.GetRequiredService<FilesUploader>();
 
             var themeEnum = theme switch
             {
@@ -104,11 +102,6 @@ You can't launch multiple instances of Superheater
             messageBox.Show();
 
             _logger?.Error(ex.ToString());
-
-            if (!Properties.IsDeveloperMode)
-            {
-                _filesUploader?.UploadLogAsync().Wait();
-            }
         }
     }
 

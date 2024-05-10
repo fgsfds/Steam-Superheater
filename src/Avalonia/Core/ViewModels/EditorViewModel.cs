@@ -1,5 +1,4 @@
-﻿using Avalonia.Layout;
-using Avalonia.Platform.Storage;
+﻿using Avalonia.Platform.Storage;
 using Common.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -21,27 +20,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
-        public EditorViewModel(
-            EditorModel editorModel,
-            ConfigProvider config,
-            PopupEditorViewModel popupEditor,
-            PopupMessageViewModel popupMessage,
-            PopupStackViewModel popupStack
-            )
-        {
-            _editorModel = editorModel;
-            _config = config.Config;
-            _popupEditor = popupEditor;
-            _popupMessage = popupMessage;
-            _popupStack = popupStack;
-
-            _searchBarText = string.Empty;
-
-            SelectedTagFilter = TagsComboboxList.First();
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
-
         [ObservableProperty]
         private string _selectedTagFilter;
         partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
@@ -51,6 +29,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupStackViewModel _popupStack;
+        private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
 
 
@@ -76,8 +55,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public bool IsDeveloperMode => Properties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
-
-        public string ProgressBarText { get; set; } = string.Empty;
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
 
@@ -416,8 +393,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsSharedFixSelected => SelectedSharedFix is not null;
 
-        public float ProgressBarValue { get; set; }
-
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
@@ -491,7 +466,37 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
 
+        [ObservableProperty]
+        private string _progressBarText = string.Empty;
+
+        [ObservableProperty]
+        private float _progressBarValue;
+
         #endregion Binding Properties
+
+
+        public EditorViewModel(
+            EditorModel editorModel,
+            ConfigProvider config,
+            PopupEditorViewModel popupEditor,
+            PopupMessageViewModel popupMessage,
+            PopupStackViewModel popupStack,
+            ProgressReport progressReport
+            )
+        {
+            _editorModel = editorModel;
+            _config = config.Config;
+            _popupEditor = popupEditor;
+            _popupMessage = popupMessage;
+            _popupStack = popupStack;
+            _progressReport = progressReport;
+
+            _searchBarText = string.Empty;
+
+            SelectedTagFilter = TagsComboboxList.First();
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
 
 
         #region Relay Commands
@@ -680,6 +685,9 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedFix.ThrowIfNull();
 
+            _progressReport.Progress.ProgressChanged += ProgressChanged;
+            _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
+
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix).ConfigureAwait(true);
 
             if (!canUpload.IsSuccess)
@@ -694,6 +702,12 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix).ConfigureAwait(true);
+
+            _progressReport.Progress.ProgressChanged -= ProgressChanged;
+            _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
+
+            ProgressBarValue = 0;
+            ProgressBarText = string.Empty;
 
             _popupMessage.Show(
                     result.IsSuccess ? "Success" : "Error",
@@ -979,6 +993,17 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 await UpdateAsync(false).ConfigureAwait(true);
             }
+        }
+
+
+        private void ProgressChanged(object? sender, float e)
+        {
+            ProgressBarValue = e;
+        }
+
+        private void OperationMessageChanged(string message)
+        {
+            ProgressBarText = message;
         }
     }
 }

@@ -7,13 +7,16 @@ namespace Common
     {
         private readonly HttpClientInstance _httpClient;
         private readonly Logger _logger;
+        private readonly ProgressReport _progressReport;
 
         public FilesUploader(
             HttpClientInstance httpClient,
-            Logger logger)
+            Logger logger,
+            ProgressReport progressReport)
         {
             _httpClient = httpClient;
             _logger = logger;
+            _progressReport = progressReport;
         }
 
         /// <summary>
@@ -39,6 +42,9 @@ namespace Common
         {
             _logger.Info($"Uploading {files.Count} file(s)");
 
+            _progressReport.OperationMessage = "Uploading...";
+            IProgress<float> progress = _progressReport.Progress;
+
             try
             {
                 foreach (var file in files)
@@ -52,7 +58,10 @@ namespace Common
                     using var stream = File.OpenRead(file);
                     using StreamContent content = new(stream);
 
+                    var keepTracking = true;
+                    new Task(new Action(() => { TrackProgress(stream, progress, ref keepTracking); })).Start();
                     await _httpClient.PutAsync(signedUrl, content).ConfigureAwait(false);
+                    keepTracking = false;
                 }
             }
             catch (Exception ex)
@@ -60,16 +69,23 @@ namespace Common
                 _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
+            finally
+            {
+                _progressReport.OperationMessage = string.Empty;
+            }
 
             return new(ResultEnum.Success, string.Empty);
         }
 
-        /// <summary>
-        /// Upload log file to S3
-        /// </summary>
-        public async Task UploadLogAsync()
+        private void TrackProgress(FileStream streamToTrack, IProgress<float> progress, ref bool keepTracking)
         {
-            await UploadFilesToFtpAsync(Consts.CrashlogsFolder, _logger.LogFile, DateTime.Now.ToString("dd.MM.yyyy_HH.mm.ss") + ".log").ConfigureAwait(false);
+            while (keepTracking)
+            {
+                var pos = ((float)streamToTrack.Position / (float)streamToTrack.Length) * 100;
+                progress.Report(pos);
+
+                Thread.Sleep(100);
+            }
         }
     }
 }

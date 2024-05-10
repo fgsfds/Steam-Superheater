@@ -345,9 +345,9 @@ namespace Common.Models
                     return new(ResultEnum.Error, $"{fileFix.Url} doesn't exist.");
                 }
 
-                if (new FileInfo(fileFix.Url).Length > 1e+8)
+                if (new FileInfo(fileFix.Url).Length > 1e+9)
                 {
-                    return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
+                    return new(ResultEnum.Error, $"Can't upload file larger than 1Gb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
             }
 
