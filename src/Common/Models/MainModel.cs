@@ -14,12 +14,14 @@ namespace Common.Models
     public sealed class MainModel(
         ConfigProvider configProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
-        FixManager fixManager
+        FixManager fixManager,
+        Logger logger
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
         private readonly FixManager _fixManager = fixManager;
+        private readonly Logger _logger = logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
@@ -35,7 +37,7 @@ namespace Common.Models
         {
             try
             {
-                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache);
+                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache).ConfigureAwait(false);
 
                 foreach (var game in games.ToArray())
                 {
@@ -78,13 +80,13 @@ namespace Common.Models
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
+                _logger.Error(ex.Message);
+                return new(ResultEnum.ConnectionError, "API is not responding");
             }
         }
 
@@ -153,11 +155,12 @@ namespace Common.Models
                 return string.Empty;
             }
 
-            if (string.IsNullOrEmpty(fileFix.Url)) { return string.Empty; }
+            if (string.IsNullOrEmpty(fileFix.Url)) 
+            {
+                return string.Empty;
+            }
 
-            return !_config.UseTestRepoBranch
-                ? fileFix.Url
-                : fileFix.Url.Replace("/master/", "/test/");
+            return fileFix.Url;
         }
 
         /// <summary>
@@ -260,7 +263,7 @@ namespace Common.Models
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check);
+            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
         /// <summary>
         /// Uninstall fix
@@ -280,7 +283,7 @@ namespace Common.Models
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
         public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check);
+            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
         public void HideTag(string tag)
         {

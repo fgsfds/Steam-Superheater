@@ -8,11 +8,13 @@ namespace Common.Models
 {
     public sealed class NewsModel(
         ConfigProvider config,
-        NewsProvider newsProvider
+        NewsProvider newsProvider,
+        Logger logger
         )
     {
         private readonly ConfigEntity _config = config.Config;
         private readonly NewsProvider _newsProvider = newsProvider;
+        private readonly Logger _logger = logger;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
 
@@ -27,21 +29,21 @@ namespace Common.Models
         {
             try
             {
-                News = await _newsProvider.GetNewsListAsync();
+                News = await _newsProvider.GetNewsListAsync().ConfigureAwait(false);
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, "File not found: " + ex.Message);
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
+                _logger.Error(ex.Message);
+                return new(ResultEnum.ConnectionError, "API is not responding");
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.ConnectionError, ex.Message);
             }
 
@@ -56,7 +58,7 @@ namespace Common.Models
         public async Task<Result> MarkAllAsReadAsync()
         {
             UpdateConfigLastReadVersion();
-            var result = await UpdateNewsListAsync();
+            var result = await UpdateNewsListAsync().ConfigureAwait(false);
 
             return result;
         }
@@ -68,14 +70,14 @@ namespace Common.Models
         /// <param name="content">Content</param>
         public async Task<Result> ChangeNewsContentAsync(DateTime date, string content)
         {
-            var result1 = await _newsProvider.ChangeNewsContentAsync(date, content);
+            var result1 = _newsProvider.ChangeNewsContent(date, content);
 
             if (result1 != ResultEnum.Success)
             {
                 return result1;
             }
 
-            var result2 = await UpdateNewsListAsync();
+            var result2 = await UpdateNewsListAsync().ConfigureAwait(false);
 
             return result2;
         }
@@ -86,14 +88,14 @@ namespace Common.Models
         /// <param name="content">News content</param>
         public async Task<Result> AddNewsAsync(string content)
         {
-            var result1 = await _newsProvider.AddNewsAsync(content);
+            var result1 = _newsProvider.AddNews(content);
 
             if (result1 != ResultEnum.Success)
             {
                 return result1;
             }
 
-            var result2 = await UpdateNewsListAsync();
+            var result2 = await UpdateNewsListAsync().ConfigureAwait(false);
 
             return result2;
         }

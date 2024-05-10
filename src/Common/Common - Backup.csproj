@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Configurations>Debug;Release;Debug-Linux</Configurations>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AddSealed">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Octopus.Octodiff" />
+    <PackageReference Include="SharpCompress" />
+    <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+</Project>

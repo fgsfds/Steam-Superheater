@@ -2,11 +2,15 @@
 
   <PropertyGroup>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
-    <AssemblyName>Superheater.Common</AssemblyName>
+    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AddSealed">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="ConfigureAwaitAnalyzer">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

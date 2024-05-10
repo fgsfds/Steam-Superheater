@@ -19,10 +19,10 @@ namespace Common.Providers
         /// </summary>
         public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
         {
-            var fixesLists = await _fixesProvider.GetListAsync(useCache);
+            var fixesLists = await _fixesProvider.GetListAsync(useCache).ConfigureAwait(false);
             var sharedFixes = _fixesProvider.GetSharedFixes();
-            var games = await _gamesProvider.GetListAsync(useCache);
-            var installedFixes = await _installedFixesProvider.GetListAsync(useCache);
+            var games = await _gamesProvider.GetListAsync(useCache).ConfigureAwait(false);
+            var installedFixes = await _installedFixesProvider.GetListAsync(useCache).ConfigureAwait(false);
 
             List<FixFirstCombinedEntity> result = new(fixesLists.Count - 1);
 

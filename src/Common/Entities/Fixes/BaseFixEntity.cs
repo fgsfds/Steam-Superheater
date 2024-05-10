@@ -47,8 +47,7 @@ namespace Common.Entities.Fixes
         public string? Description { get; set; }
 
         /// <summary>
-        /// List of files that will be backed up before the fix is installed, and the original file will remain
-        /// Paths are relative to the game folder, separated by ;
+        /// List of tags
         /// </summary>
         public List<string>? Tags { get; set; }
 

@@ -23,5 +23,5 @@ namespace Common.Entities
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
     [JsonSerializable(typeof(List<NewsEntity>))]
-    internal sealed partial class NewsEntityContext : JsonSerializerContext;
+    public sealed partial class NewsEntityContext : JsonSerializerContext;
 }

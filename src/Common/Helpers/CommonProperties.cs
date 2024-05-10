@@ -18,7 +18,9 @@ namespace Common.Helpers
         /// <summary>
         /// Path to current repository (local or online)
         /// </summary>
-        public static string CurrentFixesRepo => Consts.MainFixesRepo + "/raw/" + (_config.UseTestRepoBranch ? "test/" : "master/");
+        public static string CurrentFixesRepo => _config.UseLocalApiAndRepo ? _config.LocalRepoPath : Consts.FilesBucketUrl;
+
+        public static string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
 
         /// <summary>
         /// Current app version
@@ -92,11 +94,11 @@ namespace Common.Helpers
 
             proc.WaitForExit();
 
-            Logger.Info($"DESKTOP_SESSION result {result}");
+            //Logger.Info($"DESKTOP_SESSION result {result}");
 
             if (result.StartsWith("gamescope-wayland"))
             {
-                Logger.Info("Steam game mode detected");
+                //.Info("Steam game mode detected");
 
                 _isSteamDeckGameMode = true;
             }

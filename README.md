@@ -35,7 +35,7 @@ It's not meant to be an ultimate mod manager, but rather an easy way to fix and 
 <td valign="center">
 <img align="right" width="600" src="img/light.png">
 
-Superheater features different types of fixes. File fixes download, replace or delete files in the game folder. Registry fixes add or change registry values. And hosts fixes add entries to Windows' hosts file.
+Superheater features different types of fixes. File fixes replace or delete files in the game folder. Registry fixes add or change registry values. And hosts fixes add entries to Windows' hosts file.
 
 Installing fixes is done by pressing a single button: no third-party installers or fiddling around with files, folders or registry is necessary. Just press Install and then run the game normally from Steam.
 
@@ -54,7 +54,7 @@ Same for uninstalling and updating: original files are backed up and restored wh
 <td valign="center">
 <img align="right" width="600" src="img/editor.png">
 
-Fixes are hand-picked, verified, and prepared (if needed) by me. Some are downloaded directly from the fix developer's GitHub, some a repacked to support single-button install and put into <a href="https://github.com/fgsfds/SteamFD-Fixes-Repo">my fixes repo</a>.
+Fixes are hand-picked, verified, and prepared (if needed) by me. Some are downloaded directly from the fix developer's GitHub, some a repacked to support single-button install and put into my fixes repo.
 
 Superheater also includes fixes <b>editor</b> which allows users who want to help fixes database grow to add and submit their own fixes.
 

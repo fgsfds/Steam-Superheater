@@ -19,7 +19,7 @@ namespace Common.FixTools.FileFix
 
             _fixUninstaller.UninstallFix(game, fix.InstalledFix);
 
-            var result = await _fixInstaller.InstallFixAsync(game, fix, variant, skipMD5Check);
+            var result = await _fixInstaller.InstallFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
             return result;
         }

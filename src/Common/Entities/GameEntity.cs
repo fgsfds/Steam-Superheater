@@ -20,12 +20,7 @@
         /// <summary>
         /// Game icon
         /// </summary>
-        public string Icon => SteamTools.SteamInstallPath is null
-            ? string.Empty
-            : Path.Combine(
-                SteamTools.SteamInstallPath,
-                Path.Combine("appcache", "librarycache", $"{Id}_icon.jpg")
-                );
+        public required string Icon { get; init; }
 
         public override string ToString() => Name;
     }

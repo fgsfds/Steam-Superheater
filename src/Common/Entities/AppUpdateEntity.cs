@@ -1,4 +1,6 @@
-﻿namespace Common.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace Common.Entities
 {
     public sealed class AppUpdateEntity
     {
@@ -17,4 +19,8 @@
         /// </summary>
         public required Uri DownloadUrl { get; init; }
     }
+
+    [JsonSourceGenerationOptions(WriteIndented = true)]
+    [JsonSerializable(typeof(List<AppUpdateEntity>))]
+    public sealed partial class AppUpdateEntityContext : JsonSerializerContext;
 }

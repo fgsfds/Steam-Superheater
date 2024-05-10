@@ -1,14 +1,20 @@
 ﻿using Common.Entities;
 using Common.Helpers;
 using System.IO.Compression;
-using Common.Providers;
 using System.Runtime.InteropServices;
+using System.Text.Json;
 
 namespace Common
 {
-    public sealed class AppUpdateInstaller(ArchiveTools archiveTools)
+    public sealed class AppUpdateInstaller(
+        ArchiveTools archiveTools,
+        HttpClientInstance httpClient,
+        Logger logger
+        )
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
+        private readonly HttpClientInstance _httpClient = httpClient;
+        private readonly Logger _logger = logger;
 
         private AppUpdateEntity? _update;
 
@@ -16,30 +22,48 @@ namespace Common
         /// Check GitHub for releases with version higher than current
         /// </summary>
         /// <param name="currentVersion">Current SFD version</param>
-        /// <returns></returns>
+        /// <returns>Has newer version</returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {
-            Logger.Info("Checking for updates");
+            _logger.Info("Checking for updates");
 
-            _update = await GitHubReleasesProvider.GetLatestUpdateAsync(currentVersion);
+            string osName;
 
-            var hasUpdate = _update is not null;
-
-            if (hasUpdate)
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
             {
-                Logger.Info($"Found new version {_update!.Version}");
+                osName = OSPlatform.Windows.ToString().ToLower();
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            {
+                osName = OSPlatform.Linux.ToString().ToLower();
+            }
+            else
+            {
+                return false;
             }
 
-            return hasUpdate;
+            var releaseJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
+
+            var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
+
+            if (release is not null && release.Version > currentVersion)
+            {
+                _logger.Info($"Found new version {release.Version}");
+
+                _update = release;
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
         /// Download latest release from Github and create update lock file
         /// </summary>
-        /// <returns></returns>
         public async Task DownloadAndUnpackLatestRelease()
         {
-            Logger.Info($"Downloading app update version {_update!.Version}");
+            _logger.Info($"Downloading app update version {_update!.Version}");
 
             var updateUrl = _update.DownloadUrl;
 
@@ -50,13 +74,13 @@ namespace Common
                 File.Delete(fileName);
             }
 
-            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName);
+            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName).ConfigureAwait(false);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 
             File.Delete(fileName);
 
-            await File.Create(Consts.UpdateFile).DisposeAsync();
+            await File.Create(Consts.UpdateFile).DisposeAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -64,7 +88,7 @@ namespace Common
         /// </summary>
         public static void InstallUpdate()
         {
-            Logger.Info("Starting app update");
+            //_logger.Info("Starting app update");
 
             var dir = Directory.GetCurrentDirectory();
             var updateDir = Path.Combine(dir, Consts.UpdateFolder);

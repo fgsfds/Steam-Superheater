@@ -13,12 +13,14 @@ namespace Common.FixTools.FileFix
     public sealed class FileFixInstaller(
         ConfigProvider config,
         ArchiveTools archiveTools,
-        ProgressReport progressReport
+        ProgressReport progressReport,
+        Logger logger
         )
     {
         private readonly ConfigEntity _configEntity = config.Config;
         private readonly ArchiveTools _archiveTools = archiveTools;
         private readonly ProgressReport _progressReport = progressReport;
+        private readonly Logger _logger = logger;
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events
@@ -43,19 +45,19 @@ namespace Common.FixTools.FileFix
                 }
             }
 
-            var installedSharedFix = await InstallSharedFixAsync(game, fix, variant, skipMD5Check);
+            var installedSharedFix = await InstallSharedFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
 
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
-            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath);
+            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath).ConfigureAwait(false);
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
             BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
 
-            await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath);
+            await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath).ConfigureAwait(false);
 
-            var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides);
+            var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides).ConfigureAwait(false);
 
             RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -82,7 +84,7 @@ namespace Common.FixTools.FileFix
 
             fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
 
-            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check);
+            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check).ConfigureAwait(false);
 
             return installedSharedFix;
         }
@@ -98,17 +100,17 @@ namespace Common.FixTools.FileFix
                 ? game.InstallDir
                 : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
 
-            var pathToArchive = _configEntity.UseLocalRepo
+            var pathToArchive = _configEntity.UseLocalApiAndRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
 
-            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5);
+            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5).ConfigureAwait(false);
 
             var filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
 
             BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
-            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant);
+            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant).ConfigureAwait(false);
             return filesInArchive;
         }
 
@@ -130,7 +132,7 @@ namespace Common.FixTools.FileFix
 
             string userRegFile = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
-            var userRegLines = (await File.ReadAllLinesAsync(userRegFile)).ToList();
+            var userRegLines = (await File.ReadAllLinesAsync(userRegFile).ConfigureAwait(false)).ToList();
 
             var startIndex = userRegLines.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
 
@@ -144,7 +146,7 @@ namespace Common.FixTools.FileFix
             }
 
             userRegLines.InsertRange(startIndex + 1, addedLines);
-            await File.WriteAllLinesAsync(userRegFile, userRegLines);
+            await File.WriteAllLinesAsync(userRegFile, userRegLines).ConfigureAwait(false);
 
             return addedLines;
         }
@@ -162,13 +164,13 @@ namespace Common.FixTools.FileFix
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
-                Logger.Info($"Using local file {zipFullPath}");
+                _logger.Info($"Using local file {zipFullPath}");
 
                 var result = CheckFileMD5(zipFullPath, fixMD5);
 
                 if (!result)
                 {
-                    Logger.Info("MD5 of the local file doesn't match, removing it");
+                    _logger.Info("MD5 of the local file doesn't match, removing it");
                     File.Delete(zipFullPath);
                 }
             }
@@ -178,14 +180,9 @@ namespace Common.FixTools.FileFix
                 return Task.CompletedTask;
             }
 
-            Logger.Info($"Local file {zipFullPath} not found");
+            _logger.Info($"Local file {zipFullPath} not found");
 
             var url = fixUrl;
-
-            if (_configEntity.UseTestRepoBranch)
-            {
-                url = url.Replace("/master/", "/test/");
-            }
 
             return _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, fixMD5);
 
@@ -298,10 +295,10 @@ namespace Common.FixTools.FileFix
             string unpackToPath,
             string? variant)
         {
-            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant);
+            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant).ConfigureAwait(false);
 
             if (_configEntity.DeleteZipsAfterInstall &&
-                !_configEntity.UseLocalRepo)
+                !_configEntity.UseLocalApiAndRepo)
             {
                 File.Delete(archiveFullPath);
             }
@@ -371,7 +368,7 @@ namespace Common.FixTools.FileFix
                         originalFile,
                         new BinaryDeltaReader(patchFile, reporter),
                         newFile);
-                });
+                }).ConfigureAwait(false);
             }
 
             _progressReport.OperationMessage = string.Empty;

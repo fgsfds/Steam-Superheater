@@ -10,6 +10,12 @@ namespace Common.FixTools.RegistryFix
 {
     public sealed class RegistryFixInstaller
     {
+        private readonly Logger _logger;
+        public RegistryFixInstaller(Logger logger)
+        {
+            _logger = logger;
+        }
+
         /// <summary>
         /// Install registry fix
         /// </summary>
@@ -25,7 +31,7 @@ namespace Common.FixTools.RegistryFix
 
             var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
-            Logger.Info($"Value name is {valueName}");
+            _logger.Info($"Value name is {valueName}");
 
             string? oldValueStr = null;
 

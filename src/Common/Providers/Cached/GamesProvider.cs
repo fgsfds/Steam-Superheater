@@ -6,14 +6,24 @@ namespace Common.Providers.Cached
 {
     public sealed class GamesProvider : CachedProviderBase<GameEntity>
     {
+        private readonly SteamTools _steamTools;
+
+        public GamesProvider(
+            SteamTools steamTools,
+            Logger logger
+            ) : base(logger)
+        {
+            _steamTools = steamTools;
+        }
+
         /// <inheritdoc/>
         internal override async Task<ImmutableList<GameEntity>> CreateCacheAsync()
         {
-            Logger.Info("Creating games cache list");
+            _logger.Info("Creating games cache list");
 
             _cache = await Task.Run(() =>
             {
-                var files = SteamTools.GetAcfsList();
+                var files = _steamTools.GetAcfsList();
 
                 List<GameEntity> result = new(files.Count);
 
@@ -32,9 +42,9 @@ namespace Common.Providers.Cached
                 var cache = result.OrderBy(static x => x.Name).ToImmutableList();
 
                 return cache;
-            });
+            }).ConfigureAwait(false);
 
-            Logger.Info($"Added {_cache.Count} games to the cache");
+            _logger.Info($"Added {_cache.Count} games to the cache");
 
             return _cache;
         }
@@ -43,7 +53,7 @@ namespace Common.Providers.Cached
         /// Parse ACF file to GameEntity
         /// </summary>
         /// <param name="file">Path to ACF file</param>
-        private static GameEntity? GetGameEntityFromAcf(string file)
+        private GameEntity? GetGameEntityFromAcf(string file)
         {
             var libraryFolder = Path.GetDirectoryName(file) ?? ThrowHelper.Exception<string>("Can't find install dir");
 
@@ -85,11 +95,19 @@ namespace Common.Providers.Cached
                     dir += Path.DirectorySeparatorChar;
                 }
 
+                var icon = _steamTools.SteamInstallPath is null
+                    ? string.Empty
+                    : Path.Combine(
+                        _steamTools.SteamInstallPath,
+                        Path.Combine("appcache", "librarycache", $"{id}_icon.jpg")
+                        );
+
                 return new GameEntity()
                 {
                     Id = id,
                     Name = name,
                     InstallDir = dir,
+                    Icon = icon
                 };
             }
 

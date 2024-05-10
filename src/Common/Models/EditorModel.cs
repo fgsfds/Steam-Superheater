@@ -17,12 +17,16 @@ namespace Common.Models
     public sealed class EditorModel(
         FixesProvider fixesProvider,
         GamesProvider gamesProvider,
-        ConfigProvider configProvider
+        ConfigProvider configProvider,
+        FilesUploader filesUploader,
+        Logger logger
         )
     {
         private readonly FixesProvider _fixesProvider = fixesProvider;
         private readonly GamesProvider _gamesProvider = gamesProvider;
         private readonly ConfigEntity _config = configProvider.Config;
+        private readonly FilesUploader _filesUploader = filesUploader;
+        private readonly Logger _logger = logger;
 
         private List<FixesList> _fixesList = [];
         private List<GameEntity> _availableGamesList = [];
@@ -35,20 +39,20 @@ namespace Common.Models
         {
             try
             {
-                await GetListOfFixesAsync(useCache);
-                await UpdateListOfAvailableGamesAsync(useCache);
+                await GetListOfFixesAsync(useCache).ConfigureAwait(false);
+                await UpdateListOfAvailableGamesAsync(useCache).ConfigureAwait(false);
 
                 return new(ResultEnum.Success, string.Empty);
             }
             catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.NotFound, $"File not found: {ex.Message}");
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {
-                Logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "Can't connect to GitHub repository");
+                _logger.Error(ex.Message);
+                return new(ResultEnum.ConnectionError, "API is not responding");
             }
         }
 
@@ -172,7 +176,7 @@ namespace Common.Models
             {
                 _fixesList.Remove(game);
 
-                await UpdateListOfAvailableGamesAsync(true);
+                await UpdateListOfAvailableGamesAsync(true).ConfigureAwait(false);
             }
         }
 
@@ -182,7 +186,7 @@ namespace Common.Models
         /// <returns>Result message</returns>
         public async Task<Result> SaveFixesListAsync()
         {
-            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList);
+            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList).ConfigureAwait(false);
 
             if (!saveXmlResult.IsSuccess)
             {
@@ -261,7 +265,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public static Result UploadFix(FixesList fixesList, BaseFixEntity fix)
+        public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix)
         {
             string? fileToUpload = null;
 
@@ -297,7 +301,7 @@ namespace Common.Models
                 filesToUpload.Add(fileToUpload);
             }
 
-            var result = FilesUploader.UploadFilesToFtp(fix.Guid.ToString(), filesToUpload);
+            var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload).ConfigureAwait(false);
 
             File.Delete(fixFilePath);
 
@@ -319,6 +323,13 @@ namespace Common.Models
         /// </summary>
         public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
         {
+            var doesFixExists = await _fixesProvider.CheckIfFixExistsInTheDatabase(fix.Guid).ConfigureAwait(false);
+
+            if (doesFixExists)
+            {
+                return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+            }
+
             if (string.IsNullOrEmpty(fix.Name) ||
                 fix.Version < 1)
             {
@@ -334,20 +345,9 @@ namespace Common.Models
                     return new(ResultEnum.Error, $"{fileFix.Url} doesn't exist.");
                 }
 
-                if (new FileInfo(fileFix.Url).Length > 1e+8)
+                if (new FileInfo(fileFix.Url).Length > 1e+9)
                 {
-                    return new(ResultEnum.Error, $"Can't upload file larger than 100Mb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
-                }
-            }
-
-            var onlineFixes = await _fixesProvider.GetOnlineFixesListAsync();
-
-            foreach (var onlineFix in onlineFixes)
-            {
-                //if fix already exists in the repo, don't upload it
-                if (onlineFix.Fixes.Exists(x => x.Guid == fix.Guid))
-                {
-                    return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+                    return new(ResultEnum.Error, $"Can't upload file larger than 1Gb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
                 }
             }
 
@@ -409,14 +409,14 @@ namespace Common.Models
         /// Get sorted list of fixes
         /// </summary>
         /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache)];
+        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache).ConfigureAwait(false)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync(bool useCache)
         {
-            var installedGames = await _gamesProvider.GetListAsync(useCache);
+            var installedGames = await _gamesProvider.GetListAsync(useCache).ConfigureAwait(false);
 
             _availableGamesList = new(installedGames.Count);
 
@@ -474,7 +474,7 @@ namespace Common.Models
             }
             catch (Exception ex)
             {
-                Logger.Error(ex.Message);
+                _logger.Error(ex.Message);
                 return new(ResultEnum.Error, ex.Message);
             }
 
