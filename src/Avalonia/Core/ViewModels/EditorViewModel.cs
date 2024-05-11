@@ -32,6 +32,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
 
+        private CancellationTokenSource _cancellationTokenSource;
+
 
         #region Binding Properties
 
@@ -472,6 +474,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         private float _progressBarValue;
 
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
+        private bool _lockButtons;
+
         #endregion Binding Properties
 
 
@@ -688,6 +695,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             _progressReport.Progress.ProgressChanged += ProgressChanged;
             _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
+            LockButtons = true;
+
             var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix).ConfigureAwait(true);
 
             if (!canUpload.IsSuccess)
@@ -698,16 +707,22 @@ namespace Superheater.Avalonia.Core.ViewModels
                     PopupMessageType.OkOnly
                     );
 
+
+                LockButtons = false;
                 return;
             }
 
-            var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix).ConfigureAwait(true);
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+
+            var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, cancellationToken).ConfigureAwait(true);
 
             _progressReport.Progress.ProgressChanged -= ProgressChanged;
             _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
 
             ProgressBarValue = 0;
             ProgressBarText = string.Empty;
+            LockButtons = false;
 
             _popupMessage.Show(
                     result.IsSuccess ? "Success" : "Error",
@@ -716,6 +731,18 @@ namespace Superheater.Avalonia.Core.ViewModels
                     );
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
+
+
+        /// <summary>
+        /// Cancel ongoing task
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
+        private async Task CancelAsync()
+        {
+            await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+            _cancellationTokenSource.Dispose();
+        }
+        private bool CancelCanExecute() => LockButtons;
 
 
         /// <summary>

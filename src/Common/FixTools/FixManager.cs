@@ -45,7 +45,13 @@ namespace Common.FixTools
 
         private readonly Logger _logger = logger;
 
-        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
+        public async Task<Result> InstallFixAsync(
+            GameEntity game,
+            BaseFixEntity fix,
+            string? variant,
+            bool skipMD5Check,
+            CancellationToken cancellationToken,
+            string hostsFile = Consts.Hosts)
         {
             _logger.Info($"Installing {fix.Name} for {game.Name}");
 
@@ -62,7 +68,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
-                        installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check).ConfigureAwait(false);
+                        installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
                         break;
                     case RegistryFixEntity registryFix:
                         installedFix = _registryFixInstaller.InstallFix(game, registryFix);
@@ -168,7 +174,7 @@ namespace Common.FixTools
             return new(ResultEnum.Success, "Fix uninstalled successfully!");
         }
 
-        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, string hostsFile = Consts.Hosts)
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken, string hostsFile = Consts.Hosts)
         {
             _logger.Info($"Updating {fix.Name} for {game.Name}");
 
@@ -185,7 +191,7 @@ namespace Common.FixTools
                 switch (fix)
                 {
                     case FileFixEntity fileFix:
-                        installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check).ConfigureAwait(false);
+                        installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
                         break;
                     case RegistryFixEntity registryFix:
                         installedFix = _registryFixUpdater.UpdateFix(game, registryFix);

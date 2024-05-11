@@ -32,7 +32,7 @@ namespace Tests
                 FilesToPatch = ["install folder\\start game.exe"]
             };
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
 
             var installedActual = File.ReadAllText(Consts.InstalledFile);
             var installedExpected = $@"[

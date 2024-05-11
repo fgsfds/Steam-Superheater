@@ -118,7 +118,7 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallFix()
         {  
-            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null, new());
 
             UninstallFix(_fileFixEntity);
         }
@@ -129,7 +129,7 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallFixVariant()
         {
-            await InstallFixAsync(fixEntity: _fileFixEntity, variant: "variant2");
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: "variant2", new());
 
             UninstallFix(_fileFixEntity);
         }
@@ -140,7 +140,7 @@ namespace Tests
         [Fact]
         public async Task UpdateFix()
         {
-            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null);
+            await InstallFixAsync(fixEntity: _fileFixEntity, variant: null, new());
 
             await UpdateFixAsync(_gameEntity, _fileFixEntity);
 
@@ -162,7 +162,7 @@ namespace Tests
                 MD5 = "badMD5"
             };
 
-            var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false);
+            var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false, new());
 
             Assert.False(File.Exists(Consts.InstalledFile));
             Assert.True(installResult == ResultEnum.MD5Error);
@@ -189,7 +189,7 @@ namespace Tests
                 InstallFolder = "new folder"
             };
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
 
             Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
@@ -240,7 +240,7 @@ namespace Tests
                 InstallFolder = "new folder"
             };
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
 
             Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
@@ -278,7 +278,7 @@ namespace Tests
 
         #region Private Methods
 
-        private async Task InstallFixAsync(FileFixEntity fixEntity, string? variant)
+        private async Task InstallFixAsync(FileFixEntity fixEntity, string? variant, CancellationToken cancellationToken)
         {
             var fixArchive = variant is null ? TestFixZip : TestFixVariantZip;
 
@@ -288,12 +288,12 @@ namespace Tests
                 true
                 );
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, variant, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, variant, true, cancellationToken).ConfigureAwait(true);
 
             CheckNewFiles();
 
             //modify backed up file
-            await File.WriteAllTextAsync(Path.Combine("game", "install folder", "file to backup.txt"), "modified");
+            await File.WriteAllTextAsync(Path.Combine("game", "install folder", "file to backup.txt"), "modified").ConfigureAwait(true);
         }
 
         private async Task UpdateFixAsync(GameEntity gameEntity, FileFixEntity fileFix)
@@ -316,7 +316,7 @@ namespace Tests
                 InstalledFix = fileFix.InstalledFix
             };
 
-            await _fixManager.UpdateFixAsync(gameEntity, newFileFix, null, true);
+            await _fixManager.UpdateFixAsync(gameEntity, newFileFix, null, true, new());
 
             fileFix.InstalledFix = newFileFix.InstalledFix;
 

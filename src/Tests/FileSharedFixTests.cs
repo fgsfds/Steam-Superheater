@@ -95,7 +95,7 @@ namespace Tests
                 true
                 );
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -147,7 +147,7 @@ namespace Tests
                 true
                 );
 
-            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new());
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -209,7 +209,7 @@ namespace Tests
                 true
                 );
 
-            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true);
+            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new());
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 

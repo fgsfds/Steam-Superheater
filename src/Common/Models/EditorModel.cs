@@ -265,7 +265,7 @@ namespace Common.Models
         /// <param name="fixesList">Fixes list entity</param>
         /// <param name="fix">New fix</param>
         /// <returns>true if uploaded successfully</returns>
-        public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix)
+        public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix, CancellationToken cancellationToken)
         {
             var newFixesList = new FixesList()
             {
@@ -293,7 +293,7 @@ namespace Common.Models
                 }
             }
 
-            var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload).ConfigureAwait(false);
+            var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload, cancellationToken).ConfigureAwait(false);
 
             File.Delete(fixFilePath);
 

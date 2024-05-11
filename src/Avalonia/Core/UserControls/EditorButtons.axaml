@@ -60,10 +60,19 @@
                 How to submit fixes...
             </Button>
 
+            <Button Name="CancelButton"
+                    Command="{Binding CancelCommand}"
+                    Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
+                    Content="Cancel"
+                    Padding="8"
+                    IsVisible="{Binding LockButtons}"/>
+
             <Button Margin="3,0"
                     Padding="8"
                     Command="{Binding UploadFixCommand}"
-                    Background="{DynamicResource SystemAccentColor}">
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding !LockButtons}">
                 Upload fix
             </Button>
 

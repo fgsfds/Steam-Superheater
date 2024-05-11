@@ -1,6 +1,5 @@
 ﻿using Common.Helpers;
 using SharpCompress.Archives;
-using System.IO;
 using System.Security.Cryptography;
 
 namespace Common
@@ -23,12 +22,14 @@ namespace Common
         /// </summary>
         /// <param name="url">Link to file download</param>
         /// <param name="filePath">Absolute path to destination file</param>
+        /// <param name="cancellationToken"></param>
         /// <param name="hash">MD5 to check file against</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
         public async Task CheckAndDownloadFileAsync(
             Uri url,
             string filePath,
+            CancellationToken cancellationToken,
             string? hash = null)
         {
             _logger.Info($"Started downloading file {url}");
@@ -66,7 +67,22 @@ namespace Common
 
             new Task(() => { TrackProgress(fileStream, progress, contentLength); }).Start();
              
-            await source.CopyToAsync(fileStream).ConfigureAwait(false);
+            try
+            {
+                await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+            }
+            catch (TaskCanceledException)
+            {
+                await fileStream.DisposeAsync().ConfigureAwait(false);
+
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                ThrowHelper.Exception("Downloading cancelled");
+            }
+
             await fileStream.DisposeAsync().ConfigureAwait(false);
             File.Move(tempFile, filePath);
 
@@ -139,7 +155,7 @@ namespace Common
                     }
                     else
                     {
-                        using FileStream writableStream = File.OpenWrite(fullName);
+                        using var writableStream = File.OpenWrite(fullName);
                         reader.WriteEntryTo(writableStream);
                     }
 

@@ -61,7 +61,7 @@ namespace Common
         /// <summary>
         /// Download latest release from Github and create update lock file
         /// </summary>
-        public async Task DownloadAndUnpackLatestRelease()
+        public async Task DownloadAndUnpackLatestRelease(CancellationToken cancellationToken)
         {
             _logger.Info($"Downloading app update version {_update!.Version}");
 
@@ -74,7 +74,7 @@ namespace Common
                 File.Delete(fileName);
             }
 
-            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName).ConfigureAwait(false);
+            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
 

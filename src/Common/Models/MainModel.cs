@@ -8,6 +8,7 @@ using Common.FixTools;
 using Common.Helpers;
 using System.Collections.Immutable;
 using Common.Providers;
+using System.Threading;
 
 namespace Common.Models
 {
@@ -262,8 +263,10 @@ namespace Common.Models
         /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
-        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
+        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
+        {
+            return await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+        }
 
         /// <summary>
         /// Uninstall fix
@@ -282,8 +285,10 @@ namespace Common.Models
         /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Skip check of file's MD5</param>
         /// <returns>Result message</returns>
-        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check) =>
-            await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check).ConfigureAwait(false);
+        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
+        {
+            return await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+        }
 
         public void HideTag(string tag)
         {

@@ -25,7 +25,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly PopupStackViewModel _popupStack;
         private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
-        private bool _lockButtons;
+
+        private CancellationTokenSource _cancellationTokenSource;
 
 
         #region Binding Properties
@@ -130,30 +131,14 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-
-        public MainViewModel(
-            MainModel mainModel,
-            ConfigProvider config,
-            PopupMessageViewModel popupMessage,
-            PopupEditorViewModel popupEditor,
-            ProgressReport progressReport,
-            PopupStackViewModel popupStack
-            )
-        {
-            _mainModel = mainModel;
-            _config = config.Config;
-            _popupMessage = popupMessage;
-            _popupEditor = popupEditor;
-            _progressReport = progressReport;
-            _popupStack = popupStack;
-
-            _searchBarText = string.Empty;
-
-            SelectedTagFilter = TagsComboboxList.First();
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-        }
-
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
+        [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
+        [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
+        private bool _lockButtons;
 
         [ObservableProperty]
         private string _mainTabHeader = "Main";
@@ -190,6 +175,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -209,9 +195,33 @@ namespace Superheater.Avalonia.Core.ViewModels
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         private bool _isInProgress;
-        partial void OnIsInProgressChanged(bool value) => _lockButtons = value;
+        partial void OnIsInProgressChanged(bool value) => LockButtons = value;
 
         #endregion Binding Properties
+
+
+        public MainViewModel(
+            MainModel mainModel,
+            ConfigProvider config,
+            PopupMessageViewModel popupMessage,
+            PopupEditorViewModel popupEditor,
+            ProgressReport progressReport,
+            PopupStackViewModel popupStack
+            )
+        {
+            _mainModel = mainModel;
+            _config = config.Config;
+            _popupMessage = popupMessage;
+            _popupEditor = popupEditor;
+            _progressReport = progressReport;
+            _popupStack = popupStack;
+
+            _searchBarText = string.Empty;
+
+            SelectedTagFilter = TagsComboboxList.First();
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+        }
 
 
         #region Relay Commands
@@ -235,7 +245,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             UninstallFixCommand.NotifyCanExecuteChanged();
             UpdateFixCommand.NotifyCanExecuteChanged();
         }
-        private bool UpdateGamesCanExecute() => !_lockButtons;
+        private bool UpdateGamesCanExecute() => !LockButtons;
 
 
         /// <summary>
@@ -251,7 +261,8 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix.IsInstalled ||
                 !SelectedGame.IsGameInstalled ||
                 (DoesSelectedFixHaveVariants && SelectedFixVariant is null) ||
-                _lockButtons)
+                LockButtons
+                )
             {
                 return false;
             }
@@ -263,11 +274,23 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
+        /// Cancel ongoing task
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
+        private async Task CancelAsync()
+        {
+            await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+            _cancellationTokenSource.Dispose();
+        }
+        private bool CancelCanExecute() => LockButtons;
+
+
+        /// <summary>
         /// Update selected fix
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
         private Task UpdateFixAsync() => InstallUpdateFixAsync(true);
-        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !_lockButtons;
+        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !LockButtons;
 
 
         /// <summary>
@@ -282,18 +305,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = true;
 
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-
             var fixUninstallResult = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
 
             FillGamesList();
 
             IsInProgress = false;
-
-            InstallFixCommand.NotifyCanExecuteChanged();
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
-            UpdateGamesCommand.NotifyCanExecuteChanged();
 
             _popupMessage.Show(
                 fixUninstallResult.IsSuccess ? "Success" : "Error",
@@ -306,7 +322,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (SelectedFix is null ||
                 !SelectedFix.IsInstalled ||
                 (SelectedGame is not null && !SelectedGame.IsGameInstalled) ||
-                _lockButtons)
+                LockButtons)
             {
                 return false;
             }
@@ -411,6 +427,11 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
+            if (LockButtons)
+            {
+                return false;
+            }
+
             LaunchGameButtonText = SelectedGame.IsGameInstalled
                 ? "Launch game..."
                 : "Install game...";
@@ -473,26 +494,23 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedGame.Game.ThrowIfNull();
 
-            _lockButtons = true;
-
-            UpdateGamesCommand.NotifyCanExecuteChanged();
-            InstallFixCommand.NotifyCanExecuteChanged();
-            UpdateFixCommand.NotifyCanExecuteChanged();
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
+            LockButtons = true;
 
             _progressReport.Progress.ProgressChanged += ProgressChanged;
             _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
+
+            _cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = _cancellationTokenSource.Token;
 
             Result result;
 
             if (isUpdate)
             {
-                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false).ConfigureAwait(true);
+                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
             else
             {
-                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false).ConfigureAwait(true);
+                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
 
             if (result == ResultEnum.MD5Error)
@@ -507,17 +525,15 @@ Do you still want to install the fix?",
 
                 if (popupResult)
                 {
-                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true).ConfigureAwait(true);
+                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true, cancellationToken).ConfigureAwait(true);
                 }
             }
 
+            _cancellationTokenSource.Dispose();
+
             FillGamesList();
 
-            _lockButtons = false;
-
-            UninstallFixCommand.NotifyCanExecuteChanged();
-            OpenConfigCommand.NotifyCanExecuteChanged();
-            UpdateGamesCommand.NotifyCanExecuteChanged();
+            LockButtons = false;
 
             _progressReport.Progress.ProgressChanged -= ProgressChanged;
             _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;

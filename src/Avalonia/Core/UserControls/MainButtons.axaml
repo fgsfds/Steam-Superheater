@@ -49,6 +49,14 @@
                     HorizontalAlignment="Right"
                     Grid.Column="2">
 
+            <Button Name="CancelButton"
+                    Command="{Binding CancelCommand}"
+                    Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
+                    Content="Cancel"
+                    IsVisible="{Binding LockButtons}"
+                    Padding="8"/>
+
             <Button Name="InstallButton"
                     Command="{Binding InstallFixCommand}"
                     Margin="3,0"

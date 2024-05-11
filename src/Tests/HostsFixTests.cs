@@ -110,7 +110,7 @@ namespace Tests
             var fixEntity = _fixEntity;
 
             //Install Fix
-            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, _hostsFilePath);
+            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, new(), _hostsFilePath);
 
             CheckInstalled();
 

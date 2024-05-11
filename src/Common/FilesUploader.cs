@@ -23,9 +23,9 @@ namespace Common
         /// <param name="filePath">Path to file to upload</param>
         /// <param name="remoteFileName">File name on the s3 server</param>
         /// <returns>True if successfully uploaded</returns>
-        public async Task<Result> UploadFilesToFtpAsync(string folder, string filePath, string remoteFileName)
+        public async Task<Result> UploadFilesToFtpAsync(string folder, string filePath, string remoteFileName, CancellationToken cancellationToken)
         {
-            return await UploadFilesToFtpAsync(folder, [filePath], remoteFileName).ConfigureAwait(false);
+            return await UploadFilesToFtpAsync(folder, [filePath], cancellationToken, remoteFileName).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Common
         /// <param name="files">List of paths to files</param>
         /// <param name="remoteFileName">File name on the s3 server</param>
         /// <returns>True if successfully uploaded</returns>
-        public async Task<Result> UploadFilesToFtpAsync(string folder, List<string> files, string? remoteFileName = null)
+        public async Task<Result> UploadFilesToFtpAsync(string folder, List<string> files, CancellationToken cancellationToken, string? remoteFileName = null)
         {
             _logger.Info($"Uploading {files.Count} file(s)");
 
@@ -59,7 +59,7 @@ namespace Common
 
                     new Task(() => { TrackProgress(fileStream, progress); }).Start();
 
-                    using var response = await httpClient.PutAsync(signedUrl, content).ConfigureAwait(false);
+                    using var response = await httpClient.PutAsync(signedUrl, content, cancellationToken).ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
                     {
@@ -67,6 +67,11 @@ namespace Common
                         return new(ResultEnum.Error, result);
                     }
                 }
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.Info("Uploading cancelled");
+                return new(ResultEnum.Error, "Uploading cancelled");
             }
             catch (Exception ex)
             {
@@ -85,7 +90,7 @@ namespace Common
         {
             while (streamToTrack.CanSeek)
             {
-                var pos = (streamToTrack.Position / (float)streamToTrack.Length) * 100;
+                var pos = ((float)streamToTrack.Position / (float)streamToTrack.Length) * 100;
                 progress.Report(pos);
 
                 Thread.Sleep(50);

@@ -108,7 +108,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             IsInProgress = true;
 
-            await _updateInstaller.DownloadAndUnpackLatestRelease().ConfigureAwait(true);
+            await _updateInstaller.DownloadAndUnpackLatestRelease(new()).ConfigureAwait(true);
 
             AppUpdateInstaller.InstallUpdate();
         }
