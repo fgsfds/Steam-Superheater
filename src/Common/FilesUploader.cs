@@ -1,21 +1,17 @@
 ﻿using Common.Helpers;
-using System.Net.Http;
 using System.Web;
 
 namespace Common
 {
     public class FilesUploader
     {
-        private readonly HttpClient _httpClient;
         private readonly Logger _logger;
         private readonly ProgressReport _progressReport;
 
         public FilesUploader(
-            HttpClient httpClient,
             Logger logger,
             ProgressReport progressReport)
         {
-            _httpClient = httpClient;
             _logger = logger;
             _progressReport = progressReport;
         }
@@ -46,6 +42,8 @@ namespace Common
             _progressReport.OperationMessage = "Uploading...";
             IProgress<float> progress = _progressReport.Progress;
 
+            using HttpClient httpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
+
             try
             {
                 foreach (var file in files)
@@ -54,15 +52,20 @@ namespace Common
                     var path = "superheater_uploads/" + folder + "/" + fileName;
                     var encodedPath = HttpUtility.UrlEncode(path);
 
-                    var signedUrl = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+                    var signedUrl = await httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
-                    using var stream = File.OpenRead(file);
-                    using StreamContent content = new(stream);
+                    using var fileStream = File.OpenRead(file);
+                    using StreamContent content = new(fileStream);
 
-                    var keepTracking = true;
-                    new Task(new Action(() => { TrackProgress(stream, progress, ref keepTracking); })).Start();
-                    await _httpClient.PutAsync(signedUrl, content).ConfigureAwait(false);
-                    keepTracking = false;
+                    new Task(() => { TrackProgress(fileStream, progress); }).Start();
+
+                    using var response = await httpClient.PutAsync(signedUrl, content).ConfigureAwait(false);
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        string? result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        return new(ResultEnum.Error, result);
+                    }
                 }
             }
             catch (Exception ex)
@@ -78,14 +81,14 @@ namespace Common
             return new(ResultEnum.Success, string.Empty);
         }
 
-        private void TrackProgress(FileStream streamToTrack, IProgress<float> progress, ref bool keepTracking)
+        private static void TrackProgress(FileStream streamToTrack, IProgress<float> progress)
         {
-            while (keepTracking)
+            while (streamToTrack.CanSeek)
             {
-                var pos = ((float)streamToTrack.Position / (float)streamToTrack.Length) * 100;
+                var pos = (streamToTrack.Position / (float)streamToTrack.Length) * 100;
                 progress.Report(pos);
 
-                Thread.Sleep(100);
+                Thread.Sleep(50);
             }
         }
     }

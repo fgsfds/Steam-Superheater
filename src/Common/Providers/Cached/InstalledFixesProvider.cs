@@ -12,11 +12,8 @@ namespace Common.Providers.Cached
 {
     public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
     {
-        private readonly Logger _logger;
-
         public InstalledFixesProvider(Logger logger) : base(logger)
         {
-            _logger = logger;
         }
 
         /// <summary>

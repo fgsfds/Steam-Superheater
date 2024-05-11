@@ -31,6 +31,12 @@ namespace Superheater.Web.Server.Providers
 
             using var response = await _httpClient.GetAsync(_jsonUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error while getting response");
+                return;
+            }
+
             if (response.Content.Headers.LastModified is null)
             {
                 _logger.LogError("Can't get news last modified date");

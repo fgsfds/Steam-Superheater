@@ -1,5 +1,6 @@
 ﻿using Common.Helpers;
 using SharpCompress.Archives;
+using System.IO;
 using System.Security.Cryptography;
 
 namespace Common
@@ -46,7 +47,7 @@ namespace Common
 
             if (!response.IsSuccessStatusCode)
             {
-                ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode.ToString());
+                ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode);
             }
 
             if (hash is not null)
@@ -61,51 +62,25 @@ namespace Common
             await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
             var contentLength = response.Content.Headers.ContentLength;
 
-            FileStream file = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
+            FileStream fileStream = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
 
-            if (!contentLength.HasValue)
-            {
-                await source.CopyToAsync(file).ConfigureAwait(false);
-
-                await file.DisposeAsync().ConfigureAwait(false);
-            }
-            else
-            {
-                var buffer = new byte[81920];
-                var totalBytesRead = 0f;
-                int bytesRead;
-
-                while ((bytesRead = await source.ReadAsync(buffer).ConfigureAwait(false)) != 0)
-                {
-                    await file.WriteAsync(buffer.AsMemory(0, bytesRead)).ConfigureAwait(false);
-                    totalBytesRead += bytesRead;
-
-                    var value = (totalBytesRead / (long)contentLength * 100);
-                    progress.Report(value);
-                }
-
-                await file.DisposeAsync().ConfigureAwait(false);
-
-                File.Move(tempFile, filePath);
-            }
+            new Task(() => { TrackProgress(fileStream, progress, contentLength); }).Start();
+             
+            await source.CopyToAsync(fileStream).ConfigureAwait(false);
+            await fileStream.DisposeAsync().ConfigureAwait(false);
+            File.Move(tempFile, filePath);
 
             if (hash is not null)
             {
                 using var md5 = MD5.Create();
-                var stream = File.OpenRead(filePath);
+                using var stream = File.OpenRead(filePath);
 
                 var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
 
                 if (!hash.Equals(fileHash))
                 {
-                    await stream.DisposeAsync().ConfigureAwait(false);
-
-                    File.Delete(filePath);
-
                     ThrowHelper.HashCheckFailedException("File hash doesn't match");
                 }
-                
-                await stream.DisposeAsync().ConfigureAwait(false);
             }
 
             _progressReport.OperationMessage = string.Empty;
@@ -245,6 +220,22 @@ namespace Common
             }
 
             return files;
+        }
+
+        private static void TrackProgress(FileStream streamToTrack, IProgress<float> progress, long? contentLength)
+        {
+            if (contentLength is null)
+            {
+                return;
+            }
+
+            while (streamToTrack.CanSeek)
+            {
+                var pos = ((float)streamToTrack.Position / (float)contentLength) * 100;
+                progress.Report(pos);
+
+                Thread.Sleep(50);
+            }
         }
     }
 }

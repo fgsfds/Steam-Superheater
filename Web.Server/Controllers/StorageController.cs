@@ -8,11 +8,11 @@ namespace Superheater.Web.Server.Controllers
     [Route("api/storage")]
     public sealed class StorageController : ControllerBase
     {
-        private readonly ILogger<FixesController> _logger;
+        private readonly ILogger<StorageController> _logger;
         private readonly S3Client _s3controller;
 
         public StorageController(
-            ILogger<FixesController> logger,
+            ILogger<StorageController> logger,
             S3Client s3controller
             )
         {

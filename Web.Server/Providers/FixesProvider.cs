@@ -35,6 +35,12 @@ namespace Superheater.Web.Server.Providers
             _logger.LogInformation("Looking for new fixes");
 
             using var response = await _httpClient.GetAsync(_jsonUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error while getting response");
+                return;
+            }
 
             if (response.Content.Headers.LastModified is null)
             {
