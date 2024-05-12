@@ -19,7 +19,10 @@ namespace Web.Server.Database
 #if DEBUG
             optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=Superheater;Username=postgres;Password=123");
 #else
-            optionsBuilder.UseNpgsql("Host=192.168.0.4;Port=5432;Database=superheater;Username=gen_user;Password=ndi\\2k4OyZZ$9");
+
+            string user = Environment.GetEnvironmentVariable("DbUser")!;
+            string password = Environment.GetEnvironmentVariable("DbPass")!;
+            optionsBuilder.UseNpgsql($"Host=192.168.0.4;Port=5432;Database=superheater;Username={user};Password={password}");
 #endif
         }
     }
