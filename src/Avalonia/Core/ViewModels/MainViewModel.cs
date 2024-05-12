@@ -131,6 +131,77 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string? SelectedFixNumberOfInstalls
+        {
+            get
+            {
+                if (SelectedFix?.Installs is null)
+                {
+                    return null;
+                }
+
+                if (SelectedFix.Installs == 1)
+                {
+                    return "Installed 1 time";
+                }
+
+                return $"Installed {SelectedFix.Installs} times";
+            }
+        }
+
+        public string SelectedFixScore
+        {
+            get
+            {
+                if (SelectedFix?.Score is null)
+                {
+                    return "-";
+                }
+
+                return SelectedFix.Score.ToString()!;
+            }
+        }
+
+        public bool IsSelectedFixUpvoted
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return false;
+                }
+
+                var hasUpvote = _config.Upvotes.TryGetValue(SelectedFix.Guid, out var isUpvote);
+
+                if (hasUpvote && isUpvote)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public bool IsSelectedFixDownvoted
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return false;
+                }
+
+                var hasUpvote = _config.Upvotes.TryGetValue(SelectedFix.Guid, out var isUpvote);
+
+                if (hasUpvote && !isUpvote)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -171,6 +242,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixNumberOfInstalls))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixScore))]
+        [NotifyPropertyChangedFor(nameof(IsSelectedFixUpvoted))]
+        [NotifyPropertyChangedFor(nameof(IsSelectedFixDownvoted))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -455,7 +530,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Show popup with filters
         /// </summary>
         [RelayCommand]
         private async Task ShowFiltersPopup()
@@ -469,7 +544,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Show popup with fix variants
         /// </summary>
         [RelayCommand]
         private async Task ShowVariantsPopup()
@@ -479,6 +554,61 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedFixVariant = selectedTag;
 
             OnPropertyChanged(nameof(ShowPopupStackButtonText));
+        }
+
+
+        /// <summary>
+        /// Upvote fix
+        /// </summary>
+        [RelayCommand]
+        private async Task Upvote()
+        {
+            SelectedFix.ThrowIfNull();
+
+            await _mainModel.ChangeVoteAsync(SelectedFix, true).ConfigureAwait(true);
+            OnPropertyChanged(nameof(SelectedFixScore));
+            OnPropertyChanged(nameof(IsSelectedFixUpvoted));
+            OnPropertyChanged(nameof(IsSelectedFixDownvoted));
+
+        }
+
+
+        /// <summary>
+        /// Downvote fix
+        /// </summary>
+        [RelayCommand]
+        private async Task Downvote()
+        {
+            SelectedFix.ThrowIfNull();
+
+            await _mainModel.ChangeVoteAsync(SelectedFix, false).ConfigureAwait(true);
+            OnPropertyChanged(nameof(SelectedFixScore));
+            OnPropertyChanged(nameof(IsSelectedFixUpvoted));
+            OnPropertyChanged(nameof(IsSelectedFixDownvoted));
+        }
+
+
+        /// <summary>
+        /// Report fix
+        /// </summary>
+        [RelayCommand]
+        private async Task ReportFix()
+        {
+            SelectedFix.ThrowIfNull();
+
+            var reportText = await _popupEditor.ShowAndGetResultAsync(
+                "Report fix",
+                string.Empty
+                ).ConfigureAwait(true);
+
+            if (reportText is null)
+            {
+                return;
+            }
+
+            await _mainModel.ReportFix(SelectedFix, reportText).ConfigureAwait(true);
+
+            _popupMessage.Show("Report fix", "Report sent", PopupMessageType.OkOnly);
         }
 
         #endregion Relay Commands
@@ -500,7 +630,9 @@ namespace Superheater.Avalonia.Core.ViewModels
             _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
             _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+            var cancellationToken = _cancellationTokenSource.Token;
+
+            await _mainModel.IncreaseInstalls(SelectedFix).ConfigureAwait(true);
 
             Result result;
 

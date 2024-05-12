@@ -1,10 +1,10 @@
 ﻿using Common.Config;
+using Common.DI;
+using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using Common.DI;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Helpers
 {

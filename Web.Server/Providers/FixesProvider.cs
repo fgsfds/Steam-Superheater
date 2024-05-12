@@ -1,8 +1,8 @@
-﻿using Common;
-using Common.Entities.Fixes;
+﻿using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
+using Web.Server.Helpers;
 
 namespace Superheater.Web.Server.Providers
 {
@@ -11,6 +11,7 @@ namespace Superheater.Web.Server.Providers
         private readonly HttpClient _httpClient;
         private readonly ILogger<FixesProvider> _logger;
         private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}fixes.json";
+        private readonly DatabaseContextFactory _dbContextFactory;
 
         private DateTime? _fixesListLastModified;
         private ImmutableList<FixesList> _fixesList;
@@ -23,10 +24,15 @@ namespace Superheater.Web.Server.Providers
         public int FixesCount { get; private set; }
 
 
-        public FixesProvider(ILogger<FixesProvider> logger, HttpClient httpClient)
+        public FixesProvider(
+            ILogger<FixesProvider> logger,
+            HttpClient httpClient,
+            DatabaseContextFactory dbContextFactory
+            )
         {
             _logger = logger;
             _httpClient = httpClient;
+            _dbContextFactory = dbContextFactory;
         }
 
 
@@ -56,6 +62,23 @@ namespace Superheater.Web.Server.Providers
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var fixesList = JsonSerializer.Deserialize(json, FixesListContext.Default.ListFixesList);
+
+            using var dbContext = _dbContextFactory.Get();
+
+            var installs = dbContext.Installs.ToDictionary(x => x.FixGuid, x => x.Installs);
+            var scores = dbContext.Scores.ToDictionary(x => x.FixGuid, x => x.Rating);
+
+            foreach (var fixes in fixesList)
+            {
+                foreach (var fix in fixes.Fixes)
+                {
+                    var hasScore = scores.TryGetValue(fix.Guid, out var score);
+                    fix.Score = hasScore ? score : 0;
+
+                    var hasInstalls = installs.TryGetValue(fix.Guid, out var install);
+                    fix.Installs = hasInstalls ? install : 0;
+                }
+            }
 
             Interlocked.Exchange(ref _fixesList, [.. fixesList]);
 

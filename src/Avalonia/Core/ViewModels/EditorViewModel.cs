@@ -713,7 +713,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+            var cancellationToken = _cancellationTokenSource.Token;
 
             var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, cancellationToken).ConfigureAwait(true);
 

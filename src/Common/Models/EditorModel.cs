@@ -1,16 +1,16 @@
-﻿using Common.Entities;
+﻿using Common.Config;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
+using Common.Enums;
 using Common.Helpers;
 using Common.Providers.Cached;
 using System.Collections.Immutable;
-using Common.Config;
 using System.Text;
 using System.Text.Json;
-using Common.Enums;
 
 namespace Common.Models
 {

@@ -18,6 +18,7 @@ namespace Common.Config
             _hiddenTags = [];
             _showUninstalledGames = true;
             _showUnsupportedFixes = false;
+            _upvotes = new();
         }
 
         public delegate void ConfigChanged();
@@ -87,6 +88,18 @@ namespace Common.Config
         {
             get => _hiddenTags;
             set => SetConfigParameter(ref _hiddenTags, value);
+        }
+
+        private Dictionary<Guid, bool> _upvotes;
+        public Dictionary<Guid, bool> Upvotes
+        {
+            get => _upvotes;
+            set => SetConfigParameter(ref _upvotes, value);
+        }
+
+        public void ForceUpdateConfig()
+        {
+            NotifyConfigChanged?.Invoke();
         }
 
         /// <summary>

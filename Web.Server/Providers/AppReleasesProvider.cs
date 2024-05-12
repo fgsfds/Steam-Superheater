@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Entities;
+﻿using Common.Entities;
 using Common.Helpers;
 using System.Text.Json;
 
@@ -10,8 +9,8 @@ namespace Superheater.Web.Server.Providers
         private readonly ILogger<AppReleasesProvider> _logger;
         private readonly HttpClient _httpClient;
 
-        public AppUpdateEntity WindowsRelease { get; private set; }
-        public AppUpdateEntity LinuxRelease { get; private set; }
+        public AppUpdateEntity? WindowsRelease { get; private set; }
+        public AppUpdateEntity? LinuxRelease { get; private set; }
 
         public AppReleasesProvider(
             ILogger<AppReleasesProvider> logger,
@@ -26,9 +25,22 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         public async Task GetLatestVersionAsync()
         {
+#if DEBUG
+            _logger.LogInformation("Skipping check for new releases");
+            return;
+#endif
+
             _logger.LogInformation("Looking for new releases");
 
-            var releasesJson = await _httpClient.GetStringAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                _logger.LogError("Error while getting releases" + Environment.NewLine + response.StatusCode);
+                return;
+            }
+
+            var releasesJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var releases =
                 JsonSerializer.Deserialize(releasesJson, GitHubReleaseContext.Default.ListGitHubRelease)

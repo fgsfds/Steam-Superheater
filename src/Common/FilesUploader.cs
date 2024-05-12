@@ -63,7 +63,7 @@ namespace Common
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        string? result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                         return new(ResultEnum.Error, result);
                     }
                 }

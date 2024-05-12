@@ -13,6 +13,7 @@
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageVersion Include="Octopus.Octodiff" Version="2.0.546" />
     <PackageVersion Include="SharpCompress" Version="0.37.2" />
     <PackageVersion Include="System.Text.Json" Version="8.0.3" />
