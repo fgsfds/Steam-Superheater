@@ -8,9 +8,9 @@ namespace Web.Server.DbEntities
     public sealed class InstallsEntity
     {
         [Column("fix_guid")]
-        public Guid FixGuid { get; set; }
+        public required Guid FixGuid { get; set; }
 
         [Column("value")]
-        public int Installs { get; set; }
+        public required int Installs { get; set; }
     }
 }

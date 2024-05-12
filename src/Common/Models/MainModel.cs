@@ -310,7 +310,7 @@ namespace Common.Models
                 Score = score
             };
 
-            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", content).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", content).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newScore = int.TryParse(responseStr, out var newScoreInt);
@@ -322,7 +322,7 @@ namespace Common.Models
 
         public async Task<int> IncreaseInstalls(BaseFixEntity fix)
         {
-            using var response = await _httpClient.PostAsync($"{CommonProperties.ApiUrl}/fixes/installs/add/{fix.Guid}", null).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsync($"{CommonProperties.ApiUrl}/fixes/installs/add/{fix.Guid}", null).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
@@ -330,6 +330,17 @@ namespace Common.Models
             fix.Installs = newInstallsInt;
 
             return newInstallsInt;
+        }
+
+        public async Task ReportFix(BaseFixEntity fix, string reportText)
+        {
+            ReportMessage content = new()
+            {
+                FixGuid = fix.Guid,
+                ReportText = reportText
+            };
+
+            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/report", content).ConfigureAwait(false);
         }
     }
 }

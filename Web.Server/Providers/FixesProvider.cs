@@ -58,8 +58,8 @@ namespace Superheater.Web.Server.Providers
             var fixesList = JsonSerializer.Deserialize(json, FixesListContext.Default.ListFixesList);
 
             using var dbContext = new DatabaseContext();
-            var installs = dbContext.Downloads.ToDictionary(x => x.FixGuid, x => x.Installs);
-            var scores = dbContext.Rating.ToDictionary(x => x.FixGuid, x => x.Rating);
+            var installs = dbContext.Installs.ToDictionary(x => x.FixGuid, x => x.Installs);
+            var scores = dbContext.Scores.ToDictionary(x => x.FixGuid, x => x.Rating);
 
             foreach (var fixes in fixesList)
             {

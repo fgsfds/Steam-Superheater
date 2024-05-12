@@ -135,7 +135,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             get
             {
-                if (SelectedFix is null)
+                if (SelectedFix?.Installs is null)
                 {
                     return null;
                 }
@@ -149,7 +149,18 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public int? SelectedFixScore => SelectedFix?.Score;
+        public string SelectedFixScore
+        {
+            get
+            {
+                if (SelectedFix?.Score is null)
+                {
+                    return "-";
+                }
+
+                return SelectedFix.Score.ToString()!;
+            }
+        }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
@@ -477,7 +488,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Show popup with filters
         /// </summary>
         [RelayCommand]
         private async Task ShowFiltersPopup()
@@ -491,7 +502,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Show popup with fix variants
         /// </summary>
         [RelayCommand]
         private async Task ShowVariantsPopup()
@@ -505,7 +516,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Upvote fix
         /// </summary>
         [RelayCommand]
         private async Task Upvote()
@@ -518,7 +529,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Open hosts editor
+        /// Downvote fix
         /// </summary>
         [RelayCommand]
         private async Task Downvote()
@@ -527,6 +538,30 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             await _mainModel.ChangeVoteAsync(SelectedFix, -1).ConfigureAwait(true);
             OnPropertyChanged(nameof(SelectedFixScore));
+        }
+
+
+        /// <summary>
+        /// Report fix
+        /// </summary>
+        [RelayCommand]
+        private async Task ReportFix()
+        {
+            SelectedFix.ThrowIfNull();
+
+            var reportText = await _popupEditor.ShowAndGetResultAsync(
+                "Report fix",
+                string.Empty
+                ).ConfigureAwait(true);
+
+            if (reportText is null)
+            {
+                return;
+            }
+
+            await _mainModel.ReportFix(SelectedFix, reportText).ConfigureAwait(true);
+
+            _popupMessage.Show("Report", "Report sent", PopupMessageType.OkOnly);
         }
 
         #endregion Relay Commands

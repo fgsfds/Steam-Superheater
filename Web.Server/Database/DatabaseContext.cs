@@ -5,8 +5,9 @@ namespace Web.Server.Database
 {
     public sealed class DatabaseContext : DbContext
     {
-        public DbSet<InstallsEntity> Downloads { get; set; }
-        public DbSet<ScoreEntity> Rating { get; set; }
+        public DbSet<InstallsEntity> Installs { get; set; }
+        public DbSet<ScoresEntity> Scores { get; set; }
+        public DbSet<ReportsEntity> Reports { get; set; }
 
         public DatabaseContext()
         {

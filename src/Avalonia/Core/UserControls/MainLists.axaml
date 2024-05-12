@@ -255,7 +255,7 @@
 
                 <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
 
-                    <TextBlock Margin="3" VerticalAlignment="Center">Rating:</TextBlock>
+                    <TextBlock Margin="3" VerticalAlignment="Center">Score:</TextBlock>
 
                     <Button Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
 
@@ -265,7 +265,7 @@
 
                 </StackPanel>
 
-                <Button Grid.Column="2" HorizontalAlignment="Right" Margin="3" Command="{Binding DownvoteCommand}">🚩 Report</Button>
+                <Button Grid.Column="2" HorizontalAlignment="Right" Margin="3" Command="{Binding ReportFixCommand}">🚩 Report</Button>
 
             </Grid>
 

@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(FixGuid))]
-    [Table(name: "score", Schema = "public")]
-    public sealed class ScoreEntity
+    [Table(name: "scores", Schema = "public")]
+    public sealed class ScoresEntity
     {
         [Column("fix_guid")]
-        public Guid FixGuid { get; set; }
+        public required Guid FixGuid { get; set; }
 
         [Column("value")]
-        public int Rating { get; set; }
+        public required int Rating { get; set; }
     }
 }

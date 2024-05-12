@@ -15,6 +15,7 @@ namespace Superheater.Web.Server.Controllers
         private readonly ILogger<FixesController> _logger;
         private readonly FixesProvider _fixesProvider;
         private readonly DatabaseContextFactory _dbContextFactory;
+        private readonly SemaphoreSlim _semaphore;
 
         public FixesController(
             ILogger<FixesController> logger,
@@ -25,6 +26,7 @@ namespace Superheater.Web.Server.Controllers
             _logger = logger;
             _fixesProvider = fixesProvider;
             _dbContextFactory = dbContextFactory;
+            _semaphore = new(1);
         }
 
         [HttpGet]
@@ -57,21 +59,23 @@ namespace Superheater.Web.Server.Controllers
         public Dictionary<Guid, int>? GetNumberOfInstalls()
         {
             using var dbContext = _dbContextFactory.Get();
-            return dbContext.Downloads.ToDictionary(x => x.FixGuid, x => x.Installs);
+            return dbContext.Installs.ToDictionary(x => x.FixGuid, x => x.Installs);
         }
 
         [HttpGet("installs/{guid:Guid}")]
         public int? GetNumberOfInstallsForFix(Guid guid)
         {
             using var dbContext = _dbContextFactory.Get();
-            return dbContext.Downloads.FirstOrDefault(x => x.FixGuid == guid)?.Installs;
+            return dbContext.Installs.FirstOrDefault(x => x.FixGuid == guid)?.Installs;
         }
 
-        [HttpPost("installs/add/{guid:Guid}")]
-        public async Task<int?> AddNumberOfInstallsAsync(Guid guid)
+        [HttpPut("installs/add/{guid:Guid}")]
+        public int? AddNumberOfInstalls(Guid guid)
         {
+            _semaphore.Wait();
+
             using var dbContext = _dbContextFactory.Get();
-            var row = dbContext.Downloads.SingleOrDefault(b => b.FixGuid == guid);
+            var row = dbContext.Installs.SingleOrDefault(b => b.FixGuid == guid);
 
             int installs;
 
@@ -83,7 +87,7 @@ namespace Superheater.Web.Server.Controllers
                     Installs = 1
                 };
 
-                dbContext.Downloads.Add(entity);
+                dbContext.Installs.Add(entity);
                 installs = 1;
             }
             else
@@ -92,7 +96,9 @@ namespace Superheater.Web.Server.Controllers
                 installs = row.Installs;
             }
 
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            dbContext.SaveChanges();
+
+            _semaphore.Release();
 
             return installs;
         }
@@ -101,26 +107,28 @@ namespace Superheater.Web.Server.Controllers
         public int? GetRating(Guid guid)
         {
             using var dbContext = _dbContextFactory.Get();
-            return dbContext.Rating.FirstOrDefault(x => x.FixGuid == guid)?.Rating;
+            return dbContext.Scores.FirstOrDefault(x => x.FixGuid == guid)?.Rating;
         }
 
-        [HttpPost("score/change")]
-        public async Task<int?> ChangeRatingAsync([FromBody] RatingMessage message)
+        [HttpPut("score/change")]
+        public int? ChangeRating([FromBody] RatingMessage message)
         {
+            _semaphore.Wait();
+
             using var dbContext = _dbContextFactory.Get();
-            var row = dbContext.Rating.SingleOrDefault(b => b.FixGuid == message.FixGuid);
+            var row = dbContext.Scores.SingleOrDefault(b => b.FixGuid == message.FixGuid);
 
             int rating;
 
             if (row is null)
             {
-                ScoreEntity entity = new()
+                ScoresEntity entity = new()
                 {
                     FixGuid = message.FixGuid,
                     Rating = message.Score
                 };
 
-                dbContext.Rating.Add(entity);
+                dbContext.Scores.Add(entity);
                 rating = message.Score;
             }
             else
@@ -129,9 +137,26 @@ namespace Superheater.Web.Server.Controllers
                 rating = row.Rating;
             }
 
-            await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            dbContext.SaveChanges();
+
+            _semaphore.Release();
 
             return rating;
+        }
+
+        [HttpPost("report")]
+        public void ReportFix([FromBody] ReportMessage message)
+        {
+            using var dbContext = _dbContextFactory.Get();
+
+            ReportsEntity entity = new()
+            {
+                FixGuid = message.FixGuid,
+                ReportText = message.ReportText
+            };
+
+            dbContext.Reports.Add(entity);
+            dbContext.SaveChanges();
         }
     }
 }
