@@ -1,5 +1,4 @@
 using Common.Entities.Fixes;
-using Common.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
 using System.Collections.Immutable;
@@ -69,8 +68,8 @@ namespace Superheater.Web.Server.Controllers
             return dbContext.Installs.FirstOrDefault(x => x.FixGuid == guid)?.Installs;
         }
 
-        [HttpPut("installs/add/{guid:Guid}")]
-        public int? AddNumberOfInstalls(Guid guid)
+        [HttpPut("installs/add")]
+        public int? AddNumberOfInstalls([FromBody] Guid guid)
         {
             _semaphore.Wait();
 
@@ -111,12 +110,12 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpPut("score/change")]
-        public int? ChangeRating([FromBody] RatingMessage message)
+        public int? ChangeRating([FromBody] Tuple<Guid, sbyte> message)
         {
             _semaphore.Wait();
 
             using var dbContext = _dbContextFactory.Get();
-            var row = dbContext.Scores.SingleOrDefault(b => b.FixGuid == message.FixGuid);
+            var row = dbContext.Scores.SingleOrDefault(b => b.FixGuid == message.Item1);
 
             int rating;
 
@@ -124,16 +123,16 @@ namespace Superheater.Web.Server.Controllers
             {
                 ScoresEntity entity = new()
                 {
-                    FixGuid = message.FixGuid,
-                    Rating = message.Score
+                    FixGuid = message.Item1,
+                    Rating = message.Item2
                 };
 
                 dbContext.Scores.Add(entity);
-                rating = message.Score;
+                rating = message.Item2;
             }
             else
             {
-                row.Rating += message.Score;
+                row.Rating += message.Item2;
                 rating = row.Rating;
             }
 
@@ -145,14 +144,14 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpPost("report")]
-        public void ReportFix([FromBody] ReportMessage message)
+        public void ReportFix([FromBody] Tuple<Guid, string> message)
         {
             using var dbContext = _dbContextFactory.Get();
 
             ReportsEntity entity = new()
             {
-                FixGuid = message.FixGuid,
-                ReportText = message.ReportText
+                FixGuid = message.Item1,
+                ReportText = message.Item2
             };
 
             dbContext.Reports.Add(entity);

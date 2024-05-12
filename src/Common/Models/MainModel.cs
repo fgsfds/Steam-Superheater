@@ -6,7 +6,6 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Messages;
 using Common.Providers;
 using System.Collections.Immutable;
 using System.Net.Http.Json;
@@ -304,13 +303,7 @@ namespace Common.Models
 
         public async Task<int> ChangeVoteAsync(BaseFixEntity fix, sbyte score)
         {
-            RatingMessage content = new()
-            {
-                FixGuid = fix.Guid,
-                Score = score
-            };
-
-            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", content).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, score)).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newScore = int.TryParse(responseStr, out var newScoreInt);
@@ -322,7 +315,7 @@ namespace Common.Models
 
         public async Task<int> IncreaseInstalls(BaseFixEntity fix)
         {
-            using var response = await _httpClient.PutAsync($"{CommonProperties.ApiUrl}/fixes/installs/add/{fix.Guid}", null).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
@@ -334,13 +327,7 @@ namespace Common.Models
 
         public async Task ReportFix(BaseFixEntity fix, string reportText)
         {
-            ReportMessage content = new()
-            {
-                FixGuid = fix.Guid,
-                ReportText = reportText
-            };
-
-            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/report", content).ConfigureAwait(false);
+            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/report", new Tuple<Guid, string>(fix.Guid, reportText)).ConfigureAwait(false);
         }
     }
 }

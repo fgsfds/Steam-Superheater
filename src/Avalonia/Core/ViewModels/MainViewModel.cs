@@ -561,7 +561,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             await _mainModel.ReportFix(SelectedFix, reportText).ConfigureAwait(true);
 
-            _popupMessage.Show("Report", "Report sent", PopupMessageType.OkOnly);
+            _popupMessage.Show("Report fix", "Report sent", PopupMessageType.OkOnly);
         }
 
         #endregion Relay Commands
