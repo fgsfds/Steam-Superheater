@@ -162,6 +162,46 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsSelectedFixUpvoted
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return false;
+                }
+
+                var hasUpvote = _config.Upvotes.TryGetValue(SelectedFix.Guid, out var isUpvote);
+
+                if (hasUpvote && isUpvote)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        public bool IsSelectedFixDownvoted
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return false;
+                }
+
+                var hasUpvote = _config.Upvotes.TryGetValue(SelectedFix.Guid, out var isUpvote);
+
+                if (hasUpvote && !isUpvote)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -204,6 +244,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
         [NotifyPropertyChangedFor(nameof(SelectedFixNumberOfInstalls))]
         [NotifyPropertyChangedFor(nameof(SelectedFixScore))]
+        [NotifyPropertyChangedFor(nameof(IsSelectedFixUpvoted))]
+        [NotifyPropertyChangedFor(nameof(IsSelectedFixDownvoted))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -523,8 +565,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            await _mainModel.ChangeVoteAsync(SelectedFix, 1).ConfigureAwait(true);
+            await _mainModel.ChangeVoteAsync(SelectedFix, true).ConfigureAwait(true);
             OnPropertyChanged(nameof(SelectedFixScore));
+            OnPropertyChanged(nameof(IsSelectedFixUpvoted));
+            OnPropertyChanged(nameof(IsSelectedFixDownvoted));
+
         }
 
 
@@ -536,8 +581,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            await _mainModel.ChangeVoteAsync(SelectedFix, -1).ConfigureAwait(true);
+            await _mainModel.ChangeVoteAsync(SelectedFix, false).ConfigureAwait(true);
             OnPropertyChanged(nameof(SelectedFixScore));
+            OnPropertyChanged(nameof(IsSelectedFixUpvoted));
+            OnPropertyChanged(nameof(IsSelectedFixDownvoted));
         }
 
 

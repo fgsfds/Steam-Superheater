@@ -257,11 +257,13 @@
 
                     <TextBlock Margin="3" VerticalAlignment="Center">Score:</TextBlock>
 
-                    <Button Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
+                    <Button IsVisible="{Binding IsSelectedFixUpvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
+                    <Button IsVisible="{Binding !IsSelectedFixUpvoted}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
 
                     <TextBlock Margin="3" Text="{Binding SelectedFixScore}" VerticalAlignment="Center"></TextBlock>
 
-                    <Button Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
+                    <Button IsVisible="{Binding IsSelectedFixDownvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
+                    <Button IsVisible="{Binding !IsSelectedFixDownvoted}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
 
                 </StackPanel>
 

@@ -301,9 +301,53 @@ namespace Common.Models
             _config.HiddenTags = tags;
         }
 
-        public async Task<int> ChangeVoteAsync(BaseFixEntity fix, sbyte score)
+        public async Task<int> ChangeVoteAsync(BaseFixEntity fix, bool needTpUpvote)
         {
-            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, score)).ConfigureAwait(false);
+            sbyte increment = 0;
+
+
+            var doesEntryExist = _config.Upvotes.TryGetValue(fix.Guid, out var isUpvote);
+
+            if (doesEntryExist)
+            {
+                if (isUpvote && needTpUpvote)
+                {
+                    increment = -1;
+                    _config.Upvotes.Remove(fix.Guid);
+                }
+                else if (isUpvote && !needTpUpvote)
+                {
+                    increment = -2;
+                    _config.Upvotes[fix.Guid] = false;
+                }
+                else if (!isUpvote && needTpUpvote)
+                {
+                    increment = 2;
+                    _config.Upvotes[fix.Guid] = true;
+                }
+                else if (!isUpvote && !needTpUpvote)
+                {
+                    increment = 1;
+                    _config.Upvotes.Remove(fix.Guid);
+                }
+            }
+            else
+            {
+                if (needTpUpvote)
+                {
+                    increment = 1;
+                    _config.Upvotes.Add(fix.Guid, true);
+                }
+                else
+                {
+                    increment = -1;
+                    _config.Upvotes.Add(fix.Guid, false);
+                }
+            }
+
+            _config.ForceUpdateConfig();
+
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, increment)).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newScore = int.TryParse(responseStr, out var newScoreInt);
