@@ -1,8 +1,8 @@
 ﻿using Common.Config;
 using Common.Entities;
 using Common.Helpers;
-using System.Collections.Immutable;
 using Common.Providers;
+using System.Collections.Immutable;
 
 namespace Common.Models
 {

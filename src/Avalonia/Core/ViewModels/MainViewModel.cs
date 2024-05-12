@@ -131,6 +131,26 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public string? SelectedFixNumberOfInstalls
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return null;
+                }
+
+                if (SelectedFix.Installs == 1)
+                {
+                    return "Installed 1 time";
+                }
+
+                return $"Installed {SelectedFix.Installs} times";
+            }
+        }
+
+        public int? SelectedFixScore => SelectedFix?.Score;
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -171,6 +191,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixNumberOfInstalls))]
+        [NotifyPropertyChangedFor(nameof(SelectedFixScore))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -481,6 +503,32 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(ShowPopupStackButtonText));
         }
 
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand]
+        private async Task Upvote()
+        {
+            SelectedFix.ThrowIfNull();
+
+            await _mainModel.ChangeVoteAsync(SelectedFix, 1).ConfigureAwait(true);
+            OnPropertyChanged(nameof(SelectedFixScore));
+        }
+
+
+        /// <summary>
+        /// Open hosts editor
+        /// </summary>
+        [RelayCommand]
+        private async Task Downvote()
+        {
+            SelectedFix.ThrowIfNull();
+
+            await _mainModel.ChangeVoteAsync(SelectedFix, -1).ConfigureAwait(true);
+            OnPropertyChanged(nameof(SelectedFixScore));
+        }
+
         #endregion Relay Commands
 
 
@@ -500,7 +548,9 @@ namespace Superheater.Avalonia.Core.ViewModels
             _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
             _cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = _cancellationTokenSource.Token;
+            var cancellationToken = _cancellationTokenSource.Token;
+
+            await _mainModel.IncreaseInstalls(SelectedFix).ConfigureAwait(true);
 
             Result result;
 

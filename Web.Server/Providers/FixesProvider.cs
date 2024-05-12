@@ -1,8 +1,8 @@
-﻿using Common;
-using Common.Entities.Fixes;
+﻿using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
+using Web.Server.Database;
 
 namespace Superheater.Web.Server.Providers
 {
@@ -56,6 +56,22 @@ namespace Superheater.Web.Server.Providers
             var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var fixesList = JsonSerializer.Deserialize(json, FixesListContext.Default.ListFixesList);
+
+            using var dbContext = new DatabaseContext();
+            var installs = dbContext.Downloads.ToDictionary(x => x.FixGuid, x => x.Installs);
+            var scores = dbContext.Rating.ToDictionary(x => x.FixGuid, x => x.Rating);
+
+            foreach (var fixes in fixesList)
+            {
+                foreach (var fix in fixes.Fixes)
+                {
+                    var hasScore = scores.TryGetValue(fix.Guid, out var score);
+                    fix.Score = hasScore ? score : 0;
+
+                    var hasInstalls = installs.TryGetValue(fix.Guid, out var install);
+                    fix.Installs = hasInstalls ? install : 0;
+                }
+            }
 
             Interlocked.Exchange(ref _fixesList, [.. fixesList]);
 

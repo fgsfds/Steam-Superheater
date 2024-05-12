@@ -6,9 +6,10 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
-using System.Collections.Immutable;
+using Common.Messages;
 using Common.Providers;
-using System.Threading;
+using System.Collections.Immutable;
+using System.Net.Http.Json;
 
 namespace Common.Models
 {
@@ -16,12 +17,14 @@ namespace Common.Models
         ConfigProvider configProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
         FixManager fixManager,
+        HttpClient httpClient,
         Logger logger
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
         private readonly FixManager _fixManager = fixManager;
+        private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
@@ -297,6 +300,36 @@ namespace Common.Models
             tags = [.. tags.OrderBy(static x => x)];
 
             _config.HiddenTags = tags;
+        }
+
+        public async Task<int> ChangeVoteAsync(BaseFixEntity fix, sbyte score)
+        {
+            RatingMessage content = new()
+            {
+                FixGuid = fix.Guid,
+                Score = score
+            };
+
+            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", content).ConfigureAwait(false);
+            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            var newScore = int.TryParse(responseStr, out var newScoreInt);
+
+            fix.Score = newScoreInt;
+
+            return newScoreInt;
+        }
+
+        public async Task<int> IncreaseInstalls(BaseFixEntity fix)
+        {
+            using var response = await _httpClient.PostAsync($"{CommonProperties.ApiUrl}/fixes/installs/add/{fix.Guid}", null).ConfigureAwait(false);
+            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
+
+            fix.Installs = newInstallsInt;
+
+            return newInstallsInt;
         }
     }
 }
