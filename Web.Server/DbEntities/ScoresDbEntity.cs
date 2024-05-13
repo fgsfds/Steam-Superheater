@@ -5,7 +5,7 @@ namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(FixGuid))]
     [Table(name: "scores", Schema = "public")]
-    public sealed class ScoresEntity
+    public sealed class ScoresDbEntity
     {
         [Column("fix_guid")]
         public required Guid FixGuid { get; set; }

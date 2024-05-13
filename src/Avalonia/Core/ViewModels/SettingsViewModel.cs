@@ -24,6 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             PathToLocalRepoTextBox = _config.LocalRepoPath;
             ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
             ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+            ApiPasswordTextBox = _config.ApiPassword;
 
             _config.NotifyParameterChanged += NotifyParameterChanged;
 
@@ -76,6 +77,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         private bool _isLocalPathTextboxChanged;
 
         [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SaveApiPasswordCommand))]
+        private bool _isApiPasswordTextboxChanged;
+
+        [ObservableProperty]
         private bool _deleteArchivesCheckbox;
         partial void OnDeleteArchivesCheckboxChanged(bool value)
         {
@@ -126,6 +131,22 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        [ObservableProperty]
+        private string _apiPasswordTextBox;
+        partial void OnApiPasswordTextBoxChanged(string value)
+        {
+            var configValue = _config.ApiPassword;
+
+            if (value.Equals(configValue))
+            {
+                IsApiPasswordTextboxChanged = false;
+            }
+            else
+            {
+                IsApiPasswordTextboxChanged = true;
+            }
+        }
+
         #endregion Binding Properties
 
 
@@ -139,6 +160,15 @@ namespace Superheater.Avalonia.Core.ViewModels
             IsLocalPathTextboxChanged = false;
         }
         private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged;
+
+        [RelayCommand(CanExecute = (nameof(SaveApiPasswordCanExecute)))]
+        private void SaveApiPassword()
+        {
+            _config.ApiPassword = ApiPasswordTextBox;
+
+            IsApiPasswordTextboxChanged = false;
+        }
+        private bool SaveApiPasswordCanExecute() => IsApiPasswordTextboxChanged;
 
         [RelayCommand]
         private void SetDefaultTheme()

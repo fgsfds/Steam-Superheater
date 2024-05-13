@@ -4,17 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
-    [Table(name: "reports", Schema = "public")]
-    public sealed class ReportsEntity
+    [Table(name: "news", Schema = "public")]
+    public sealed class NewsDbEntity
     {
         [Column("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Column("fix_guid")]
-        public required Guid FixGuid { get; set; }
+        [Column("date")]
+        public required DateTime Date { get; set; }
 
-        [Column("text")]
-        public required string ReportText { get; set; }
+        [Column("content")]
+        public required string Content { get; set; }
     }
 }

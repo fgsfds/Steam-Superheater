@@ -21,7 +21,6 @@ namespace Superheater.Web.Server
 
             builder.Services.AddHostedService<FixesListUpdateTask>();
             builder.Services.AddHostedService<AppReleasesTask>();
-            builder.Services.AddHostedService<NewsListUpdateTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();

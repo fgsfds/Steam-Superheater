@@ -8,8 +8,6 @@
 
         public const string InstalledFile = "installed.json";
 
-        internal const string NewsFile = "news.json";
-
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
 
         public const string BackupFolder = ".sfd";

@@ -227,6 +227,27 @@
 
                     </Grid>
 
+                    <!--API password-->
+                    <Grid ColumnDefinitions="auto,*,auto">
+
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            API password
+                        </TextBlock>
+
+                        <TextBox Text="{Binding ApiPasswordTextBox}"
+                                 Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 Margin="5"/>
+
+                        <Button Command="{Binding SaveApiPasswordCommand}"
+                                Grid.Column="3">
+                            Save
+                        </Button>
+
+                    </Grid>
+
                 </StackPanel>
             </Expander>
 

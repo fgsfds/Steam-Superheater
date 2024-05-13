@@ -1,7 +1,6 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
-using System;
 using System.Collections.Immutable;
 using Web.Server.DbEntities;
 using Web.Server.Helpers;
@@ -81,7 +80,7 @@ namespace Superheater.Web.Server.Controllers
 
             if (row is null)
             {
-                InstallsEntity entity = new()
+                InstallsDbEntity entity = new()
                 {
                     FixGuid = guid,
                     Installs = 1
@@ -124,7 +123,7 @@ namespace Superheater.Web.Server.Controllers
 
             if (row is null)
             {
-                ScoresEntity entity = new()
+                ScoresDbEntity entity = new()
                 {
                     FixGuid = message.Item1,
                     Rating = message.Item2
@@ -153,7 +152,7 @@ namespace Superheater.Web.Server.Controllers
         {
             using var dbContext = _dbContextFactory.Get();
 
-            ReportsEntity entity = new()
+            ReportsDbEntity entity = new()
             {
                 FixGuid = message.Item1,
                 ReportText = message.Item2

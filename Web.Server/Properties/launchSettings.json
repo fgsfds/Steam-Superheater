@@ -17,9 +17,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy",
-        "S3Key": "QED3T8XHRLCQYSNS62N1",
-        "S3SKey": "5dngV13JtPvzlrUzsUNSRt2eC9E84wlzM0lNEQt7"
+        "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7093;http://localhost:5088"

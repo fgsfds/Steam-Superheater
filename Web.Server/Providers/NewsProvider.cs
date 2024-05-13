@@ -1,64 +1,106 @@
 ﻿using Common.Entities;
-using Common.Helpers;
 using System.Collections.Immutable;
-using System.Text.Json;
+using Web.Server.DbEntities;
+using Web.Server.Helpers;
 
 namespace Superheater.Web.Server.Providers
 {
     public sealed class NewsProvider
     {
-        private readonly HttpClient _httpClient;
         private readonly ILogger<NewsProvider> _logger;
-        private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}news.json";
-
-        private DateTime? _newsListLastModified;
-        private ImmutableList<NewsEntity> _newsList;
-
-        public ImmutableList<NewsEntity> NewsList => _newsList;
+        private readonly DatabaseContextFactory _databaseContextFactory;
 
 
-        public NewsProvider(ILogger<NewsProvider> logger, HttpClient httpClient)
+        public NewsProvider(
+            ILogger<NewsProvider> logger,
+            DatabaseContextFactory databaseContextFactory)
         {
             _logger = logger;
-            _httpClient = httpClient;
+            _databaseContextFactory = databaseContextFactory;
         }
 
 
-        public async Task CreateNewsListAsync()
+        public ImmutableList<NewsEntity> GetNews()
         {
-            _logger.LogInformation("Looking for new news");
+            using var dbContext = _databaseContextFactory.Get();
+            var newsEntities = dbContext.News;
 
-            using var response = await _httpClient.GetAsync(_jsonUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            List<NewsEntity> news = new(newsEntities.Count());
 
-            if (!response.IsSuccessStatusCode)
+            //adding news in reverse order
+            for (var i = newsEntities.Count() - 1; i >= 0; i--)
             {
-                _logger.LogError("Error while getting response");
-                return;
+                var element = newsEntities.ElementAt(i);
+
+                NewsEntity entity = new()
+                {
+                    Date = element.Date,
+                    Content = element.Content
+                };
+
+                news.Add(entity);
             }
 
-            if (response.Content.Headers.LastModified is null)
+            return [.. news];
+        }
+
+        internal bool AddNews(Tuple<DateTime, string, string> message)
+        {
+            string apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+
+            if (!apiPassword.Equals(message.Item3))
             {
-                _logger.LogError("Can't get news last modified date");
+                return false;
             }
 
-            if (response.Content.Headers.LastModified <= _newsListLastModified)
+            using var dbContext = _databaseContextFactory.Get();
+
+            NewsDbEntity entity = new()
             {
-                _logger.LogInformation("No new news found");
-                return;
+                Date = message.Item1,
+                Content = message.Item2
+            };
+
+            dbContext.News.Add(entity);
+            dbContext.SaveChanges();
+
+            return true;
+        }
+
+        internal bool ChangeNews(Tuple<DateTime, string, string> message)
+        {
+            string apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+
+            if (!apiPassword.Equals(message.Item3))
+            {
+                return false;
             }
 
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            using var dbContext = _databaseContextFactory.Get();
 
-            var newsList = JsonSerializer.Deserialize(json, NewsEntityContext.Default.ListNewsEntity);
-
-            Interlocked.Exchange(ref _newsList, [.. newsList]);
-
-            if (response.Content.Headers.LastModified is not null)
+            NewsDbEntity? entity = null;
+            
+            foreach (var news in dbContext.News)
             {
-                _newsListLastModified = response.Content.Headers.LastModified.Value.UtcDateTime;
+                var date1 = message.Item1;
+                var date2 = news.Date;
+
+                if (date1 == date2)
+                {
+                    entity = news;
+                    break;
+                }
             }
 
-            _logger.LogInformation("Found new news");
+            if (entity is null)
+            {
+                return false;
+            }
+
+            entity.Content = message.Item2;
+            dbContext.SaveChanges();
+
+            return true;
         }
     }
 }

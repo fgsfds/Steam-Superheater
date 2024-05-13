@@ -14,6 +14,7 @@ namespace Common.Config
             _lastReadNewsDate = DateTime.MinValue;
             _useLocalApiAndRepo = false;
             _localRepoPath = "LocalRepo";
+            _localRepoPath = string.Empty;
             _theme = ThemeEnum.System;
             _hiddenTags = [];
             _showUninstalledGames = true;
@@ -60,6 +61,13 @@ namespace Common.Config
         {
             get => _localRepoPath;
             set => SetConfigParameter(ref _localRepoPath, value);
+        }
+
+        private string _apiPassword;
+        public string ApiPassword
+        {
+            get => _apiPassword;
+            set => SetConfigParameter(ref _apiPassword, value);
         }
 
         private ThemeEnum _theme;
@@ -109,10 +117,10 @@ namespace Common.Config
         /// <param name="value">New value</param>
         private void SetConfigParameter<T>(ref T fieldName, T value, [CallerMemberName] string callerName = "")
         {
-            fieldName.ThrowIfNull();
+            //fieldName.ThrowIfNull();
             callerName.ThrowIfNullOrEmpty();
 
-            if (!fieldName.Equals(value))
+            if (fieldName is null || !fieldName.Equals(value))
             {
                 fieldName = value;
                 NotifyConfigChanged?.Invoke();

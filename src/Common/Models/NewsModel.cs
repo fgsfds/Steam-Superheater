@@ -70,7 +70,7 @@ namespace Common.Models
         /// <param name="content">Content</param>
         public async Task<Result> ChangeNewsContentAsync(DateTime date, string content)
         {
-            var result1 = _newsProvider.ChangeNewsContent(date, content);
+            var result1 = await _newsProvider.ChangeNewsContentAsync(date, content).ConfigureAwait(false);
 
             if (result1 != ResultEnum.Success)
             {
@@ -88,7 +88,7 @@ namespace Common.Models
         /// <param name="content">News content</param>
         public async Task<Result> AddNewsAsync(string content)
         {
-            var result1 = _newsProvider.AddNews(content);
+            var result1 = await _newsProvider.AddNewsAsync(content).ConfigureAwait(false);
 
             if (result1 != ResultEnum.Success)
             {
