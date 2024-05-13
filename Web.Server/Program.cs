@@ -1,4 +1,3 @@
-using Common;
 using Superheater.Web.Server.Providers;
 using Superheater.Web.Server.Tasks;
 using Web.Server.Helpers;
@@ -13,7 +12,7 @@ namespace Superheater.Web.Server
 
             builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
             {
-                jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = false;
+                jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
             });
 
@@ -27,8 +26,9 @@ namespace Superheater.Web.Server
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();
             builder.Services.AddSingleton<AppReleasesProvider>();
-            builder.Services.AddSingleton<HttpClient>();
+            builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
             builder.Services.AddSingleton<S3Client>();
+            builder.Services.AddSingleton<DatabaseContextFactory>();
 
             var app = builder.Build();
 
@@ -51,6 +51,13 @@ namespace Superheater.Web.Server
             app.MapFallbackToFile("/index.html");
 
             app.Run();
+        }
+
+        private static HttpClient CreateHttpClient(IServiceProvider provider)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+            return httpClient;
         }
     }
 }

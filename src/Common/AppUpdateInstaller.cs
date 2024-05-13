@@ -42,7 +42,14 @@ namespace Common
                 return false;
             }
 
-            var releaseJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{CommonProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode || response.StatusCode is System.Net.HttpStatusCode.NoContent)
+            {
+                return false;
+            }
+
+            var releaseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
 

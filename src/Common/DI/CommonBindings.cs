@@ -29,10 +29,17 @@ namespace Common.DI
             container.AddTransient<ArchiveTools>();
 
             container.AddSingleton<ProgressReport>();
-            container.AddSingleton<HttpClient>();
+            container.AddSingleton<HttpClient>(CreateHttpClient);
             container.AddSingleton<FilesUploader>();
             container.AddSingleton<SteamTools>();
             container.AddSingleton<Logger>();
+        }
+
+        private static HttpClient CreateHttpClient(IServiceProvider provider)
+        {
+            var httpClient = new HttpClient();
+            httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+            return httpClient;
         }
     }
 }

@@ -148,7 +148,7 @@ namespace Common.Providers.Cached
                 return [];
             }
 
-            XDocument xdoc = XDocument.Load("installed.xml");
+            var xdoc = XDocument.Load("installed.xml");
 
             List<BaseInstalledFixEntity> result = [];
 

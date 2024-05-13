@@ -6,9 +6,9 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.FixTools;
 using Common.Helpers;
-using System.Collections.Immutable;
 using Common.Providers;
-using System.Threading;
+using System.Collections.Immutable;
+using System.Net.Http.Json;
 
 namespace Common.Models
 {
@@ -16,12 +16,14 @@ namespace Common.Models
         ConfigProvider configProvider,
         CombinedEntitiesProvider combinedEntitiesProvider,
         FixManager fixManager,
+        HttpClient httpClient,
         Logger logger
         )
     {
         private readonly ConfigEntity _config = configProvider.Config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
         private readonly FixManager _fixManager = fixManager;
+        private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
@@ -297,6 +299,79 @@ namespace Common.Models
             tags = [.. tags.OrderBy(static x => x)];
 
             _config.HiddenTags = tags;
+        }
+
+        public async Task<int> ChangeVoteAsync(BaseFixEntity fix, bool needTpUpvote)
+        {
+            sbyte increment = 0;
+
+
+            var doesEntryExist = _config.Upvotes.TryGetValue(fix.Guid, out var isUpvote);
+
+            if (doesEntryExist)
+            {
+                if (isUpvote && needTpUpvote)
+                {
+                    increment = -1;
+                    _config.Upvotes.Remove(fix.Guid);
+                }
+                else if (isUpvote && !needTpUpvote)
+                {
+                    increment = -2;
+                    _config.Upvotes[fix.Guid] = false;
+                }
+                else if (!isUpvote && needTpUpvote)
+                {
+                    increment = 2;
+                    _config.Upvotes[fix.Guid] = true;
+                }
+                else if (!isUpvote && !needTpUpvote)
+                {
+                    increment = 1;
+                    _config.Upvotes.Remove(fix.Guid);
+                }
+            }
+            else
+            {
+                if (needTpUpvote)
+                {
+                    increment = 1;
+                    _config.Upvotes.Add(fix.Guid, true);
+                }
+                else
+                {
+                    increment = -1;
+                    _config.Upvotes.Add(fix.Guid, false);
+                }
+            }
+
+            _config.ForceUpdateConfig();
+
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, increment)).ConfigureAwait(false);
+            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            var newScore = int.TryParse(responseStr, out var newScoreInt);
+
+            fix.Score = newScoreInt;
+
+            return newScoreInt;
+        }
+
+        public async Task<int> IncreaseInstalls(BaseFixEntity fix)
+        {
+            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
+            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
+
+            fix.Installs = newInstallsInt;
+
+            return newInstallsInt;
+        }
+
+        public async Task ReportFix(BaseFixEntity fix, string reportText)
+        {
+            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/report", new Tuple<Guid, string>(fix.Guid, reportText)).ConfigureAwait(false);
         }
     }
 }

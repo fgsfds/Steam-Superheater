@@ -130,7 +130,7 @@
         </ListBox>
 
         <!--Right column-->
-        <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto">
+        <Grid Grid.Column="2" RowDefinitions="*,auto,auto,auto,auto,auto,auto">
 
             <!--Description-->
             <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"
@@ -239,6 +239,37 @@
                        HorizontalAlignment="Center">
                 Superheater needs to be run as admin in order to install hosts fixes
             </TextBlock>
+
+            <!--Rating-->
+            <Grid Grid.Row="6"
+                  Margin="3,6,3,0"
+                  IsVisible="{Binding SelectedFix, Converter={x:Static ObjectConverters.IsNotNull}}">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectedFixNumberOfInstalls}"/>
+
+                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
+
+                    <TextBlock Margin="3" VerticalAlignment="Center">Score:</TextBlock>
+
+                    <Button IsVisible="{Binding IsSelectedFixUpvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
+                    <Button IsVisible="{Binding !IsSelectedFixUpvoted}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
+
+                    <TextBlock Margin="3" Text="{Binding SelectedFixScore}" VerticalAlignment="Center"></TextBlock>
+
+                    <Button IsVisible="{Binding IsSelectedFixDownvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
+                    <Button IsVisible="{Binding !IsSelectedFixDownvoted}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
+
+                </StackPanel>
+
+                <Button Grid.Column="2" HorizontalAlignment="Right" Margin="3" Command="{Binding ReportFixCommand}">🚩 Report</Button>
+
+            </Grid>
 
         </Grid>
     </Grid>

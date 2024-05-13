@@ -46,7 +46,7 @@ namespace Common.FixTools.FileFix
                 return;
             }
 
-            string file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+            var file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
             var linesList = File.ReadAllLines(file).ToList();
 
@@ -54,7 +54,7 @@ namespace Common.FixTools.FileFix
 
             List<int> indexes = new(dllList.Count);
 
-            for (int i = startIndex; i < linesList.Count; i++)
+            for (var i = startIndex; i < linesList.Count; i++)
             {
                 if (linesList[i].Equals(""))
                 {
@@ -156,7 +156,7 @@ namespace Common.FixTools.FileFix
                 return;
             }
 
-            string backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
+            var backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
 
             if (!Directory.Exists(backupFolder))
             {
