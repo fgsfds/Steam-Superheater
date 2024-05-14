@@ -42,18 +42,17 @@ namespace Common.Entities.Fixes.RegistryFix
         /// <summary>
         /// Registry key
         /// </summary>
-        public string Key { get; set; }
+        public required string Key { get; set; }
 
         /// <summary>
         /// Registry value name
         /// </summary>
-        public string ValueName { get; set; }
-
+        public required string ValueName { get; set; }
 
         /// <summary>
         /// Registry value
         /// </summary>
-        public string NewValueData { get; set; }
+        public required string NewValueData { get; set; }
 
         /// <summary>
         /// Value type

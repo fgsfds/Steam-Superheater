@@ -4,8 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
-    [Table(name: "reports", Schema = "main")]
-    public sealed class ReportsDbEntity
+    [Table(name: "dependencies", Schema = "main")]
+    public sealed class DependenciesDbEntity
     {
         [Column("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,10 +15,12 @@ namespace Web.Server.DbEntities
         [Column("fix_guid")]
         public required Guid FixGuid { get; set; }
 
-        [Column("text")]
-        public required string ReportText { get; set; }
+        [ForeignKey(nameof(FixesTable2))]
+        [Column("dependency_guid")]
+        public required Guid DependencyGuid { get; set; }
 
 
         public FixesDbEntity FixesTable { get; set; }
+        public FixesDbEntity FixesTable2 { get; set; }
     }
 }

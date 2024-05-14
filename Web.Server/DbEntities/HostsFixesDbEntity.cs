@@ -3,20 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Server.DbEntities
 {
-    [PrimaryKey(nameof(Id))]
-    [Table(name: "reports", Schema = "main")]
-    public sealed class ReportsDbEntity
+    [PrimaryKey(nameof(FixGuid))]
+    [Table(name: "hosts_fixes", Schema = "main")]
+    public sealed class HostsFixesDbEntity
     {
-        [Column("id")]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         [ForeignKey(nameof(FixesTable))]
         [Column("fix_guid")]
         public required Guid FixGuid { get; set; }
 
-        [Column("text")]
-        public required string ReportText { get; set; }
+        [Column("entries")]
+        public required List<string> Entries { get; set; }
 
 
         public FixesDbEntity FixesTable { get; set; }

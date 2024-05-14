@@ -74,7 +74,7 @@ namespace Common.Helpers
             return result;
         }
 
-        public static string ReplaceDirectorySeparatorChar(this string str) => str.Replace('\\', Path.DirectorySeparatorChar);
+        public static string ReplaceDirectorySeparatorChar(this string str) => str.Replace('\\', Path.DirectorySeparatorChar).Replace('/', Path.DirectorySeparatorChar);
 
         public static string ToSizeString(this long? size)
         {

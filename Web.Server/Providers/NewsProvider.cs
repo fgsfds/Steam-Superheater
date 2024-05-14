@@ -1,5 +1,5 @@
 ﻿using Common.Entities;
-using System.Collections.Immutable;
+using Microsoft.EntityFrameworkCore;
 using Web.Server.DbEntities;
 using Web.Server.Helpers;
 
@@ -20,33 +20,25 @@ namespace Superheater.Web.Server.Providers
         }
 
 
-        public ImmutableList<NewsEntity> GetNews()
+        public List<NewsEntity> GetNews()
         {
             using var dbContext = _databaseContextFactory.Get();
-            var newsEntities = dbContext.News;
+            var newsEntities = dbContext.News.AsNoTracking().OrderByDescending(static x => x.Date).ToList();
 
-            List<NewsEntity> news = new(newsEntities.Count());
-
-            //adding news in reverse order
-            for (var i = newsEntities.Count() - 1; i >= 0; i--)
-            {
-                var element = newsEntities.ElementAt(i);
-
-                NewsEntity entity = new()
+            var news = newsEntities.ConvertAll(x =>
+                new NewsEntity()
                 {
-                    Date = element.Date,
-                    Content = element.Content
-                };
+                    Date = x.Date.ToUniversalTime(),
+                    Content = x.Content
+                }
+            );
 
-                news.Add(entity);
-            }
-
-            return [.. news];
+            return news;
         }
 
         internal bool AddNews(Tuple<DateTime, string, string> message)
         {
-            string apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+            var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
             if (!apiPassword.Equals(message.Item3))
             {
@@ -57,7 +49,7 @@ namespace Superheater.Web.Server.Providers
 
             NewsDbEntity entity = new()
             {
-                Date = message.Item1,
+                Date = message.Item1.ToUniversalTime(),
                 Content = message.Item2
             };
 
@@ -69,7 +61,7 @@ namespace Superheater.Web.Server.Providers
 
         internal bool ChangeNews(Tuple<DateTime, string, string> message)
         {
-            string apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+            var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
             if (!apiPassword.Equals(message.Item3))
             {
@@ -78,19 +70,7 @@ namespace Superheater.Web.Server.Providers
 
             using var dbContext = _databaseContextFactory.Get();
 
-            NewsDbEntity? entity = null;
-            
-            foreach (var news in dbContext.News)
-            {
-                var date1 = message.Item1;
-                var date2 = news.Date;
-
-                if (date1 == date2)
-                {
-                    entity = news;
-                    break;
-                }
-            }
+            var entity = dbContext.News.Find(message.Item1);
 
             if (entity is null)
             {

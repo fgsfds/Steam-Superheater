@@ -1,5 +1,6 @@
 using Superheater.Web.Server.Providers;
 using Superheater.Web.Server.Tasks;
+using Web.Server.Database;
 using Web.Server.Helpers;
 
 namespace Superheater.Web.Server
@@ -19,7 +20,6 @@ namespace Superheater.Web.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddHostedService<FixesListUpdateTask>();
             builder.Services.AddHostedService<AppReleasesTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
@@ -46,6 +46,9 @@ namespace Superheater.Web.Server
             app.UseAuthorization();
 
             app.MapControllers();
+
+            var dbContext = new DatabaseContext();
+            dbContext.Dispose();
 
             app.MapFallbackToFile("/index.html");
 

@@ -1,137 +1,234 @@
 ﻿using Common.Entities.Fixes;
-using Common.Helpers;
-using System.Collections.Immutable;
-using System.Text.Json;
+using Common.Entities.Fixes.FileFix;
+using Common.Entities.Fixes.HostsFix;
+using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using Web.Server.DbEntities;
 using Web.Server.Helpers;
 
 namespace Superheater.Web.Server.Providers
 {
     public sealed class FixesProvider
     {
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<FixesProvider> _logger;
-        private readonly string _jsonUrl = $"{Consts.FilesBucketUrl}fixes.json";
         private readonly DatabaseContextFactory _dbContextFactory;
-
-        private DateTime? _fixesListLastModified;
-        private ImmutableList<FixesList> _fixesList;
-
-
-        public ImmutableList<FixesList> FixesList => _fixesList;
-
-        public int GamesCount { get; private set; }
-
-        public int FixesCount { get; private set; }
+        private readonly ILogger<FixesProvider> _logger;
 
 
         public FixesProvider(
             ILogger<FixesProvider> logger,
-            HttpClient httpClient,
             DatabaseContextFactory dbContextFactory
             )
         {
             _logger = logger;
-            _httpClient = httpClient;
             _dbContextFactory = dbContextFactory;
         }
 
 
-        public async Task CreateFixesListAsync()
+        public List<FixesList> GetFixesList()
         {
-            _logger.LogInformation("Looking for new fixes");
-
-            using var response = await _httpClient.GetAsync(_jsonUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-            
-            if (!response.IsSuccessStatusCode)
-            {
-                _logger.LogError("Error while getting response");
-                return;
-            }
-
-            if (response.Content.Headers.LastModified is null)
-            {
-                _logger.LogError("Can't get fixes last modified date");
-            }
-
-            if (response.Content.Headers.LastModified <= _fixesListLastModified)
-            {
-                _logger.LogInformation("No new fixes found");
-                return;
-            }
-
-            var json = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            var fixesList = JsonSerializer.Deserialize(json, FixesListContext.Default.ListFixesList);
+            _logger.LogInformation("Started get fixes");
+            Stopwatch sw = new();
+            sw.Start();
 
             using var dbContext = _dbContextFactory.Get();
 
-            var installs = dbContext.Installs.ToDictionary(x => x.FixGuid, x => x.Installs);
-            var scores = dbContext.Scores.ToDictionary(x => x.FixGuid, x => x.Rating);
+            var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
+            var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
+            var dependencies = dbContext.Dependencies.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.DependencyGuid);
+            var tagsIdsDb = dbContext.TagsLists.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.TagId);
+            var fixesDb = dbContext.Fixes.AsNoTracking().ToLookup(static x => x.GameId);
+            var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
+            var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
 
-            foreach (var fixes in fixesList)
+            List<FixesList> fixesLists = new(games.Count);
+
+            foreach (var game in games)
             {
-                foreach (var fix in fixes.Fixes)
+                var fixes = fixesDb[game.Id];
+
+                List<BaseFixEntity> baseFixEntities = new(fixes.Count());
+
+                foreach (var fix in fixes)
                 {
-                    var hasScore = scores.TryGetValue(fix.Guid, out var score);
-                    fix.Score = hasScore ? score : 0;
+                    var type = (FixTypeEnum)fix.FixType;
+                    var deps = dependencies[fix.Guid];
+                    var tags = tagsIdsDb[fix.Guid].Select(x => tagsDict[x]);
 
-                    var hasInstalls = installs.TryGetValue(fix.Guid, out var install);
-                    fix.Installs = hasInstalls ? install : 0;
+                    OSEnum supportedOSes = 0;
+
+                    if (fix.IsWindowsSupported)
+                    {
+                        supportedOSes = supportedOSes.AddFlag(OSEnum.Windows);
+                    }
+                    if (fix.IsLinuxSupported)
+                    {
+                        supportedOSes = supportedOSes.AddFlag(OSEnum.Linux);
+                    }
+
+                    if (type is FixTypeEnum.FileFix)
+                    {
+                        var fileFix = dbContext.FileFixes.Find(fix.Guid)!;
+
+                        FileFixEntity fileFixEntity = new()
+                        {
+                            Name = fix.Name,
+                            Version = fix.Version,
+                            Guid = fix.Guid,
+                            Description = fix.Description,
+                            Dependencies = deps is null ? null : [.. deps],
+                            Tags = tags is null ? null : [.. tags],
+                            SupportedOSes = supportedOSes,
+                            Installs = installsDb.GetValueOrDefault(fix.Guid),
+                            Score = scoresDb.GetValueOrDefault(fix.Guid),
+
+                            Url = fileFix!.Url,
+                            FileSize = fileFix.FileSize,
+                            InstallFolder = fileFix.InstallFolder,
+                            ConfigFile = fileFix.ConfigFile,
+                            FilesToDelete = fileFix.FilesToDelete,
+                            FilesToBackup = fileFix.FilesToBackup,
+                            RunAfterInstall = fileFix.RunAfterInstall,
+                            MD5 = fileFix.MD5,
+                            SharedFixGuid = fileFix.SharedFixGuid,
+                            SharedFixInstallFolder = fileFix.SharedFixInstallFolder,
+                            WineDllOverrides = fileFix.WineDllOverrides
+                        };
+
+                        baseFixEntities.Add(fileFixEntity);
+                    }
+                    else if (type is FixTypeEnum.RegistryFix)
+                    {
+                        var regFix = dbContext.RegistryFixes.Find(fix.Guid)!;
+
+                        RegistryFixEntity fileFixEntity = new()
+                        {
+                            Name = fix.Name,
+                            Version = fix.Version,
+                            Guid = fix.Guid,
+                            Description = fix.Description,
+                            Dependencies = deps is null ? null : [.. deps],
+                            Tags = tags is null ? null : [.. tags],
+                            SupportedOSes = supportedOSes,
+                            Installs = installsDb.GetValueOrDefault(fix.Guid),
+                            Score = scoresDb.GetValueOrDefault(fix.Guid),
+
+                            Key = regFix.Key,
+                            ValueName = regFix.ValueName,
+                            NewValueData = regFix.NewValueData,
+                            ValueType = (RegistryValueTypeEnum)regFix.ValueType
+                        };
+
+                        baseFixEntities.Add(fileFixEntity);
+                    }
+                    else if (type is FixTypeEnum.HostsFix)
+                    {
+                        var hostsFix = dbContext.HostsFixes.Find(fix.Guid)!;
+
+                        HostsFixEntity fileFixEntity = new()
+                        {
+                            Name = fix.Name,
+                            Version = fix.Version,
+                            Guid = fix.Guid,
+                            Description = fix.Description,
+                            Dependencies = deps is null ? null : [.. deps],
+                            Tags = tags is null ? null : [.. tags],
+                            SupportedOSes = supportedOSes,
+                            Installs = installsDb.GetValueOrDefault(fix.Guid),
+                            Score = scoresDb.GetValueOrDefault(fix.Guid),
+
+                            Entries = hostsFix.Entries
+                        };
+
+                        baseFixEntities.Add(fileFixEntity);
+                    }
                 }
+
+                FixesList fixesList = new()
+                {
+                    GameId = game.Id,
+                    GameName = game.Name,
+                    Fixes = baseFixEntities
+                };
+
+                fixesLists.Add(fixesList);
             }
 
-            Interlocked.Exchange(ref _fixesList, [.. fixesList]);
+            sw.Stop();
+            _logger.LogInformation($"Got fixes in {sw.ElapsedMilliseconds} ms");
 
-            FillCounts();
-
-            if (response.Content.Headers.LastModified is not null)
-            {
-                _fixesListLastModified = response.Content.Headers.LastModified.Value.UtcDateTime;
-            }
-
-            _logger.LogInformation("Found new fixes");
+            return fixesLists;
         }
 
-        public void ChangeFixScore(Guid fixGuid, int score)
+        public int ChangeFixScore(Guid fixGuid, sbyte score)
         {
-            foreach (var fixesList in _fixesList)
-            {
-                var fix = fixesList.Fixes.FirstOrDefault(x => x.Guid == fixGuid);
+            using var dbContext = _dbContextFactory.Get();
+            var fix = dbContext.Scores.Find(fixGuid);
 
-                if (fix is not null)
-                {
-                    fix.Score = score;
-                    return;
-                }
+            int newScore;
+
+            if (fix is null)
+            {
+                ScoresDbEntity newScoreEntity = new()
+                { 
+                    FixGuid = fixGuid,
+                    Score = score 
+                };
+
+                dbContext.Scores.Add(newScoreEntity);
+                newScore = score;
             }
+            else
+            {
+                fix.Score += score;
+                newScore = fix.Score;
+            }
+
+            dbContext.SaveChanges();
+            return newScore;
         }
 
-        public void IncreaseFixInstallsCount(Guid fixGuid)
+        public int IncreaseFixInstallsCount(Guid fixGuid)
         {
-            foreach (var fixesList in _fixesList)
-            {
-                var fix = fixesList.Fixes.FirstOrDefault(x => x.Guid == fixGuid);
+            using var dbContext = _dbContextFactory.Get();
+            var fix = dbContext.Installs.Find(fixGuid);
 
-                if (fix is not null)
+            int newInstalls;
+
+            if (fix is null)
+            {
+                InstallsDbEntity newInstallsEntity = new()
                 {
-                    fix.Installs += 1;
-                    return;
-                }
+                    FixGuid = fixGuid,
+                    Installs = 1
+                };
+
+                dbContext.Installs.Add(newInstallsEntity);
+                newInstalls = 1;
             }
+            else
+            {
+                fix.Installs += 1;
+                newInstalls = fix.Installs;
+            }
+
+            dbContext.SaveChanges();
+            return newInstalls;
         }
 
-        private void FillCounts()
+        public void AddReport(Guid fixGuid, string text)
         {
-            GamesCount = _fixesList.Count;
+            using var dbContext = _dbContextFactory.Get();
 
-            var count = 0;
-
-            foreach (var fix in _fixesList)
+            ReportsDbEntity entity = new()
             {
-                count += fix.Fixes.Count;
-            }
+                FixGuid = fixGuid,
+                ReportText = text
+            };
 
-            FixesCount = count;
+            dbContext.Reports.Add(entity);
+            dbContext.SaveChanges();
         }
     }
 }

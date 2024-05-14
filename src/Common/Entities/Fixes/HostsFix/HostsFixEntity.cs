@@ -36,6 +36,6 @@ namespace Common.Entities.Fixes.HostsFix
         /// <summary>
         /// List of entries to be added to the hosts file
         /// </summary>
-        public List<string> Entries { get; set; }
+        public required List<string> Entries { get; set; }
     }
 }

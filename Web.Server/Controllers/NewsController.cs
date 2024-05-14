@@ -1,7 +1,6 @@
 using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
-using System.Collections.Immutable;
 
 namespace Superheater.Web.Server.Controllers
 {
@@ -22,7 +21,7 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpGet]
-        public ImmutableList<NewsEntity> GetNewsList() => _newsProvider.GetNews();
+        public List<NewsEntity> GetNewsList() => _newsProvider.GetNews();
 
         [HttpPost("add")]
         public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)

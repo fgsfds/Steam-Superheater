@@ -1,7 +1,6 @@
 ﻿using Common.Enums;
 using Common.Helpers;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.FileFix
@@ -31,6 +30,7 @@ namespace Common.Entities.Fixes.FileFix
             FilesToPatch = null;
             RunAfterInstall = null;
             MD5 = null;
+            SharedFixGuid = null;
             SharedFix = null;
             SharedFixInstallFolder = null;
             WineDllOverrides = null;
@@ -55,6 +55,7 @@ namespace Common.Entities.Fixes.FileFix
             FilesToBackup = null;
             RunAfterInstall = null;
             MD5 = null;
+            SharedFixGuid = null;
             SharedFix = null;
             SharedFixInstallFolder = null;
             WineDllOverrides = null;
@@ -80,11 +81,7 @@ namespace Common.Entities.Fixes.FileFix
         private string? _installFolder;
         public string? InstallFolder
         { 
-            get
-            {
-                return _installFolder?.ReplaceDirectorySeparatorChar();
-            }
-           
+            get => _installFolder?.ReplaceDirectorySeparatorChar();
             set => _installFolder = value; 
         }
 
@@ -96,11 +93,7 @@ namespace Common.Entities.Fixes.FileFix
         private string? _configFile;
         public string? ConfigFile
         {
-            get
-            {
-                return _configFile?.ReplaceDirectorySeparatorChar();
-            }
-
+            get => _configFile?.ReplaceDirectorySeparatorChar();
             set => _configFile = value;
         }
 
@@ -111,16 +104,7 @@ namespace Common.Entities.Fixes.FileFix
         private List<string>? _filesToDelete;
         public List<string>? FilesToDelete
         {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return _filesToDelete;
-                }
-
-                return _filesToDelete?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
-            }
-
+            get => _filesToDelete?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
             set => _filesToDelete = value;
         }
 
@@ -131,16 +115,7 @@ namespace Common.Entities.Fixes.FileFix
         private List<string>? _filesToBackup;
         public List<string>? FilesToBackup
         {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return _filesToBackup;
-                }
-
-                return _filesToBackup?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
-            }
-
+            get => _filesToBackup?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
             set => _filesToBackup = value;
         }
 
@@ -151,11 +126,7 @@ namespace Common.Entities.Fixes.FileFix
         private string? _runAfterInstall;
         public string? RunAfterInstall
         {
-            get
-            {
-                return _runAfterInstall?.ReplaceDirectorySeparatorChar();
-            }
-
+            get => _runAfterInstall?.ReplaceDirectorySeparatorChar();
             set => _runAfterInstall = value;
         }
 
@@ -170,16 +141,7 @@ namespace Common.Entities.Fixes.FileFix
         private List<string>? _filesToPatch;
         public List<string>? FilesToPatch
         {
-            get
-            {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    return _filesToPatch;
-                }
-
-                return _filesToPatch?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
-            }
-
+            get => _filesToPatch?.ConvertAll(static x => x.ReplaceDirectorySeparatorChar());
             set => _filesToPatch = value;
         }
 
@@ -195,11 +157,7 @@ namespace Common.Entities.Fixes.FileFix
         private string? _sharedFixInstallFolder;
         public string? SharedFixInstallFolder
         {
-            get
-            {
-                return _sharedFixInstallFolder?.ReplaceDirectorySeparatorChar();
-            }
-
+            get => _sharedFixInstallFolder?.ReplaceDirectorySeparatorChar();
             set => _sharedFixInstallFolder = value;
         }
 
@@ -252,11 +210,12 @@ namespace Common.Entities.Fixes.FileFix
                 FilesToPatch = this.FilesToPatch,
                 RunAfterInstall = this.RunAfterInstall,
                 MD5 = this.MD5,
+                SharedFixGuid = this.SharedFixGuid,
                 SharedFix = this.SharedFix,
                 SharedFixInstallFolder = this.SharedFixInstallFolder,
                 WineDllOverrides = this.WineDllOverrides,
                 FileSize = this.FileSize
-        };
+            };
         }
     }
 }

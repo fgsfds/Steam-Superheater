@@ -2,7 +2,7 @@
 {
     public enum RegistryValueTypeEnum : byte
     {
-        String,
-        Dword
+        String = 1,
+        Dword = 2
     }
 }

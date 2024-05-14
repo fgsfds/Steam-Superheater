@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Amazon.S3.Model;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
-    [Table(name: "reports", Schema = "main")]
-    public sealed class ReportsDbEntity
+    [Table(name: "tags_lists", Schema = "main")]
+    public sealed class TagsListsDbEntity
     {
         [Column("id")]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -15,10 +16,12 @@ namespace Web.Server.DbEntities
         [Column("fix_guid")]
         public required Guid FixGuid { get; set; }
 
-        [Column("text")]
-        public required string ReportText { get; set; }
+        [ForeignKey(nameof(TagsTable))]
+        [Column("tag_id")]
+        public required int TagId { get; set; }
 
 
         public FixesDbEntity FixesTable { get; set; }
+        public TagsDbEntity TagsTable { get; set; }
     }
 }
