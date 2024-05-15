@@ -20,7 +20,8 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// Fix GUID
         /// </summary>
-        public required Guid Guid { get; init; }
+        [Obsolete("Make init only some time later")]
+        public required Guid Guid { get; set; }
 
         /// <summary>
         /// Installed version

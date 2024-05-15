@@ -22,7 +22,7 @@ namespace Common.Entities.Fixes.RegistryFix
         /// <summary>
         /// Value type
         /// </summary>
-        [Obsolete("Make required some time later")]
+        [Obsolete("Make required and init only some time later")]
         public RegistryValueTypeEnum? ValueType { get; set; }
     }
 }

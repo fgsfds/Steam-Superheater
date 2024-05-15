@@ -95,6 +95,7 @@ namespace Common.Providers.Cached
                 installedFixes.ThrowIfNull();
 
                 var needToSave = FixRegValueType(installedFixes);
+                needToSave = FixWrongGuids(installedFixes);
 
                 _cache = [.. installedFixes];
 
@@ -128,6 +129,63 @@ namespace Common.Providers.Cached
                     {
                         regFix.ValueType = RegistryValueTypeEnum.String;
                     }
+
+                    needToSave = true;
+                }
+            }
+
+            return needToSave;
+        }
+
+        /// <summary>
+        /// Fix wrong guids in installed fixes
+        /// </summary>
+        [Obsolete("Remove in version 1.0")]
+        private bool FixWrongGuids(ImmutableList<BaseInstalledFixEntity> installedFixes)
+        {
+            var needToSave = false;
+
+            foreach (var fix in installedFixes)
+            {
+                if (fix.GameId == 299030 &&
+                    fix.Guid == new Guid("8bd92099-4d55-47fb-961d-033ab3cb5570"))
+                {
+                    fix.Guid = new("be21caea-ccab-47a6-979e-c47b73ef0a43");
+
+                    needToSave = true;
+                }
+                else if (fix.GameId == 299030 &&
+                    fix.Guid == new Guid("40d4fed2-060f-46f8-9977-f1dd7c26a868"))
+                {
+                    fix.Guid = new("09d1013a-75ce-4879-b7ca-ae155df63424");
+
+                    needToSave = true;
+                }
+                else if (fix.GameId == 108710 &&
+                    fix.Guid == new Guid("e2cfbadc-fe21-4898-bf47-e6a9c7f784d4"))
+                {
+                    fix.Guid = new("e026709c-085c-4cfe-9120-9bbf09109270");
+
+                    needToSave = true;
+                }
+                else if (fix.GameId == 282900 &&
+                    fix.Guid == new Guid("e2cfbadc-fe21-4898-bf47-e6a9c7f784d4"))
+                {
+                    fix.Guid = new("7fc5eefe-7436-42f3-af33-b7747817c333");
+
+                    needToSave = true;
+                }
+                else if (fix.GameId == 351710 &&
+                    fix.Guid == new Guid("e2cfbadc-fe21-4898-bf47-e6a9c7f784d4"))
+                {
+                    fix.Guid = new("9c338265-1f5c-4618-a6df-36601eca069e");
+
+                    needToSave = true;
+                }
+                else if (fix.GameId == 353270 &&
+                    fix.Guid == new Guid("e2cfbadc-fe21-4898-bf47-e6a9c7f784d4"))
+                {
+                    fix.Guid = new("a8544f69-d32a-4912-b8d1-e72883a2d0c3");
 
                     needToSave = true;
                 }
