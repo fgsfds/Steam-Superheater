@@ -82,6 +82,7 @@ namespace Superheater.Web.Server.Providers
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
+                            Notes = fix.Notes,
 
                             Url = fileFix!.Url,
                             FileSize = fileFix.FileSize,
@@ -89,11 +90,13 @@ namespace Superheater.Web.Server.Providers
                             ConfigFile = fileFix.ConfigFile,
                             FilesToDelete = fileFix.FilesToDelete,
                             FilesToBackup = fileFix.FilesToBackup,
+                            FilesToPatch = fileFix.FilesToPatch,
                             RunAfterInstall = fileFix.RunAfterInstall,
                             MD5 = fileFix.MD5,
                             SharedFixGuid = fileFix.SharedFixGuid,
                             SharedFixInstallFolder = fileFix.SharedFixInstallFolder,
-                            WineDllOverrides = fileFix.WineDllOverrides
+                            WineDllOverrides = fileFix.WineDllOverrides,
+                            Variants = fileFix.Variants
                         };
 
                         baseFixEntities.Add(fileFixEntity);
@@ -113,6 +116,7 @@ namespace Superheater.Web.Server.Providers
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
+                            Notes = fix.Notes,
 
                             Key = regFix.Key,
                             ValueName = regFix.ValueName,
@@ -137,6 +141,7 @@ namespace Superheater.Web.Server.Providers
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
+                            Notes = fix.Notes,
 
                             Entries = hostsFix.Entries
                         };
