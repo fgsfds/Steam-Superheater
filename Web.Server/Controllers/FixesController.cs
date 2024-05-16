@@ -1,3 +1,4 @@
+using Common.Entities;
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
@@ -49,6 +50,18 @@ namespace Superheater.Web.Server.Controllers
         public void ReportFix([FromBody] Tuple<Guid, string> message)
         {
             _fixesProvider.AddReport(message.Item1, message.Item2);
+        }
+
+
+        [HttpGet("remove/{guid:Guid}")]
+        public void RemoveFix(Tuple<Guid, string> message)
+        {
+        }
+
+
+        [HttpGet("add/{guid:Guid}")]
+        public void AddFix(Tuple<GameEntity, BaseFixEntity, string> message)
+        {
         }
     }
 }

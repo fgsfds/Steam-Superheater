@@ -38,9 +38,13 @@ namespace Superheater.Web.Server.Providers
             var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
             var dependencies = dbContext.Dependencies.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.DependencyGuid);
             var tagsIdsDb = dbContext.TagsLists.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.TagId);
-            var fixesDb = dbContext.Fixes.AsNoTracking().ToLookup(static x => x.GameId);
             var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
             var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
+
+            var fixesDb = dbContext.Fixes.AsNoTracking().ToLookup(static x => x.GameId);
+            var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
+            var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
+            var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
 
             List<FixesList> fixesLists = new(games.Count);
 
@@ -69,7 +73,7 @@ namespace Superheater.Web.Server.Providers
 
                     if (type is FixTypeEnum.FileFix)
                     {
-                        var fileFix = dbContext.FileFixes.Find(fix.Guid)!;
+                        var fileFix = fileFixesDb[fix.Guid];
 
                         FileFixEntity fileFixEntity = new()
                         {
@@ -77,8 +81,8 @@ namespace Superheater.Web.Server.Providers
                             Version = fix.Version,
                             Guid = fix.Guid,
                             Description = fix.Description,
-                            Dependencies = deps is null ? null : [.. deps],
-                            Tags = tags is null ? null : [.. tags],
+                            Dependencies = !deps.Any() ? null : [.. deps],
+                            Tags = !tags.Any() ? null : [.. tags],
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
@@ -103,7 +107,7 @@ namespace Superheater.Web.Server.Providers
                     }
                     else if (type is FixTypeEnum.RegistryFix)
                     {
-                        var regFix = dbContext.RegistryFixes.Find(fix.Guid)!;
+                        var regFix = regFixesDb[fix.Guid];
 
                         RegistryFixEntity fileFixEntity = new()
                         {
@@ -111,8 +115,8 @@ namespace Superheater.Web.Server.Providers
                             Version = fix.Version,
                             Guid = fix.Guid,
                             Description = fix.Description,
-                            Dependencies = deps is null ? null : [.. deps],
-                            Tags = tags is null ? null : [.. tags],
+                            Dependencies = !deps.Any() ? null : [.. deps],
+                            Tags = !tags.Any() ? null : [.. tags],
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
@@ -128,7 +132,7 @@ namespace Superheater.Web.Server.Providers
                     }
                     else if (type is FixTypeEnum.HostsFix)
                     {
-                        var hostsFix = dbContext.HostsFixes.Find(fix.Guid)!;
+                        var hostsFix = hostsFixesDb[fix.Guid];
 
                         HostsFixEntity fileFixEntity = new()
                         {
@@ -136,8 +140,8 @@ namespace Superheater.Web.Server.Providers
                             Version = fix.Version,
                             Guid = fix.Guid,
                             Description = fix.Description,
-                            Dependencies = deps is null ? null : [.. deps],
-                            Tags = tags is null ? null : [.. tags],
+                            Dependencies = !deps.Any() ? null : [.. deps],
+                            Tags = !tags.Any() ? null : [.. tags],
                             SupportedOSes = supportedOSes,
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
