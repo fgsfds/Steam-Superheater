@@ -219,7 +219,7 @@ namespace Common.Models
 
             var allGameDeps = fixEntity.Dependencies;
 
-            List<BaseFixEntity> deps = [.. fixesList.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            var deps = fixesList.Fixes.Where(x => allGameDeps.Contains(x.Guid));
 
             return [.. deps];
         }

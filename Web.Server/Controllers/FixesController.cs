@@ -25,6 +25,10 @@ namespace Superheater.Web.Server.Controllers
         public List<FixesList> GetFixesList() => _fixesProvider.GetFixesList();
 
 
+        [HttpGet("{guid:Guid}")]
+        public bool GetFixByGuid(Guid guid) => _fixesProvider.CheckIfFixExists(guid);
+
+
         [HttpPut("installs/add")]
         public int AddNumberOfInstalls([FromBody] Guid guid)
         {

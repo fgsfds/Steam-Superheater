@@ -235,5 +235,13 @@ namespace Superheater.Web.Server.Providers
             dbContext.Reports.Add(entity);
             dbContext.SaveChanges();
         }
+        
+        public bool CheckIfFixExists(Guid fixGuid)
+        {
+            using var dbContext = _dbContextFactory.Get();
+            var entity = dbContext.Fixes.Find(fixGuid);
+
+            return entity is not null;
+        }
     }
 }
