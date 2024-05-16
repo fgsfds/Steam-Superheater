@@ -13,6 +13,8 @@ namespace Web.Server.Database
 {
     public sealed class DatabaseContext : DbContext
     {
+        private static bool _isRunOnce = false;
+
         public DbSet<InstallsDbEntity> Installs { get; set; }
         public DbSet<ScoresDbEntity> Scores { get; set; }
         public DbSet<ReportsDbEntity> Reports { get; set; }
@@ -30,9 +32,17 @@ namespace Web.Server.Database
 
         public DatabaseContext()
         {
+#if DEBUG
+            if (!_isRunOnce)
+            {
+                Database.EnsureDeleted();
+                _isRunOnce = true;
+            }
+#endif
+
             Database.EnsureCreated();
 
-            if (Fixes.Count() == 0)
+            if (!Fixes.Any())
             {
                 FillDb();
             }

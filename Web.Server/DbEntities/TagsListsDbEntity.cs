@@ -1,10 +1,10 @@
-﻿using Amazon.S3.Model;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
+    [Index(nameof(FixGuid))]
     [Table(name: "tags_lists", Schema = "main")]
     public sealed class TagsListsDbEntity
     {

@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
+    [Index(nameof(Name))]
     [Table(name: "games", Schema = "main")]
     public sealed class GamesDbEntity
     {

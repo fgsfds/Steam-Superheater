@@ -32,7 +32,7 @@ namespace Superheater.Web.Server.Providers
             Stopwatch sw = new();
             sw.Start();
 
-            using var dbContext = _dbContextFactory.Get();
+            var dbContext = _dbContextFactory.Get();
 
             var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
             var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
@@ -41,10 +41,12 @@ namespace Superheater.Web.Server.Providers
             var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
             var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
 
-            var fixesDb = dbContext.Fixes.AsNoTracking().ToLookup(static x => x.GameId);
+            var fixesDb = dbContext.Fixes.AsNoTracking().Where(static x => !x.IsDeleted).ToLookup(static x => x.GameId);
             var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
+
+            dbContext.Dispose();
 
             List<FixesList> fixesLists = new(games.Count);
 
