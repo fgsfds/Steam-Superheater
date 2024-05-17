@@ -19,9 +19,9 @@ namespace Common
         private AppUpdateEntity? _update;
 
         /// <summary>
-        /// Check GitHub for releases with version higher than current
+        /// Check API for releases with version higher than the current
         /// </summary>
-        /// <param name="currentVersion">Current SFD version</param>
+        /// <param name="currentVersion">Current Superheater version</param>
         /// <returns>Has newer version</returns>
         public async Task<bool> CheckForUpdates(Version currentVersion)
         {

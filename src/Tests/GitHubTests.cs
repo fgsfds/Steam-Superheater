@@ -3,7 +3,7 @@ using Common.Config;
 using Common.DI;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using FixesProvider = Common.Providers.Cached.FixesProvider;
+using FixesProvider = Common.Providers.FixesProvider;
 
 namespace Tests
 {
@@ -24,10 +24,10 @@ namespace Tests
         }
 
         [Fact]
-        public async Task GetFixesFromGitHubTest()
+        public async Task GetFixesListFromAPI()
         {
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
-            var fixes = await fixesProvider.GetListAsync(false).ConfigureAwait(true);
+            var fixes = await fixesProvider.GetFixesListAsync().ConfigureAwait(true);
 
             //Looking for Alan Wake fixes list
             var result = fixes.Exists(static x => x.GameId == 108710);
@@ -35,7 +35,7 @@ namespace Tests
         }
 
         [Fact]
-        public async Task GetGitHubReleasesTest()
+        public async Task GetAppReleasesTest()
         {
             var fixesProvider = BindingsManager.Provider.GetRequiredService<AppUpdateInstaller>();
             var release = await fixesProvider.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);

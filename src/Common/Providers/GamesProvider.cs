@@ -2,26 +2,28 @@
 using Common.Helpers;
 using System.Collections.Immutable;
 
-namespace Common.Providers.Cached
+namespace Common.Providers
 {
-    public sealed class GamesProvider : CachedProviderBase<GameEntity>
+    public sealed class GamesProvider
     {
         private readonly SteamTools _steamTools;
+        private readonly Logger _logger;
 
         public GamesProvider(
             SteamTools steamTools,
             Logger logger
-            ) : base(logger)
+            )
         {
             _steamTools = steamTools;
+            _logger = logger;
         }
 
         /// <inheritdoc/>
-        internal override async Task<ImmutableList<GameEntity>> CreateCacheAsync()
+        public async Task<ImmutableList<GameEntity>> GetGamesListAsync()
         {
             _logger.Info("Creating games cache list");
 
-            _cache = await Task.Run(() =>
+            var list = await Task.Run(() =>
             {
                 var files = _steamTools.GetAcfsList();
 
@@ -44,9 +46,9 @@ namespace Common.Providers.Cached
                 return cache;
             }).ConfigureAwait(false);
 
-            _logger.Info($"Added {_cache.Count} games to the cache");
+            _logger.Info($"Added {list.Count} games to the cache");
 
-            return _cache;
+            return list;
         }
 
         /// <summary>

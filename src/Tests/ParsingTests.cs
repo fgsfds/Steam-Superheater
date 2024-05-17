@@ -1,7 +1,7 @@
 using Common;
 using Common.DI;
 using Common.Entities;
-using Common.Providers.Cached;
+using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

@@ -35,12 +35,11 @@ namespace Common.Models
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
         /// </summary>
-        /// <param name="useCache">Is cache used</param>
-        public async Task<Result> UpdateGamesListAsync(bool useCache)
+        public async Task<Result> UpdateGamesListAsync()
         {
             try
             {
-                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync(useCache).ConfigureAwait(false);
+                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync().ConfigureAwait(false);
 
                 foreach (var game in games.ToArray())
                 {

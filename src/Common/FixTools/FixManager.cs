@@ -7,7 +7,7 @@ using Common.FixTools.FileFix;
 using Common.FixTools.HostsFix;
 using Common.FixTools.RegistryFix;
 using Common.Helpers;
-using Common.Providers.Cached;
+using Common.Providers;
 
 namespace Common.FixTools
 {

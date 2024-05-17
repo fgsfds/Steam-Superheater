@@ -6,24 +6,56 @@ using System.Collections.Immutable;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Common.Providers.Cached
+namespace Common.Providers
 {
-    public sealed class FixesProvider : CachedProviderBase<FixesList>
+    public sealed class FixesProvider
     {
-        private string? _fixesCachedString;
         private ImmutableList<FileFixEntity> _sharedFixes;
         private readonly ConfigEntity _config;
         private readonly HttpClient _httpClient;
+        private readonly Logger _logger;
 
         public FixesProvider(
             ConfigProvider config,
             HttpClient httpClient,
             Logger logger
-            ) : base(logger)
+            )
         {
             _config = config.Config;
             _httpClient = httpClient;
+            _logger = logger;
+            _sharedFixes = [];
         }
+
+        /// <summary>
+        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
+        /// </summary>
+        public async Task<ImmutableList<FixesList>> GetFixesListAsync()
+        {
+            _logger.Info("Creating fixes cache");
+
+            var fixesJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
+
+            if (fixesJson is null)
+            {
+                _logger.Error("Error while getting fixes...");
+                ThrowHelper.Exception("Error while getting fixes");
+            }
+
+            var fixesList = JsonSerializer.Deserialize(fixesJson, FixesListContext.Default.ListFixesList);
+
+            if (fixesList is null)
+            {
+                _logger.Error("Error while deserializing fixes...");
+                ThrowHelper.Exception("Error while deserializing fixes");
+            }
+
+            _sharedFixes = fixesList.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
+
+            return [.. fixesList];
+        }
+
+        public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
         /// <summary>
         /// Check if fix with the same GUID already exists in the database
@@ -38,8 +70,6 @@ namespace Common.Providers.Cached
 
             return result ? doesExist : true;
         }
-
-        public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
         public async Task<Result> ChangeFixDisabledStateAsync(Guid fixGuid, bool isDeleted)
         {
@@ -87,27 +117,6 @@ namespace Common.Providers.Cached
             {
                 return new(ResultEnum.Error, $"Error while adding fix");
             }
-        }
-
-        /// <summary>
-        /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
-        /// </summary>
-        protected override async Task<ImmutableList<FixesList>> GetCachedListAsync()
-        {
-            _logger.Info("Requesting cached fixes list");
-
-            await _locker.WaitAsync().ConfigureAwait(false);
-
-            if (_fixesCachedString is null)
-            {
-                _locker.Release();
-
-                return await CreateCacheAsync().ConfigureAwait(false);
-            }
-
-            _locker.Release();
-
-            return [.. DeserializeCachedString(_fixesCachedString)];
         }
 
         private Result PrepareFixes(BaseFixEntity fix)
@@ -182,60 +191,6 @@ namespace Common.Providers.Cached
             }
 
             return new Result(ResultEnum.Success, string.Empty);
-        }
-
-        /// <summary>
-        /// Create new cache of fixes from online or local repository
-        /// </summary>
-        internal override async Task<ImmutableList<FixesList>> CreateCacheAsync()
-        {
-            _logger.Info("Creating fixes cache");
-
-            try
-            {
-                _logger.Info("Downloading fixes xml from online repository");
-
-                _fixesCachedString = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
-
-                var fixes = DeserializeCachedString(_fixesCachedString);
-
-                _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
-
-                return fixes;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                throw;
-            }
-        }
-
-        /// <summary>
-        /// Deserialize string
-        /// </summary>
-        /// <param name="fixes">String to deserialize</param>
-        /// <returns>List of fixes</returns>
-        private static ImmutableList<FixesList> DeserializeCachedString(string fixes)
-        {
-            var fixesList = JsonSerializer.Deserialize(fixes, FixesListContext.Default.ListFixesList);
-
-            fixesList.ThrowIfNull();
-
-            return [.. fixesList];
-        }
-
-        /// <summary>
-        /// Remove current cache, then create new one and return list of entities
-        /// </summary>
-        /// <returns>List of entities</returns>
-        protected override Task<ImmutableList<FixesList>> GetNewListAsync()
-        {
-            _logger.Info($"Requesting new Fixes list");
-
-            _cache = null;
-            _fixesCachedString = null;
-
-            return GetCachedListAsync();
         }
     }
 }

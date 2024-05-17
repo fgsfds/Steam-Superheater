@@ -32,6 +32,6 @@ namespace Common.Entities.Fixes
     [JsonSourceGenerationOptions(
         WriteIndented = true,
         Converters = [typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)])]
-    [JsonSerializable(typeof(ImmutableList<BaseInstalledFixEntity>))]
+    [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
     internal sealed partial class InstalledFixesListContext : JsonSerializerContext;
 }

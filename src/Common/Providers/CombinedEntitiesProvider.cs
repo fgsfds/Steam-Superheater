@@ -1,6 +1,5 @@
 ﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes.FileFix;
-using Common.Providers.Cached;
 
 namespace Common.Providers
 {
@@ -17,12 +16,12 @@ namespace Common.Providers
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>
-        public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync(bool useCache)
+        public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync()
         {
-            var fixesLists = await _fixesProvider.GetListAsync(useCache).ConfigureAwait(false);
+            var fixesLists = await _fixesProvider.GetFixesListAsync().ConfigureAwait(false);
             var sharedFixes = _fixesProvider.GetSharedFixes();
-            var games = await _gamesProvider.GetListAsync(useCache).ConfigureAwait(false);
-            var installedFixes = await _installedFixesProvider.GetListAsync(useCache).ConfigureAwait(false);
+            var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+            var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);
 
             List<FixFirstCombinedEntity> result = new(fixesLists.Count - 1);
 

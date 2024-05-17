@@ -305,7 +305,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// VM initialization
         /// </summary>
         [RelayCommand]
-        private Task InitializeAsync() => UpdateAsync(true);
+        private Task InitializeAsync() => UpdateAsync();
 
 
         /// <summary>
@@ -314,7 +314,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
         private async Task UpdateGamesAsync()
         {
-            await UpdateAsync(false).ConfigureAwait(true);
+            await UpdateAsync().ConfigureAwait(true);
 
             InstallFixCommand.NotifyCanExecuteChanged();
             UninstallFixCommand.NotifyCanExecuteChanged();
@@ -708,14 +708,13 @@ Do you still want to install the fix?",
         /// <summary>
         /// Update games list
         /// </summary>
-        /// <param name="useCache">Use cached list</param>
-        private async Task UpdateAsync(bool useCache)
+        private async Task UpdateAsync()
         {
             await _locker.WaitAsync().ConfigureAwait(true);
             IsInProgress = true;
             ProgressBarText = "Updating...";
 
-            var result = await _mainModel.UpdateGamesListAsync(useCache).ConfigureAwait(true);
+            var result = await _mainModel.UpdateGamesListAsync().ConfigureAwait(true);
 
             FillGamesList();
 
@@ -867,13 +866,13 @@ Do you still want to install the fix?",
         {
             if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
             {
-                await UpdateAsync(true).ConfigureAwait(true);
+                await UpdateAsync().ConfigureAwait(true);
             }
 
             if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
                 parameterName.Equals(nameof(_config.HiddenTags)))
             {
-                await UpdateAsync(true).ConfigureAwait(true);
+                await UpdateAsync().ConfigureAwait(true);
                 OnPropertyChanged(nameof(SelectedGameFixesList));
                 OnPropertyChanged(nameof(SelectedFixTags));
             }
@@ -881,7 +880,7 @@ Do you still want to install the fix?",
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await UpdateAsync(false).ConfigureAwait(true);
+                await UpdateAsync().ConfigureAwait(true);
             }
         }
     }

@@ -4,7 +4,7 @@ using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Providers.Cached;
+using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Runtime.InteropServices;
 
@@ -72,7 +72,7 @@ namespace Tests
             _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
             //create cache;
-            _ = _installedFixesProvider.GetListAsync(false).Result;
+            _ = _installedFixesProvider.GetInstalledFixesListAsync().Result;
 
             File.Copy(
                 Path.Combine(_rootDirectory, "Resources\\hosts"), 

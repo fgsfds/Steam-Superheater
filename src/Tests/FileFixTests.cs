@@ -4,7 +4,7 @@ using Common.Entities;
 using Common.Entities.Fixes.FileFix;
 using Common.FixTools;
 using Common.Helpers;
-using Common.Providers.Cached;
+using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
@@ -90,7 +90,7 @@ namespace Tests
             _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
 
             //create cache;
-            _ = _installedFixesProvider.GetListAsync(false).Result;
+            _ = _installedFixesProvider.GetInstalledFixesListAsync().Result;
         }
 
         public void Dispose()

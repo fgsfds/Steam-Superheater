@@ -16,7 +16,6 @@ namespace Common.Providers
         private readonly ConfigEntity _config = config.Config;
         private readonly HttpClient _httpClient = httpClient;
         private readonly Logger _logger = logger;
-        private List<NewsEntity> _news;
 
         /// <summary>
         /// Get list of news
@@ -24,11 +23,28 @@ namespace Common.Providers
         /// <exception cref="NullReferenceException"></exception>
         public async Task<ImmutableList<NewsEntity>> GetNewsListAsync()
         {
-            _logger.Info("Requesting news");
+            _logger.Info("Creating news list");
 
-            await CreateNewsListAsync().ConfigureAwait(false);
+            var newsJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/news").ConfigureAwait(false);
 
-            return [.. _news];
+            if (newsJson is null)
+            {
+                _logger.Error("Error while getting news...");
+                ThrowHelper.Exception("Error while getting news");
+            }
+
+            var newsList = JsonSerializer.Deserialize(
+                newsJson,
+                NewsEntityContext.Default.ListNewsEntity
+                );
+
+            if (newsList is null)
+            {
+                _logger.Error("Error while deserializing news...");
+                ThrowHelper.Exception("Error while deserializing news");
+            }
+
+            return [.. newsList];
         }
 
         /// <summary>
@@ -70,35 +86,6 @@ namespace Common.Providers
             {
                 return new(ResultEnum.Error, "Error while adding news");
             }
-        }
-
-        /// <summary>
-        /// Create news list from json
-        /// </summary>
-        private async Task CreateNewsListAsync()
-        {
-            _logger.Info("Creating news list");
-
-            var newsJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/news").ConfigureAwait(false);
-
-            if (newsJson is null)
-            {
-                _logger.Error("Error while getting news...");
-                ThrowHelper.Exception("Error while getting news");
-            }
-
-            var list = JsonSerializer.Deserialize(
-                newsJson,
-                NewsEntityContext.Default.ListNewsEntity
-                );
-
-            if (list is null)
-            {
-                _logger.Error("Error while deserializing news...");
-                ThrowHelper.Exception("Error while deserializing news");
-            }
-
-            _news = [.. list];
         }
     }
 }

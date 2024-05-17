@@ -6,7 +6,7 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
-using Common.Providers.Cached;
+using Common.Providers;
 using System.Collections.Immutable;
 using System.Text.Json;
 
@@ -40,13 +40,12 @@ namespace Common.Models
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
         /// </summary>
-        /// <param name="useCache">Is cache used</param>
-        public async Task<Result> UpdateListsAsync(bool useCache)
+        public async Task<Result> UpdateListsAsync()
         {
             try
             {
-                await GetListOfFixesAsync(useCache).ConfigureAwait(false);
-                await UpdateListOfAvailableGamesAsync(useCache).ConfigureAwait(false);
+                await GetListOfFixesAsync().ConfigureAwait(false);
+                await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
 
                 return new(ResultEnum.Success, string.Empty);
             }
@@ -390,15 +389,14 @@ namespace Common.Models
         /// <summary>
         /// Get sorted list of fixes
         /// </summary>
-        /// <param name="useCache">Use cached list</param>
-        private async Task GetListOfFixesAsync(bool useCache) => _fixesList = [.. await _fixesProvider.GetListAsync(useCache).ConfigureAwait(false)];
+        private async Task GetListOfFixesAsync() => _fixesList = [.. await _fixesProvider.GetFixesListAsync().ConfigureAwait(false)];
 
         /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
-        private async Task UpdateListOfAvailableGamesAsync(bool useCache)
+        private async Task UpdateListOfAvailableGamesAsync()
         {
-            var installedGames = await _gamesProvider.GetListAsync(useCache).ConfigureAwait(false);
+            var installedGames = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
 
             _availableGamesList = new(installedGames.Count);
 

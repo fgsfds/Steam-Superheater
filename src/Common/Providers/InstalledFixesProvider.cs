@@ -8,12 +8,32 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using System.Xml.Linq;
 
-namespace Common.Providers.Cached
+namespace Common.Providers
 {
-    public sealed class InstalledFixesProvider : CachedProviderBase<BaseInstalledFixEntity>
+    public sealed class InstalledFixesProvider
     {
-        public InstalledFixesProvider(Logger logger) : base(logger)
+        private readonly Logger _logger;
+        private List<BaseInstalledFixEntity>? _cache;
+
+
+        public InstalledFixesProvider(Logger logger)
         {
+            _logger = logger;
+        }
+
+
+        public async Task<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
+        {
+            if (_cache is not null)
+            {
+                return [.. _cache];
+            }
+
+            await CreateCacheAsync().ConfigureAwait(false);
+
+            _cache.ThrowIfNull();
+
+            return [.. _cache];
         }
 
         /// <summary>
@@ -30,7 +50,7 @@ namespace Common.Providers.Cached
 
                 var json = JsonSerializer.Serialize(
                     _cache,
-                    InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity
+                    InstalledFixesListContext.Default.ListBaseInstalledFixEntity
                     );
 
                 File.WriteAllText(Consts.InstalledFile, json);
@@ -55,11 +75,11 @@ namespace Common.Providers.Cached
         /// Add installed fix to cache
         /// </summary>
         /// <param name="installedFix">Installed fix entity</param>
-        internal void AddToCache(BaseInstalledFixEntity installedFix)
+        public void AddToCache(BaseInstalledFixEntity installedFix)
         {
             _cache.ThrowIfNull();
 
-            _cache = _cache.Add(installedFix);
+            _cache.Add(installedFix);
         }
 
         /// <summary>
@@ -67,16 +87,16 @@ namespace Common.Providers.Cached
         /// </summary>
         /// <param name="gameId">Game id</param>
         /// <param name="fixGuid">Fix guid</param>
-        internal void RemoveFromCache(int gameId, Guid fixGuid)
+        public void RemoveFromCache(int gameId, Guid fixGuid)
         {
             _cache.ThrowIfNull();
 
             var toRemove = _cache.First(x => x.GameId == gameId && x.Guid == fixGuid);
-            _cache = _cache.Remove(toRemove);
+            _cache.Remove(toRemove);
         }
 
         /// <inheritdoc/>
-        internal override async Task<ImmutableList<BaseInstalledFixEntity>> CreateCacheAsync()
+        private async Task<List<BaseInstalledFixEntity>> CreateCacheAsync()
         {
             _logger.Info("Requesting installed fixes");
 
@@ -90,14 +110,14 @@ namespace Common.Providers.Cached
 
                 text.ThrowIfNull();
 
-                var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ImmutableListBaseInstalledFixEntity);
+                var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
 
                 installedFixes.ThrowIfNull();
 
                 var needToSave = FixRegValueType(installedFixes);
                 needToSave = FixWrongGuids(installedFixes);
 
-                _cache = [.. installedFixes];
+                _cache = installedFixes;
 
                 if (needToSave)
                 {
@@ -112,7 +132,7 @@ namespace Common.Providers.Cached
         /// Add value type to installed reg fix
         /// </summary>
         [Obsolete("Remove in version 1.0")]
-        private bool FixRegValueType(ImmutableList<BaseInstalledFixEntity> installedFixes)
+        private bool FixRegValueType(List<BaseInstalledFixEntity> installedFixes)
         {
             var needToSave = false;
 
@@ -141,7 +161,7 @@ namespace Common.Providers.Cached
         /// Fix wrong guids in installed fixes
         /// </summary>
         [Obsolete("Remove in version 1.0")]
-        private bool FixWrongGuids(ImmutableList<BaseInstalledFixEntity> installedFixes)
+        private bool FixWrongGuids(List<BaseInstalledFixEntity> installedFixes)
         {
             var needToSave = false;
 
@@ -198,7 +218,7 @@ namespace Common.Providers.Cached
         /// Convert old installed.xml file to a newer installed.json
         /// </summary>
         [Obsolete("Remove in version 1.0")]
-        private ImmutableList<BaseInstalledFixEntity> ConvertXmlToJson()
+        private List<BaseInstalledFixEntity> ConvertXmlToJson()
         {
 #pragma warning disable CS8602
             if (!File.Exists("installed.xml"))
@@ -276,7 +296,7 @@ namespace Common.Providers.Cached
 
             SaveInstalledFixes();
 
-            return [.. result];
+            return result;
 #pragma warning restore CS8602
         }
     }

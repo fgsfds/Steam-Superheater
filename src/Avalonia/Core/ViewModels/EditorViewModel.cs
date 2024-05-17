@@ -107,7 +107,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixTags
         {
             get => SelectedFix?.Tags is null
-                ? string.Empty 
+                ? string.Empty
                 : string.Join(';', SelectedFix.Tags);
             set
             {
@@ -119,8 +119,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string SelectedFixVariants
         {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null 
-                ? string.Join(';', fileFix.Variants) 
+            get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null
+                ? string.Join(';', fileFix.Variants)
                 : string.Empty;
             set
             {
@@ -502,16 +502,17 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         /// <summary>
         /// VM initialization
+        /// Do nothing
         /// </summary>
         [RelayCommand]
-        private Task InitializeAsync() => UpdateAsync(true);
+        private Task InitializeAsync() => Task.CompletedTask;
 
 
         /// <summary>
         /// Update games list
         /// </summary>
         [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
-        private Task UpdateGamesAsync() => UpdateAsync(false);
+        private Task UpdateGamesAsync() => UpdateAsync();
         private bool UpdateGamesCanExecute() => IsInProgress is false;
 
 
@@ -913,13 +914,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// Update games list
         /// </summary>
-        /// <param name="useCache">Use cached list</param>
-        private async Task UpdateAsync(bool useCache)
+        private async Task UpdateAsync()
         {
             await _locker.WaitAsync().ConfigureAwait(true);
             IsInProgress = true;
 
-            var result = await _editorModel.UpdateListsAsync(useCache).ConfigureAwait(true);
+            var result = await _editorModel.UpdateListsAsync().ConfigureAwait(true);
 
             FillGamesList();
 
@@ -966,7 +966,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
             {
-                await UpdateAsync(false).ConfigureAwait(true);
+                await UpdateAsync().ConfigureAwait(true);
             }
         }
 

@@ -1,6 +1,5 @@
 ﻿using Common.Config;
 using Common.Providers;
-using Common.Providers.Cached;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.DI
