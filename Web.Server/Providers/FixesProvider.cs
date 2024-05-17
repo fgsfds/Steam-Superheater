@@ -591,32 +591,12 @@ namespace Superheater.Web.Server.Providers
             else
             {
                 //if can't get md5 from the response, download zip
-                var currentDir = Directory.GetCurrentDirectory();
-                var fileName = Path.GetFileName(fixUrl);
-                var pathToFile = Path.Combine(currentDir, "temp", fileName);
+                await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (!Directory.Exists(Path.GetDirectoryName(pathToFile)))
-                {
-                    Directory.CreateDirectory(Path.GetDirectoryName(pathToFile));
-                }
+                using var md5 = MD5.Create();
 
-                await using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                {
-                    await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var hash = Convert.ToHexString(await md5.ComputeHashAsync(source).ConfigureAwait(false));
 
-                    await source.CopyToAsync(file).ConfigureAwait(false);
-                }
-
-                string hash;
-
-                using (var md5 = MD5.Create())
-                {
-                    await using var stream = File.OpenRead(pathToFile);
-
-                    hash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
-                }
-
-                File.Delete(pathToFile);
                 return hash;
             }
         }
