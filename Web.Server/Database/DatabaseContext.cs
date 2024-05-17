@@ -35,14 +35,14 @@ namespace Web.Server.Database
 #if DEBUG
             if (!_isRunOnce)
             {
-                Database.EnsureDeleted();
-                _isRunOnce = true;
+                //Database.EnsureDeleted();
+                //_isRunOnce = true;
             }
 #endif
 
             Database.EnsureCreated();
 
-            if (!Fixes.Any())
+            if (Fixes is null || !Fixes.Any())
             {
                 FillDb();
             }
