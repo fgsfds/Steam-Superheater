@@ -1,5 +1,4 @@
-using Common;
-using Common.Helpers;
+using ClientCommon;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.ViewModels.Popups;
@@ -15,7 +14,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public Version CurrentVersion => CommonProperties.CurrentVersion;
+        public Version CurrentVersion => ClientProperties.CurrentVersion;
 
         [ObservableProperty]
         private string _aboutTabHeader = "About";

@@ -1,5 +1,4 @@
-﻿using Common.Enums;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Web.Server.DbEntities

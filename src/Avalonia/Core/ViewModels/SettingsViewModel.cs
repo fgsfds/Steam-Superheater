@@ -1,7 +1,8 @@
 using Avalonia;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
-using Common.Config;
+using ClientCommon;
+using ClientCommon.Config;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -42,7 +43,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<string> HiddenTagsList => [.. _config.HiddenTags];
 
-        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
 
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
 

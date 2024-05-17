@@ -33,7 +33,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Dependencies = fix.Dependencies;
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
-            IsDisabled = true;
+            IsDisabled = fix.IsDisabled;
 
             Key = string.Empty;
             ValueName = string.Empty;

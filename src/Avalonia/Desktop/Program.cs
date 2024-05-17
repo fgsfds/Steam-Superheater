@@ -1,5 +1,5 @@
 ﻿using Avalonia;
-using Common;
+using ClientCommon;
 using Common.Helpers;
 using Superheater.Avalonia.Core;
 
@@ -15,7 +15,7 @@ internal static class Program
     {
         if (args.Contains("-dev"))
         {
-            CommonProperties.IsDeveloperMode = true;
+            ClientProperties.IsDeveloperMode = true;
         }
 
         if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFile)))

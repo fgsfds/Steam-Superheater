@@ -2,7 +2,6 @@
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
-using System.Collections.Immutable;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes
@@ -33,5 +32,5 @@ namespace Common.Entities.Fixes
         WriteIndented = true,
         Converters = [typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)])]
     [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
-    internal sealed partial class InstalledFixesListContext : JsonSerializerContext;
+    public sealed partial class InstalledFixesListContext : JsonSerializerContext;
 }

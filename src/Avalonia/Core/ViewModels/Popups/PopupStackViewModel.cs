@@ -7,7 +7,7 @@ namespace Superheater.Avalonia.Core.ViewModels.Popups
     public sealed partial class PopupStackViewModel : ObservableObject, IPopup
     {
         private SemaphoreSlim? _semaphore;
-        private string _result = ConstStrings.All;
+        private string _result = Consts.All;
 
         public event Action<bool>? PopupShownEvent;
 

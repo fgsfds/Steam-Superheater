@@ -1,7 +1,7 @@
-using Common;
-using Common.DI;
+using ClientCommon;
+using ClientCommon.DI;
+using ClientCommon.Providers;
 using Common.Entities;
-using Common.Providers;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 

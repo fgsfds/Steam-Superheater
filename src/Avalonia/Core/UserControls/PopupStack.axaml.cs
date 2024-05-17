@@ -1,5 +1,5 @@
 using Avalonia.Controls;
-using Common.DI;
+using ClientCommon.DI;
 using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 

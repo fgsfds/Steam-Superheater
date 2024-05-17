@@ -47,7 +47,7 @@ namespace Common.Entities.Fixes.FileFix
             Dependencies = fix.Dependencies;
             Tags = fix.Tags;
             SupportedOSes = fix.SupportedOSes;
-            IsDisabled = true;
+            IsDisabled = fix.IsDisabled;
 
             Url = null;
             FileSize = null;

@@ -3,9 +3,9 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
-using Common;
-using Common.Config;
-using Common.DI;
+using ClientCommon;
+using ClientCommon.Config;
+using ClientCommon.DI;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,7 +71,7 @@ You can't launch multiple instances of Superheater
 
             RequestedThemeVariant = themeEnum;
 
-            if (CommonProperties.IsDeveloperMode)
+            if (ClientProperties.IsDeveloperMode)
             {
                 _logger.Info("Started in developer mode");
             }

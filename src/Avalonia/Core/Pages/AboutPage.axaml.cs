@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using Common.DI;
+using ClientCommon.DI;
 using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
 using System.Diagnostics;

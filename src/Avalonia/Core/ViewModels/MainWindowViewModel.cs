@@ -1,5 +1,5 @@
-using Common.Config;
-using Common.Helpers;
+using ClientCommon;
+using ClientCommon.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 
@@ -22,9 +22,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => ClientProperties.IsInSteamDeckGameMode;
 
-        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
 
         [ObservableProperty]
         private PopupMessageViewModel? _popupDataContext;

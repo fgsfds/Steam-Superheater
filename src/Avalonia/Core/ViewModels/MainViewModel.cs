@@ -1,12 +1,14 @@
 using Avalonia.Input.Platform;
-using Common.Config;
+using ClientCommon;
+using ClientCommon.Config;
+using ClientCommon.Models;
+using Common;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Helpers;
-using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
@@ -42,7 +44,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public ImmutableList<string> SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : [];
 
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => ClientProperties.IsInSteamDeckGameMode;
 
         public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty ;
 
@@ -54,7 +56,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool SelectedFixHasTags => !SelectedFixTags.IsEmpty;
 
-        public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !CommonProperties.IsAdmin;
+        public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !ClientProperties.IsAdmin;
 
 
         public string ShowVariantsPopupButtonText => SelectedFixVariant is null ? "Select variant..." : SelectedFixVariant;
@@ -70,7 +72,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             get
             {
                 if (SelectedFix is HostsFixEntity &&
-                    !CommonProperties.IsAdmin)
+                    !ClientProperties.IsAdmin)
                 {
                     return "Restart as admin...";
                 }

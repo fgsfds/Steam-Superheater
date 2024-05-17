@@ -1,5 +1,7 @@
 ﻿using Avalonia.Platform.Storage;
-using Common.Config;
+using ClientCommon;
+using ClientCommon.Config;
+using ClientCommon.Models;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -8,7 +10,6 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
-using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
@@ -49,12 +50,12 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
 
-        public HashSet<string> TagsComboboxList => [ConstStrings.All, ConstStrings.WindowsOnly, ConstStrings.LinuxOnly, ConstStrings.AllSuppoted];
+        public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
 
-        public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
+        public bool IsSteamGameMode => ClientProperties.IsInSteamDeckGameMode;
 
-        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
+        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
 

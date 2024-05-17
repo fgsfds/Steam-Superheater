@@ -30,7 +30,7 @@ namespace Common.Entities.Fixes.HostsFix
             Dependencies = fix.Dependencies;
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
-            IsDisabled = true;
+            IsDisabled = fix.IsDisabled;
 
             Entries = [];
         }

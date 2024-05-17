@@ -168,6 +168,25 @@ namespace Superheater.Web.Server.Providers
 
                         baseFixEntities.Add(fileFixEntity);
                     }
+                    else if (type is FixTypeEnum.TextFix)
+                    {
+                        TextFixEntity textFixEntity = new()
+                        {
+                            Name = fix.Name,
+                            Version = fix.Version,
+                            Guid = fix.Guid,
+                            Description = fix.Description,
+                            Dependencies = !deps.Any() ? null : [.. deps],
+                            Tags = !tags.Any() ? null : [.. tags],
+                            SupportedOSes = supportedOSes,
+                            Installs = installsDb.GetValueOrDefault(fix.Guid),
+                            Score = scoresDb.GetValueOrDefault(fix.Guid),
+                            Notes = fix.Notes,
+                            IsDisabled = fix.IsDisabled
+                        };
+
+                        baseFixEntities.Add(textFixEntity);
+                    }
                 }
 
                 FixesList fixesList = new()

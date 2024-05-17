@@ -1,9 +1,8 @@
-﻿using Common;
-using Common.Config;
-using Common.DI;
-using Common.Helpers;
+﻿using ClientCommon;
+using ClientCommon.Config;
+using ClientCommon.DI;
+using ClientCommon.Providers;
 using Microsoft.Extensions.DependencyInjection;
-using FixesProvider = Common.Providers.FixesProvider;
 
 namespace Tests
 {
