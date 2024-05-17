@@ -72,26 +72,6 @@
 
             <Button Grid.Column="0"
                     Grid.Row="1"
-                    Margin="3,3,3,0"
-                    Padding="4"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    Command="{Binding MoveFixUpCommand}">
-                Up
-            </Button>
-
-            <Button Grid.Column="1"
-                    Grid.Row="1"
-                    Margin="3,3,3,0"
-                    Padding="4"
-                    HorizontalAlignment="Stretch"
-                    HorizontalContentAlignment="Center"
-                    Command="{Binding MoveFixDownCommand}">
-                Down
-            </Button>
-
-            <Button  Grid.Column="0"
-                    Grid.Row="2"
                     Name="AddNewPatchButton"
                     Margin="3,3,3,0"
                     Padding="4"
@@ -101,16 +81,38 @@
                 Add new fix
             </Button>
 
-            <Button  Grid.Column="1"
-                    Grid.Row="2"
-                    Name="RemovePatchButton"
+            <Button Grid.Column="1"
+                    Grid.Row="1"
                     Margin="3,3,3,0"
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding RemoveFixCommand}">
-                Delete fix
+                    Command="{Binding UploadFixCommand}"
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsEnabled="{Binding !LockButtons}">
+                Upload fix
             </Button>
+
+            <Button Grid.Column="0"
+                    Grid.Row="2"
+                    Margin="3,3,3,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding AddFixToDbCommand}"
+                    IsVisible="{Binding IsDeveloperMode}">
+                Add fix to DB
+            </Button>
+
+            <Button Grid.Column="1"
+                    Grid.Row="2"
+                    Content="{Binding DeleteFixButtonText, FallbackValue=Delete fix}"
+                    Margin="3,3,3,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding DeleteFixCommand}"
+                    IsVisible="{Binding IsDeveloperMode}"/>
 
         </Grid>
 

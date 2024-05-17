@@ -102,40 +102,38 @@ namespace Common.Models
         {
             List<FixFirstCombinedEntity> result = [.. _combinedEntitiesList];
 
-            foreach (var entity in result.ToArray())
+            foreach (var entity in _combinedEntitiesList)
             {
                 foreach (var fix in entity.FixesList.Fixes)
                 {
-                    fix.IsHidden = false;
+                    fix.IsHidden = fix.IsDeleted;
                 }
-            }
-
-            if (string.IsNullOrEmpty(search) &&
-                string.IsNullOrEmpty(tag))
-            {
-                return [.. result];
             }
 
             if (!string.IsNullOrEmpty(tag))
             {
                 if (!tag.Equals(ConstStrings.All))
                 {
-                    foreach (var entity in result.ToArray())
+                    foreach (var entity in result)
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
                             if (fix.Tags is null ||
-                                !fix.Tags.Exists(x => x.Equals(tag)))
+                                !fix.Tags.Exists(x => x.Equals(tag))
+                                )
                             {
                                 fix.IsHidden = true;
                             }
                         }
-
-                        if (!entity.FixesList.Fixes.Exists(static x => !x.IsHidden))
-                        {
-                            result.Remove(entity);
-                        }
                     }
+                }
+            }
+
+            foreach (var entity in result.ToArray())
+            {
+                if (!entity.FixesList.Fixes.Exists(static x => !x.IsHidden))
+                {
+                    result.Remove(entity);
                 }
             }
 

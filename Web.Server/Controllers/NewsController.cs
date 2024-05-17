@@ -26,7 +26,7 @@ namespace Superheater.Web.Server.Controllers
         [HttpPost("add")]
         public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
         {
-            var result = _newsProvider.AddNews(message);
+            var result = _newsProvider.AddNews(message.Item1, message.Item2, message.Item3);
 
             if (result)
             {
@@ -41,7 +41,7 @@ namespace Superheater.Web.Server.Controllers
         [HttpPut("change")]
         public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
         {
-            var result = _newsProvider.ChangeNews(message);
+            var result = _newsProvider.ChangeNews(message.Item1, message.Item2, message.Item3);
 
             if (result)
             {
@@ -52,9 +52,5 @@ namespace Superheater.Web.Server.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden);
             }
         }
-
-        //Expected format 2020-09-22T18:07:13
-        //[HttpGet("{date:DateTime?}")]
-        //public ImmutableList<NewsEntity>? GetNewsByDate(DateTime date) => [.. _newsProvider.NewsList.Where(x => x.Date > date)];
     }
 }

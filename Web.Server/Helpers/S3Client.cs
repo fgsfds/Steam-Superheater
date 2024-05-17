@@ -24,6 +24,11 @@ namespace Web.Server.Helpers
             _s3client = new(creds, config);
         }
 
+        /// <summary>
+        /// Get signed URL for file uploading
+        /// </summary>
+        /// <param name="file">File name</param>
+        /// <returns>Signed URL</returns>
         public string GetSignedUrl(string file)
         {
             GetPreSignedUrlRequest request = new()

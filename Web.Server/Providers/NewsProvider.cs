@@ -20,6 +20,9 @@ namespace Superheater.Web.Server.Providers
         }
 
 
+        /// <summary>
+        /// Get list of news from the database
+        /// </summary>
         public List<NewsEntity> GetNews()
         {
             using var dbContext = _databaseContextFactory.Get();
@@ -36,11 +39,18 @@ namespace Superheater.Web.Server.Providers
             return news;
         }
 
-        internal bool AddNews(Tuple<DateTime, string, string> message)
+        /// <summary>
+        /// Add news to the database
+        /// </summary>
+        /// <param name="date">News date</param>
+        /// <param name="text">News text</param>
+        /// <param name="password">API password</param>
+        /// <returns>News successfully added</returns>
+        public bool AddNews(DateTime date, string text, string password)
         {
             var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
-            if (!apiPassword.Equals(message.Item3))
+            if (!apiPassword.Equals(password))
             {
                 return false;
             }
@@ -49,8 +59,8 @@ namespace Superheater.Web.Server.Providers
 
             NewsDbEntity entity = new()
             {
-                Date = message.Item1.ToUniversalTime(),
-                Content = message.Item2
+                Date = date.ToUniversalTime(),
+                Content = text
             };
 
             dbContext.News.Add(entity);
@@ -59,25 +69,32 @@ namespace Superheater.Web.Server.Providers
             return true;
         }
 
-        internal bool ChangeNews(Tuple<DateTime, string, string> message)
+        /// <summary>
+        /// Change existing news
+        /// </summary>
+        /// <param name="date">News date</param>
+        /// <param name="text">News text</param>
+        /// <param name="password">API password</param>
+        /// <returns>News successfully changed</returns>
+        public bool ChangeNews(DateTime date, string text, string password)
         {
             var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
-            if (!apiPassword.Equals(message.Item3))
+            if (!apiPassword.Equals(password))
             {
                 return false;
             }
 
             using var dbContext = _databaseContextFactory.Get();
 
-            var entity = dbContext.News.Find(message.Item1);
+            var entity = dbContext.News.Find(date);
 
             if (entity is null)
             {
                 return false;
             }
 
-            entity.Content = message.Item2;
+            entity.Content = text;
             dbContext.SaveChanges();
 
             return true;

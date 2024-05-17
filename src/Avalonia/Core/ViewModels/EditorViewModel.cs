@@ -60,6 +60,25 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
 
+        public string DeleteFixButtonText
+        {
+            get
+            {
+                if (SelectedFix is null)
+                {
+                    return string.Empty;
+                }
+                else if (SelectedFix.IsDeleted)
+                {
+                    return "Restore fix";
+                }
+                else
+                {
+                    return "Delete fix";
+                }
+            }
+        }
+
 
         public string SelectedFixName
         {
@@ -433,10 +452,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
         [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
+        [NotifyPropertyChangedFor(nameof(DeleteFixButtonText))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
-        [NotifyCanExecuteChangedFor(nameof(RemoveFixCommand))]
-        [NotifyCanExecuteChangedFor(nameof(MoveFixDownCommand))]
-        [NotifyCanExecuteChangedFor(nameof(MoveFixUpCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DeleteFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
@@ -446,6 +464,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(AddFixToDbCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -542,21 +561,43 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Remove fix from a game
+        /// Add new fix for a game
         /// </summary>
-        [RelayCommand(CanExecute = nameof(RemoveFixCanExecute))]
-        private void RemoveFix()
+        [RelayCommand(CanExecute = nameof(AddFixToDbCanExecute))]
+        private async Task AddFixToDbAsync()
         {
             SelectedGame.ThrowIfNull();
+
+            var result = await _editorModel.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
+
+            _popupMessage.Show(
+                result.IsSuccess ? "Success" : "Error",
+                result.Message,
+                PopupMessageType.OkOnly
+                );
+        }
+        private bool AddFixToDbCanExecute() => SelectedFix is not null;
+
+
+        /// <summary>
+        /// Remove fix from a game
+        /// </summary>
+        [RelayCommand(CanExecute = nameof(DeleteFixCanExecute))]
+        private async Task DeleteFixAsync()
+        {
             SelectedFix.ThrowIfNull();
 
-            _editorModel.RemoveFix(SelectedGame, SelectedFix);
+            var result = await _editorModel.DeleteFix(SelectedFix, !SelectedFix.IsDeleted).ConfigureAwait(true);
 
-            OnPropertyChanged(nameof(SelectedGameFixesList));
-            OnPropertyChanged(nameof(FilteredGamesList));
-            OnPropertyChanged(nameof(AvailableGamesList));
+            OnPropertyChanged(nameof(DeleteFixButtonText));
+
+            _popupMessage.Show(
+                result.IsSuccess ? "Success" : "Error",
+                result.Message,
+                PopupMessageType.OkOnly
+                );
         }
-        private bool RemoveFixCanExecute() => SelectedFix is not null;
+        private bool DeleteFixCanExecute() => SelectedFix is not null;
 
 
         /// <summary>
@@ -565,39 +606,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = nameof(ClearSearchCanExecute))]
         private void ClearSearch() => SearchBarText = string.Empty;
         private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
-
-
-        /// <summary>
-        /// Save fixes.xml
-        /// </summary>
-        [RelayCommand]
-        private async Task SaveChangesAsync()
-        {
-            var result = await _editorModel.SaveFixesListAsync().ConfigureAwait(true);
-
-            OnPropertyChanged(nameof(SelectedFixMD5));
-            OnPropertyChanged(nameof(SelectedFixSize));
-            OnPropertyChanged(nameof(SelectedFixUrl));
-
-            _popupMessage.Show(
-                result.IsSuccess ? "Success" : "Error",
-                result.Message,
-                PopupMessageType.OkOnly
-                );
-        }
-
-
-        /// <summary>
-        /// Open fixes.xml file
-        /// </summary>
-        [RelayCommand]
-        private void OpenXmlFile() =>
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(_config.LocalRepoPath, Consts.FixesFile),
-                UseShellExecute = true
-            });
-
 
         /// <summary>
         /// Add dependency for a fix
@@ -647,40 +655,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedFix = newGame.Fixes.First();
         }
         private bool AddNewGameCanExecute() => SelectedAvailableGame is not null;
-
-
-        /// <summary>
-        /// Move fix up in the list
-        /// </summary>
-        [RelayCommand(CanExecute = nameof(MoveFixUpCanExecute))]
-        private void MoveFixUp()
-        {
-            SelectedGame.ThrowIfNull();
-
-            EditorModel.MoveFixUp(SelectedGame.Fixes, SelectedFixIndex);
-
-            OnPropertyChanged(nameof(SelectedGameFixesList));
-            MoveFixDownCommand.NotifyCanExecuteChanged();
-            MoveFixUpCommand.NotifyCanExecuteChanged();
-        }
-        private bool MoveFixUpCanExecute() => SelectedFix is not null && SelectedFixIndex > 0;
-
-
-        /// <summary>
-        /// Move fix down in the list
-        /// </summary>
-        [RelayCommand(CanExecute = nameof(MoveFixDownCanExecute))]
-        private void MoveFixDown()
-        {
-            SelectedGame.ThrowIfNull();
-
-            EditorModel.MoveFixDown(SelectedGame.Fixes, SelectedFixIndex);
-
-            OnPropertyChanged(nameof(SelectedGameFixesList));
-            MoveFixDownCommand.NotifyCanExecuteChanged();
-            MoveFixUpCommand.NotifyCanExecuteChanged();
-        }
-        private bool MoveFixDownCanExecute() => SelectedFix is not null && SelectedFixIndex < SelectedGameFixesList.Count - 1;
 
 
         /// <summary>

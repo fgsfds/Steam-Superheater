@@ -67,6 +67,11 @@ namespace Common.Entities.Fixes
         public int? Score { get; set; }
 
         /// <summary>
+        /// Is fix deleted in the database
+        /// </summary>
+        public bool IsDeleted { get; set; }
+
+        /// <summary>
         /// Installed fix entity
         /// </summary>
         [JsonIgnore]

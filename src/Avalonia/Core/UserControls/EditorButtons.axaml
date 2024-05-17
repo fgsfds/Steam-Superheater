@@ -30,8 +30,16 @@
             <Button Name="AddGame"
                     Margin="3,0"
                     Padding="8"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
                     Command="{Binding AddNewGameCommand}">
-                Add new game
+                +
+            </Button>
+
+            <Button Margin="3,0"
+                    Padding="8"
+                    Command="{Binding OpenSteamDBCommand}">
+                Open SteamDB...
             </Button>
 
             <Button Name="UpdateFixes"
@@ -41,24 +49,11 @@
                 Update list
             </Button>
 
-            <Button Margin="3,0"
-                    Padding="8"
-                    Command="{Binding OpenSteamDBCommand}">
-                Open SteamDB...
-            </Button>
-
         </StackPanel>
 
         <StackPanel Orientation="Horizontal"
                     HorizontalAlignment="Right"
                     Grid.Column="2">
-
-            <Button Margin="3,0"
-                    Padding="8"
-                    Click="HowToSubmitButtonClick"
-                    Background="{DynamicResource SystemAccentColor}">
-                How to submit fixes...
-            </Button>
 
             <Button Name="CancelButton"
                     Command="{Binding CancelCommand}"
@@ -70,24 +65,9 @@
 
             <Button Margin="3,0"
                     Padding="8"
-                    Command="{Binding UploadFixCommand}"
-                    Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding !LockButtons}">
-                Upload fix
-            </Button>
-
-            <Button Margin="3,0"
-                    Padding="8"
-                    Command="{Binding SaveChangesCommand}"
-                    IsVisible="{Binding IsDeveloperMode}">
-                Save changes
-            </Button>
-
-            <Button Margin="3,0,0,0"
-                    Padding="8"
-                    Command="{Binding OpenXmlFileCommand}"
-                    IsVisible="{Binding IsDeveloperMode}">
-                Open fixes.json...
+                    Click="HowToSubmitButtonClick"
+                    Background="{DynamicResource SystemAccentColor}">
+                How to submit fixes...
             </Button>
 
         </StackPanel>

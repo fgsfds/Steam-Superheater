@@ -5,7 +5,7 @@ namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Guid))]
     [Index(nameof(GameId))]
-    [Index(nameof(IsDeleted))]
+    [Index(nameof(IsDisabled))]
     [Table(name: "fixes", Schema = "main")]
     public sealed class FixesDbEntity
     {
@@ -39,7 +39,7 @@ namespace Web.Server.DbEntities
         public string? Notes { get; set; }
 
         [Column("is_deleted")]
-        public bool IsDeleted { get; set; }
+        public bool IsDisabled { get; set; }
 
 
         public GamesDbEntity GameTable { get; set; }

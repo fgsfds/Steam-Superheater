@@ -1,4 +1,3 @@
-using Common.Entities;
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
@@ -31,37 +30,46 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPut("installs/add")]
-        public int AddNumberOfInstalls([FromBody] Guid guid)
-        {
-            var installs = _fixesProvider.IncreaseFixInstallsCount(guid);
-            return installs;
-        }
+        public int AddNumberOfInstalls([FromBody] Guid guid) => _fixesProvider.IncreaseFixInstallsCount(guid);
 
 
         [HttpPut("score/change")]
-        public int ChangeRating([FromBody] Tuple<Guid, sbyte> message)
-        {
-            var score = _fixesProvider.ChangeFixScore(message.Item1, message.Item2);
-            return score;
-        }
+        public int ChangeRating([FromBody] Tuple<Guid, sbyte> message) => _fixesProvider.ChangeFixScore(message.Item1, message.Item2);
 
 
         [HttpPost("report")]
-        public void ReportFix([FromBody] Tuple<Guid, string> message)
+        public void ReportFix([FromBody] Tuple<Guid, string> message) => _fixesProvider.AddReport(message.Item1, message.Item2);
+
+
+        [HttpPut("delete")]
+        public StatusCodeResult DeleteFix([FromBody] Tuple<Guid, bool, string> message)
         {
-            _fixesProvider.AddReport(message.Item1, message.Item2);
+            var result = _fixesProvider.ChangeFixDisabledState(message.Item1, message.Item2, message.Item3);
+
+            if (result)
+            {
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
         }
 
 
-        [HttpGet("remove/{guid:Guid}")]
-        public void RemoveFix(Tuple<Guid, string> message)
+        [HttpPost("add")]
+        public StatusCodeResult AddFix([FromBody] Tuple<int, string, string, string> message)
         {
-        }
+            var result = _fixesProvider.AddFix(message.Item1, message.Item2, message.Item3, message.Item4);
 
-
-        [HttpGet("add/{guid:Guid}")]
-        public void AddFix(Tuple<GameEntity, BaseFixEntity, string> message)
-        {
+            if (result)
+            {
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
         }
     }
 }

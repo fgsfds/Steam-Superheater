@@ -9,7 +9,6 @@ using Common.Enums;
 using Common.Helpers;
 using Common.Providers.Cached;
 using System.Collections.Immutable;
-using System.Text;
 using System.Text.Json;
 
 namespace Common.Models
@@ -168,39 +167,27 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public async void RemoveFix(FixesList game, BaseFixEntity fix)
+        public async Task<Result> DeleteFix(BaseFixEntity fix, bool isDeleted)
         {
-            game.Fixes.Remove(fix);
+            var result = await _fixesProvider.DeleteFixAsync(fix.Guid, isDeleted).ConfigureAwait(false);
 
-            if (game.Fixes.Count == 0)
+            if (result.IsSuccess)
             {
-                _fixesList.Remove(game);
-
-                await UpdateListOfAvailableGamesAsync(true).ConfigureAwait(false);
+                fix.IsDeleted = isDeleted;
             }
+
+            return result;
         }
 
         /// <summary>
-        /// Save current fixes list to XML
+        /// Save list of fixes to XML
         /// </summary>
-        /// <returns>Result message</returns>
-        public async Task<Result> SaveFixesListAsync()
+        /// <param name="fix"></param>
+        public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
         {
-            var saveXmlResult = await _fixesProvider.SaveFixesAsync(_fixesList).ConfigureAwait(false);
+            var result = await _fixesProvider.AddFixToDbAsync(gameId, gameName, fix).ConfigureAwait(false);
 
-            if (!saveXmlResult.IsSuccess)
-            {
-                return saveXmlResult;
-            }
-
-            var createReadmeResult = CreateReadme();
-
-            if (!createReadmeResult.IsSuccess)
-            {
-                return createReadmeResult;
-            }
-
-            return saveXmlResult;
+            return result;
         }
 
         /// <summary>
@@ -357,10 +344,6 @@ namespace Common.Models
             addTo.Dependencies?.Remove(dependency.Guid);
         }
 
-        public static void MoveFixUp(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index - 1);
-
-        public static void MoveFixDown(List<BaseFixEntity> fixesList, int index) => fixesList.Move(index, index + 1);
-
         /// <summary>
         /// Change type of the fix
         /// </summary>
@@ -419,58 +402,6 @@ namespace Common.Models
                     _availableGamesList.Add(game);
                 }
             }
-        }
-
-        /// <summary>
-        /// Create readme file containing list of fixes
-        /// </summary>
-        private Result CreateReadme()
-        {
-            StringBuilder fixesList = new();
-            List<string> noIntroGames = [];
-            
-            var gamesCount = 0;
-            var fixesCount = 0;
-
-            foreach (var game in _fixesList)
-            {
-                var first = true;
-                    
-                foreach (var fix in game.Fixes)
-                {
-                    if (fix.Name.StartsWith("No Intro"))
-                    {
-                        noIntroGames.Add(game.GameName);
-                        continue;
-                    }
-
-                    if (first)
-                    {
-                        fixesList.Append($"{Environment.NewLine}{game.GameName}{Environment.NewLine}");
-                        gamesCount++;
-                        first = false;
-                    }
-
-                    fixesList.Append($"- {fix.Name}{Environment.NewLine}");
-                    fixesCount++;
-                }
-            }
-
-            StringBuilder result = new($"**CURRENTLY AVAILABLE {fixesCount} FIXES FOR {gamesCount} GAMES**{Environment.NewLine}{Environment.NewLine}");
-            result.Append(fixesList);
-            result.Append($"{Environment.NewLine}No Intro Fixes for: {string.Join(", ", noIntroGames)}");
-
-            try
-            {
-                File.WriteAllText(Path.Combine(_config.LocalRepoPath, "README.md"), result.ToString());
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.Error, ex.Message);
-            }
-
-            return new(ResultEnum.Success, "Readme saved successfully");
         }
     }
 }

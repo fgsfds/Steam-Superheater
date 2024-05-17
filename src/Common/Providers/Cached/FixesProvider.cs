@@ -3,6 +3,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text.Json;
 
@@ -41,46 +42,52 @@ namespace Common.Providers.Cached
 
         public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
+        public async Task<Result> DeleteFixAsync(Guid fixGuid, bool isDeleted)
+        {
+            Tuple<Guid, bool, string> message = new(fixGuid, isDeleted, _config.ApiPassword);
+
+            var result = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/delete", message).ConfigureAwait(false);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return new(ResultEnum.Success, $"Successfully {(isDeleted ? "deleted" : "restored")} fix");
+            }
+            else
+            {
+                return new(ResultEnum.Error, $"Error while {(isDeleted ? "deleting" : "restoring")} fix");
+            }
+        }
+
         /// <summary>
         /// Save list of fixes to XML
         /// </summary>
-        /// <param name="fixesList"></param>
-        public async Task<Result> SaveFixesAsync(List<FixesList> fixesList)
+        /// <param name="fix"></param>
+        public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
         {
-            _logger.Info("Saving fixes list");
-
-            var fileFixResult = await PrepareFixes(fixesList).ConfigureAwait(false);
+            var fileFixResult = await PrepareFixes(fix).ConfigureAwait(false);
 
             if (fileFixResult != ResultEnum.Success)
             {
                 return fileFixResult;
             }
 
-            fixesList = [.. fixesList.OrderBy(static x => x.GameName)];
-
-            try
-            {
-                if (!Directory.Exists(_config.LocalRepoPath))
-                {
-                    Directory.CreateDirectory(_config.LocalRepoPath);
-                }
-
-                await using FileStream fs = new(Path.Combine(_config.LocalRepoPath, Consts.FixesFile), FileMode.Create);
-
-                JsonSerializer.Serialize(
-                    fs,
-                    fixesList,
-                    FixesListContext.Default.ListFixesList
+            var jsonStr = JsonSerializer.Serialize(
+                    fix,
+                    FixesListContext.Default.BaseFixEntity
                     );
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.Error, ex.Message);
-            }
 
-            _logger.Info("Fixes list saved successfully!");
-            return new(ResultEnum.Success, "Fixes list saved successfully!");   
+            Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
+
+            var result = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/add", message).ConfigureAwait(false);
+
+            if (result.IsSuccessStatusCode)
+            {
+                return new(ResultEnum.Success, $"Successfully added fix");
+            }
+            else
+            {
+                return new(ResultEnum.Error, $"Error while adding fix");
+            }
         }
 
         /// <summary>
@@ -104,36 +111,33 @@ namespace Common.Providers.Cached
             return [.. DeserializeCachedString(_fixesCachedString)];
         }
 
-        private async Task<Result> PrepareFixes(List<FixesList> fixesList)
+        private async Task<Result> PrepareFixes(BaseFixEntity fix)
         {
-            foreach (var fix in fixesList.SelectMany(static x => x.Fixes))
+            if (fix is FileFixEntity fileFix)
             {
-                if (fix is FileFixEntity fileFix)
-                {
-                    var result = await PrepareFileFixes(fileFix).ConfigureAwait(false);
+                var result = await PrepareFileFixes(fileFix).ConfigureAwait(false);
 
-                    if (!result.IsSuccess)
-                    {
-                        return result;
-                    }
+                if (!result.IsSuccess)
+                {
+                    return result;
                 }
+            }
 
-                if (string.IsNullOrWhiteSpace(fix.Description))
-                {
-                    fix.Description = null;
-                }
-                if (string.IsNullOrWhiteSpace(fix.Notes))
-                {
-                    fix.Notes = null;
-                }
-                if (fix.Dependencies?.Count == 0)
-                {
-                    fix.Dependencies = null;
-                }
-                if (fix.Tags?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
-                {
-                    fix.Tags = null;
-                }
+            if (string.IsNullOrWhiteSpace(fix.Description))
+            {
+                fix.Description = null;
+            }
+            if (string.IsNullOrWhiteSpace(fix.Notes))
+            {
+                fix.Notes = null;
+            }
+            if (fix.Dependencies?.Count == 0)
+            {
+                fix.Dependencies = null;
+            }
+            if (fix.Tags?.Any(static x => string.IsNullOrWhiteSpace(x)) ?? false)
+            {
+                fix.Tags = null;
             }
 
             return new Result(ResultEnum.Success, string.Empty);
