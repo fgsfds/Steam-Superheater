@@ -1,7 +1,6 @@
 using Common.Config;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 
 namespace Superheater.Avalonia.Core.ViewModels
@@ -25,7 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
 
         [ObservableProperty]
         private PopupMessageViewModel? _popupDataContext;
@@ -42,8 +41,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         private void UpdateRepoMessage()
         {
             RepositoryMessage = _config.UseLocalApiAndRepo
-                ? $"Local repo: {_config.LocalRepoPath}"
-                : $"Online repo: {CommonProperties.CurrentFixesRepo}";
+                ? $"Local API"
+                : $"Online API";
         }
 
         private void NotifyParameterChanged(string parameterName)

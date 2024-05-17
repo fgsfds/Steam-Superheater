@@ -40,7 +40,7 @@ namespace Common.Providers
         {
             Tuple<DateTime, string, string> message = new(date, content, _config.ApiPassword);
 
-            var result = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/news/change", message).ConfigureAwait(false);
+            var result = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/news/change", message).ConfigureAwait(false);
 
             if (result.IsSuccessStatusCode)
             {
@@ -60,7 +60,7 @@ namespace Common.Providers
         {
             Tuple<DateTime, string, string> message = new(DateTime.UtcNow, content, _config.ApiPassword);
 
-            var result = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/news/add", message).ConfigureAwait(false);
+            var result = await _httpClient.PostAsJsonAsync($"{ApiProperties.ApiUrl}/news/add", message).ConfigureAwait(false);
 
             if (result.IsSuccessStatusCode)
             {
@@ -79,7 +79,7 @@ namespace Common.Providers
         {
             _logger.Info("Creating news list");
 
-            var newsJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/news").ConfigureAwait(false);
+            var newsJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/news").ConfigureAwait(false);
 
             if (newsJson is null)
             {

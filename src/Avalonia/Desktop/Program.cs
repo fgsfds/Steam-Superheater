@@ -2,7 +2,6 @@
 using Common;
 using Common.Helpers;
 using Superheater.Avalonia.Core;
-using Superheater.Avalonia.Core.Helpers;
 
 namespace Superheater.Desktop;
 
@@ -16,7 +15,7 @@ internal static class Program
     {
         if (args.Contains("-dev"))
         {
-            Properties.IsDeveloperMode = true;
+            CommonProperties.IsDeveloperMode = true;
         }
 
         if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFile)))

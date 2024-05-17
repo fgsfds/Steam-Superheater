@@ -10,7 +10,6 @@ using Common.Enums;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.DI;
-using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.Pages;
 using Superheater.Avalonia.Core.Windows;
 
@@ -72,7 +71,7 @@ You can't launch multiple instances of Superheater
 
             RequestedThemeVariant = themeEnum;
 
-            if (Properties.IsDeveloperMode)
+            if (CommonProperties.IsDeveloperMode)
             {
                 _logger.Info("Started in developer mode");
             }

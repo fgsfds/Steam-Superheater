@@ -15,6 +15,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Dependencies = null;
             Tags = null;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
 
             Key = string.Empty;
             ValueName = string.Empty;
@@ -32,6 +33,7 @@ namespace Common.Entities.Fixes.RegistryFix
             Dependencies = fix.Dependencies;
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
 
             Key = string.Empty;
             ValueName = string.Empty;

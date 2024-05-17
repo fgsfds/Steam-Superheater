@@ -42,7 +42,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<string> HiddenTagsList => [.. _config.HiddenTags];
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
 
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
 
@@ -210,7 +210,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private async Task OpenFolderPicker()
         {
-            var files = await Properties.TopLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            var files = await AvaloniaProperties.TopLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
                 Title = "Choose local repo folder",
                 AllowMultiple = false

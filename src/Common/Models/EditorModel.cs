@@ -13,22 +13,30 @@ using System.Text.Json;
 
 namespace Common.Models
 {
-    public sealed class EditorModel(
-        FixesProvider fixesProvider,
-        GamesProvider gamesProvider,
-        ConfigProvider configProvider,
-        FilesUploader filesUploader,
-        Logger logger
-        )
+    public sealed class EditorModel
     {
-        private readonly FixesProvider _fixesProvider = fixesProvider;
-        private readonly GamesProvider _gamesProvider = gamesProvider;
-        private readonly ConfigEntity _config = configProvider.Config;
-        private readonly FilesUploader _filesUploader = filesUploader;
-        private readonly Logger _logger = logger;
+        private readonly FixesProvider _fixesProvider;
+        private readonly GamesProvider _gamesProvider;
+        private readonly FilesUploader _filesUploader;
+        private readonly Logger _logger;
 
         private List<FixesList> _fixesList = [];
         private List<GameEntity> _availableGamesList = [];
+
+
+        public EditorModel(
+            FixesProvider fixesProvider,
+            GamesProvider gamesProvider,
+            FilesUploader filesUploader,
+            Logger logger
+            )
+        {
+            _fixesProvider = fixesProvider;
+            _gamesProvider = gamesProvider;
+            _filesUploader = filesUploader;
+            _logger = logger;
+        }
+
 
         /// <summary>
         /// Update list of fixes either from cache or by downloading fixes.xml from repo
@@ -153,7 +161,7 @@ namespace Common.Models
         /// </summary>
         /// <param name="game">Game entity</param>
         /// <returns>New fix entity</returns>
-        public static FileFixEntity AddNewFix(FixesList game)
+        public FileFixEntity AddNewFix(FixesList game)
         {
             FileFixEntity newFix = new();
 
@@ -165,15 +173,15 @@ namespace Common.Models
         /// <summary>
         /// Remove fix from a game
         /// </summary>
-        /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
-        public async Task<Result> DeleteFix(BaseFixEntity fix, bool isDeleted)
+        /// <param name="isDisabled">Is fix disabled</param>
+        public async Task<Result> ChangeFixDisabledState(BaseFixEntity fix, bool isDisabled)
         {
-            var result = await _fixesProvider.DeleteFixAsync(fix.Guid, isDeleted).ConfigureAwait(false);
+            var result = await _fixesProvider.ChangeFixDisabledStateAsync(fix.Guid, isDisabled).ConfigureAwait(false);
 
             if (result.IsSuccess)
             {
-                fix.IsDeleted = isDeleted;
+                fix.IsDisabled = isDisabled;
             }
 
             return result;
@@ -333,13 +341,13 @@ namespace Common.Models
             return new(ResultEnum.Success, string.Empty);
         }
 
-        public static void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
+        public void AddDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies ??= [];
             addTo.Dependencies.Add(dependency.Guid);
         }
 
-        public static void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
+        public void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
             addTo.Dependencies?.Remove(dependency.Guid);
         }
@@ -350,7 +358,7 @@ namespace Common.Models
         /// <typeparam name="T">New fix type</typeparam>
         /// <param name="fixesList">List of fixes</param>
         /// <param name="fix">Fix to replace</param>
-        public static void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
+        public void ChangeFixType<T>(List<BaseFixEntity> fixesList, BaseFixEntity fix) where T : BaseFixEntity
         {
             var fixIndex = fixesList.IndexOf(fix);
 

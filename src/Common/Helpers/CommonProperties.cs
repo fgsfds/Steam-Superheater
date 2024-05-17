@@ -1,7 +1,4 @@
-﻿using Common.Config;
-using Common.DI;
-using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -10,17 +7,14 @@ namespace Common.Helpers
 {
     public static class CommonProperties
     {
-        private static readonly ConfigEntity _config = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config;
-        private static readonly SemaphoreSlim _locker = new(1);
+        private static readonly SemaphoreSlim _semaphore = new(1);
 
         private static bool? _isSteamDeckGameMode = null;
 
         /// <summary>
-        /// Path to current repository (local or online)
+        /// Is app started in developer mode
         /// </summary>
-        public static string CurrentFixesRepo => _config.UseLocalApiAndRepo ? _config.LocalRepoPath : Consts.FilesBucketUrl;
-
-        public static string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
+        public static bool IsDeveloperMode { get; set; }
 
         /// <summary>
         /// Current app version
@@ -71,12 +65,12 @@ namespace Common.Helpers
                 return false;
             }
 
-            _locker.Wait();
+            _semaphore.Wait();
 
             if (_isSteamDeckGameMode is not null)
             {
-                _locker.Release();
-                return (bool)_isSteamDeckGameMode;
+                _semaphore.Release();
+                return _isSteamDeckGameMode.Value;
             }
 
             ProcessStartInfo processInfo = new()
@@ -88,7 +82,7 @@ namespace Common.Helpers
                 CreateNoWindow = true
             };
 
-            var proc = Process.Start(processInfo) ?? ThrowHelper.Exception<Process>("Error starting process");
+            using var proc = Process.Start(processInfo) ?? ThrowHelper.Exception<Process>("Error while starting process");
 
             var result = proc.StandardOutput.ReadToEnd().Trim();
 
@@ -107,8 +101,8 @@ namespace Common.Helpers
                 _isSteamDeckGameMode = false;
             }
 
-            _locker.Release();
-            return (bool)_isSteamDeckGameMode;
+            _semaphore.Release();
+            return _isSteamDeckGameMode.Value;
         }
     }
 }

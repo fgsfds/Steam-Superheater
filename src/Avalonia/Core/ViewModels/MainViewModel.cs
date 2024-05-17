@@ -465,7 +465,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private Task UrlCopyToClipboardAsync()
         {
-            var clipboard = Properties.TopLevel.Clipboard ?? ThrowHelper.ArgumentNullException<IClipboard>("Error while getting clipboard implementation");
+            var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? ThrowHelper.ArgumentNullException<IClipboard>("Error while getting clipboard implementation");
             return clipboard.SetTextAsync(SelectedFixUrl);
         }
 
@@ -519,7 +519,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Close app
         /// </summary>
         [RelayCommand]
-        private void CloseApp() => Properties.MainWindow.Close();
+        private void CloseApp() => AvaloniaProperties.MainWindow.Close();
 
 
         /// <summary>

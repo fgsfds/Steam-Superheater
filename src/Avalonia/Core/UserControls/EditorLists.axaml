@@ -106,12 +106,12 @@
 
             <Button Grid.Column="1"
                     Grid.Row="2"
-                    Content="{Binding DeleteFixButtonText, FallbackValue=Delete fix}"
+                    Content="{Binding DisableFixButtonText}"
                     Margin="3,3,3,0"
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding DeleteFixCommand}"
+                    Command="{Binding DisableFixCommand}"
                     IsVisible="{Binding IsDeveloperMode}"/>
 
         </Grid>

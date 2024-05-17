@@ -38,7 +38,7 @@ namespace Web.Server.DbEntities
         [Column("notes")]
         public string? Notes { get; set; }
 
-        [Column("is_deleted")]
+        [Column("is_disabled")]
         public bool IsDisabled { get; set; }
 
 

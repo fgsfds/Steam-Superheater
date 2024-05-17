@@ -15,6 +15,7 @@ namespace Common.Entities.Fixes.TextFix
             Dependencies = null;
             Tags = null;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
         }
 
         [SetsRequiredMembers]
@@ -27,6 +28,7 @@ namespace Common.Entities.Fixes.TextFix
             Dependencies = null;
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
         }
     }
 }

@@ -95,7 +95,7 @@ namespace Superheater.Web.Server.Providers
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
                             Notes = fix.Notes,
-                            IsDeleted = fix.IsDisabled,
+                            IsDisabled = fix.IsDisabled,
 
                             Url = fileFix!.Url,
                             FileSize = fileFix.FileSize,
@@ -130,7 +130,7 @@ namespace Superheater.Web.Server.Providers
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
                             Notes = fix.Notes,
-                            IsDeleted = fix.IsDisabled,
+                            IsDisabled = fix.IsDisabled,
 
                             Key = regFix.Key,
                             ValueName = regFix.ValueName,
@@ -156,7 +156,7 @@ namespace Superheater.Web.Server.Providers
                             Installs = installsDb.GetValueOrDefault(fix.Guid),
                             Score = scoresDb.GetValueOrDefault(fix.Guid),
                             Notes = fix.Notes,
-                            IsDeleted = fix.IsDisabled,
+                            IsDisabled = fix.IsDisabled,
 
                             Entries = hostsFix.Entries
                         };
@@ -371,7 +371,8 @@ namespace Superheater.Web.Server.Providers
                         IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
                         Name = fix.Name,
                         Notes = fix.Notes,
-                        Version = fix.Version
+                        Version = fix.Version,
+                        IsDisabled = true
                     };
 
                     dbContext.Fixes.Add(newFixEntity);

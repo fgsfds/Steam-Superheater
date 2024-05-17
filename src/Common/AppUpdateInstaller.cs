@@ -42,7 +42,7 @@ namespace Common
                 return false;
             }
 
-            using var response = await _httpClient.GetAsync($"{CommonProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode || response.StatusCode is System.Net.HttpStatusCode.NoContent)
             {

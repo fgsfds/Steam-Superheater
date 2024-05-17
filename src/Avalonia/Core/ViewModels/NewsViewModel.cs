@@ -1,9 +1,9 @@
 ﻿using Common.Config;
 using Common.Entities;
+using Common.Helpers;
 using Common.Models;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
 
@@ -22,7 +22,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<NewsEntity> NewsList => _newsModel.News;
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(MarkAllAsReadCommand))]

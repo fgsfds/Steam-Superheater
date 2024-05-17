@@ -106,7 +106,14 @@ namespace Common.Models
             {
                 foreach (var fix in entity.FixesList.Fixes)
                 {
-                    fix.IsHidden = fix.IsDeleted;
+                    if (CommonProperties.IsDeveloperMode)
+                    {
+                        fix.IsHidden = false;
+                    }
+                    else
+                    {
+                        fix.IsHidden = fix.IsDisabled;
+                    }
                 }
             }
 
@@ -345,7 +352,7 @@ namespace Common.Models
 
             _config.ForceUpdateConfig();
 
-            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, increment)).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, increment)).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newScore = int.TryParse(responseStr, out var newScoreInt);
@@ -357,7 +364,7 @@ namespace Common.Models
 
         public async Task<int> IncreaseInstalls(BaseFixEntity fix)
         {
-            using var response = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
             var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
@@ -369,7 +376,7 @@ namespace Common.Models
 
         public async Task ReportFix(BaseFixEntity fix, string reportText)
         {
-            using var response = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/report", new Tuple<Guid, string>(fix.Guid, reportText)).ConfigureAwait(false);
+            using var response = await _httpClient.PostAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/report", new Tuple<Guid, string>(fix.Guid, reportText)).ConfigureAwait(false);
         }
     }
 }

@@ -54,27 +54,27 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsSteamGameMode => CommonProperties.IsInSteamDeckGameMode;
 
-        public bool IsDeveloperMode => Properties.IsDeveloperMode;
+        public bool IsDeveloperMode => CommonProperties.IsDeveloperMode;
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
 
-        public string DeleteFixButtonText
+        public string DisableFixButtonText
         {
             get
             {
                 if (SelectedFix is null)
                 {
-                    return string.Empty;
+                    return "-";
                 }
-                else if (SelectedFix.IsDeleted)
+                else if (SelectedFix.IsDisabled)
                 {
-                    return "Restore fix";
+                    return "Enable fix";
                 }
                 else
                 {
-                    return "Delete fix";
+                    return "Disable fix";
                 }
             }
         }
@@ -298,7 +298,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 if (value)
                 {
-                    EditorModel.ChangeFixType<FileFixEntity>(SelectedGame.Fixes, SelectedFix);
+                    _editorModel.ChangeFixType<FileFixEntity>(SelectedGame.Fixes, SelectedFix);
 
                     var index = SelectedFixIndex;
                     OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -317,7 +317,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 if (value)
                 {
-                    EditorModel.ChangeFixType<RegistryFixEntity>(SelectedGame.Fixes, SelectedFix);
+                    _editorModel.ChangeFixType<RegistryFixEntity>(SelectedGame.Fixes, SelectedFix);
 
                     var index = SelectedFixIndex;
                     OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -336,7 +336,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 if (value)
                 {
-                    EditorModel.ChangeFixType<HostsFixEntity>(SelectedGame.Fixes, SelectedFix);
+                    _editorModel.ChangeFixType<HostsFixEntity>(SelectedGame.Fixes, SelectedFix);
 
                     var index = SelectedFixIndex;
                     OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -355,7 +355,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 if (value)
                 {
-                    EditorModel.ChangeFixType<TextFixEntity>(SelectedGame.Fixes, SelectedFix);
+                    _editorModel.ChangeFixType<TextFixEntity>(SelectedGame.Fixes, SelectedFix);
 
                     var index = SelectedFixIndex;
                     OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -452,9 +452,9 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
         [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
-        [NotifyPropertyChangedFor(nameof(DeleteFixButtonText))]
+        [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
-        [NotifyCanExecuteChangedFor(nameof(DeleteFixCommand))]
+        [NotifyCanExecuteChangedFor(nameof(DisableFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
@@ -550,7 +550,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedGame.ThrowIfNull();
 
-            var newFix = EditorModel.AddNewFix(SelectedGame);
+            var newFix = _editorModel.AddNewFix(SelectedGame);
 
             OnPropertyChanged(nameof(SelectedGameFixesList));
             OnPropertyChanged(nameof(FilteredGamesList));
@@ -582,14 +582,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// <summary>
         /// Remove fix from a game
         /// </summary>
-        [RelayCommand(CanExecute = nameof(DeleteFixCanExecute))]
-        private async Task DeleteFixAsync()
+        [RelayCommand(CanExecute = nameof(DisableFixCanExecute))]
+        private async Task DisableFixAsync()
         {
             SelectedFix.ThrowIfNull();
 
-            var result = await _editorModel.DeleteFix(SelectedFix, !SelectedFix.IsDeleted).ConfigureAwait(true);
+            var result = await _editorModel.ChangeFixDisabledState(SelectedFix, !SelectedFix.IsDisabled).ConfigureAwait(true);
 
-            OnPropertyChanged(nameof(DeleteFixButtonText));
+            OnPropertyChanged(nameof(DisableFixButtonText));
 
             _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",
@@ -597,7 +597,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 PopupMessageType.OkOnly
                 );
         }
-        private bool DeleteFixCanExecute() => SelectedFix is not null;
+        private bool DisableFixCanExecute() => SelectedFix is not null;
 
 
         /// <summary>
@@ -615,7 +615,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            EditorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
+            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -631,7 +631,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            EditorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
+            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -727,7 +727,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
 
-            var topLevel = Properties.TopLevel;
+            var topLevel = AvaloniaProperties.TopLevel;
 
             FilePickerFileType zipType = new("Zip")
             {

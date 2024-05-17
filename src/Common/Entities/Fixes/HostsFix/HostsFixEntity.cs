@@ -15,6 +15,7 @@ namespace Common.Entities.Fixes.HostsFix
             Dependencies = null;
             Tags = null;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
 
             Entries = [];
         }
@@ -29,6 +30,7 @@ namespace Common.Entities.Fixes.HostsFix
             Dependencies = fix.Dependencies;
             Tags = fix.Tags;
             SupportedOSes = OSEnum.Windows;
+            IsDisabled = true;
 
             Entries = [];
         }

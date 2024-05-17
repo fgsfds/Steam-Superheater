@@ -34,7 +34,7 @@ namespace Common.Providers.Cached
         {
             _logger.Info("Requesting online fixes");
 
-            var str = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);
+            var str = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);
             var result = bool.TryParse(str, out var doesExist);
 
             return result ? doesExist : true;
@@ -42,11 +42,11 @@ namespace Common.Providers.Cached
 
         public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
-        public async Task<Result> DeleteFixAsync(Guid fixGuid, bool isDeleted)
+        public async Task<Result> ChangeFixDisabledStateAsync(Guid fixGuid, bool isDeleted)
         {
             Tuple<Guid, bool, string> message = new(fixGuid, isDeleted, _config.ApiPassword);
 
-            var result = await _httpClient.PutAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/delete", message).ConfigureAwait(false);
+            var result = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/delete", message).ConfigureAwait(false);
 
             if (result.IsSuccessStatusCode)
             {
@@ -78,7 +78,7 @@ namespace Common.Providers.Cached
 
             Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
 
-            var result = await _httpClient.PostAsJsonAsync($"{CommonProperties.ApiUrl}/fixes/add", message).ConfigureAwait(false);
+            var result = await _httpClient.PostAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/add", message).ConfigureAwait(false);
 
             if (result.IsSuccessStatusCode)
             {
@@ -347,7 +347,7 @@ namespace Common.Providers.Cached
 
             try
             {
-                var fixesJson = await _httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/fixes").ConfigureAwait(false);
+                var fixesJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
 
                 return fixesJson;
             }

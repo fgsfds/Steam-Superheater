@@ -52,7 +52,7 @@ namespace Common
                     var path = "superheater_uploads/" + folder + "/" + fileName;
                     var encodedPath = HttpUtility.UrlEncode(path);
 
-                    var signedUrl = await httpClient.GetStringAsync($"{CommonProperties.ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+                    var signedUrl = await httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
                     using var fileStream = File.OpenRead(file);
                     using StreamContent content = new(fileStream);
