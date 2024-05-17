@@ -758,6 +758,7 @@ Do you still want to install the fix?",
             var selectedFixGuid = SelectedFix?.Guid;
 
             OnPropertyChanged(nameof(FilteredGamesList));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
 
             UpdateHeader();
 
