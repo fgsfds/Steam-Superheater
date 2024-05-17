@@ -566,6 +566,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             var result = await _editorModel.ChangeFixDisabledState(SelectedFix, !SelectedFix.IsDisabled).ConfigureAwait(true);
 
             OnPropertyChanged(nameof(DisableFixButtonText));
+            OnPropertyChanged(nameof(SelectedGameFixesList));
 
             _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",

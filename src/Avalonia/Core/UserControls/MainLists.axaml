@@ -124,6 +124,14 @@
                                    VerticalAlignment="Center"
                                    FontWeight="Bold"
                                    IsVisible="{Binding IsOutdated}"/>
+
+                        <TextBlock Margin="0"
+                                   Text="Disabled"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding IsDisabled}"
+                                   FontWeight="Thin"
+                                   FontStyle="Italic"/>
+
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
