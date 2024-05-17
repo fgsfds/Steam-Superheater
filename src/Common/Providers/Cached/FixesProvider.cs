@@ -4,7 +4,6 @@ using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Net.Http.Json;
-using System.Security.Cryptography;
 using System.Text.Json;
 
 namespace Common.Providers.Cached
@@ -64,7 +63,7 @@ namespace Common.Providers.Cached
         /// <param name="fix"></param>
         public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
         {
-            var fileFixResult = await PrepareFixes(fix).ConfigureAwait(false);
+            var fileFixResult = PrepareFixes(fix);
 
             if (fileFixResult != ResultEnum.Success)
             {
@@ -111,11 +110,11 @@ namespace Common.Providers.Cached
             return [.. DeserializeCachedString(_fixesCachedString)];
         }
 
-        private async Task<Result> PrepareFixes(BaseFixEntity fix)
+        private Result PrepareFixes(BaseFixEntity fix)
         {
             if (fix is FileFixEntity fileFix)
             {
-                var result = await PrepareFileFixes(fileFix).ConfigureAwait(false);
+                var result = PrepareFileFixes(fileFix);
 
                 if (!result.IsSuccess)
                 {
@@ -143,7 +142,7 @@ namespace Common.Providers.Cached
             return new Result(ResultEnum.Success, string.Empty);
         }
 
-        private async Task<Result> PrepareFileFixes(FileFixEntity fileFix)
+        private Result PrepareFileFixes(FileFixEntity fileFix)
         {
             if (!string.IsNullOrEmpty(fileFix.Url))
             {
@@ -151,21 +150,6 @@ namespace Common.Providers.Cached
                 {
                     fileFix.Url = Consts.FilesBucketUrl + fileFix.Url;
                 }
-
-                if (fileFix.MD5 is null)
-                {
-                    try
-                    {
-                        fileFix.MD5 = await GetMD5(fileFix).ConfigureAwait(false);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Error(ex.Message);
-                        return new Result(ResultEnum.ConnectionError, ex.Message);
-                    }
-                }
-
-                fileFix.FileSize ??= await GetFileSize(fileFix).ConfigureAwait(false);
             }
 
             if (string.IsNullOrWhiteSpace(fileFix.RunAfterInstall))
@@ -201,126 +185,29 @@ namespace Common.Providers.Cached
         }
 
         /// <summary>
-        /// Get MD5 of the local or online file
-        /// </summary>
-        /// <param name="fix">Fix entity</param>
-        /// <returns>MD5 of the fix file</returns>
-        /// <exception cref="Exception">Http response error</exception>
-        private async Task<string> GetMD5(FileFixEntity fix)
-        {
-            fix.Url.ThrowIfNull();
-
-            if (fix.Url.StartsWith(Consts.FilesBucketUrl))
-            {
-                var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
-                var fileName = Path.GetRelativePath(Consts.FilesBucketUrl + "fixes", fix.Url);
-                //var fileName = Path.GetFileName(fix.Url);
-                var pathToFile = Path.Combine(currentDir, fileName);
-
-                using (var md5 = MD5.Create())
-                {
-                    await using (var stream = File.OpenRead(pathToFile))
-                    {
-                        return Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
-                    }
-                }
-            }
-            else
-            {
-                using var response = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return ThrowHelper.Exception<string>($"Error while getting response for {fix.Url}: {response.StatusCode}");
-                }
-                else if (response.Content.Headers.ContentMD5 is not null)
-                {
-                    return BitConverter.ToString(response.Content.Headers.ContentMD5).Replace("-", string.Empty);
-                }
-                else
-                {
-                    //if can't get md5 from the response, download zip
-                    var currentDir = Directory.GetCurrentDirectory();
-                    var fileName = Path.GetFileName(fix.Url);
-                    var pathToFile = Path.Combine(currentDir, fileName);
-
-                    await using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
-                    {
-                        await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-
-                        await source.CopyToAsync(file).ConfigureAwait(false);
-                    }
-
-                    response.Dispose();
-
-                    string hash;
-
-                    using (var md5 = MD5.Create())
-                    {
-                        await using var stream = File.OpenRead(pathToFile);
-
-                        hash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
-                    }
-
-                    File.Delete(pathToFile);
-                    return hash;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Get the size the local or online file
-        /// </summary>
-        /// <param name="client">Http client</param>
-        /// <param name="fix">Fix entity</param>
-        /// <returns>Size of the file in bytes</returns>
-        /// <exception cref="Exception">Http response error</exception>
-        private async Task<long?> GetFileSize(FileFixEntity fix)
-        {
-            fix.Url.ThrowIfNull();
-
-            if (fix.Url.StartsWith(Consts.FilesBucketUrl))
-            {
-                var currentDir = Path.Combine(_config.LocalRepoPath, "fixes");
-                var fileName = Path.GetRelativePath(Consts.FilesBucketUrl + "/fixes", fix.Url);
-                var pathToFile = Path.Combine(currentDir, fileName);
-
-                FileInfo info = new(pathToFile);
-                return info.Length;
-            }
-            else
-            {
-                using var response = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    return ThrowHelper.Exception<long>($"Error while getting response for {fix.Url}: {response.StatusCode}");
-                }
-                else if (response.Content.Headers.ContentLength is not null)
-                {
-                    return response.Content.Headers.ContentLength;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-        }
-
-        /// <summary>
         /// Create new cache of fixes from online or local repository
         /// </summary>
         internal override async Task<ImmutableList<FixesList>> CreateCacheAsync()
         {
             _logger.Info("Creating fixes cache");
 
-            _fixesCachedString = await DownloadFixesXMLAsync().ConfigureAwait(false);
+            try
+            {
+                _logger.Info("Downloading fixes xml from online repository");
 
-            var fixes = DeserializeCachedString(_fixesCachedString);
+                _fixesCachedString = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
 
-            _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
+                var fixes = DeserializeCachedString(_fixesCachedString);
 
-            return fixes;
+                _sharedFixes = fixes.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
+
+                return fixes;
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+                throw;
+            }
         }
 
         /// <summary>
@@ -335,27 +222,6 @@ namespace Common.Providers.Cached
             fixesList.ThrowIfNull();
 
             return [.. fixesList];
-        }
-
-        /// <summary>
-        /// Download fixes xml from online repository
-        /// </summary>
-        /// <returns></returns>
-        private async Task<string> DownloadFixesXMLAsync()
-        {
-            _logger.Info("Downloading fixes xml from online repository");
-
-            try
-            {
-                var fixesJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
-
-                return fixesJson;
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                throw;
-            }
         }
 
         /// <summary>

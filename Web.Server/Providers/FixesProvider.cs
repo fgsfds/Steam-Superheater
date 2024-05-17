@@ -4,8 +4,10 @@ using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
+using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text.Json;
 using Web.Server.Database;
 using Web.Server.DbEntities;
@@ -16,14 +18,17 @@ namespace Superheater.Web.Server.Providers
     public sealed class FixesProvider
     {
         private readonly DatabaseContextFactory _dbContextFactory;
+        private readonly HttpClient _httpClient;
         private readonly ILogger<FixesProvider> _logger;
 
 
         public FixesProvider(
             ILogger<FixesProvider> logger,
+            HttpClient httpClient,
             DatabaseContextFactory dbContextFactory
             )
         {
+            _httpClient = httpClient;
             _logger = logger;
             _dbContextFactory = dbContextFactory;
         }
@@ -97,15 +102,15 @@ namespace Superheater.Web.Server.Providers
                             Notes = fix.Notes,
                             IsDisabled = fix.IsDisabled,
 
-                            Url = fileFix!.Url,
                             FileSize = fileFix.FileSize,
+                            MD5 = fileFix.MD5,
+                            Url = fileFix!.Url,
                             InstallFolder = fileFix.InstallFolder,
                             ConfigFile = fileFix.ConfigFile,
                             FilesToDelete = fileFix.FilesToDelete,
                             FilesToBackup = fileFix.FilesToBackup,
                             FilesToPatch = fileFix.FilesToPatch,
                             RunAfterInstall = fileFix.RunAfterInstall,
-                            MD5 = fileFix.MD5,
                             SharedFixGuid = fileFix.SharedFixGuid,
                             SharedFixInstallFolder = fileFix.SharedFixInstallFolder,
                             WineDllOverrides = fileFix.WineDllOverrides,
@@ -314,7 +319,7 @@ namespace Superheater.Web.Server.Providers
         /// <param name="fixJson">Fix</param>
         /// <param name="password">API password</param>
         /// <returns>Is adding successfull</returns>
-        public bool AddFix(int gameId, string gameName, string fixJson, string password)
+        public async Task<bool> AddFixAsync(int gameId, string gameName, string fixJson, string password)
         {
             var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
@@ -398,12 +403,15 @@ namespace Superheater.Web.Server.Providers
 
                 if (fix is FileFixEntity fileFix)
                 {
+                    var fileSize = fileFix.Url is null ? null : await GetFileSizeAsync(fileFix.Url).ConfigureAwait(false);
+                    var fileMd5 = fileFix.Url is null ? null : await GetFileMD5Async(fileFix.Url).ConfigureAwait(false);
+
                     FileFixesDbEntity newFixEntity = new()
                     {
                         FixGuid = fileFix.Guid,
                         Url = fileFix.Url,
-                        FileSize = fileFix.FileSize,
-                        MD5 = fileFix.MD5,
+                        FileSize = fileSize,
+                        MD5 = fileMd5,
                         InstallFolder = fileFix.InstallFolder,
                         ConfigFile = fileFix.ConfigFile,
                         FilesToDelete = fileFix.FilesToDelete,
@@ -515,6 +523,82 @@ namespace Superheater.Web.Server.Providers
             if (c is not null)
             {
                 dbContext.HostsFixes.Remove(c);
+            }
+        }
+
+        /// <summary>
+        /// Get the size the local or online file
+        /// </summary>
+        /// <param name="client">Http client</param>
+        /// <param name="fix">Fix entity</param>
+        /// <returns>Size of the file in bytes</returns>
+        /// <exception cref="Exception">Http response error</exception>
+        private async Task<long?> GetFileSizeAsync(string fixUrl)
+        {
+            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return ThrowHelper.Exception<long>($"Error while getting response for {fixUrl}: {response.StatusCode}");
+            }
+            else if (response.Content.Headers.ContentLength is not null)
+            {
+                return response.Content.Headers.ContentLength;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get MD5 of the local or online file
+        /// </summary>
+        /// <param name="fix">Fix entity</param>
+        /// <returns>MD5 of the fix file</returns>
+        /// <exception cref="Exception">Http response error</exception>
+        private async Task<string> GetFileMD5Async(string fixUrl)
+        {
+            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return ThrowHelper.Exception<string>($"Error while getting response for {fixUrl}: {response.StatusCode}");
+            }
+            else if (response.Content.Headers.ContentMD5 is not null)
+            {
+                return BitConverter.ToString(response.Content.Headers.ContentMD5).Replace("-", string.Empty);
+            }
+            else
+            {
+                //if can't get md5 from the response, download zip
+                var currentDir = Directory.GetCurrentDirectory();
+                var fileName = Path.GetFileName(fixUrl);
+                var pathToFile = Path.Combine(currentDir, "temp", fileName);
+
+                if (!Directory.Exists(Path.GetDirectoryName(pathToFile)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(pathToFile));
+                }
+
+                await using (FileStream file = new(pathToFile, FileMode.Create, FileAccess.Write, FileShare.None))
+                {
+                    await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                    await source.CopyToAsync(file).ConfigureAwait(false);
+                }
+
+                string hash;
+
+                using (var md5 = MD5.Create())
+                {
+                    await using var stream = File.OpenRead(pathToFile);
+
+                    hash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
+                }
+
+                File.Delete(pathToFile);
+                return hash;
             }
         }
     }

@@ -58,9 +58,9 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPost("add")]
-        public StatusCodeResult AddFix([FromBody] Tuple<int, string, string, string> message)
+        public async Task<StatusCodeResult> AddFixAsync([FromBody] Tuple<int, string, string, string> message)
         {
-            var result = _fixesProvider.AddFix(message.Item1, message.Item2, message.Item3, message.Item4);
+            var result = await _fixesProvider.AddFixAsync(message.Item1, message.Item2, message.Item3, message.Item4).ConfigureAwait(false);
 
             if (result)
             {

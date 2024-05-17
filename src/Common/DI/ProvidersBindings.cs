@@ -9,12 +9,12 @@ namespace Common.DI
     {
         public static void Load(ServiceCollection container)
         {
-            container.AddScoped<CombinedEntitiesProvider>();
-            container.AddScoped<ConfigProvider>();
-            container.AddScoped<GamesProvider>();
-            container.AddScoped<NewsProvider>();
-            container.AddScoped<FixesProvider>();
-            container.AddScoped<InstalledFixesProvider>();
+            container.AddSingleton<CombinedEntitiesProvider>();
+            container.AddSingleton<ConfigProvider>();
+            container.AddSingleton<GamesProvider>();
+            container.AddSingleton<NewsProvider>();
+            container.AddSingleton<FixesProvider>();
+            container.AddSingleton<InstalledFixesProvider>();
         }
     }
 }

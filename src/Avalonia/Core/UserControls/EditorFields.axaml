@@ -348,42 +348,6 @@
                          Margin="0,3"/>
             </Grid>
 
-            <!--MD5-->
-            <Grid IsVisible="{Binding IsFileFixType}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock VerticalAlignment="Center"
-                           Grid.Column="0"
-                           Margin="5">
-                    MD5
-                </TextBlock>
-
-                <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
-                         Grid.Column="1"
-                         Margin="0,3"/>
-            </Grid>
-
-            <!--Size-->
-            <Grid IsVisible="{Binding IsFileFixType}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock VerticalAlignment="Center"
-                           Grid.Column="0"
-                           Margin="5">
-                    Size
-                </TextBlock>
-
-                <TextBox Text="{Binding SelectedFixSize, Mode=TwoWay}"
-                         Grid.Column="1"
-                         Margin="0,3"/>
-            </Grid>
-
             <!--Shared fix-->
             <Grid IsVisible="{Binding IsFileFixType}">
                 <Grid.ColumnDefinitions>

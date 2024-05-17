@@ -197,31 +197,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public string SelectedFixMD5
-        {
-            get => SelectedFix is FileFixEntity fileFix && fileFix.MD5 is not null 
-                ? fileFix.MD5 
-                : string.Empty;
-            set
-            {
-                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
-
-                fileFix.MD5 = string.IsNullOrWhiteSpace(value)
-                    ? null
-                    : value;
-            }
-        }
-
-        public long? SelectedFixSize
-        {
-            get => SelectedFix is FileFixEntity fileFix ? fileFix.FileSize : null;
-            set
-            {
-                SelectedFix.ThrowIfNotType<FileFixEntity>(out var fileFix);
-                fileFix.FileSize = value;
-            }
-        }
-
         public string SelectedFixEntries
         {
             get => SelectedFix is HostsFixEntity hostsFix
@@ -438,8 +413,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
-        [NotifyPropertyChangedFor(nameof(SelectedFixMD5))]
-        [NotifyPropertyChangedFor(nameof(SelectedFixSize))]
         [NotifyPropertyChangedFor(nameof(SelectedFixEntries))]
         [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
         [NotifyPropertyChangedFor(nameof(IsFileFixType))]
@@ -567,6 +540,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private async Task AddFixToDbAsync()
         {
             SelectedGame.ThrowIfNull();
+            SelectedFix.ThrowIfNull();
 
             var result = await _editorModel.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
