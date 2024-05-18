@@ -9,21 +9,21 @@ namespace Superheater.Web.Server.Controllers
     public sealed class ReleaseController : ControllerBase
     {
         private readonly ILogger<ReleaseController> _logger;
-        private readonly AppReleasesProvider _fixesProvider;
+        private readonly AppReleasesProvider _appReleasesProvider;
 
         public ReleaseController(
             ILogger<ReleaseController> logger,
-            AppReleasesProvider fixesProvider
+            AppReleasesProvider appReleasesProvider
             )
         {
             _logger = logger;
-            _fixesProvider = fixesProvider;
+            _appReleasesProvider = appReleasesProvider;
         }
 
         [HttpGet("windows")]
-        public AppUpdateEntity? GetWindowsRelease() => _fixesProvider.WindowsRelease;
+        public AppUpdateEntity? GetWindowsRelease() => _appReleasesProvider.WindowsRelease;
 
         [HttpGet("linux")]
-        public AppUpdateEntity? GetLinuxRelease() => _fixesProvider.LinuxRelease;
+        public AppUpdateEntity? GetLinuxRelease() => _appReleasesProvider.LinuxRelease;
     }
 }

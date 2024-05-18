@@ -5,25 +5,25 @@ namespace Superheater.Web.Server.Tasks
     public sealed class AppReleasesTask : IHostedService, IDisposable
     {
         private readonly ILogger<AppReleasesTask> _logger;
-        private readonly AppReleasesProvider _fixesProvider;
+        private readonly AppReleasesProvider _appReleasesProvider;
 
         private bool _runOnce = false;
         private Timer _timer;
 
         public AppReleasesTask(
             ILogger<AppReleasesTask> logger,
-            AppReleasesProvider fixesProvider
+            AppReleasesProvider appReleasesProvider
             )
         {
             _logger = logger;
-            _fixesProvider = fixesProvider;
+            _appReleasesProvider = appReleasesProvider;
         }
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
             if (!_runOnce)
             {
-                _fixesProvider.GetLatestVersionAsync().Wait(stoppingToken);
+                _appReleasesProvider.GetLatestVersionAsync().Wait(stoppingToken);
                 _runOnce = true;
             }
 
@@ -39,7 +39,7 @@ namespace Superheater.Web.Server.Tasks
 
         private void DoWork(object? state)
         {
-            _ = _fixesProvider.GetLatestVersionAsync();
+            _ = _appReleasesProvider.GetLatestVersionAsync();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)

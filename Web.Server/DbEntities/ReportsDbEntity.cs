@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Web.Server.DbEntities
 {
     [PrimaryKey(nameof(Id))]
+    [Index(nameof(FixGuid))]
     [Table(name: "reports", Schema = "main")]
     public sealed class ReportsDbEntity
     {
@@ -18,7 +19,7 @@ namespace Web.Server.DbEntities
         [Column("text")]
         public required string ReportText { get; set; }
 
-
+            
         public FixesDbEntity FixesTable { get; set; }
     }
 }
