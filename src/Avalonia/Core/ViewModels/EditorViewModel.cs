@@ -59,6 +59,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public bool IsEditingAvailable => SelectedFix is not null;
 
+        public bool IsEmpty => FilteredGamesList.Count == 0;
+
         public string ShowPopupStackButtonText => SelectedTagFilter;
 
         public string DisableFixButtonText
@@ -933,6 +935,8 @@ namespace Superheater.Avalonia.Core.ViewModels
                     PopupMessageType.OkOnly
                     );
             }
+
+            OnPropertyChanged(nameof(IsEmpty));
 
             IsInProgress = false;
             _locker.Release();

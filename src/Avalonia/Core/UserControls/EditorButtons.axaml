@@ -25,7 +25,8 @@
                       VerticalAlignment="Center"
                       Height="{Binding #AddGame.Bounds.Height}"
                       ItemsSource="{Binding AvailableGamesList}"
-                      SelectedItem="{Binding SelectedAvailableGame}"/>
+                      SelectedItem="{Binding SelectedAvailableGame}"
+                      IsEnabled="{Binding !IsEmpty}"/>
 
             <Button Name="AddGame"
                     Margin="3,0"
@@ -48,6 +49,15 @@
                     Command="{Binding UpdateGamesCommand}">
                 Update list
             </Button>
+
+            <TextBlock
+                Margin="3,0"
+                Padding="8"
+                VerticalAlignment="Center"
+                IsVisible="{Binding IsEmpty}"
+                FontWeight="Bold">
+                &lt;- Press to start
+            </TextBlock>
 
         </StackPanel>
 
