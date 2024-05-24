@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.33711.374
@@ -26,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Server", "Web.Server\We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientCommon", "src\ClientCommon\ClientCommon.csproj", "{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "src\Telegram\Telegram.csproj", "{9C2FB36A-5686-43A5-8C58-3A88B908C955}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +49,18 @@ Global
 		{7DB7C42D-1741-4BF0-871C-0237A00A56BD}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7DB7C42D-1741-4BF0-871C-0237A00A56BD}.Release|x64.ActiveCfg = Release|Any CPU
 		{7DB7C42D-1741-4BF0-871C-0237A00A56BD}.Release|x64.Build.0 = Release|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug|x64.Build.0 = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug-Linux|Any CPU.ActiveCfg = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug-Linux|Any CPU.Build.0 = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug-Linux|x64.ActiveCfg = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Debug-Linux|x64.Build.0 = Debug|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Release|x64.ActiveCfg = Release|Any CPU
+		{9C2FB36A-5686-43A5-8C58-3A88B908C955}.Release|x64.Build.0 = Release|Any CPU
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}.Debug|x64.ActiveCfg = Debug|Any CPU

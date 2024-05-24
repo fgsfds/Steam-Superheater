@@ -1,11 +1,12 @@
 using Superheater.Web.Server.Providers;
 using Superheater.Web.Server.Tasks;
+using Telegram;
 using Web.Server.Database;
 using Web.Server.Helpers;
 
 namespace Superheater.Web.Server
 {
-    public sealed class Program
+    public sealed class Server
     {
         public static void Main(string[] args)
         {
@@ -51,6 +52,9 @@ namespace Superheater.Web.Server
             dbContext.Dispose();
 
             app.MapFallbackToFile("/index.html");
+
+            var bot = new TelegramBot();
+            _ = bot.StartAsync();
 
             app.Run();
         }
