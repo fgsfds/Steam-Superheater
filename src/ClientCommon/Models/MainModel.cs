@@ -110,7 +110,7 @@ namespace ClientCommon.Models
                     {
                         fix.IsHidden = false;
                     }
-                    else
+                    else if (!fix.IsInstalled)
                     {
                         fix.IsHidden = fix.IsDisabled;
                     }
@@ -364,10 +364,15 @@ namespace ClientCommon.Models
 
         public async Task<int> IncreaseInstalls(BaseFixEntity fix)
         {
+            if (ClientProperties.IsDeveloperMode)
+            {
+                return fix.Installs ?? 0;
+            }
+
             using var response = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
             var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            var newInstalls = int.TryParse(responseStr, out var newInstallsInt);
+            int.TryParse(responseStr, out var newInstallsInt);
 
             fix.Installs = newInstallsInt;
 

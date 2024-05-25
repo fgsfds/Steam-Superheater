@@ -39,7 +39,7 @@ namespace Superheater.Web.Server.Providers
 
 
         /// <summary>
-        /// Get list of fixes from the databse
+        /// Get list of fixes from the database
         /// </summary>
         public List<FixesList> GetFixesList()
         {
@@ -309,7 +309,7 @@ namespace Superheater.Web.Server.Providers
         }
 
         /// <summary>
-        /// Disable or enable fix in the datase
+        /// Disable or enable fix in the database
         /// </summary>
         /// <param name="fixGuid">Fix guid</param>
         /// <param name="isDisabled">Is disabled</param>
@@ -341,7 +341,7 @@ namespace Superheater.Web.Server.Providers
         /// <param name="gameName">Game name</param>
         /// <param name="fixJson">Fix</param>
         /// <param name="password">API password</param>
-        /// <returns>Is adding successfull</returns>
+        /// <returns>Is adding successful</returns>
         public async Task<bool> AddFixAsync(int gameId, string gameName, string fixJson, string password)
         {
             var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
@@ -356,9 +356,6 @@ namespace Superheater.Web.Server.Providers
             using var dbContext = _dbContextFactory.Get();
             using (var transaction = dbContext.Database.BeginTransaction())
             {
-                var existingEntity = dbContext.Fixes.Find(fix.Guid);
-
-
                 //adding or modifying game
                 var gameEntity = dbContext.Games.Find(gameId);
 
@@ -374,6 +371,12 @@ namespace Superheater.Web.Server.Providers
                     dbContext.SaveChanges();
 
                     gameEntity = dbContext.Games.Find(gameId);
+
+                    if (gameEntity is null)
+                    {
+                        _logger.LogError("Error while adding new game");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -382,10 +385,13 @@ namespace Superheater.Web.Server.Providers
 
 
                 //adding or modifying base fix
+                var existingEntity = dbContext.Fixes.Find(fix.Guid);
+
                 var fixType = fix.GetType() == typeof(FileFixEntity) ? FixTypeEnum.FileFix :
                                 fix.GetType() == typeof(RegistryFixEntity) ? FixTypeEnum.RegistryFix :
                                 fix.GetType() == typeof(HostsFixEntity) ? FixTypeEnum.HostsFix :
-                                fix.GetType() == typeof(TextFixEntity) ? FixTypeEnum.TextFix : 0;
+                                fix.GetType() == typeof(TextFixEntity) ? FixTypeEnum.TextFix :
+                                0;
 
                 if (existingEntity is null)
                 {
@@ -405,6 +411,12 @@ namespace Superheater.Web.Server.Providers
 
                     dbContext.Fixes.Add(newFixEntity);
                     existingEntity = dbContext.Fixes.Find(fix.Guid);
+
+                    if (existingEntity is null)
+                    {
+                        _logger.LogError("Error while adding new fix");
+                        return false;
+                    }
                 }
                 else
                 {
@@ -474,6 +486,7 @@ namespace Superheater.Web.Server.Providers
                 }
                 else if (fix is TextFixEntity textFix)
                 {
+                    //nothing to do
                 }
 
                 dbContext.SaveChanges();
@@ -642,10 +655,9 @@ namespace Superheater.Web.Server.Providers
         }
 
         /// <summary>
-        /// Get the size the local or online file
+        /// Get the size of the local or online file
         /// </summary>
-        /// <param name="client">Http client</param>
-        /// <param name="fix">Fix entity</param>
+        /// <param name="fixUrl">File url</param>
         /// <returns>Size of the file in bytes</returns>
         /// <exception cref="Exception">Http response error</exception>
         private async Task<long?> GetFileSizeAsync(string fixUrl)
@@ -669,7 +681,7 @@ namespace Superheater.Web.Server.Providers
         /// <summary>
         /// Get MD5 of the local or online file
         /// </summary>
-        /// <param name="fix">Fix entity</param>
+        /// <param name="fixUrl">File url</param>
         /// <returns>MD5 of the fix file</returns>
         /// <exception cref="Exception">Http response error</exception>
         private async Task<string> GetFileMD5Async(string fixUrl)

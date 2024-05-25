@@ -128,7 +128,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            var result = await _newsModel.ChangeNewsContentAsync(date, newContent!).ConfigureAwait(true);
+            var result = await _newsModel.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
 
             if (!result.IsSuccess)
             {
