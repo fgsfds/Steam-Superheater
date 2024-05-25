@@ -10,6 +10,10 @@ namespace Superheater.Web.Server
     {
         public static void Main(string[] args)
         {
+            var dbContext = new DatabaseContext();
+            dbContext.Dispose();
+
+
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
@@ -22,6 +26,7 @@ namespace Superheater.Web.Server
             builder.Services.AddSwaggerGen();
 
             builder.Services.AddHostedService<AppReleasesTask>();
+            builder.Services.AddHostedService<FileCheckerTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();
@@ -29,6 +34,7 @@ namespace Superheater.Web.Server
             builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
             builder.Services.AddSingleton<S3Client>();
             builder.Services.AddSingleton<DatabaseContextFactory>();
+            builder.Services.AddSingleton<TelegramBot>();
 
             var app = builder.Build();
 
@@ -47,9 +53,6 @@ namespace Superheater.Web.Server
             app.UseAuthorization();
 
             app.MapControllers();
-
-            var dbContext = new DatabaseContext();
-            dbContext.Dispose();
 
             app.MapFallbackToFile("/index.html");
 

@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Telegram;
 using Web.Server.Database;
 using Web.Server.DbEntities;
 using Web.Server.Helpers;
@@ -20,17 +21,20 @@ namespace Superheater.Web.Server.Providers
         private readonly DatabaseContextFactory _dbContextFactory;
         private readonly HttpClient _httpClient;
         private readonly ILogger<FixesProvider> _logger;
+        private readonly TelegramBot _bot;
 
 
         public FixesProvider(
             ILogger<FixesProvider> logger,
             HttpClient httpClient,
-            DatabaseContextFactory dbContextFactory
+            DatabaseContextFactory dbContextFactory,
+            TelegramBot bot
             )
         {
             _httpClient = httpClient;
             _logger = logger;
             _dbContextFactory = dbContextFactory;
+            _bot = bot;
         }
 
 
@@ -515,11 +519,103 @@ namespace Superheater.Web.Server.Providers
         }
 
         /// <summary>
+        /// Check files' availability, md5 and size in the database
+        /// </summary>
+        /// <returns></returns>
+        public async Task CheckFixesAsync()
+        {
+            _logger.LogInformation("Check fixes started");
+
+            using var dbContext = _dbContextFactory.Get();
+            var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+        
+            foreach (var fix in fixes)
+            {
+                if (fix.Url is null)
+                {
+                    continue;
+                }
+
+                var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
+
+                if (result is null || !result.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"Fix doesn't exist or unavailable: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix doesn't exist or unavailable: {fix.Url}");
+                    continue;
+                }
+
+
+                if (fix.MD5 is null)
+                {
+                    _logger.LogError($"Fix doesn't have MD5 in the database: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix doesn't have MD5 in the database: {fix.Url}");
+                }
+                if (fix.FileSize is null)
+                {
+                    _logger.LogError($"Fix doesn't have file size in the database: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix doesn't have file size in the database: {fix.Url}");
+                }
+
+
+                if (fix.Url.StartsWith(Consts.FilesBucketUrl))
+                {
+                    if (result.Headers.ETag?.Tag is null)
+                    {
+                        _logger.LogError($"Fix doesn't have ETag: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't have ETag: {fix.Url}");
+                    }
+                    else
+                    {
+                        var md5 = result.Headers.ETag!.Tag.Replace("\"", "");
+
+                        if (md5.Contains('-'))
+                        {
+                            _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
+                            await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
+                        }
+                        else if (!md5.Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
+                            await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                        }
+                    }
+                }
+                else if (result.Content.Headers.ContentMD5 is null)
+                {
+                    _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
+                }
+                else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                }
+
+
+                if (result.Content.Headers.ContentLength is null)
+                {
+                    _logger.LogError($"Fix doesn't have size in the header: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix doesn't have size in the header: {fix.Url}");
+                }
+                else if (result.Content.Headers.ContentLength != fix.FileSize)
+                {
+                    _logger.LogError($"Fix size doesn't match: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fix size doesn't match: {fix.Url}");
+                }
+            }
+
+            _logger.LogInformation("Check fixes ended");
+            await _bot.SendMessageAsync($"Fixes check ended");
+        }
+
+
+        /// <summary>
         /// Delete sub fixes from the database
         /// </summary>
         /// <param name="dbContext">DB context</param>
         /// <param name="existingEntity">Fix entity</param>
-        private static void DeleteExistingSubFixes(DatabaseContext dbContext, FixesDbEntity? existingEntity)
+        private void DeleteExistingSubFixes(DatabaseContext dbContext, FixesDbEntity? existingEntity)
         {
             if (existingEntity is null)
             {

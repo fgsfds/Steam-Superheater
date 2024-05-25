@@ -36,7 +36,7 @@ namespace Web.Server.Database
             if (!_isRunOnce)
             {
                 //Database.EnsureDeleted();
-                //_isRunOnce = true;
+                _isRunOnce = true;
             }
 #endif
 
