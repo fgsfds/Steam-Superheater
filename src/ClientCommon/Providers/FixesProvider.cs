@@ -89,9 +89,11 @@ namespace ClientCommon.Providers
         }
 
         /// <summary>
-        /// Save list of fixes to XML
+        /// Upload fix to the database
         /// </summary>
-        /// <param name="fix"></param>
+        /// <param name="gameId">Game id</param>
+        /// <param name="gameName">Game name</param>
+        /// <param name="fix">Fix</param>
         public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
         {
             var fileFixResult = PrepareFixes(fix);

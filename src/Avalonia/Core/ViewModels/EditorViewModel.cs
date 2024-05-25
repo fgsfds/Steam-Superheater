@@ -912,6 +912,35 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
         private bool OpenSteamDBCanExecute() => SelectedGame is not null;
 
+
+        /// <summary>
+        /// Add new fix from a fix json
+        /// </summary>
+        [RelayCommand]
+        private async Task AddFixFromFileAsync()
+        {
+            var topLevel = AvaloniaProperties.TopLevel;
+
+            var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Choose fix file",
+                AllowMultiple = false
+            }).ConfigureAwait(true);
+
+            if (files.Count == 0)
+            {
+                return;
+            }
+
+            var result = _editorModel.AddFixFromFile(files[0].Path.LocalPath);
+
+            if (result.IsSuccess)
+            {
+                OnPropertyChanged(nameof(FilteredGamesList));
+                OnPropertyChanged(nameof(SelectedGameFixesList));
+            }
+        }
+
         #endregion Relay Commands
 
 

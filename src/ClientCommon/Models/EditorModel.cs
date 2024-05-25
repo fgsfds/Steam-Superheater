@@ -270,7 +270,7 @@ namespace ClientCommon.Models
 
             var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
-            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.xml");
+            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.json");
 
             File.WriteAllText(fixFilePath, fixJson);
 
@@ -407,6 +407,37 @@ namespace ClientCommon.Models
                 {
                     _availableGamesList.Add(game);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Add new fix from a fix json
+        /// </summary>
+        /// <param name="pathToFile">Path to json</param>
+        public Result AddFixFromFile(string pathToFile)
+        {
+            try
+            {
+                var json = File.ReadAllText(pathToFile);
+
+                var newFix = JsonSerializer.Deserialize(json, FixesListContext.Default.FixesList)!;
+
+                var existingGame = _fixesList.FirstOrDefault(x => x.GameId == newFix.GameId);
+
+                if (existingGame is not null)
+                {
+                    existingGame.Fixes.Add(newFix.Fixes[0]);
+                }
+                else
+                {
+                    _fixesList.Add(newFix);
+                }
+
+                return new(ResultEnum.Success, string.Empty);
+            }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, ex.Message);
             }
         }
     }
