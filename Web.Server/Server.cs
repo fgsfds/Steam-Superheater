@@ -1,5 +1,7 @@
 using Superheater.Web.Server.Providers;
+#if !DEBUG
 using Superheater.Web.Server.Tasks;
+#endif
 using Telegram;
 using Web.Server.Database;
 using Web.Server.Helpers;
@@ -13,7 +15,6 @@ namespace Superheater.Web.Server
             var dbContext = new DatabaseContext();
             dbContext.Dispose();
 
-
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
@@ -25,8 +26,12 @@ namespace Superheater.Web.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+#if !DEBUG
             builder.Services.AddHostedService<AppReleasesTask>();
             builder.Services.AddHostedService<FileCheckerTask>();
+#endif
+
 
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();

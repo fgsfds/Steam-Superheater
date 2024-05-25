@@ -25,11 +25,6 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         public async Task GetLatestVersionAsync()
         {
-#if DEBUG
-            _logger.LogInformation("Skipping check for new releases");
-            return;
-#endif
-
             _logger.LogInformation("Looking for new releases");
 
             using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);

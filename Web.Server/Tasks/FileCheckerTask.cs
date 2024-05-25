@@ -46,7 +46,7 @@ namespace Superheater.Web.Server.Tasks
 
         public Task StopAsync(CancellationToken stoppingToken)
         {
-            _timer.Change(Timeout.Infinite, 0);
+            _timer?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;
         }
