@@ -696,17 +696,24 @@ namespace Superheater.Web.Server.Providers
             {
                 return BitConverter.ToString(response.Content.Headers.ContentMD5).Replace("-", string.Empty);
             }
-            else
+            else if (fixUrl.StartsWith(Consts.FilesBucketUrl) && response.Headers.ETag?.Tag is not null)
             {
-                //if can't get md5 from the response, download zip
-                await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var md5fromEtag = response.Headers.ETag.Tag.Replace("\"", "");
 
-                using var md5 = MD5.Create();
-
-                var hash = Convert.ToHexString(await md5.ComputeHashAsync(source).ConfigureAwait(false));
-
-                return hash;
+                if (!md5fromEtag.Contains('-'))
+                {
+                    return md5fromEtag.ToUpper();
+                }
             }
+
+            //if can't get md5 from the response, download zip
+            await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+            using var md5 = MD5.Create();
+
+            var hash = Convert.ToHexString(await md5.ComputeHashAsync(source).ConfigureAwait(false));
+
+            return hash;
         }
     }
 }
