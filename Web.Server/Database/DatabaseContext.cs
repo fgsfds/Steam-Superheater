@@ -5,6 +5,7 @@ using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
+using Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using Web.Server.DbEntities;
@@ -14,6 +15,7 @@ namespace Web.Server.Database
     public sealed class DatabaseContext : DbContext
     {
         private static bool _isRunOnce = false;
+        private readonly IProperties _properties;
 
         public DbSet<InstallsDbEntity> Installs { get; set; }
         public DbSet<ScoresDbEntity> Scores { get; set; }
@@ -30,15 +32,18 @@ namespace Web.Server.Database
         public DbSet<RegistryFixesDbEntity> RegistryFixes { get; set; }
         public DbSet<FileFixesDbEntity> FileFixes { get; set; }
 
-        public DatabaseContext()
+        public DatabaseContext(IProperties properties)
         {
-#if DEBUG
-            if (!_isRunOnce)
+            _properties = properties;
+
+            if (_properties.IsDevMode)
             {
-                //Database.EnsureDeleted();
-                _isRunOnce = true;
+                if (!_isRunOnce)
+                {
+                    //Database.EnsureDeleted();
+                    _isRunOnce = true;
+                }
             }
-#endif
 
             Database.EnsureCreated();
 
@@ -50,16 +55,18 @@ namespace Web.Server.Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-#if DEBUG
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater;Username=postgres;Password=123;Include Error Detail=True");
-#else
-
-            string dbip = Environment.GetEnvironmentVariable("DbIp")!;
-            string dbport = Environment.GetEnvironmentVariable("DbPort")!;
-            string user = Environment.GetEnvironmentVariable("DbUser")!;
-            string password = Environment.GetEnvironmentVariable("DbPass")!;
-            optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater;Username={user};Password={password}");
-#endif
+            if (_properties.IsDevMode)
+            {
+                optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater;Username=postgres;Password=123;Include Error Detail=True");
+            }
+            else
+            {
+                var dbip = Environment.GetEnvironmentVariable("DbIp")!;
+                var dbport = Environment.GetEnvironmentVariable("DbPort")!;
+                var user = Environment.GetEnvironmentVariable("DbUser")!;
+                var password = Environment.GetEnvironmentVariable("DbPass")!;
+                optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater;Username={user};Password={password}");
+            }
         }
 
         [Obsolete]

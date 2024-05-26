@@ -29,15 +29,11 @@ namespace Telegram
         {
             using var cts = new CancellationTokenSource();
 
-#if !DEBUG
-
             _botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
             var me = await _botClient.GetMeAsync().ConfigureAwait(false);
 
             await SendMessageAsync("Server started").ConfigureAwait(false);
-
-#endif
         }
 
         public async Task SendMessageAsync(string text, string? id = null)
@@ -67,6 +63,12 @@ namespace Telegram
                             }
 
                             if (update.Message!.Text!.Equals("Ping", StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                await SendMessageAsync(
+                                    "Pong"
+                                    ).ConfigureAwait(false);
+                            }
+                            else if (update.Message!.Text!.Equals("Check", StringComparison.InvariantCultureIgnoreCase))
                             {
                                 await SendMessageAsync(
                                     "Pong"

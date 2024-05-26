@@ -1,9 +1,7 @@
+using Common.Interfaces;
 using Superheater.Web.Server.Providers;
-#if !DEBUG
 using Superheater.Web.Server.Tasks;
-#endif
 using Telegram;
-using Web.Server.Database;
 using Web.Server.Helpers;
 
 namespace Superheater.Web.Server
@@ -12,9 +10,6 @@ namespace Superheater.Web.Server
     {
         public static void Main(string[] args)
         {
-            var dbContext = new DatabaseContext();
-            dbContext.Dispose();
-
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
@@ -26,12 +21,12 @@ namespace Superheater.Web.Server
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-
-#if !DEBUG
-            builder.Services.AddHostedService<AppReleasesTask>();
-            builder.Services.AddHostedService<FileCheckerTask>();
-#endif
-
+            // Don't run tasks in dev mode
+            if (!builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddHostedService<AppReleasesTask>();
+                builder.Services.AddHostedService<FileCheckerTask>();
+            }
 
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();
@@ -40,8 +35,20 @@ namespace Superheater.Web.Server
             builder.Services.AddSingleton<S3Client>();
             builder.Services.AddSingleton<DatabaseContextFactory>();
             builder.Services.AddSingleton<TelegramBot>();
+            builder.Services.AddSingleton<IProperties, ServerProperties>();
 
             var app = builder.Build();
+
+            if (builder.Environment.IsDevelopment())
+            {
+                var properties = app.Services.GetService<IProperties>();
+                properties!.IsDevMode = true;
+            }
+
+            // Creating database
+            var dbContext = app.Services.GetService<DatabaseContextFactory>()!.Get();
+            dbContext.Dispose();
+
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -61,8 +68,14 @@ namespace Superheater.Web.Server
 
             app.MapFallbackToFile("/index.html");
 
-            var bot = new TelegramBot();
-            _ = bot.StartAsync();
+
+            // Don't start bot in dev mode
+            if (!app.Environment.IsDevelopment())
+            {
+                var bot = app.Services.GetService<TelegramBot>();
+                _ = bot!.StartAsync();
+            }
+
 
             app.Run();
         }

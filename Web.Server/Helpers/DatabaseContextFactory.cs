@@ -1,9 +1,17 @@
-﻿using Web.Server.Database;
+﻿using Common.Interfaces;
+using Web.Server.Database;
 
 namespace Web.Server.Helpers
 {
     public class DatabaseContextFactory
     {
-        public DatabaseContext Get() => new();
+        private readonly IProperties _properties;
+
+        public DatabaseContextFactory(IProperties properties)
+        {
+            _properties = properties;
+        }
+
+        public DatabaseContext Get() => new(_properties);
     }
 }
