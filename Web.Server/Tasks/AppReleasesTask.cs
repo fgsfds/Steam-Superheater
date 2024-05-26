@@ -51,7 +51,7 @@ namespace Superheater.Web.Server.Tasks
 
         public void Dispose()
         {
-            _timer.Dispose();
+            _timer?.Dispose();
         }
     }
 }

@@ -23,6 +23,8 @@ namespace Superheater.Web.Server.Providers
         private readonly ILogger<FixesProvider> _logger;
         private readonly TelegramBot _bot;
 
+        private bool _isCheckFixesRunning = false;
+
 
         public FixesProvider(
             ILogger<FixesProvider> logger,
@@ -215,9 +217,10 @@ namespace Superheater.Web.Server.Providers
         /// <param name="fixGuid">Fix guid</param>
         /// <param name="increment">Increment</param>
         /// <returns>New score</returns>
-        public int ChangeFixScore(Guid fixGuid, sbyte increment)
+        public async Task<int> ChangeFixScoreAsync(Guid fixGuid, sbyte increment)
         {
             using var dbContext = _dbContextFactory.Get();
+
             var fix = dbContext.Scores.Find(fixGuid);
 
             int newScore;
@@ -225,9 +228,9 @@ namespace Superheater.Web.Server.Providers
             if (fix is null)
             {
                 ScoresDbEntity newScoreEntity = new()
-                { 
+                {
                     FixGuid = fixGuid,
-                    Score = increment 
+                    Score = increment
                 };
 
                 dbContext.Scores.Add(newScoreEntity);
@@ -240,6 +243,17 @@ namespace Superheater.Web.Server.Providers
             }
 
             dbContext.SaveChanges();
+
+
+            var names = (from fixx in dbContext.Fixes
+                     join gamee in dbContext.Games
+                     on fixx.GameId equals gamee.Id
+                     where fixx.Guid == fixGuid
+                     select new Tuple<string, string>(gamee.Name, fixx.Name))
+                     .First();
+
+            await _bot.SendMessageAsync($"Fix score changed: {names.Item1} - {names.Item2} incr {increment}");
+
             return newScore;
         }
 
@@ -281,7 +295,7 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         /// <param name="fixGuid">Fix guid</param>
         /// <param name="text">Report text</param>
-        public void AddReport(Guid fixGuid, string text)
+        public async Task AddReportAsync(Guid fixGuid, string text)
         {
             using var dbContext = _dbContextFactory.Get();
 
@@ -293,6 +307,16 @@ namespace Superheater.Web.Server.Providers
 
             dbContext.Reports.Add(entity);
             dbContext.SaveChanges();
+
+
+            var names = (from fixx in dbContext.Fixes
+                         join gamee in dbContext.Games
+                         on fixx.GameId equals gamee.Id
+                         where fixx.Guid == fixGuid
+                         select new Tuple<string, string>(gamee.Name, fixx.Name))
+                     .First();
+
+            await _bot.SendMessageAsync($"Fix score changed: {names.Item1} - {names.Item2} text {text}");
         }
         
         /// <summary>
@@ -330,6 +354,21 @@ namespace Superheater.Web.Server.Providers
             entity.IsDisabled = isDisabled;
 
             dbContext.SaveChanges();
+
+            return true;
+        }
+
+        
+        public async Task<bool> ForceCheckFixesAsync(string password)
+        {
+            var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+
+            if (!apiPassword.Equals(password))
+            {
+                return false;
+            }
+
+            await CheckFixesAsync();
 
             return true;
         }
@@ -438,8 +477,8 @@ namespace Superheater.Web.Server.Providers
 
                 if (fix is FileFixEntity fileFix)
                 {
-                    var fileSize = fileFix.Url is null ? null : await GetFileSizeAsync(fileFix.Url).ConfigureAwait(false);
-                    var fileMd5 = fileFix.Url is null ? null : await GetFileMD5Async(fileFix.Url).ConfigureAwait(false);
+                    var fileSize = fileFix.Url is null ? null : await GetFileSizeAsync(fileFix.Url);
+                    var fileMd5 = fileFix.Url is null ? null : await GetFileMD5Async(fileFix.Url);
 
                     FileFixesDbEntity newFixEntity = new()
                     {
@@ -537,89 +576,112 @@ namespace Superheater.Web.Server.Providers
         /// <returns></returns>
         public async Task CheckFixesAsync()
         {
-            _logger.LogInformation("Check fixes started");
-
-            using var dbContext = _dbContextFactory.Get();
-            var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
-        
-            foreach (var fix in fixes)
+            if (_isCheckFixesRunning)
             {
-                if (fix.Url is null)
-                {
-                    continue;
-                }
+                _logger.LogInformation("Fixes check already running");
+                await _bot.SendMessageAsync($"Fixes check already running");
 
-                var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
-
-                if (result is null || !result.IsSuccessStatusCode)
-                {
-                    _logger.LogError($"Fix doesn't exist or unavailable: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't exist or unavailable: {fix.Url}");
-                    continue;
-                }
-
-
-                if (fix.MD5 is null)
-                {
-                    _logger.LogError($"Fix doesn't have MD5 in the database: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have MD5 in the database: {fix.Url}");
-                }
-                if (fix.FileSize is null)
-                {
-                    _logger.LogError($"Fix doesn't have file size in the database: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have file size in the database: {fix.Url}");
-                }
-
-
-                if (fix.Url.StartsWith(Consts.FilesBucketUrl))
-                {
-                    if (result.Headers.ETag?.Tag is null)
-                    {
-                        _logger.LogError($"Fix doesn't have ETag: {fix.Url}");
-                        await _bot.SendMessageAsync($"Fix doesn't have ETag: {fix.Url}");
-                    }
-                    else
-                    {
-                        var md5 = result.Headers.ETag!.Tag.Replace("\"", "");
-
-                        if (md5.Contains('-'))
-                        {
-                            _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
-                            await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
-                        }
-                        else if (!md5.Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
-                            await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
-                        }
-                    }
-                }
-                else if (result.Content.Headers.ContentMD5 is null)
-                {
-                    _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
-                }
-                else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
-                }
-
-
-                if (result.Content.Headers.ContentLength is null)
-                {
-                    _logger.LogError($"Fix doesn't have size in the header: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have size in the header: {fix.Url}");
-                }
-                else if (result.Content.Headers.ContentLength != fix.FileSize)
-                {
-                    _logger.LogError($"Fix size doesn't match: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix size doesn't match: {fix.Url}");
-                }
+                return;
             }
 
-            _logger.LogInformation("Check fixes ended");
-            await _bot.SendMessageAsync($"Fixes check ended");
+            try
+            {
+                _isCheckFixesRunning = true;
+
+                _logger.LogInformation("Fixes check started");
+                await _bot.SendMessageAsync($"Fixes check started");
+
+                using var dbContext = _dbContextFactory.Get();
+                var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+
+                foreach (var fix in fixes)
+                {
+                    if (fix.Url is null)
+                    {
+                        continue;
+                    }
+
+                    var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
+
+                    if (result is null || !result.IsSuccessStatusCode)
+                    {
+                        _logger.LogError($"Fix doesn't exist or unavailable: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't exist or unavailable: {fix.Url}");
+                        continue;
+                    }
+
+
+                    if (fix.MD5 is null)
+                    {
+                        _logger.LogError($"Fix doesn't have MD5 in the database: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't have MD5 in the database: {fix.Url}");
+                    }
+                    if (fix.FileSize is null)
+                    {
+                        _logger.LogError($"Fix doesn't have file size in the database: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't have file size in the database: {fix.Url}");
+                    }
+
+
+                    if (fix.Url.StartsWith(Consts.FilesBucketUrl))
+                    {
+                        if (result.Headers.ETag?.Tag is null)
+                        {
+                            _logger.LogError($"Fix doesn't have ETag: {fix.Url}");
+                            await _bot.SendMessageAsync($"Fix doesn't have ETag: {fix.Url}");
+                        }
+                        else
+                        {
+                            var md5 = result.Headers.ETag!.Tag.Replace("\"", "");
+
+                            if (md5.Contains('-'))
+                            {
+                                _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
+                                await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
+                            }
+                            else if (!md5.Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                            {
+                                _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
+                                await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                            }
+                        }
+                    }
+                    else if (result.Content.Headers.ContentMD5 is null)
+                    {
+                        _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
+                    }
+                    else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                    }
+
+
+                    if (result.Content.Headers.ContentLength is null)
+                    {
+                        _logger.LogError($"Fix doesn't have size in the header: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix doesn't have size in the header: {fix.Url}");
+                    }
+                    else if (result.Content.Headers.ContentLength != fix.FileSize)
+                    {
+                        _logger.LogError($"Fix size doesn't match: {fix.Url}");
+                        await _bot.SendMessageAsync($"Fix size doesn't match: {fix.Url}");
+                    }
+                }
+
+                _logger.LogInformation("Fixes check ended");
+                await _bot.SendMessageAsync($"Fixes check ended");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Fixes check error: {ex.Message}");
+                await _bot.SendMessageAsync($"Fixes check error: {ex.Message}");
+            }
+            finally
+            {
+                _isCheckFixesRunning = false;
+            }
         }
 
 
@@ -662,7 +724,7 @@ namespace Superheater.Web.Server.Providers
         /// <exception cref="Exception">Http response error</exception>
         private async Task<long?> GetFileSizeAsync(string fixUrl)
         {
-            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -686,7 +748,7 @@ namespace Superheater.Web.Server.Providers
         /// <exception cref="Exception">Http response error</exception>
         private async Task<string> GetFileMD5Async(string fixUrl)
         {
-            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -707,11 +769,11 @@ namespace Superheater.Web.Server.Providers
             }
 
             //if can't get md5 from the response, download zip
-            await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+            await using var source = await response.Content.ReadAsStreamAsync();
 
             using var md5 = MD5.Create();
 
-            var hash = Convert.ToHexString(await md5.ComputeHashAsync(source).ConfigureAwait(false));
+            var hash = Convert.ToHexString(await md5.ComputeHashAsync(source));
 
             return hash;
         }

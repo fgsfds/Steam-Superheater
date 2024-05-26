@@ -25,15 +25,13 @@ namespace Superheater.Web.Server.Tasks
             {
                 _ = _fixesProvider.CheckFixesAsync();
                 _runOnce = true;
-
-                return Task.CompletedTask;
             }
 
             _timer = new Timer(
                 DoWork, 
                 null, 
                 TimeSpan.Zero,
-                TimeSpan.FromHours(12)
+                TimeSpan.FromHours(6)
                 );
 
             return Task.CompletedTask;
@@ -53,7 +51,7 @@ namespace Superheater.Web.Server.Tasks
 
         public void Dispose()
         {
-            _timer.Dispose();
+            _timer?.Dispose();
         }
     }
 }

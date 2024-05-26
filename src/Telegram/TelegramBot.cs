@@ -1,4 +1,5 @@
-﻿using Telegram.Bot;
+﻿using System.Net.Http.Json;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
@@ -6,17 +7,20 @@ using Telegram.Bot.Types.Enums;
 
 namespace Telegram
 {
-    public class TelegramBot
+    public sealed class TelegramBot
     {
         private readonly ITelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
+        private readonly HttpClient _httpClient;
 
         private readonly string _chatId = Environment.GetEnvironmentVariable("TgChatId")!;
         private readonly string _token = Environment.GetEnvironmentVariable("TgToken")!;
+        private readonly string _apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
-        public TelegramBot()
+        public TelegramBot(HttpClient httpClient)
         {
             _botClient = new TelegramBotClient(_token);
+            _httpClient = httpClient;
 
             _receiverOptions = new ReceiverOptions
             {
@@ -64,15 +68,11 @@ namespace Telegram
 
                             if (update.Message!.Text!.Equals("Ping", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                await SendMessageAsync(
-                                    "Pong"
-                                    ).ConfigureAwait(false);
+                                await SendMessageAsync("Pong").ConfigureAwait(false);
                             }
                             else if (update.Message!.Text!.Equals("Check", StringComparison.InvariantCultureIgnoreCase))
                             {
-                                await SendMessageAsync(
-                                    "Pong"
-                                    ).ConfigureAwait(false);
+                                await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
                             }
 
                             return;

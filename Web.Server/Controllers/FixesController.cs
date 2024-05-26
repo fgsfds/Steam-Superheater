@@ -34,11 +34,11 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPut("score/change")]
-        public int ChangeRating([FromBody] Tuple<Guid, sbyte> message) => _fixesProvider.ChangeFixScore(message.Item1, message.Item2);
+        public async Task<int> ChangeRatingAsync([FromBody] Tuple<Guid, sbyte> message) => await _fixesProvider.ChangeFixScoreAsync(message.Item1, message.Item2);
 
 
         [HttpPost("report")]
-        public void ReportFix([FromBody] Tuple<Guid, string> message) => _fixesProvider.AddReport(message.Item1, message.Item2);
+        public async Task ReportFixAsync([FromBody] Tuple<Guid, string> message) => await _fixesProvider.AddReportAsync(message.Item1, message.Item2);
 
 
         [HttpPut("delete")]
@@ -60,7 +60,22 @@ namespace Superheater.Web.Server.Controllers
         [HttpPost("add")]
         public async Task<StatusCodeResult> AddFixAsync([FromBody] Tuple<int, string, string, string> message)
         {
-            var result = await _fixesProvider.AddFixAsync(message.Item1, message.Item2, message.Item3, message.Item4).ConfigureAwait(false);
+            var result = await _fixesProvider.AddFixAsync(message.Item1, message.Item2, message.Item3, message.Item4);
+
+            if (result)
+            {
+                return StatusCode(StatusCodes.Status200OK);
+            }
+            else
+            {
+                return StatusCode(StatusCodes.Status403Forbidden);
+            }
+        }
+        
+        [HttpPost("check")]
+        public async Task<StatusCodeResult> AddFixAsync([FromBody] string password)
+        {
+            var result = await _fixesProvider.ForceCheckFixesAsync(password);
 
             if (result)
             {

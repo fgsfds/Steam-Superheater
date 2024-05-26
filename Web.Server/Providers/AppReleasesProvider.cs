@@ -27,7 +27,7 @@ namespace Superheater.Web.Server.Providers
         {
             _logger.LogInformation("Looking for new releases");
 
-            using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -35,7 +35,7 @@ namespace Superheater.Web.Server.Providers
                 return;
             }
 
-            var releasesJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var releasesJson = await response.Content.ReadAsStringAsync();
 
             var releases =
                 JsonSerializer.Deserialize(releasesJson, GitHubReleaseContext.Default.ListGitHubRelease)
