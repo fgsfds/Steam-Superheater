@@ -414,6 +414,7 @@ namespace ClientCommon.Models
         /// Add new fix from a fix json
         /// </summary>
         /// <param name="pathToFile">Path to json</param>
+        /// <returns>Results: [0]: Game id, [1] New fix GUID</returns>
         public Result AddFixFromFile(string pathToFile)
         {
             try
@@ -433,7 +434,7 @@ namespace ClientCommon.Models
                     _fixesList.Add(newFix);
                 }
 
-                return new(ResultEnum.Success, string.Empty);
+                return new(ResultEnum.Success, string.Empty, [newFix.GameId, newFix.Fixes.Last().Guid]);
             }
             catch (Exception ex)
             {

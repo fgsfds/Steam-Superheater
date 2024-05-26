@@ -7,7 +7,8 @@ namespace Common
     /// </summary>
     public readonly struct Result(
         ResultEnum resultEnum,
-        string message
+        string message,
+        List<object>? results = null
         )
     {
         /// <summary>
@@ -24,6 +25,11 @@ namespace Common
         /// Is operation successful
         /// </summary>
         public bool IsSuccess => ResultEnum is ResultEnum.Success;
+
+        /// <summary>
+        /// List of objects to return
+        /// </summary>
+        public readonly List<object>? Results = results;
 
         public override bool Equals(object? obj)
         {

@@ -937,7 +937,13 @@ namespace Superheater.Avalonia.Core.ViewModels
             if (result.IsSuccess)
             {
                 OnPropertyChanged(nameof(FilteredGamesList));
+
+                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == (int)result.Results![0]);
+                SelectedGame = game;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
+
+                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == (Guid)result.Results![1]);
+                SelectedFix = fix;
             }
         }
 
