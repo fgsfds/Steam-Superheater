@@ -58,7 +58,7 @@ namespace Superheater.Web.Server.Providers
             var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
             var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
 
-            var fixesDb = dbContext.Fixes.AsNoTracking().ToLookup(static x => x.GameId);
+            var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name).ToLookup(static x => x.GameId);
             var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
