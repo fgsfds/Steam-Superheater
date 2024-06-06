@@ -392,6 +392,17 @@ namespace Superheater.Web.Server.Providers
 
             var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
 
+            if (fix is FileFixEntity fileFix1 &&
+                fileFix1.Url is not null)
+            {
+                var result = await _httpClient.GetAsync(fileFix1.Url, HttpCompletionOption.ResponseHeadersRead);
+                if (!result.IsSuccessStatusCode)
+                {
+                    _logger.LogError($"File {fileFix1.Url} doesn't exist");
+                    return false;
+                }
+            }
+
             using var dbContext = _dbContextFactory.Get();
             using (var transaction = dbContext.Database.BeginTransaction())
             {
