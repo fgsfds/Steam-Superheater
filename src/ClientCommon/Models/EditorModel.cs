@@ -43,23 +43,18 @@ namespace ClientCommon.Models
         /// </summary>
         public async Task<Result> UpdateListsAsync()
         {
-            try
-            {
-                await GetListOfFixesAsync().ConfigureAwait(false);
-                await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
+            var result = await _fixesProvider.GetFixesListAsync().ConfigureAwait(false);
 
-                return new(ResultEnum.Success, string.Empty);
-            }
-            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
+            if (!result.IsSuccess)
             {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.NotFound, $"File not found: {ex.Message}");
+                return new(result.ResultEnum, result.Message);
             }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "API is not responding");
-            }
+
+            _fixesList = [.. result.ResultObject];
+
+            await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
+
+            return new(ResultEnum.Success, string.Empty);
         }
 
         /// <summary>
@@ -388,11 +383,6 @@ namespace ClientCommon.Models
         }
 
         /// <summary>
-        /// Get sorted list of fixes
-        /// </summary>
-        private async Task GetListOfFixesAsync() => _fixesList = [.. await _fixesProvider.GetFixesListAsync().ConfigureAwait(false)];
-
-        /// <summary>
         /// Create or update list of games that can be added to the fixes list
         /// </summary>
         private async Task UpdateListOfAvailableGamesAsync()
@@ -415,7 +405,7 @@ namespace ClientCommon.Models
         /// </summary>
         /// <param name="pathToFile">Path to json</param>
         /// <returns>Results: [0]: Game id, [1] New fix GUID</returns>
-        public Result AddFixFromFile(string pathToFile)
+        public Result AddFixFromFile(string pathToFile, out int? newFixGameId, out Guid? newFixGuid)
         {
             try
             {
@@ -434,10 +424,15 @@ namespace ClientCommon.Models
                     _fixesList.Add(newFix);
                 }
 
-                return new(ResultEnum.Success, string.Empty, [newFix.GameId, newFix.Fixes.Last().Guid]);
+                newFixGameId = newFix.GameId;
+                newFixGuid = newFix.Fixes.Last().Guid;
+
+                return new(ResultEnum.Success, string.Empty);
             }
             catch (Exception ex)
             {
+                newFixGameId = null;
+                newFixGuid = null;
                 return new(ResultEnum.Error, ex.Message);
             }
         }

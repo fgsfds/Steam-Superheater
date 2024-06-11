@@ -6,15 +6,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common", "src\Common\Common
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "src\Tests\Tests.csproj", "{B9857CAA-ACC7-4AA4-B8F7-AE9F30FA86F2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{152401FC-B2F3-48C2-8229-72E56A64C65F}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		Directory.Build.props = Directory.Build.props
-		Directory.Packages.props = Directory.Packages.props
-		Dockerfile = Dockerfile
-		README.md = README.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Core", "src\Avalonia\Core\Avalonia.Core.csproj", "{CA677845-C2C9-43CC-8A2E-225A007F3A57}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Avalonia.Desktop", "src\Avalonia\Desktop\Avalonia.Desktop.csproj", "{1B305CB9-D21D-4AFA-98C0-86488DA114E9}"
@@ -23,9 +14,9 @@ Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "Web.Client", "Web.Client\We
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web.Server", "Web.Server\Web.Server.csproj", "{69DE51C1-2512-4375-81A7-89CF7002D195}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientCommon", "src\ClientCommon\ClientCommon.csproj", "{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Client", "src\ClientCommon\Common.Client.csproj", "{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telegram", "src\Telegram\Telegram.csproj", "{9C2FB36A-5686-43A5-8C58-3A88B908C955}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Telegram", "src\Telegram\Telegram.csproj", "{9C2FB36A-5686-43A5-8C58-3A88B908C955}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -138,6 +129,16 @@ Global
 		{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}.Release|x64.ActiveCfg = Release|Any CPU
+		{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}.Release|x64.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EFBC4669-39D4-478B-B0FB-2E0DB8858A05}
+	EndGlobalSection
+EndGlobal
+09-3B644B21BB1E}.Release|x64.ActiveCfg = Release|Any CPU
 		{DF0A2B9A-6B22-4614-8A09-3B644B21BB1E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution

@@ -1,5 +1,6 @@
 using Avalonia.Input.Platform;
 using ClientCommon;
+using ClientCommon.API;
 using ClientCommon.Config;
 using ClientCommon.Models;
 using Common;
@@ -21,6 +22,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
         private readonly MainModel _mainModel;
+        private readonly ApiInterface _apiInterface;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
@@ -279,6 +281,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public MainViewModel(
             MainModel mainModel,
+            ApiInterface apiInterface,
             ConfigProvider config,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor,
@@ -287,6 +290,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             )
         {
             _mainModel = mainModel;
+            _apiInterface = apiInterface;
             _config = config.Config;
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
@@ -608,9 +612,13 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            await _mainModel.ReportFix(SelectedFix, reportText).ConfigureAwait(true);
+            var result = await _apiInterface.ReportFixAsync(SelectedFix.Guid, reportText).ConfigureAwait(true);
 
-            _popupMessage.Show("Report fix", "Report sent", PopupMessageType.OkOnly);
+            _popupMessage.Show(
+                "Report fix",
+                result.IsSuccess ? "Report sent" : result.Message, 
+                PopupMessageType.OkOnly
+                );
         }
 
         #endregion Relay Commands
@@ -665,8 +673,6 @@ Do you still want to install the fix?",
 
             _cancellationTokenSource.Dispose();
 
-            FillGamesList();
-
             LockButtons = false;
 
             _progressReport.Progress.ProgressChanged -= ProgressChanged;
@@ -685,6 +691,8 @@ Do you still want to install the fix?",
 
                 return;
             }
+
+            FillGamesList();
 
             if (SelectedFix is FileFixEntity fileFix &&
                 fileFix.ConfigFile is not null &&

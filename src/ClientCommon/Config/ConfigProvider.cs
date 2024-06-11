@@ -7,7 +7,7 @@ namespace ClientCommon.Config
     {
         public ConfigProvider()
         {
-            Config = ReadConfigFromXml();
+            Config = ReadConfigFromFile();
 
             Config.NotifyConfigChanged += SaveConfigXml;
         }
@@ -20,7 +20,7 @@ namespace ClientCommon.Config
         /// <summary>
         /// Read config from XML or create new XML if it doesn't exist
         /// </summary>
-        private ConfigEntity ReadConfigFromXml()
+        private ConfigEntity ReadConfigFromFile()
         {
             if (!File.Exists(Consts.ConfigFile))
             {

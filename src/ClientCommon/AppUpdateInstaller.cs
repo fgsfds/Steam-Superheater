@@ -1,68 +1,51 @@
-﻿using Common.Entities;
+﻿using ClientCommon.API;
+using Common;
+using Common.Entities;
+using Common.Enums;
 using Common.Helpers;
 using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Text.Json;
 
 namespace ClientCommon
 {
     public sealed class AppUpdateInstaller(
         ArchiveTools archiveTools,
-        HttpClient httpClient,
+        ApiInterface apiInterface,
         Logger logger
         )
     {
         private readonly ArchiveTools _archiveTools = archiveTools;
-        private readonly HttpClient _httpClient = httpClient;
+        private readonly ApiInterface _apiInterface = apiInterface;
         private readonly Logger _logger = logger;
 
-        private AppUpdateEntity? _update;
+        private AppReleaseEntity? _update;
 
         /// <summary>
         /// Check API for releases with version higher than the current
         /// </summary>
         /// <param name="currentVersion">Current Superheater version</param>
         /// <returns>Has newer version</returns>
-        public async Task<bool> CheckForUpdates(Version currentVersion)
+        public async Task<Result> CheckForUpdates(Version currentVersion)
         {
             _logger.Info("Checking for updates");
 
-            string osName;
+            var result = await _apiInterface.GetLatestAppReleaseAsync(OSEnumHelper.GetCurrentOSEnum()).ConfigureAwait(false);
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) 
+            if (!result.IsSuccess)
             {
-                osName = OSPlatform.Windows.ToString().ToLower();
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                osName = OSPlatform.Linux.ToString().ToLower();
-            }
-            else
-            {
-                return false;
+                return new(result.ResultEnum, result.Message);
             }
 
-            using var response = await _httpClient.GetAsync($"{ApiProperties.ApiUrl}/release/{osName}").ConfigureAwait(false);
-
-            if (!response.IsSuccessStatusCode || response.StatusCode is System.Net.HttpStatusCode.NoContent)
+            if (result.ResultObject is not null && result.ResultObject.Version > currentVersion)
             {
-                return false;
+                _logger.Info($"Found new version {result.ResultObject.Version}");
+
+                _update = result.ResultObject;
+
+                return new(ResultEnum.Success, string.Empty);
             }
 
-            var releaseJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            var release = JsonSerializer.Deserialize(releaseJson, AppUpdateEntityContext.Default.AppUpdateEntity);
-
-            if (release is not null && release.Version > currentVersion)
-            {
-                _logger.Info($"Found new version {release.Version}");
-
-                _update = release;
-
-                return true;
-            }
-
-            return false;
+            return new(ResultEnum.NotFound, string.Empty);
         }
 
         /// <summary>

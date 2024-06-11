@@ -106,11 +106,6 @@ namespace ClientCommon.Config
             set => SetConfigParameter(ref _upvotes, value);
         }
 
-        public void ForceUpdateConfig()
-        {
-            NotifyConfigChanged?.Invoke();
-        }
-
         /// <summary>
         /// Sets config parameter if changed and invokes notifier
         /// </summary>
@@ -118,7 +113,6 @@ namespace ClientCommon.Config
         /// <param name="value">New value</param>
         private void SetConfigParameter<T>(ref T fieldName, T value, [CallerMemberName] string callerName = "")
         {
-            //fieldName.ThrowIfNull();
             callerName.ThrowIfNullOrEmpty();
 
             if (fieldName is null || !fieldName.Equals(value))

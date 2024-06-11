@@ -21,9 +21,9 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpGet("windows")]
-        public AppUpdateEntity? GetWindowsRelease() => _appReleasesProvider.WindowsRelease;
+        public AppReleaseEntity? GetWindowsRelease() => _appReleasesProvider.WindowsRelease;
 
         [HttpGet("linux")]
-        public AppUpdateEntity? GetLinuxRelease() => _appReleasesProvider.LinuxRelease;
+        public AppReleaseEntity? GetLinuxRelease() => _appReleasesProvider.LinuxRelease;
     }
 }

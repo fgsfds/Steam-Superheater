@@ -97,65 +97,32 @@ namespace ClientCommon.Providers
         }
 
         /// <inheritdoc/>
-        private async Task<List<BaseInstalledFixEntity>> CreateCacheAsync()
+        private async Task CreateCacheAsync()
         {
             _logger.Info("Requesting installed fixes");
 
             if (!File.Exists(Consts.InstalledFile))
             {
-                _cache = ConvertXmlToJson();
+                _cache = [];
+                return;
             }
-            else
+
+            var text = await File.ReadAllTextAsync(Consts.InstalledFile).ConfigureAwait(false);
+
+            text.ThrowIfNull();
+
+            var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
+
+            installedFixes.ThrowIfNull();
+
+            var needToSave = FixWrongGuids(installedFixes);
+
+            _cache = installedFixes;
+
+            if (needToSave)
             {
-                var text = await File.ReadAllTextAsync(Consts.InstalledFile).ConfigureAwait(false);
-
-                text.ThrowIfNull();
-
-                var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
-
-                installedFixes.ThrowIfNull();
-
-                var needToSave = FixRegValueType(installedFixes);
-                needToSave = FixWrongGuids(installedFixes);
-
-                _cache = installedFixes;
-
-                if (needToSave)
-                {
-                    SaveInstalledFixes();
-                }
+                SaveInstalledFixes();
             }
-
-            return _cache;
-        }
-
-        /// <summary>
-        /// Add value type to installed reg fix
-        /// </summary>
-        [Obsolete("Remove in version 1.0")]
-        private bool FixRegValueType(List<BaseInstalledFixEntity> installedFixes)
-        {
-            var needToSave = false;
-
-            foreach (var fix in installedFixes)
-            {
-                if (fix is RegistryInstalledFixEntity regFix &&
-                    regFix.ValueType is null)
-                {
-                    if (regFix.Guid == Guid.Parse("6f768f0a-7233-4f64-8cb2-27f6b1edd7c4"))
-                    {
-                        regFix.ValueType = RegistryValueTypeEnum.Dword;
-                    }
-                    else
-                    {
-                        regFix.ValueType = RegistryValueTypeEnum.String;
-                    }
-
-                    needToSave = true;
-                }
-            }
-
-            return needToSave;
         }
 
         /// <summary>
@@ -213,92 +180,6 @@ namespace ClientCommon.Providers
             }
 
             return needToSave;
-        }
-
-        /// <summary>
-        /// Convert old installed.xml file to a newer installed.json
-        /// </summary>
-        [Obsolete("Remove in version 1.0")]
-        private List<BaseInstalledFixEntity> ConvertXmlToJson()
-        {
-#pragma warning disable CS8602
-            if (!File.Exists("installed.xml"))
-            {
-                return [];
-            }
-
-            var xdoc = XDocument.Load("installed.xml");
-
-            List<BaseInstalledFixEntity> result = [];
-
-            var fileFixes = xdoc.Descendants("FileInstalledFix");
-
-            foreach (var fix in fileFixes)
-            {
-                var gameId = fix.Element("GameId").Value;
-                var guid = fix.Element("Guid").Value;
-                var version = fix.Element("Version").Value;
-                var backupFolder = fix.Element("BackupFolder")?.Value;
-
-                var filesList = fix.Elements("FilesList").Descendants().Select(static x => x.Value);
-
-                result.Add(new FileInstalledFixEntity()
-                {
-                    GameId = int.Parse(gameId),
-                    Guid = new Guid(guid),
-                    Version = int.Parse(version),
-                    BackupFolder = backupFolder,
-                    FilesList = [.. filesList],
-                    InstalledSharedFix = null
-                });
-            }
-
-            var hostsFixes = xdoc.Descendants("HostsInstalledFix");
-
-            foreach (var fix in hostsFixes)
-            {
-                var gameId = fix.Element("GameId").Value;
-                var guid = fix.Element("Guid").Value;
-                var version = fix.Element("Version").Value;
-
-                var entriesList = fix.Elements("Entries").Descendants().Select(static x => x.Value);
-
-                result.Add(new HostsInstalledFixEntity()
-                {
-                    GameId = int.Parse(gameId),
-                    Guid = new Guid(guid),
-                    Version = int.Parse(version),
-                    Entries = [.. entriesList]
-                });
-            }
-
-            var registryFixes = xdoc.Descendants("RegistryInstalledFix");
-
-            foreach (var fix in registryFixes)
-            {
-                var gameId = fix.Element("GameId").Value;
-                var guid = fix.Element("Guid").Value;
-                var version = fix.Element("Version").Value;
-                var key = fix.Element("Key").Value;
-                var value = fix.Element("ValueName").Value;
-                var original = fix.Element("OriginalValue")?.Value;
-
-                result.Add(new RegistryInstalledFixEntity()
-                {
-                    GameId = int.Parse(gameId),
-                    Guid = new Guid(guid),
-                    Version = int.Parse(version),
-                    Key = key,
-                    ValueName = value,
-                    OriginalValue = original,
-                    ValueType = RegistryValueTypeEnum.Dword
-                });
-            }
-
-            SaveInstalledFixes();
-
-            return result;
-#pragma warning restore CS8602
         }
     }
 }

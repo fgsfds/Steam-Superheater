@@ -59,42 +59,37 @@ namespace ClientCommon.FixTools
             if (fix is FileFixEntity &&
                 !Directory.Exists(game.InstallDir))
             {
-                return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
+                return new(ResultEnum.NotFound, $"""
+                    Game folder not found:
+                    
+                    {game.InstallDir}
+                    """);
             }
 
-            BaseInstalledFixEntity? installedFix = null;
+            Result<BaseInstalledFixEntity> installedFix;
 
-            try
+            switch (fix)
             {
-                switch (fix)
-                {
-                    case FileFixEntity fileFix:
-                        installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-                        break;
-                    case RegistryFixEntity registryFix:
-                        installedFix = _registryFixInstaller.InstallFix(game, registryFix);
-                        break;
-                    case HostsFixEntity hostsFix:
-                        installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
-                        break;
-                    default:
-                        ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Installer for this fix type is not implemented");
-                        break;
-                }
-            }
-            catch (HashCheckFailedException ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.Error, ex.Message);
+                case FileFixEntity fileFix:
+                    installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+                    break;
+                case RegistryFixEntity registryFix:
+                    installedFix = _registryFixInstaller.InstallFix(game, registryFix);
+                    break;
+                case HostsFixEntity hostsFix:
+                    installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
+                    break;
+                default:
+                    return ThrowHelper.NotImplementedException<Result>("Installer for this fix type is not implemented");
             }
 
-            fix.InstalledFix = installedFix;
-            _installedFixesProvider.AddToCache(installedFix);
+            if (!installedFix.IsSuccess)
+            {
+                return new(installedFix.ResultEnum, installedFix.Message);
+            }
+
+            fix.InstalledFix = installedFix.ResultObject;
+            _installedFixesProvider.AddToCache(installedFix.ResultObject!);
 
             var saveResult = _installedFixesProvider.SaveInstalledFixes();
 
@@ -137,20 +132,6 @@ namespace ClientCommon.FixTools
                         break;
                 }
             }
-            catch (BackwardsCompatibilityException ex)
-            {
-                _logger.Error(ex.Message);
-                fix.InstalledFix = null;
-
-                var saveResultInner = _installedFixesProvider.SaveInstalledFixes();
-
-                if (!saveResultInner.IsSuccess)
-                {
-                    return saveResultInner;
-                }
-
-                return new(ResultEnum.BackwardsCompatibility, "Error while restoring backed up files. Verify integrity of game files on Steam.");
-            }
             catch (IOException ex)
             {
                 _logger.Error(ex.Message);
@@ -185,59 +166,31 @@ namespace ClientCommon.FixTools
                 return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
             }
 
-            BaseInstalledFixEntity? installedFix = null;
+            Result<BaseInstalledFixEntity> installedFix;
 
-            try
+            switch (fix)
             {
-                switch (fix)
-                {
-                    case FileFixEntity fileFix:
-                        installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-                        break;
-                    case RegistryFixEntity registryFix:
-                        installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
-                        break;
-                    case HostsFixEntity hostsFix:
-                        installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
-                        break;
-                    default:
-                        ThrowHelper.NotImplementedException<BaseInstalledFixEntity>("Updater for this fix type is not implemented");
-                        break;
-                }
-            }
-            catch (BackwardsCompatibilityException ex)
-            {
-                _logger.Error(ex.Message);
-                fix.InstalledFix = null;
-
-                var saveResultInner = _installedFixesProvider.SaveInstalledFixes();
-
-                if (!saveResultInner.IsSuccess)
-                {
-                    return saveResultInner;
-                }
-
-                return new(ResultEnum.BackwardsCompatibility, "Error while restoring backed up files. Verify integrity of game files on Steam.");
-            }
-            catch (HashCheckFailedException ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.MD5Error, "MD5 of the file doesn't match the database");
-            }
-            catch (IOException ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.FileAccessError, ex.Message);
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.Error, ex.Message);
+                case FileFixEntity fileFix:
+                    installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+                    break;
+                case RegistryFixEntity registryFix:
+                    installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
+                    break;
+                case HostsFixEntity hostsFix:
+                    installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
+                    break;
+                default:
+                    return ThrowHelper.NotImplementedException<Result>("Updater for this fix type is not implemented");
             }
 
-            fix.InstalledFix = installedFix;
+            if (!installedFix.IsSuccess)
+            {
+                return new(installedFix.ResultEnum, installedFix.Message);
+            }
+
+            fix.InstalledFix = installedFix.ResultObject;
             _installedFixesProvider.RemoveFromCache(game.Id, fix.Guid);
-            _installedFixesProvider.AddToCache(installedFix);
+            _installedFixesProvider.AddToCache(installedFix.ResultObject!);
 
             var saveResult = _installedFixesProvider.SaveInstalledFixes();
 

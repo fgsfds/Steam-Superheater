@@ -9,18 +9,6 @@ namespace Common.Helpers
     public static class ThrowHelper
     {
         [DoesNotReturn]
-        public static void BackwardsCompatibilityException(string? message = "") => throw new BackwardsCompatibilityException(message);
-
-        [DoesNotReturn]
-        public static T BackwardsCompatibilityException<T>(string? message = "") => throw new BackwardsCompatibilityException(message);
-
-        [DoesNotReturn]
-        public static void HashCheckFailedException(string? message = "") => throw new HashCheckFailedException(message);
-
-        [DoesNotReturn]
-        public static T HashCheckFailedException<T>(string? message = "") => throw new HashCheckFailedException(message);
-
-        [DoesNotReturn]
         public static void NotImplementedException(string? message = "") => throw new NotImplementedException(message);
 
         [DoesNotReturn]

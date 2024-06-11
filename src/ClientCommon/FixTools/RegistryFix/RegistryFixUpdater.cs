@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using Common;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
@@ -13,7 +14,7 @@ namespace ClientCommon.FixTools.RegistryFix
         private readonly RegistryFixInstaller _fixInstaller = fixInstaller;
         private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller;
 
-        public BaseInstalledFixEntity UpdateFix(GameEntity game, RegistryFixEntity regFix)
+        public Result<BaseInstalledFixEntity> UpdateFix(GameEntity game, RegistryFixEntity regFix)
         {
             regFix.InstalledFix.ThrowIfNull();
 

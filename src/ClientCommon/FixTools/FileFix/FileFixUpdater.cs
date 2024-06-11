@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using Common;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
@@ -13,7 +14,7 @@ namespace ClientCommon.FixTools.FileFix
         private readonly FileFixInstaller _fixInstaller = fixInstaller;
         private readonly FileFixUninstaller _fixUninstaller = fixUninstaller;
 
-        public async Task<BaseInstalledFixEntity> UpdateFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
+        public async Task<Result<BaseInstalledFixEntity>> UpdateFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
         {
             fix.InstalledFix.ThrowIfNull();
 

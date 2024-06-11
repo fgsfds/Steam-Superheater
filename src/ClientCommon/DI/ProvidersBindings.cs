@@ -11,7 +11,6 @@ namespace ClientCommon.DI
             container.AddSingleton<CombinedEntitiesProvider>();
             container.AddSingleton<ConfigProvider>();
             container.AddSingleton<GamesProvider>();
-            container.AddSingleton<NewsProvider>();
             container.AddSingleton<FixesProvider>();
             container.AddSingleton<InstalledFixesProvider>();
         }

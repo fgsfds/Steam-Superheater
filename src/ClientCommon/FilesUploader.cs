@@ -1,15 +1,17 @@
-﻿using Common;
-using System.Web;
+﻿using ClientCommon.API;
+using Common;
 
 namespace ClientCommon
 {
     public class FilesUploader
     {
         private readonly Logger _logger;
+        private readonly ApiInterface _apiInterface;
         private readonly ProgressReport _progressReport;
 
         public FilesUploader(
             Logger logger,
+            ApiInterface apiInterface,
             ProgressReport progressReport)
         {
             _logger = logger;
@@ -42,29 +44,31 @@ namespace ClientCommon
             _progressReport.OperationMessage = "Uploading...";
             IProgress<float> progress = _progressReport.Progress;
 
-            using HttpClient httpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
-
             try
             {
                 foreach (var file in files)
                 {
                     var fileName = remoteFileName ?? Path.GetFileName(file);
-                    var path = "superheater_uploads/" + folder + "/" + fileName;
-                    var encodedPath = HttpUtility.UrlEncode(path);
+                    var result = await _apiInterface.GetSignedUrlAsync(folder + "/" + fileName).ConfigureAwait(false);
 
-                    var signedUrl = await httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+                    if (!result.IsSuccess)
+                    {
+                        return new(result.ResultEnum, result.Message);
+                    }
 
                     using var fileStream = File.OpenRead(file);
                     using StreamContent content = new(fileStream);
 
                     new Task(() => { TrackProgress(fileStream, progress); }).Start();
 
-                    using var response = await httpClient.PutAsync(signedUrl, content, cancellationToken).ConfigureAwait(false);
+                    using HttpClient httpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
+
+                    using var response = await httpClient.PutAsync(result.ResultObject, content, cancellationToken).ConfigureAwait(false);
 
                     if (!response.IsSuccessStatusCode)
                     {
-                        var result = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                        return new(ResultEnum.Error, result);
+                        var errorMessage = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                        return new(ResultEnum.Error, errorMessage);
                     }
                 }
             }

@@ -1,4 +1,5 @@
 ﻿using ClientCommon.Config;
+using Common;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -30,8 +31,7 @@ namespace ClientCommon.FixTools.FileFix
         /// <param name="variant">Fix variant</param>
         /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
         /// <exception cref="Exception">Error while downloading file</exception>
-        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task<BaseInstalledFixEntity> InstallFixAsync(
+        public async Task<Result<BaseInstalledFixEntity>> InstallFixAsync(
             GameEntity game,
             FileFixEntity fix,
             string? variant,
@@ -42,7 +42,10 @@ namespace ClientCommon.FixTools.FileFix
             {
                 if (!File.Exists(@$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
                 {
-                    throw new Exception("""
+                    return new(
+                        ResultEnum.Error,
+                        null,
+                        """
                         Can't find 'compatdata' folder.
                         
                         Run the game at least once before installing this fix.
@@ -54,7 +57,15 @@ namespace ClientCommon.FixTools.FileFix
 
             var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
-            var unpackedFiles = await DownloadAndUnpackArchive(game, fix, variant, skipMD5Check, backupFolderPath, cancellationToken).ConfigureAwait(false);
+            var unpackedFiles = await DownloadAndUnpackArchiveAsync(game, fix, variant, skipMD5Check, backupFolderPath, cancellationToken).ConfigureAwait(false);
+
+            if (!unpackedFiles.IsSuccess)
+            {
+                return new(
+                    unpackedFiles.ResultEnum,
+                    null,
+                    unpackedFiles.Message);
+            }
 
             BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
             BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
@@ -72,29 +83,29 @@ namespace ClientCommon.FixTools.FileFix
                 Guid = fix.Guid,
                 Version = fix.Version,
                 BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
-                FilesList = unpackedFiles,
-                InstalledSharedFix = installedSharedFix,
+                FilesList = unpackedFiles.ResultObject,
+                InstalledSharedFix = (FileInstalledFixEntity)installedSharedFix.ResultObject!,
                 WineDllOverrides = dllOverrides
             };
 
-            return installedFix;
+            return new(ResultEnum.Success, installedFix, "Successfully installed fix");
         }
 
-        private async Task<FileInstalledFixEntity?> InstallSharedFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
+        private async Task<Result<BaseInstalledFixEntity>> InstallSharedFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
         {
             if (fix.SharedFix is null)
             {
-                return null;
+                return new(ResultEnum.Success, null, "No shared fixes");
             }
 
             fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
 
-            var installedSharedFix = (FileInstalledFixEntity)await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+            var installedSharedFix = await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
 
             return installedSharedFix;
         }
 
-        private async Task<List<string>?> DownloadAndUnpackArchive(
+        private async Task<Result<List<string>?>> DownloadAndUnpackArchiveAsync(
             GameEntity game, 
             FileFixEntity fix,
             string? variant,
@@ -104,7 +115,7 @@ namespace ClientCommon.FixTools.FileFix
         {
             if (fix.Url is null)
             {
-                return null;
+                return new(ResultEnum.Success, null, string.Empty);
             }
 
             var unpackToPath = fix.InstallFolder is null
@@ -115,14 +126,20 @@ namespace ClientCommon.FixTools.FileFix
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
 
-            await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
+            var fileDownloadResult = await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
+
+            if (!fileDownloadResult.IsSuccess)
+            {
+                return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
+            }
 
             var filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
 
             BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
             await UnpackArchiveAsync(pathToArchive, unpackToPath, variant).ConfigureAwait(false);
-            return filesInArchive;
+
+            return new(ResultEnum.Success, filesInArchive, string.Empty);
         }
 
         /// <summary>
@@ -170,33 +187,33 @@ namespace ClientCommon.FixTools.FileFix
         /// <param name="fixMD5">MD5 of the file</param>
         /// <exception cref="Exception">Error while downloading file</exception>
         /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        private Task CheckAndDownloadFileAsync(string zipFullPath, string fixUrl, string? fixMD5, CancellationToken cancellationToken)
+        private async Task<Result> CheckAndDownloadFileAsync(string zipFullPath, string fixUrl, string? fixMD5, CancellationToken cancellationToken)
         {
             //checking md5 of the existing file
             if (File.Exists(zipFullPath))
             {
                 _logger.Info($"Using local file {zipFullPath}");
 
-                var result = CheckFileMD5(zipFullPath, fixMD5);
+                var fileCheckResult = CheckFileMD5(zipFullPath, fixMD5);
 
-                if (!result)
+                if (!fileCheckResult)
                 {
                     _logger.Info("MD5 of the local file doesn't match, removing it");
                     File.Delete(zipFullPath);
                 }
-            }
-
-            if (File.Exists(zipFullPath))
-            {
-                return Task.CompletedTask;
+                else
+                {
+                    return new(ResultEnum.Success, "File already exists");
+                }
             }
 
             _logger.Info($"Local file {zipFullPath} not found");
 
             var url = fixUrl;
 
-            return _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, cancellationToken, fixMD5);
+            var result = await _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, cancellationToken, fixMD5).ConfigureAwait(false);
 
+            return result;
         }
 
         /// <summary>

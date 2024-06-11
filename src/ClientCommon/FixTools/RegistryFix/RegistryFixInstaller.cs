@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using Common;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
@@ -22,11 +23,11 @@ namespace ClientCommon.FixTools.RegistryFix
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>Installed fix entity</returns>
-        public BaseInstalledFixEntity InstallFix(GameEntity game, RegistryFixEntity fix)
+        public Result<BaseInstalledFixEntity> InstallFix(GameEntity game, RegistryFixEntity fix)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);
+                return ThrowHelper.PlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
             }
 
             var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
@@ -65,16 +66,19 @@ namespace ClientCommon.FixTools.RegistryFix
                     break;
             }
 
-            return new RegistryInstalledFixEntity()
-            {
-                GameId = game.Id,
-                Guid = fix.Guid,
-                Version = fix.Version,
-                Key = fix.Key,
-                ValueName = valueName,
-                OriginalValue = oldValueStr,
-                ValueType = fix.ValueType
-            };
+            return new(
+                ResultEnum.Success,
+                new RegistryInstalledFixEntity()
+                {
+                    GameId = game.Id,
+                    Guid = fix.Guid,
+                    Version = fix.Version,
+                    Key = fix.Key,
+                    ValueName = valueName,
+                    OriginalValue = oldValueStr,
+                    ValueType = fix.ValueType
+                },
+                "Successfully installed fix");
         }
     }
 }

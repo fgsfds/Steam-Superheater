@@ -59,20 +59,20 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Mark all news as read
         /// </summary>
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
-        private async Task MarkAllAsReadAsync()
+        private void MarkAllAsRead()
         {
-            var result = await _newsModel.MarkAllAsReadAsync().ConfigureAwait(true);
+            _newsModel.UpdateConfigLastReadVersion();
 
-            if (!result.IsSuccess)
-            {
-                _popupMessage.Show(
-                    "Error",
-                    result.Message,
-                    PopupMessageType.OkOnly
-                    );
+            //if (!result.IsSuccess)
+            //{
+            //    _popupMessage.Show(
+            //        "Error",
+            //        result.Message,
+            //        PopupMessageType.OkOnly
+            //        );
 
-                return;
-            }
+            //    return;
+            //}
 
             OnPropertyChanged(nameof(NewsList));
             UpdateHeader();

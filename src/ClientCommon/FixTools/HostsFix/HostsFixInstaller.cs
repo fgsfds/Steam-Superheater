@@ -1,4 +1,5 @@
-﻿using Common.Entities;
+﻿using Common;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
@@ -16,11 +17,11 @@ namespace ClientCommon.FixTools.HostsFix
         /// <param name="fix">Fix entity</param>
         /// <param name="hostsFilePath">Path to hosts file</param>
         /// <returns>Installed fix entity</returns>
-        public BaseInstalledFixEntity InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath)
+        public Result<BaseInstalledFixEntity> InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath)
         {
             if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                return ThrowHelper.PlatformNotSupportedException<BaseInstalledFixEntity>(string.Empty);
+                return ThrowHelper.PlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
             }
 
             try
@@ -46,13 +47,16 @@ namespace ClientCommon.FixTools.HostsFix
 
             File.AppendAllText(hostsFilePath, stringToAdd);
 
-            return new HostsInstalledFixEntity()
-            {
-                GameId = game.Id,
-                Guid = fix.Guid,
-                Version = fix.Version,
-                Entries = [.. fix.Entries]
-            };
+            return new(
+                ResultEnum.Success,
+                new HostsInstalledFixEntity()
+                {
+                    GameId = game.Id,
+                    Guid = fix.Guid,
+                    Version = fix.Version,
+                    Entries = [.. fix.Entries]
+                },
+                "Successfully installed fix");
         }
     }
 }

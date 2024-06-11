@@ -1,4 +1,5 @@
-﻿using Common.Helpers;
+﻿using Common;
+using Common.Helpers;
 using SharpCompress.Archives;
 using System.Security.Cryptography;
 
@@ -25,8 +26,7 @@ namespace ClientCommon
         /// <param name="cancellationToken"></param>
         /// <param name="hash">MD5 to check file against</param>
         /// <exception cref="Exception">Error while downloading file</exception>
-        /// <exception cref="HashCheckFailedException">MD5 of the downloaded file doesn't match provided MD5</exception>
-        public async Task CheckAndDownloadFileAsync(
+        public async Task<Result> CheckAndDownloadFileAsync(
             Uri url,
             string filePath,
             CancellationToken cancellationToken,
@@ -53,10 +53,23 @@ namespace ClientCommon
 
             if (hash is not null)
             {
-                if (response.Content.Headers.ContentMD5 is not null &&
-                    !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
+                if (url.ToString().StartsWith(Consts.FilesBucketUrl))
                 {
-                    ThrowHelper.HashCheckFailedException("File hash doesn't match");
+                    if (response.Headers.ETag?.Tag is not null)
+                    {
+                        var md5 = response.Headers.ETag!.Tag.Replace("\"", "");
+
+                        if (!md5.Contains('-') &&
+                            !md5.Equals(hash, StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            return new(ResultEnum.MD5Error, string.Empty);
+                        }
+                    }
+                }
+                else if (response.Content.Headers.ContentMD5 is not null &&
+                         !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
+                {
+                    return new(ResultEnum.MD5Error, string.Empty);
                 }
             }
 
@@ -95,11 +108,12 @@ namespace ClientCommon
 
                 if (!hash.Equals(fileHash))
                 {
-                    ThrowHelper.HashCheckFailedException("File hash doesn't match");
+                    return new(ResultEnum.MD5Error, string.Empty);
                 }
             }
 
             _progressReport.OperationMessage = string.Empty;
+            return new(ResultEnum.Success, string.Empty);
         }
 
         /// <summary>

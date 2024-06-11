@@ -932,17 +932,17 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            var result = _editorModel.AddFixFromFile(files[0].Path.LocalPath);
+            var result = _editorModel.AddFixFromFile(files[0].Path.LocalPath, out var newFixGameId, out var newFixGuid);
 
             if (result.IsSuccess)
             {
                 OnPropertyChanged(nameof(FilteredGamesList));
 
-                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == (int)result.Results![0]);
+                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == newFixGameId);
                 SelectedGame = game;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
 
-                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == (Guid)result.Results![1]);
+                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == newFixGuid);
                 SelectedFix = fix;
             }
         }

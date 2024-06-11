@@ -1,5 +1,5 @@
-﻿using ClientCommon.Config;
-using ClientCommon.Providers;
+﻿using ClientCommon.API;
+using ClientCommon.Config;
 using Common;
 using Common.Entities;
 using System.Collections.Immutable;
@@ -8,12 +8,12 @@ namespace ClientCommon.Models
 {
     public sealed class NewsModel(
         ConfigProvider config,
-        NewsProvider newsProvider,
+        ApiInterface newsProvider,
         Logger logger
         )
     {
         private readonly ConfigEntity _config = config.Config;
-        private readonly NewsProvider _newsProvider = newsProvider;
+        private readonly ApiInterface _newsProvider = newsProvider;
         private readonly Logger _logger = logger;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
@@ -27,29 +27,16 @@ namespace ClientCommon.Models
         /// </summary>
         public async Task<Result> UpdateNewsListAsync()
         {
-            try
+            var result = await _newsProvider.GetNewsListAsync().ConfigureAwait(false);
+
+            if (result.IsSuccess)
             {
-                News = await _newsProvider.GetNewsListAsync().ConfigureAwait(false);
-            }
-            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.NotFound, "File not found: " + ex.Message);
-            }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "API is not responding");
-            }
-            catch (Exception ex)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, ex.Message);
+                News = [.. result.ResultObject];
+
+                UpdateReadStatusOfExistingNews();
             }
 
-            UpdateReadStatusOfExistingNews();
-
-            return new(ResultEnum.Success, string.Empty);
+            return new(result.ResultEnum, result.Message);
         }
 
         /// <summary>
@@ -58,6 +45,7 @@ namespace ClientCommon.Models
         public async Task<Result> MarkAllAsReadAsync()
         {
             UpdateConfigLastReadVersion();
+
             var result = await UpdateNewsListAsync().ConfigureAwait(false);
 
             return result;
@@ -70,9 +58,9 @@ namespace ClientCommon.Models
         /// <param name="content">Content</param>
         public async Task<Result> ChangeNewsContentAsync(DateTime date, string content)
         {
-            var result1 = await _newsProvider.ChangeNewsContentAsync(date, content).ConfigureAwait(false);
+            var result1 = await _newsProvider.ChangeNewsAsync(date, content).ConfigureAwait(false);
 
-            if (result1 != ResultEnum.Success)
+            if (!result1.IsSuccess)
             {
                 return result1;
             }
@@ -90,7 +78,7 @@ namespace ClientCommon.Models
         {
             var result1 = await _newsProvider.AddNewsAsync(content).ConfigureAwait(false);
 
-            if (result1 != ResultEnum.Success)
+            if (!result1.IsSuccess)
             {
                 return result1;
             }
@@ -114,7 +102,7 @@ namespace ClientCommon.Models
         /// <summary>
         /// Update last read date in config
         /// </summary>
-        private void UpdateConfigLastReadVersion()
+        public void UpdateConfigLastReadVersion()
         {
             var lastReadDate = News.Max(static x => x.Date);
 

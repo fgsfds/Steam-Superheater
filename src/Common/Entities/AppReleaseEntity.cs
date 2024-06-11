@@ -2,7 +2,7 @@
 
 namespace Common.Entities
 {
-    public sealed class AppUpdateEntity
+    public sealed class AppReleaseEntity
     {
         /// <summary>
         /// Release version
@@ -21,6 +21,6 @@ namespace Common.Entities
     }
 
     [JsonSourceGenerationOptions(WriteIndented = true)]
-    [JsonSerializable(typeof(List<AppUpdateEntity>))]
-    public sealed partial class AppUpdateEntityContext : JsonSerializerContext;
+    [JsonSerializable(typeof(List<AppReleaseEntity>))]
+    public sealed partial class AppReleaseEntityContext : JsonSerializerContext;
 }

@@ -1,4 +1,5 @@
-﻿using ClientCommon.Config;
+﻿using ClientCommon.API;
+using ClientCommon.Config;
 using Common;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -13,17 +14,17 @@ namespace ClientCommon.Providers
     {
         private ImmutableList<FileFixEntity> _sharedFixes;
         private readonly ConfigEntity _config;
-        private readonly HttpClient _httpClient;
+        private readonly ApiInterface _apiInterface;
         private readonly Logger _logger;
 
         public FixesProvider(
             ConfigProvider config,
-            HttpClient httpClient,
+            ApiInterface apiInterface,
             Logger logger
             )
         {
             _config = config.Config;
-            _httpClient = httpClient;
+            _apiInterface = apiInterface;
             _logger = logger;
             _sharedFixes = [];
         }
@@ -31,29 +32,20 @@ namespace ClientCommon.Providers
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        public async Task<ImmutableList<FixesList>> GetFixesListAsync()
+        public async Task<Result<ImmutableList<FixesList>>> GetFixesListAsync()
         {
             _logger.Info("Creating fixes cache");
 
-            var fixesJson = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes").ConfigureAwait(false);
+            var result = await _apiInterface.GetFixesListAsync().ConfigureAwait(false);
 
-            if (fixesJson is null)
+            if (!result.IsSuccess)
             {
-                _logger.Error("Error while getting fixes...");
-                ThrowHelper.Exception("Error while getting fixes");
+                return new(result.ResultEnum, null, result.Message);
             }
 
-            var fixesList = JsonSerializer.Deserialize(fixesJson, FixesListContext.Default.ListFixesList);
+            _sharedFixes = result.ResultObject!.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
 
-            if (fixesList is null)
-            {
-                _logger.Error("Error while deserializing fixes...");
-                ThrowHelper.Exception("Error while deserializing fixes");
-            }
-
-            _sharedFixes = fixesList.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
-
-            return [.. fixesList];
+            return new(ResultEnum.Success, [.. result.ResultObject!], string.Empty);
         }
 
         public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
@@ -66,26 +58,16 @@ namespace ClientCommon.Providers
         {
             _logger.Info("Requesting online fixes");
 
-            var str = await _httpClient.GetStringAsync($"{ApiProperties.ApiUrl}/fixes/{guid}").ConfigureAwait(false);
-            var result = bool.TryParse(str, out var doesExist);
+            var result = await _apiInterface.CheckIfFixEsistsAsync(guid).ConfigureAwait(false);
 
-            return result ? doesExist : true;
+            return result.IsSuccess;
         }
 
         public async Task<Result> ChangeFixDisabledStateAsync(Guid fixGuid, bool isDeleted)
         {
-            Tuple<Guid, bool, string> message = new(fixGuid, isDeleted, _config.ApiPassword);
+            var result = await _apiInterface.ChangeFixStateAsync(fixGuid, isDeleted).ConfigureAwait(false);
 
-            var result = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/delete", message).ConfigureAwait(false);
-
-            if (result.IsSuccessStatusCode)
-            {
-                return new(ResultEnum.Success, $"Successfully {(isDeleted ? "deleted" : "restored")} fix");
-            }
-            else
-            {
-                return new(ResultEnum.Error, $"Error while {(isDeleted ? "deleting" : "restoring")} fix");
-            }
+            return result;
         }
 
         /// <summary>
@@ -103,23 +85,9 @@ namespace ClientCommon.Providers
                 return fileFixResult;
             }
 
-            var jsonStr = JsonSerializer.Serialize(
-                    fix,
-                    FixesListContext.Default.BaseFixEntity
-                    );
+            var result = await _apiInterface.AddFixToDbAsync(gameId, gameName, fix).ConfigureAwait(false);
 
-            Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
-
-            var result = await _httpClient.PostAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/add", message).ConfigureAwait(false);
-
-            if (result.IsSuccessStatusCode)
-            {
-                return new(ResultEnum.Success, $"Successfully added fix");
-            }
-            else
-            {
-                return new(ResultEnum.Error, $"Error while adding fix");
-            }
+            return result;
         }
 
         private Result PrepareFixes(BaseFixEntity fix)

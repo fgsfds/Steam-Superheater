@@ -1,4 +1,5 @@
-﻿using ClientCommon.FixTools;
+﻿using ClientCommon.API;
+using ClientCommon.FixTools;
 using ClientCommon.FixTools.FileFix;
 using ClientCommon.FixTools.HostsFix;
 using ClientCommon.FixTools.RegistryFix;
@@ -32,6 +33,7 @@ namespace ClientCommon.DI
             container.AddSingleton<FilesUploader>();
             container.AddSingleton<SteamTools>();
             container.AddSingleton<Logger>();
+            container.AddSingleton<ApiInterface>();
         }
 
         private static HttpClient CreateHttpClient(IServiceProvider provider)

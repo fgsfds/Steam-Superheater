@@ -7,11 +7,6 @@ namespace ClientCommon
     /// </summary>
     public sealed class ProgressReport
     {
-        public ProgressReport()
-        {
-            Progress = new Progress<float>();
-        }
-
         /// <summary>
         /// Progress value
         /// </summary>
@@ -36,6 +31,12 @@ namespace ClientCommon
 
         public delegate void OperationMessageChanged(string message);
         public event OperationMessageChanged NotifyOperationMessageChanged;
+
+
+        public ProgressReport()
+        {
+            Progress = new Progress<float>();
+        }
     }
 
     /// <summary>

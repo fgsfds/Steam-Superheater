@@ -1,3 +1,4 @@
+using ClientCommon.API;
 using ClientCommon.Config;
 using ClientCommon.DI;
 using ClientCommon.FixTools;
@@ -54,6 +55,7 @@ namespace Tests
             container.AddScoped<ConfigProvider>();
             container.AddScoped<InstalledFixesProvider>();
             container.AddScoped<FixesProvider>();
+            container.AddScoped<ApiInterface>();
             CommonBindings.Load(container);
 
             _rootDirectory = Directory.GetCurrentDirectory();

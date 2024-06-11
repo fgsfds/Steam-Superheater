@@ -1,4 +1,5 @@
-﻿using ClientCommon.Config;
+﻿using ClientCommon.API;
+using ClientCommon.Config;
 using ClientCommon.FixTools;
 using ClientCommon.Providers;
 using Common;
@@ -9,23 +10,16 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.Net.Http.Json;
 
 namespace ClientCommon.Models
 {
-    public sealed class MainModel(
-        ConfigProvider configProvider,
-        CombinedEntitiesProvider combinedEntitiesProvider,
-        FixManager fixManager,
-        HttpClient httpClient,
-        Logger logger
-        )
+    public sealed class MainModel
     {
-        private readonly ConfigEntity _config = configProvider.Config;
-        private readonly CombinedEntitiesProvider _combinedEntitiesProvider = combinedEntitiesProvider;
-        private readonly FixManager _fixManager = fixManager;
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly Logger _logger = logger;
+        private readonly ConfigEntity _config;
+        private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
+        private readonly FixManager _fixManager;
+        private readonly ApiInterface _apiInterface;
+        private readonly Logger _logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
@@ -33,64 +27,75 @@ namespace ClientCommon.Models
 
         public bool HasUpdateableGames => UpdateableGamesCount > 0;
 
+
+        public MainModel(
+            ConfigProvider configProvider,
+            CombinedEntitiesProvider combinedEntitiesProvider,
+            FixManager fixManager,
+            ApiInterface apiInterface,
+            Logger logger
+            )
+        {
+            _config = configProvider.Config;
+            _combinedEntitiesProvider = combinedEntitiesProvider;
+            _fixManager = fixManager;
+            _apiInterface = apiInterface;
+            _logger = logger;
+        }
+
+
         /// <summary>
         /// Update list of games either from cache or by downloading fixes.xml from repo
         /// </summary>
         public async Task<Result> UpdateGamesListAsync()
         {
-            try
+            var result = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync().ConfigureAwait(false);
+
+            if (!result.IsSuccess)
             {
-                var games = await _combinedEntitiesProvider.GetFixFirstEntitiesAsync().ConfigureAwait(false);
+                return new(result.ResultEnum, result.Message);
+            }
 
-                foreach (var game in games.ToArray())
+            var games = result.ResultObject!;
+
+            foreach (var game in games.ToArray())
+            {
+                //remove uninstalled games
+                if (!_config.ShowUninstalledGames &&
+                    !game.IsGameInstalled)
                 {
-                    //remove uninstalled games
-                    if (!_config.ShowUninstalledGames &&
-                        !game.IsGameInstalled)
+                    games.Remove(game);
+                }
+
+                foreach (var fix in game.FixesList.Fixes.ToArray())
+                {
+                    //remove fixes with hidden tags
+                    if (fix.Tags is not null &&
+                        fix.Tags.Count != 0 &&
+                        fix.Tags.All(_config.HiddenTags.Contains))
                     {
-                        games.Remove(game);
+                        game.FixesList.Fixes.Remove(fix);
+                        continue;
                     }
 
-                    foreach (var fix in game.FixesList.Fixes.ToArray())
+                    //remove fixes for different OSes
+                    if (!_config.ShowUnsupportedFixes &&
+                        !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
                     {
-                        //remove fixes with hidden tags
-                        if (fix.Tags is not null &&
-                            fix.Tags.Count != 0 &&
-                            fix.Tags.All(_config.HiddenTags.Contains))
-                        {
-                            game.FixesList.Fixes.Remove(fix);
-                            continue;
-                        }
-
-                        //remove fixes for different OSes
-                        if (!_config.ShowUnsupportedFixes &&
-                            !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
-                        {
-                            game.FixesList.Fixes.Remove(fix);
-                        }
-                    }
-
-                    //remove games with no shown fixes
-                    if (!game.FixesList.Fixes.Exists(static x => !x.IsHidden))
-                    {
-                        games.Remove(game);
+                        game.FixesList.Fixes.Remove(fix);
                     }
                 }
 
-                _combinedEntitiesList = [.. games];
+                //remove games with no shown fixes
+                if (!game.FixesList.Fixes.Exists(static x => !x.IsHidden))
+                {
+                    games.Remove(game);
+                }
+            }
 
-                return new(ResultEnum.Success, "Games list updated successfully");
-            }
-            catch (Exception ex) when (ex is FileNotFoundException or DirectoryNotFoundException)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.NotFound, "File not found: " + ex.Message);
-            }
-            catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
-            {
-                _logger.Error(ex.Message);
-                return new(ResultEnum.ConnectionError, "API is not responding");
-            }
+            _combinedEntitiesList = [.. games];
+
+            return new(ResultEnum.Success, "Games list updated successfully");
         }
 
         /// <summary>
@@ -281,8 +286,10 @@ namespace ClientCommon.Models
         /// <param name="game">Game entity</param>
         /// <param name="fix">Fix to delete</param>
         /// <returns>Result message</returns>
-        public Result UninstallFix(GameEntity game, BaseFixEntity fix) =>
-            _fixManager.UninstallFix(game, fix);
+        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
+        {
+            return _fixManager.UninstallFix(game, fix);
+        }
 
         /// <summary>
         /// Update fix
@@ -306,10 +313,9 @@ namespace ClientCommon.Models
             _config.HiddenTags = tags;
         }
 
-        public async Task<int> ChangeVoteAsync(BaseFixEntity fix, bool needTpUpvote)
+        public async Task<Result<int?>> ChangeVoteAsync(BaseFixEntity fix, bool needTpUpvote)
         {
             sbyte increment = 0;
-
 
             var doesEntryExist = _config.Upvotes.TryGetValue(fix.Guid, out var isUpvote);
 
@@ -318,22 +324,18 @@ namespace ClientCommon.Models
                 if (isUpvote && needTpUpvote)
                 {
                     increment = -1;
-                    _config.Upvotes.Remove(fix.Guid);
                 }
                 else if (isUpvote && !needTpUpvote)
                 {
                     increment = -2;
-                    _config.Upvotes[fix.Guid] = false;
                 }
                 else if (!isUpvote && needTpUpvote)
                 {
                     increment = 2;
-                    _config.Upvotes[fix.Guid] = true;
                 }
                 else if (!isUpvote && !needTpUpvote)
                 {
                     increment = 1;
-                    _config.Upvotes.Remove(fix.Guid);
                 }
             }
             else
@@ -341,47 +343,69 @@ namespace ClientCommon.Models
                 if (needTpUpvote)
                 {
                     increment = 1;
-                    _config.Upvotes.Add(fix.Guid, true);
                 }
                 else
                 {
                     increment = -1;
-                    _config.Upvotes.Add(fix.Guid, false);
                 }
             }
 
-            _config.ForceUpdateConfig();
+            var response = await _apiInterface.ChangeScoreAsync(fix.Guid, increment).ConfigureAwait(false);
 
-            using var response = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(fix.Guid, increment)).ConfigureAwait(false);
-            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            if (response.IsSuccess)
+            {
+                fix.Score = response.ResultObject;
 
-            var newScore = int.TryParse(responseStr, out var newScoreInt);
+                if (doesEntryExist)
+                {
+                    if (isUpvote && needTpUpvote)
+                    {
+                        _config.Upvotes.Remove(fix.Guid);
+                    }
+                    else if (isUpvote && !needTpUpvote)
+                    {
+                        _config.Upvotes[fix.Guid] = false;
+                    }
+                    else if (!isUpvote && needTpUpvote)
+                    {
+                        _config.Upvotes[fix.Guid] = true;
+                    }
+                    else if (!isUpvote && !needTpUpvote)
+                    {
+                        _config.Upvotes.Remove(fix.Guid);
+                    }
+                }
+                else
+                {
+                    if (needTpUpvote)
+                    {
+                        _config.Upvotes.Add(fix.Guid, true);
+                    }
+                    else
+                    {
+                        _config.Upvotes.Add(fix.Guid, false);
+                    }
+                }
+            }
 
-            fix.Score = newScoreInt;
-
-            return newScoreInt;
+            return response;
         }
 
-        public async Task<int> IncreaseInstalls(BaseFixEntity fix)
+        public async Task IncreaseInstalls(BaseFixEntity fix)
         {
             if (ClientProperties.IsDeveloperMode)
             {
-                return fix.Installs ?? 0;
+                return;
             }
 
-            using var response = await _httpClient.PutAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/installs/add", fix.Guid).ConfigureAwait(false);
-            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var result = await _apiInterface.AddNumberOfInstallsAsync(fix.Guid).ConfigureAwait(false);
 
-            int.TryParse(responseStr, out var newInstallsInt);
+            if (!result.IsSuccess)
+            {
+                return;
+            }
 
-            fix.Installs = newInstallsInt;
-
-            return newInstallsInt;
-        }
-
-        public async Task ReportFix(BaseFixEntity fix, string reportText)
-        {
-            using var response = await _httpClient.PostAsJsonAsync($"{ApiProperties.ApiUrl}/fixes/report", new Tuple<Guid, string>(fix.Guid, reportText)).ConfigureAwait(false);
+            fix.Installs = result.ResultObject;
         }
     }
 }

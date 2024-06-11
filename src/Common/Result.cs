@@ -5,31 +5,33 @@ namespace Common
     /// <summary>
     /// Operation result
     /// </summary>
-    public readonly struct Result(
-        ResultEnum resultEnum,
-        string message,
-        List<object>? results = null
-        )
+    public readonly struct Result
     {
         /// <summary>
         /// Operation result enum
         /// </summary>
-        private readonly ResultEnum ResultEnum = resultEnum;
+        public readonly ResultEnum ResultEnum;
 
         /// <summary>
         /// Operation result message
         /// </summary>
-        public readonly string Message = message;
+        public readonly string Message;
 
         /// <summary>
         /// Is operation successful
         /// </summary>
         public bool IsSuccess => ResultEnum is ResultEnum.Success;
 
-        /// <summary>
-        /// List of objects to return
-        /// </summary>
-        public readonly List<object>? Results = results;
+
+        public Result(
+            ResultEnum resultEnum,
+            string message
+            )
+        {
+            ResultEnum = resultEnum;
+            Message = message;
+        }
+
 
         public override bool Equals(object? obj)
         {
@@ -62,6 +64,74 @@ namespace Common
         }
     }
 
+
+    /// <summary>
+    /// Operation result with return object
+    /// </summary>
+    public readonly struct Result<T>
+    {
+        /// <summary>
+        /// Operation result enum
+        /// </summary>
+        public readonly ResultEnum ResultEnum;
+
+        /// <summary>
+        /// Operation result message
+        /// </summary>
+        public readonly string Message;
+
+        public readonly T? ResultObject;
+
+        /// <summary>
+        /// Is operation successful
+        /// </summary>
+        public bool IsSuccess => ResultEnum is ResultEnum.Success;
+
+
+        public Result(
+            ResultEnum resultEnum,
+            T? resultObj,
+            string message
+            )
+        {
+            ResultEnum = resultEnum;
+            Message = message;
+            ResultObject = resultObj;
+        }
+
+
+        public override bool Equals(object? obj)
+        {
+            switch (obj)
+            {
+                case Result<T> result:
+                    return ResultEnum == result.ResultEnum;
+                case ResultEnum resultE:
+                    return ResultEnum == resultE;
+                default:
+                    ThrowHelper.ArgumentException($"Can't compare Result to {obj?.GetType()}");
+                    return false;
+            }
+        }
+
+        public static bool operator ==(Result<T> obj1, ResultEnum obj2)
+        {
+            return obj1.ResultEnum == obj2;
+        }
+
+        public static bool operator !=(Result<T> obj1, ResultEnum obj2)
+        {
+            return obj1.ResultEnum != obj2;
+        }
+
+        public override int GetHashCode()
+        {
+            ThrowHelper.NotImplementedException(string.Empty);
+            return 0;
+        }
+    }
+
+
     public enum ResultEnum : byte
     {
         /// <summary>
@@ -87,11 +157,6 @@ namespace Common
         /// <summary>
         /// General error
         /// </summary>
-        Error,
-        /// <summary>
-        /// Backwards compatibility error
-        /// </summary>
-        [Obsolete("Remove in version 1.0")]
-        BackwardsCompatibility
+        Error
     }
 }

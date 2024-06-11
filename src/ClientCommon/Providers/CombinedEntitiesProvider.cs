@@ -1,4 +1,5 @@
-﻿using Common.Entities.CombinedEntities;
+﻿using Common;
+using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes.FileFix;
 
 namespace ClientCommon.Providers
@@ -16,16 +17,22 @@ namespace ClientCommon.Providers
         /// <summary>
         /// Get list of combined entities with fixes list being main entity
         /// </summary>
-        public async Task<List<FixFirstCombinedEntity>> GetFixFirstEntitiesAsync()
+        public async Task<Result<List<FixFirstCombinedEntity>?>> GetFixFirstEntitiesAsync()
         {
             var fixesLists = await _fixesProvider.GetFixesListAsync().ConfigureAwait(false);
+
+            if (!fixesLists.IsSuccess)
+            {
+                return new(fixesLists.ResultEnum, null, fixesLists.Message);
+            }
+
             var sharedFixes = _fixesProvider.GetSharedFixes();
             var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
             var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);
 
-            List<FixFirstCombinedEntity> result = new(fixesLists.Count - 1);
+            List<FixFirstCombinedEntity> result = new(fixesLists.ResultObject!.Count - 1);
 
-            foreach (var fixesList in fixesLists)
+            foreach (var fixesList in fixesLists.ResultObject)
             {
                 if (fixesList.GameId == 0)
                 {
@@ -68,7 +75,7 @@ namespace ClientCommon.Providers
 
             result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
 
-            return result;
+            return new(ResultEnum.Success, result, string.Empty);
         }
     }
 }
