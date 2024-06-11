@@ -1,4 +1,5 @@
 ﻿using Common.Helpers;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common
 {
@@ -73,14 +74,18 @@ namespace Common
         /// <summary>
         /// Operation result enum
         /// </summary>
-        public readonly ResultEnum ResultEnum;
+        public readonly ResultEnum ResultEnum { get; init; }
 
         /// <summary>
         /// Operation result message
         /// </summary>
-        public readonly string Message;
+        public readonly string Message { get; init; }
 
-        public readonly T? ResultObject;
+        /// <summary>
+        /// Operation result object
+        /// </summary>
+        [MemberNotNullWhen(returnValue: true, nameof(IsSuccess))]
+        public readonly T? ResultObject { get; init; }
 
         /// <summary>
         /// Is operation successful
@@ -143,7 +148,7 @@ namespace Common
         /// </summary>
         MD5Error,
         /// <summary>
-        /// File or directory not found
+        /// Something not found
         /// </summary>
         NotFound,
         /// <summary>

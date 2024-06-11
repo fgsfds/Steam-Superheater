@@ -1,6 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
-using ClientCommon.DI;
+using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
 using Superheater.Avalonia.Core.ViewModels.Popups;

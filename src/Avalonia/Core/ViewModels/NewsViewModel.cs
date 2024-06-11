@@ -1,6 +1,6 @@
-﻿using ClientCommon;
-using ClientCommon.Config;
-using ClientCommon.Models;
+﻿using Common.Client;
+using Common.Client.Config;
+using Common.Client.Models;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

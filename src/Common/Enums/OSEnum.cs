@@ -1,5 +1,4 @@
 ﻿using Common.Helpers;
-using System.Runtime.InteropServices;
 
 namespace Common.Enums
 {
@@ -27,11 +26,11 @@ namespace Common.Enums
         /// </summary>
         public static OSEnum GetCurrentOSEnum()
         {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 return OSEnum.Windows;
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 return OSEnum.Linux;
             }

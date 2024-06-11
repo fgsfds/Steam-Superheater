@@ -1,8 +1,8 @@
 using Avalonia.Input.Platform;
-using ClientCommon;
-using ClientCommon.API;
-using ClientCommon.Config;
-using ClientCommon.Models;
+using Common.Client;
+using Common.Client.API;
+using Common.Client.Config;
+using Common.Client.Models;
 using Common;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;

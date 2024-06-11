@@ -1,7 +1,7 @@
-using ClientCommon.Config;
-using ClientCommon.DI;
-using ClientCommon.FixTools;
-using ClientCommon.Providers;
+using Common.Client.Config;
+using Common.Client.DI;
+using Common.Client.FixTools;
+using Common.Client.Providers;
 using Common;
 using Common.Entities;
 using Common.Entities.Fixes.FileFix;

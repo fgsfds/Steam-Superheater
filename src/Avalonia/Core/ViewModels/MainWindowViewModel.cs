@@ -1,5 +1,5 @@
-using ClientCommon;
-using ClientCommon.Config;
+using Common.Client;
+using Common.Client.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 

@@ -1,8 +1,8 @@
-﻿using ClientCommon;
-using ClientCommon.API;
-using ClientCommon.Config;
-using ClientCommon.DI;
-using ClientCommon.Providers;
+﻿using Common.Client;
+using Common.Client.API;
+using Common.Client.Config;
+using Common.Client.DI;
+using Common.Client.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests

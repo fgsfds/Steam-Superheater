@@ -1,4 +1,4 @@
-using ClientCommon;
+using Common.Client;
 using Common;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;

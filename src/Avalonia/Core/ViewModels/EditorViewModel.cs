@@ -1,7 +1,7 @@
 ﻿using Avalonia.Platform.Storage;
-using ClientCommon;
-using ClientCommon.Config;
-using ClientCommon.Models;
+using Common.Client;
+using Common.Client.Config;
+using Common.Client.Models;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
