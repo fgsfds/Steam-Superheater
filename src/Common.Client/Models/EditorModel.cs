@@ -1,5 +1,4 @@
 ﻿using Common.Client.Providers;
-using Common;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -18,7 +17,6 @@ namespace Common.Client.Models
         private readonly FixesProvider _fixesProvider;
         private readonly GamesProvider _gamesProvider;
         private readonly FilesUploader _filesUploader;
-        private readonly Logger _logger;
 
         private List<FixesList> _fixesList = [];
         private List<GameEntity> _availableGamesList = [];
@@ -27,14 +25,12 @@ namespace Common.Client.Models
         public EditorModel(
             FixesProvider fixesProvider,
             GamesProvider gamesProvider,
-            FilesUploader filesUploader,
-            Logger logger
+            FilesUploader filesUploader
             )
         {
             _fixesProvider = fixesProvider;
             _gamesProvider = gamesProvider;
             _filesUploader = filesUploader;
-            _logger = logger;
         }
 
 
@@ -50,7 +46,7 @@ namespace Common.Client.Models
                 return new(result.ResultEnum, result.Message);
             }
 
-            _fixesList = [.. result.ResultObject];
+            _fixesList = result.ResultObject;
 
             await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
 
@@ -63,9 +59,7 @@ namespace Common.Client.Models
         /// <param name="search">Search string</param>
         public ImmutableList<FixesList> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            List<FixesList> result = [.. _fixesList];
-
-            foreach (var entity in result.ToArray())
+            foreach (var entity in _fixesList)
             {
                 foreach (var fix in entity.Fixes)
                 {
@@ -76,14 +70,14 @@ namespace Common.Client.Models
             if (string.IsNullOrEmpty(search) &&
                 string.IsNullOrEmpty(tag))
             {
-                return [.. result];
+                return [.. _fixesList];
             }
 
             if (!string.IsNullOrEmpty(tag))
             {
                 if (!tag.Equals(Consts.All))
                 {
-                    foreach (var entity in result.ToArray())
+                    foreach (var entity in _fixesList)
                     {
                         foreach (var fix in entity.Fixes)
                         {
@@ -100,32 +94,22 @@ namespace Common.Client.Models
                                 fix.IsHidden = true;
                             }
                         }
-
-                        if (!entity.Fixes.Exists(static x => !x.IsHidden))
-                        {
-                            result.Remove(entity);
-                        }
                     }
                 }
             }
 
             if (search is null)
             {
-                return [.. result];
+                return [.. _fixesList.Where(static x => !x.IsEmpty)];
             }
 
-            return [.. result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
+            return [.. _fixesList.Where(x => !x.IsEmpty && x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
         }
 
         /// <summary>
         /// Get list of fixes optionally filtered by a search string
         /// </summary>
         public ImmutableList<GameEntity> GetAvailableGamesList() => [.. _availableGamesList];
-
-        /// <summary>
-        /// Get list of fixes optionally filtered by a search string
-        /// </summary>
-        public ImmutableList<FileFixEntity> GetSharedFixesList() => _fixesProvider.GetSharedFixes();
 
         /// <summary>
         /// Add new game with empty fix
@@ -142,8 +126,6 @@ namespace Common.Client.Models
             };
 
             _fixesList.Add(newFix);
-
-            _fixesList = [.. _fixesList.OrderBy(static x => x.GameName)];
 
             _availableGamesList.Remove(game);
 
@@ -177,17 +159,6 @@ namespace Common.Client.Models
             {
                 fix.IsDisabled = isDisabled;
             }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Save list of fixes to XML
-        /// </summary>
-        /// <param name="fix"></param>
-        public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
-        {
-            var result = await _fixesProvider.AddFixToDbAsync(gameId, gameName, fix).ConfigureAwait(false);
 
             return result;
         }
@@ -286,17 +257,7 @@ namespace Common.Client.Models
 
             File.Delete(fixFilePath);
 
-            if (result == ResultEnum.Success)
-            {
-                return new(ResultEnum.Success, """
-                    Fix successfully uploaded.
-                    It will be added to the database after developer's review.
-
-                    Thank you.
-                    """);
-            }
-
-            return new(ResultEnum.Error, result.Message);
+            return result;
         }
 
         /// <summary>
@@ -308,7 +269,13 @@ namespace Common.Client.Models
 
             if (doesFixExists)
             {
-                return new(ResultEnum.Error, $"Can't upload fix.{Environment.NewLine}{Environment.NewLine}This fix already exists in the database.");
+                return new(
+                    ResultEnum.Error, 
+                    """
+                    Can't upload fix.
+                    
+                    This fix already exists in the database.
+                    """);
             }
 
             if (string.IsNullOrEmpty(fix.Name) ||
@@ -328,7 +295,13 @@ namespace Common.Client.Models
 
                 if (new FileInfo(fileFix.Url).Length > 1e+9)
                 {
-                    return new(ResultEnum.Error, $"Can't upload file larger than 1Gb.{Environment.NewLine}{Environment.NewLine}Please, upload it to file hosting.");
+                    return new(
+                        ResultEnum.Error,
+                        """
+                        Can't upload file larger than 1Gb.
+                        
+                        Please, upload it to file hosting.
+                        """);
                 }
             }
 
@@ -343,7 +316,14 @@ namespace Common.Client.Models
 
         public void RemoveDependencyForFix(BaseFixEntity addTo, BaseFixEntity dependency)
         {
-            addTo.Dependencies?.Remove(dependency.Guid);
+            addTo.Dependencies.ThrowIfNull();
+
+            addTo.Dependencies.Remove(dependency.Guid);
+
+            if (addTo.Dependencies.Count == 0)
+            {
+                addTo.Dependencies = null;
+            }
         }
 
         /// <summary>
@@ -404,8 +384,7 @@ namespace Common.Client.Models
         /// Add new fix from a fix json
         /// </summary>
         /// <param name="pathToFile">Path to json</param>
-        /// <returns>Results: [0]: Game id, [1] New fix GUID</returns>
-        public Result AddFixFromFile(string pathToFile, out int? newFixGameId, out Guid? newFixGuid)
+        public Result<Tuple<int, Guid>?> AddFixFromFile(string pathToFile)
         {
             try
             {
@@ -424,16 +403,14 @@ namespace Common.Client.Models
                     _fixesList.Add(newFix);
                 }
 
-                newFixGameId = newFix.GameId;
-                newFixGuid = newFix.Fixes.Last().Guid;
+                var newFixGameId = newFix.GameId;
+                var newFixGuid = newFix.Fixes.Last().Guid;
 
-                return new(ResultEnum.Success, string.Empty);
+                return new(ResultEnum.Success, new(newFixGameId, newFixGuid), string.Empty);
             }
             catch (Exception ex)
             {
-                newFixGameId = null;
-                newFixGuid = null;
-                return new(ResultEnum.Error, ex.Message);
+                return new(ResultEnum.Error, null, ex.Message);
             }
         }
     }

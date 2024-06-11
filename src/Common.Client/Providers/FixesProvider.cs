@@ -1,12 +1,9 @@
 ﻿using Common.Client.API;
 using Common.Client.Config;
-using Common;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Collections.Immutable;
-using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace Common.Client.Providers
 {
@@ -32,7 +29,7 @@ namespace Common.Client.Providers
         /// <summary>
         /// Get cached fixes list from online or local repo or create new cache if it wasn't created yet
         /// </summary>
-        public async Task<Result<ImmutableList<FixesList>>> GetFixesListAsync()
+        public async Task<Result<List<FixesList>>> GetFixesListAsync()
         {
             _logger.Info("Creating fixes cache");
 
@@ -45,7 +42,7 @@ namespace Common.Client.Providers
 
             _sharedFixes = result.ResultObject!.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
 
-            return new(ResultEnum.Success, [.. result.ResultObject!], string.Empty);
+            return new(ResultEnum.Success, result.ResultObject, string.Empty);
         }
 
         public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;

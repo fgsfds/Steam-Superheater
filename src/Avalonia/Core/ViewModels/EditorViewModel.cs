@@ -2,6 +2,7 @@
 using Common.Client;
 using Common.Client.Config;
 using Common.Client.Models;
+using Common.Client.Providers;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -26,6 +27,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
 
         private readonly EditorModel _editorModel;
+        private readonly FixesProvider _fixesProvider;
         private readonly ConfigEntity _config;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
@@ -48,7 +50,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+        public ImmutableList<FileFixEntity> SharedFixesList => _fixesProvider.GetSharedFixes();
 
         public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
@@ -479,6 +481,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public EditorViewModel(
             EditorModel editorModel,
+            FixesProvider fixesProvider,
             ConfigProvider config,
             PopupEditorViewModel popupEditor,
             PopupMessageViewModel popupMessage,
@@ -487,6 +490,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             )
         {
             _editorModel = editorModel;
+            _fixesProvider = fixesProvider;
             _config = config.Config;
             _popupEditor = popupEditor;
             _popupMessage = popupMessage;
@@ -546,7 +550,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedFix.ThrowIfNull();
 
-            var result = await _editorModel.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
+            var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
             _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",
@@ -677,11 +681,28 @@ namespace Superheater.Avalonia.Core.ViewModels
             ProgressBarText = string.Empty;
             LockButtons = false;
 
-            _popupMessage.Show(
-                    result.IsSuccess ? "Success" : "Error",
+            if (result.IsSuccess)
+            {
+                _popupMessage.Show(
+                    "Success",
+                    """
+                    Fix successfully uploaded.
+                    It will be added to the database after developer's review.
+
+                    Thank you.
+                    """,
+                    PopupMessageType.OkOnly
+                    );
+            }
+            else
+            {
+                _popupMessage.Show(
+                    "Error",
                     result.Message,
                     PopupMessageType.OkOnly
                     );
+            }
+
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
 
@@ -925,24 +946,25 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 Title = "Choose fix file",
                 AllowMultiple = false
-            }).ConfigureAwait(true);
+            }
+            ).ConfigureAwait(true);
 
             if (files.Count == 0)
             {
                 return;
             }
 
-            var result = _editorModel.AddFixFromFile(files[0].Path.LocalPath, out var newFixGameId, out var newFixGuid);
+            var result = _editorModel.AddFixFromFile(files[0].Path.LocalPath);
 
             if (result.IsSuccess)
             {
                 OnPropertyChanged(nameof(FilteredGamesList));
 
-                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == newFixGameId);
+                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == result.ResultObject.Item1);
                 SelectedGame = game;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
 
-                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == newFixGuid);
+                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == result.ResultObject.Item2);
                 SelectedFix = fix;
             }
         }

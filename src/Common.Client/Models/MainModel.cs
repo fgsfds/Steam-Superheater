@@ -2,7 +2,6 @@
 using Common.Client.Config;
 using Common.Client.FixTools;
 using Common.Client.Providers;
-using Common;
 using Common.Entities;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
@@ -19,7 +18,6 @@ namespace Common.Client.Models
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
         private readonly FixManager _fixManager;
         private readonly ApiInterface _apiInterface;
-        private readonly Logger _logger;
 
         private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
@@ -32,15 +30,13 @@ namespace Common.Client.Models
             ConfigProvider configProvider,
             CombinedEntitiesProvider combinedEntitiesProvider,
             FixManager fixManager,
-            ApiInterface apiInterface,
-            Logger logger
+            ApiInterface apiInterface
             )
         {
             _config = configProvider.Config;
             _combinedEntitiesProvider = combinedEntitiesProvider;
             _fixManager = fixManager;
             _apiInterface = apiInterface;
-            _logger = logger;
         }
 
 

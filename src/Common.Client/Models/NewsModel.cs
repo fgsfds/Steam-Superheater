@@ -1,26 +1,31 @@
 ﻿using Common.Client.API;
 using Common.Client.Config;
-using Common;
 using Common.Entities;
 using System.Collections.Immutable;
 
 namespace Common.Client.Models
 {
-    public sealed class NewsModel(
-        ConfigProvider config,
-        ApiInterface newsProvider,
-        Logger logger
-        )
+    public sealed class NewsModel
     {
-        private readonly ConfigEntity _config = config.Config;
-        private readonly ApiInterface _newsProvider = newsProvider;
-        private readonly Logger _logger = logger;
+        private readonly ConfigEntity _config;
+        private readonly ApiInterface _newsProvider;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
 
         public bool HasUnreadNews => UnreadNewsCount > 0;
 
         public ImmutableList<NewsEntity> News = [];
+
+
+        public NewsModel(
+            ConfigProvider config,
+            ApiInterface newsProvider
+            )
+        {
+            _config = config.Config;
+            _newsProvider = newsProvider;
+        }
+
 
         /// <summary>
         /// Get list of news from online or local repo
@@ -42,13 +47,11 @@ namespace Common.Client.Models
         /// <summary>
         /// Mark all news as read
         /// </summary>
-        public async Task<Result> MarkAllAsReadAsync()
+        public void MarkAllAsRead()
         {
             UpdateConfigLastReadVersion();
 
-            var result = await UpdateNewsListAsync().ConfigureAwait(false);
-
-            return result;
+            UpdateReadStatusOfExistingNews();
         }
 
         /// <summary>
@@ -102,7 +105,7 @@ namespace Common.Client.Models
         /// <summary>
         /// Update last read date in config
         /// </summary>
-        public void UpdateConfigLastReadVersion()
+        private void UpdateConfigLastReadVersion()
         {
             var lastReadDate = News.Max(static x => x.Date);
 

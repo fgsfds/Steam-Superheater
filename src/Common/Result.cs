@@ -1,4 +1,5 @@
-﻿using Common.Helpers;
+﻿using Common.Entities.Fixes;
+using Common.Helpers;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Common
@@ -32,7 +33,6 @@ namespace Common
             ResultEnum = resultEnum;
             Message = message;
         }
-
 
         public override bool Equals(object? obj)
         {
@@ -84,12 +84,12 @@ namespace Common
         /// <summary>
         /// Operation result object
         /// </summary>
-        [MemberNotNullWhen(returnValue: true, nameof(IsSuccess))]
         public readonly T? ResultObject { get; init; }
 
         /// <summary>
         /// Is operation successful
         /// </summary>
+        [MemberNotNullWhen(returnValue: true, nameof(ResultObject))]
         public bool IsSuccess => ResultEnum is ResultEnum.Success;
 
 
