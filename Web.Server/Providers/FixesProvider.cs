@@ -6,6 +6,7 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -49,6 +50,7 @@ namespace Superheater.Web.Server.Providers
             Stopwatch sw = new();
             sw.Start();
 
+            //disposed later
             var dbContext = _dbContextFactory.Get();
 
             var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
@@ -693,6 +695,75 @@ namespace Superheater.Web.Server.Providers
             {
                 _isCheckFixesRunning = false;
             }
+        }
+
+        public FixesStats GetFixesStats()
+        {
+            using var dbContext = _dbContextFactory.Get();
+
+            var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToList();
+            List<FixesDbEntity> fixes = [];
+            List<string> noIntro = [];
+
+            foreach (var fix in dbContext.Fixes.AsNoTracking())
+            {
+                if (fix.Name.Equals("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    var game = games.First(x => x.Id == fix.GameId);
+                    noIntro.Add(game.Name);
+                }
+                else
+                {
+                    fixes.Add(fix);
+                }
+            }
+
+            int gamesCount = 0;
+            int fixesCount = 0;
+
+            FixesStats fixesStats = new FixesStats()
+            {
+                FixesLists = []
+            };
+
+            foreach (var game in games)
+            {
+                var fixesList = fixes.Where(x => x.GameId == game.Id).Select(x => x.Name);
+
+                if (!fixesList.Any())
+                {
+                    continue;
+                }
+
+                fixesStats.FixesLists.Add(new FixesLists
+                { 
+                    Game = game.Name, 
+                    Fixes = [.. fixesList]
+                });
+
+                gamesCount++;
+                fixesCount += fixesList.Count();
+            }
+
+            fixesStats.GamesCount = gamesCount;
+            fixesStats.FixesCount = fixesCount;
+            fixesStats.NoIntroFixes = [.. noIntro.OrderBy(x => x)];
+
+            return fixesStats;
+        }
+
+        public class FixesStats
+        {
+            public int GamesCount { get; set; }
+            public int FixesCount { get; set; }
+            public List<FixesLists> FixesLists { get; set; }
+            public List<string> NoIntroFixes { get; set; }
+        }
+
+        public class FixesLists
+        {
+            public string Game { get; set; }
+            public List<string> Fixes { get; set; }
         }
 
 

@@ -87,5 +87,9 @@ namespace Superheater.Web.Server.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden);
             }
         }
+
+
+        [HttpGet("stats")]
+        public FixesProvider.FixesStats GetFixesStats() => _fixesProvider.GetFixesStats();
     }
 }
