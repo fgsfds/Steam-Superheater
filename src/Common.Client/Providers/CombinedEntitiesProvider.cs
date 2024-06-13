@@ -25,7 +25,7 @@ namespace Common.Client.Providers
                 return new(fixesLists.ResultEnum, null, fixesLists.Message);
             }
 
-            var sharedFixes = _fixesProvider.GetSharedFixes();
+            var sharedFixes = _fixesProvider.SharedFixes;
             var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
             var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);
 

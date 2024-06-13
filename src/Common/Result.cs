@@ -1,5 +1,4 @@
-﻿using Common.Entities.Fixes;
-using Common.Helpers;
+﻿using Common.Helpers;
 using System.Diagnostics.CodeAnalysis;
 
 namespace Common

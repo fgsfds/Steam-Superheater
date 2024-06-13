@@ -1,6 +1,5 @@
 ﻿using Common.Client.API;
 using Common.Client.Config;
-using Common.Client.FixTools;
 using Common.Client.Providers;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;

@@ -2,7 +2,6 @@
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Common.Client.Providers;
-using Common;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;

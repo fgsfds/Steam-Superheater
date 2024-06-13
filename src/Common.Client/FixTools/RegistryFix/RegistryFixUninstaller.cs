@@ -3,7 +3,6 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.Win32;
-using System.Runtime.InteropServices;
 
 namespace Common.Client.FixTools.RegistryFix
 {

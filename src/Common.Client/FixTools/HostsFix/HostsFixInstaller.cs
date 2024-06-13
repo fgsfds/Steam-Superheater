@@ -1,10 +1,8 @@
-﻿using Common;
-using Common.Entities;
+﻿using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 
 namespace Common.Client.FixTools.HostsFix
 {

@@ -1,0 +1,26 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug-Linux" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Project Path="src\Avalonia\Core\Avalonia.Core.csproj" />
+  <Project Path="src\Avalonia\Desktop\Avalonia.Desktop.csproj" />
+  <Project Path="src\Common.Client\Common.Client.csproj" />
+  <Project Path="src\Common\Common.csproj" />
+  <Project Path="src\Telegram\Telegram.csproj">
+    <Configuration Solution="Debug-Linux|*" Project="Debug|*" />
+  </Project>
+  <Project Path="src\Tests\Tests.csproj" />
+  <Project Path="Web.Client\Web.Client.esproj" Type="{54A90642-561A-4BB1-A94E-469ADEE60C69}">
+    <Configuration Solution="*|*" Project="*|AnyCPU|Deploy" />
+    <Configuration Solution="*|Any CPU" Project="*|*|Deploy" />
+    <Configuration Solution="*|x64" Project="*|AnyCPU|Deploy" />
+    <Configuration Solution="Debug-Linux|*" Project="Debug|*" />
+  </Project>
+  <Project Path="Web.Server\Web.Server.csproj">
+    <Configuration Solution="Debug-Linux|*" Project="Debug|*" />
+  </Project>
+</Solution>

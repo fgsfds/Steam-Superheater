@@ -19,7 +19,7 @@ namespace Common.Client.Config
             _hiddenTags = [];
             _showUninstalledGames = true;
             _showUnsupportedFixes = false;
-            _upvotes = new();
+            _upvotes = [];
             _apiPassword = string.Empty;
         }
 

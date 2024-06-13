@@ -1,13 +1,10 @@
 ﻿using Common.Client.Config;
-using Common;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Octodiff.Core;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Runtime.Versioning;
 using System.Security.Cryptography;
 
 namespace Common.Client.FixTools.FileFix

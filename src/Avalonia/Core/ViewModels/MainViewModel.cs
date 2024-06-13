@@ -1,9 +1,10 @@
 using Avalonia.Input.Platform;
+using Common;
 using Common.Client;
 using Common.Client.API;
 using Common.Client.Config;
+using Common.Client.FixTools;
 using Common.Client.Models;
-using Common;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -16,7 +17,6 @@ using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Common.Client.FixTools;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {

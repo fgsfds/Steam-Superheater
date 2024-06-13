@@ -2,7 +2,6 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
-using System.Runtime.InteropServices;
 
 namespace Common.Client.FixTools.FileFix
 {
@@ -104,7 +103,7 @@ namespace Common.Client.FixTools.FileFix
             }
 
             //deleting files and adding folders to the list
-            List<string> directories = new();
+            List<string> directories = [];
             foreach (var file in fixFiles)
             {
                 var fullPath = Path.Combine(gameInstallDir, file);

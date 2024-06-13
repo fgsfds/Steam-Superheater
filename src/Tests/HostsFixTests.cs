@@ -7,7 +7,6 @@ using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.InteropServices;
 
 namespace Tests
 {

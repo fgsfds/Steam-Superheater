@@ -3,7 +3,6 @@ using Common.Entities;
 using Common.Enums;
 using Common.Helpers;
 using System.IO.Compression;
-using System.Runtime.InteropServices;
 
 namespace Common.Client
 {

@@ -22,10 +22,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
-        [ObservableProperty]
-        private string _selectedTagFilter;
-        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
-
         private readonly EditorModel _editorModel;
         private readonly FixesProvider _fixesProvider;
         private readonly ConfigEntity _config;
@@ -50,7 +46,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public ImmutableList<FileFixEntity> SharedFixesList => _fixesProvider.GetSharedFixes();
+        public ImmutableList<FileFixEntity> SharedFixesList => _fixesProvider.SharedFixes;
 
         public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
@@ -475,6 +471,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(CancelCommand))]
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         private bool _lockButtons;
+
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
 
         #endregion Binding Properties
 

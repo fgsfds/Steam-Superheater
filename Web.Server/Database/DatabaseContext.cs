@@ -111,7 +111,7 @@ namespace Web.Server.Database
 
 
                 //TAGS
-                List<TagsDbEntity> tags = new();
+                List<TagsDbEntity> tags = [];
 
                 foreach (var game in fixesList)
                 {
