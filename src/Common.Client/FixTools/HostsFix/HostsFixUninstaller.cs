@@ -15,7 +15,7 @@ namespace Common.Client.FixTools.HostsFix
         /// <param name="hostsFilePath">Path to hosts file</param>
         public void UninstallFix(BaseInstalledFixEntity installedFix, string hostsFilePath)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 ThrowHelper.PlatformNotSupportedException(string.Empty);
                 return;

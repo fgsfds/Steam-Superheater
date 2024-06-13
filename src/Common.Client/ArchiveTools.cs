@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Helpers;
+﻿using Common.Helpers;
 using SharpCompress.Archives;
 using System.Security.Cryptography;
 
@@ -8,15 +7,24 @@ namespace Common.Client
     /// <summary>
     /// Class for working with archives
     /// </summary>
-    public sealed class ArchiveTools (
-        ProgressReport progressReport, 
-        HttpClient httpClient,
-        Logger logger
-        )
+    public sealed class ArchiveTools
     {
-        private readonly ProgressReport _progressReport = progressReport;
-        private readonly HttpClient _httpClient = httpClient;
-        private readonly Logger _logger = logger;
+        private readonly ProgressReport _progressReport;
+        private readonly HttpClient _httpClient;
+        private readonly Logger _logger;
+
+
+        public ArchiveTools(
+            ProgressReport progressReport, 
+            HttpClient httpClient,
+            Logger logger
+        )
+        {
+            _progressReport = progressReport;
+            _httpClient = httpClient;
+            _logger = logger;
+        }
+
 
         /// <summary>
         /// Download ZIP
@@ -261,7 +269,7 @@ namespace Common.Client
 
             while (streamToTrack.CanSeek)
             {
-                var pos = ((float)streamToTrack.Position / (float)contentLength) * 100;
+                var pos = streamToTrack.Position / (float)contentLength * 100;
                 progress.Report(pos);
 
                 Thread.Sleep(50);

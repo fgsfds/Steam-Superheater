@@ -45,7 +45,7 @@ namespace Tests
 
         public HostsFixTests()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -85,7 +85,7 @@ namespace Tests
 
         public void Dispose()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -102,7 +102,7 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallFixTest()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }

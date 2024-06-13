@@ -879,7 +879,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                hostsFix.Entries = result.ToListOfString()!;
+                hostsFix.Entries = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixEntries));
             }
         }

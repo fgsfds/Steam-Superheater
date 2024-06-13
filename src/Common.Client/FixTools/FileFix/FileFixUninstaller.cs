@@ -41,7 +41,7 @@ namespace Common.Client.FixTools.FileFix
             List<string>? dllList)
         {
             if (dllList is null ||
-                !RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                !OperatingSystem.IsLinux())
             {
                 return;
             }

@@ -16,6 +16,7 @@ using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using Common.Client.FixTools;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
@@ -23,6 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         private readonly MainModel _mainModel;
         private readonly ApiInterface _apiInterface;
+        private readonly FixManager _fixManager;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
@@ -282,6 +284,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public MainViewModel(
             MainModel mainModel,
             ApiInterface apiInterface,
+            FixManager fixManager,
             ConfigProvider config,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor,
@@ -291,6 +294,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _mainModel = mainModel;
             _apiInterface = apiInterface;
+            _fixManager = fixManager;
             _config = config.Config;
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
@@ -386,7 +390,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = true;
 
-            var fixUninstallResult = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+            var fixUninstallResult = _fixManager.UninstallFix(SelectedGame.Game, SelectedFix);
 
             FillGamesList();
 
@@ -648,11 +652,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (isUpdate)
             {
-                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
+                result = await _fixManager.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
             else
             {
-                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
+                result = await _fixManager.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
 
             if (result == ResultEnum.MD5Error)
@@ -667,7 +671,7 @@ Do you still want to install the fix?",
 
                 if (popupResult)
                 {
-                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true, cancellationToken).ConfigureAwait(true);
+                    result = await _fixManager.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true, cancellationToken).ConfigureAwait(true);
                 }
             }
 

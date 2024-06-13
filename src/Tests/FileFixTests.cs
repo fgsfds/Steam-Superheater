@@ -22,7 +22,7 @@ namespace Tests
         {
             get
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return "\\\\";
                 }

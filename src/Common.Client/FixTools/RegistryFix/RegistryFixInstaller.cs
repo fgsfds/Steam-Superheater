@@ -25,7 +25,7 @@ namespace Common.Client.FixTools.RegistryFix
         /// <returns>Installed fix entity</returns>
         public Result<BaseInstalledFixEntity> InstallFix(GameEntity game, RegistryFixEntity fix)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return ThrowHelper.PlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
             }

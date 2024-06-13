@@ -19,7 +19,7 @@ namespace Common.Client.FixTools.HostsFix
         /// <returns>Installed fix entity</returns>
         public Result<BaseInstalledFixEntity> InstallFix(GameEntity game, HostsFixEntity fix, string hostsFilePath)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return ThrowHelper.PlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
             }

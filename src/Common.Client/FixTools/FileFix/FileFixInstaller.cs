@@ -93,7 +93,7 @@ namespace Common.Client.FixTools.FileFix
                 Version = fix.Version,
                 BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
                 FilesList = filesUnpackResult.ResultObject,
-                InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject!,
+                InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
                 WineDllOverrides = dllOverrides
             };
 

@@ -1,7 +1,6 @@
 ﻿using Common.Helpers;
 using System.Diagnostics;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Security.Principal;
 
 namespace Common.Client
@@ -29,11 +28,11 @@ namespace Common.Client
         {
             get
             {
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                if (OperatingSystem.IsWindows())
                 {
                     return Process.GetCurrentProcess().MainModule?.ModuleName ?? "Superheater.exe";
                 }
-                else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+                else if (OperatingSystem.IsLinux())
                 {
                     return AppDomain.CurrentDomain.FriendlyName;
                 }
@@ -48,7 +47,7 @@ namespace Common.Client
         /// <summary>
         /// Is app run with admin privileges
         /// </summary>
-        public static bool IsAdmin => RuntimeInformation.IsOSPlatform(OSPlatform.Windows) &&
+        public static bool IsAdmin => OperatingSystem.IsWindows() &&
                                       new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Common.Client
         /// </summary>
         private static bool CheckDeckGameMode()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            if (!OperatingSystem.IsLinux())
             {
                 return false;
             }
@@ -89,12 +88,8 @@ namespace Common.Client
 
             proc.WaitForExit();
 
-            //Logger.Info($"DESKTOP_SESSION result {result}");
-
             if (result.StartsWith("gamescope-wayland"))
             {
-                //.Info("Steam game mode detected");
-
                 _isSteamDeckGameMode = true;
             }
             else

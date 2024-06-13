@@ -1,5 +1,4 @@
 ﻿using Common.Client.API;
-using Common.Client.Config;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
@@ -9,21 +8,18 @@ namespace Common.Client.Providers
 {
     public sealed class FixesProvider
     {
-        private ImmutableList<FileFixEntity> _sharedFixes;
-        private readonly ConfigEntity _config;
+        public ImmutableList<FileFixEntity> SharedFixes { get; private set; } = [];
+
         private readonly ApiInterface _apiInterface;
         private readonly Logger _logger;
 
         public FixesProvider(
-            ConfigProvider config,
             ApiInterface apiInterface,
             Logger logger
             )
         {
-            _config = config.Config;
             _apiInterface = apiInterface;
             _logger = logger;
-            _sharedFixes = [];
         }
 
         /// <summary>
@@ -40,12 +36,10 @@ namespace Common.Client.Providers
                 return new(result.ResultEnum, null, result.Message);
             }
 
-            _sharedFixes = result.ResultObject!.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
+            SharedFixes = result.ResultObject.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
 
             return new(ResultEnum.Success, result.ResultObject, string.Empty);
         }
-
-        public ImmutableList<FileFixEntity> GetSharedFixes() => _sharedFixes;
 
         /// <summary>
         /// Check if fix with the same GUID already exists in the database

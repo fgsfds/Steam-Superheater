@@ -15,7 +15,7 @@ namespace Common.Client.FixTools.RegistryFix
         /// <param name="installedFix">Fix entity</param>
         public void UninstallFix(BaseInstalledFixEntity installedFix)
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 ThrowHelper.PlatformNotSupportedException(string.Empty);
                 return;

@@ -2,7 +2,6 @@
 using Common.Client.Config;
 using Common.Client.FixTools;
 using Common.Client.Providers;
-using Common.Entities;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -16,10 +15,9 @@ namespace Common.Client.Models
     {
         private readonly ConfigEntity _config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
-        private readonly FixManager _fixManager;
         private readonly ApiInterface _apiInterface;
 
-        private ImmutableList<FixFirstCombinedEntity> _combinedEntitiesList = [];
+        private List<FixFirstCombinedEntity> _combinedEntitiesList = [];
 
         public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
 
@@ -29,13 +27,11 @@ namespace Common.Client.Models
         public MainModel(
             ConfigProvider configProvider,
             CombinedEntitiesProvider combinedEntitiesProvider,
-            FixManager fixManager,
             ApiInterface apiInterface
             )
         {
             _config = configProvider.Config;
             _combinedEntitiesProvider = combinedEntitiesProvider;
-            _fixManager = fixManager;
             _apiInterface = apiInterface;
         }
 
@@ -52,44 +48,31 @@ namespace Common.Client.Models
                 return new(result.ResultEnum, result.Message);
             }
 
-            var games = result.ResultObject!;
+            var games = result.ResultObject;
 
-            foreach (var game in games.ToArray())
+            foreach (var game in games)
             {
-                //remove uninstalled games
-                if (!_config.ShowUninstalledGames &&
-                    !game.IsGameInstalled)
-                {
-                    games.Remove(game);
-                }
-
-                foreach (var fix in game.FixesList.Fixes.ToArray())
+                foreach (var fix in game.FixesList.Fixes)
                 {
                     //remove fixes with hidden tags
                     if (fix.Tags is not null &&
                         fix.Tags.Count != 0 &&
                         fix.Tags.All(_config.HiddenTags.Contains))
                     {
-                        game.FixesList.Fixes.Remove(fix);
+                        fix.IsHidden = true;
                         continue;
                     }
 
                     //remove fixes for different OSes
                     if (!_config.ShowUnsupportedFixes &&
-                        !fix.SupportedOSes.HasFlag(OSEnumHelper.GetCurrentOSEnum()))
+                        !fix.SupportedOSes.HasFlag(OSEnumHelper.CurrentOSEnum))
                     {
-                        game.FixesList.Fixes.Remove(fix);
+                        fix.IsHidden = true;
                     }
-                }
-
-                //remove games with no shown fixes
-                if (!game.FixesList.Fixes.Exists(static x => !x.IsHidden))
-                {
-                    games.Remove(game);
                 }
             }
 
-            _combinedEntitiesList = [.. games];
+            _combinedEntitiesList = games;
 
             return new(ResultEnum.Success, "Games list updated successfully");
         }
@@ -101,8 +84,6 @@ namespace Common.Client.Models
         /// <param name="tag">Selected tag</param>
         public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
         {
-            List<FixFirstCombinedEntity> result = [.. _combinedEntitiesList];
-
             foreach (var entity in _combinedEntitiesList)
             {
                 foreach (var fix in entity.FixesList.Fixes)
@@ -122,7 +103,7 @@ namespace Common.Client.Models
             {
                 if (!tag.Equals(Consts.All))
                 {
-                    foreach (var entity in result)
+                    foreach (var entity in _combinedEntitiesList)
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
@@ -137,20 +118,12 @@ namespace Common.Client.Models
                 }
             }
 
-            foreach (var entity in result.ToArray())
+            if (string.IsNullOrWhiteSpace(search))
             {
-                if (!entity.FixesList.Fixes.Exists(static x => !x.IsHidden))
-                {
-                    result.Remove(entity);
-                }
+                return [.. _combinedEntitiesList.Where(static x => !x.FixesList.IsEmpty)];
             }
 
-            if (search is null)
-            {
-                return [.. result];
-            }
-
-            return [.. result.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase))];
+            return [.. _combinedEntitiesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase) && !x.FixesList.IsEmpty)];
         }
 
         /// <summary>
@@ -209,12 +182,12 @@ namespace Common.Client.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>List of dependencies</returns>
-        public List<BaseFixEntity> GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
+        public List<BaseFixEntity>? GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             if (fix.Dependencies is null ||
                 fix.Dependencies.Count == 0)
             {
-                return [];
+                return null;
             }
 
             var allGameFixes = _combinedEntitiesList.First(x => x.GameName == entity.GameName).FixesList;
@@ -236,8 +209,7 @@ namespace Common.Client.Models
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
-            return deps.Count != 0 &&
-                   deps.Exists(static x => !x.IsInstalled);
+            return deps is not null && deps.Exists(static x => !x.IsInstalled);
         }
 
         /// <summary>
@@ -247,7 +219,9 @@ namespace Common.Client.Models
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
         public List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
-            => [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
+        {
+            return [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
+        }
 
         /// <summary>
         /// Does fix have dependent fixes that are currently installed
@@ -259,45 +233,7 @@ namespace Common.Client.Models
         {
             var deps = GetDependentFixes(fixes, guid);
 
-            return deps.Count != 0 &&
-                   deps.Exists(static x => x.IsInstalled);
-        }
-
-        /// <summary>
-        /// Install fix
-        /// </summary>
-        /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to install</param>
-        /// <param name="variant">Fix variant</param>
-        /// <param name="skipMD5Check">Skip check of file's MD5</param>
-        /// <returns>Result message</returns>
-        public async Task<Result> InstallFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
-        {
-            return await _fixManager.InstallFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-        }
-
-        /// <summary>
-        /// Uninstall fix
-        /// </summary>
-        /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to delete</param>
-        /// <returns>Result message</returns>
-        public Result UninstallFix(GameEntity game, BaseFixEntity fix)
-        {
-            return _fixManager.UninstallFix(game, fix);
-        }
-
-        /// <summary>
-        /// Update fix
-        /// </summary>
-        /// <param name="game">Game entity</param>
-        /// <param name="fix">Fix to update</param>
-        /// <param name="variant">Fix variant</param>
-        /// <param name="skipMD5Check">Skip check of file's MD5</param>
-        /// <returns>Result message</returns>
-        public async Task<Result> UpdateFixAsync(GameEntity game, BaseFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
-        {
-            return await _fixManager.UpdateFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+            return deps is not null && deps.Exists(static x => x.IsInstalled);
         }
 
         public void HideTag(string tag)

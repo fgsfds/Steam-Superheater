@@ -96,7 +96,7 @@ namespace Common.Client.FixTools
             }
 
             fix.InstalledFix = installedFix.ResultObject;
-            _installedFixesProvider.AddToCache(installedFix.ResultObject!);
+            _installedFixesProvider.AddToCache(installedFix.ResultObject);
 
             var saveResult = _installedFixesProvider.SaveInstalledFixes();
 
@@ -202,7 +202,7 @@ namespace Common.Client.FixTools
 
             fix.InstalledFix = installedFix.ResultObject;
             _installedFixesProvider.RemoveFromCache(game.Id, fix.Guid);
-            _installedFixesProvider.AddToCache(installedFix.ResultObject!);
+            _installedFixesProvider.AddToCache(installedFix.ResultObject);
 
             var saveResult = _installedFixesProvider.SaveInstalledFixes();
 

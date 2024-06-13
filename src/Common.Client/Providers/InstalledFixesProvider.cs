@@ -1,13 +1,7 @@
-﻿using Common;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Enums;
+﻿using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
-using System.Xml.Linq;
 
 namespace Common.Client.Providers
 {

@@ -1,5 +1,4 @@
 ﻿using Common.Client.API;
-using Common;
 using Common.Entities;
 using Common.Enums;
 using Common.Helpers;
@@ -29,7 +28,7 @@ namespace Common.Client
         {
             _logger.Info("Checking for updates");
 
-            var result = await _apiInterface.GetLatestAppReleaseAsync(OSEnumHelper.GetCurrentOSEnum()).ConfigureAwait(false);
+            var result = await _apiInterface.GetLatestAppReleaseAsync(OSEnumHelper.CurrentOSEnum).ConfigureAwait(false);
 
             if (!result.IsSuccess)
             {
@@ -94,12 +93,12 @@ namespace Common.Client
             File.Delete(Path.Combine(dir, Consts.UpdateFile));
             Directory.Delete(Path.Combine(dir, Consts.UpdateFolder), true);
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 //starting new version of the app
                 System.Diagnostics.Process.Start(oldExe);
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 //setting execute permission for user, otherwise the app won't run from game mode
                var attributes = File.GetUnixFileMode(oldExe);

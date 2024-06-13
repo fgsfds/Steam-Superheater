@@ -1,5 +1,4 @@
 ﻿using Common.Client.API;
-using Common;
 
 namespace Common.Client
 {
@@ -94,7 +93,7 @@ namespace Common.Client
         {
             while (streamToTrack.CanSeek)
             {
-                var pos = ((float)streamToTrack.Position / (float)streamToTrack.Length) * 100;
+                var pos = streamToTrack.Position / (float)streamToTrack.Length * 100;
                 progress.Report(pos);
 
                 Thread.Sleep(50);

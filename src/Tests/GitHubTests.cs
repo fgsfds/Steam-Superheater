@@ -30,8 +30,10 @@ namespace Tests
             var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
             var fixes = await fixesProvider.GetFixesListAsync().ConfigureAwait(true);
 
+            Assert.NotNull(fixes.ResultObject);
+
             //Looking for Alan Wake fixes list
-            var result = fixes.ResultObject!.Exists(static x => x.GameId == 108710);
+            var result = fixes.ResultObject.Exists(static x => x.GameId == 108710);
             Assert.True(result);
         }
 

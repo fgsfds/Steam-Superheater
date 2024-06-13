@@ -11,6 +11,26 @@ namespace Common.Enums
 
     public static class OSEnumHelper
     {
+        /// <summary>
+        /// Get current OS
+        /// </summary>
+        public static OSEnum CurrentOSEnum
+        {
+            get
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    return OSEnum.Windows;
+                }
+                else if (OperatingSystem.IsLinux())
+                {
+                    return OSEnum.Linux;
+                }
+
+                return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
+            }
+        }
+
         public static OSEnum AddFlag(this OSEnum osenum, OSEnum flag)
         {
             return osenum |= flag;
@@ -19,23 +39,6 @@ namespace Common.Enums
         public static OSEnum RemoveFlag(this OSEnum osenum, OSEnum flag)
         {
             return osenum &= ~flag;
-        }
-
-        /// <summary>
-        /// Get current OS
-        /// </summary>
-        public static OSEnum GetCurrentOSEnum()
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                return OSEnum.Windows;
-            }
-            else if (OperatingSystem.IsLinux())
-            {
-                return OSEnum.Linux;
-            }
-
-            return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
         }
     }
 }

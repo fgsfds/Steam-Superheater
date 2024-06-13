@@ -1,5 +1,4 @@
-﻿using Common;
-using Common.Entities.CombinedEntities;
+﻿using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes.FileFix;
 
 namespace Common.Client.Providers
@@ -30,7 +29,7 @@ namespace Common.Client.Providers
             var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
             var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);
 
-            List<FixFirstCombinedEntity> result = new(fixesLists.ResultObject!.Count - 1);
+            List<FixFirstCombinedEntity> result = new(fixesLists.ResultObject.Count - 1);
 
             foreach (var fixesList in fixesLists.ResultObject)
             {

@@ -46,7 +46,7 @@ namespace Common.Client
         {
             string? result;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (OperatingSystem.IsWindows())
             {
                 var path = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
 
@@ -58,7 +58,7 @@ namespace Common.Client
 
                 result = strPath.Replace('/', Path.DirectorySeparatorChar);
             }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+            else if (OperatingSystem.IsLinux())
             {
                 var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
