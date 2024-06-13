@@ -5,13 +5,21 @@ using Common.Helpers;
 
 namespace Common.Client.FixTools.HostsFix
 {
-    public sealed class HostsFixUpdater(
-        HostsFixInstaller fixInstaller,
-        HostsFixUninstaller fixUninstaller
-        )
+    public sealed class HostsFixUpdater
     {
-        private readonly HostsFixInstaller _fixInstaller = fixInstaller;
-        private readonly HostsFixUninstaller _fixUninstaller = fixUninstaller;
+        private readonly HostsFixInstaller _fixInstaller;
+        private readonly HostsFixUninstaller _fixUninstaller;
+
+
+        public HostsFixUpdater(
+            HostsFixInstaller fixInstaller,
+            HostsFixUninstaller fixUninstaller
+            )
+        {
+            _fixInstaller = fixInstaller;
+            _fixUninstaller = fixUninstaller;
+        }
+
 
         public Result<BaseInstalledFixEntity> UpdateFix(GameEntity game, HostsFixEntity hostsFix, string hostsFile)
         {

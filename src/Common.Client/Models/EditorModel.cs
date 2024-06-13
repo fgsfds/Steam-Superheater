@@ -107,9 +107,9 @@ namespace Common.Client.Models
         }
 
         /// <summary>
-        /// Get list of fixes optionally filtered by a search string
+        /// List of games that that can be added
         /// </summary>
-        public ImmutableList<GameEntity> GetAvailableGamesList() => [.. _availableGamesList];
+        public ImmutableList<GameEntity> AvailableGames => [.. _availableGamesList];
 
         /// <summary>
         /// Add new game with empty fix
@@ -169,12 +169,12 @@ namespace Common.Client.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of dependencies</returns>
-        public ImmutableList<BaseFixEntity> GetDependenciesForAFix(FixesList? fixesList, BaseFixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity>? GetDependenciesForAFix(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixEntity?.Dependencies is null ||
                 fixesList is null)
             {
-                return [];
+                return null;
             }
 
             var allGameDeps = fixEntity.Dependencies;
@@ -190,12 +190,12 @@ namespace Common.Client.Models
         /// <param name="fixesList">Fixes list</param>
         /// <param name="fixEntity">Fix</param>
         /// <returns>List of fixes</returns>
-        public ImmutableList<BaseFixEntity> GetListOfAvailableDependencies(FixesList? fixesList, BaseFixEntity? fixEntity)
+        public ImmutableList<BaseFixEntity>? GetListOfAvailableDependencies(FixesList? fixesList, BaseFixEntity? fixEntity)
         {
             if (fixesList is null ||
                 fixEntity is null)
             {
-                return [];
+                return null;
             }
 
             List<BaseFixEntity> result = [];
@@ -204,16 +204,25 @@ namespace Common.Client.Models
 
             foreach (var fix in fixesList.Fixes)
             {
-                if (//don't add itself
-                    fix.Guid != fixEntity.Guid &&
-                    //don't add fixes that depend on it
-                    (fix.Dependencies is null || !fix.Dependencies.Contains(fixEntity.Guid)) &&
-                    //don't add fixes that are already dependencies
-                    !fixDependencies.Exists(x => x.Guid == fix.Guid)
-                    )
+                if (fix.Guid == fixEntity.Guid)
                 {
-                    result.Add(fix);
+                    //don't add itself
+                    continue;
                 }
+
+                if (fix.Dependencies is not null && fix.Dependencies.Contains(fixEntity.Guid))
+                {
+                    //don't add fixes that depend on it
+                    continue;
+                }
+
+                if (fixDependencies is not null && fixDependencies.Exists(x => x.Guid == fix.Guid))
+                {
+                    //don't add fixes that are already dependencies
+                    continue;
+                }
+
+                result.Add(fix);
             }
 
             return [.. result];

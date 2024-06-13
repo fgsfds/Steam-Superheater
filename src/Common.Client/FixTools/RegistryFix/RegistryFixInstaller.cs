@@ -10,10 +10,13 @@ namespace Common.Client.FixTools.RegistryFix
     public sealed class RegistryFixInstaller
     {
         private readonly Logger _logger;
+
+
         public RegistryFixInstaller(Logger logger)
         {
             _logger = logger;
         }
+
 
         /// <summary>
         /// Install registry fix

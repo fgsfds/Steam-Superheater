@@ -9,17 +9,27 @@ using System.Security.Cryptography;
 
 namespace Common.Client.FixTools.FileFix
 {
-    public sealed class FileFixInstaller(
-        ConfigProvider config,
-        ArchiveTools archiveTools,
-        ProgressReport progressReport,
-        Logger logger
-        )
+    public sealed class FileFixInstaller
     {
-        private readonly ConfigEntity _configEntity = config.Config;
-        private readonly ArchiveTools _archiveTools = archiveTools;
-        private readonly ProgressReport _progressReport = progressReport;
-        private readonly Logger _logger = logger;
+        private readonly ConfigEntity _configEntity;
+        private readonly ArchiveTools _archiveTools;
+        private readonly ProgressReport _progressReport;
+        private readonly Logger _logger;
+
+
+        public FileFixInstaller(
+            ConfigProvider config,
+            ArchiveTools archiveTools,
+            ProgressReport progressReport,
+            Logger logger
+            )
+        {
+            _configEntity = config.Config;
+            _archiveTools = archiveTools;
+            _progressReport = progressReport;
+            _logger = logger;
+        }
+
 
         /// <summary>
         /// Install file fix: download ZIP, backup and delete files if needed, run post install events

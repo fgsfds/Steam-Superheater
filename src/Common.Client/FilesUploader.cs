@@ -8,14 +8,17 @@ namespace Common.Client
         private readonly ApiInterface _apiInterface;
         private readonly ProgressReport _progressReport;
 
+
         public FilesUploader(
             Logger logger,
             ApiInterface apiInterface,
             ProgressReport progressReport)
         {
             _logger = logger;
+            _apiInterface = apiInterface;
             _progressReport = progressReport;
         }
+
 
         /// <summary>
         /// Upload single file to S3

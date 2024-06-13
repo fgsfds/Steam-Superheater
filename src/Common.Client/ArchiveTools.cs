@@ -144,7 +144,7 @@ namespace Common.Client
 
             var entriesCount = variant is null
             ? archive.Entries.Count()
-            : archive.Entries.Count(x => x.Key.StartsWith(subfolder));
+            : archive.Entries.Count(x => x.Key!.StartsWith(subfolder));
 
             var entryNumber = 1f;
 
@@ -155,14 +155,14 @@ namespace Common.Client
                     var entry = reader.Entry;
 
                     if (variant is not null &&
-                        !entry.Key.StartsWith(variant + "/"))
+                        !entry.Key!.StartsWith(variant + "/"))
                     {
                         continue;
                     }
 
                     var fullName = variant is null
-                        ? Path.Combine(unpackTo, entry.Key)
-                        : Path.Combine(unpackTo, entry.Key.Replace(variant + "/", string.Empty));
+                        ? Path.Combine(unpackTo, entry.Key!)
+                        : Path.Combine(unpackTo, entry.Key!.Replace(variant + "/", string.Empty));
 
                     if (!Directory.Exists(Path.GetDirectoryName(fullName)))
                     {
@@ -225,7 +225,7 @@ namespace Common.Client
 
                 if (variant is not null)
                 {
-                    if (entry.Key.StartsWith(variant + '/'))
+                    if (entry.Key!.StartsWith(variant + '/'))
                     {
                         path = entry.Key.Replace(variant + '/', string.Empty);
 
@@ -240,9 +240,7 @@ namespace Common.Client
                     }
                 }
 
-                var fullName = Path.Combine(
-                    fixInstallFolder ?? string.Empty,
-                    path)
+                var fullName = Path.Combine(fixInstallFolder ?? string.Empty, path!)
                     .Replace('/', Path.DirectorySeparatorChar);
 
                 //if it's a file, add it to the list
@@ -251,7 +249,7 @@ namespace Common.Client
                     files.Add(fullName);
                 }
                 //if it's a directory and it doesn't already exist, add it to the list
-                else if (!Directory.Exists(Path.Combine(unpackToPath, path)))
+                else if (!Directory.Exists(Path.Combine(unpackToPath, path!)))
                 {
                     files.Add(fullName);
                 }

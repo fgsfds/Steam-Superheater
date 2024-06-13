@@ -38,13 +38,13 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
+        public ImmutableList<GameEntity> AvailableGamesList => _editorModel.AvailableGames;
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
+        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? null : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
 
-        public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity>? AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
         public ImmutableList<FileFixEntity> SharedFixesList => _fixesProvider.SharedFixes;
 
@@ -598,7 +598,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
+            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList!.ElementAt(SelectedAvailableDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -614,7 +614,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
+            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList!.ElementAt(SelectedDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -964,7 +964,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedGame = game;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
 
-                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == result.ResultObject.Item2);
+                var fix = SelectedGameFixesList?.FirstOrDefault(x => x.Guid == result.ResultObject.Item2);
                 SelectedFix = fix;
             }
         }
@@ -1017,6 +1017,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 var selectedFixGuid = SelectedFix?.Guid;
 
                 if (selectedFixGuid is not null &&
+                    SelectedGameFixesList is not null &&
                     SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))
                 {
                     SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);

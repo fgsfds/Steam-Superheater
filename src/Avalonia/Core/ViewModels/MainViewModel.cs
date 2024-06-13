@@ -837,7 +837,7 @@ Do you still want to install the fix?",
 
             string? requires = null;
 
-            if (dependsOn.Count != 0)
+            if (dependsOn is not null && dependsOn.Count != 0)
             {
                 requires = "REQUIRES: " + string.Join(", ", dependsOn.Select(static x => x.Name));
             }

@@ -13,7 +13,7 @@ namespace Common.Client.API
         private readonly HttpClient _httpClient;
         private readonly ConfigEntity _config;
 
-        private string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api/" : "https://superheater.fgsfds.link/api/";
+        private string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
 
         public ApiInterface(
             ConfigProvider configProvider,
@@ -28,7 +28,7 @@ namespace Common.Client.API
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{ApiUrl}news").ConfigureAwait(false);
+                var response = await _httpClient.GetStringAsync($"{ApiUrl}/news").ConfigureAwait(false);
 
                 if (response is null)
                 {
@@ -60,7 +60,7 @@ namespace Common.Client.API
             {
                 Tuple<DateTime, string, string> message = new(DateTime.Now, content, _config.ApiPassword);
 
-                var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}news/add", message).ConfigureAwait(false);
+                var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/news/add", message).ConfigureAwait(false);
 
                 if (response is null || !response.IsSuccessStatusCode)
                 {
@@ -85,7 +85,7 @@ namespace Common.Client.API
             {
                 Tuple<DateTime, string, string> message = new(date, content, _config.ApiPassword);
 
-                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}news/change", message).ConfigureAwait(false);
+                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/news/change", message).ConfigureAwait(false);
 
                 if (response is null || !response.IsSuccessStatusCode)
                 {
@@ -110,7 +110,7 @@ namespace Common.Client.API
             {
                 var encodedPath = HttpUtility.UrlEncode("superheater_uploads/" + path);
 
-                var signedUrl = await _httpClient.GetStringAsync($"{ApiUrl}storage/url/{encodedPath}").ConfigureAwait(false);
+                var signedUrl = await _httpClient.GetStringAsync($"{ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
                 if (signedUrl is null)
                 {
@@ -133,7 +133,7 @@ namespace Common.Client.API
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{ApiUrl}release/{osEnum.ToString().ToLower()}").ConfigureAwait(false);
+                var response = await _httpClient.GetStringAsync($"{ApiUrl}/release/{osEnum.ToString().ToLower()}").ConfigureAwait(false);
 
                 if (string.IsNullOrWhiteSpace(response))
                 {
@@ -158,7 +158,7 @@ namespace Common.Client.API
         {
             try
             {
-                var response = await _httpClient.GetStringAsync($"{ApiUrl}fixes").ConfigureAwait(false);
+                var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes").ConfigureAwait(false);
 
                 if (string.IsNullOrWhiteSpace(response))
                 {
@@ -188,7 +188,7 @@ namespace Common.Client.API
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
+                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -220,7 +220,7 @@ namespace Common.Client.API
         {
             try
             {
-                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}fixes/installs/add", guid).ConfigureAwait(false);
+                var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -252,7 +252,7 @@ namespace Common.Client.API
         {
             try
             {
-                using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
+                using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -275,7 +275,7 @@ namespace Common.Client.API
         {
             try
             {
-                var result = await _httpClient.GetStringAsync($"{ApiUrl}fixes/{guid}").ConfigureAwait(false);
+                var result = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/{guid}").ConfigureAwait(false);
 
                 if (string.IsNullOrEmpty(result))
                 {
@@ -307,7 +307,7 @@ namespace Common.Client.API
             {
                 Tuple<Guid, bool, string> message = new(guid, isDeleted, _config.ApiPassword);
 
-                var result = await _httpClient.PutAsJsonAsync($"{ApiUrl}fixes/delete", message).ConfigureAwait(false);
+                var result = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/delete", message).ConfigureAwait(false);
 
                 if (!result.IsSuccessStatusCode)
                 {
@@ -337,7 +337,7 @@ namespace Common.Client.API
 
                 Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
 
-                var result = await _httpClient.PostAsJsonAsync($"{ApiUrl}fixes/add", message).ConfigureAwait(false);
+                var result = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/add", message).ConfigureAwait(false);
 
                 if (!result.IsSuccessStatusCode)
                 {

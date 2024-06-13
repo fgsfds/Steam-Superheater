@@ -5,13 +5,21 @@ using Common.Helpers;
 
 namespace Common.Client.FixTools.RegistryFix
 {
-    public sealed class RegistryFixUpdater(
-        RegistryFixInstaller fixInstaller,
-        RegistryFixUninstaller fixUninstaller
-        )
+    public sealed class RegistryFixUpdater
     {
-        private readonly RegistryFixInstaller _fixInstaller = fixInstaller;
-        private readonly RegistryFixUninstaller _fixUninstaller = fixUninstaller;
+        private readonly RegistryFixInstaller _fixInstaller;
+        private readonly RegistryFixUninstaller _fixUninstaller;
+
+
+        public RegistryFixUpdater(
+            RegistryFixInstaller fixInstaller,
+            RegistryFixUninstaller fixUninstaller
+            )
+        {
+            _fixInstaller = fixInstaller;
+            _fixUninstaller = fixUninstaller;
+        }
+
 
         public Result<BaseInstalledFixEntity> UpdateFix(GameEntity game, RegistryFixEntity regFix)
         {

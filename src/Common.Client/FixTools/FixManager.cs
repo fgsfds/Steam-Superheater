@@ -11,39 +11,56 @@ using Common.Helpers;
 
 namespace Common.Client.FixTools
 {
-    public sealed class FixManager(
-        FileFixInstaller fileFixInstaller,
-        FileFixUninstaller fileFixUninstaller,
-        FileFixUpdater fileFixUpdater,
-
-        RegistryFixInstaller registryFixInstaller,
-        RegistryFixUninstaller registryFixUninstaller,
-        RegistryFixUpdater registryFixUpdater,
-
-        HostsFixInstaller hostsFixInstaller,
-        HostsFixUninstaller hostsFixUninstaller,
-        HostsFixUpdater hostsFixUpdater,
-
-        InstalledFixesProvider installedFixesProvider,
-
-        Logger logger
-        )
+    public sealed class FixManager
     {
-        private readonly FileFixInstaller _fileFixInstaller = fileFixInstaller;
-        private readonly FileFixUninstaller _fileFixUninstaller = fileFixUninstaller;
-        private readonly FileFixUpdater _fileFixUpdater = fileFixUpdater;
+        private readonly FileFixInstaller _fileFixInstaller;
+        private readonly FileFixUninstaller _fileFixUninstaller;
+        private readonly FileFixUpdater _fileFixUpdater;
 
-        private readonly RegistryFixInstaller _registryFixInstaller = registryFixInstaller;
-        private readonly RegistryFixUninstaller _registryFixUninstaller = registryFixUninstaller;
-        private readonly RegistryFixUpdater _registryFixUpdater = registryFixUpdater;
+        private readonly RegistryFixInstaller _registryFixInstaller;
+        private readonly RegistryFixUninstaller _registryFixUninstaller;
+        private readonly RegistryFixUpdater _registryFixUpdater;
 
-        private readonly HostsFixInstaller _hostsFixInstaller = hostsFixInstaller;
-        private readonly HostsFixUninstaller _hostsFixUninstaller = hostsFixUninstaller;
-        private readonly HostsFixUpdater _hostsFixUpdater = hostsFixUpdater;
+        private readonly HostsFixInstaller _hostsFixInstaller;
+        private readonly HostsFixUninstaller _hostsFixUninstaller;
+        private readonly HostsFixUpdater _hostsFixUpdater;
 
-        private readonly InstalledFixesProvider _installedFixesProvider = installedFixesProvider;
+        private readonly InstalledFixesProvider _installedFixesProvider;
 
-        private readonly Logger _logger = logger;
+        private readonly Logger _logger;
+
+
+        public FixManager(
+            FileFixInstaller fileFixInstaller,
+            FileFixUninstaller fileFixUninstaller,
+            FileFixUpdater fileFixUpdater,
+
+            RegistryFixInstaller registryFixInstaller,
+            RegistryFixUninstaller registryFixUninstaller,
+            RegistryFixUpdater registryFixUpdater,
+
+            HostsFixInstaller hostsFixInstaller,
+            HostsFixUninstaller hostsFixUninstaller,
+            HostsFixUpdater hostsFixUpdater,
+
+            InstalledFixesProvider installedFixesProvider,
+
+            Logger logger
+            )
+        {
+            _fileFixInstaller = fileFixInstaller;
+            _fileFixUninstaller = fileFixUninstaller;
+            _fileFixUpdater = fileFixUpdater;
+            _registryFixInstaller = registryFixInstaller;
+            _registryFixUninstaller = registryFixUninstaller;
+            _registryFixUpdater = registryFixUpdater;
+            _hostsFixInstaller = hostsFixInstaller;
+            _hostsFixUninstaller = hostsFixUninstaller;
+            _hostsFixUpdater = hostsFixUpdater;
+            _installedFixesProvider = installedFixesProvider;
+            _logger = logger;
+        }
+
 
         public async Task<Result> InstallFixAsync(
             GameEntity game,
