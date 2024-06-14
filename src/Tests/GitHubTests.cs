@@ -15,7 +15,7 @@ namespace Tests
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
             container.AddTransient<FixesProvider>();
-            container.AddTransient<ConfigProvider>();
+            container.AddScoped<IConfigProvider, ConfigProviderFake>();
             container.AddTransient<AppUpdateInstaller>();
             container.AddTransient<HttpClient>();
             container.AddTransient<Logger>();

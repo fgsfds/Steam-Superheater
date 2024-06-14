@@ -25,7 +25,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly MainModel _mainModel;
         private readonly ApiInterface _apiInterface;
         private readonly FixManager _fixManager;
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupStackViewModel _popupStack;
@@ -266,7 +266,18 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         private string _selectedTagFilter;
-        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
+        partial void OnSelectedTagFilterChanging(string value)
+        {
+            if (_selectedTagFilter is null ||
+                value is null)
+            {
+                return;
+            }
+
+            _selectedTagFilter = value;
+
+            FillGamesList();
+        }
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
@@ -285,7 +296,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             MainModel mainModel,
             ApiInterface apiInterface,
             FixManager fixManager,
-            ConfigProvider config,
+            IConfigProvider config,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor,
             ProgressReport progressReport,
@@ -295,7 +306,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _mainModel = mainModel;
             _apiInterface = apiInterface;
             _fixManager = fixManager;
-            _config = config.Config;
+            _config = config;
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
             _progressReport = progressReport;
@@ -305,7 +316,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             SelectedTagFilter = TagsComboboxList.First();
 
-            _config.NotifyParameterChanged += NotifyParameterChanged;
+            _config.ParameterChangedEvent += OnParameterChangedEvent;
         }
 
 
@@ -579,7 +590,6 @@ namespace Superheater.Avalonia.Core.ViewModels
             OnPropertyChanged(nameof(SelectedFixScore));
             OnPropertyChanged(nameof(IsSelectedFixUpvoted));
             OnPropertyChanged(nameof(IsSelectedFixDownvoted));
-
         }
 
 
@@ -877,19 +887,13 @@ Do you still want to install the fix?",
             ProgressBarText = message;
         }
 
-        private async void NotifyParameterChanged(string parameterName)
+        private async void OnParameterChangedEvent(string parameterName)
         {
-            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)))
-            {
-                await UpdateAsync().ConfigureAwait(true);
-            }
-
-            if (parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
+            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)) ||
+                parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
                 parameterName.Equals(nameof(_config.HiddenTags)))
             {
-                await UpdateAsync().ConfigureAwait(true);
-                OnPropertyChanged(nameof(SelectedGameFixesList));
-                OnPropertyChanged(nameof(SelectedFixTags));
+                FillGamesList();
             }
 
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||

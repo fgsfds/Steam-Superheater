@@ -51,7 +51,7 @@ namespace Tests
         {
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
-            container.AddScoped<ConfigProvider>();
+            container.AddScoped<IConfigProvider, ConfigProviderFake>();
             container.AddScoped<InstalledFixesProvider>();
             container.AddScoped<FixesProvider>();
             container.AddScoped<GamesProvider>();

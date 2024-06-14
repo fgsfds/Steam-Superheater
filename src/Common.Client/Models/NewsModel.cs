@@ -7,7 +7,7 @@ namespace Common.Client.Models
 {
     public sealed class NewsModel
     {
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly ApiInterface _newsProvider;
 
         public int UnreadNewsCount => News.Count(static x => x.IsNewer);
@@ -18,11 +18,11 @@ namespace Common.Client.Models
 
 
         public NewsModel(
-            ConfigProvider config,
+            IConfigProvider config,
             ApiInterface newsProvider
             )
         {
-            _config = config.Config;
+            _config = config;
             _newsProvider = newsProvider;
         }
 
@@ -107,7 +107,7 @@ namespace Common.Client.Models
         /// </summary>
         private void UpdateConfigLastReadVersion()
         {
-            var lastReadDate = News.Max(static x => x.Date);
+            var lastReadDate = News.Max(static x => x.Date) + TimeSpan.FromSeconds(1);
 
             _config.LastReadNewsDate = lastReadDate;
         }

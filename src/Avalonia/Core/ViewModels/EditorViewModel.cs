@@ -24,7 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     {
         private readonly EditorModel _editorModel;
         private readonly FixesProvider _fixesProvider;
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupStackViewModel _popupStack;
@@ -482,7 +482,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         public EditorViewModel(
             EditorModel editorModel,
             FixesProvider fixesProvider,
-            ConfigProvider config,
+            IConfigProvider config,
             PopupEditorViewModel popupEditor,
             PopupMessageViewModel popupMessage,
             PopupStackViewModel popupStack,
@@ -491,7 +491,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _editorModel = editorModel;
             _fixesProvider = fixesProvider;
-            _config = config.Config;
+            _config = config;
             _popupEditor = popupEditor;
             _popupMessage = popupMessage;
             _popupStack = popupStack;
@@ -501,7 +501,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             SelectedTagFilter = TagsComboboxList.First();
 
-            _config.NotifyParameterChanged += NotifyParameterChanged;
+            _config.ParameterChangedEvent += OnParameterChangedEvent;
         }
 
 
@@ -1025,7 +1025,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        private async void NotifyParameterChanged(string parameterName)
+        private async void OnParameterChangedEvent(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))

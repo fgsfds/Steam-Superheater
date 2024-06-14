@@ -12,7 +12,7 @@ namespace Common.Client.Models
 {
     public sealed class MainModel
     {
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly CombinedEntitiesProvider _combinedEntitiesProvider;
         private readonly ApiInterface _apiInterface;
 
@@ -24,12 +24,12 @@ namespace Common.Client.Models
 
 
         public MainModel(
-            ConfigProvider configProvider,
+            IConfigProvider configProvider,
             CombinedEntitiesProvider combinedEntitiesProvider,
             ApiInterface apiInterface
             )
         {
-            _config = configProvider.Config;
+            _config = configProvider;
             _combinedEntitiesProvider = combinedEntitiesProvider;
             _apiInterface = apiInterface;
         }
@@ -49,28 +49,6 @@ namespace Common.Client.Models
 
             var games = result.ResultObject;
 
-            foreach (var game in games)
-            {
-                foreach (var fix in game.FixesList.Fixes)
-                {
-                    //remove fixes with hidden tags
-                    if (fix.Tags is not null &&
-                        fix.Tags.Count != 0 &&
-                        fix.Tags.All(_config.HiddenTags.Contains))
-                    {
-                        fix.IsHidden = true;
-                        continue;
-                    }
-
-                    //remove fixes for different OSes
-                    if (!_config.ShowUnsupportedFixes &&
-                        !fix.SupportedOSes.HasFlag(OSEnumHelper.CurrentOSEnum))
-                    {
-                        fix.IsHidden = true;
-                    }
-                }
-            }
-
             _combinedEntitiesList = games;
 
             return new(ResultEnum.Success, "Games list updated successfully");
@@ -87,6 +65,30 @@ namespace Common.Client.Models
             {
                 foreach (var fix in entity.FixesList.Fixes)
                 {
+                    //remove fixes with hidden tags
+                    if (fix.Tags is not null &&
+                        fix.Tags.Count != 0 &&
+                        fix.Tags.All(_config.HiddenTags.Contains))
+                    {
+                        fix.IsHidden = true;
+                        continue;
+                    }
+
+                    //remove fixes for different OSes
+                    if (!_config.ShowUnsupportedFixes &&
+                        !fix.SupportedOSes.HasFlag(OSEnumHelper.CurrentOSEnum))
+                    {
+                        fix.IsHidden = true;
+                        continue;
+                    }
+
+                    if (!entity.IsGameInstalled &&
+                        !_config.ShowUninstalledGames)
+                    {
+                        fix.IsHidden = true;
+                        continue;
+                    }
+
                     if (ClientProperties.IsDeveloperMode)
                     {
                         fix.IsHidden = false;
@@ -237,11 +239,7 @@ namespace Common.Client.Models
 
         public void HideTag(string tag)
         {
-            var tags = _config.HiddenTags;
-            tags.Add(tag);
-            tags = [.. tags.OrderBy(static x => x)];
-
-            _config.HiddenTags = tags;
+            _config.ChangeTagState(tag, true);
         }
 
         public async Task<Result<int?>> ChangeVoteAsync(BaseFixEntity fix, bool needTpUpvote)
@@ -287,36 +285,7 @@ namespace Common.Client.Models
             {
                 fix.Score = response.ResultObject;
 
-                if (doesEntryExist)
-                {
-                    if (isUpvote && needTpUpvote)
-                    {
-                        _config.Upvotes.Remove(fix.Guid);
-                    }
-                    else if (isUpvote && !needTpUpvote)
-                    {
-                        _config.Upvotes[fix.Guid] = false;
-                    }
-                    else if (!isUpvote && needTpUpvote)
-                    {
-                        _config.Upvotes[fix.Guid] = true;
-                    }
-                    else if (!isUpvote && !needTpUpvote)
-                    {
-                        _config.Upvotes.Remove(fix.Guid);
-                    }
-                }
-                else
-                {
-                    if (needTpUpvote)
-                    {
-                        _config.Upvotes.Add(fix.Guid, true);
-                    }
-                    else
-                    {
-                        _config.Upvotes.Add(fix.Guid, false);
-                    }
-                }
+                _config.ChangeFixUpvoteState(fix.Guid, needTpUpvote);
             }
 
             return response;

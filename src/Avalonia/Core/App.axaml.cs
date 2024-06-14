@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
@@ -56,9 +57,9 @@ You can't launch multiple instances of Superheater
             ModelsBindings.Load(container);
             ViewModelsBindings.Load(container);
             CommonBindings.Load(container);
-            ProvidersBindings.Load(container);
+            ProvidersBindings.Load(container, Design.IsDesignMode);
 
-            var theme = BindingsManager.Provider.GetRequiredService<ConfigProvider>().Config.Theme;
+            var theme = BindingsManager.Provider.GetRequiredService<IConfigProvider>().Theme;
             _logger = BindingsManager.Provider.GetRequiredService<Logger>();
 
             var themeEnum = theme switch

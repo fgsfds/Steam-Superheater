@@ -12,7 +12,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class NewsViewModel : ObservableObject
     {
         private readonly NewsModel _newsModel;
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly SemaphoreSlim _locker = new(1);
@@ -33,17 +33,17 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public NewsViewModel(
             NewsModel newsModel,
-            ConfigProvider configProvider,
+            IConfigProvider configProvider,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor
         )
         {
             _newsModel = newsModel;
-            _config = configProvider.Config;
+            _config = configProvider;
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
 
-            _config.NotifyParameterChanged += NotifyParameterChanged;
+            _config.ParameterChangedEvent += OnParameterChangedEvent;
         }
 
 
@@ -170,7 +170,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 : string.Empty);
         }
 
-        private async void NotifyParameterChanged(string parameterName)
+        private async void OnParameterChangedEvent(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
             {

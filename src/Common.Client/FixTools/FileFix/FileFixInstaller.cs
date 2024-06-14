@@ -11,20 +11,20 @@ namespace Common.Client.FixTools.FileFix
 {
     public sealed class FileFixInstaller
     {
-        private readonly ConfigEntity _configEntity;
+        private readonly IConfigProvider _configEntity;
         private readonly ArchiveTools _archiveTools;
         private readonly ProgressReport _progressReport;
         private readonly Logger _logger;
 
 
         public FileFixInstaller(
-            ConfigProvider config,
+            IConfigProvider config,
             ArchiveTools archiveTools,
             ProgressReport progressReport,
             Logger logger
             )
         {
-            _configEntity = config.Config;
+            _configEntity = config;
             _archiveTools = archiveTools;
             _progressReport = progressReport;
             _logger = logger;

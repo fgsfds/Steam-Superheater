@@ -15,27 +15,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class SettingsViewModel : ObservableObject
     {
-        public SettingsViewModel(ConfigProvider config)
-        {
-            _config = config.Config;
-
-            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
-            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
-            UseLocalApiCheckbox = _config.UseLocalApiAndRepo;
-            PathToLocalRepoTextBox = _config.LocalRepoPath;
-            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
-            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
-            ApiPasswordTextBox = _config.ApiPassword;
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-
-            _watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
-            _watcher.NotifyFilter = NotifyFilters.FileName;
-            _watcher.Renamed += NotifyFileDownloaded;
-            _watcher.EnableRaisingEvents = true;
-        }
-
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
         private readonly FileSystemWatcher _watcher;
         private readonly List<string> _archivesExtensions = [".zip", ".7z"];
 
@@ -151,6 +131,27 @@ namespace Superheater.Avalonia.Core.ViewModels
         #endregion Binding Properties
 
 
+        public SettingsViewModel(IConfigProvider config)
+        {
+            _config = config;
+
+            DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
+            OpenConfigCheckbox = _config.OpenConfigAfterInstall;
+            UseLocalApiCheckbox = _config.UseLocalApiAndRepo;
+            PathToLocalRepoTextBox = _config.LocalRepoPath;
+            ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
+            ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+            ApiPasswordTextBox = _config.ApiPassword;
+
+            _config.ParameterChangedEvent += OnParameterChangedEvent;
+
+            _watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
+            _watcher.NotifyFilter = NotifyFilters.FileName;
+            _watcher.Renamed += NotifyFileDownloaded;
+            _watcher.EnableRaisingEvents = true;
+        }
+
+
         #region Relay Commands
 
         [RelayCommand(CanExecute = (nameof(SaveLocalRepoPathCanExecute)))]
@@ -232,8 +233,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void RemoveTag(string value)
         {
-            var tags = HiddenTagsList.Remove(value);
-            _config.HiddenTags = [.. tags];
+            _config.ChangeTagState(value, false);
             OnPropertyChanged(nameof(HiddenTagsList));
         }
 
@@ -256,7 +256,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         #endregion Relay Commands
 
 
-        private void NotifyParameterChanged(string parameterName)
+        private void OnParameterChangedEvent(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.HiddenTags)))
             {

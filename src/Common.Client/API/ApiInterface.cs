@@ -11,16 +11,16 @@ namespace Common.Client.API
     public sealed class ApiInterface
     {
         private readonly HttpClient _httpClient;
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
 
         private string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
 
         public ApiInterface(
-            ConfigProvider configProvider,
+            IConfigProvider configProvider,
             HttpClient httpClient
             )
         {
-            _config = configProvider.Config;
+            _config = configProvider;
             _httpClient = httpClient;
         }
 

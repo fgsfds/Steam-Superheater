@@ -7,7 +7,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class MainWindowViewModel : ObservableObject
     {
-        private readonly ConfigEntity _config;
+        private readonly IConfigProvider _config;
 
 
         #region Binding Properties
@@ -25,12 +25,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         #endregion Binding Properties
 
 
-        public MainWindowViewModel(ConfigProvider configProvider)
+        public MainWindowViewModel(IConfigProvider configProvider)
         {
-            _config = configProvider.Config;
+            _config = configProvider;
             _repositoryMessage = string.Empty;
 
-            _config.NotifyParameterChanged += NotifyParameterChanged;
+            _config.ParameterChangedEvent += OnParameterChangedEvent;
 
             UpdateRepoMessage();
         }
@@ -46,7 +46,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 : $"Online API";
         }
 
-        private void NotifyParameterChanged(string parameterName)
+        private void OnParameterChangedEvent(string parameterName)
         {
             if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
                 parameterName.Equals(nameof(_config.LocalRepoPath)))
