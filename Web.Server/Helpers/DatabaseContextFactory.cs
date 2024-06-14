@@ -3,7 +3,7 @@ using Web.Server.Database;
 
 namespace Web.Server.Helpers
 {
-    public class DatabaseContextFactory
+    public sealed class DatabaseContextFactory
     {
         private readonly IProperties _properties;
 

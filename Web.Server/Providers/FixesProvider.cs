@@ -353,6 +353,8 @@ namespace Superheater.Web.Server.Providers
             using var dbContext = _dbContextFactory.Get();
             var entity = dbContext.Fixes.Find(fixGuid);
 
+            entity.ThrowIfNull();
+
             entity.IsDisabled = isDisabled;
 
             dbContext.SaveChanges();
@@ -393,6 +395,8 @@ namespace Superheater.Web.Server.Providers
             }
 
             var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
+
+            fix.ThrowIfNull();
 
             if (fix is FileFixEntity fileFix1 &&
                 fileFix1.Url is not null)
@@ -701,7 +705,8 @@ namespace Superheater.Web.Server.Providers
         {
             using var dbContext = _dbContextFactory.Get();
 
-            var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToList();
+            var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToDictionary(x => x.Id, x => x.Name);
+
             List<FixesDbEntity> fixes = [];
             List<string> noIntro = [];
 
@@ -709,8 +714,8 @@ namespace Superheater.Web.Server.Providers
             {
                 if (fix.Name.Equals("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    var game = games.First(x => x.Id == fix.GameId);
-                    noIntro.Add(game.Name);
+                    var gameName = games[fix.GameId];
+                    noIntro.Add(gameName);
                 }
                 else
                 {
@@ -721,14 +726,13 @@ namespace Superheater.Web.Server.Providers
             int gamesCount = 0;
             int fixesCount = 0;
 
-            FixesStats fixesStats = new FixesStats()
-            {
-                FixesLists = []
-            };
+            FixesStats fixesStats = new FixesStats();
+
+            var fixesLookup = fixes.ToLookup(x => x.GameId);
 
             foreach (var game in games)
             {
-                var fixesList = fixes.Where(x => x.GameId == game.Id).Select(x => x.Name);
+                var fixesList = fixesLookup[game.Key].Select(x => x.Name);
 
                 if (!fixesList.Any())
                 {
@@ -737,7 +741,7 @@ namespace Superheater.Web.Server.Providers
 
                 fixesStats.FixesLists.Add(new FixesLists
                 { 
-                    Game = game.Name, 
+                    Game = game.Value, 
                     Fixes = [.. fixesList]
                 });
 
@@ -752,18 +756,18 @@ namespace Superheater.Web.Server.Providers
             return fixesStats;
         }
 
-        public class FixesStats
+        public sealed class FixesStats
         {
             public int GamesCount { get; set; }
             public int FixesCount { get; set; }
-            public List<FixesLists> FixesLists { get; set; }
-            public List<string> NoIntroFixes { get; set; }
+            public List<FixesLists> FixesLists { get; set; } = [];
+            public List<string> NoIntroFixes { get; set; } = [];
         }
 
-        public class FixesLists
+        public sealed class FixesLists
         {
-            public string Game { get; set; }
-            public List<string> Fixes { get; set; }
+            public string Game { get; set; } = string.Empty;
+            public List<string> Fixes { get; set; } = [];
         }
 
 
