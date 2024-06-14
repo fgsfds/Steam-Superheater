@@ -25,8 +25,6 @@ namespace Common.Client.FixTools.FileFix
 
             RestoreBackup(game.InstallDir, installedFileFix);
 
-            DeleteBackupFolderIfEmpty(game.InstallDir);
-
             RemoveWineDllOverrides(game.Id, installedFileFix.WineDllOverrides);
         }
 
@@ -174,22 +172,6 @@ namespace Common.Client.FixTools.FileFix
             }
 
             Directory.Delete(backupFolder, true);
-        }
-
-        /// <summary>
-        /// Delete backup folder if it's empty
-        /// </summary>
-        /// <param name="gameInstallDir">Game install folder</param>
-        private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
-        {
-            var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
-
-            if (Directory.Exists(backupFolder) &&
-                Directory.GetFiles(backupFolder).Length == 0 &&
-                Directory.GetDirectories(backupFolder).Length == 0)
-            {
-                Directory.Delete(backupFolder);
-            }
         }
     }
 }

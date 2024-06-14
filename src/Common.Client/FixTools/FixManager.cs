@@ -112,9 +112,8 @@ namespace Common.Client.FixTools
             }
 
             fix.InstalledFix = installedFix.ResultObject;
-            _installedFixesProvider.AddToCache(installedFix.ResultObject);
 
-            var saveResult = _installedFixesProvider.SaveInstalledFixes();
+            var saveResult = _installedFixesProvider.CreateInstalledJson(game, installedFix.ResultObject);
 
             if (!saveResult.IsSuccess)
             {
@@ -167,14 +166,15 @@ namespace Common.Client.FixTools
             }
 
             fix.InstalledFix = null;
-            _installedFixesProvider.RemoveFromCache(game.Id, fix.Guid);
 
-            var saveResult = _installedFixesProvider.SaveInstalledFixes();
+            var saveResult = _installedFixesProvider.RemoveInstalledJson(game, fix.Guid);
 
             if (!saveResult.IsSuccess)
             {
                 return saveResult;
             }
+
+            DeleteBackupFolderIfEmpty(game.InstallDir);
 
             return new(ResultEnum.Success, "Fix uninstalled successfully!");
         }
@@ -217,17 +217,41 @@ namespace Common.Client.FixTools
             }
 
             fix.InstalledFix = installedFix.ResultObject;
-            _installedFixesProvider.RemoveFromCache(game.Id, fix.Guid);
-            _installedFixesProvider.AddToCache(installedFix.ResultObject);
 
-            var saveResult = _installedFixesProvider.SaveInstalledFixes();
+            var saveResult1 = _installedFixesProvider.RemoveInstalledJson(game, fix.Guid);
 
-            if (!saveResult.IsSuccess)
+            if (!saveResult1.IsSuccess)
             {
-                return saveResult;
+                return saveResult1;
             }
 
+            var saveResult2 = _installedFixesProvider.CreateInstalledJson(game, installedFix.ResultObject);
+
+            if (!saveResult2.IsSuccess)
+            {
+                return saveResult2;
+            }
+
+            DeleteBackupFolderIfEmpty(game.InstallDir);
+
             return new(ResultEnum.Success, "Fix updated successfully!");
+        }
+
+
+        /// <summary>
+        /// Delete backup folder if it's empty
+        /// </summary>
+        /// <param name="gameInstallDir">Game install folder</param>
+        private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
+        {
+            var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
+
+            if (Directory.Exists(backupFolder) &&
+                Directory.GetFiles(backupFolder).Length == 0 &&
+                Directory.GetDirectories(backupFolder).Length == 0)
+            {
+                Directory.Delete(backupFolder);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
+using System.Security.Principal;
 
 namespace Tests
 {
@@ -54,6 +55,7 @@ namespace Tests
             container.AddScoped<ConfigProvider>();
             container.AddScoped<InstalledFixesProvider>();
             container.AddScoped<FixesProvider>();
+            container.AddScoped<GamesProvider>();
             container.AddScoped<ApiInterface>();
             CommonBindings.Load(container);
 
@@ -113,18 +115,18 @@ namespace Tests
             //Install Fix
             await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, new(), _hostsFilePath);
 
-            CheckInstalled();
+            CheckInstalled(fixEntity.Guid.ToString());
 
             _fixManager.UninstallFix(gameEntity, fixEntity, _hostsFilePath);
 
-            CheckUninstalled();
+            CheckUninstalled(fixEntity.Guid.ToString());
         }
 
         #endregion Tests
 
         #region Private Methods
 
-        private void CheckInstalled()
+        private void CheckInstalled(string fixGuid)
         {
             var hostsActual1 = File.ReadAllText(_hostsFilePath);
             var hostsExpected1 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
@@ -136,24 +138,22 @@ namespace Tests
 
 123 added entry  #c0650f19-f670-4f8a-8545-70f6c5171fa5";
 
-            var instActual1 = File.ReadAllText(Consts.InstalledFile);
-            var instExpected1 = $@"[
-  {{
-    ""$type"": ""HostsFix"",
-    ""Entries"": [
-      ""123 added entry ""
-    ],
-    ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-    ""Version"": 1
-  }}
-]";
+            var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json"));
+            var instExpected1 = $@"{{
+  ""$type"": ""HostsFix"",
+  ""Entries"": [
+    ""123 added entry ""
+  ],
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
 
             Assert.Equal(hostsActual1, hostsExpected1);
             Assert.Equal(instActual1, instExpected1);
         }
 
-        private void CheckUninstalled()
+        private void CheckUninstalled(string fixGuid)
         {
             var hostsActual2 = File.ReadAllText(_hostsFilePath);
             var hostsExpected2 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
@@ -163,12 +163,9 @@ namespace Tests
 0.0.0.0 test.site
 0.0.0.0 testtesttest # comment
 ";
-
-            var instActual2 = File.ReadAllText(Consts.InstalledFile);
-            var instExpected2 = $@"[]";
-
+            
             Assert.Equal(hostsActual2, hostsExpected2);
-            Assert.Equal(instActual2, instExpected2);
+            Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json")));
         }
 
         #endregion Private Methods

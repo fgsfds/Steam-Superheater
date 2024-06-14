@@ -17,6 +17,7 @@ namespace Tests
         {
             BindingsManager.Reset();
             var container = BindingsManager.Instance;
+            container.AddTransient<GamesProvider>();
             container.AddTransient<SteamTools>();
             container.AddTransient<Logger>();
         }

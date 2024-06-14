@@ -99,33 +99,31 @@ namespace Tests
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
-            var installedActual = File.ReadAllText(Consts.InstalledFile);
-            var installedExpected = $@"[
-  {{
-    ""$type"": ""FileFix"",
-    ""BackupFolder"": ""test_fix"",
+            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+            var installedExpected = $@"{{
+  ""$type"": ""FileFix"",
+  ""BackupFolder"": ""test_fix"",
+  ""FilesList"": [
+    ""install folder{SeparatorForJson}start game.exe"",
+    ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+  ],
+  ""InstalledSharedFix"": {{
+    ""BackupFolder"": null,
     ""FilesList"": [
-      ""install folder{SeparatorForJson}start game.exe"",
-      ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+      ""shared install folder{SeparatorForJson}"",
+      ""shared install folder{SeparatorForJson}shared fix file.txt""
     ],
-    ""InstalledSharedFix"": {{
-      ""BackupFolder"": null,
-      ""FilesList"": [
-        ""shared install folder{SeparatorForJson}"",
-        ""shared install folder{SeparatorForJson}shared fix file.txt""
-      ],
-      ""InstalledSharedFix"": null,
-      ""WineDllOverrides"": null,
-      ""GameId"": 1,
-      ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-      ""Version"": 1
-    }},
+    ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
     ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
     ""Version"": 1
-  }}
-]";
+  }},
+  ""WineDllOverrides"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
 
             Assert.Equal(installedExpected, installedActual);
         }
@@ -154,32 +152,30 @@ namespace Tests
             var newFileActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
             var newFileExpected = "fix_v2";
 
-            var installedActual = File.ReadAllText(Consts.InstalledFile);
-            var installedExpected = $@"[
-  {{
-    ""$type"": ""FileFix"",
-    ""BackupFolder"": ""test_fix"",
+            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+            var installedExpected = $@"{{
+  ""$type"": ""FileFix"",
+  ""BackupFolder"": ""test_fix"",
+  ""FilesList"": [
+    ""install folder{SeparatorForJson}start game.exe""
+  ],
+  ""InstalledSharedFix"": {{
+    ""BackupFolder"": null,
     ""FilesList"": [
-      ""install folder{SeparatorForJson}start game.exe""
+      ""shared install folder{SeparatorForJson}"",
+      ""shared install folder{SeparatorForJson}shared fix file.txt""
     ],
-    ""InstalledSharedFix"": {{
-      ""BackupFolder"": null,
-      ""FilesList"": [
-        ""shared install folder{SeparatorForJson}"",
-        ""shared install folder{SeparatorForJson}shared fix file.txt""
-      ],
-      ""InstalledSharedFix"": null,
-      ""WineDllOverrides"": null,
-      ""GameId"": 1,
-      ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-      ""Version"": 1
-    }},
+    ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
     ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-    ""Version"": 2
-  }}
-]";
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
+    ""Version"": 1
+  }},
+  ""WineDllOverrides"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 2
+}}";
 
             Assert.Equal(newFileExpected, newFileActual);
             Assert.Equal(installedExpected, installedActual);
@@ -213,34 +209,32 @@ namespace Tests
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 
-            var installedActual = File.ReadAllText(Consts.InstalledFile);
-            var installedExpected = $@"[
-  {{
-    ""$type"": ""FileFix"",
-    ""BackupFolder"": ""test_fix"",
+            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+            var installedExpected = $@"{{
+  ""$type"": ""FileFix"",
+  ""BackupFolder"": ""test_fix"",
+  ""FilesList"": [
+    ""install folder{SeparatorForJson}start game.exe"",
+    ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+  ],
+  ""InstalledSharedFix"": {{
+    ""BackupFolder"": null,
     ""FilesList"": [
-      ""install folder{SeparatorForJson}start game.exe"",
-      ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+      ""shared install folder{SeparatorForJson}"",
+      ""shared install folder{SeparatorForJson}shared fix file 2.txt"",
+      ""shared install folder{SeparatorForJson}shared fix file.txt""
     ],
-    ""InstalledSharedFix"": {{
-      ""BackupFolder"": null,
-      ""FilesList"": [
-        ""shared install folder{SeparatorForJson}"",
-        ""shared install folder{SeparatorForJson}shared fix file 2.txt"",
-        ""shared install folder{SeparatorForJson}shared fix file.txt""
-      ],
-      ""InstalledSharedFix"": null,
-      ""WineDllOverrides"": null,
-      ""GameId"": 1,
-      ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-      ""Version"": 2
-    }},
+    ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
     ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-    ""Version"": 1
-  }}
-]";
+    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
+    ""Version"": 2
+  }},
+  ""WineDllOverrides"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
 
             Assert.Equal(installedExpected, installedActual);
         }
@@ -254,10 +248,7 @@ namespace Tests
 
             CheckOriginalFiles();
 
-            var installedActual = File.ReadAllText(Consts.InstalledFile);
-            var installedExpected = $@"[]";
-
-            Assert.Equal(installedExpected, installedActual);
+            Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json")));
         }
     }
 }

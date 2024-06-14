@@ -8,7 +8,7 @@
 
         public const string PCGamingWikiUrl = "https://pcgamingwiki.com/api/appid.php?appid=";
 
-        public const string BackupFolder = ".sfd";
+        public const string BackupFolder = ".superheater";
 
         public const string UpdateFile = ".update";
 

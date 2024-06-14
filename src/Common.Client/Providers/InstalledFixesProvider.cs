@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes;
+﻿using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Helpers;
 using System.Collections.Immutable;
 using System.Text.Json;
@@ -8,11 +9,17 @@ namespace Common.Client.Providers
     public sealed class InstalledFixesProvider
     {
         private readonly Logger _logger;
+        private readonly GamesProvider _gamesProvider;
+
         private List<BaseInstalledFixEntity>? _cache;
 
 
-        public InstalledFixesProvider(Logger logger)
+        public InstalledFixesProvider(
+            GamesProvider gamesProvider,
+            Logger logger
+            )
         {
+            _gamesProvider = gamesProvider;
             _logger = logger;
         }
 
@@ -32,25 +39,158 @@ namespace Common.Client.Providers
         }
 
         /// <summary>
-        /// Save installed fixes to XML
+        /// Add installed fix to cache
         /// </summary>
-        /// <returns>Result struct</returns>
-        public Result SaveInstalledFixes()
+        /// <param name="installedFix">Installed fix entity</param>
+        public Result CreateInstalledJson(GameEntity game, BaseInstalledFixEntity installedFix)
         {
-            _logger.Info("Saving installed fixes list");
+            _cache.ThrowIfNull();
+
+            _cache.Add(installedFix);
 
             try
             {
-                _cache.ThrowIfNull();
+                if (!Directory.Exists(Path.Combine(game.InstallDir, Consts.BackupFolder)))
+                {
+                    Directory.CreateDirectory(Path.Combine(game.InstallDir, Consts.BackupFolder));
+                }
 
-                var json = JsonSerializer.Serialize(
-                    _cache,
-                    InstalledFixesListContext.Default.ListBaseInstalledFixEntity
+                var jsonText = JsonSerializer.Serialize(installedFix, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+
+                File.WriteAllText(Path.Combine(game.InstallDir, Consts.BackupFolder, installedFix.Guid.ToString() + ".json"), jsonText);
+            }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, ex.Message);
+            }
+
+            return new(ResultEnum.Success, string.Empty);
+        }
+
+        /// <summary>
+        /// Remove installed fix from cache
+        /// </summary>
+        /// <param name="game">Game</param>
+        /// <param name="fixGuid">Fix guid</param>
+        public Result RemoveInstalledJson(GameEntity game, Guid fixGuid)
+        {
+            _cache.ThrowIfNull();
+
+            var toRemove = _cache.First(x => x.GameId == game.Id && x.Guid == fixGuid);
+            _cache.Remove(toRemove);
+
+            try
+            {
+                File.Delete(Path.Combine(game.InstallDir, Consts.BackupFolder, fixGuid.ToString() + ".json"));
+            }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, ex.Message);
+            }
+
+            return new(ResultEnum.Success, string.Empty);
+        }
+
+
+        /// <summary>
+        /// Create installed fixes cache
+        /// </summary>
+        private async Task CreateCacheAsync()
+        {
+            _logger.Info("Requesting installed fixes");
+
+            _cache = [];
+
+            var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+
+            //TODO remove in 1.0
+            if (File.Exists(Consts.InstalledFile))
+            {
+                foreach (var game in games)
+                {
+                    var sfdFolder = Path.Combine(game.InstallDir, ".sfd");
+
+                    if (Directory.Exists(sfdFolder))
+                    {
+                        Directory.Move(sfdFolder, Path.Combine(game.InstallDir, Consts.BackupFolder));
+                    }
+                }
+
+                await ConvertOldInstalledJsonAsync(games).ConfigureAwait(false);
+            }
+
+            foreach (var gameInstallDir in games.Select(static x => x.InstallDir).Distinct())
+            {
+                var superheaterFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
+
+                if (!Directory.Exists(superheaterFolder))
+                {
+                    continue;
+                }
+
+                var jsons = Directory.GetFiles(superheaterFolder, "*.json", SearchOption.TopDirectoryOnly);
+
+                foreach (var json in jsons)
+                {
+                    var jsonText = File.ReadAllText(json);
+
+                    var installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+
+                    if (installedFixes is null)
+                    {
+                        continue;
+                    }
+
+                    _cache.Add(installedFixes);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Convert old installed.json to a new format
+        /// </summary>
+        [Obsolete("Remove in version 1.0")]
+        private async Task ConvertOldInstalledJsonAsync(IEnumerable<GameEntity> games)
+        {
+            var text = await File.ReadAllTextAsync(Consts.InstalledFile).ConfigureAwait(false);
+
+            text.ThrowIfNull();
+
+            var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
+
+            installedFixes.ThrowIfNull();
+
+            _ = FixWrongGuids(installedFixes);
+
+            SaveInstalledFixes(installedFixes, games);
+
+            File.Delete(Consts.InstalledFile);
+        }
+
+        /// <summary>
+        /// Save installed fixes to XML
+        /// </summary>
+        [Obsolete("Remove in version 1.0")]
+        private Result SaveInstalledFixes(List<BaseInstalledFixEntity> installedFixes, IEnumerable<GameEntity> games)
+        {
+            try
+            {
+                foreach (var installedFix in installedFixes)
+                {
+                    var json = JsonSerializer.Serialize(
+                    installedFix,
+                    InstalledFixesListContext.Default.BaseInstalledFixEntity
                     );
 
-                File.WriteAllText(Consts.InstalledFile, json);
+                    var game = games.FirstOrDefault(x => x.Id == installedFix.GameId);
 
-                _logger.Info("Fixes list saved successfully");
+                    if (game is null)
+                    {
+                        continue;
+                    }
+
+                    File.WriteAllText(Path.Combine(game.InstallDir, Consts.BackupFolder, installedFix.Guid.ToString() + ".json"), json);
+                }
 
                 return new(ResultEnum.Success, string.Empty);
             }
@@ -63,59 +203,6 @@ namespace Common.Client.Providers
             {
                 _logger.Error(ex.Message);
                 return new Result(ResultEnum.Error, ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Add installed fix to cache
-        /// </summary>
-        /// <param name="installedFix">Installed fix entity</param>
-        public void AddToCache(BaseInstalledFixEntity installedFix)
-        {
-            _cache.ThrowIfNull();
-
-            _cache.Add(installedFix);
-        }
-
-        /// <summary>
-        /// Remove installed fix from cache
-        /// </summary>
-        /// <param name="gameId">Game id</param>
-        /// <param name="fixGuid">Fix guid</param>
-        public void RemoveFromCache(int gameId, Guid fixGuid)
-        {
-            _cache.ThrowIfNull();
-
-            var toRemove = _cache.First(x => x.GameId == gameId && x.Guid == fixGuid);
-            _cache.Remove(toRemove);
-        }
-
-        /// <inheritdoc/>
-        private async Task CreateCacheAsync()
-        {
-            _logger.Info("Requesting installed fixes");
-
-            if (!File.Exists(Consts.InstalledFile))
-            {
-                _cache = [];
-                return;
-            }
-
-            var text = await File.ReadAllTextAsync(Consts.InstalledFile).ConfigureAwait(false);
-
-            text.ThrowIfNull();
-
-            var installedFixes = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.ListBaseInstalledFixEntity);
-
-            installedFixes.ThrowIfNull();
-
-            var needToSave = FixWrongGuids(installedFixes);
-
-            _cache = installedFixes;
-
-            if (needToSave)
-            {
-                SaveInstalledFixes();
             }
         }
 
