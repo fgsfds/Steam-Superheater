@@ -9,8 +9,8 @@ namespace Superheater.Web.Server.Providers
         private readonly ILogger<AppReleasesProvider> _logger;
         private readonly HttpClient _httpClient;
 
-        public AppUpdateEntity? WindowsRelease { get; private set; }
-        public AppUpdateEntity? LinuxRelease { get; private set; }
+        public AppReleaseEntity? WindowsRelease { get; private set; }
+        public AppReleaseEntity? LinuxRelease { get; private set; }
 
         public AppReleasesProvider(
             ILogger<AppReleasesProvider> logger,
@@ -38,13 +38,13 @@ namespace Superheater.Web.Server.Providers
             var releasesJson = await response.Content.ReadAsStringAsync();
 
             var releases =
-                JsonSerializer.Deserialize(releasesJson, GitHubReleaseContext.Default.ListGitHubRelease)
-                ?? ThrowHelper.Exception<List<GitHubRelease>>("Error while deserializing GitHub releases");
+                JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
+                ?? ThrowHelper.Exception<List<GitHubReleaseEntity>>("Error while deserializing GitHub releases");
 
-            releases = [.. releases.Where(static x => x.draft is false && x.prerelease is false).OrderByDescending(static x => new Version(x.tag_name))];
+            releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
 
-            AppUpdateEntity? windowsRelease = null;
-            AppUpdateEntity? linuxRelease = null;
+            AppReleaseEntity? windowsRelease = null;
+            AppReleaseEntity? linuxRelease = null;
 
             foreach (var release in releases)
             {
@@ -70,20 +70,20 @@ namespace Superheater.Web.Server.Providers
             LinuxRelease = linuxRelease!;
         }
 
-        private AppUpdateEntity? GetRelease(GitHubRelease release, string osPostfix)
+        private AppReleaseEntity? GetRelease(GitHubReleaseEntity release, string osPostfix)
         {
-            var asset = release.assets.FirstOrDefault(x => x.name.EndsWith(osPostfix));
+            var asset = release.Assets.FirstOrDefault(x => x.FileName.EndsWith(osPostfix));
 
             if (asset is null)
             {
                 return null;
             }
 
-            var version = new Version(release.tag_name);
-            var description = release.body;
-            var downloadUrl = new Uri(asset.browser_download_url);
+            var version = new Version(release.TagName);
+            var description = release.Description;
+            var downloadUrl = new Uri(asset.DownloadUrl);
 
-            AppUpdateEntity update = new()
+            AppReleaseEntity update = new()
             {
                 Version = version,
                 Description = description,

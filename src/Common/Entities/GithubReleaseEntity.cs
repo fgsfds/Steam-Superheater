@@ -1,35 +1,38 @@
-﻿#pragma warning disable IDE1006 // Naming Styles
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Common.Entities
 {
-    /// <summary>
-    /// Class is auto generated from the json response
-    /// </summary>
-    public sealed class GitHubRelease
+    public sealed class GitHubReleaseEntity
     {
-        public string tag_name { get; set; }
+        [JsonPropertyName("tag_name")]
+        public string TagName { get; set; }
 
-        public bool draft { get; set; }
+        [JsonPropertyName("draft")]
+        public bool IsDraft { get; set; }
 
-        public bool prerelease { get; set; }
+        [JsonPropertyName("prerelease")]
+        public bool IsPrerelease { get; set; }
 
-        public Asset[] assets { get; set; }
+        [JsonPropertyName("assets")]
+        public GitHubReleaseAsset[] Assets { get; set; }
 
-        public string body { get; set; }
+        [JsonPropertyName("body")]
+        public string Description { get; set; }
     }
 
-    public sealed class Asset
+    public sealed class GitHubReleaseAsset
     {
-        public string name { get; set; }
+        [JsonPropertyName("name")]
+        public string FileName { get; set; }
 
-        public string browser_download_url { get; set; }
+        [JsonPropertyName("browser_download_url")]
+        public string DownloadUrl { get; set; }
+
+        [JsonPropertyName("updated_at")]
+        public DateTime UpdatedDate { get; set; }
     }
 
-    [JsonSerializable(typeof(List<GitHubRelease>))]
-    public sealed partial class GitHubReleaseContext : JsonSerializerContext;
+
+    [JsonSerializable(typeof(List<GitHubReleaseEntity>))]
+    public sealed partial class GitHubReleaseEntityContext : JsonSerializerContext;
 }
-#pragma warning restore IDE1006 // Naming Styles
-#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

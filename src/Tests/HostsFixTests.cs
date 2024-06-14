@@ -1,12 +1,12 @@
-using ClientCommon.Config;
-using ClientCommon.DI;
-using ClientCommon.FixTools;
-using ClientCommon.Providers;
+using Common.Client.API;
+using Common.Client.Config;
+using Common.Client.DI;
+using Common.Client.FixTools;
+using Common.Client.Providers;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using System.Runtime.InteropServices;
 
 namespace Tests
 {
@@ -44,7 +44,7 @@ namespace Tests
 
         public HostsFixTests()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -54,6 +54,7 @@ namespace Tests
             container.AddScoped<ConfigProvider>();
             container.AddScoped<InstalledFixesProvider>();
             container.AddScoped<FixesProvider>();
+            container.AddScoped<ApiInterface>();
             CommonBindings.Load(container);
 
             _rootDirectory = Directory.GetCurrentDirectory();
@@ -83,7 +84,7 @@ namespace Tests
 
         public void Dispose()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }
@@ -100,7 +101,7 @@ namespace Tests
         [Fact]
         public async Task InstallUninstallFixTest()
         {
-            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+            if (!OperatingSystem.IsWindows())
             {
                 return;
             }

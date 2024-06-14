@@ -22,6 +22,11 @@ namespace Common.Entities.Fixes
         /// List of fixes
         /// </summary>
         public required List<BaseFixEntity> Fixes { get; init; }
+
+        /// <summary>
+        /// Does list have any not hidden fixes
+        /// </summary>
+        public bool IsEmpty => Fixes.Count == 0 || !Fixes.Any(static x => !x.IsHidden);
     }
 
     [JsonSourceGenerationOptions(

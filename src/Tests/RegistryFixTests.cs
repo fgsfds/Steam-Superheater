@@ -61,7 +61,7 @@
 
 //        public void Dispose()
 //        {
-//            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+//            if (!OperatingSystem.IsWindows())
 //            {
 //                return;
 //            }
@@ -89,7 +89,7 @@
 //        [Fact]
 //        public async Task InstallUninstallFixTest()
 //        {
-//            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+//            if (!OperatingSystem.IsWindows())
 //            {
 //                Assert.Fail();
 //                return;
@@ -143,7 +143,7 @@
 //        [Fact]
 //        public async Task InstallUninstallReplaceFixTest()
 //        {
-//            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+//            if (!OperatingSystem.IsWindows())
 //            {
 //                Assert.Fail();
 //                return;

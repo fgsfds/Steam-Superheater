@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Helpers
 {
@@ -53,6 +54,7 @@ namespace Common.Helpers
             return [.. str.Split(';').Select(static x => x.Trim())];
         }
 
+        [return: NotNullIfNotNull(nameof(str))]
         public static List<string>? ToListOfString(this string? str)
         {
             if (string.IsNullOrWhiteSpace(str))

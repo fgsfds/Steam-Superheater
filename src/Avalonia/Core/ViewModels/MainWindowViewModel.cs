@@ -1,5 +1,5 @@
-using ClientCommon;
-using ClientCommon.Config;
+using Common.Client;
+using Common.Client.Config;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 
@@ -7,16 +7,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class MainWindowViewModel : ObservableObject
     {
-        public MainWindowViewModel(ConfigProvider configProvider)
-        {
-            _config = configProvider.Config;
-            _repositoryMessage = string.Empty;
-
-            _config.NotifyParameterChanged += NotifyParameterChanged;
-
-            UpdateRepoMessage();
-        }
-
         private readonly ConfigEntity _config;
 
 
@@ -33,6 +23,17 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _repositoryMessage;
 
         #endregion Binding Properties
+
+
+        public MainWindowViewModel(ConfigProvider configProvider)
+        {
+            _config = configProvider.Config;
+            _repositoryMessage = string.Empty;
+
+            _config.NotifyParameterChanged += NotifyParameterChanged;
+
+            UpdateRepoMessage();
+        }
 
 
         /// <summary>

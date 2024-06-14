@@ -1,5 +1,4 @@
 ﻿using Common.Helpers;
-using System.Runtime.InteropServices;
 
 namespace Common.Enums
 {
@@ -12,6 +11,26 @@ namespace Common.Enums
 
     public static class OSEnumHelper
     {
+        /// <summary>
+        /// Get current OS
+        /// </summary>
+        public static OSEnum CurrentOSEnum
+        {
+            get
+            {
+                if (OperatingSystem.IsWindows())
+                {
+                    return OSEnum.Windows;
+                }
+                else if (OperatingSystem.IsLinux())
+                {
+                    return OSEnum.Linux;
+                }
+
+                return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
+            }
+        }
+
         public static OSEnum AddFlag(this OSEnum osenum, OSEnum flag)
         {
             return osenum |= flag;
@@ -20,23 +39,6 @@ namespace Common.Enums
         public static OSEnum RemoveFlag(this OSEnum osenum, OSEnum flag)
         {
             return osenum &= ~flag;
-        }
-
-        /// <summary>
-        /// Get current OS
-        /// </summary>
-        public static OSEnum GetCurrentOSEnum()
-        {
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                return OSEnum.Windows;
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                return OSEnum.Linux;
-            }
-
-            return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
         }
     }
 }

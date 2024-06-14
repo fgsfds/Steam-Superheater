@@ -7,7 +7,6 @@ namespace Superheater.Web.Server.Tasks
         private readonly ILogger<AppReleasesTask> _logger;
         private readonly AppReleasesProvider _appReleasesProvider;
 
-        private bool _runOnce = false;
         private Timer _timer;
 
         public AppReleasesTask(
@@ -21,15 +20,9 @@ namespace Superheater.Web.Server.Tasks
 
         public Task StartAsync(CancellationToken stoppingToken)
         {
-            if (!_runOnce)
-            {
-                _appReleasesProvider.GetLatestVersionAsync().Wait(stoppingToken);
-                _runOnce = true;
-            }
-
             _timer = new Timer(
-                DoWork, 
-                null, 
+                DoWork,
+                null,
                 TimeSpan.Zero,
                 TimeSpan.FromHours(1)
                 );

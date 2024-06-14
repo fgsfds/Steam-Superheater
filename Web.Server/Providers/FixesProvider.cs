@@ -6,6 +6,7 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -49,6 +50,7 @@ namespace Superheater.Web.Server.Providers
             Stopwatch sw = new();
             sw.Start();
 
+            //disposed later
             var dbContext = _dbContextFactory.Get();
 
             var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
@@ -351,6 +353,8 @@ namespace Superheater.Web.Server.Providers
             using var dbContext = _dbContextFactory.Get();
             var entity = dbContext.Fixes.Find(fixGuid);
 
+            entity.ThrowIfNull();
+
             entity.IsDisabled = isDisabled;
 
             dbContext.SaveChanges();
@@ -391,6 +395,8 @@ namespace Superheater.Web.Server.Providers
             }
 
             var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
+
+            fix.ThrowIfNull();
 
             if (fix is FileFixEntity fileFix1 &&
                 fileFix1.Url is not null)

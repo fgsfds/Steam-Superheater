@@ -1,5 +1,5 @@
 ﻿using Avalonia;
-using ClientCommon;
+using Common.Client;
 using Common.Helpers;
 using Superheater.Avalonia.Core;
 

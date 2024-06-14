@@ -1,14 +1,13 @@
-using ClientCommon;
+using Common;
+using Common.Client;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Superheater.Avalonia.Core.ViewModels.Popups;
 
 namespace Superheater.Avalonia.Core.ViewModels
 {
     public sealed partial class AboutViewModel : ObservableObject
     {
         private readonly AppUpdateInstaller _updateInstaller;
-        private readonly PopupMessageViewModel _popupMessage;
         private readonly Logger _logger;
 
 
@@ -35,11 +34,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public AboutViewModel(
             AppUpdateInstaller updateInstaller,
-            PopupMessageViewModel popupMessage,
             Logger logger)
         {
             _updateInstaller = updateInstaller;
-            _popupMessage = popupMessage;
             _logger = logger;
         }
 
@@ -60,39 +57,25 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             IsInProgress = true;
 
-            var updates = false;
+            CheckForUpdatesButtonText = "Checking...";
 
-            try
+            var result = await _updateInstaller.CheckForUpdates(CurrentVersion).ConfigureAwait(true);
+
+            if (result == ResultEnum.NotFound)
             {
-                CheckForUpdatesButtonText = "Checking...";
-                updates = await _updateInstaller.CheckForUpdates(CurrentVersion).ConfigureAwait(true);
+                CheckForUpdatesButtonText = "Already up-to-date";
             }
-            catch (Exception ex)
+            else if (!result.IsSuccess)
             {
-                var message = $"""
-                               Cannot retrieve latest releases:
-                                                   
-                               {ex.Message}
-                               """;
+                _logger.Error(result.Message);
 
-                _popupMessage.Show(
-                    "Error",
-                    message,
-                    PopupMessageType.OkOnly
-                    );
-
-                _logger.Error(message);
+                CheckForUpdatesButtonText = result.Message;
             }
-
-            if (updates)
+            else
             {
                 IsUpdateAvailable = true;
 
                 UpdateHeader();
-            }
-            else
-            {
-                CheckForUpdatesButtonText = "Already up-to-date";
             }
 
             IsInProgress = false;

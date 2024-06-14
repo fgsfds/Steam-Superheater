@@ -1,6 +1,7 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
+using static Superheater.Web.Server.Providers.StatsProvider;
 
 namespace Superheater.Web.Server.Controllers
 {
@@ -10,14 +11,17 @@ namespace Superheater.Web.Server.Controllers
     {
         private readonly ILogger<FixesController> _logger;
         private readonly FixesProvider _fixesProvider;
+        private readonly StatsProvider _statsProvider;
 
         public FixesController(
             ILogger<FixesController> logger,
-            FixesProvider fixesProvider
+            FixesProvider fixesProvider,
+            StatsProvider statsProvider
             )
         {
             _logger = logger;
             _fixesProvider = fixesProvider;
+            _statsProvider = statsProvider;
         }
 
 
@@ -26,7 +30,7 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpGet("{guid:Guid}")]
-        public bool GetFixByGuid(Guid guid) => _fixesProvider.CheckIfFixExists(guid);
+        public bool CheckIfFixEsists(Guid guid) => _fixesProvider.CheckIfFixExists(guid);
 
 
         [HttpPut("installs/add")]
@@ -34,7 +38,7 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPut("score/change")]
-        public async Task<int> ChangeRatingAsync([FromBody] Tuple<Guid, sbyte> message) => await _fixesProvider.ChangeFixScoreAsync(message.Item1, message.Item2);
+        public async Task<int> ChangeScoreAsync([FromBody] Tuple<Guid, sbyte> message) => await _fixesProvider.ChangeFixScoreAsync(message.Item1, message.Item2);
 
 
         [HttpPost("report")]
@@ -42,7 +46,7 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPut("delete")]
-        public StatusCodeResult DeleteFix([FromBody] Tuple<Guid, bool, string> message)
+        public StatusCodeResult ChangeFixState([FromBody] Tuple<Guid, bool, string> message)
         {
             var result = _fixesProvider.ChangeFixDisabledState(message.Item1, message.Item2, message.Item3);
 
@@ -58,7 +62,7 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpPost("add")]
-        public async Task<StatusCodeResult> AddFixAsync([FromBody] Tuple<int, string, string, string> message)
+        public async Task<StatusCodeResult> AddFixToDbAsync([FromBody] Tuple<int, string, string, string> message)
         {
             var result = await _fixesProvider.AddFixAsync(message.Item1, message.Item2, message.Item3, message.Item4);
 
@@ -72,8 +76,9 @@ namespace Superheater.Web.Server.Controllers
             }
         }
         
+
         [HttpPost("check")]
-        public async Task<StatusCodeResult> AddFixAsync([FromBody] string password)
+        public async Task<StatusCodeResult> ForceCheckFixesAsync([FromBody] string password)
         {
             var result = await _fixesProvider.ForceCheckFixesAsync(password);
 
@@ -86,5 +91,9 @@ namespace Superheater.Web.Server.Controllers
                 return StatusCode(StatusCodes.Status403Forbidden);
             }
         }
+
+
+        [HttpGet("stats")]
+        public FixesStats? GetFixesStats() => _statsProvider.Stats;
     }
 }

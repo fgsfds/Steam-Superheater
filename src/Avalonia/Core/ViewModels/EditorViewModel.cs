@@ -1,7 +1,8 @@
 ﻿using Avalonia.Platform.Storage;
-using ClientCommon;
-using ClientCommon.Config;
-using ClientCommon.Models;
+using Common.Client;
+using Common.Client.Config;
+using Common.Client.Models;
+using Common.Client.Providers;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -21,11 +22,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 {
     internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
-        [ObservableProperty]
-        private string _selectedTagFilter;
-        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
-
         private readonly EditorModel _editorModel;
+        private readonly FixesProvider _fixesProvider;
         private readonly ConfigEntity _config;
         private readonly PopupEditorViewModel _popupEditor;
         private readonly PopupMessageViewModel _popupMessage;
@@ -40,15 +38,15 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
-        public ImmutableList<GameEntity> AvailableGamesList => _editorModel.GetAvailableGamesList();
+        public ImmutableList<GameEntity> AvailableGamesList => _editorModel.AvailableGames;
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
+        public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? null : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
 
-        public ImmutableList<BaseFixEntity> AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity>? AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
-        public ImmutableList<BaseFixEntity> SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
+        public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-        public ImmutableList<FileFixEntity> SharedFixesList => _editorModel.GetSharedFixesList();
+        public ImmutableList<FileFixEntity> SharedFixesList => _fixesProvider.SharedFixes;
 
         public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
@@ -474,11 +472,16 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
         private bool _lockButtons;
 
+        [ObservableProperty]
+        private string _selectedTagFilter;
+        partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
+
         #endregion Binding Properties
 
 
         public EditorViewModel(
             EditorModel editorModel,
+            FixesProvider fixesProvider,
             ConfigProvider config,
             PopupEditorViewModel popupEditor,
             PopupMessageViewModel popupMessage,
@@ -487,6 +490,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             )
         {
             _editorModel = editorModel;
+            _fixesProvider = fixesProvider;
             _config = config.Config;
             _popupEditor = popupEditor;
             _popupMessage = popupMessage;
@@ -546,7 +550,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedFix.ThrowIfNull();
 
-            var result = await _editorModel.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
+            var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
             _popupMessage.Show(
                 result.IsSuccess ? "Success" : "Error",
@@ -594,7 +598,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList.ElementAt(SelectedAvailableDependencyIndex));
+            _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList!.ElementAt(SelectedAvailableDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -610,7 +614,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedFix.ThrowIfNull();
 
-            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList.ElementAt(SelectedDependencyIndex));
+            _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList!.ElementAt(SelectedDependencyIndex));
 
             OnPropertyChanged(nameof(AvailableDependenciesList));
             OnPropertyChanged(nameof(SelectedFixDependenciesList));
@@ -677,11 +681,28 @@ namespace Superheater.Avalonia.Core.ViewModels
             ProgressBarText = string.Empty;
             LockButtons = false;
 
-            _popupMessage.Show(
-                    result.IsSuccess ? "Success" : "Error",
+            if (result.IsSuccess)
+            {
+                _popupMessage.Show(
+                    "Success",
+                    """
+                    Fix successfully uploaded.
+                    It will be added to the database after developer's review.
+
+                    Thank you.
+                    """,
+                    PopupMessageType.OkOnly
+                    );
+            }
+            else
+            {
+                _popupMessage.Show(
+                    "Error",
                     result.Message,
                     PopupMessageType.OkOnly
                     );
+            }
+
         }
         private bool UploadFixCanExecute() => SelectedFix is not null;
 
@@ -858,7 +879,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (result is not null)
             {
-                hostsFix.Entries = result.ToListOfString()!;
+                hostsFix.Entries = result.ToListOfString();
                 OnPropertyChanged(nameof(SelectedFixEntries));
             }
         }
@@ -925,7 +946,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 Title = "Choose fix file",
                 AllowMultiple = false
-            }).ConfigureAwait(true);
+            }
+            ).ConfigureAwait(true);
 
             if (files.Count == 0)
             {
@@ -938,11 +960,11 @@ namespace Superheater.Avalonia.Core.ViewModels
             {
                 OnPropertyChanged(nameof(FilteredGamesList));
 
-                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == (int)result.Results![0]);
+                var game = FilteredGamesList.FirstOrDefault(x => x.GameId == result.ResultObject.Item1);
                 SelectedGame = game;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
 
-                var fix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == (Guid)result.Results![1]);
+                var fix = SelectedGameFixesList?.FirstOrDefault(x => x.Guid == result.ResultObject.Item2);
                 SelectedFix = fix;
             }
         }
@@ -995,6 +1017,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 var selectedFixGuid = SelectedFix?.Guid;
 
                 if (selectedFixGuid is not null &&
+                    SelectedGameFixesList is not null &&
                     SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))
                 {
                     SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);

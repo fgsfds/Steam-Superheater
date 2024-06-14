@@ -1,8 +1,10 @@
 using Avalonia.Input.Platform;
-using ClientCommon;
-using ClientCommon.Config;
-using ClientCommon.Models;
 using Common;
+using Common.Client;
+using Common.Client.API;
+using Common.Client.Config;
+using Common.Client.FixTools;
+using Common.Client.Models;
 using Common.Entities.CombinedEntities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -21,6 +23,8 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
         private readonly MainModel _mainModel;
+        private readonly ApiInterface _apiInterface;
+        private readonly FixManager _fixManager;
         private readonly ConfigEntity _config;
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupEditorViewModel _popupEditor;
@@ -279,6 +283,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public MainViewModel(
             MainModel mainModel,
+            ApiInterface apiInterface,
+            FixManager fixManager,
             ConfigProvider config,
             PopupMessageViewModel popupMessage,
             PopupEditorViewModel popupEditor,
@@ -287,6 +293,8 @@ namespace Superheater.Avalonia.Core.ViewModels
             )
         {
             _mainModel = mainModel;
+            _apiInterface = apiInterface;
+            _fixManager = fixManager;
             _config = config.Config;
             _popupMessage = popupMessage;
             _popupEditor = popupEditor;
@@ -382,7 +390,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             IsInProgress = true;
 
-            var fixUninstallResult = _mainModel.UninstallFix(SelectedGame.Game, SelectedFix);
+            var fixUninstallResult = _fixManager.UninstallFix(SelectedGame.Game, SelectedFix);
 
             FillGamesList();
 
@@ -608,9 +616,13 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return;
             }
 
-            await _mainModel.ReportFix(SelectedFix, reportText).ConfigureAwait(true);
+            var result = await _apiInterface.ReportFixAsync(SelectedFix.Guid, reportText).ConfigureAwait(true);
 
-            _popupMessage.Show("Report fix", "Report sent", PopupMessageType.OkOnly);
+            _popupMessage.Show(
+                "Report fix",
+                result.IsSuccess ? "Report sent" : result.Message, 
+                PopupMessageType.OkOnly
+                );
         }
 
         #endregion Relay Commands
@@ -640,11 +652,11 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             if (isUpdate)
             {
-                result = await _mainModel.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
+                result = await _fixManager.UpdateFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
             else
             {
-                result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
+                result = await _fixManager.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, false, cancellationToken).ConfigureAwait(true);
             }
 
             if (result == ResultEnum.MD5Error)
@@ -659,13 +671,11 @@ Do you still want to install the fix?",
 
                 if (popupResult)
                 {
-                    result = await _mainModel.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true, cancellationToken).ConfigureAwait(true);
+                    result = await _fixManager.InstallFixAsync(SelectedGame.Game, SelectedFix, SelectedFixVariant, true, cancellationToken).ConfigureAwait(true);
                 }
             }
 
             _cancellationTokenSource.Dispose();
-
-            FillGamesList();
 
             LockButtons = false;
 
@@ -685,6 +695,8 @@ Do you still want to install the fix?",
 
                 return;
             }
+
+            FillGamesList();
 
             if (SelectedFix is FileFixEntity fileFix &&
                 fileFix.ConfigFile is not null &&
@@ -825,7 +837,7 @@ Do you still want to install the fix?",
 
             string? requires = null;
 
-            if (dependsOn.Count != 0)
+            if (dependsOn is not null && dependsOn.Count != 0)
             {
                 requires = "REQUIRES: " + string.Join(", ", dependsOn.Select(static x => x.Name));
             }

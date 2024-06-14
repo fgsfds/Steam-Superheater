@@ -1,6 +1,6 @@
-﻿using ClientCommon;
-using ClientCommon.Config;
-using ClientCommon.Models;
+﻿using Common.Client;
+using Common.Client.Config;
+using Common.Client.Models;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -59,21 +59,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// Mark all news as read
         /// </summary>
         [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
-        private async Task MarkAllAsReadAsync()
+        private void MarkAllAsRead()
         {
-            var result = await _newsModel.MarkAllAsReadAsync().ConfigureAwait(true);
+            _newsModel.MarkAllAsRead();
 
-            if (!result.IsSuccess)
-            {
-                _popupMessage.Show(
-                    "Error",
-                    result.Message,
-                    PopupMessageType.OkOnly
-                    );
-
-                return;
-            }
-
+            //TODO
             OnPropertyChanged(nameof(NewsList));
             UpdateHeader();
         }
