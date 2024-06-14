@@ -13,7 +13,7 @@ interface FixesLists {
 }
 
 function App() {
-    const [fixes, setFixesStats] = useState<FixesStats[]>([]);
+    const [fixes, setFixesStats] = useState<FixesStats>();
 
     useEffect(() => {
         getFixesStats();
@@ -49,16 +49,16 @@ function App() {
             <br />
             <br />
 
-            <h2>Currently has {fixes.FixesCount} fixes for {fixes.GamesCount} games</h2>
+            <h2>Currently has {fixes?.FixesCount} fixes for {fixes?.GamesCount} games</h2>
             <h4>(not counting no intro fixes)</h4>
 
             <br />
 
-            <div style={{ display: "inline-block", textAlign: "left" }}>{fixes.FixesLists?.map(f =>
+            <div style={{ display: "inline-block", textAlign: "left" }}>{fixes?.FixesLists?.map(f =>
 
                 <div >
-                    <h3>{f.Game}</h3>
-                    {f.Fixes.map(ff => <div>&nbsp; &nbsp; &nbsp; &nbsp; • {ff}</div>)}
+                    <h3>{f?.Game}</h3>
+                    {f?.Fixes?.map(ff => <div>&nbsp; &nbsp; &nbsp; &nbsp; • {ff}</div>)}
                 </div>
 
             )}</div>
@@ -66,7 +66,7 @@ function App() {
             <br />
             <br />
 
-            <div><b>No Intro Fixes for:</b> {fixes.NoIntroFixes?.join(', ')}</div>
+            <div><b>No Intro Fixes for:</b> {fixes?.NoIntroFixes?.join(', ')}</div>
                 
         </div>
     );
