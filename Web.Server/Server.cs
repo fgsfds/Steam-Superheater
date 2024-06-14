@@ -27,10 +27,13 @@ namespace Superheater.Web.Server
                 builder.Services.AddHostedService<AppReleasesTask>();
                 builder.Services.AddHostedService<FileCheckerTask>();
             }
+            builder.Services.AddHostedService<StatsTask>();
 
             builder.Services.AddSingleton<FixesProvider>();
             builder.Services.AddSingleton<NewsProvider>();
             builder.Services.AddSingleton<AppReleasesProvider>();
+            builder.Services.AddSingleton<StatsProvider>();
+
             builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
             builder.Services.AddSingleton<S3Client>();
             builder.Services.AddSingleton<DatabaseContextFactory>();

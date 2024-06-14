@@ -1,6 +1,7 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
 using Superheater.Web.Server.Providers;
+using static Superheater.Web.Server.Providers.StatsProvider;
 
 namespace Superheater.Web.Server.Controllers
 {
@@ -10,14 +11,17 @@ namespace Superheater.Web.Server.Controllers
     {
         private readonly ILogger<FixesController> _logger;
         private readonly FixesProvider _fixesProvider;
+        private readonly StatsProvider _statsProvider;
 
         public FixesController(
             ILogger<FixesController> logger,
-            FixesProvider fixesProvider
+            FixesProvider fixesProvider,
+            StatsProvider statsProvider
             )
         {
             _logger = logger;
             _fixesProvider = fixesProvider;
+            _statsProvider = statsProvider;
         }
 
 
@@ -90,6 +94,6 @@ namespace Superheater.Web.Server.Controllers
 
 
         [HttpGet("stats")]
-        public FixesProvider.FixesStats GetFixesStats() => _fixesProvider.GetFixesStats();
+        public FixesStats? GetFixesStats() => _statsProvider.Stats;
     }
 }
