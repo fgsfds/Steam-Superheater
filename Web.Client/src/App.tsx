@@ -13,7 +13,7 @@ interface FixesLists {
 }
 
 function App() {
-    const [fixes, setFixesStats] = useState<FixesStats>([]);
+    const [fixes, setFixesStats] = useState<FixesStats[]>([]);
 
     useEffect(() => {
         getFixesStats();
