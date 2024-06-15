@@ -191,8 +191,8 @@ namespace Common.Client.Config
                 _dbContext.Settings.Add(new() { Name = nameof(config.UseLocalApiAndRepo), Value = config.UseLocalApiAndRepo.ToString() });
                 _dbContext.Settings.Add(new() { Name = nameof(config.ShowUninstalledGames), Value = config.ShowUninstalledGames.ToString() });
                 _dbContext.Settings.Add(new() { Name = nameof(config.ShowUnsupportedFixes), Value = config.ShowUnsupportedFixes.ToString() });
-                _dbContext.Settings.Add(new() { Name = nameof(config.LocalRepoPath), Value = config.LocalRepoPath });
-                _dbContext.Settings.Add(new() { Name = nameof(config.ApiPassword), Value = config.ApiPassword });
+                _dbContext.Settings.Add(new() { Name = nameof(config.LocalRepoPath), Value = config.LocalRepoPath ?? string.Empty });
+                _dbContext.Settings.Add(new() { Name = nameof(config.ApiPassword), Value = config.ApiPassword ?? string.Empty });
                 _dbContext.Settings.Add(new() { Name = nameof(config.LastReadNewsDate), Value = config.LastReadNewsDate.ToUniversalTime().ToString() });
 
                 if (config.Upvotes is not null)
