@@ -148,10 +148,10 @@ namespace Superheater.Avalonia.Core.ViewModels
 
                 if (SelectedFix.Installs == 1)
                 {
-                    return "Installed 1 time";
+                    return "1 install";
                 }
 
-                return $"Installed {SelectedFix.Installs} times";
+                return $"{SelectedFix.Installs} installs";
             }
         }
 
