@@ -1,4 +1,5 @@
 ﻿using Common.Entities.CombinedEntities;
+using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 
 namespace Common.Client.Providers
@@ -75,6 +76,23 @@ namespace Common.Client.Providers
             result = [.. result.OrderByDescending(static x => x.IsGameInstalled)];
 
             return new(ResultEnum.Success, result, string.Empty);
+        }
+
+        /// <summary>
+        /// Get list of combined entities with fixes list being main entity
+        /// </summary>
+        public async Task<FixFirstCombinedEntity> GetFixFirstEntityAsync(FixesList fixesList)
+        {
+            var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+            var game = games.FirstOrDefault(x => x.Id == fixesList.GameId);
+
+            FixFirstCombinedEntity addFix = new()
+            {
+                Game = game,
+                FixesList = fixesList
+            };
+
+            return addFix;
         }
     }
 }

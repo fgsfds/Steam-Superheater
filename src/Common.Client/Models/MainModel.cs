@@ -59,9 +59,11 @@ namespace Common.Client.Models
         /// </summary>
         /// <param name="search">Search string</param>
         /// <param name="tag">Selected tag</param>
-        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null)
+        public ImmutableList<FixFirstCombinedEntity> GetFilteredGamesList(string? search = null, string? tag = null, FixesList? additionalFix = null)
         {
-            foreach (var entity in _combinedEntitiesList)
+            var fixesList = _combinedEntitiesList;
+
+            foreach (var entity in fixesList)
             {
                 foreach (var fix in entity.FixesList.Fixes)
                 {
@@ -100,15 +102,33 @@ namespace Common.Client.Models
                 }
             }
 
+            if (additionalFix is not null)
+            {
+                fixesList = [.. fixesList];
+
+                var existingGame = fixesList.FirstOrDefault(x => x.GameId == additionalFix.GameId);
+
+                if (existingGame is not null)
+                {
+                    existingGame.FixesList.Fixes.Add(additionalFix.Fixes[0]);
+                }
+                else
+                {
+                    var addFix = _combinedEntitiesProvider.GetFixFirstEntityAsync(additionalFix).Result;
+                    fixesList.Add(addFix);
+                }
+
+            }
+
             if (!string.IsNullOrEmpty(tag))
             {
                 if (!tag.Equals(Consts.All))
                 {
-                    foreach (var entity in _combinedEntitiesList)
+                    foreach (var entity in fixesList)
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
-                            if (fix.Tags is null ||
+                            if (fix.Tags is not null &&
                                 !fix.Tags.Exists(x => x.Equals(tag))
                                 )
                             {
@@ -121,10 +141,10 @@ namespace Common.Client.Models
 
             if (string.IsNullOrWhiteSpace(search))
             {
-                return [.. _combinedEntitiesList.Where(static x => !x.FixesList.IsEmpty)];
+                return [.. fixesList.Where(static x => !x.FixesList.IsEmpty)];
             }
 
-            return [.. _combinedEntitiesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase) && !x.FixesList.IsEmpty)];
+            return [.. fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase) && !x.FixesList.IsEmpty)];
         }
 
         /// <summary>

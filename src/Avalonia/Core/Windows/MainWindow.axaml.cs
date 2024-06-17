@@ -21,6 +21,14 @@ public sealed partial class MainWindow : Window
         ((IPopup)PopupMessage.DataContext!).PopupShownEvent += MainWindow_IsShown;
     }
 
+    public void SwitchTab(MainWindowTabsEnum tabEnum)
+    {
+        if (tabEnum is MainWindowTabsEnum.MainTab)
+        {
+            MainTab.IsSelected = true;
+        }
+    }
+
     private void MainWindow_IsShown(bool obj)
     {
         if (obj)
@@ -32,4 +40,9 @@ public sealed partial class MainWindow : Window
             Tabs.Effect = null;
         }
     }
+}
+
+public enum MainWindowTabsEnum
+{
+    MainTab
 }

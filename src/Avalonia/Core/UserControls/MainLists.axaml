@@ -248,10 +248,10 @@
                 Superheater needs to be run as admin in order to install hosts fixes
             </TextBlock>
 
-            <!--Rating-->
+            <!--Stats-->
             <Grid Grid.Row="6"
                   Margin="3,6,3,0"
-                  IsVisible="{Binding SelectedFix, Converter={x:Static ObjectConverters.IsNotNull}}">
+                  IsVisible="{Binding IsStatsVisible}">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
@@ -259,8 +259,10 @@
                     <ColumnDefinition Width="*"></ColumnDefinition>
                 </Grid.ColumnDefinitions>
 
+                <!--Installs-->
                 <TextBlock Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectedFixNumberOfInstalls}"/>
 
+                <!--Score-->
                 <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
 
                     <Button IsVisible="{Binding IsSelectedFixUpvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
@@ -273,6 +275,7 @@
 
                 </StackPanel>
 
+                <!--Report-->
                 <Button Grid.Column="2" HorizontalAlignment="Right" Margin="3" Command="{Binding ReportFixCommand}">🚩</Button>
 
             </Grid>

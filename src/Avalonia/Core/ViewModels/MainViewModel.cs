@@ -1,4 +1,5 @@
 using Avalonia.Input.Platform;
+using AvaloniaEdit.Utils;
 using Common;
 using Common.Client;
 using Common.Client.API;
@@ -16,6 +17,7 @@ using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace Superheater.Avalonia.Core.ViewModels
@@ -32,14 +34,32 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly ProgressReport _progressReport;
         private readonly SemaphoreSlim _locker = new(1);
 
+        private FixesList _additionalFix;
+
         private CancellationTokenSource _cancellationTokenSource;
 
 
         #region Binding Properties
 
-        public ImmutableList<FixFirstCombinedEntity> FilteredGamesList => _mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
+        public ObservableCollection<FixFirstCombinedEntity> FilteredGamesList { get; set; } = [];
 
-        public ImmutableList<BaseFixEntity> SelectedGameFixesList => SelectedGame is null ? [] : [.. SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden)];
+        public void UpdateFilteredGamesList(FixesList? additionalFix = null)
+        {
+            FilteredGamesList.Clear();
+            FilteredGamesList.AddRange(_mainModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter, additionalFix));
+        }
+
+        public ObservableCollection<BaseFixEntity> SelectedGameFixesList { get; set; } = [];
+
+        public void UpdateSelectedGameFixesList()
+        {
+            SelectedGameFixesList.Clear();
+
+            if (SelectedGame is not null)
+            {
+                SelectedGameFixesList.AddRange(SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden));
+            }
+        }
 
         public ImmutableList<string> SelectedFixTags => SelectedFix?.Tags is null ? [] : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
 
@@ -208,6 +228,26 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
+        public bool IsStatsVisible
+        {
+            get
+            {
+                if (SelectedFix is null ||
+                    SelectedFix.IsTestFix)
+                {
+                    return false;
+                }
+
+                if (SelectedGame is null || 
+                    !SelectedGame.IsGameInstalled)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
+
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
@@ -230,11 +270,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         private float _progressBarValue;
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
         private FixFirstCombinedEntity? _selectedGame;
+        partial void OnSelectedGameChanged(FixFirstCombinedEntity? oldValue, FixFirstCombinedEntity? newValue)
+        {
+            UpdateSelectedGameFixesList();
+        }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
@@ -252,6 +295,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixScore))]
         [NotifyPropertyChangedFor(nameof(IsSelectedFixUpvoted))]
         [NotifyPropertyChangedFor(nameof(IsSelectedFixDownvoted))]
+        [NotifyPropertyChangedFor(nameof(IsStatsVisible))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
@@ -638,6 +682,23 @@ namespace Superheater.Avalonia.Core.ViewModels
         #endregion Relay Commands
 
 
+        public void TestFix(FixesList newFix)
+        {
+            SearchBarText = string.Empty;
+            SelectedTagFilter = Consts.All;
+
+            _additionalFix = newFix;
+
+            UpdateFilteredGamesList(_additionalFix);
+
+            var game = FilteredGamesList.First(x => x.GameId == newFix.GameId);
+            SelectedGame = game;
+
+            var fix = SelectedGameFixesList.First(x => x.Guid == newFix.Fixes[0].Guid);
+            SelectedFix = fix;
+        }
+
+
         /// <summary>
         /// Install or update fix
         /// </summary>
@@ -779,19 +840,17 @@ Do you still want to install the fix?",
             var selectedGameId = SelectedGame?.GameId;
             var selectedFixGuid = SelectedFix?.Guid;
 
-            OnPropertyChanged(nameof(FilteredGamesList));
-            OnPropertyChanged(nameof(SelectedGameFixesList));
+            UpdateFilteredGamesList(_additionalFix);
 
             UpdateHeader();
 
-            if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
+            if (selectedGameId is not null)
             {
-                SelectedGame = FilteredGamesList.First(x => x.GameId == selectedGameId);
+                SelectedGame = FilteredGamesList.FirstOrDefault(x => x.GameId == selectedGameId);
 
-                if (selectedFixGuid is not null &&
-                    SelectedGameFixesList.Exists(x => x.Guid == selectedFixGuid))
+                if (selectedFixGuid is not null)
                 {
-                    SelectedFix = SelectedGameFixesList.First(x => x.Guid == selectedFixGuid);
+                    SelectedFix = SelectedGameFixesList.FirstOrDefault(x => x.Guid == selectedFixGuid);
                 }
             }
         }

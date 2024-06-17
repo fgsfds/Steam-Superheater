@@ -15,6 +15,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Superheater.Avalonia.Core.Helpers;
 using Superheater.Avalonia.Core.ViewModels.Popups;
+using Superheater.Avalonia.Core.Windows;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -23,6 +24,7 @@ namespace Superheater.Avalonia.Core.ViewModels
     internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
     {
         private readonly EditorModel _editorModel;
+        private readonly MainViewModel _mainViewModel;
         private readonly FixesProvider _fixesProvider;
         private readonly IConfigProvider _config;
         private readonly PopupEditorViewModel _popupEditor;
@@ -439,6 +441,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
         [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(AddFixToDbCommand))]
+        [NotifyCanExecuteChangedFor(nameof(TestFixCommand))]
         private BaseFixEntity? _selectedFix;
 
         [ObservableProperty]
@@ -481,6 +484,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public EditorViewModel(
             EditorModel editorModel,
+            MainViewModel mainViewModel,
             FixesProvider fixesProvider,
             IConfigProvider config,
             PopupEditorViewModel popupEditor,
@@ -490,6 +494,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             )
         {
             _editorModel = editorModel;
+            _mainViewModel = mainViewModel;
             _fixesProvider = fixesProvider;
             _config = config;
             _popupEditor = popupEditor;
@@ -968,6 +973,23 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix = fix;
             }
         }
+
+
+        /// <summary>
+        /// Test newly added fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(TestFixCanExecute)))]
+        private void TestFix()
+        {
+            SelectedGame.ThrowIfNull();
+            SelectedFix.ThrowIfNull();
+
+            _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var fixJson);
+            _mainViewModel.TestFix(fixJson);
+
+            ((MainWindow)AvaloniaProperties.MainWindow).SwitchTab(MainWindowTabsEnum.MainTab);
+        }
+        private bool TestFixCanExecute() => SelectedFix is not null;
 
         #endregion Relay Commands
 

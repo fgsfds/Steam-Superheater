@@ -41,11 +41,11 @@
                        Text="{Binding RepositoryMessage}"/>
 
             <TabControl Grid.Row="1" Margin="5" Name="Tabs">
-                <TabItem Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
+                <TabItem Name="MainTab" Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
                 <TabItem Header="Editor" IsVisible="{Binding !IsSteamGameMode}" Margin="0,0,10,10">
-                    <pages:EditorPage Margin="0" />
+                    <pages:EditorPage Margin="0" x:Name="EditorPageTab" />
                 </TabItem>
                 <TabItem Header="{Binding ElementName=NewsPageTab, Path=((vm:NewsViewModel)DataContext).NewsTabHeader}" Margin="0,0,10,10">
                     <pages:NewsPage Margin="0" x:Name="NewsPageTab" />

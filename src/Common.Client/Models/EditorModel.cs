@@ -236,18 +236,7 @@ namespace Common.Client.Models
         /// <returns>true if uploaded successfully</returns>
         public async Task<Result> UploadFixAsync(FixesList fixesList, BaseFixEntity fix, CancellationToken cancellationToken)
         {
-            var newFixesList = new FixesList()
-            {
-                GameId = fixesList.GameId,
-                GameName = fixesList.GameName,
-                Fixes = [fix]
-            };
-
-            var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
-
-            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.json");
-
-            File.WriteAllText(fixFilePath, fixJson);
+            var fixFilePath = CreateFixJson(fixesList, fix, false, out _);
 
             List<string> filesToUpload = [fixFilePath];
 
@@ -267,6 +256,29 @@ namespace Common.Client.Models
             File.Delete(fixFilePath);
 
             return result;
+        }
+
+        public string CreateFixJson(FixesList fixesList, BaseFixEntity fix, bool isTestFix, out FixesList newFixesList)
+        {
+            if (isTestFix)
+            {
+                fix.IsTestFix = true;
+                fix.IsDisabled = false;
+            }
+
+            newFixesList = new FixesList()
+            {
+                GameId = fixesList.GameId,
+                GameName = fixesList.GameName,
+                Fixes = [fix]
+            };
+
+            var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
+
+            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.json");
+
+            File.WriteAllText(fixFilePath, fixJson);
+            return fixFilePath;
         }
 
         /// <summary>
