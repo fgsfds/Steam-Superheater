@@ -628,7 +628,7 @@
                           HorizontalAlignment="Right"
                           VerticalAlignment="Top"
                           IsChecked="False">
-                md
+                preview
             </ToggleButton>
         </Grid>
 
