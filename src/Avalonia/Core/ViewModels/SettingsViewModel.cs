@@ -147,6 +147,8 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
             _watcher.NotifyFilter = NotifyFilters.FileName;
+            _watcher.Deleted += NotifyFileDownloaded;
+            _watcher.Created += NotifyFileDownloaded;
             _watcher.Renamed += NotifyFileDownloaded;
             _watcher.EnableRaisingEvents = true;
         }
