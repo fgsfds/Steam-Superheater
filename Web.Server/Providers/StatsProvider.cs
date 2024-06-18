@@ -24,6 +24,8 @@ namespace Superheater.Web.Server.Providers
 
         public void CreateStats()
         {
+            _logger.LogInformation("Started creating stats");
+
             using var dbContext = _dbContextFactory.Get();
 
             var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToDictionary(x => x.Id, x => x.Name);
@@ -31,7 +33,7 @@ namespace Superheater.Web.Server.Providers
             List<FixesDbEntity> fixes = [];
             List<string> noIntro = [];
 
-            foreach (var fix in dbContext.Fixes.AsNoTracking())
+            foreach (var fix in dbContext.Fixes.AsNoTracking().Where(x => !x.IsDisabled))
             {
                 if (fix.Name.Equals("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
                 {
@@ -75,6 +77,8 @@ namespace Superheater.Web.Server.Providers
             fixesStats.NoIntroFixes = [.. noIntro.OrderBy(x => x)];
 
             Stats = fixesStats;
+
+            _logger.LogInformation("Finished creating stats");
         }
 
 
