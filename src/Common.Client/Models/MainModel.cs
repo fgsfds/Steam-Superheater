@@ -110,6 +110,13 @@ namespace Common.Client.Models
 
                 if (existingGame is not null)
                 {
+                    var existingFix = existingGame.FixesList.Fixes.FirstOrDefault(x => x.Guid == additionalFix.Fixes[0].Guid);
+
+                    if (existingFix is not null)
+                    {
+                        existingGame.FixesList.Fixes.Remove(existingFix);
+                    }
+
                     existingGame.FixesList.Fixes.Add(additionalFix.Fixes[0]);
                 }
                 else

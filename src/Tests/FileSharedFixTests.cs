@@ -8,8 +8,8 @@ namespace Tests
     /// </summary>
     public sealed partial class FileFixTests : IDisposable
     {
-        private const string TestFixSharedZip = "test_fix_shared.zip";
-        private const string TestFixShared2Zip = "test_fix_shared_v2.zip";
+        private readonly string _testFixSharedZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_shared.zip");
+        private readonly string _testFixShared2Zip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_shared_v2.zip");
 
         #region Tests
 
@@ -24,7 +24,7 @@ namespace Tests
                 Name = "shared test fix",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-                Url = TestFixSharedZip
+                Url = _testFixSharedZip
             };
 
             FileFixEntity fixEntity = new()
@@ -32,16 +32,16 @@ namespace Tests
                 Name = "test fix",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = TestFixZip,
+                Url = _testFixZip,
                 InstallFolder = "install folder",
                 SharedFix = sharedFixEntity,
                 SharedFixGuid = sharedFixEntity.Guid,
                 SharedFixInstallFolder = "shared install folder"
             };
 
-            await InstallAsync(fixEntity);
+            await InstallAsync(fixEntity).ConfigureAwait(true);
 
-            await UpdateSharedFixAsync(fixEntity);
+            await UpdateSharedFixAsync(fixEntity).ConfigureAwait(true);
             
             Uninstall(fixEntity);
         }
@@ -57,7 +57,7 @@ namespace Tests
                 Name = "shared test fix",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-                Url = TestFixSharedZip
+                Url = _testFixSharedZip
             };
 
             FileFixEntity fixEntity = new()
@@ -65,16 +65,16 @@ namespace Tests
                 Name = "test fix",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = TestFixZip,
+                Url = _testFixZip,
                 InstallFolder = "install folder",
                 SharedFix = sharedFixEntity,
                 SharedFixGuid = sharedFixEntity.Guid,
                 SharedFixInstallFolder = "shared install folder"
             };
 
-            await InstallAsync(fixEntity);
+            await InstallAsync(fixEntity).ConfigureAwait(true);
 
-            await UpdateMainFixAsync(fixEntity);
+            await UpdateMainFixAsync(fixEntity).ConfigureAwait(true);
             
             Uninstall(fixEntity);
         }
@@ -83,19 +83,7 @@ namespace Tests
 
         private async Task InstallAsync(FileFixEntity fixEntity)
         {
-            //install
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixZip),
-                Path.Combine(_rootDirectory, TestFixZip),
-                true
-                );
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixSharedZip),
-                Path.Combine(_rootDirectory, TestFixSharedZip),
-                true
-                );
-
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -131,21 +119,9 @@ namespace Tests
         private async Task UpdateMainFixAsync(FileFixEntity fixEntity)
         {
             fixEntity.Version = 2;
-            fixEntity.Url = TestFixV2Zip;
+            fixEntity.Url = _testFixV2Zip;
 
-            //update
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixSharedZip),
-                Path.Combine(_rootDirectory, TestFixSharedZip),
-                true
-                );
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixV2Zip),
-                Path.Combine(_rootDirectory, TestFixV2Zip),
-                true
-                );
-
-            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new());
+            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -188,24 +164,12 @@ namespace Tests
                 Name = "shared test fix",
                 Version = 2,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-                Url = TestFixShared2Zip
+                Url = _testFixShared2Zip
             };
 
             fixEntity.SharedFix = sharedFixEntity2;
 
-            //update
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixZip),
-                Path.Combine(_rootDirectory, TestFixZip),
-                true
-                );
-            File.Copy(
-                Path.Combine(_rootDirectory, "Resources", TestFixShared2Zip),
-                Path.Combine(_rootDirectory, TestFixShared2Zip),
-                true
-                );
-
-            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new());
+            await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
             Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 

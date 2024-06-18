@@ -7,7 +7,6 @@ using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
-using System.Security.Principal;
 
 namespace Tests
 {
@@ -18,7 +17,8 @@ namespace Tests
     public sealed class HostsFixTests : IDisposable
     {
         private const string TestTempFolder = "test_temp";
-        private readonly string _rootDirectory;
+
+        private readonly string _rootDirectory = Directory.GetCurrentDirectory();
         private readonly string _testDirectory;
         private readonly string _hostsFilePath;
 
@@ -56,10 +56,8 @@ namespace Tests
             container.AddScoped<InstalledFixesProvider>();
             container.AddScoped<FixesProvider>();
             container.AddScoped<GamesProvider>();
-            container.AddScoped<ApiInterface>();
             CommonBindings.Load(container);
 
-            _rootDirectory = Directory.GetCurrentDirectory();
             _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
             _hostsFilePath = Path.Combine(_testDirectory, "hosts");
 
@@ -113,7 +111,7 @@ namespace Tests
             var fixEntity = _fixEntity;
 
             //Install Fix
-            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, new(), _hostsFilePath);
+            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, new(), _hostsFilePath).ConfigureAwait(true);
 
             CheckInstalled(fixEntity.Guid.ToString());
 

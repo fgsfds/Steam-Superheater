@@ -132,29 +132,34 @@ namespace Common.Client.FixTools.FileFix
         {
             if (fix.Url is null)
             {
-                return new(ResultEnum.Success, null, string.Empty);
+                return new(ResultEnum.Success, null, "Fix doesn't have downloadable file");
             }
 
             var unpackToPath = fix.InstallFolder is null
                 ? game.InstallDir
                 : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
 
-            var pathToArchive = _configEntity.UseLocalApiAndRepo
-                ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fix.Url))
-                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fix.Url));
+            var fileUri = new Uri(fix.Url);
 
-            var fileDownloadResult = await CheckAndDownloadFileAsync(pathToArchive, fix.Url, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
+            var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
 
             if (!fileDownloadResult.IsSuccess)
             {
                 return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
             }
 
-            var filesInArchive = _archiveTools.GetListOfFilesInArchive(pathToArchive, unpackToPath, fix.InstallFolder, variant);
+            var filesInArchive = _archiveTools.GetListOfFilesInArchive(fileDownloadResult.ResultObject, unpackToPath, fix.InstallFolder, variant);
 
             BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
-            await UnpackArchiveAsync(pathToArchive, unpackToPath, variant).ConfigureAwait(false);
+            await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
+
+            if (_configEntity.DeleteZipsAfterInstall &&
+                !_configEntity.UseLocalApiAndRepo &&
+                !fileUri.IsFile)
+            {
+                File.Delete(fileDownloadResult.ResultObject);
+            }
 
             return new(ResultEnum.Success, filesInArchive, string.Empty);
         }
@@ -199,37 +204,57 @@ namespace Common.Client.FixTools.FileFix
         /// <summary>
         /// Check file's MD5 and download if MD5 is correct
         /// </summary>
-        /// <param name="zipFullPath">Full path to the archive</param>
         /// <param name="fixUrl">Url to the file</param>
         /// <param name="fixMD5">MD5 of the file</param>
         /// <exception cref="Exception">Error while downloading file</exception>
-        private async Task<Result> CheckAndDownloadFileAsync(string zipFullPath, string fixUrl, string? fixMD5, CancellationToken cancellationToken)
+        private async Task<Result<string>> CheckAndDownloadFileAsync(Uri fixUrl, string? fixMD5, CancellationToken cancellationToken)
         {
-            //checking md5 of the existing file
-            if (File.Exists(zipFullPath))
-            {
-                _logger.Info($"Using local file {zipFullPath}");
+            string pathToArchive;
 
-                var fileCheckResult = CheckFileMD5(zipFullPath, fixMD5);
+            if (fixUrl.IsFile && File.Exists(fixUrl.AbsolutePath))
+            {
+                return new(ResultEnum.Success, fixUrl.AbsolutePath, "Using local file");
+            }
+            else if (fixUrl.IsAbsoluteUri)
+            {
+                pathToArchive = _configEntity.UseLocalApiAndRepo
+                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl.AbsolutePath))
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl.AbsolutePath));
+            }
+            else
+            {
+                return ThrowHelper.ArgumentException<Result<string>>(nameof(fixUrl));
+            }
+            
+
+            //checking md5 of the existing file
+            if (File.Exists(pathToArchive))
+            {
+                _logger.Info($"Checking local file {pathToArchive}");
+
+                var fileCheckResult = CheckFileMD5(pathToArchive, fixMD5);
 
                 if (!fileCheckResult)
                 {
                     _logger.Info("MD5 of the local file doesn't match, removing it");
-                    File.Delete(zipFullPath);
+                    File.Delete(pathToArchive);
                 }
                 else
                 {
-                    return new(ResultEnum.Success, "File already exists");
+                    return new(ResultEnum.Success, pathToArchive, "Using local file");
                 }
             }
 
-            _logger.Info($"Local file {zipFullPath} not found");
+            _logger.Info($"Local file {pathToArchive} not found");
 
-            var url = fixUrl;
+            var result = await _archiveTools.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixMD5).ConfigureAwait(false);
 
-            var result = await _archiveTools.CheckAndDownloadFileAsync(new Uri(url), zipFullPath, cancellationToken, fixMD5).ConfigureAwait(false);
+            if (!result.IsSuccess)
+            {
+                return new(result.ResultEnum, null, result.Message);
+            }
 
-            return result;
+            return new(ResultEnum.Success, pathToArchive, "File downloaded successfully");
         }
 
         /// <summary>
@@ -326,26 +351,6 @@ namespace Common.Client.FixTools.FileFix
             }
 
             return fixMD5.Equals(hash);
-        }
-
-        /// <summary>
-        /// Backup files that will be replaced and unpack Zip
-        /// </summary>
-        /// <param name="archiveFullPath">Path to archive file</param>
-        /// <param name="unpackToPath">Where to unpack archive</param>
-        /// <param name="variant">Fix variant</param>
-        private async Task UnpackArchiveAsync(
-            string archiveFullPath,
-            string unpackToPath,
-            string? variant)
-        {
-            await _archiveTools.UnpackArchiveAsync(archiveFullPath, unpackToPath, variant).ConfigureAwait(false);
-
-            if (_configEntity.DeleteZipsAfterInstall &&
-                !_configEntity.UseLocalApiAndRepo)
-            {
-                File.Delete(archiveFullPath);
-            }
         }
 
         /// <summary>

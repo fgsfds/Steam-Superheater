@@ -8,7 +8,7 @@ namespace Tests
     /// </summary>
     public sealed partial class FileFixTests
     {
-        private const string TestFixPatchZip = "test_fix_patch.zip";
+        private readonly string _testFixPatchZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_patch.zip");
 
         /// <summary>
         /// Install and uninstall fix that includes octodiff patch
@@ -16,23 +16,17 @@ namespace Tests
         [Fact]
         public async Task InstallFixWithPatching()
         {
-            File.Copy(
-                Path.Combine(_rootDirectory, Path.Combine("Resources", TestFixPatchZip)),
-                Path.Combine(_rootDirectory, TestFixPatchZip),
-                true
-                );
-
             FileFixEntity fixEntity = new()
             {
                 Name = "test fix with patch",
                 Version = 1,
                 Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = TestFixPatchZip,
+                Url = _testFixPatchZip,
                 InstallFolder = "install folder",
                 FilesToPatch = ["install folder\\start game.exe"]
             };
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new());
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
             var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
             var installedExpected = $@"{{
