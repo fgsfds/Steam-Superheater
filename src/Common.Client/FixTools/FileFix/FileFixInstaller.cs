@@ -211,15 +211,15 @@ namespace Common.Client.FixTools.FileFix
         {
             string pathToArchive;
 
-            if (fixUrl.IsFile && File.Exists(fixUrl.AbsolutePath))
+            if (fixUrl.IsFile && File.Exists(fixUrl.LocalPath))
             {
-                return new(ResultEnum.Success, fixUrl.AbsolutePath, "Using local file");
+                return new(ResultEnum.Success, fixUrl.LocalPath, "Using local file");
             }
             else if (fixUrl.IsAbsoluteUri)
             {
                 pathToArchive = _configEntity.UseLocalApiAndRepo
-                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl.AbsolutePath))
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl.AbsolutePath));
+                    ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl.LocalPath))
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl.LocalPath));
             }
             else
             {
