@@ -20,7 +20,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public ImmutableList<NewsEntity> NewsList => _newsModel.News;
+        public ImmutableList<NewsEntity> NewsList => _newsModel.GetNews();
 
         public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
 
@@ -63,7 +63,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             _newsModel.MarkAllAsRead();
 
-            //TODO
             OnPropertyChanged(nameof(NewsList));
             UpdateHeader();
         }

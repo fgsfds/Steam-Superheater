@@ -10,11 +10,11 @@ namespace Common.Client.Models
         private readonly IConfigProvider _config;
         private readonly ApiInterface _newsProvider;
 
-        public int UnreadNewsCount => News.Count(static x => x.IsNewer);
+        public int UnreadNewsCount => _news.Count(static x => x.IsNewer);
 
         public bool HasUnreadNews => UnreadNewsCount > 0;
 
-        public ImmutableList<NewsEntity> News = [];
+        private List<NewsEntity> _news = [];
 
 
         public NewsModel(
@@ -26,6 +26,8 @@ namespace Common.Client.Models
             _newsProvider = newsProvider;
         }
 
+        public ImmutableList<NewsEntity> GetNews() => [.. _news];
+
 
         /// <summary>
         /// Get list of news from online or local repo
@@ -36,7 +38,7 @@ namespace Common.Client.Models
 
             if (result.IsSuccess)
             {
-                News = [.. result.ResultObject];
+                _news = [.. result.ResultObject];
 
                 UpdateReadStatusOfExistingNews();
             }
@@ -96,10 +98,12 @@ namespace Common.Client.Models
         /// </summary>
         private void UpdateReadStatusOfExistingNews()
         {
-            foreach (var item in News)
+            foreach (var item in _news)
             {
                 item.IsNewer = item.Date > _config.LastReadNewsDate;
             }
+
+            //News = [.. News];
         }
 
         /// <summary>
@@ -107,7 +111,7 @@ namespace Common.Client.Models
         /// </summary>
         private void UpdateConfigLastReadVersion()
         {
-            var lastReadDate = News.Max(static x => x.Date) + TimeSpan.FromSeconds(1);
+            var lastReadDate = _news.Max(static x => x.Date) + TimeSpan.FromSeconds(1);
 
             _config.LastReadNewsDate = lastReadDate;
         }
