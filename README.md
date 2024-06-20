@@ -18,7 +18,7 @@
 
 <b>Steam Superheater</b> is an app which main purpose is to simplify the process of installing various must-have fixes and patches for Steam games.
 
-The ever-growing list of fixes includes, but not limited to: (ultra)widescreen fixes, crash workarounds, unofficial patches, modern source ports for older games, and no intro fixes. 
+The ever-growing list of fixes includes, but not limited to (ultra)widescreen fixes, crash workarounds, unofficial patches, modern source ports for older games, and no intro fixes. 
 
 It's not meant to be an ultimate mod manager, but rather an easy way to fix and improve Steam games that are broken or have troubles running on modern systems out of the box.
 
@@ -54,11 +54,11 @@ Same for uninstalling and updating: original files are backed up and restored wh
 <td valign="center">
 <img align="right" width="600" src="img/editor.png">
 
-Fixes are hand-picked, verified, and prepared (if needed) by me. Some are downloaded directly from the fix developer's GitHub, some a repacked to support single-button install and put into my fixes repo.
+Fixes are hand-picked, verified, and prepared (if needed) by me. Some are downloaded directly from the fix developer's GitHub, some a repacked to support single-button install and put into my storage.
 
 Superheater also includes fixes <b>editor</b> which allows users who want to help fixes database grow to add and submit their own fixes.
 
-After review, user-submitted fixes will be added to the public database.
+After review, user-submitted fixes will be added (or not) to the public database.
 
 </td>
 </tr>
@@ -75,7 +75,7 @@ After review, user-submitted fixes will be added to the public database.
 
 Superheater is standalone and doesn't require Steam credentials or any other sensitive information to work.
 
-Fixes are checked and verifyed for any malware or unwanted behaviour before being added to the database. MD5 hash of the downloaded archives is checked before installing the fix, making it impossible to replace once verified fix with malware.
+Fixes are checked and verified for any malware or unwanted behavior before being added to the database. MD5 hash of the downloaded archives is checked before installing the fix, making it impossible to replace once verified fix with malware.
 
 </td>
 </tr>
@@ -90,4 +90,4 @@ Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b>
 
 ### Links
 
-<img align="left" height="32" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://discord.gg/mWvKyxR4et">Superheater Discord server</a>
+<img align="left" height="32" src="https://superheater.fgsfds.link/logo.png"> <a href="[https://discord.gg/mWvKyxR4et](https://superheater.fgsfds.link/)"> <a href="https://superheater.fgsfds.link/">Superheater website</a>
