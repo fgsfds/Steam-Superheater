@@ -11,6 +11,13 @@ namespace Common.Client
 
         private static bool? _isSteamDeckGameMode = null;
 
+        static ClientProperties()
+        {
+            WorkingFolder = Path.GetDirectoryName(Assembly.GetEntryAssembly()!.Location)!;
+        }
+
+        public static string WorkingFolder { get; private set; }
+
         /// <summary>
         /// Is app started in developer mode
         /// </summary>

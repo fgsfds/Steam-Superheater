@@ -275,7 +275,7 @@ namespace Common.Client.Models
 
             var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
-            var fixFilePath = Path.Combine(Directory.GetCurrentDirectory(), "fix.json");
+            var fixFilePath = Path.Combine(ClientProperties.WorkingFolder, "fix.json");
 
             File.WriteAllText(fixFilePath, fixJson);
             return fixFilePath;

@@ -28,11 +28,11 @@ public sealed class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (!DoesHaveWriteAccess(Directory.GetCurrentDirectory()))
+        if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
         {
             var messageBox = new MessageBox($"""
 Superheater doesn't have write access to
-{Directory.GetCurrentDirectory()}
+{ClientProperties.WorkingFolder}
 and can't be launched. 
 Move it to the folder where you have write access.
 """
@@ -137,7 +137,7 @@ You can't launch multiple instances of Superheater
     {
         _logger?.Info("Starting cleanup");
 
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+        var files = Directory.GetFiles(ClientProperties.WorkingFolder);
 
         foreach (var file in files)
         {
@@ -147,7 +147,7 @@ You can't launch multiple instances of Superheater
             }
         }
 
-        var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
+        var updateDir = Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder);
 
         if (Directory.Exists(updateDir))
         {

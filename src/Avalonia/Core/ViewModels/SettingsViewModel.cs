@@ -35,7 +35,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             get
             {
-                var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+                var files = Directory.GetFiles(ClientProperties.WorkingFolder);
 
                 var count = files.Count(x => _archivesExtensions.Any(x.EndsWith));
 
@@ -145,7 +145,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             _config.ParameterChangedEvent += OnParameterChangedEvent;
 
-            _watcher = new FileSystemWatcher(Directory.GetCurrentDirectory());
+            _watcher = new FileSystemWatcher(ClientProperties.WorkingFolder);
             _watcher.NotifyFilter = NotifyFilters.FileName;
             _watcher.Deleted += NotifyFileDownloaded;
             _watcher.Created += NotifyFileDownloaded;
@@ -243,7 +243,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand]
         private void DeleteFiles()
         {
-            var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+            var files = Directory.GetFiles(ClientProperties.WorkingFolder);
 
             var archives = files.Where(x => _archivesExtensions.Any(x.EndsWith));
 

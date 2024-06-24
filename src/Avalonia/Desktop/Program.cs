@@ -18,7 +18,7 @@ internal static class Program
             ClientProperties.IsDeveloperMode = true;
         }
 
-        if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFile)))
+        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();
         }

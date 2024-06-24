@@ -55,7 +55,7 @@ namespace Common.Client
 
             var updateUrl = _update.DownloadUrl;
 
-            var fileName = Path.Combine(Directory.GetCurrentDirectory(), Path.GetFileName(updateUrl.ToString()).Trim());
+            var fileName = Path.Combine(ClientProperties.WorkingFolder, Path.GetFileName(updateUrl.ToString()).Trim());
 
             if (File.Exists(fileName))
             {
@@ -64,7 +64,7 @@ namespace Common.Client
 
             await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
-            ZipFile.ExtractToDirectory(fileName, Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder), true);
+            ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder), true);
 
             File.Delete(fileName);
 
@@ -78,7 +78,7 @@ namespace Common.Client
         {
             //_logger.Info("Starting app update");
 
-            var dir = Directory.GetCurrentDirectory();
+            var dir = ClientProperties.WorkingFolder;
             var updateDir = Path.Combine(dir, Consts.UpdateFolder);
             var oldExe = Path.Combine(dir, ClientProperties.ExecutableName);
             var newExe = Path.Combine(updateDir, ClientProperties.ExecutableName);

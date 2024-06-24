@@ -11,7 +11,7 @@ namespace Common.Client
 
         public Logger()
         {
-            LogFile = Path.Combine(Directory.GetCurrentDirectory(), "superheater.log");
+            LogFile = Path.Combine(ClientProperties.WorkingFolder, "superheater.log");
 
             try
             {
