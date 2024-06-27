@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Common.Client;
+using Common.Client.DI;
 using Common.Helpers;
+using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core;
 
 namespace Superheater.Desktop;
@@ -18,7 +20,7 @@ internal static class Program
             ClientProperties.IsDeveloperMode = true;
         }
 
-        if (File.Exists(Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFile)))
+        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();
         }
@@ -30,6 +32,9 @@ internal static class Program
             }
             catch (Exception ex)
             {
+                var logger = BindingsManager.Provider.GetRequiredService<Logger>();
+                logger.Error(ex.ToString());
+
                 Environment.FailFast(ex.ToString());
             }
         }

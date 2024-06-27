@@ -196,12 +196,12 @@ namespace Common.Client.Providers
             }
             catch (Exception ex) when (ex is FileNotFoundException || ex is DirectoryNotFoundException)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex.ToString());
                 return new Result(ResultEnum.NotFound, ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex.ToString());
                 return new Result(ResultEnum.Error, ex.Message);
             }
         }

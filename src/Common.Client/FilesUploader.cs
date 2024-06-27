@@ -81,7 +81,7 @@ namespace Common.Client
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex.ToString());
                 return new(ResultEnum.Error, ex.Message);
             }
             finally

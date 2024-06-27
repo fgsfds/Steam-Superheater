@@ -156,12 +156,12 @@ namespace Common.Client.FixTools
             }
             catch (IOException ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex.ToString());
                 return new(ResultEnum.FileAccessError, ex.Message);
             }
             catch (Exception ex)
             {
-                _logger.Error(ex.Message);
+                _logger.Error(ex.ToString());
                 return new(ResultEnum.Error, ex.Message);
             }
 

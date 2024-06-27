@@ -28,11 +28,11 @@ public sealed class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (!DoesHaveWriteAccess(Directory.GetCurrentDirectory()))
+        if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
         {
             var messageBox = new MessageBox($"""
 Superheater doesn't have write access to
-{Directory.GetCurrentDirectory()}
+{ClientProperties.WorkingFolder}
 and can't be launched. 
 Move it to the folder where you have write access.
 """
@@ -42,10 +42,7 @@ Move it to the folder where you have write access.
         }
         if (!_mutex.WaitOne(1000, false))
         {
-            var messageBox = new MessageBox($"""
-You can't launch multiple instances of Superheater
-"""
-);
+            var messageBox = new MessageBox($"You can't launch multiple instances of Superheater");
             messageBox.Show();
             return;
         }
@@ -77,6 +74,8 @@ You can't launch multiple instances of Superheater
                 _logger.Info("Started in developer mode");
             }
 
+            _logger.Info($"Working folder is {ClientProperties.WorkingFolder}");
+
             Cleanup();
 
             // Line below is needed to remove Avalonia data validation.
@@ -98,7 +97,7 @@ You can't launch multiple instances of Superheater
         }
         catch (Exception ex)
         {
-            var messageBox = new MessageBox(ex.Message);
+            var messageBox = new MessageBox(ex.ToString());
             messageBox.Show();
 
             _logger?.Error(ex.ToString());
@@ -137,7 +136,7 @@ You can't launch multiple instances of Superheater
     {
         _logger?.Info("Starting cleanup");
 
-        var files = Directory.GetFiles(Directory.GetCurrentDirectory());
+        var files = Directory.GetFiles(ClientProperties.WorkingFolder);
 
         foreach (var file in files)
         {
@@ -147,7 +146,7 @@ You can't launch multiple instances of Superheater
             }
         }
 
-        var updateDir = Path.Combine(Directory.GetCurrentDirectory(), Consts.UpdateFolder);
+        var updateDir = Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder);
 
         if (Directory.Exists(updateDir))
         {
