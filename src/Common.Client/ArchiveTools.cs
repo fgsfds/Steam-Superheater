@@ -137,14 +137,13 @@ namespace Common.Client
         {
             IProgress<float> progress = _progressReport.Progress;
             _progressReport.OperationMessage = "Unpacking...";
-            var subfolder = variant + "/";
 
             using var archive = ArchiveFactory.Open(pathToArchive);
             using var reader = archive.ExtractAllEntries();
 
             var entriesCount = variant is null
             ? archive.Entries.Count()
-            : archive.Entries.Count(x => x.Key!.StartsWith(subfolder));
+            : archive.Entries.Count(x => x.Key!.StartsWith(variant));
 
             var entryNumber = 1f;
 
@@ -172,7 +171,6 @@ namespace Common.Client
 
                     if (entry.IsDirectory)
                     {
-                        //it's a directory
                         Directory.CreateDirectory(fullName);
                     }
                     else

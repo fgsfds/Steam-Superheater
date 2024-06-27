@@ -89,7 +89,7 @@ namespace Common.Client.FixTools.FileFix
             //checking if files can be opened before deleting them
             foreach (var file in fixFiles)
             {
-                var fullPath = Path.Combine(gameInstallDir, file);
+                var fullPath = ClientHelpers.GetFullPath(gameInstallDir, file);
 
                 if (!file.EndsWith('/') &&
                     !file.EndsWith('\\') &&
@@ -104,7 +104,7 @@ namespace Common.Client.FixTools.FileFix
             List<string> directories = [];
             foreach (var file in fixFiles)
             {
-                var fullPath = Path.Combine(gameInstallDir, file);
+                var fullPath = ClientHelpers.GetFullPath(gameInstallDir, file);
 
                 if (!file.EndsWith('/') &&
                     !file.EndsWith('\\') &&

@@ -58,10 +58,7 @@ namespace Tests
             container.AddScoped<GamesProvider>();
             CommonBindings.Load(container);
 
-            if (Directory.Exists(TestTempFolder))
-            {
-                Directory.Delete(TestTempFolder, true);
-            }
+            ClearTempFolders();
 
             Directory.CreateDirectory(TestTempFolder);
             _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
@@ -106,11 +103,31 @@ namespace Tests
             _ = _installedFixesProvider.GetInstalledFixesListAsync().Result;
         }
 
+        private static void ClearTempFolders()
+        {
+            if (Directory.Exists(TestTempFolder))
+            {
+                Directory.Delete(TestTempFolder, true);
+            }
+
+            if (Directory.Exists(Path.Combine("C:", "Windows", "temp", "test_fix")))
+            {
+                Directory.Delete(Path.Combine("C:", "Windows", "temp", "test_fix"), true);
+            }
+
+            var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            if (Directory.Exists(Path.Combine(documents, "test_fix")))
+            {
+                Directory.Delete(Path.Combine(documents, "test_fix"), true);
+            }
+        }
+
         public void Dispose()
         {
             Directory.SetCurrentDirectory(_rootDirectory);
 
-            Directory.Delete(TestTempFolder, true);
+            ClearTempFolders();
 
             foreach (var file in Directory.GetFiles(_rootDirectory))
             {
@@ -269,7 +286,105 @@ namespace Tests
             _fixManager.UninstallFix(_gameEntity, fixEntity);
 
             Assert.True(Directory.Exists(Path.Combine("game", "new folder")));
-        }        
+        }
+
+        /// <summary>
+        /// Install fix to an absolute path
+        /// </summary>
+        [Fact]
+        public async Task InstallFixToAnAbsolutePathTemp()
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
+            FileFixEntity fixEntity = new()
+            {
+                Name = "test fix absolute pack",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = _testFixZip,
+                InstallFolder = Path.Combine("C:", "Windows", "temp", "test_fix")
+            };
+
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+
+            Assert.True(File.Exists(Path.Combine("C:", "Windows", "temp", "test_fix", "start game.exe")));
+
+            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+            var installedExpected = $@"{{
+  ""$type"": ""FileFix"",
+  ""BackupFolder"": null,
+  ""FilesList"": [
+    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}"",
+    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}start game.exe"",
+    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}subfolder{SeparatorForJson}"",
+    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+  ],
+  ""InstalledSharedFix"": null,
+  ""WineDllOverrides"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
+
+            Assert.Equal(installedExpected, installedActual);
+
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
+
+            Assert.False(Directory.Exists(Path.Combine("C:", "Windows", "temp", "test_fix")));
+        }
+
+        /// <summary>
+        /// Install fix to an absolute path
+        /// </summary>
+        [Fact]
+        public async Task InstallFixToAnAbsolutePathDocuments()
+        {
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
+            FileFixEntity fixEntity = new()
+            {
+                Name = "test fix absolute pack",
+                Version = 1,
+                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+                Url = _testFixZip,
+                InstallFolder = Path.Combine("{documents}", "test_fix")
+            };
+
+            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+
+            var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+            Assert.True(File.Exists(Path.Combine(documents, "test_fix", "start game.exe")));
+
+            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+            var installedExpected = $@"{{
+  ""$type"": ""FileFix"",
+  ""BackupFolder"": null,
+  ""FilesList"": [
+    ""{{documents}}\\test_fix\\"",
+    ""{{documents}}\\test_fix\\start game.exe"",
+    ""{{documents}}\\test_fix\\subfolder\\"",
+    ""{{documents}}\\test_fix\\subfolder\\file.txt""
+  ],
+  ""InstalledSharedFix"": null,
+  ""WineDllOverrides"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
+
+            Assert.Equal(installedExpected, installedActual);
+
+            _fixManager.UninstallFix(_gameEntity, fixEntity);
+
+            Assert.False(Directory.Exists(Path.Combine(documents, "test_fix")));
+        }
 
         #endregion Tests
 

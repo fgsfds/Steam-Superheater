@@ -135,9 +135,7 @@ namespace Common.Client.FixTools.FileFix
                 return new(ResultEnum.Success, null, "Fix doesn't have downloadable file");
             }
 
-            var unpackToPath = fix.InstallFolder is null
-                ? game.InstallDir
-                : Path.Combine(game.InstallDir, fix.InstallFolder) + Path.DirectorySeparatorChar;
+            var unpackToPath = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
 
             var fileUri = new Uri(fix.Url);
 
