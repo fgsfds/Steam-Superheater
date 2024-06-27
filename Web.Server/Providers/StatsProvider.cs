@@ -22,7 +22,7 @@ namespace Superheater.Web.Server.Providers
         }
 
 
-        public void CreateStats()
+        public void UpdateStats()
         {
             _logger.LogInformation("Started creating stats");
 
@@ -35,7 +35,7 @@ namespace Superheater.Web.Server.Providers
 
             foreach (var fix in dbContext.Fixes.AsNoTracking().Where(x => !x.IsDisabled))
             {
-                if (fix.Name.Equals("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
+                if (fix.Name.StartsWith("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
                 {
                     var gameName = games[fix.GameId];
                     noIntro.Add(gameName);

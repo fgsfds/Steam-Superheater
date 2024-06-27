@@ -10,6 +10,8 @@ namespace Superheater.Web.Server.Providers
         private readonly ILogger<NewsProvider> _logger;
         private readonly DatabaseContextFactory _databaseContextFactory;
 
+        public List<NewsEntity>? News { get; private set; }
+
 
         public NewsProvider(
             ILogger<NewsProvider> logger,
@@ -17,26 +19,8 @@ namespace Superheater.Web.Server.Providers
         {
             _logger = logger;
             _databaseContextFactory = databaseContextFactory;
-        }
 
-
-        /// <summary>
-        /// Get list of news from the database
-        /// </summary>
-        public List<NewsEntity> GetNews()
-        {
-            using var dbContext = _databaseContextFactory.Get();
-            var newsEntities = dbContext.News.AsNoTracking().OrderByDescending(static x => x.Date).ToList();
-
-            var news = newsEntities.ConvertAll(x =>
-                new NewsEntity()
-                {
-                    Date = x.Date.ToUniversalTime(),
-                    Content = x.Content
-                }
-            );
-
-            return news;
+            UpdateNews();
         }
 
         /// <summary>
@@ -65,6 +49,8 @@ namespace Superheater.Web.Server.Providers
 
             dbContext.News.Add(entity);
             dbContext.SaveChanges();
+
+            UpdateNews();
 
             return true;
         }
@@ -97,7 +83,29 @@ namespace Superheater.Web.Server.Providers
             entity.Content = text;
             dbContext.SaveChanges();
 
+            UpdateNews();
+
             return true;
+        }
+
+
+        /// <summary>
+        /// Get list of news from the database
+        /// </summary>
+        private void UpdateNews()
+        {
+            using var dbContext = _databaseContextFactory.Get();
+            var newsEntities = dbContext.News.AsNoTracking().OrderByDescending(static x => x.Date).ToList();
+
+            var news = newsEntities.ConvertAll(x =>
+                new NewsEntity()
+                {
+                    Date = x.Date.ToUniversalTime(),
+                    Content = x.Content
+                }
+            );
+
+            News = news;
         }
     }
 }

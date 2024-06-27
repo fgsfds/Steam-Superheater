@@ -6,7 +6,6 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -46,24 +45,26 @@ namespace Superheater.Web.Server.Providers
         /// </summary>
         public List<FixesList> GetFixesList()
         {
-            _logger.LogInformation("Started get fixes");
             Stopwatch sw = new();
             sw.Start();
 
             //disposed later
             var dbContext = _dbContextFactory.Get();
 
-            var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
             var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
-            var dependencies = dbContext.Dependencies.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.DependencyGuid);
-            var tagsIdsDb = dbContext.TagsLists.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.TagId);
-            var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
-            var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
-
             var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name).ToLookup(static x => x.GameId);
             var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
+
+            var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
+
+            var tagsIdsDb = dbContext.TagsLists.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.TagId);
+            var dependencies = dbContext.Dependencies.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.DependencyGuid);
+
+            var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
+            var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
+
 
             dbContext.Dispose();
 

@@ -21,7 +21,7 @@ namespace Superheater.Web.Server.Controllers
         }
 
         [HttpGet]
-        public List<NewsEntity> GetNewsList() => _newsProvider.GetNews();
+        public List<NewsEntity>? GetNewsList() => _newsProvider.News;
 
         [HttpPost("add")]
         public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)

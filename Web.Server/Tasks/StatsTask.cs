@@ -32,7 +32,7 @@ namespace Superheater.Web.Server.Tasks
 
         private void DoWork(object? state)
         {
-            _statsProvider.CreateStats();
+            _statsProvider.UpdateStats();
         }
 
         public Task StopAsync(CancellationToken stoppingToken)
