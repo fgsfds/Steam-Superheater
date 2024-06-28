@@ -1,5 +1,6 @@
 ﻿using Common.Helpers;
 using SharpCompress.Archives;
+using System.Net.Http.Headers;
 using System.Security.Cryptography;
 
 namespace Common.Client
@@ -70,14 +71,14 @@ namespace Common.Client
                         if (!md5.Contains('-') &&
                             !md5.Equals(hash, StringComparison.InvariantCultureIgnoreCase))
                         {
-                            return new(ResultEnum.MD5Error, string.Empty);
+                            return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
                         }
                     }
                 }
                 else if (response.Content.Headers.ContentMD5 is not null &&
                          !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
                 {
-                    return new(ResultEnum.MD5Error, string.Empty);
+                    return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
                 }
             }
 
@@ -103,12 +104,25 @@ namespace Common.Client
 
                 ThrowHelper.Exception("Downloading cancelled");
             }
+            catch (HttpIOException)
+            {
+                await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                return new(ResultEnum.Error, ex.ToString());
+            }
+            finally
+            {
+                await fileStream.DisposeAsync().ConfigureAwait(false);
+            }
 
-            await fileStream.DisposeAsync().ConfigureAwait(false);
             File.Move(tempFile, filePath);
 
             if (hash is not null)
             {
+                _progressReport.OperationMessage = "Checking hash...";
+
                 using var md5 = MD5.Create();
                 using var stream = File.OpenRead(filePath);
 
@@ -116,7 +130,7 @@ namespace Common.Client
 
                 if (!hash.Equals(fileHash))
                 {
-                    return new(ResultEnum.MD5Error, string.Empty);
+                    return new(ResultEnum.MD5Error, "Downloaded file's hash doesn't match the database");
                 }
             }
 
@@ -254,6 +268,42 @@ namespace Common.Client
             }
 
             return files;
+        }
+
+        /// <summary>
+        /// Continue download after network error
+        /// </summary>
+        /// <param name="url">Url to the file</param>
+        /// <param name="contentLength">Total content length</param>
+        /// <param name="fileStream">File stream to write to</param>
+        /// <param name="cancellationToken">Cancellation token</param>
+        private async Task ContinueDownload(Uri url, long? contentLength, FileStream fileStream, CancellationToken cancellationToken)
+        {
+            try
+            {
+                using HttpRequestMessage request = new()
+                {
+                    RequestUri = url,
+                    Method = HttpMethod.Get
+                };
+
+                request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
+
+                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+
+                if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
+                {
+                    ThrowHelper.Exception("Error while downloading file");
+                }
+
+                using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+                await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+            }
+            catch (HttpIOException)
+            {
+                await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
+            }
         }
 
         private static void TrackProgress(FileStream streamToTrack, IProgress<float> progress, long? contentLength)
