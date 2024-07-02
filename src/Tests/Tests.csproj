@@ -52,7 +52,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Web.Server\Web.Server.csproj" />
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>

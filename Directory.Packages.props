@@ -7,9 +7,10 @@
     <PackageVersion Include="Avalonia" Version="11.0.11" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.0.11" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.0.11" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.309.10" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.309.12" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.2.2" />
     <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.0.3" />
+    <PackageVersion Include="Markdig" Version="0.37.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.6" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
