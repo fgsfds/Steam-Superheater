@@ -1,6 +1,6 @@
 ﻿namespace Common.Client.Config;
 
-public class DatabaseContextFactory
+public sealed class DatabaseContextFactory
 {
     public DatabaseContext Get() => new();
 }

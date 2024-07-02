@@ -1,4 +1,5 @@
 ﻿using Common.Client.API;
+using Common.Client.FilesTools;
 using Common.Entities;
 using Common.Enums;
 using Common.Helpers;
@@ -7,12 +8,12 @@ using System.IO.Compression;
 namespace Common.Client
 {
     public sealed class AppUpdateInstaller(
-        ArchiveTools archiveTools,
+        FilesDownloader filesDownloader,
         ApiInterface apiInterface,
         Logger logger
         )
     {
-        private readonly ArchiveTools _archiveTools = archiveTools;
+        private readonly FilesDownloader _filesDownloader = filesDownloader;
         private readonly ApiInterface _apiInterface = apiInterface;
         private readonly Logger _logger = logger;
 
@@ -62,7 +63,7 @@ namespace Common.Client
                 File.Delete(fileName);
             }
 
-            await _archiveTools.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
+            await _filesDownloader.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
             ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder), true);
 

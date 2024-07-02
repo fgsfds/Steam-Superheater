@@ -7,12 +7,13 @@ namespace Common.Client
     /// </summary>
     public sealed class ProgressReport
     {
+        private string _operationMessage = string.Empty;
+
         /// <summary>
         /// Progress value
         /// </summary>
         public Progress<float> Progress { get; set; }
 
-        private string _operationMessage;
         /// <summary>
         /// Operation message
         /// </summary>
@@ -30,7 +31,7 @@ namespace Common.Client
         }
 
         public delegate void OperationMessageChanged(string message);
-        public event OperationMessageChanged NotifyOperationMessageChanged;
+        public event OperationMessageChanged? NotifyOperationMessageChanged;
 
 
         public ProgressReport()
@@ -45,7 +46,7 @@ namespace Common.Client
     public sealed class OctodiffProgressReporter : IProgressReporter
     {
         public delegate void ProgressChanged(float progress);
-        public event ProgressChanged NotifyProgressChanged;
+        public event ProgressChanged? NotifyProgressChanged;
 
         public void ReportProgress(string operation, long currentPosition, long total)
         {
