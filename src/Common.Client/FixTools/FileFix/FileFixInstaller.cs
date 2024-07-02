@@ -1,4 +1,5 @@
 ﻿using Common.Client.Config;
+using Common.Client.FilesTools;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -13,6 +14,7 @@ namespace Common.Client.FixTools.FileFix
     {
         private readonly IConfigProvider _configEntity;
         private readonly ArchiveTools _archiveTools;
+        private readonly FilesDownloader _filesDownloader;
         private readonly ProgressReport _progressReport;
         private readonly Logger _logger;
 
@@ -20,12 +22,14 @@ namespace Common.Client.FixTools.FileFix
         public FileFixInstaller(
             IConfigProvider config,
             ArchiveTools archiveTools,
+            FilesDownloader filesDownloader,
             ProgressReport progressReport,
             Logger logger
             )
         {
             _configEntity = config;
             _archiveTools = archiveTools;
+            _filesDownloader = filesDownloader;
             _progressReport = progressReport;
             _logger = logger;
         }
@@ -245,7 +249,7 @@ namespace Common.Client.FixTools.FileFix
 
             _logger.Info($"Local file {pathToArchive} not found");
 
-            var result = await _archiveTools.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixMD5).ConfigureAwait(false);
+            var result = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixMD5).ConfigureAwait(false);
 
             if (!result.IsSuccess)
             {

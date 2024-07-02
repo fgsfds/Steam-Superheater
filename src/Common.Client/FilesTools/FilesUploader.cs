@@ -1,8 +1,8 @@
 ﻿using Common.Client.API;
 
-namespace Common.Client
+namespace Common.Client.FilesTools
 {
-    public class FilesUploader
+    public sealed class FilesUploader
     {
         private readonly Logger _logger;
         private readonly ApiInterface _apiInterface;
@@ -91,6 +91,7 @@ namespace Common.Client
 
             return new(ResultEnum.Success, string.Empty);
         }
+
 
         private static void TrackProgress(FileStream streamToTrack, IProgress<float> progress)
         {

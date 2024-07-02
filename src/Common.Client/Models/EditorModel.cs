@@ -1,4 +1,5 @@
-﻿using Common.Client.Providers;
+﻿using Common.Client.FilesTools;
+using Common.Client.Providers;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;

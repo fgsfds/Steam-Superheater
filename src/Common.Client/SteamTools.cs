@@ -3,9 +3,12 @@ using Microsoft.Win32;
 
 namespace Common.Client
 {
-    public class SteamTools
+    public sealed class SteamTools
     {
         public readonly Logger _logger;
+
+        public string? SteamInstallPath { get; }
+
 
         public SteamTools(Logger logger)
         {
@@ -13,7 +16,6 @@ namespace Common.Client
             SteamInstallPath = GetSteamInstallPath();
         }
 
-        public string? SteamInstallPath { get; }
 
         /// <summary>
         /// Get list of ACF files from all Steam libraries

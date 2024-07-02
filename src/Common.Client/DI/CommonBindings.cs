@@ -1,5 +1,6 @@
 ﻿using Common.Client.API;
 using Common.Client.Config;
+using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
@@ -29,9 +30,10 @@ namespace Common.Client.DI
             container.AddTransient<FixManager>();
             container.AddTransient<ArchiveTools>();
 
+            container.AddSingleton<FilesDownloader>();
+            container.AddSingleton<FilesUploader>();
             container.AddSingleton<ProgressReport>();
             container.AddSingleton<HttpClient>(CreateHttpClient);
-            container.AddSingleton<FilesUploader>();
             container.AddSingleton<SteamTools>();
             container.AddSingleton<Logger>();
             container.AddSingleton<ApiInterface>();

@@ -2,6 +2,7 @@
 using Common.Client.API;
 using Common.Client.Config;
 using Common.Client.DI;
+using Common.Client.FilesTools;
 using Common.Client.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -22,6 +23,7 @@ namespace Tests
             container.AddTransient<ArchiveTools>();
             container.AddTransient<ProgressReport>();
             container.AddTransient<ApiInterface>();
+            container.AddTransient<FilesDownloader>();
         }
 
         [Fact]
