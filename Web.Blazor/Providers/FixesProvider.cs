@@ -52,7 +52,7 @@ namespace Web.Blazor.Providers
             var dbContext = _dbContextFactory.Get();
 
             var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
-            var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name).ToLookup(static x => x.GameId);
+            var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
             var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
             var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
