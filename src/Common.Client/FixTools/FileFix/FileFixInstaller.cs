@@ -158,7 +158,7 @@ namespace Common.Client.FixTools.FileFix
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalApiAndRepo &&
-                !fileUri.IsFile)
+                fileUri.IsFile)
             {
                 File.Delete(fileDownloadResult.ResultObject);
             }
@@ -298,7 +298,7 @@ namespace Common.Client.FixTools.FileFix
 
             foreach (var file in files)
             {
-                var fullFilePath = Path.Combine(gameDir, file);
+                var fullFilePath = ClientHelpers.GetFullPath(gameDir, file);
 
                 if (!File.Exists(fullFilePath))
                 {

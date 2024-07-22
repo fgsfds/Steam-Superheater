@@ -166,7 +166,7 @@ namespace Common.Client.FixTools.FileFix
             {
                 var relativePath = Path.GetRelativePath(backupFolder, file);
 
-                var pathTo = Path.Combine(gameDir, relativePath);
+                var pathTo = ClientHelpers.GetFullPath(gameDir, relativePath);
 
                 File.Move(file, pathTo, true);
             }
