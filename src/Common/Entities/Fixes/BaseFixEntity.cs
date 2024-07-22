@@ -71,6 +71,9 @@ namespace Common.Entities.Fixes
         /// </summary>
         public bool IsDisabled { get; set; }
 
+        /// <summary>
+        /// Is this a test fix
+        /// </summary>
         [JsonIgnore]
         public bool IsTestFix { get; set; }
 

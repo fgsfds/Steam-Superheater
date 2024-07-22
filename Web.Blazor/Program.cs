@@ -1,4 +1,7 @@
+using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Interfaces;
+using Microsoft.Extensions.Options;
 using Telegram;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
@@ -20,6 +23,10 @@ namespace Web.Blazor
             {
                 jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
                 jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
+                jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(FixesListContext.Default);
+                jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
+                jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);
+                jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsEntityContext.Default);
             });
 
             // Don't run tasks in dev mode

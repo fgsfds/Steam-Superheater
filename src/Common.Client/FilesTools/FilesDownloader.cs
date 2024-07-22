@@ -65,7 +65,7 @@ namespace Common.Client.FilesTools
                         var md5 = response.Headers.ETag!.Tag.Replace("\"", "");
 
                         if (!md5.Contains('-') &&
-                            !md5.Equals(hash, StringComparison.InvariantCultureIgnoreCase))
+                            !md5.Equals(hash, StringComparison.OrdinalIgnoreCase))
                         {
                             return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
                         }

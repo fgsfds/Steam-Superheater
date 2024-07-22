@@ -26,6 +26,7 @@ namespace Common.Entities.Fixes
         /// <summary>
         /// Does list have any not hidden fixes
         /// </summary>
+        [JsonIgnore]
         public bool IsEmpty => Fixes.Count == 0 || !Fixes.Any(static x => !x.IsHidden);
     }
 

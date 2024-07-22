@@ -12,9 +12,9 @@
             {
                 return folder;
             }
-            else if (folder.StartsWith("{documents}", StringComparison.InvariantCultureIgnoreCase))
+            else if (folder.StartsWith("{documents}", StringComparison.OrdinalIgnoreCase))
             {
-                return folder.Replace("{documents}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), StringComparison.InvariantCultureIgnoreCase);
+                return folder.Replace("{documents}", Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), StringComparison.OrdinalIgnoreCase);
             }
             else
             {

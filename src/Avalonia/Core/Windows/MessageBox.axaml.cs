@@ -5,6 +5,10 @@ namespace Superheater.Avalonia.Core.Windows
 {
     public sealed partial class MessageBox : Window
     {
+        public MessageBox()
+        {
+        }
+
         public MessageBox(string text)
         {
             InitializeComponent();

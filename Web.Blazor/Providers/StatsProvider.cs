@@ -35,7 +35,7 @@ namespace Web.Blazor.Providers
 
             foreach (var fix in dbContext.Fixes.AsNoTracking().Where(x => !x.IsDisabled))
             {
-                if (fix.Name.StartsWith("No Intro Fix", StringComparison.InvariantCultureIgnoreCase))
+                if (fix.Name.StartsWith("No Intro Fix", StringComparison.OrdinalIgnoreCase))
                 {
                     var gameName = games[fix.GameId];
                     noIntro.Add(gameName);

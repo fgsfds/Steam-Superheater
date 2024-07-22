@@ -66,13 +66,13 @@ namespace Telegram
                                     ).ConfigureAwait(false);
                             }
 
-                            if (update.Message!.Text!.Equals("Ping", StringComparison.InvariantCultureIgnoreCase))
+                            if (update.Message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
                             {
                                 await SendMessageAsync("Pong").ConfigureAwait(false);
                             }
-                            else if (update.Message!.Text!.Equals("Check", StringComparison.InvariantCultureIgnoreCase))
+                            else if (update.Message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
                             {
-                                await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
+                                await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword, cancellationToken).ConfigureAwait(false);
                             }
 
                             return;

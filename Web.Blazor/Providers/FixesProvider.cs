@@ -43,7 +43,7 @@ namespace Web.Blazor.Providers
         /// <summary>
         /// Get list of fixes from the database
         /// </summary>
-        public List<FixesList> GetFixesList()
+        public IEnumerable<FixesList> GetFixesList()
         {
             Stopwatch sw = new();
             sw.Start();
@@ -444,10 +444,10 @@ namespace Web.Blazor.Providers
                 //adding or modifying base fix
                 var existingEntity = dbContext.Fixes.Find(fix.Guid);
 
-                var fixType = fix.GetType() == typeof(FileFixEntity) ? FixTypeEnum.FileFix :
-                                fix.GetType() == typeof(RegistryFixEntity) ? FixTypeEnum.RegistryFix :
-                                fix.GetType() == typeof(HostsFixEntity) ? FixTypeEnum.HostsFix :
-                                fix.GetType() == typeof(TextFixEntity) ? FixTypeEnum.TextFix :
+                var fixType = fix is FileFixEntity ? FixTypeEnum.FileFix :
+                                fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
+                                fix is HostsFixEntity ? FixTypeEnum.HostsFix :
+                                fix is TextFixEntity ? FixTypeEnum.TextFix :
                                 0;
 
                 if (existingEntity is null)
@@ -657,7 +657,7 @@ namespace Web.Blazor.Providers
                                 _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
                                 await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
                             }
-                            else if (!md5.Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                            else if (!md5.Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                             {
                                 _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
                                 await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
@@ -669,7 +669,7 @@ namespace Web.Blazor.Providers
                         _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
                         await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
                     }
-                    else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.InvariantCultureIgnoreCase))
+                    else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                     {
                         _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
                         await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
@@ -693,7 +693,7 @@ namespace Web.Blazor.Providers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Fixes check error: {ex.Message}");
+                _logger.LogInformation("Fixes check error", ex);
                 await _bot.SendMessageAsync($"Fixes check error: {ex.Message}");
             }
             finally

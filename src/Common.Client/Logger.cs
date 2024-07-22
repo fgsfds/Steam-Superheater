@@ -2,7 +2,7 @@
 
 namespace Common.Client
 {
-    public class Logger
+    public sealed class Logger
     {
         private readonly object _lock = new();
         private readonly List<string> _buffer = [];

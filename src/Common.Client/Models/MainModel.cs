@@ -151,7 +151,7 @@ namespace Common.Client.Models
                 return [.. fixesList.Where(static x => !x.FixesList.IsEmpty)];
             }
 
-            return [.. fixesList.Where(x => x.GameName.Contains(search, StringComparison.CurrentCultureIgnoreCase) && !x.FixesList.IsEmpty)];
+            return [.. fixesList.Where(x => x.GameName.Contains(search, StringComparison.OrdinalIgnoreCase) && !x.FixesList.IsEmpty)];
         }
 
         /// <summary>

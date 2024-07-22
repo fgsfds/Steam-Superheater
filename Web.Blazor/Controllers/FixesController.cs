@@ -23,7 +23,7 @@ namespace Web.Blazor.Controllers
 
 
         [HttpGet]
-        public List<FixesList> GetFixesList() => _fixesProvider.GetFixesList();
+        public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList();
 
 
         [HttpGet("{guid:Guid}")]
