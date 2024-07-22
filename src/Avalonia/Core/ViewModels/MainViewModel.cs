@@ -474,6 +474,22 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
+        /// Clear search bar
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(ClearSearchCanExecute)))]
+        private void ClearSearch() => SearchBarText = string.Empty;
+        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
+
+
+        /// <summary>
+        /// Open config file for selected fix
+        /// </summary>
+        [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
+        private void OpenConfig() => OpenConfigFileAsync();
+        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
+
+
+        /// <summary>
         /// Open selected game install folder
         /// </summary>
         [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
@@ -492,25 +508,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
-        /// Clear search bar
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(ClearSearchCanExecute)))]
-        private void ClearSearch() => SearchBarText = string.Empty;
-        private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
-
-
-        /// <summary>
-        /// Open config file for selected fix
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
-        private void OpenConfig() => OpenConfigFileAsync();
-        private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
-
-
-        /// <summary>
         /// Open PCGW page for selected game
         /// </summary>
-        [RelayCommand(CanExecute = (nameof(OpenPCGamingWikiCanExecute)))]
+        [RelayCommand]
         private void OpenPCGamingWiki()
         {
             SelectedGame.ThrowIfNull();
@@ -521,7 +521,54 @@ namespace Superheater.Avalonia.Core.ViewModels
                 UseShellExecute = true
             });
         }
-        private bool OpenPCGamingWikiCanExecute() => SelectedGame is not null;
+
+
+        /// <summary>
+        /// Open selected game on Steam store
+        /// </summary>
+        [RelayCommand]
+        private void OpenSteamStore()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://store.steampowered.com/app/" + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
+        /// Open selected game on Steam client
+        /// </summary>
+        [RelayCommand]
+        private void OpenSteamClient()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "steam://nav/games/details/" + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
+        /// Open SteamDB page for selected game
+        /// </summary>
+        [RelayCommand]
+        private void OpenSteamDB()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = @$"https://steamdb.info/app/{SelectedGame.GameId}/config/",
+                UseShellExecute = true
+            });
+        }
 
 
         /// <summary>

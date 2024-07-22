@@ -37,12 +37,6 @@
                 +
             </Button>
 
-            <Button Margin="3,0"
-                    Padding="8"
-                    Command="{Binding OpenSteamDBCommand}">
-                Open SteamDB...
-            </Button>
-
             <Button Name="UpdateFixes"
                     Margin="3,0"
                     Padding="8"

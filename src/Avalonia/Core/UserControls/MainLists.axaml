@@ -38,7 +38,18 @@
 
                     <Grid RowDefinitions="*,auto"
                           ColumnDefinitions="auto,auto"
+                          Background="Transparent"
                           Margin="5">
+
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Margin="5" Header="Open game folder..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenGameFolderCommand}"/>
+                                <MenuItem Margin="5" Header="Open on Steam client..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamClientCommand}"/>
+                                <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamStoreCommand}"/>
+                                <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenPCGamingWikiCommand}"/>
+                                <MenuItem Margin="5" Header="Open SteamDB page..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamDBCommand}"/>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
 
                         <Border BorderBrush="Black"
                                 Background="Black"
@@ -109,7 +120,16 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical" Margin="10">
+                    <StackPanel Orientation="Vertical" Margin="10" Background="Transparent">
+
+                        <StackPanel.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Margin="5" Header="Install" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallFixCommand}"/>
+                                <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
+                                <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
+                            </ContextMenu>
+                        </StackPanel.ContextMenu>
+
                         <TextBlock Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Center"/>
 
                         <TextBlock Margin="0"
@@ -250,8 +270,7 @@
 
             <!--Stats-->
             <Grid Grid.Row="6"
-                  Margin="3,6,3,0"
-                  IsVisible="{Binding IsStatsVisible}">
+                  Margin="3,6,3,0">
 
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"></ColumnDefinition>
@@ -260,10 +279,17 @@
                 </Grid.ColumnDefinitions>
 
                 <!--Installs-->
-                <TextBlock Grid.Column="0" Margin="3" VerticalAlignment="Center" HorizontalAlignment="Left" Text="{Binding SelectedFixNumberOfInstalls}"/>
+                <TextBlock Grid.Column="0"
+                           Margin="3"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Left"
+                           Text="{Binding SelectedFixNumberOfInstalls}"/>
 
                 <!--Score-->
-                <StackPanel Grid.Column="1" HorizontalAlignment="Center" Orientation="Horizontal">
+                <StackPanel Grid.Column="1"
+                            IsVisible="{Binding IsStatsVisible}"
+                            HorizontalAlignment="Center"
+                            Orientation="Horizontal">
 
                     <Button IsVisible="{Binding IsSelectedFixUpvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
                     <Button IsVisible="{Binding !IsSelectedFixUpvoted}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
@@ -276,7 +302,11 @@
                 </StackPanel>
 
                 <!--Report-->
-                <Button Grid.Column="2" HorizontalAlignment="Right" Margin="3" Command="{Binding ReportFixCommand}">🚩</Button>
+                <Button Grid.Column="2"
+                        IsVisible="{Binding IsStatsVisible}"
+                        HorizontalAlignment="Right"
+                        Margin="3"
+                        Command="{Binding ReportFixCommand}">🚩</Button>
 
             </Grid>
 

@@ -31,6 +31,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private readonly PopupMessageViewModel _popupMessage;
         private readonly PopupStackViewModel _popupStack;
         private readonly ProgressReport _progressReport;
+        private readonly GamesProvider _gamesProvider;
         private readonly SemaphoreSlim _locker = new(1);
 
         private CancellationTokenSource _cancellationTokenSource;
@@ -490,6 +491,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             PopupEditorViewModel popupEditor,
             PopupMessageViewModel popupMessage,
             PopupStackViewModel popupStack,
+            GamesProvider gamesProvider,
             ProgressReport progressReport
             )
         {
@@ -500,6 +502,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             _popupEditor = popupEditor;
             _popupMessage = popupMessage;
             _popupStack = popupStack;
+            _gamesProvider = gamesProvider;
             _progressReport = progressReport;
 
             _searchBarText = string.Empty;
@@ -923,9 +926,81 @@ namespace Superheater.Avalonia.Core.ViewModels
 
 
         /// <summary>
+        /// Open selected game install folder
+        /// </summary>
+        [RelayCommand]
+        private async Task OpenGameFolderAsync()
+        {
+            SelectedGame.ThrowIfNull();
+
+            var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+            var game = games.FirstOrDefault(x => x.Id == SelectedGame.GameId);
+
+            if (game is null)
+            {
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = game.InstallDir,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
+        /// Open PCGW page for selected game
+        /// </summary>
+        [RelayCommand]
+        private void OpenPCGamingWiki()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
+        /// Open selected game on Steam store
+        /// </summary>
+        [RelayCommand]
+        private void OpenSteamStore()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://store.steampowered.com/app/" + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
+        /// Open selected game on Steam client
+        /// </summary>
+        [RelayCommand]
+        private void OpenSteamClient()
+        {
+            SelectedGame.ThrowIfNull();
+
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "steam://nav/games/details/" + SelectedGame.GameId,
+                UseShellExecute = true
+            });
+        }
+
+
+        /// <summary>
         /// Open SteamDB page for selected game
         /// </summary>
-        [RelayCommand(CanExecute = (nameof(OpenSteamDBCanExecute)))]
+        [RelayCommand]
         private void OpenSteamDB()
         {
             SelectedGame.ThrowIfNull();
@@ -936,7 +1011,6 @@ namespace Superheater.Avalonia.Core.ViewModels
                 UseShellExecute = true
             });
         }
-        private bool OpenSteamDBCanExecute() => SelectedGame is not null;
 
 
         /// <summary>

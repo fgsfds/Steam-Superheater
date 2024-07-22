@@ -24,19 +24,6 @@
                     Background="{DynamicResource SystemAccentColor}"
                     IsVisible="{Binding !IsSteamGameMode}"/>
 
-            <Button Command="{Binding OpenGameFolderCommand}"
-                    Margin="3,0"
-                    Padding="8"
-                    IsVisible="{Binding !IsSteamGameMode}">
-                Open game folder...
-            </Button>
-
-            <Button Command="{Binding OpenPCGamingWikiCommand}"
-                    Margin="3,0"
-                    Padding="8">
-                PCGamingWiki...
-            </Button>
-
             <Button Command="{Binding UpdateGamesCommand}"
                     Margin="3,0"
                     Padding="8">
