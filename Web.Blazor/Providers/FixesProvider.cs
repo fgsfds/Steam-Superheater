@@ -667,7 +667,7 @@ namespace Web.Blazor.Providers
                     else if (result.Content.Headers.ContentMD5 is null)
                     {
                         _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
-                        await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
+                        //await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
                     }
                     else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                     {
@@ -693,7 +693,7 @@ namespace Web.Blazor.Providers
             }
             catch (Exception ex)
             {
-                _logger.LogInformation("Fixes check error", ex);
+                _logger.LogCritical(ex, "Fixes check error");
                 await _bot.SendMessageAsync($"Fixes check error: {ex.Message}");
             }
             finally
