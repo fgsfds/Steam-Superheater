@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              x:DataType="vm:MainViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.MainButtons">
     <Grid>
@@ -17,7 +18,8 @@
                     HorizontalAlignment="Left"
                     Grid.Column="0">
 
-            <Button Command="{Binding LaunchGameCommand}"
+            <Button Name="LaunchButton"
+                    Command="{Binding LaunchGameCommand}"
                     Content="{Binding LaunchGameButtonText, FallbackValue=Launch game...}"
                     Margin="0,0,3,0"
                     Padding="8"
@@ -25,9 +27,14 @@
                     IsVisible="{Binding !IsSteamGameMode}"/>
 
             <Button Command="{Binding UpdateGamesCommand}"
+                    Height="{Binding Bounds.Height, ElementName=LaunchButton}"
+                    Width="{Binding $self.Bounds.Height}"
                     Margin="3,0"
                     Padding="8">
-                Update list
+                <Grid>
+                    <i:Icon Value="fa-sync" Animation="Spin" IsVisible="{Binding IsInProgress}" />
+                    <i:Icon Value="fa-sync" IsVisible="{Binding !IsInProgress}" />
+                </Grid>
             </Button>
 
         </StackPanel>

@@ -3,6 +3,8 @@ using Common.Client;
 using Common.Client.DI;
 using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
+using Projektanker.Icons.Avalonia;
+using Projektanker.Icons.Avalonia.FontAwesome;
 using Superheater.Avalonia.Core;
 
 namespace Superheater.Desktop;
@@ -42,8 +44,15 @@ internal static class Program
 
     // Avalonia configuration, don't remove; also used by visual designer.
     private static AppBuilder BuildAvaloniaApp()
-        => AppBuilder.Configure<App>()
-            .UsePlatformDetect()
-            //.WithInterFont()
-            .LogToTrace();
+    {
+        IconProvider.Current
+            .Register<FontAwesomeIconProvider>()
+            //.Register<MaterialDesignIconProvider>()
+            ;
+
+        return AppBuilder.Configure<App>()
+                .UsePlatformDetect()
+                //.WithInterFont()
+                .LogToTrace();
+    }
 }

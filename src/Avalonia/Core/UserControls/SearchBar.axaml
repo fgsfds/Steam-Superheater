@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="30"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              x:DataType="vm:ISearchBarViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.SearchBar">
 
@@ -50,7 +51,7 @@
                 VerticalContentAlignment="Center"
                 Background="{DynamicResource SystemAccentColor}"
                 ToolTip.Tip="Clear search bar">
-            X
+            <i:Icon Value="fa-x" />
         </Button>
 
     </Grid>

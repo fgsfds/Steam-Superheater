@@ -43,7 +43,9 @@
 
                         <Grid.ContextMenu>
                             <ContextMenu>
+                                <MenuItem Margin="5" Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameButtonText}" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameCommand}"/>
                                 <MenuItem Margin="5" Header="Open game folder..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenGameFolderCommand}"/>
+                                <Separator/>
                                 <MenuItem Margin="5" Header="Open on Steam client..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamClientCommand}"/>
                                 <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamStoreCommand}"/>
                                 <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenPCGamingWikiCommand}"/>
