@@ -159,6 +159,10 @@ namespace Common
         /// </summary>
         FileAccessError,
         /// <summary>
+        /// Task cancelled
+        /// </summary>
+        Cancelled,
+        /// <summary>
         /// General error
         /// </summary>
         Error

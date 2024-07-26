@@ -52,7 +52,7 @@ namespace Common.Client.FilesTools
 
             if (!response.IsSuccessStatusCode)
             {
-                ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode);
+                return new(ResultEnum.ConnectionError, "Error while downloading a file: " + response.StatusCode);
             }
 
             //Hash check before download
@@ -99,7 +99,7 @@ namespace Common.Client.FilesTools
                     File.Delete(tempFile);
                 }
 
-                ThrowHelper.Exception("Downloading cancelled");
+                return new(ResultEnum.Cancelled, "Downloading cancelled");
             }
             catch (HttpIOException)
             {
@@ -156,11 +156,11 @@ namespace Common.Client.FilesTools
 
                 request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
 
-                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+                using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
                 if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
                 {
-                    ThrowHelper.Exception("Error while downloading file");
+                    ThrowHelper.Exception("Error while downloading a file: " + response.StatusCode);
                 }
 
                 using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
