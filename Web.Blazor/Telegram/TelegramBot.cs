@@ -1,17 +1,17 @@
-﻿using System.Net.Http.Json;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Telegram
+namespace Web.Blazor.Telegram
 {
     public sealed class TelegramBot
     {
         private readonly ITelegramBotClient _botClient;
         private readonly ReceiverOptions _receiverOptions;
         private readonly HttpClient _httpClient;
+        private readonly ILogger<TelegramBot> _logger;
 
         private readonly string _chatId = Environment.GetEnvironmentVariable("TgChatId")!;
         private readonly string _token = Environment.GetEnvironmentVariable("TgToken")!;
@@ -54,6 +54,8 @@ namespace Telegram
         {
             try
             {
+                _logger.LogInformation($"Got update of type {update.Type.ToString()}");
+
                 switch (update.Type)
                 {
                     case UpdateType.Message:
@@ -68,10 +70,12 @@ namespace Telegram
 
                             if (update.Message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
                             {
+                                _logger.LogInformation("Pong");
                                 await SendMessageAsync("Pong").ConfigureAwait(false);
                             }
                             else if (update.Message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
                             {
+                                _logger.LogInformation("Check message received");
                                 await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword, cancellationToken).ConfigureAwait(false);
                             }
 
@@ -81,6 +85,7 @@ namespace Telegram
             }
             catch (Exception ex)
             {
+                _logger.LogCritical(ex, "Critical telegram error");
                 await SendMessageAsync(ex.ToString()).ConfigureAwait(false);
             }
         }
@@ -99,6 +104,7 @@ namespace Telegram
                 _ => error.ToString()
             };
 
+            _logger.LogError(message);
             await SendMessageAsync(message).ConfigureAwait(false);
         }
     }

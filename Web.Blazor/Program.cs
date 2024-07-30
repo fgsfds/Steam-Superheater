@@ -1,11 +1,10 @@
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Interfaces;
-using Microsoft.Extensions.Options;
-using Telegram;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
+using Web.Blazor.Telegram;
 
 namespace Web.Blazor
 {

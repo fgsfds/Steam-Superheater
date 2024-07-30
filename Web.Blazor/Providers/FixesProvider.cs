@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Telegram;
 using Web.Blazor.Database;
 using Web.Blazor.DbEntities;
 using Web.Blazor.Helpers;
+using Web.Blazor.Telegram;
 
 namespace Web.Blazor.Providers
 {
