@@ -17,9 +17,10 @@
         Width="1200"
         WindowStartupLocation="CenterScreen"
         CanResize="True"
-        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaToDecorationsHint="False"
         Background="{DynamicResource Background}"
-        WindowState="Maximized">
+        WindowState="Maximized"
+        >
 
     <Window.Resources>
         <ResourceDictionary>
