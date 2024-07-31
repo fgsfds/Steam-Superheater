@@ -19,7 +19,7 @@
     <PackageVersion Include="Octopus.Octodiff" Version="2.0.546" />
     <PackageVersion Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
     <PackageVersion Include="SharpCompress" Version="0.37.2" />
-    <PackageVersion Include="Telegram.Bot" Version="19.0.0" />
+    <PackageVersion Include="Telegram.Bot" Version="21.7.1" />
     <PackageVersion Include="xunit" Version="2.9.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
