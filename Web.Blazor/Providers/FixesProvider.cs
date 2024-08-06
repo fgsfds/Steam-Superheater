@@ -601,18 +601,17 @@ namespace Web.Blazor.Providers
 
                 return;
             }
+            _isCheckFixesRunning = true;
 
-            try
+            _logger.LogInformation("Fixes check started");
+            await _bot.SendMessageAsync($"Fixes check started");
+
+            using var dbContext = _dbContextFactory.Get();
+            var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+
+            foreach (var fix in fixes)
             {
-                _isCheckFixesRunning = true;
-
-                _logger.LogInformation("Fixes check started");
-                await _bot.SendMessageAsync($"Fixes check started");
-
-                using var dbContext = _dbContextFactory.Get();
-                var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
-
-                foreach (var fix in fixes)
+                try
                 {
                     if (fix.Url is null)
                     {
@@ -687,19 +686,17 @@ namespace Web.Blazor.Providers
                         await _bot.SendMessageAsync($"Fix size doesn't match: {fix.Url}");
                     }
                 }
+                catch (Exception ex)
+                {
+                    _logger.LogCritical(ex, $"Fix check error: {fix.Url}");
+                    await _bot.SendMessageAsync($"Fixes check error: {fix.Url}{Environment.NewLine}{ex}");
+                }
+            }
 
-                _logger.LogInformation("Fixes check ended");
-                await _bot.SendMessageAsync($"Fixes check ended");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogCritical(ex, "Fixes check error");
-                await _bot.SendMessageAsync($"Fixes check error: {ex.Message}");
-            }
-            finally
-            {
-                _isCheckFixesRunning = false;
-            }
+            _logger.LogInformation("Fixes check ended");
+            await _bot.SendMessageAsync($"Fixes check ended");
+
+            _isCheckFixesRunning = false;
         }
 
 

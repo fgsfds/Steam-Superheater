@@ -14,7 +14,7 @@
 
         public const string UpdateFolder = "update";
 
-        public const string FilesBucketUrl = "https://files.fgsfds.link/superheater/fixes/";
+        public const string FilesBucketUrl = "http://files.fgsfds.link/superheater/fixes/";
 
         public const string Bucket = "b70f50a9-files";
 
