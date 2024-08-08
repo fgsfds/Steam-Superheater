@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
@@ -219,7 +220,7 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                         ToolTip.Tip="Hide tag">
-                                    -
+                                    <i:Icon Value="fa-minus" />
                                 </Button>
 
                             </StackPanel>
@@ -293,13 +294,39 @@
                             HorizontalAlignment="Center"
                             Orientation="Horizontal">
 
-                    <Button IsVisible="{Binding IsSelectedFixUpvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
-                    <Button IsVisible="{Binding !IsSelectedFixUpvoted}" Margin="3" Command="{Binding UpvoteCommand}">👍</Button>
+                    <Button Classes.IsUpvoted="{Binding IsSelectedFixUpvoted}"
+                            Margin="3"
+                            Padding="7"
+                            Command="{Binding UpvoteCommand}">
 
-                    <TextBlock Margin="3" Text="{Binding SelectedFixScore}" VerticalAlignment="Center"></TextBlock>
+                        <Button.Styles>
+                            <Style Selector="Button.IsUpvoted">
+                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                            </Style>
+                        </Button.Styles>
 
-                    <Button IsVisible="{Binding IsSelectedFixDownvoted}" Background="{DynamicResource SystemAccentColor}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
-                    <Button IsVisible="{Binding !IsSelectedFixDownvoted}" Margin="3" Command="{Binding DownvoteCommand}">👎</Button>
+                        <i:Icon Value="fa-thumbs-up" />
+
+                    </Button>
+
+                    <TextBlock Margin="3"
+                               Text="{Binding SelectedFixScore}"
+                               VerticalAlignment="Center"/>
+
+                    <Button Classes.IsDownvoted="{Binding IsSelectedFixDownvoted}"
+                            Margin="3"
+                            Padding="7"
+                            Command="{Binding DownvoteCommand}">
+
+                        <i:Icon Value="fa-thumbs-down" />
+
+                        <Button.Styles>
+                            <Style Selector="Button.IsDownvoted">
+                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                            </Style>
+                        </Button.Styles>
+
+                    </Button>
 
                 </StackPanel>
 
@@ -308,7 +335,10 @@
                         IsVisible="{Binding IsStatsVisible}"
                         HorizontalAlignment="Right"
                         Margin="3"
-                        Command="{Binding ReportFixCommand}">🚩</Button>
+                        Padding="7"
+                        Command="{Binding ReportFixCommand}">
+                    <i:Icon Value="fa-flag" />
+                </Button>
 
             </Grid>
 

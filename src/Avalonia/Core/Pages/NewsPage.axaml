@@ -27,15 +27,20 @@
                                       Classes.IsNew="{Binding IsNewer}">
 
                                 <Expander.Styles>
-                                    <Style Selector="Expander /template/ ToggleButton">
+
+                                    <Style Selector=".IsNew /template/ ToggleButton">
                                         <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+
+                                        <Style Selector="^:pointerover /template/ Border#ToggleButtonBackground">
+                                            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                        </Style>
+
+                                        <Style Selector="^:pressed /template/ Border#ToggleButtonBackground">
+                                            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                        </Style>
+
                                     </Style>
-                                    <Style Selector=":pointerover /template/ Border#ToggleButtonBackground">
-                                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
-                                    </Style>
-                                    <Style Selector=":pressed /template/ Border#ToggleButtonBackground">
-                                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
-                                    </Style>
+
                                 </Expander.Styles>
 
                                 <Grid RowDefinitions="*">
