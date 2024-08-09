@@ -312,6 +312,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _selectedTagFilter;
         partial void OnSelectedTagFilterChanging(string value)
         {
+#pragma warning disable MVVMTK0034 // Direct field reference to [ObservableProperty] backing field
             if (_selectedTagFilter is null ||
                 value is null)
             {
@@ -319,6 +320,7 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
 
             _selectedTagFilter = value;
+#pragma warning restore MVVMTK0034 // Direct field reference to [ObservableProperty] backing field
 
             FillGamesList();
         }
@@ -419,8 +421,11 @@ namespace Superheater.Avalonia.Core.ViewModels
         [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
         private async Task CancelAsync()
         {
-            await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
-            _cancellationTokenSource.Dispose();
+            if (_cancellationTokenSource is not null)
+            {
+                await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+                _cancellationTokenSource.Dispose();
+            }
         }
         private bool CancelCanExecute() => LockButtons;
 
