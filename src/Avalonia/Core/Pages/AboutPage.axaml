@@ -22,7 +22,7 @@
 
                 <Grid ColumnDefinitions="auto,*, auto, auto">
                     <StackPanel Grid.Column="0" Orientation="Horizontal">
-                        <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/logo.png" Width="48" />
+                        <Image Source="/Assets/logo.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Superheater</TextBlock>
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
@@ -41,7 +41,7 @@
                     HorizontalAlignment="Stretch"
                     Click="DiscordClick">
                 <StackPanel Orientation="Horizontal">
-                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/discord.png" Width="48" />
+                    <Image Source="/Assets/discord.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Discord server</TextBlock>
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Join discussion on Discord</TextBlock>
@@ -55,7 +55,7 @@
                     HorizontalAlignment="Stretch"
                     Click="GitHubClick">
                 <StackPanel Orientation="Horizontal">
-                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/github.png" Width="48" />
+                    <Image Source="/Assets/github.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">GitHub repository</TextBlock>
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Steam Superheater is free and open source</TextBlock>
@@ -70,7 +70,7 @@
                     Click="GitHubIssuesClick">
 
                 <StackPanel Orientation="Horizontal">
-                    <Image RenderOptions.BitmapInterpolationMode="HighQuality" Source="/Assets/issues.png" Width="48" />
+                    <Image Source="/Assets/issues.png" Width="48" />
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Create issue on GitHub</TextBlock>

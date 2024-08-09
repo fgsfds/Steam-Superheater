@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media;
+using Avalonia.Media.Imaging;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
 using Superheater.Avalonia.Core.ViewModels;
@@ -11,6 +12,8 @@ public sealed partial class MainWindow : Window
 {
     public MainWindow()
     {
+        RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.HighQuality);
+
         var vm = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
 
         DataContext = vm;
