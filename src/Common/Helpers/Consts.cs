@@ -23,6 +23,8 @@
 
         public const string All = "All";
 
+        public const string UpdateAvailable = "Update available";
+
         public const string WindowsOnly = "Windows Only";
 
         public const string LinuxOnly = "Linux Only";

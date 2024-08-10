@@ -129,13 +129,29 @@ namespace Common.Client.Models
 
             if (!string.IsNullOrEmpty(tag))
             {
-                if (!tag.Equals(Consts.All))
+                if (tag.Equals(Consts.All))
+                {
+                }
+                else if (tag.Equals(Consts.UpdateAvailable))
                 {
                     foreach (var entity in fixesList)
                     {
                         foreach (var fix in entity.FixesList.Fixes)
                         {
-                            if (fix.Tags is not null &&
+                            if (!fix.IsOutdated)
+                            {
+                                fix.IsHidden = true;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (var entity in fixesList)
+                    {
+                        foreach (var fix in entity.FixesList.Fixes)
+                        {
+                            if (fix.Tags is null ||
                                 !fix.Tags.Exists(x => x.Equals(tag))
                                 )
                             {
@@ -201,7 +217,9 @@ namespace Common.Client.Models
                 list = [.. list.OrderBy(static x => x)];
             }
 
-            return [Consts.All, .. list];
+            var updateAvailable = _combinedEntitiesList.Any(x => x.HasUpdates);
+
+            return [Consts.All, updateAvailable ? Consts.UpdateAvailable : null, .. list];
         }
 
         /// <summary>
