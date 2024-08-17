@@ -1,5 +1,4 @@
 ﻿using Common.Client.API;
-using Common.Client.Config;
 using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
@@ -37,8 +36,6 @@ namespace Common.Client.DI
             container.AddSingleton<SteamTools>();
             container.AddSingleton<Logger>();
             container.AddSingleton<ApiInterface>();
-
-            container.AddSingleton<DatabaseContextFactory>();
         }
 
         private static HttpClient CreateHttpClient(IServiceProvider provider)

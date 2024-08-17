@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <Configurations>Debug;Release;Debug-Linux</Configurations>
-      <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
     <ItemGroup>
@@ -14,13 +15,11 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Octopus.Octodiff" />
-        <PackageReference Include="SharpCompress" />
-  </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
-      <ProjectReference Include="..\Database.Client\Database.Client.csproj" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     </ItemGroup>
 
 </Project>

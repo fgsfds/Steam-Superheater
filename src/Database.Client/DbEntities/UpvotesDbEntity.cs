@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Common.Client.Config.DbEntities;
+namespace Database.Client.DbEntities;
 
 [Table(name: "upvotes", Schema = "main")]
 public sealed class UpvotesDbEntity

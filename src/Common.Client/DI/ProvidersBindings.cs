@@ -1,5 +1,6 @@
 ﻿using Common.Client.Config;
 using Common.Client.Providers;
+using Database.Client;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Client.DI
