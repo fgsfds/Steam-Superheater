@@ -158,7 +158,8 @@ namespace Common.Client.FixTools.FileFix
 
             if (_configEntity.DeleteZipsAfterInstall &&
                 !_configEntity.UseLocalApiAndRepo &&
-                fileUri.IsFile)
+                fileDownloadResult.ResultObject is not null &&
+                fileDownloadResult.ResultObject.StartsWith(ClientProperties.WorkingFolder))
             {
                 File.Delete(fileDownloadResult.ResultObject);
             }
