@@ -22,6 +22,11 @@ internal static class Program
             ClientProperties.IsDeveloperMode = true;
         }
 
+        if (args.Contains("-deck"))
+        {
+            ClientProperties.IsInSteamDeckGameMode = true;
+        }
+
         if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();

@@ -14,6 +14,7 @@ namespace Common.Client
         static ClientProperties()
         {
             WorkingFolder = Path.GetDirectoryName(Environment.ProcessPath!)!;
+            IsInSteamDeckGameMode = CheckDeckGameMode();
         }
 
         public static string WorkingFolder { get; private set; }
@@ -60,7 +61,7 @@ namespace Common.Client
         /// <summary>
         /// Is Game Mode active on Steam Deck
         /// </summary>
-        public static bool IsInSteamDeckGameMode => CheckDeckGameMode();
+        public static bool IsInSteamDeckGameMode { get; set; }
 
         /// <summary>
         /// Check if Game Mode is active on Steam Deck
