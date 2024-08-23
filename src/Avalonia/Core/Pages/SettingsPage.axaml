@@ -7,6 +7,7 @@
              d:DesignWidth="800"
              d:DesignHeight="450"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:SettingsViewModel"
              x:Class="Superheater.Avalonia.Core.Pages.SettingsPage">
 
@@ -178,7 +179,7 @@
             <Expander Header="Developer settings"
                       HorizontalAlignment="Stretch"
                       IsExpanded="True"
-                      IsVisible="{Binding IsDeveloperMode}"
+                      IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                       Margin="5">
 
                 <StackPanel Orientation="Vertical">
@@ -259,7 +260,7 @@
                 Padding="8"
                 HorizontalAlignment="Right"
                 Command="{Binding OpenConfigXMLCommand}"
-                IsVisible="{Binding IsDeveloperMode}">
+                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
             Open config XML...
         </Button>
 

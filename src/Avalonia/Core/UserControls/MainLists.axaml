@@ -184,7 +184,7 @@
             <Grid ColumnDefinitions="auto,*"
                   Grid.Row="2"
                   Margin="3,6,3,0"
-                  IsVisible="{Binding SelectedFixHasTags}">
+                  IsVisible="{Binding SelectedFixTags, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                 <TextBlock Grid.Column="0"
                            VerticalAlignment="Center"

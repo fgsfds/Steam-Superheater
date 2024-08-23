@@ -5,6 +5,7 @@
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:NewsViewModel"
              x:Class="Superheater.Avalonia.Core.Pages.NewsPage">
 
@@ -55,7 +56,7 @@
 
                                     <Button Grid.Row="0"
                                             Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).EditNewsCommand}"
-                                            IsVisible="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).IsDeveloperMode}"
+                                            IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}"
                                             CommandParameter="{Binding Date}"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Top">
@@ -89,7 +90,7 @@
                 Margin="5"
                 Padding="8"
                 Command="{Binding InitializeCommand}"
-                IsVisible="{Binding IsDeveloperMode}"
+                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Update News
@@ -99,7 +100,7 @@
                 Margin="5"
                 Padding="8"
                 Command="{Binding AddNewsCommand}"
-                IsVisible="{Binding IsDeveloperMode}"
+                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Add...

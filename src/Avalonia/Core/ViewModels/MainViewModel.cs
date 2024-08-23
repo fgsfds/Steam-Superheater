@@ -61,24 +61,12 @@ namespace Superheater.Avalonia.Core.ViewModels
             }
         }
 
-        public ImmutableList<string> SelectedFixTags => SelectedFix?.Tags is null ? [] : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
+        public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags is null ? null : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];
 
         public HashSet<string> TagsComboboxList => _mainModel.GetListOfTags();
 
-        public ImmutableList<string> SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : [];
+        public ImmutableList<string>? SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : null;
 
-
-        public bool IsSteamGameMode => ClientProperties.IsInSteamDeckGameMode;
-
-        public bool DoesSelectedFixHaveVariants => !SelectedFixVariants.IsEmpty ;
-
-        public bool IsVariantSelectorEnabled => DoesSelectedFixHaveVariants && !IsSteamGameMode;
-
-        public bool IsDeckVariantSelectorEnabled => DoesSelectedFixHaveVariants && IsSteamGameMode;
-
-        public bool DoesSelectedFixHaveUpdates => SelectedFix?.IsOutdated ?? false;
-
-        public bool SelectedFixHasTags => !SelectedFixTags.IsEmpty;
 
         public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !ClientProperties.IsAdmin;
 
@@ -90,6 +78,8 @@ namespace Superheater.Avalonia.Core.ViewModels
         public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
+
+        public string LaunchGameButtonText => SelectedGame is null || !SelectedGame.IsGameInstalled ? "Install game..." : "Launch game...";
 
         public string InstallButtonText
         {
@@ -111,7 +101,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return "Install";
                 }
 
-                if (DoesSelectedFixHaveVariants && SelectedFixVariant is null)
+                if (SelectedFixVariants is not null && SelectedFixVariant is null)
                 {
                     return "<- Select fix variant";
                 }
@@ -265,15 +255,13 @@ namespace Superheater.Avalonia.Core.ViewModels
         private string _mainTabHeader = "Main";
 
         [ObservableProperty]
-        private string _launchGameButtonText = "Launch game...";
-
-        [ObservableProperty]
         private string _progressBarText = string.Empty;
 
         [ObservableProperty]
         private float _progressBarValue;
 
         [ObservableProperty]
+        [NotifyPropertyChangedFor(nameof(LaunchGameButtonText))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenGameFolderCommand))]
         [NotifyCanExecuteChangedFor(nameof(OpenPCGamingWikiCommand))]
@@ -285,13 +273,9 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
-        [NotifyPropertyChangedFor(nameof(DoesSelectedFixHaveUpdates))]
         [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
-        [NotifyPropertyChangedFor(nameof(IsVariantSelectorEnabled))]
-        [NotifyPropertyChangedFor(nameof(IsDeckVariantSelectorEnabled))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
-        [NotifyPropertyChangedFor(nameof(SelectedFixHasTags))]
         [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
@@ -407,7 +391,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 SelectedFix is TextFixEntity ||
                 SelectedFix.IsInstalled ||
                 !SelectedGame.IsGameInstalled ||
-                (DoesSelectedFixHaveVariants && SelectedFixVariant is null) ||
+                (SelectedFixVariants is not null && SelectedFixVariant is null) ||
                 LockButtons
                 )
             {
@@ -440,7 +424,7 @@ namespace Superheater.Avalonia.Core.ViewModels
         /// </summary>
         [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
         private Task UpdateFixAsync() => InstallUpdateFixAsync(true);
-        public bool UpdateFixCanExecute() => (SelectedGame is not null && SelectedGame.IsGameInstalled) || !LockButtons;
+        public bool UpdateFixCanExecute() => SelectedFix is not null && SelectedFix.IsOutdated && !LockButtons;
 
 
         /// <summary>
@@ -617,24 +601,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 });
             }
         }
-        private bool LaunchGameCanExecute()
-        {
-            if (SelectedGame is null)
-            {
-                return false;
-            }
-
-            if (LockButtons)
-            {
-                return false;
-            }
-
-            LaunchGameButtonText = SelectedGame.IsGameInstalled
-                ? "Launch game..."
-                : "Install game...";
- 
-            return true;
-        }
+        private bool LaunchGameCanExecute() => SelectedGame is not null && !LockButtons;
 
 
         /// <summary>

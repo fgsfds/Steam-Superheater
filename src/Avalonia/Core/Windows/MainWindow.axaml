@@ -7,6 +7,8 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
         xmlns:vmp="clr-namespace:Superheater.Avalonia.Core.ViewModels.Popups"
+        xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
+        xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
         x:DataType="vm:MainWindowViewModel"
         x:Class="Superheater.Avalonia.Core.Windows.MainWindow"
         Icon="/Assets/icon.ico"
@@ -19,11 +21,13 @@
         CanResize="True"
         ExtendClientAreaToDecorationsHint="False"
         Background="{DynamicResource Background}"
-        WindowState="Maximized"
-        >
+        WindowState="Maximized">
 
     <Window.Resources>
         <ResourceDictionary>
+
+            <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceInclude Source='/Styles/ThemedResources.axaml'/>
             </ResourceDictionary.MergedDictionaries>
@@ -38,14 +42,16 @@
 
             <TextBlock Margin="10,5,0,0"
                        Foreground="{DynamicResource SystemAccentColor}"
-                       IsVisible="{Binding IsDeveloperMode}"
+                       IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                        Text="{Binding RepositoryMessage}"/>
 
             <TabControl Grid.Row="1" Margin="5" Name="Tabs">
                 <TabItem Name="MainTab" Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
-                <TabItem Header="Editor" IsVisible="{Binding !IsSteamGameMode}" Margin="0,0,10,10">
+                <TabItem Header="Editor"
+                         IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}"
+                         Margin="0,0,10,10">
                     <pages:EditorPage Margin="0" x:Name="EditorPageTab" />
                 </TabItem>
                 <TabItem Header="{Binding ElementName=NewsPageTab, Path=((vm:NewsViewModel)DataContext).NewsTabHeader}" Margin="0,0,10,10">

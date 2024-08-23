@@ -5,8 +5,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
+             xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
              x:DataType="vm:EditorViewModel"
              x:Class="Superheater.Avalonia.Core.UserControls.EditorLists">
+
+    <UserControl.Resources>
+        <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
+    </UserControl.Resources>
 
     <Grid>
 
@@ -102,7 +108,7 @@
                     HorizontalContentAlignment="Center"
                     Command="{Binding UploadFixCommand}"
                     Background="{DynamicResource SystemAccentColor}"
-                    IsVisible="{Binding !IsDeveloperMode}"
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}, Converter={StaticResource ReverseBoolConverter}}"
                     IsEnabled="{Binding !LockButtons}">
                 Upload fix
             </Button>
@@ -115,7 +121,7 @@
                     HorizontalContentAlignment="Center"
                     Background="{DynamicResource SystemAccentColor}"
                     Command="{Binding AddFixToDbCommand}"
-                    IsVisible="{Binding IsDeveloperMode}">
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
                 Add fix to DB
             </Button>
 
@@ -126,7 +132,7 @@
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     Command="{Binding AddFixFromFileCommand}"
-                    IsVisible="{Binding IsDeveloperMode}">
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
                 Add from file...
             </Button>
 
@@ -138,7 +144,7 @@
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     Command="{Binding DisableFixCommand}"
-                    IsVisible="{Binding IsDeveloperMode}"/>
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"/>
 
             <Button Grid.Column="0"
                     Grid.ColumnSpan="2"

@@ -13,8 +13,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         #region Binding Properties
 
-        public Version CurrentVersion => ClientProperties.CurrentVersion;
-
         [ObservableProperty]
         private string _aboutTabHeader = "About";
 
@@ -59,7 +57,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
             CheckForUpdatesButtonText = "Checking...";
 
-            var result = await _updateInstaller.CheckForUpdates(CurrentVersion).ConfigureAwait(true);
+            var result = await _updateInstaller.CheckForUpdates(ClientProperties.CurrentVersion).ConfigureAwait(true);
 
             if (result == ResultEnum.NotFound)
             {

@@ -1,5 +1,4 @@
-﻿using Common.Client;
-using Common.Client.Config;
+﻿using Common.Client.Config;
 using Common.Client.Models;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -21,8 +20,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         #region Binding Properties
 
         public ImmutableList<NewsEntity> NewsList => _newsModel.GetNews();
-
-        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
 
         [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(MarkAllAsReadCommand))]

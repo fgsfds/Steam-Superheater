@@ -54,12 +54,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
 
-        public bool IsSteamGameMode => ClientProperties.IsInSteamDeckGameMode;
-
-        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
-
-        public bool IsEditingAvailable => SelectedFix is not null;
-
         public bool IsEmpty => FilteredGamesList.Count == 0;
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
@@ -409,7 +403,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyPropertyChangedFor(nameof(SelectedFixVersion))]
         [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
         [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
-        [NotifyPropertyChangedFor(nameof(IsEditingAvailable))]
         [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
         [NotifyPropertyChangedFor(nameof(SelectedFixFilesToDelete))]
         [NotifyPropertyChangedFor(nameof(SelectedFixFilesToBackup))]

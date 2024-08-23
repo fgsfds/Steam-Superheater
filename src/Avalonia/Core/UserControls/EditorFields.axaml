@@ -12,7 +12,7 @@
 
     <Grid RowDefinitions="Auto,*"
           IsSharedSizeScope="True"
-          IsVisible="{Binding IsEditingAvailable}">
+          IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
         <StackPanel Grid.Row="0"
                     Orientation="Vertical">

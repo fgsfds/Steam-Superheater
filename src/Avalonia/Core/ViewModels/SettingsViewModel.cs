@@ -23,8 +23,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public ImmutableList<string> HiddenTagsList => [.. _config.HiddenTags];
 
-        public bool IsDeveloperMode => ClientProperties.IsDeveloperMode;
-
         public bool IsDefaultTheme => _config.Theme is ThemeEnum.System;
 
         public bool IsLightTheme => _config.Theme is ThemeEnum.Light;

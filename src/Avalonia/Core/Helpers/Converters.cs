@@ -28,7 +28,7 @@ namespace Superheater.Avalonia.Core.Helpers
     /// <summary>
     /// Reverses bool value
     /// </summary>
-    internal sealed class ReverseBool : IValueConverter
+    internal sealed class ReverseBoolConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

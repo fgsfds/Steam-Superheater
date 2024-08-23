@@ -12,8 +12,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         string ShowPopupStackButtonText { get; }
 
-        bool IsSteamGameMode { get; }
-
         IRelayCommand ClearSearchCommand { get; }
 
         IAsyncRelayCommand ShowFiltersPopupCommand { get; }

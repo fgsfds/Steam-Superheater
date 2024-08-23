@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:AboutViewModel"
              x:Class="Superheater.Avalonia.Core.Pages.AboutPage"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
@@ -25,7 +26,7 @@
                         <Image Source="/Assets/logo.png" Width="48" />
                         <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                             <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Steam Superheater</TextBlock>
-                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding CurrentVersion}"/>
+                            <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14" Text="{Binding Source={x:Static cp:ClientProperties.CurrentVersion}}"/>
                         </StackPanel>
                     </StackPanel>
                     <ProgressBar Grid.Column="1" IsIndeterminate="True" IsVisible="{Binding IsInProgress}" Margin="30,0"/>
