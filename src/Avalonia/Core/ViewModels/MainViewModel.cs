@@ -73,8 +73,6 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         public string ShowVariantsPopupButtonText => SelectedFixVariant is null ? "Select variant..." : SelectedFixVariant;
 
-        public string SelectedFixRequirements => GetRequirementsString();
-
         public string SelectedFixUrl => _mainModel.GetSelectedFixUrl(SelectedFix);
 
         public string ShowPopupStackButtonText => SelectedTagFilter;
@@ -243,6 +241,12 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
+        private List<string>? _selectedFixRequirements;
+
+        [ObservableProperty]
+        private List<string>? _selectedFixDependencies;
+
+        [ObservableProperty]
         [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
@@ -272,7 +276,6 @@ namespace Superheater.Avalonia.Core.ViewModels
         }
 
         [ObservableProperty]
-        [NotifyPropertyChangedFor(nameof(SelectedFixRequirements))]
         [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
         [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
         [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
@@ -290,6 +293,10 @@ namespace Superheater.Avalonia.Core.ViewModels
         [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
         [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
         private BaseFixEntity? _selectedFix;
+        partial void OnSelectedFixChanged(BaseFixEntity? oldValue, BaseFixEntity? newValue)
+        {
+            GetRequirementsString();
+        }
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ShowVariantsPopupButtonText))]
@@ -398,9 +405,7 @@ namespace Superheater.Avalonia.Core.ViewModels
                 return false;
             }
 
-            var result = !_mainModel.DoesFixHaveNotInstalledDependencies(SelectedGame, SelectedFix);
-
-            return result;
+            return true;
         }
 
 
@@ -733,6 +738,28 @@ namespace Superheater.Avalonia.Core.ViewModels
             SelectedGame.ThrowIfNull();
             SelectedGame.Game.ThrowIfNull();
 
+            var dependantFixes = _mainModel.GetNotInstalledDependencies(SelectedGame, SelectedFix);
+
+            if (dependantFixes is not null)
+            {
+                var res = await _popupMessage.ShowAndGetResultAsync("Required fixes", 
+                    $"""
+                    The following fixes are required for this fix to work.
+                    Do you want to install them?
+
+                    {string.Join(Environment.NewLine, dependantFixes)}
+                    """,
+                    PopupMessageType.YesNo).ConfigureAwait(true);
+
+                if (!res)
+                {
+                    return;
+                }
+            }
+
+            //TODO!
+            return;
+
             LockButtons = true;
 
             _progressReport.Progress.ProgressChanged += ProgressChanged;
@@ -918,46 +945,40 @@ Do you still want to install the fix?",
         /// <summary>
         /// Get requirements for selected fix
         /// </summary>
-        private string GetRequirementsString()
+        private void GetRequirementsString()
         {
             if (SelectedFix is null ||
                 SelectedGame is null)
             {
-                return string.Empty;
+                SelectedFixRequirements = null;
+                SelectedFixDependencies = null;
+
+                return;
             }
 
             var dependsOn = _mainModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-            string? requires = null;
-
-            if (dependsOn is not null && dependsOn.Count != 0)
+            if (dependsOn is null)
             {
-                requires = "REQUIRES: " + string.Join(", ", dependsOn.Select(static x => x.Name));
+                SelectedFixRequirements = null;
             }
 
-            string? required = null;
+            if (dependsOn is not null)
+            {
+                SelectedFixRequirements = [.. dependsOn.Select(x => x.ToString())];
+            }
 
             var dependedBy = _mainModel.GetDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
 
-            if (dependedBy.Count != 0)
+            if (dependedBy is null)
             {
-                required = "REQUIRED BY: " + string.Join(", ", dependedBy.Select(static x => x.Name));
+                SelectedFixDependencies = null;
             }
 
-            if (requires is not null && required is not null)
+            if (dependedBy is not null)
             {
-                return requires + Environment.NewLine + required;
+                SelectedFixDependencies = [.. dependedBy.Select(x => x.ToString())];
             }
-            else if (requires is not null)
-            {
-                return requires;
-            }
-            else if (required is not null)
-            {
-                return required;
-            }
-
-            return string.Empty;
         }
 
         private void ProgressChanged(object? sender, float e)

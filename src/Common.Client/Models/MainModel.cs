@@ -228,7 +228,7 @@ namespace Common.Client.Models
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
         /// <returns>List of dependencies</returns>
-        public List<BaseFixEntity>? GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
+        public IEnumerable<BaseFixEntity>? GetDependenciesForAFix(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             if (fix.Dependencies is null ||
                 fix.Dependencies.Count == 0)
@@ -240,22 +240,29 @@ namespace Common.Client.Models
 
             var allGameDeps = fix.Dependencies;
 
-            List<BaseFixEntity> deps = [.. allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid))];
+            var deps = allGameFixes.Fixes.Where(x => allGameDeps.Contains(x.Guid));
 
-            return deps;
+            return deps.Any() ? deps : null;
         }
 
         /// <summary>
-        /// Does fix have dependencies that are currently not installed
+        /// Get a list of dependencies that are currently not installed
         /// </summary>
         /// <param name="entity">Combined entity</param>
         /// <param name="fix">Fix entity</param>
-        /// <returns>true if there are installed dependencies</returns>
-        public bool DoesFixHaveNotInstalledDependencies(FixFirstCombinedEntity entity, BaseFixEntity fix)
+        /// <returns>List of not installed dependencies</returns>
+        public IEnumerable<BaseFixEntity>? GetNotInstalledDependencies(FixFirstCombinedEntity entity, BaseFixEntity fix)
         {
             var deps = GetDependenciesForAFix(entity, fix);
 
-            return deps is not null && deps.Exists(static x => !x.IsInstalled);
+            if (deps is null)
+            {
+                return null;
+            }
+
+            var notInstalled = deps.Where(static x => !x.IsInstalled);
+
+            return notInstalled.Any() ? notInstalled : null;
         }
 
         /// <summary>
@@ -264,9 +271,11 @@ namespace Common.Client.Models
         /// <param name="fixes">List of fix entities</param>
         /// <param name="guid">Guid of a fix</param>
         /// <returns>List of dependent fixes</returns>
-        public List<BaseFixEntity> GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
+        public IEnumerable<BaseFixEntity>? GetDependentFixes(IEnumerable<BaseFixEntity> fixes, Guid guid)
         {
-            return [.. fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid))];
+            var dependant = fixes.Where(x => x.Dependencies is not null && x.Dependencies.Contains(guid));
+
+            return dependant.Any() ? dependant : null;
         }
 
         /// <summary>
@@ -279,7 +288,7 @@ namespace Common.Client.Models
         {
             var deps = GetDependentFixes(fixes, guid);
 
-            return deps is not null && deps.Exists(static x => x.IsInstalled);
+            return deps is not null && deps.Any(static x => x.IsInstalled);
         }
 
         public void HideTag(string tag)

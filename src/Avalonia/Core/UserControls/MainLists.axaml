@@ -174,11 +174,45 @@
             </md:MarkdownScrollViewer>
 
             <!--Requirements-->
-            <TextBlock Text="{Binding SelectedFixRequirements, Mode=OneWay}"
-                       TextWrapping="Wrap"
-                       Margin="0,6,0,0"
-                       Grid.Row="1"
-                       Padding="3"/>
+
+            <Grid ColumnDefinitions="auto,*,auto"
+                  RowDefinitions="auto,auto"
+                  Grid.Row="1">
+
+                <TextBlock FontWeight="Bold"
+                           Grid.Column="0"
+                           Grid.Row="0"
+                           Margin="0,6,0,0"
+                           IsVisible="{Binding SelectedFixRequirements, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    Requires:
+                </TextBlock>
+
+                <TextBlock FontWeight="Bold"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           Margin="0,6,0,0"
+                           HorizontalAlignment="Right"
+                           IsVisible="{Binding SelectedFixDependencies, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    Required by:
+                </TextBlock>
+
+                <ItemsControl ItemsSource="{Binding SelectedFixRequirements}" Grid.Column="0" Grid.Row="1">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" HorizontalAlignment="Left"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+                <ItemsControl ItemsSource="{Binding SelectedFixDependencies}" Grid.Column="2" Grid.Row="1">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" HorizontalAlignment="Right"/>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+
+            </Grid>
 
             <!--Tags-->
             <Grid ColumnDefinitions="auto,*"
