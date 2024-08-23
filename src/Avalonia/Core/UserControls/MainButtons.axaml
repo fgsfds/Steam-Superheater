@@ -43,6 +43,28 @@
                     HorizontalAlignment="Right"
                     Grid.Column="2">
 
+            <!--Variants-->
+            <ComboBox Grid.Column="1"
+                      Padding="8"
+                      Margin="3,0"
+                      MinWidth="150"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      IsVisible="{Binding IsVariantSelectorEnabled}"
+                      ItemsSource="{Binding SelectedFixVariants}"
+                      SelectedItem="{Binding SelectedFixVariant}"/>
+
+            <!--Steam Deck selector-->
+            <Button Command="{Binding ShowVariantsPopupCommand}"
+                    Content="{Binding ShowVariantsPopupButtonText, FallbackValue='Select variant...'}"
+                    IsVisible="{Binding IsDeckVariantSelectorEnabled}"
+                    Grid.Row="3"
+                    Padding="8"
+                    Margin="3,0"
+                    VerticalContentAlignment="Center"
+                    HorizontalContentAlignment="Center"
+                    HorizontalAlignment="Stretch"/>
+
             <Button Name="CancelButton"
                     Command="{Binding CancelCommand}"
                     Margin="3,0"

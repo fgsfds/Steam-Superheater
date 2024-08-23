@@ -101,40 +101,44 @@ namespace Superheater.Avalonia.Core.ViewModels
                     return "Restart as admin...";
                 }
 
-                if (SelectedFix is FileFixEntity fileFix)
+                if (SelectedFix is not FileFixEntity fileFix)
                 {
-                    if (fileFix.Url is null)
-                    {
-                        return "Install";
-                    }
-
-                    var pathToArchive = _config.UseLocalApiAndRepo
-                    ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
-                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
-
-                    if (File.Exists(pathToArchive))
-                    {
-                        return "Install";
-                    }
-
-                    if (fileFix.Url is null ||
-                        fileFix.FileSize is null)
-                    {
-                        return $"Download and install";
-                    }
-
-                    var size = fileFix.FileSize;
-
-                    if (fileFix.SharedFix?.FileSize is not null)
-                    {
-                        size += fileFix.SharedFix.FileSize;
-                    }
-                        
-                    return $"Download ({size.ToSizeString()}) and install";
-
+                    return "Install";
                 }
 
-                return "Install";
+                if (fileFix.Url is null)
+                {
+                    return "Install";
+                }
+
+                if (DoesSelectedFixHaveVariants && SelectedFixVariant is null)
+                {
+                    return "<- Select fix variant";
+                }
+
+                var pathToArchive = _config.UseLocalApiAndRepo
+                ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
+                : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
+
+                if (File.Exists(pathToArchive))
+                {
+                    return "Install";
+                }
+
+                if (fileFix.Url is null ||
+                    fileFix.FileSize is null)
+                {
+                    return $"Download and install";
+                }
+
+                var size = fileFix.FileSize;
+
+                if (fileFix.SharedFix?.FileSize is not null)
+                {
+                    size += fileFix.SharedFix.FileSize;
+                }
+
+                return $"Download ({size.ToSizeString()}) and install";
             }
         }
 
@@ -305,6 +309,7 @@ namespace Superheater.Avalonia.Core.ViewModels
 
         [ObservableProperty]
         [NotifyPropertyChangedFor(nameof(ShowVariantsPopupButtonText))]
+        [NotifyPropertyChangedFor(nameof(InstallButtonText))]
         [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
         private string? _selectedFixVariant;
 
