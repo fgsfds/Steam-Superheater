@@ -55,10 +55,14 @@ namespace Superheater.Avalonia.Core.ViewModels
         {
             SelectedGameFixesList.Clear();
 
-            if (SelectedGame is not null)
+            if (SelectedGame is null)
             {
-                SelectedGameFixesList.AddRange(SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden));
+                return;
             }
+
+            var fixes = SelectedGame.FixesList.Fixes.Where(static x => !x.IsHidden);
+
+            SelectedGameFixesList.AddRange(fixes);
         }
 
         public ImmutableList<string>? SelectedFixTags => SelectedFix?.Tags is null ? null : [.. SelectedFix.Tags.Where(x => !_config.HiddenTags.Contains(x))];

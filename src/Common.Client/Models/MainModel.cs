@@ -7,6 +7,7 @@ using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.Helpers;
 using System.Collections.Immutable;
+using System.Linq;
 
 namespace Common.Client.Models
 {
@@ -262,7 +263,24 @@ namespace Common.Client.Models
 
             var notInstalled = deps.Where(static x => !x.IsInstalled);
 
-            return notInstalled.Any() ? notInstalled : null;
+            var result = notInstalled.ToList();
+
+            foreach (var dep in notInstalled)
+            {
+                var level2 = GetDependenciesForAFix(entity, dep);
+                var notInstalled2 = level2?.Where(static x => !x.IsInstalled);
+
+                if (notInstalled2 is null)
+                {
+                    continue;
+                }
+
+                var newDeps = notInstalled2.Except(result);
+
+                result.AddRange(newDeps);
+            }
+
+            return result.Count > 0 ? result.OrderBy(static x => x.DependencyLevel) : null;
         }
 
         /// <summary>

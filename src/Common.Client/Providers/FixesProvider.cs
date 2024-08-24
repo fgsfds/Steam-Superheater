@@ -38,6 +38,39 @@ namespace Common.Client.Providers
 
             SharedFixes = result.ResultObject.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => (FileFixEntity)x).ToImmutableList() ?? [];
 
+            foreach (var fixesList in result.ResultObject)
+            {
+                var woDependencies = fixesList.Fixes.Where(static x => x.Dependencies is null).ToList();
+                var withDependencies = fixesList.Fixes.Except(woDependencies).OrderByDescending(static x => x.Dependencies!.Count).ToList();
+
+                while (withDependencies.Count > 0)
+                {
+                    foreach (var dep in withDependencies)
+                    {
+                        var guid = dep.Dependencies![0];
+                        var existing = woDependencies.FirstOrDefault(x => x.Guid == guid);
+
+                        dep.DependencyLevel += dep.Dependencies.Count;
+
+                        if (existing is null)
+                        {
+                            continue;
+                        }
+
+                        var oldIndex = fixesList.Fixes.IndexOf(dep);
+                        fixesList.Fixes.RemoveAt(oldIndex);
+
+                        var newIndex = fixesList.Fixes.IndexOf(existing) + 1;
+                        fixesList.Fixes.Insert(newIndex, dep);
+
+                        woDependencies.Add(dep);
+                        withDependencies.Remove(dep);
+
+                        break;
+                    }
+                }
+            }
+
             return new(ResultEnum.Success, result.ResultObject, string.Empty);
         }
 

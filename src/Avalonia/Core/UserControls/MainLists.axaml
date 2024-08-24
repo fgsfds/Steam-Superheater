@@ -133,7 +133,8 @@
                             </ContextMenu>
                         </StackPanel.ContextMenu>
 
-                        <TextBlock Text="{Binding Name, Mode=TwoWay}" VerticalAlignment="Center"/>
+                        <TextBlock Text="{Binding SortedName}"
+                                   VerticalAlignment="Center"/>
 
                         <TextBlock Margin="0"
                                    Text="Installed"

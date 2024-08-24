@@ -42,6 +42,7 @@ namespace Common.Client.DI
         {
             var httpClient = new HttpClient();
             httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+            httpClient.Timeout = TimeSpan.FromSeconds(10);
             return httpClient;
         }
     }

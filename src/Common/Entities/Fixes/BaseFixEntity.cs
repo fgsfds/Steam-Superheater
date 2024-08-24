@@ -3,6 +3,7 @@ using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes
@@ -100,6 +101,32 @@ namespace Common.Entities.Fixes
         /// </summary>
         [JsonIgnore]
         public virtual bool IsOutdated => InstalledFix is not null && InstalledFix.Version < Version;
+
+        [JsonIgnore]
+        public int DependencyLevel { get; set; } = 0;
+
+        [JsonIgnore]
+        public string SortedName
+        {
+            get
+            {
+                if (DependencyLevel == 0)
+                {
+                    return Name;
+                }
+
+                StringBuilder sb = new(Name.Length + 5);
+
+                for (var i = 0; i < DependencyLevel; i++)
+                {
+                    sb.Append("     ");
+                }
+
+                sb.Append("⤷ ").Append(Name);
+
+                return sb.ToString();
+            }
+        }
 
         public override string ToString() => Name;
     }
