@@ -1,13 +1,12 @@
-using Common.Interfaces;
 using Web.Blazor.Database;
 
 namespace Web.Blazor.Helpers;
 
 public sealed class DatabaseContextFactory
 {
-    private readonly IProperties _properties;
+    private readonly ServerProperties _properties;
 
-    public DatabaseContextFactory(IProperties properties)
+    public DatabaseContextFactory(ServerProperties properties)
     {
         _properties = properties;
     }

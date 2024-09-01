@@ -1,5 +1,6 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
+using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using static Web.Blazor.Providers.StatsProvider;
 
@@ -11,15 +12,22 @@ public sealed class FixesController : ControllerBase
 {
     private readonly FixesProvider _fixesProvider;
     private readonly StatsProvider _statsProvider;
+    private readonly ServerProperties _serverProperties;
 
     public FixesController(
         FixesProvider fixesProvider,
-        StatsProvider statsProvider
+        StatsProvider statsProvider,
+        ServerProperties serverProperties
         )
     {
         _fixesProvider = fixesProvider;
         _statsProvider = statsProvider;
+        _serverProperties = serverProperties;
     }
+
+
+    [HttpGet("last_updated")]
+    public string GetLastUpdated() => _serverProperties.LastUpdated;
 
 
     [HttpGet]

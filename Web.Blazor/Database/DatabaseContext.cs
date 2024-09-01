@@ -1,13 +1,14 @@
-using Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Web.Blazor.DbEntities;
+using Web.Blazor.Helpers;
 
 namespace Web.Blazor.Database;
 
 public sealed class DatabaseContext : DbContext
 {
-    private readonly IProperties _properties;
+    private readonly ServerProperties _properties;
 
+    public DbSet<CommonDbEntity> Common { get; set; }
     public DbSet<InstallsDbEntity> Installs { get; set; }
     public DbSet<ScoresDbEntity> Scores { get; set; }
     public DbSet<ReportsDbEntity> Reports { get; set; }
@@ -23,7 +24,7 @@ public sealed class DatabaseContext : DbContext
     public DbSet<RegistryFixesDbEntity> RegistryFixes { get; set; }
     public DbSet<FileFixesDbEntity> FileFixes { get; set; }
 
-    public DatabaseContext(IProperties properties)
+    public DatabaseContext(ServerProperties properties)
     {
         _properties = properties;
 

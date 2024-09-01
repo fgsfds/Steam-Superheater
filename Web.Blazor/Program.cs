@@ -1,6 +1,5 @@
 using Common.Entities;
 using Common.Entities.Fixes;
-using Common.Interfaces;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
@@ -15,10 +14,10 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor();
+        _ = builder.Services.AddRazorPages();
+        _ = builder.Services.AddServerSideBlazor();
 
-        builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
+        _ = builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
         {
             jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
@@ -31,53 +30,66 @@ public class Program
         // Don't run tasks in dev mode
         if (!builder.Environment.IsDevelopment())
         {
-            builder.Services.AddHostedService<AppReleasesTask>();
-            builder.Services.AddHostedService<FileCheckerTask>();
+            _ = builder.Services.AddHostedService<AppReleasesTask>();
+            _ = builder.Services.AddHostedService<FileCheckerTask>();
         }
 
-        builder.Services.AddHostedService<StatsTask>();
+        _ = builder.Services.AddHostedService<StatsTask>();
 
-        builder.Services.AddSingleton<FixesProvider>();
-        builder.Services.AddSingleton<NewsProvider>();
-        builder.Services.AddSingleton<AppReleasesProvider>();
-        builder.Services.AddSingleton<StatsProvider>();
+        _ = builder.Services.AddSingleton<FixesProvider>();
+        _ = builder.Services.AddSingleton<NewsProvider>();
+        _ = builder.Services.AddSingleton<AppReleasesProvider>();
+        _ = builder.Services.AddSingleton<StatsProvider>();
 
-        builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
-        builder.Services.AddSingleton<S3Client>();
-        builder.Services.AddSingleton<DatabaseContextFactory>();
-        builder.Services.AddSingleton<TelegramBot>();
-        builder.Services.AddSingleton<IProperties, ServerProperties>();
+        _ = builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
+        _ = builder.Services.AddSingleton<S3Client>();
+        _ = builder.Services.AddSingleton<DatabaseContextFactory>();
+        _ = builder.Services.AddSingleton<TelegramBot>();
+        _ = builder.Services.AddSingleton<ServerProperties>();
 
 
         var app = builder.Build();
 
+        var properties = app.Services.GetService<ServerProperties>()!;
 
         if (builder.Environment.IsDevelopment())
         {
-            var properties = app.Services.GetService<IProperties>();
             properties!.IsDevMode = true;
         }
 
         // Creating database
         var dbContext = app.Services.GetService<DatabaseContextFactory>()!.Get();
+
+        var date = dbContext.Common.Find("last_updated")?.Value!;
+
+        if (date is null)
+        {
+            properties.LastUpdated = DateTime.MinValue.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+        }
+        else
+        {
+            var dateTime = DateTime.Parse(date);
+            properties.LastUpdated = dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+        }
+
         dbContext.Dispose();
 
 
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
         {
-            app.UseExceptionHandler("/Error");
+            _ = app.UseExceptionHandler("/Error");
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            app.UseHsts();
+            _ = app.UseHsts();
         }
 
 
-        app.MapControllers();
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-        app.UseRouting();
-        app.MapBlazorHub();
-        app.MapFallbackToPage("/_Host");
+        _ = app.MapControllers();
+        _ = app.UseHttpsRedirection();
+        _ = app.UseStaticFiles();
+        _ = app.UseRouting();
+        _ = app.MapBlazorHub();
+        _ = app.MapFallbackToPage("/_Host");
 
 
         // Don't start bot in dev mode
