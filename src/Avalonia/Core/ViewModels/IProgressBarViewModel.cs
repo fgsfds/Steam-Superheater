@@ -1,11 +1,20 @@
-﻿namespace Superheater.Avalonia.Core.ViewModels
+namespace Avalonia.Core.ViewModels;
+
+public interface IProgressBarViewModel
 {
-    public interface IProgressBarViewModel
-    {
-        bool IsInProgress { get; }
+    /// <summary>
+    /// Is operation in progress
+    /// </summary>
+    bool IsInProgress { get; }
 
-        float ProgressBarValue { get; set; }
+    /// <summary>
+    /// Progress numeric value
+    /// </summary>
+    float ProgressBarValue { get; set; }
 
-        string ProgressBarText { get; set; }
-    }
+    /// <summary>
+    /// Operation descriptions
+    /// </summary>
+    string ProgressBarText { get; set; }
 }
+

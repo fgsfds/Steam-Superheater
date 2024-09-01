@@ -1,12 +1,12 @@
 using Avalonia.Controls;
 
-namespace Superheater.Avalonia.Core.UserControls
+namespace Avalonia.Core.UserControls;
+
+public sealed partial class GameInfoBar : UserControl
 {
-    public sealed partial class GameInfoBar : UserControl
+    public GameInfoBar()
     {
-        public GameInfoBar()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
+

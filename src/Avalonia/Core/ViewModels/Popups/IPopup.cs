@@ -1,11 +1,20 @@
-﻿namespace Superheater.Avalonia.Core.ViewModels.Popups
+namespace Avalonia.Core.ViewModels.Popups;
+
+public interface IPopup
 {
-    public interface IPopup
-    {
-        public bool IsVisible { get; }
+    /// <summary>
+    /// Is popup visible
+    /// </summary>
+    public bool IsVisible { get; }
 
-        public string TitleText { get; }
+    /// <summary>
+    /// Popup title text
+    /// </summary>
+    public string TitleText { get; }
 
-        event Action<bool>? PopupShownEvent;
-    }
+    /// <summary>
+    /// Invoked when popup is shown
+    /// </summary>
+    event Action<bool>? PopupShownEvent;
 }
+

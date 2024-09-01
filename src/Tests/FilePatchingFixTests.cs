@@ -1,35 +1,35 @@
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 
-namespace Tests
+namespace Tests;
+
+/// <summary>
+/// Tests that use instance data and should be run in a single thread
+/// </summary>
+public sealed partial class FileFixTests
 {
+    private readonly string _testFixPatchZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_patch.zip");
+
     /// <summary>
-    /// Tests that use instance data and should be run in a single thread
+    /// Install and uninstall fix that includes octodiff patch
     /// </summary>
-    public sealed partial class FileFixTests
+    [Fact]
+    public async Task InstallFixWithPatching()
     {
-        private readonly string _testFixPatchZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_patch.zip");
-
-        /// <summary>
-        /// Install and uninstall fix that includes octodiff patch
-        /// </summary>
-        [Fact]
-        public async Task InstallFixWithPatching()
+        FileFixEntity fixEntity = new()
         {
-            FileFixEntity fixEntity = new()
-            {
-                Name = "test fix with patch",
-                Version = 1,
-                Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-                Url = _testFixPatchZip,
-                InstallFolder = "install folder",
-                FilesToPatch = ["install folder\\start game.exe"]
-            };
+            Name = "test fix with patch",
+            Version = 1,
+            Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+            Url = _testFixPatchZip,
+            InstallFolder = "install folder",
+            FilesToPatch = ["install folder\\start game.exe"]
+        };
 
-            await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+        await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
-            var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-            var installedExpected = $@"{{
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedExpected = $@"{{
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix_with_patch"",
   ""FilesList"": [
@@ -42,13 +42,13 @@ namespace Tests
   ""Version"": 1
 }}";
 
-            var exeActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
-            var exeExpected = "original_patched";
+        var exeActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
+        var exeExpected = "original_patched";
 
-            Assert.Equal(installedExpected, installedActual);
-            Assert.Equal(exeExpected, exeActual);
+        Assert.Equal(installedExpected, installedActual);
+        Assert.Equal(exeExpected, exeActual);
 
-            UninstallFix(fixEntity);
-        }
+        UninstallFix(fixEntity);
     }
 }
+

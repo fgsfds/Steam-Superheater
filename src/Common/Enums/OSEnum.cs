@@ -1,44 +1,44 @@
-﻿using Common.Helpers;
+using CommunityToolkit.Diagnostics;
 
-namespace Common.Enums
+namespace Common.Enums;
+
+[Flags]
+public enum OSEnum : byte
 {
-    [Flags]
-    public enum OSEnum : byte
+    Windows = 2,
+    Linux = 4
+}
+
+public static class OSEnumHelper
+{
+    /// <summary>
+    /// Get current OS
+    /// </summary>
+    public static OSEnum CurrentOSEnum
     {
-        Windows = 2,
-        Linux = 4
+        get
+        {
+            if (OperatingSystem.IsWindows())
+            {
+                return OSEnum.Windows;
+            }
+            else if (OperatingSystem.IsLinux())
+            {
+                return OSEnum.Linux;
+            }
+
+            return ThrowHelper.ThrowPlatformNotSupportedException<OSEnum>("Error while identifying platform");
+        }
     }
 
-    public static class OSEnumHelper
+    public static OSEnum AddFlag(this OSEnum osenum, OSEnum flag)
     {
-        /// <summary>
-        /// Get current OS
-        /// </summary>
-        public static OSEnum CurrentOSEnum
-        {
-            get
-            {
-                if (OperatingSystem.IsWindows())
-                {
-                    return OSEnum.Windows;
-                }
-                else if (OperatingSystem.IsLinux())
-                {
-                    return OSEnum.Linux;
-                }
+        return osenum |= flag;
+    }
 
-                return ThrowHelper.PlatformNotSupportedException<OSEnum>("Error while identifying platform");
-            }
-        }
-
-        public static OSEnum AddFlag(this OSEnum osenum, OSEnum flag)
-        {
-            return osenum |= flag;
-        }
-
-        public static OSEnum RemoveFlag(this OSEnum osenum, OSEnum flag)
-        {
-            return osenum &= ~flag;
-        }
+    public static OSEnum RemoveFlag(this OSEnum osenum, OSEnum flag)
+    {
+        return osenum &= ~flag;
     }
 }
+

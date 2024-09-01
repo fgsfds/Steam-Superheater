@@ -4,10 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:NewsViewModel"
-             x:Class="Superheater.Avalonia.Core.Pages.NewsPage">
+             x:Class="Avalonia.Core.Pages.NewsPage">
 
     <Grid RowDefinitions="*,auto,auto,auto" Margin="5">
 

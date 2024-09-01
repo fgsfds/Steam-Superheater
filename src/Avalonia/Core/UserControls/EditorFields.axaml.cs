@@ -1,27 +1,27 @@
 using Avalonia.Controls;
 
-namespace Superheater.Avalonia.Core.UserControls
+namespace Avalonia.Core.UserControls;
+
+public sealed partial class EditorFields : UserControl
 {
-    public sealed partial class EditorFields : UserControl
+    public EditorFields()
     {
-        public EditorFields()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
 
-        private void VersionTextBoxChanging(object sender, TextChangingEventArgs e)
-        {
-            VersionTextBox.Text = string.IsNullOrWhiteSpace(VersionTextBox.Text)
-                ? "0"
-                : VersionTextBox.Text;
-        }
+    private void VersionTextBoxChanging(object sender, TextChangingEventArgs e)
+    {
+        VersionTextBox.Text = string.IsNullOrWhiteSpace(VersionTextBox.Text)
+            ? "0"
+            : VersionTextBox.Text;
+    }
 
-        private void VersionTextBoxChanged(object sender, TextChangedEventArgs e)
+    private void VersionTextBoxChanged(object sender, TextChangedEventArgs e)
+    {
+        if (VersionTextBox.Text == "0")
         {
-            if (VersionTextBox.Text == "0")
-            {
-                VersionTextBox.SelectAll();
-            }
+            VersionTextBox.SelectAll();
         }
     }
 }
+

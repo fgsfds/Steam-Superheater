@@ -1,4 +1,4 @@
-﻿namespace Database.Client;
+namespace Database.Client;
 
 public sealed class DatabaseContextFactory
 {

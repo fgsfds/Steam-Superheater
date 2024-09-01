@@ -1,24 +1,24 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 
-namespace Superheater.Avalonia.Core.Windows
+namespace Avalonia.Core.Windows;
+
+public sealed partial class MessageBox : Window
 {
-    public sealed partial class MessageBox : Window
+    public MessageBox()
     {
-        public MessageBox()
-        {
-        }
+    }
 
-        public MessageBox(string text)
-        {
-            InitializeComponent();
+    public MessageBox(string text)
+    {
+        InitializeComponent();
 
-            TextBlock.Text = text;
-        }
+        TextBlock.Text = text;
+    }
 
-        private void ButtonClick(object? sender, RoutedEventArgs e)
-        {
-            Environment.Exit(0);
-        }
+    private void ButtonClick(object? sender, RoutedEventArgs e)
+    {
+        Environment.Exit(0);
     }
 }
+

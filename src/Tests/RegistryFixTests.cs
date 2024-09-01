@@ -12,7 +12,7 @@
 //using System.Security.Cryptography;
 
 //namespace Tests
-//{
+//
 //    /// <summary>
 //    /// Tests that use instance data and should be run in a single thread
 //    /// </summary>
@@ -203,4 +203,4 @@
 
 //        #endregion Tests
 //    }
-//}
+//

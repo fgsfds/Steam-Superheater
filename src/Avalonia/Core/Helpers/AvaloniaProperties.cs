@@ -1,16 +1,32 @@
-﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Common.Helpers;
+using CommunityToolkit.Diagnostics;
 
-namespace Superheater.Avalonia.Core.Helpers
+namespace Avalonia.Core.Helpers;
+
+public static class AvaloniaProperties
 {
-    public static class AvaloniaProperties
+    public static Window MainWindow
     {
-        public static Window MainWindow => (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow
-            ?? ThrowHelper.ArgumentNullException<Window>(nameof(MainWindow));
+        get
+        {
+            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-        public static TopLevel TopLevel => TopLevel.GetTopLevel(MainWindow)
-            ?? ThrowHelper.ArgumentNullException<TopLevel>(nameof(TopLevel));
+            Guard.IsNotNull(mainWindow);
+
+            return mainWindow;
+        }
+    }
+
+    public static TopLevel TopLevel
+    {
+        get
+        {
+            var topLevel = TopLevel.GetTopLevel(MainWindow);
+
+            Guard.IsNotNull(topLevel);
+
+            return topLevel;
+        }
     }
 }

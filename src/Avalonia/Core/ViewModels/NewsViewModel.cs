@@ -1,177 +1,170 @@
-﻿using Common.Client.Config;
+using Avalonia.Core.ViewModels.Popups;
+using Common.Client.Config;
 using Common.Client.Models;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Superheater.Avalonia.Core.ViewModels.Popups;
 using System.Collections.Immutable;
 
-namespace Superheater.Avalonia.Core.ViewModels
+namespace Avalonia.Core.ViewModels;
+
+internal sealed partial class NewsViewModel : ObservableObject
 {
-    internal sealed partial class NewsViewModel : ObservableObject
-    {
-        private readonly NewsModel _newsModel;
-        private readonly IConfigProvider _config;
-        private readonly PopupMessageViewModel _popupMessage;
-        private readonly PopupEditorViewModel _popupEditor;
-        private readonly SemaphoreSlim _locker = new(1);
+    private readonly NewsModel _newsModel;
+    private readonly IConfigProvider _config;
+    private readonly PopupMessageViewModel _popupMessage;
+    private readonly PopupEditorViewModel _popupEditor;
+    private readonly SemaphoreSlim _locker = new(1);
 
 
-        #region Binding Properties
+    #region Binding Properties
 
-        public ImmutableList<NewsEntity> NewsList => _newsModel.GetNews();
+    public ImmutableList<NewsEntity> NewsList => _newsModel.GetNews();
 
-        [ObservableProperty]
-        [NotifyCanExecuteChangedFor(nameof(MarkAllAsReadCommand))]
-        private string _newsTabHeader = "News";
+    public string NewsTabHeader =>
+        "News" + (_newsModel.HasUnreadNews
+        ? $" ({_newsModel.UnreadNewsCount} unread)"
+        : string.Empty);
 
-        #endregion Binding Properties
+    #endregion Binding Properties
 
 
-        public NewsViewModel(
-            NewsModel newsModel,
-            IConfigProvider configProvider,
-            PopupMessageViewModel popupMessage,
-            PopupEditorViewModel popupEditor
+    public NewsViewModel(
+        NewsModel newsModel,
+        IConfigProvider configProvider,
+        PopupMessageViewModel popupMessage,
+        PopupEditorViewModel popupEditor
         )
-        {
-            _newsModel = newsModel;
-            _config = configProvider;
-            _popupMessage = popupMessage;
-            _popupEditor = popupEditor;
+    {
+        _newsModel = newsModel;
+        _config = configProvider;
+        _popupMessage = popupMessage;
+        _popupEditor = popupEditor;
 
-            _config.ParameterChangedEvent += OnParameterChangedEvent;
+        _config.ParameterChangedEvent += OnParameterChangedEvent;
+    }
+
+
+    #region Relay Commands
+
+    /// <summary>
+    /// VM initialization
+    /// </summary>
+    [RelayCommand]
+    private Task InitializeAsync() => UpdateAsync();
+
+    /// <summary>
+    /// Mark all news as read
+    /// </summary>
+    [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
+    private void MarkAllAsRead()
+    {
+        _newsModel.MarkAllAsRead();
+
+        OnPropertyChanged(nameof(NewsList));
+        OnPropertyChanged(nameof(NewsTabHeader));
+        MarkAllAsReadCommand.NotifyCanExecuteChanged();
+    }
+    private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
+
+    /// <summary>
+    /// Add news
+    /// </summary>
+    [RelayCommand]
+    private async Task AddNews()
+    {
+        var newContent = await _popupEditor.ShowAndGetResultAsync("Add news entry", string.Empty).ConfigureAwait(true);
+
+        if (newContent is null)
+        {
+            return;
         }
 
+        var result = await _newsModel.AddNewsAsync(newContent).ConfigureAwait(true);
 
-        #region Relay Commands
-
-        /// <summary>
-        /// VM initialization
-        /// </summary>
-        [RelayCommand]
-        private Task InitializeAsync() => UpdateAsync();
-
-        /// <summary>
-        /// Mark all news as read
-        /// </summary>
-        [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
-        private void MarkAllAsRead()
+        if (!result.IsSuccess)
         {
-            _newsModel.MarkAllAsRead();
+            _popupMessage.Show(
+                "Error",
+                result.Message,
+                PopupMessageType.OkOnly
+                );
 
-            OnPropertyChanged(nameof(NewsList));
-            UpdateHeader();
-        }
-        private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
-
-        /// <summary>
-        /// Add news
-        /// </summary>
-        [RelayCommand]
-        private async Task AddNews()
-        {
-            var newContent = await _popupEditor.ShowAndGetResultAsync("Add news entry", string.Empty).ConfigureAwait(true);
-
-            if (newContent is null)
-            {
-                return;
-            }
-
-            var result = await _newsModel.AddNewsAsync(newContent).ConfigureAwait(true);
-
-            if (!result.IsSuccess)
-            {
-                _popupMessage.Show(
-                    "Error",
-                    result.Message,
-                    PopupMessageType.OkOnly
-                    );
-
-                return;
-            }
-
-            OnPropertyChanged(nameof(NewsList));
+            return;
         }
 
-        /// <summary>
-        /// Edit current news content
-        /// </summary>
-        [RelayCommand]
-        private async Task EditNews(DateTime date)
+        OnPropertyChanged(nameof(NewsList));
+    }
+
+    /// <summary>
+    /// Edit current news content
+    /// </summary>
+    [RelayCommand]
+    private async Task EditNews(DateTime date)
+    {
+        var news = NewsList.FirstOrDefault(x => x.Date == date);
+
+        if (news is null)
         {
-            var news = NewsList.FirstOrDefault(x => x.Date == date);
-
-            if (news is null)
-            {
-                return;
-            }
-
-            var newContent = await _popupEditor.ShowAndGetResultAsync("Edit news entry", news.Content).ConfigureAwait(true);
-
-            if (newContent is null)
-            {
-                return;
-            }
-
-            var result = await _newsModel.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
-
-            if (!result.IsSuccess)
-            {
-                _popupMessage.Show(
-                    "Error",
-                    result.Message,
-                    PopupMessageType.OkOnly
-                    );
-
-                return;
-            }
-
-            OnPropertyChanged(nameof(NewsList));
+            return;
         }
 
-        #endregion Relay Commands
+        var newContent = await _popupEditor.ShowAndGetResultAsync("Edit news entry", news.Content).ConfigureAwait(true);
 
-        /// <summary>
-        /// Update news list and tab header
-        /// </summary>
-        private async Task UpdateAsync()
+        if (newContent is null)
         {
-            await _locker.WaitAsync().ConfigureAwait(true);
-
-            var result = await _newsModel.UpdateNewsListAsync().ConfigureAwait(true);
-
-            if (!result.IsSuccess)
-            {
-                _popupMessage.Show(
-                    "Error",
-                    result.Message,
-                    PopupMessageType.OkOnly
-                    );
-            }
-
-            OnPropertyChanged(nameof(NewsList));
-            UpdateHeader();
-
-            _locker.Release();
+            return;
         }
 
-        /// <summary>
-        /// Update tab header
-        /// </summary>
-        private void UpdateHeader()
+        var result = await _newsModel.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
+
+        if (!result.IsSuccess)
         {
-            NewsTabHeader = "News" + (_newsModel.HasUnreadNews
-                ? $" ({_newsModel.UnreadNewsCount} unread)"
-                : string.Empty);
+            _popupMessage.Show(
+                "Error",
+                result.Message,
+                PopupMessageType.OkOnly
+                );
+
+            return;
         }
 
-        private async void OnParameterChangedEvent(string parameterName)
+        OnPropertyChanged(nameof(NewsList));
+    }
+
+    #endregion Relay Commands
+
+    /// <summary>
+    /// Update news list and tab header
+    /// </summary>
+    private async Task UpdateAsync()
+    {
+        await _locker.WaitAsync().ConfigureAwait(true);
+
+        var result = await _newsModel.UpdateNewsListAsync().ConfigureAwait(true);
+
+        if (!result.IsSuccess)
         {
-            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
-            {
-                await UpdateAsync().ConfigureAwait(true);
-            }
+            _popupMessage.Show(
+                "Error",
+                result.Message,
+                PopupMessageType.OkOnly
+                );
+        }
+
+        OnPropertyChanged(nameof(NewsList));
+        OnPropertyChanged(nameof(NewsTabHeader));
+        MarkAllAsReadCommand.NotifyCanExecuteChanged();
+
+        _ = _locker.Release();
+    }
+
+    private async void OnParameterChangedEvent(string parameterName)
+    {
+        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
+        {
+            await UpdateAsync().ConfigureAwait(true);
         }
     }
 }
+

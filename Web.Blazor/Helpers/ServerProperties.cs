@@ -1,4 +1,4 @@
-﻿using Common.Interfaces;
+using Common.Interfaces;
 
 namespace Web.Blazor.Helpers;
 

@@ -1,4 +1,4 @@
-﻿using Database.Client.DbEntities;
+using Database.Client.DbEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database.Client;
@@ -15,7 +15,7 @@ public sealed class DatabaseContext : DbContext
         {
             Database.Migrate();
         }
-        catch (Exception ex)
+        catch (Exception)
         {
             ConvertOldConfig();
         }
@@ -28,18 +28,18 @@ public sealed class DatabaseContext : DbContext
         var hiddenTags = HiddenTags.ToList();
         var upvotes = Upvotes.ToList();
 
-        Database.EnsureDeleted();
+        _ = Database.EnsureDeleted();
         Database.Migrate();
 
         Settings.AddRange(settings);
         HiddenTags.AddRange(hiddenTags);
         Upvotes.AddRange(upvotes);
 
-        SaveChanges();
+        _ = SaveChanges();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlite("Data Source=config.db");
+        _ = optionsBuilder.UseSqlite("Data Source=config.db");
     }
 }

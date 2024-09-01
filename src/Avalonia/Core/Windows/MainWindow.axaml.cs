@@ -1,12 +1,12 @@
-﻿using Avalonia.Controls;
+using Avalonia.Controls;
+using Avalonia.Core.ViewModels;
+using Avalonia.Core.ViewModels.Popups;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
-using Superheater.Avalonia.Core.ViewModels;
-using Superheater.Avalonia.Core.ViewModels.Popups;
 
-namespace Superheater.Avalonia.Core.Windows;
+namespace Avalonia.Core.Windows;
 
 public sealed partial class MainWindow : Window
 {
@@ -20,8 +20,9 @@ public sealed partial class MainWindow : Window
 
         InitializeComponent();
 
-        ((IPopup)PopupEditor.DataContext!).PopupShownEvent += MainWindow_IsShown;
-        ((IPopup)PopupMessage.DataContext!).PopupShownEvent += MainWindow_IsShown;
+        ((IPopup)PopupEditor.DataContext!).PopupShownEvent += Popup_IsShown;
+        ((IPopup)PopupMessage.DataContext!).PopupShownEvent += Popup_IsShown;
+        ((IPopup)PopupStack.DataContext!).PopupShownEvent += Popup_IsShown;
     }
 
     public void SwitchTab(MainWindowTabsEnum tabEnum)
@@ -32,7 +33,7 @@ public sealed partial class MainWindow : Window
         }
     }
 
-    private void MainWindow_IsShown(bool obj)
+    private void Popup_IsShown(bool obj)
     {
         if (obj)
         {
@@ -47,5 +48,9 @@ public sealed partial class MainWindow : Window
 
 public enum MainWindowTabsEnum
 {
-    MainTab
+    MainTab,
+    EditorTab,
+    NewsTab,
+    SettingsTab,
+    AboutTab
 }

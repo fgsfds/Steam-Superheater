@@ -1,4 +1,4 @@
-﻿using Common.Client.API;
+using Common.Client.API;
 using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
@@ -6,44 +6,44 @@ using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Common.Client.DI
+namespace Common.Client.DI;
+
+public static class CommonBindings
 {
-    public static class CommonBindings
+    public static void Load(ServiceCollection container)
     {
-        public static void Load(ServiceCollection container)
-        {
-            container.AddTransient<AppUpdateInstaller>();
+        _ = container.AddTransient<AppUpdateInstaller>();
 
-            container.AddTransient<FileFixInstaller>();
-            container.AddTransient<FileFixUpdater>();
-            container.AddTransient<FileFixUninstaller>();
+        _ = container.AddTransient<FileFixInstaller>();
+        _ = container.AddTransient<FileFixUpdater>();
+        _ = container.AddTransient<FileFixUninstaller>();
 
-            container.AddTransient<RegistryFixInstaller>();
-            container.AddTransient<RegistryFixUpdater>();
-            container.AddTransient<RegistryFixUninstaller>();
+        _ = container.AddTransient<RegistryFixInstaller>();
+        _ = container.AddTransient<RegistryFixUpdater>();
+        _ = container.AddTransient<RegistryFixUninstaller>();
 
-            container.AddTransient<HostsFixInstaller>();
-            container.AddTransient<HostsFixUpdater>();
-            container.AddTransient<HostsFixUninstaller>();
+        _ = container.AddTransient<HostsFixInstaller>();
+        _ = container.AddTransient<HostsFixUpdater>();
+        _ = container.AddTransient<HostsFixUninstaller>();
 
-            container.AddTransient<FixManager>();
-            container.AddTransient<ArchiveTools>();
+        _ = container.AddTransient<FixManager>();
+        _ = container.AddTransient<ArchiveTools>();
 
-            container.AddSingleton<FilesDownloader>();
-            container.AddSingleton<FilesUploader>();
-            container.AddSingleton<ProgressReport>();
-            container.AddSingleton<HttpClient>(CreateHttpClient);
-            container.AddSingleton<SteamTools>();
-            container.AddSingleton<Logger>();
-            container.AddSingleton<ApiInterface>();
-        }
+        _ = container.AddSingleton<FilesDownloader>();
+        _ = container.AddSingleton<FilesUploader>();
+        _ = container.AddSingleton<ProgressReport>();
+        _ = container.AddSingleton<HttpClient>(CreateHttpClient);
+        _ = container.AddSingleton<SteamTools>();
+        _ = container.AddSingleton<Logger>();
+        _ = container.AddSingleton<ApiInterface>();
+    }
 
-        private static HttpClient CreateHttpClient(IServiceProvider provider)
-        {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
-            httpClient.Timeout = TimeSpan.FromSeconds(10);
-            return httpClient;
-        }
+    private static HttpClient CreateHttpClient(IServiceProvider provider)
+    {
+        var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+        httpClient.Timeout = TimeSpan.FromSeconds(10);
+        return httpClient;
     }
 }
+

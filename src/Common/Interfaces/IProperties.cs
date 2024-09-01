@@ -1,7 +1,7 @@
-﻿namespace Common.Interfaces
+namespace Common.Interfaces;
+
+public interface IProperties
 {
-    public interface IProperties
-    {
-        bool IsDevMode { get; set; }
-    }
+    bool IsDevMode { get; set; }
 }
+

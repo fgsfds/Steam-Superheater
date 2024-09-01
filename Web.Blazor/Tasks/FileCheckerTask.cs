@@ -1,47 +1,47 @@
-﻿using Web.Blazor.Providers;
+using Web.Blazor.Providers;
 
-namespace Web.Blazor.Tasks
+namespace Web.Blazor.Tasks;
+
+public sealed class FileCheckerTask : IHostedService, IDisposable
 {
-    public sealed class FileCheckerTask : IHostedService, IDisposable
+    private readonly FixesProvider _fixesProvider;
+
+    private Timer _timer;
+
+    public FileCheckerTask(
+        FixesProvider fixesProvider
+        )
     {
-        private readonly FixesProvider _fixesProvider;
+        _fixesProvider = fixesProvider;
+    }
 
-        private Timer _timer;
+    public Task StartAsync(CancellationToken stoppingToken)
+    {
+        _timer = new Timer(
+            DoWork,
+            null,
+            TimeSpan.Zero,
+            TimeSpan.FromHours(6)
+            );
 
-        public FileCheckerTask(
-            FixesProvider fixesProvider
-            )
-        {
-            _fixesProvider = fixesProvider;
-        }
+        return Task.CompletedTask;
+    }
 
-        public Task StartAsync(CancellationToken stoppingToken)
-        {
-            _timer = new Timer(
-                DoWork,
-                null,
-                TimeSpan.Zero,
-                TimeSpan.FromHours(6)
-                );
+    private void DoWork(object? state)
+    {
+        _ = _fixesProvider.CheckFixesAsync();
+    }
 
-            return Task.CompletedTask;
-        }
+    public Task StopAsync(CancellationToken stoppingToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
 
-        private void DoWork(object? state)
-        {
-            _ = _fixesProvider.CheckFixesAsync();
-        }
+        return Task.CompletedTask;
+    }
 
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }
+

@@ -1,19 +1,19 @@
 using Avalonia.Controls;
+using Avalonia.Core.ViewModels;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
-using Superheater.Avalonia.Core.ViewModels;
 
-namespace Superheater.Avalonia.Core.Pages
+namespace Avalonia.Core.Pages;
+
+public sealed partial class SettingsPage : UserControl
 {
-    public sealed partial class SettingsPage : UserControl
+    public SettingsPage()
     {
-        public SettingsPage()
-        {
-            var vm = BindingsManager.Provider.GetRequiredService<SettingsViewModel>();
+        var vm = BindingsManager.Provider.GetRequiredService<SettingsViewModel>();
 
-            InitializeComponent();
+        InitializeComponent();
 
-            DataContext = vm;
-        }
+        DataContext = vm;
     }
 }
+

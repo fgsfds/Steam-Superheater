@@ -1,16 +1,16 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 
-namespace Common.Enums
+namespace Common.Enums;
+
+public enum FixTypeEnum : byte
 {
-    public enum FixTypeEnum : byte
-    {
-        [Description("File fix")]
-        FileFix = 1,
-        [Description("Registry fix")]
-        RegistryFix = 2,
-        [Description("Hosts fix")]
-        HostsFix = 3,
-        [Description("Text fix")]
-        TextFix = 4
-    }
+    [Description("File fix")]
+    FileFix = 1,
+    [Description("Registry fix")]
+    RegistryFix = 2,
+    [Description("Hosts fix")]
+    HostsFix = 3,
+    [Description("Text fix")]
+    TextFix = 4
 }
+

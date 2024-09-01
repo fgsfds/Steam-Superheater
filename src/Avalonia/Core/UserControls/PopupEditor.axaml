@@ -5,9 +5,9 @@
              mc:Ignorable="d"
              d:DesignWidth="1000"
              d:DesignHeight="800"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels.Popups"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels.Popups"
              x:DataType="vm:PopupEditorViewModel"
-             x:Class="Superheater.Avalonia.Core.UserControls.PopupEditor">
+             x:Class="Avalonia.Core.UserControls.PopupEditor">
 
     <Grid ColumnDefinitions="100,*,100"
           RowDefinitions="100,*,100">

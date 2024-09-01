@@ -1,4 +1,4 @@
-﻿using Common.Client;
+using Common.Client;
 using Common.Client.API;
 using Common.Client.Config;
 using Common.Client.DI;
@@ -6,46 +6,49 @@ using Common.Client.FilesTools;
 using Common.Client.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Tests
+namespace Tests;
+
+[Collection("Sync")]
+public sealed class GitHubTests
 {
-    [Collection("Sync")]
-    public sealed class GitHubTests
+    public GitHubTests()
     {
-        public GitHubTests()
-        {
-            BindingsManager.Reset();
-            var container = BindingsManager.Instance;
-            container.AddTransient<FixesProvider>();
-            container.AddScoped<IConfigProvider, ConfigProviderFake>();
-            container.AddTransient<AppUpdateInstaller>();
-            container.AddTransient<HttpClient>();
-            container.AddTransient<Logger>();
-            container.AddTransient<ArchiveTools>();
-            container.AddTransient<ProgressReport>();
-            container.AddTransient<ApiInterface>();
-            container.AddTransient<FilesDownloader>();
-        }
+        BindingsManager.Reset();
+        var container = BindingsManager.Instance;
+        _ = container.AddTransient<SteamTools>();
+        _ = container.AddTransient<GamesProvider>();
+        _ = container.AddTransient<InstalledFixesProvider>();
+        _ = container.AddTransient<FixesProvider>();
+        _ = container.AddScoped<IConfigProvider, ConfigProviderFake>();
+        _ = container.AddTransient<AppUpdateInstaller>();
+        _ = container.AddTransient<HttpClient>();
+        _ = container.AddTransient<Logger>();
+        _ = container.AddTransient<ArchiveTools>();
+        _ = container.AddTransient<ProgressReport>();
+        _ = container.AddTransient<ApiInterface>();
+        _ = container.AddTransient<FilesDownloader>();
+    }
 
-        [Fact]
-        public async Task GetFixesListFromAPI()
-        {
-            var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
-            var fixes = await fixesProvider.GetFixesListAsync().ConfigureAwait(true);
+    [Fact]
+    public async Task GetFixesListFromAPI()
+    {
+        var fixesProvider = BindingsManager.Provider.GetRequiredService<FixesProvider>();
+        var fixes = await fixesProvider.GetFixesListAsync().ConfigureAwait(true);
 
-            Assert.NotNull(fixes.ResultObject);
+        Assert.NotNull(fixes.ResultObject);
 
-            //Looking for Alan Wake fixes list
-            var result = fixes.ResultObject.Exists(static x => x.GameId == 108710);
-            Assert.True(result);
-        }
+        //Looking for Alan Wake fixes list
+        var result = fixes.ResultObject.Exists(static x => x.GameId == 108710);
+        Assert.True(result);
+    }
 
-        [Fact]
-        public async Task GetAppReleasesTest()
-        {
-            var fixesProvider = BindingsManager.Provider.GetRequiredService<AppUpdateInstaller>();
-            var release = await fixesProvider.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);
+    [Fact]
+    public async Task GetAppReleasesTest()
+    {
+        var fixesProvider = BindingsManager.Provider.GetRequiredService<AppUpdateInstaller>();
+        var release = await fixesProvider.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);
 
-            Assert.True(release.IsSuccess);
-        }
+        Assert.True(release.IsSuccess);
     }
 }
+

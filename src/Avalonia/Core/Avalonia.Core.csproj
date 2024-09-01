@@ -16,6 +16,7 @@
     </PackageReference>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="ConfigureAwaitAnalyzer">
       <PrivateAssets>all</PrivateAssets>
@@ -28,12 +29,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Common.Client\Common.Client.csproj" />
     <ProjectReference Include="..\..\Common\Common.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="UserControls\PopupStack.axaml.cs">
-      <DependentUpon>PopupStack.axaml</DependentUpon>
-    </Compile>
   </ItemGroup>
   
 </Project>

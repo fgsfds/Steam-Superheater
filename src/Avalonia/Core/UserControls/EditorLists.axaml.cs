@@ -1,12 +1,12 @@
 using Avalonia.Controls;
 
-namespace Superheater.Avalonia.Core.UserControls
+namespace Avalonia.Core.UserControls;
+
+public sealed partial class EditorLists : UserControl
 {
-    public sealed partial class EditorLists : UserControl
+    public EditorLists()
     {
-        public EditorLists()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
+

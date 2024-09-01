@@ -1,19 +1,37 @@
-﻿using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Input;
 
-namespace Superheater.Avalonia.Core.ViewModels
+namespace Avalonia.Core.ViewModels;
+
+public interface ISearchBarViewModel
 {
-    public interface ISearchBarViewModel
-    {
-        HashSet<string> TagsComboboxList { get; }
+    /// <summary>
+    /// List of tags
+    /// </summary>
+    HashSet<string> TagsComboboxList { get; }
 
-        string SelectedTagFilter { get; set; }
+    /// <summary>
+    /// Selected tag
+    /// </summary>
+    string SelectedTagFilter { get; set; }
 
-        string SearchBarText { get; set; }
+    /// <summary>
+    /// Search string
+    /// </summary>
+    string SearchBarText { get; set; }
 
-        string ShowPopupStackButtonText { get; }
+    /// <summary>
+    /// Show tags filter popup
+    /// </summary>
+    string ShowPopupStackButtonText { get; }
 
-        IRelayCommand ClearSearchCommand { get; }
+    /// <summary>
+    /// Clear search bar text
+    /// </summary>
+    IRelayCommand ClearSearchCommand { get; }
 
-        IAsyncRelayCommand ShowFiltersPopupCommand { get; }
-    }
+    /// <summary>
+    /// Show tags filter popup
+    /// </summary>
+    IAsyncRelayCommand ShowFiltersPopupCommand { get; }
 }
+

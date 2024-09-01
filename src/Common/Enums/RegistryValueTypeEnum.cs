@@ -1,8 +1,8 @@
-﻿namespace Common.Enums
+namespace Common.Enums;
+
+public enum RegistryValueTypeEnum : byte
 {
-    public enum RegistryValueTypeEnum : byte
-    {
-        String = 1,
-        Dword = 2
-    }
+    String = 1,
+    Dword = 2
 }
+

@@ -3,10 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              x:DataType="vm:EditorViewModel"
-             x:Class="Superheater.Avalonia.Core.UserControls.EditorButtons">
+             x:Class="Avalonia.Core.UserControls.EditorButtons">
 
     <Grid>
         <Grid.ColumnDefinitions>

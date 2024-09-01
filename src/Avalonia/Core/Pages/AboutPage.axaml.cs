@@ -1,59 +1,59 @@
 using Avalonia.Controls;
+using Avalonia.Core.ViewModels;
 using Avalonia.Interactivity;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
-using Superheater.Avalonia.Core.ViewModels;
 using System.Diagnostics;
 
-namespace Superheater.Avalonia.Core.Pages
+namespace Avalonia.Core.Pages;
+
+public sealed partial class AboutPage : UserControl
 {
-    public sealed partial class AboutPage : UserControl
+    public AboutPage()
     {
-        public AboutPage()
+        var vm = BindingsManager.Provider.GetRequiredService<AboutViewModel>();
+
+        DataContext = vm;
+
+        InitializeComponent();
+
+        vm.InitializeCommand.Execute(null);
+    }
+
+    private void DiscordClick(object sender, RoutedEventArgs e)
+    {
+        _ = Process.Start(new ProcessStartInfo
         {
-            var vm = BindingsManager.Provider.GetRequiredService<AboutViewModel>();
+            FileName = "https://discord.gg/mWvKyxR4et",
+            UseShellExecute = true
+        });
+    }
 
-            DataContext = vm;
-
-            InitializeComponent();
-
-            vm.InitializeCommand.Execute(null);
-        }
-
-        private void DiscordClick(object sender, RoutedEventArgs e)
+    private void GitHubClick(object sender, RoutedEventArgs e)
+    {
+        _ = Process.Start(new ProcessStartInfo
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://discord.gg/mWvKyxR4et",
-                UseShellExecute = true
-            });
-        }
+            FileName = "https://github.com/fgsfds/Steam-Superheater",
+            UseShellExecute = true
+        });
+    }
 
-        private void GitHubClick(object sender, RoutedEventArgs e)
+    private void GitHubIssuesClick(object sender, RoutedEventArgs e)
+    {
+        _ = Process.Start(new ProcessStartInfo
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/fgsfds/Steam-Superheater",
-                UseShellExecute = true
-            });
-        }
+            FileName = "https://github.com/fgsfds/Steam-Superheater/issues/new",
+            UseShellExecute = true
+        });
+    }
 
-        private void GitHubIssuesClick(object sender, RoutedEventArgs e)
+    private void ShowChangelogClick(object sender, RoutedEventArgs e)
+    {
+        _ = Process.Start(new ProcessStartInfo
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/fgsfds/Steam-Superheater/issues/new",
-                UseShellExecute = true
-            });
-        }
-
-        private void ShowChangelogClick(object sender, RoutedEventArgs e)
-        {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
-                UseShellExecute = true
-            });
-        }
+            FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
+            UseShellExecute = true
+        });
     }
 }
+

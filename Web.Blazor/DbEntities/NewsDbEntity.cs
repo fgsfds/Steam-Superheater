@@ -1,16 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Web.Blazor.DbEntities
-{
-    [PrimaryKey(nameof(Date))]
-    [Table(name: "news", Schema = "main")]
-    public sealed class NewsDbEntity
-    {
-        [Column("date")]
-        public required DateTime Date { get; set; }
+namespace Web.Blazor.DbEntities;
 
-        [Column("content")]
-        public required string Content { get; set; }
-    }
+[PrimaryKey(nameof(Date))]
+[Table(name: "news", Schema = "main")]
+public sealed class NewsDbEntity
+{
+    [Column("date")]
+    public required DateTime Date { get; set; }
+
+    [Column("content")]
+    public required string Content { get; set; }
 }
+

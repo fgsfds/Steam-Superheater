@@ -1,6 +1,6 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        x:Class="Superheater.Avalonia.Core.Windows.MessageBox"
+        x:Class="Avalonia.Core.Windows.MessageBox"
         Title="Error"
         SizeToContent="WidthAndHeight"
         WindowStartupLocation="CenterScreen"
@@ -8,6 +8,8 @@
         ExtendClientAreaToDecorationsHint="True"
         ExtendClientAreaChromeHints="NoChrome"
         RequestedThemeVariant="Default"
+        MaxWidth="800"
+        MaxHeight="600"
         Background="{DynamicResource Background}">
 
     <Window.Resources>
@@ -18,21 +20,27 @@
         </ResourceDictionary>
     </Window.Resources>
 
-    <Grid RowDefinitions="*,auto,auto,*" ColumnDefinitions="*,auto,*">
-        <Border Grid.RowSpan="4"
-                Grid.ColumnSpan="3"
-                BorderBrush="{DynamicResource SystemAccentColor}"
-                BorderThickness="1"/>
+    <Grid RowDefinitions="auto,*,auto">
 
-        <TextBlock Name="TextBlock"
-                   Grid.Row="1" Grid.Column="1"
-                   HorizontalAlignment="Center"
-                   Margin="20,20,20,0"/>
+        <TextBlock HorizontalAlignment="Center"
+                   Grid.Row="0"
+                   Margin="30"
+                   Foreground="{DynamicResource SystemAccentColor}"
+                   FontWeight="Bold"
+                   FontSize="25"
+                   Text="Critical Error"/>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      Margin="30,0">
+            <TextBlock Name="TextBlock"
+                       TextWrapping="Wrap"/>
+        </ScrollViewer>
 
         <Button Click="ButtonClick"
                 Background="{DynamicResource SystemAccentColor}"
-                Grid.Row="2" Grid.Column="1"
-                Margin="20"
+                Grid.Row="2"
+                Margin="30"
                 HorizontalAlignment="Center">
             Close
         </Button>

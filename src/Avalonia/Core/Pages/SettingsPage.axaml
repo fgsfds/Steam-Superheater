@@ -6,10 +6,10 @@
              mc:Ignorable="d"
              d:DesignWidth="800"
              d:DesignHeight="450"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:SettingsViewModel"
-             x:Class="Superheater.Avalonia.Core.Pages.SettingsPage">
+             x:Class="Avalonia.Core.Pages.SettingsPage">
 
     <Grid RowDefinitions="auto,*,auto">
 

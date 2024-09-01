@@ -1,14 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:ucs="clr-namespace:Superheater.Avalonia.Core.UserControls"
+             xmlns:ucs="clr-namespace:Avalonia.Core.UserControls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
-             xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
+             xmlns:helpers="clr-namespace:Avalonia.Core.Helpers"
              x:DataType="vm:EditorViewModel"
-             x:Class="Superheater.Avalonia.Core.UserControls.EditorLists">
+             x:Class="Avalonia.Core.UserControls.EditorLists">
 
     <UserControl.Resources>
         <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
@@ -22,6 +22,7 @@
             <ColumnDefinition Width="1.5*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
+        <!--Games-->
         <ListBox ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
                  SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
                  Grid.Column="0"
@@ -65,6 +66,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <!--Fixes-->
             <ListBox ItemsSource="{Binding SelectedGameFixesList}"
                      SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
                      SelectedIndex="{Binding SelectedFixIndex}"
@@ -73,7 +75,8 @@
                      Grid.Row="0"
                      Name="FixesList"
                      Padding="5"
-                     Margin="3,0">
+                     Margin="0,0,3,0"
+                     >
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
@@ -159,7 +162,7 @@
 
         </Grid>
 
-        <ucs:EditorFields Grid.Column="2" Margin="3,0,0,0"/>
+        <ucs:EditorFields Grid.Column="2"/>
 
     </Grid>
 </UserControl>

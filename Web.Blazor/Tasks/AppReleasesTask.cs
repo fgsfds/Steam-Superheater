@@ -1,47 +1,47 @@
-﻿using Web.Blazor.Providers;
+using Web.Blazor.Providers;
 
-namespace Web.Blazor.Tasks
+namespace Web.Blazor.Tasks;
+
+public sealed class AppReleasesTask : IHostedService, IDisposable
 {
-    public sealed class AppReleasesTask : IHostedService, IDisposable
+    private readonly AppReleasesProvider _appReleasesProvider;
+
+    private Timer _timer;
+
+    public AppReleasesTask(
+        AppReleasesProvider appReleasesProvider
+        )
     {
-        private readonly AppReleasesProvider _appReleasesProvider;
+        _appReleasesProvider = appReleasesProvider;
+    }
 
-        private Timer _timer;
+    public Task StartAsync(CancellationToken stoppingToken)
+    {
+        _timer = new Timer(
+            DoWork,
+            null,
+            TimeSpan.Zero,
+            TimeSpan.FromHours(1)
+            );
 
-        public AppReleasesTask(
-            AppReleasesProvider appReleasesProvider
-            )
-        {
-            _appReleasesProvider = appReleasesProvider;
-        }
+        return Task.CompletedTask;
+    }
 
-        public Task StartAsync(CancellationToken stoppingToken)
-        {
-            _timer = new Timer(
-                DoWork,
-                null,
-                TimeSpan.Zero,
-                TimeSpan.FromHours(1)
-                );
+    private void DoWork(object? state)
+    {
+        _ = _appReleasesProvider.GetLatestVersionAsync();
+    }
 
-            return Task.CompletedTask;
-        }
+    public Task StopAsync(CancellationToken stoppingToken)
+    {
+        _timer?.Change(Timeout.Infinite, 0);
 
-        private void DoWork(object? state)
-        {
-            _ = _appReleasesProvider.GetLatestVersionAsync();
-        }
+        return Task.CompletedTask;
+    }
 
-        public Task StopAsync(CancellationToken stoppingToken)
-        {
-            _timer?.Change(Timeout.Infinite, 0);
-
-            return Task.CompletedTask;
-        }
-
-        public void Dispose()
-        {
-            _timer?.Dispose();
-        }
+    public void Dispose()
+    {
+        _timer?.Dispose();
     }
 }
+

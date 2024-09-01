@@ -1,9 +1,9 @@
-﻿namespace Common.Enums
+namespace Common.Enums;
+
+public enum ThemeEnum : byte
 {
-    public enum ThemeEnum: byte
-    {
-        System,
-        Light,
-        Dark
-    }
+    System,
+    Light,
+    Dark
 }
+

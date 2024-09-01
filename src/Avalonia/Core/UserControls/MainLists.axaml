@@ -5,10 +5,10 @@
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:helpers="clr-namespace:Superheater.Avalonia.Core.Helpers"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:helpers="clr-namespace:Avalonia.Core.Helpers"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              x:DataType="vm:MainViewModel"
-             x:Class="Superheater.Avalonia.Core.UserControls.MainLists">
+             x:Class="Avalonia.Core.UserControls.MainLists">
 
     <UserControl.Resources>
         <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
@@ -17,9 +17,9 @@
     <Grid>
 
         <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
             <ColumnDefinition Width="1.5*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
         </Grid.ColumnDefinitions>
 
         <!--Games list-->

@@ -1,91 +1,91 @@
-﻿using Telegram.Bot;
+using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 
-namespace Web.Blazor.Telegram
+namespace Web.Blazor.Telegram;
+
+public sealed class TelegramBot
 {
-    public sealed class TelegramBot
+    private readonly TelegramBotClient _bot;
+    private readonly HttpClient _httpClient;
+    private readonly ILogger<TelegramBot> _logger;
+
+    private readonly string _chatId = Environment.GetEnvironmentVariable("TgChatId")!;
+    private readonly string _token = Environment.GetEnvironmentVariable("TgToken")!;
+    private readonly string _apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+
+    public TelegramBot(
+        HttpClient httpClient,
+        ILogger<TelegramBot> logger
+        )
     {
-        private readonly TelegramBotClient _bot;
-        private readonly HttpClient _httpClient;
-        private readonly ILogger<TelegramBot> _logger;
+        _httpClient = httpClient;
+        _logger = logger;
+        _bot = new TelegramBotClient(_token, httpClient);
+    }
 
-        private readonly string _chatId = Environment.GetEnvironmentVariable("TgChatId")!;
-        private readonly string _token = Environment.GetEnvironmentVariable("TgToken")!;
-        private readonly string _apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
+    public async Task StartAsync()
+    {
+        var me = await _bot.GetMeAsync().ConfigureAwait(false);
 
-        public TelegramBot(
-            HttpClient httpClient,
-            ILogger<TelegramBot> logger
-            )
+        _bot.OnError += OnError;
+        _bot.OnMessage += OnMessage;
+
+        await SendMessageAsync("Server started").ConfigureAwait(false);
+    }
+
+    private async Task OnMessage(Message message, UpdateType type)
+    {
+        _logger.LogInformation("Got message");
+
+        if (message.From!.Id.ToString() != _chatId)
         {
-            _httpClient = httpClient;
-            _logger = logger;
-            _bot = new TelegramBotClient(_token, httpClient);
+            await SendMessageAsync(
+                "You are not supposed to be here",
+                message!.From!.Id.ToString()
+                ).ConfigureAwait(false);
         }
 
-        public async Task StartAsync()
+        if (message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
         {
-            var me = await _bot.GetMeAsync().ConfigureAwait(false);
-
-            _bot.OnError += OnError;
-            _bot.OnMessage += OnMessage;
-
-            await SendMessageAsync("Server started").ConfigureAwait(false);
+            _logger.LogInformation("Pong");
+            await SendMessageAsync("Pong").ConfigureAwait(false);
         }
-
-        private async Task OnMessage(Message message, UpdateType type)
+        else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
         {
-            _logger.LogInformation("Got message");
-
-            if (message.From!.Id.ToString() != _chatId)
-            {
-                await SendMessageAsync(
-                    "You are not supposed to be here",
-                    message!.From!.Id.ToString()
-                    ).ConfigureAwait(false);
-            }
-
-            if (message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogInformation("Pong");
-                await SendMessageAsync("Pong").ConfigureAwait(false);
-            }
-            else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
-            {
-                _logger.LogInformation("Check message received");
-                await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
-            }
+            _logger.LogInformation("Check message received");
+            await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
         }
+    }
 
-        private async Task OnError(Exception exception, HandleErrorSource source)
+    private async Task OnError(Exception exception, HandleErrorSource source)
+    {
+        var message = exception switch
         {
-            var message = exception switch
-            {
-                ApiRequestException apiRequestException => $"""
+            ApiRequestException apiRequestException => $"""
                 Telegram API Error:
 
                 {apiRequestException.ErrorCode}
 
                 {apiRequestException.Message}
                 """,
-                _ => exception.ToString()
-            };
+            _ => exception.ToString()
+        };
 
-            _logger.LogError(message);
-            await SendMessageAsync(message).ConfigureAwait(false);
-        }
+        _logger.LogError(message);
+        await SendMessageAsync(message).ConfigureAwait(false);
+    }
 
-        public async Task SendMessageAsync(string text, string? id = null)
-        {
-            id ??= _chatId;
+    public async Task SendMessageAsync(string text, string? id = null)
+    {
+        id ??= _chatId;
 
-            await _bot.SendTextMessageAsync(
-                id,
-                text
-                ).ConfigureAwait(false);
-        }
+        await _bot.SendTextMessageAsync(
+            id,
+            text
+            ).ConfigureAwait(false);
     }
 }
+

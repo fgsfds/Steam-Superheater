@@ -1,12 +1,12 @@
 using Avalonia.Controls;
 
-namespace Superheater.Avalonia.Core.UserControls
+namespace Avalonia.Core.UserControls;
+
+public sealed partial class MainButtons : UserControl
 {
-    public sealed partial class MainButtons : UserControl
+    public MainButtons()
     {
-        public MainButtons()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
+

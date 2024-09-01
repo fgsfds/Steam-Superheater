@@ -3,10 +3,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:usc="clr-namespace:Superheater.Avalonia.Core.UserControls"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:usc="clr-namespace:Avalonia.Core.UserControls"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              x:DataType="vm:MainViewModel"
-             x:Class="Superheater.Avalonia.Core.Pages.MainPage">
+             x:Class="Avalonia.Core.Pages.MainPage">
 
     <Grid RowDefinitions="auto,*,auto,auto,auto">
 

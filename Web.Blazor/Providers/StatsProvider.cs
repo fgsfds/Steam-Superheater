@@ -1,99 +1,99 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Web.Blazor.DbEntities;
 using Web.Blazor.Helpers;
 
-namespace Web.Blazor.Providers
+namespace Web.Blazor.Providers;
+
+public sealed class StatsProvider
 {
-    public sealed class StatsProvider
+    private readonly ILogger<StatsProvider> _logger;
+    private readonly DatabaseContextFactory _dbContextFactory;
+
+    public FixesStats? Stats { get; private set; }
+
+
+    public StatsProvider(
+        DatabaseContextFactory dbContextFactory,
+        ILogger<StatsProvider> logger
+        )
     {
-        private readonly ILogger<StatsProvider> _logger;
-        private readonly DatabaseContextFactory _dbContextFactory;
+        _dbContextFactory = dbContextFactory;
+        _logger = logger;
+    }
 
-        public FixesStats? Stats {get; private set;}
 
+    public void UpdateStats()
+    {
+        _logger.LogInformation("Started creating stats");
 
-        public StatsProvider(
-            DatabaseContextFactory dbContextFactory,
-            ILogger<StatsProvider> logger
-            )
+        using var dbContext = _dbContextFactory.Get();
+
+        var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToDictionary(x => x.Id, x => x.Name);
+
+        List<FixesDbEntity> fixes = [];
+        List<string> noIntro = [];
+
+        foreach (var fix in dbContext.Fixes.AsNoTracking().Where(x => !x.IsDisabled))
         {
-            _dbContextFactory = dbContextFactory;
-            _logger = logger;
+            if (fix.Name.StartsWith("No Intro Fix", StringComparison.OrdinalIgnoreCase))
+            {
+                var gameName = games[fix.GameId];
+                noIntro.Add(gameName);
+            }
+            else
+            {
+                fixes.Add(fix);
+            }
         }
 
+        var gamesCount = 0;
+        var fixesCount = 0;
 
-        public void UpdateStats()
+        var fixesStats = new FixesStats();
+
+        var fixesLookup = fixes.ToLookup(x => x.GameId);
+
+        foreach (var game in games)
         {
-            _logger.LogInformation("Started creating stats");
+            var fixesList = fixesLookup[game.Key].Select(x => x.Name);
 
-            using var dbContext = _dbContextFactory.Get();
-
-            var games = dbContext.Games.AsNoTracking().OrderBy(x => x.Name).Where(x => x.Id != 0).ToDictionary(x => x.Id, x => x.Name);
-
-            List<FixesDbEntity> fixes = [];
-            List<string> noIntro = [];
-
-            foreach (var fix in dbContext.Fixes.AsNoTracking().Where(x => !x.IsDisabled))
+            if (!fixesList.Any())
             {
-                if (fix.Name.StartsWith("No Intro Fix", StringComparison.OrdinalIgnoreCase))
-                {
-                    var gameName = games[fix.GameId];
-                    noIntro.Add(gameName);
-                }
-                else
-                {
-                    fixes.Add(fix);
-                }
+                continue;
             }
 
-            var gamesCount = 0;
-            var fixesCount = 0;
-
-            var fixesStats = new FixesStats();
-
-            var fixesLookup = fixes.ToLookup(x => x.GameId);
-
-            foreach (var game in games)
+            fixesStats.FixesLists.Add(new FixesLists
             {
-                var fixesList = fixesLookup[game.Key].Select(x => x.Name);
+                Game = game.Value,
+                Fixes = [.. fixesList]
+            });
 
-                if (!fixesList.Any())
-                {
-                    continue;
-                }
-
-                fixesStats.FixesLists.Add(new FixesLists
-                {
-                    Game = game.Value,
-                    Fixes = [.. fixesList]
-                });
-
-                gamesCount++;
-                fixesCount += fixesList.Count();
-            }
-
-            fixesStats.GamesCount = gamesCount;
-            fixesStats.FixesCount = fixesCount;
-            fixesStats.NoIntroFixes = [.. noIntro.OrderBy(x => x)];
-
-            Stats = fixesStats;
-
-            _logger.LogInformation("Finished creating stats");
+            gamesCount++;
+            fixesCount += fixesList.Count();
         }
 
+        fixesStats.GamesCount = gamesCount;
+        fixesStats.FixesCount = fixesCount;
+        fixesStats.NoIntroFixes = [.. noIntro.OrderBy(x => x)];
 
-        public sealed class FixesStats
-        {
-            public int GamesCount { get; set; }
-            public int FixesCount { get; set; }
-            public List<FixesLists> FixesLists { get; set; } = [];
-            public List<string> NoIntroFixes { get; set; } = [];
-        }
+        Stats = fixesStats;
 
-        public sealed class FixesLists
-        {
-            public string Game { get; set; } = string.Empty;
-            public List<string> Fixes { get; set; } = [];
-        }
+        _logger.LogInformation("Finished creating stats");
+    }
+
+
+    public sealed class FixesStats
+    {
+        public int GamesCount { get; set; }
+        public int FixesCount { get; set; }
+        public List<FixesLists> FixesLists { get; set; } = [];
+        public List<string> NoIntroFixes { get; set; } = [];
+    }
+
+    public sealed class FixesLists
+    {
+        public string Game { get; set; } = string.Empty;
+        public List<string> Fixes { get; set; } = [];
     }
 }
+

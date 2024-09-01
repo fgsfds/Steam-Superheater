@@ -1,49 +1,43 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Common.Client.DI
+namespace Common.Client.DI;
+
+public static class BindingsManager
 {
-    public static class BindingsManager
+    private static ServiceCollection? _instance;
+    private static ServiceProvider? _provider;
+    private static readonly object _syncRoot = new();
+
+    public static ServiceCollection Instance
     {
-        private static ServiceCollection? _instance;
-        private static ServiceProvider? _provider;
-        private static readonly object _syncRoot = new();
-
-        public static ServiceCollection Instance
+        get
         {
-            get
+            lock (_syncRoot)
             {
-                if (_instance is null)
-                {
-                    lock (_syncRoot)
-                    {
-                        _instance = new ServiceCollection();
-                    }
-                }
-
-                return _instance;
+                _instance ??= new ServiceCollection();
             }
-        }
 
-        public static ServiceProvider Provider
-        {
-            get
-            {
-                if (_provider is null)
-                {
-                    lock (_syncRoot)
-                    {
-                        _provider = Instance.BuildServiceProvider();
-                    }
-                }
-
-                return _provider;
-            }
-        }
-
-        public static void Reset()
-        {
-            _instance = null;
-            _provider = null;
+            return _instance;
         }
     }
+
+    public static ServiceProvider Provider
+    {
+        get
+        {
+            lock (_syncRoot)
+            {
+                _provider ??= Instance.BuildServiceProvider();
+            }
+
+            return _provider;
+        }
+    }
+
+    public static void Reset()
+    {
+        _instance = null;
+        _provider = null;
+    }
 }
+

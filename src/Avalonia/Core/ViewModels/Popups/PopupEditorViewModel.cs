@@ -1,111 +1,115 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Superheater.Avalonia.Core.ViewModels.Popups
+namespace Avalonia.Core.ViewModels.Popups;
+
+internal sealed partial class PopupEditorViewModel : ObservableObject, IPopup
 {
-    internal sealed partial class PopupEditorViewModel : ObservableObject, IPopup
+    private string? _result;
+    private SemaphoreSlim? _semaphore;
+
+    public event Action<bool>? PopupShownEvent;
+
+
+    #region Binding Properties
+
+    [ObservableProperty]
+    private bool _isVisible;
+
+    [ObservableProperty]
+    private string _titleText = string.Empty;
+
+    [ObservableProperty]
+    private string _text = string.Empty;
+
+    #endregion Binding Properties
+
+
+    #region Relay Commands
+
+    [RelayCommand]
+    private void Cancel()
     {
-        private string? _result;
-        private SemaphoreSlim? _semaphore;
+        _result = null;
 
-        public event Action<bool>? PopupShownEvent;
+        Reset();
+    }
 
-
-        #region Binding Properties
-
-        [ObservableProperty]
-        private bool _isVisible;
-
-        [ObservableProperty]
-        private string _titleText = string.Empty;
-
-        [ObservableProperty]
-        private string _text = string.Empty;
-
-        #endregion Binding Properties
-
-
-        #region Relay Commands
-
-        [RelayCommand]
-        private void Cancel()
+    [RelayCommand]
+    private void Save()
+    {
+        if (string.IsNullOrWhiteSpace(Text))
         {
             _result = null;
-
-            Reset();
         }
-
-        [RelayCommand]
-        private void Save()
+        else
         {
-            if (string.IsNullOrWhiteSpace(Text))
-            {
-                _result = null;
-            }
-            else
-            {
-                _result = Text;
-            }
-
-            Reset();
+            _result = Text;
         }
 
-        #endregion Relay Commands
+        Reset();
+    }
+
+    #endregion Relay Commands
 
 
-        /// <summary>
-        /// Show popup window and return result
-        /// </summary>
-        /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
-        public async Task<string?> ShowAndGetResultAsync(string title, IEnumerable<string>? text)
+    /// <summary>
+    /// Show popup window with text editor and return resulting text
+    /// </summary>
+    /// <param name="title">Popup title</param>
+    /// <param name="text">Popup text</param>
+    /// <returns>Text</returns>
+    public async Task<string?> ShowAndGetResultAsync(string title, IEnumerable<string>? text)
+    {
+        var textString = string.Empty;
+
+        if (text is not null)
         {
-            var textString = string.Empty;
-
-            if (text is not null)
-            {
-                textString = string.Join(Environment.NewLine, text);
-            }
-
-            TitleText = title;
-            Text = textString;
-            IsVisible = true;
-            PopupShownEvent?.Invoke(true);
-
-            _semaphore = new(0);
-            await _semaphore.WaitAsync().ConfigureAwait(true);
-
-            return _result;
+            textString = string.Join(Environment.NewLine, text);
         }
 
+        TitleText = title;
+        Text = textString;
+        IsVisible = true;
+        PopupShownEvent?.Invoke(true);
 
-        /// <summary>
-        /// Show popup window and return result
-        /// </summary>
-        /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
-        public async Task<string?> ShowAndGetResultAsync(string title, string? text)
-        {
-            TitleText = title;
-            Text = text ?? string.Empty;
+        _semaphore = new(0);
+        await _semaphore.WaitAsync().ConfigureAwait(true);
 
-            IsVisible = true;
-            PopupShownEvent?.Invoke(true);
+        return _result;
+    }
 
-            _semaphore = new(0);
-            await _semaphore.WaitAsync().ConfigureAwait(true);
 
-            return _result;
-        }
+    /// <summary>
+    /// Show popup window with text editor and return resulting text
+    /// </summary>
+    /// <param name="title">Popup title</param>
+    /// <param name="text">Popup text</param>
+    /// <returns>Text</returns>
+    public async Task<string?> ShowAndGetResultAsync(string title, string? text)
+    {
+        TitleText = title;
+        Text = text ?? string.Empty;
 
-        /// <summary>
-        /// Reset popup to its initial state
-        /// </summary>
-        private void Reset()
-        {
-            IsVisible = false;
-            PopupShownEvent?.Invoke(false);
+        IsVisible = true;
+        PopupShownEvent?.Invoke(true);
 
-            _semaphore?.Release();
-            _semaphore = null;
-        }
+        _semaphore = new(0);
+        await _semaphore.WaitAsync().ConfigureAwait(true);
+
+        return _result;
+    }
+
+    /// <summary>
+    /// Reset popup to its initial state
+    /// </summary>
+    private void Reset()
+    {
+        IsVisible = false;
+        PopupShownEvent?.Invoke(false);
+
+        _ = _semaphore?.Release();
+        _semaphore = null;
     }
 }
+

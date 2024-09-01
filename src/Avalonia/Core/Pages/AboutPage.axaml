@@ -2,10 +2,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:Superheater.Avalonia.Core.ViewModels"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:Avalonia.Core.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:AboutViewModel"
-             x:Class="Superheater.Avalonia.Core.Pages.AboutPage"
+             x:Class="Avalonia.Core.Pages.AboutPage"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
 
     <Grid ColumnDefinitions="*">

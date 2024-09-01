@@ -1,96 +1,96 @@
-﻿using Common.Entities;
-using Common.Helpers;
+using Common.Entities;
+using CommunityToolkit.Diagnostics;
 using System.Text.Json;
 
-namespace Web.Blazor.Providers
+namespace Web.Blazor.Providers;
+
+public sealed class AppReleasesProvider
 {
-    public sealed class AppReleasesProvider
+    private readonly ILogger<AppReleasesProvider> _logger;
+    private readonly HttpClient _httpClient;
+
+    public AppReleaseEntity? WindowsRelease { get; private set; }
+    public AppReleaseEntity? LinuxRelease { get; private set; }
+
+    public AppReleasesProvider(
+        ILogger<AppReleasesProvider> logger,
+        HttpClient httpClient)
     {
-        private readonly ILogger<AppReleasesProvider> _logger;
-        private readonly HttpClient _httpClient;
+        _logger = logger;
+        _httpClient = httpClient;
+    }
 
-        public AppReleaseEntity? WindowsRelease { get; private set; }
-        public AppReleaseEntity? LinuxRelease { get; private set; }
+    /// <summary>
+    /// Return the latest new release or null if there's no newer releases
+    /// </summary>
+    public async Task GetLatestVersionAsync()
+    {
+        _logger.LogInformation("Looking for new releases");
 
-        public AppReleasesProvider(
-            ILogger<AppReleasesProvider> logger,
-            HttpClient httpClient)
+        using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead);
+
+        if (!response.IsSuccessStatusCode)
         {
-            _logger = logger;
-            _httpClient = httpClient;
+            _logger.LogError("Error while getting releases" + Environment.NewLine + response.StatusCode);
+            return;
         }
 
-        /// <summary>
-        /// Return the latest new release or null if there's no newer releases
-        /// </summary>
-        public async Task GetLatestVersionAsync()
+        var releasesJson = await response.Content.ReadAsStringAsync();
+
+        var releases =
+            JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
+            ?? ThrowHelper.ThrowInvalidDataException<List<GitHubReleaseEntity>>("Error while deserializing GitHub releases");
+
+        releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
+
+        AppReleaseEntity? windowsRelease = null;
+        AppReleaseEntity? linuxRelease = null;
+
+        foreach (var release in releases)
         {
-            _logger.LogInformation("Looking for new releases");
+            windowsRelease = GetRelease(release, "win-x64.zip");
 
-            using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead);
-
-            if (!response.IsSuccessStatusCode)
+            if (windowsRelease is not null)
             {
-                _logger.LogError("Error while getting releases" + Environment.NewLine + response.StatusCode);
-                return;
+                break;
             }
-
-            var releasesJson = await response.Content.ReadAsStringAsync();
-
-            var releases =
-                JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
-                ?? ThrowHelper.Exception<List<GitHubReleaseEntity>>("Error while deserializing GitHub releases");
-
-            releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
-
-            AppReleaseEntity? windowsRelease = null;
-            AppReleaseEntity? linuxRelease = null;
-
-            foreach (var release in releases)
-            {
-                windowsRelease = GetRelease(release, "win-x64.zip");
-
-                if (windowsRelease is not null)
-                {
-                    break;
-                }
-            }
-
-            foreach (var release in releases)
-            {
-                linuxRelease = GetRelease(release, "linux-x64.zip");
-
-                if (linuxRelease is not null)
-                {
-                    break;
-                }
-            }
-
-            WindowsRelease = windowsRelease!;
-            LinuxRelease = linuxRelease!;
         }
 
-        private AppReleaseEntity? GetRelease(GitHubReleaseEntity release, string osPostfix)
+        foreach (var release in releases)
         {
-            var asset = release.Assets.FirstOrDefault(x => x.FileName.EndsWith(osPostfix));
+            linuxRelease = GetRelease(release, "linux-x64.zip");
 
-            if (asset is null)
+            if (linuxRelease is not null)
             {
-                return null;
+                break;
             }
-
-            var version = new Version(release.TagName);
-            var description = release.Description;
-            var downloadUrl = new Uri(asset.DownloadUrl);
-
-            AppReleaseEntity update = new()
-            {
-                Version = version,
-                Description = description,
-                DownloadUrl = downloadUrl
-            };
-
-            return update;
         }
+
+        WindowsRelease = windowsRelease!;
+        LinuxRelease = linuxRelease!;
+    }
+
+    private AppReleaseEntity? GetRelease(GitHubReleaseEntity release, string osPostfix)
+    {
+        var asset = release.Assets.FirstOrDefault(x => x.FileName.EndsWith(osPostfix));
+
+        if (asset is null)
+        {
+            return null;
+        }
+
+        var version = new Version(release.TagName);
+        var description = release.Description;
+        var downloadUrl = new Uri(asset.DownloadUrl);
+
+        AppReleaseEntity update = new()
+        {
+            Version = version,
+            Description = description,
+            DownloadUrl = downloadUrl
+        };
+
+        return update;
     }
 }
+

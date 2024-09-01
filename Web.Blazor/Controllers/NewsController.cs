@@ -2,52 +2,52 @@ using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
-namespace Web.Blazor.Controllers
+namespace Web.Blazor.Controllers;
+
+[ApiController]
+[Route("api/news")]
+public sealed class NewsController : ControllerBase
 {
-    [ApiController]
-    [Route("api/news")]
-    public sealed class NewsController : ControllerBase
+    private readonly NewsProvider _newsProvider;
+
+    public NewsController(
+        NewsProvider newsProvider
+        )
     {
-        private readonly NewsProvider _newsProvider;
+        _newsProvider = newsProvider;
+    }
 
-        public NewsController(
-            NewsProvider newsProvider
-            )
+    [HttpGet]
+    public List<NewsEntity>? GetNewsList() => _newsProvider.News;
+
+    [HttpPost("add")]
+    public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
+    {
+        var result = _newsProvider.AddNews(message.Item1, message.Item2, message.Item3);
+
+        if (result)
         {
-            _newsProvider = newsProvider;
+            return StatusCode(StatusCodes.Status200OK);
         }
-
-        [HttpGet]
-        public List<NewsEntity>? GetNewsList() => _newsProvider.News;
-
-        [HttpPost("add")]
-        public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
+        else
         {
-            var result = _newsProvider.AddNews(message.Item1, message.Item2, message.Item3);
-
-            if (result)
-            {
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
+            return StatusCode(StatusCodes.Status403Forbidden);
         }
+    }
 
-        [HttpPut("change")]
-        public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
+    [HttpPut("change")]
+    public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
+    {
+        var result = _newsProvider.ChangeNews(message.Item1, message.Item2, message.Item3);
+
+        if (result)
         {
-            var result = _newsProvider.ChangeNews(message.Item1, message.Item2, message.Item3);
-
-            if (result)
-            {
-                return StatusCode(StatusCodes.Status200OK);
-            }
-            else
-            {
-                return StatusCode(StatusCodes.Status403Forbidden);
-            }
+            return StatusCode(StatusCodes.Status200OK);
+        }
+        else
+        {
+            return StatusCode(StatusCodes.Status403Forbidden);
         }
     }
 }
+

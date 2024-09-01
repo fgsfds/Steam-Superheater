@@ -1,27 +1,27 @@
-﻿using Common.Enums;
+using Common.Enums;
 
-namespace Common.Entities.Fixes.RegistryFix
+namespace Common.Entities.Fixes.RegistryFix;
+
+public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
 {
-    public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
-    {
-        /// <summary>
-        /// Registry key
-        /// </summary>
-        public required string Key { get; init; }
+    /// <summary>
+    /// Registry key
+    /// </summary>
+    public required string Key { get; init; }
 
-        /// <summary>
-        /// Registry value name
-        /// </summary>
-        public required string ValueName { get; init; }
+    /// <summary>
+    /// Registry value name
+    /// </summary>
+    public required string ValueName { get; init; }
 
-        /// <summary>
-        /// Value type
-        /// </summary>
-        public required RegistryValueTypeEnum? ValueType { get; init; }
+    /// <summary>
+    /// Value type
+    /// </summary>
+    public required RegistryValueTypeEnum ValueType { get; init; }
 
-        /// <summary>
-        /// Original value, null if the value was created
-        /// </summary>
-        public string? OriginalValue { get; init; }
-    }
+    /// <summary>
+    /// Original value, null if the value was created
+    /// </summary>
+    public string? OriginalValue { get; init; }
 }
+

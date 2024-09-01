@@ -1,19 +1,19 @@
 using Avalonia.Controls;
+using Avalonia.Core.ViewModels.Popups;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
-using Superheater.Avalonia.Core.ViewModels.Popups;
 
-namespace Superheater.Avalonia.Core.UserControls
+namespace Avalonia.Core.UserControls;
+
+public sealed partial class PopupEditor : UserControl
 {
-    public sealed partial class PopupEditor : UserControl
+    public PopupEditor()
     {
-        public PopupEditor()
-        {
-            var vm = BindingsManager.Provider.GetRequiredService<PopupEditorViewModel>();
+        var vm = BindingsManager.Provider.GetRequiredService<PopupEditorViewModel>();
 
-            DataContext = vm;
+        DataContext = vm;
 
-            InitializeComponent();
-        }
+        InitializeComponent();
     }
 }
+

@@ -1,6 +1,7 @@
-﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Core.DI;
+using Avalonia.Core.Windows;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -9,12 +10,10 @@ using Common.Client.Config;
 using Common.Client.DI;
 using Common.Enums;
 using Common.Helpers;
+using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
-using Superheater.Avalonia.Core.DI;
-using Superheater.Avalonia.Core.Pages;
-using Superheater.Avalonia.Core.Windows;
 
-namespace Superheater.Avalonia.Core;
+namespace Avalonia.Core;
 
 public sealed class App : Application
 {
@@ -28,18 +27,25 @@ public sealed class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
+        if (ClientProperties.HasCrashed is not null && ClientProperties.HasCrashed.Item1)
         {
-            var messageBox = new MessageBox($"""
-Superheater doesn't have write access to
-{ClientProperties.WorkingFolder}
-and can't be launched. 
-Move it to the folder where you have write access.
-"""
-);
+            var messageBox = new MessageBox(ClientProperties.HasCrashed.Item2);
             messageBox.Show();
             return;
         }
+
+        if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
+        {
+            var messageBox = new MessageBox($"""
+                Superheater doesn't have write access to
+                {ClientProperties.WorkingFolder}
+                and can't be launched. 
+                Move it to the folder where you have write access.
+                """);
+            messageBox.Show();
+            return;
+        }
+
         if (!_mutex.WaitOne(1000, false))
         {
             var messageBox = new MessageBox($"You can't launch multiple instances of Superheater");
@@ -64,7 +70,7 @@ Move it to the folder where you have write access.
                 ThemeEnum.System => ThemeVariant.Default,
                 ThemeEnum.Light => ThemeVariant.Light,
                 ThemeEnum.Dark => ThemeVariant.Dark,
-                _ => ThrowHelper.ArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+                _ => ThrowHelper.ThrowArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
             };
 
             RequestedThemeVariant = themeEnum;
@@ -85,12 +91,7 @@ Move it to the folder where you have write access.
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow();
-
                 desktop.Exit += OnAppExit;
-            }
-            else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
-            {
-                singleViewPlatform.MainView = new MainPage();
             }
 
             base.OnFrameworkInitializationCompleted();
