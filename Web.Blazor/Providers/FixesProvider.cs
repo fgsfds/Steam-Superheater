@@ -551,15 +551,10 @@ public sealed class FixesProvider
 
 
             //removing existing and adding new tags
+            _ = dbContext.TagsLists.Where(x => x.FixGuid == fix.Guid).ExecuteDelete();
+
             if (fix.Tags is not null)
             {
-                var tags = dbContext.TagsLists.Where(x => x.FixGuid == fix.Guid);
-
-                foreach (var tag in tags)
-                {
-                    _ = dbContext.TagsLists.Remove(tag);
-                }
-
                 foreach (var tag in fix.Tags.ToList())
                 {
                     var existingTag = dbContext.Tags.SingleOrDefault(x => x.Tag == tag);
@@ -583,6 +578,26 @@ public sealed class FixesProvider
             }
 
             _ = dbContext.SaveChanges();
+
+
+            //removing existing and adding new dependencies
+            _ = dbContext.Dependencies.Where(x => x.FixGuid == fix.Guid);
+            if (fix.Dependencies is not null)
+            {
+                foreach (var tag in fix.Dependencies.ToList())
+                {
+                    DependenciesDbEntity newEntity = new()
+                    {
+                        FixGuid = fix.Guid,
+                        DependencyGuid = tag
+                    };
+
+                    _ = dbContext.Dependencies.Add(newEntity);
+                }
+            }
+
+            _ = dbContext.SaveChanges();
+
             transaction.Commit();
         }
 
