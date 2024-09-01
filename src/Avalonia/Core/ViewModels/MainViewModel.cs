@@ -17,6 +17,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Avalonia.Core.ViewModels;
 
@@ -32,7 +33,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private readonly ProgressReport _progressReport;
     private readonly SemaphoreSlim _locker = new(1);
 
-    private readonly CancellationTokenSource _cancellationTokenSource = new();
+    private CancellationTokenSource? _cancellationTokenSource;
     private FixesList? _additionalFix;
 
 
@@ -410,7 +411,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// Cancel ongoing task
     /// </summary>
     [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
-    private async Task CancelAsync() => await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+    private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
 
 
@@ -835,7 +836,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         _progressReport.Progress.ProgressChanged += ProgressChanged;
         _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
-        var cancellationToken = _cancellationTokenSource.Token;
+        _cancellationTokenSource = new();
 
         await _mainModel.IncreaseInstalls(fix).ConfigureAwait(true);
 
@@ -843,11 +844,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         if (isUpdate)
         {
-            result = await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, false, cancellationToken).ConfigureAwait(true);
+            result = await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, false, _cancellationTokenSource.Token).ConfigureAwait(true);
         }
         else
         {
-            result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, false, cancellationToken).ConfigureAwait(true);
+            result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, false, _cancellationTokenSource.Token).ConfigureAwait(true);
         }
 
         if (result == ResultEnum.MD5Error)
@@ -862,7 +863,7 @@ Do you still want to install the fix?",
 
             if (popupResult)
             {
-                result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, cancellationToken).ConfigureAwait(true);
+                result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
 

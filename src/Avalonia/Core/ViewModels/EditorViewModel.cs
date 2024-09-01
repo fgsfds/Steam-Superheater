@@ -19,6 +19,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Immutable;
 using System.Diagnostics;
+using System.Threading;
 
 namespace Avalonia.Core.ViewModels;
 
@@ -33,9 +34,9 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
     private readonly GamesProvider _gamesProvider;
-
     private readonly SemaphoreSlim _locker = new(1);
-    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    private CancellationTokenSource _cancellationTokenSource;
 
 
     #region Binding Properties
@@ -666,9 +667,9 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             return;
         }
 
-        var cancellationToken = _cancellationTokenSource.Token;
+        _cancellationTokenSource = new();
 
-        var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, cancellationToken).ConfigureAwait(true);
+        var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, _cancellationTokenSource.Token).ConfigureAwait(true);
 
         _progressReport.Progress.ProgressChanged -= ProgressChanged;
         _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
