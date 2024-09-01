@@ -559,7 +559,7 @@
 
                 <ListBox SelectionMode="Single"
                          ItemsSource="{Binding AvailableDependenciesList}"
-                         SelectedIndex="{Binding SelectedAvailableDependencyIndex}"
+                         SelectedItem="{Binding SelectedAvailableDependency}"
                          Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
                          Padding="5"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
@@ -584,7 +584,7 @@
 
                 <ListBox SelectionMode="Single"
                          ItemsSource="{Binding SelectedFixDependenciesList}"
-                         SelectedIndex="{Binding SelectedDependencyIndex}"
+                         SelectedItem="{Binding SelectedDependency}"
                          Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"
                          Padding="5"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>

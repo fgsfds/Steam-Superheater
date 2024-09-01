@@ -395,14 +395,15 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedGameFixesList))]
     [NotifyCanExecuteChangedFor(nameof(AddNewFixCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenSteamDBCommand))]
     private FixesList? _selectedGame;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedFixName))]
     [NotifyPropertyChangedFor(nameof(SelectedFixVersion))]
     [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
+    [NotifyPropertyChangedFor(nameof(SelectedAvailableDependency))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
+    [NotifyPropertyChangedFor(nameof(SelectedDependency))]
     [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
     [NotifyPropertyChangedFor(nameof(SelectedFixFilesToDelete))]
     [NotifyPropertyChangedFor(nameof(SelectedFixFilesToBackup))]
@@ -436,6 +437,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(AddFixToDbCommand))]
     [NotifyCanExecuteChangedFor(nameof(TestFixCommand))]
+    [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
+    [NotifyCanExecuteChangedFor(nameof(RemoveDependencyCommand))]
     private BaseFixEntity? _selectedFix;
 
     [ObservableProperty]
@@ -443,11 +446,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
-    private int _selectedAvailableDependencyIndex;
+    private BaseFixEntity _selectedAvailableDependency;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveDependencyCommand))]
-    private int _selectedDependencyIndex;
+    private BaseFixEntity _selectedDependency;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
@@ -592,12 +595,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedFix);
 
-        _editorModel.AddDependencyForFix(SelectedFix, AvailableDependenciesList!.ElementAt(SelectedAvailableDependencyIndex));
+        _editorModel.AddDependencyForFix(SelectedFix, SelectedAvailableDependency);
 
         OnPropertyChanged(nameof(AvailableDependenciesList));
         OnPropertyChanged(nameof(SelectedFixDependenciesList));
     }
-    private bool AddDependencyCanExecute() => SelectedAvailableDependencyIndex > -1;
+    private bool AddDependencyCanExecute() => SelectedAvailableDependency is not null;
 
 
     /// <summary>
@@ -608,12 +611,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedFix);
 
-        _editorModel.RemoveDependencyForFix(SelectedFix, SelectedFixDependenciesList!.ElementAt(SelectedDependencyIndex));
+        _editorModel.RemoveDependencyForFix(SelectedFix, SelectedDependency);
 
         OnPropertyChanged(nameof(AvailableDependenciesList));
         OnPropertyChanged(nameof(SelectedFixDependenciesList));
     }
-    private bool RemoveDependencyCanExecute() => SelectedDependencyIndex > -1;
+    private bool RemoveDependencyCanExecute() => SelectedDependency is not null;
 
 
     /// <summary>
