@@ -25,7 +25,7 @@
                 </Grid.ColumnDefinitions>
 
                 <TextBlock VerticalAlignment="Center"
-                           Margin="5,0"
+                           Margin="5"
                            Grid.Column="0"
                            FontWeight="Bold">
                     Fix Type
@@ -42,19 +42,19 @@
 
                     <RadioButton GroupName="Type2"
                                  IsChecked="{Binding IsRegistryFixType}"
-                                 Margin="5,0">
+                                 Margin="10,0">
                         Registry
                     </RadioButton>
 
                     <RadioButton GroupName="Type3"
                                  IsChecked="{Binding IsHostsFixType}"
-                                 Margin="5,0">
+                                 Margin="10,0">
                         Hosts
                     </RadioButton>
 
                     <RadioButton GroupName="Type4"
                                  IsChecked="{Binding IsTextFixType}"
-                                 Margin="5,0">
+                                 Margin="10,0">
                         Text
                     </RadioButton>
                 </StackPanel>
@@ -83,21 +83,24 @@
                     </CheckBox>
 
                     <CheckBox IsChecked="{Binding IsLinuxChecked}"
-                              Margin="5,0,0,0">
+                              Margin="10,0,0,0">
                         Linux
                     </CheckBox>
 
                 </StackPanel>
             </Grid>
 
-            <!--Name-->
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
-                <TextBlock VerticalAlignment="Center" Grid.Column="0"
+                <!--Name-->
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="0"
                            Margin="5"
                            FontWeight="Bold">
                     Name
@@ -107,26 +110,22 @@
                          Text="{Binding SelectedFixName, Mode=TwoWay}"
                          Name="NameTextBox"
                          Margin="0,3" />
-            </Grid>
 
-            <!--Version-->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
-                <TextBlock VerticalAlignment="Center" Grid.Column="0"
-                           Margin="5"
-                           FontWeight="Bold">
+                <!--Version-->
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="2"
+                           Margin="20,5"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right">
                     Version
                 </TextBlock>
 
-                <TextBox Grid.Column="1"
+                <TextBox Grid.Column="3"
                          Text="{Binding SelectedFixVersion, Mode=TwoWay}"
                          Name="VersionTextBox"
                          TextChanging="VersionTextBoxChanging"
                          TextChanged="VersionTextBoxChanged"
+                         Width="100"
                          Margin="0,3" />
             </Grid>
 
@@ -163,6 +162,8 @@
                     <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock VerticalAlignment="Center"
@@ -182,23 +183,16 @@
                         Command="{Binding OpenFilePickerCommand}">
                     ...
                 </Button>
-            </Grid>
 
-            <!--Install folder-->
-            <Grid IsVisible="{Binding IsFileFixType}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
+                <!--Install folder-->
                 <TextBlock VerticalAlignment="Center"
-                           Grid.Column="1"
-                           Margin="5">
+                           Grid.Column="3"
+                           Margin="10,5"
+                           HorizontalAlignment="Right">
                     Install folder
                 </TextBlock>
 
-                <TextBox Grid.Column="2"
+                <TextBox Grid.Column="4"
                          Text="{Binding ((ff:FileFixEntity)SelectedFix).InstallFolder, Mode=TwoWay, FallbackValue=''}"
                          Margin="0,3" />
             </Grid>
@@ -354,6 +348,8 @@
                     <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <TextBlock VerticalAlignment="Center"
@@ -374,23 +370,15 @@
                         HorizontalContentAlignment="Center"
                         Command="{Binding ResetSelectedSharedFixCommand}"
                         Margin="5,0,0,0">x</Button>
-            </Grid>
 
-            <!--Shared fix install folder-->
-            <Grid IsVisible="{Binding IsFileFixType}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
-                    <ColumnDefinition Width="auto" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-
+                <!--Shared fix install folder-->
                 <TextBlock VerticalAlignment="Center"
-                           Grid.Column="1"
-                           Margin="5">
+                           Grid.Column="3"
+                           Margin="10,5">
                     Install folder
                 </TextBlock>
 
-                <TextBox Grid.Column="2"
+                <TextBox Grid.Column="4"
                          HorizontalAlignment="Stretch"
                          Text="{Binding ((ff:FileFixEntity)SelectedFix).SharedFixInstallFolder, FallbackValue=''}"
                          Margin="0,3"/>
@@ -500,14 +488,13 @@
                             IsVisible="{Binding IsRegistryFixType}">
 
                     <RadioButton GroupName="Value1"
-                                 IsChecked="{Binding IsStringValueType}"
-                                 Margin="5,0">
+                                 IsChecked="{Binding IsStringValueType}">
                         String
                     </RadioButton>
 
                     <RadioButton GroupName="Value2"
                                  IsChecked="{Binding IsDwordValueType}"
-                                 Margin="5,0">
+                                 Margin="10,0">
                         Dword
                     </RadioButton>
                 </StackPanel>
