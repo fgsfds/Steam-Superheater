@@ -25,7 +25,7 @@ public sealed class ConfigProvider : IConfigProvider
 
     public bool ShowUninstalledGames
     {
-        get => bool.TryParse(_dbContext.Settings.Find([nameof(ShowUninstalledGames)])?.Value, out var result) && result;
+        get => bool.TryParse(_dbContext.Settings.Find([nameof(ShowUninstalledGames)])?.Value, out var result) ? result : true;
         set => SetSettingsValue(value.ToString());
     }
 
