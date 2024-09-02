@@ -2,6 +2,7 @@ using Common.Client.Config;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Enums;
+using Common.Helpers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
@@ -22,6 +23,31 @@ public sealed class ApiInterface
     {
         _config = configProvider;
         _httpClient = httpClient;
+    }
+
+    public async Task<Result<DateTime>> GetLastUpdated()
+    {
+        try
+        {
+            var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/last_updated").ConfigureAwait(false);
+
+            if (response is null)
+            {
+                return new(ResultEnum.Error, DateTime.MinValue, "Error while getting last update date");
+            }
+            //2024-09-01T16:01:18.249669+00:00
+            var result = DateTime.ParseExact(response, Consts.DateTimeFormat, null);
+
+            return new(ResultEnum.Success, result, string.Empty);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            return new(ResultEnum.ConnectionError, DateTime.MinValue, "API is not responding");
+        }
+        catch
+        {
+            return new(ResultEnum.Error, DateTime.MinValue, "Error while getting last update date");
+        }
     }
 
     public async Task<Result<List<NewsEntity>?>> GetNewsListAsync()

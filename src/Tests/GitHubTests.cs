@@ -4,6 +4,7 @@ using Common.Client.Config;
 using Common.Client.DI;
 using Common.Client.FilesTools;
 using Common.Client.Providers;
+using Database.Client;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests;
@@ -27,6 +28,7 @@ public sealed class GitHubTests
         _ = container.AddTransient<ProgressReport>();
         _ = container.AddTransient<ApiInterface>();
         _ = container.AddTransient<FilesDownloader>();
+        _ = container.AddTransient<DatabaseContextFactory>();
     }
 
     [Fact]

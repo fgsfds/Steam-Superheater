@@ -29,5 +29,7 @@ public static class Consts
     public const string LinuxOnly = "Linux Only";
 
     public const string AllSuppoted = "All supported OSes";
+
+    public const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
 }
 

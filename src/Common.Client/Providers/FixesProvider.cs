@@ -2,6 +2,9 @@ using Common.Client.API;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
+using Database.Client;
+using Database.Client.DbEntities;
+using System.Text.Json;
 
 namespace Common.Client.Providers;
 
@@ -10,6 +13,7 @@ public sealed class FixesProvider
     private readonly ApiInterface _apiInterface;
     private readonly GamesProvider _gamesProvider;
     private readonly InstalledFixesProvider _installedFixesProvider;
+    private readonly DatabaseContextFactory _dbContextFactory;
     private readonly Logger _logger;
 
     public volatile IEnumerable<FileFixEntity>? SharedFixes;
@@ -18,12 +22,14 @@ public sealed class FixesProvider
         ApiInterface apiInterface,
         GamesProvider gamesProvider,
         InstalledFixesProvider installedFixesProvider,
+        DatabaseContextFactory dbContextFactory,
         Logger logger
         )
     {
         _apiInterface = apiInterface;
         _gamesProvider = gamesProvider;
         _installedFixesProvider = installedFixesProvider;
+        _dbContextFactory = dbContextFactory;
         _logger = logger;
     }
 
@@ -32,18 +38,40 @@ public sealed class FixesProvider
     /// </summary>
     public async Task<Result<List<FixesList>>> GetFixesListAsync()
     {
-        _logger.Info("Getting list of fixes");
+        using var dbContext = _dbContextFactory.Get();
 
-        var result = await _apiInterface.GetFixesListAsync().ConfigureAwait(false);
+        var lastUpdatedResult = await CheckLastUpdatedDate(dbContext).ConfigureAwait(false);
 
-        if (!result.IsSuccess)
+        if (lastUpdatedResult.IsSuccess)
         {
-            return new(result.ResultEnum, null, result.Message);
+            return lastUpdatedResult;
         }
 
-        SharedFixes = result.ResultObject.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
+        _logger.Info("Getting online fixes");
 
-        return new(ResultEnum.Success, result.ResultObject, string.Empty);
+        var onlineFixesResult = await _apiInterface.GetFixesListAsync().ConfigureAwait(false);
+
+        if (!onlineFixesResult.IsSuccess)
+        {
+            return new(onlineFixesResult.ResultEnum, null, onlineFixesResult.Message);
+        }
+
+        SharedFixes = onlineFixesResult.ResultObject.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
+
+
+        //saving new fixes to the database
+        var fixesList = JsonSerializer.Serialize(onlineFixesResult.ResultObject, FixesListContext.Default.ListFixesList);
+
+        FixesDbEntity db = new() 
+        { 
+            LastUpdated = DateTime.Now.ToString(Consts.DateTimeFormat), 
+            Fixes = fixesList 
+        };
+
+        _ = dbContext.Fixes.Add(db);
+        _ = dbContext.SaveChanges();
+
+        return new(ResultEnum.Success, onlineFixesResult.ResultObject, string.Empty);
     }
 
     /// <summary>
@@ -155,6 +183,47 @@ public sealed class FixesProvider
         return result;
     }
 
+
+    private async Task<Result<List<FixesList>>> CheckLastUpdatedDate(DatabaseContext dbContext)
+    {
+        var lastUpdatedResponse = await _apiInterface.GetLastUpdated().ConfigureAwait(false);
+
+        if (!lastUpdatedResponse.IsSuccess)
+        {
+            return new(lastUpdatedResponse.ResultEnum, null, lastUpdatedResponse.Message);
+        }
+
+        var lastUpdatedDb = dbContext.Fixes.FirstOrDefault();
+
+        if (lastUpdatedDb is not null)
+        {
+            var lastUpdated = DateTime.ParseExact(lastUpdatedDb.LastUpdated, Consts.DateTimeFormat, null);
+
+            _logger.Info($"Local fixes cache time: {lastUpdated}");
+            _logger.Info($"Online fixes time: {lastUpdatedResponse.ResultObject}");
+
+            if (lastUpdatedResponse.ResultObject <= lastUpdated)
+            {
+                if (lastUpdatedResponse.ResultObject <= lastUpdated)
+                {
+                    try
+                    {
+                        _logger.Info($"Getting local fixes cache");
+
+                        var existingFixesList = JsonSerializer.Deserialize(lastUpdatedDb.Fixes, FixesListContext.Default.ListFixesList);
+
+                        return new(ResultEnum.Success, existingFixesList, string.Empty);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Info("Error while deserializing existing fixes list: " + ex.ToString());
+                    }
+                }
+            }
+        }
+
+        return new(ResultEnum.Error, null, "Can't get existing fixes list");
+    }
 
     private Result PrepareFixes(BaseFixEntity fix)
     {

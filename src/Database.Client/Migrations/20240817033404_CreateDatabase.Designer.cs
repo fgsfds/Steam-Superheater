@@ -9,7 +9,7 @@ namespace Database.Client.Migrations;
 
 [DbContext(typeof(DatabaseContext))]
 [Migration("20240817033404_CreateDatabase")]
-partial class CreateDatabase
+sealed partial class CreateDatabase
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)

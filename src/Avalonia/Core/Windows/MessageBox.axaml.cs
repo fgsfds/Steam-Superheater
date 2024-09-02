@@ -18,7 +18,7 @@ public sealed partial class MessageBox : Window
 
     private void ButtonClick(object? sender, RoutedEventArgs e)
     {
-        Environment.Exit(0);
+        Environment.FailFast(string.Empty);
     }
 }
 

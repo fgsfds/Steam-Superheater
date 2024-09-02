@@ -55,7 +55,7 @@ public static class Program
 
         _ = System.Diagnostics.Process.Start(exe, args);
 
-        Environment.Exit(-1);
+        Environment.FailFast(string.Empty);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.

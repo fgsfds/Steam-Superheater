@@ -1,5 +1,6 @@
 using Common.Entities;
 using Common.Entities.Fixes;
+using Common.Helpers;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
@@ -64,12 +65,12 @@ public class Program
 
         if (date is null)
         {
-            properties.LastUpdated = DateTime.MinValue.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+            properties.LastUpdated = DateTime.MinValue.ToString(Consts.DateTimeFormat);
         }
         else
         {
             var dateTime = DateTime.Parse(date);
-            properties.LastUpdated = dateTime.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+            properties.LastUpdated = dateTime.ToString(Consts.DateTimeFormat);
         }
 
         dbContext.Dispose();
