@@ -1004,10 +1004,9 @@ Do you still want to install the fix?",
     /// </summary>
     private void GetRequirementsString()
     {
-        Guard.IsNotNull(SelectedGameFixesList);
-
         if (SelectedFix is null ||
-            SelectedGame is null)
+            SelectedGame is null ||
+            SelectedGameFixesList is null)
         {
             SelectedFixRequirements = null;
             SelectedFixDependencies = null;
