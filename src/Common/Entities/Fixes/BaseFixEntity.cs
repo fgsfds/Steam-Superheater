@@ -48,6 +48,11 @@ public abstract class BaseFixEntity
     public string? Description { get; set; }
 
     /// <summary>
+    /// Fix chagelog
+    /// </summary>
+    public string? Changelog { get; set; }
+
+    /// <summary>
     /// List of tags
     /// </summary>
     public List<string>? Tags { get; set; }

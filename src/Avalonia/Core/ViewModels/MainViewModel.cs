@@ -138,6 +138,19 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         }
     }
 
+    public string? SelectedFixChangelog
+    {
+        get
+        {
+            if (SelectedFix is null)
+            {
+                return string.Empty;
+            }
+
+            return SelectedFix.Changelog;
+        }
+    }
+
     public string? SelectedFixNumberOfInstalls
     {
         get
