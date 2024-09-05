@@ -12,7 +12,7 @@ namespace Database.Client.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     [Migration("20240903185319_CreateCacheTable")]
-    partial class CreateCacheTable
+    partial class AddCacheTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

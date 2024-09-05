@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Common.Enums;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace Database.Client.Migrations;
 
 /// <inheritdoc />
-public sealed partial class CreateCacheTable : Migration
+public sealed partial class AddCacheTable : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)
@@ -27,6 +28,20 @@ public sealed partial class CreateCacheTable : Migration
             {
                 _ = table.PrimaryKey("PK_cache", x => x.type);
             });
+
+        _ = migrationBuilder.InsertData(
+            table: "cache", 
+            schema: "main",
+            columns: ["type", "data", "version"],
+            values: [(byte)DatabaseTableEnum.Fixes, "[]", 0]
+            );
+
+        _ = migrationBuilder.InsertData(
+            table: "cache", 
+            schema: "main",
+            columns: ["type", "data", "version"],
+            values: [(byte)DatabaseTableEnum.News, "[]", 0]
+            );
     }
 
     /// <inheritdoc />

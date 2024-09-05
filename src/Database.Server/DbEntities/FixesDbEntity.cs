@@ -1,3 +1,4 @@
+using Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -20,7 +21,7 @@ public sealed class FixesDbEntity
 
     [ForeignKey(nameof(FixTypesTable))]
     [Column("fix_type_id")]
-    public required byte FixType { get; set; }
+    public required FixTypeEnum FixType { get; set; }
 
     [Column("name")]
     public required string Name { get; set; }

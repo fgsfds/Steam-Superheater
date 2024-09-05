@@ -1,3 +1,4 @@
+using Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,10 +21,12 @@ public sealed class RegistryFixesDbEntity
     [Column("new_value_data")]
     public required string NewValueData { get; set; }
 
+    [ForeignKey(nameof(RegistryValueTypesTable))]
     [Column("value_type_id")]
-    public required byte ValueType { get; set; }
+    public required RegistryValueTypeEnum ValueType { get; set; }
 
 
     public FixesDbEntity FixesTable { get; set; }
+    public RegistryValueTypesDbEntity RegistryValueTypesTable { get; set; }
 }
 

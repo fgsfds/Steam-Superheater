@@ -1,3 +1,4 @@
+using Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,7 +9,7 @@ public sealed class RegistryValueTypesDbEntity
 {
     [Key]
     [Column("id")]
-    public required byte Id { get; set; }
+    public required RegistryValueTypeEnum Id { get; set; }
 
     [Column("type")]
     public required string Type { get; set; }

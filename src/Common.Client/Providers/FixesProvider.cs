@@ -1,9 +1,9 @@
 using Common.Client.API;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
+using Common.Enums;
 using Common.Helpers;
 using Database.Client;
-using Database.Client.DbEntities;
 using System.Text.Json;
 
 namespace Common.Client.Providers;
@@ -58,17 +58,14 @@ public sealed class FixesProvider
 
         SharedFixes = onlineFixesResult.ResultObject.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
 
-
         //saving new fixes to the database
         var fixesList = JsonSerializer.Serialize(onlineFixesResult.ResultObject, FixesListContext.Default.ListFixesList);
 
-        CacheDbEntity db = new() 
-        { 
-            Version = 0, 
-            Data = fixesList 
-        };
+        var fixesCache = dbContext.Cache.Find(DatabaseTableEnum.Fixes)!;
 
-        _ = dbContext.Cache.Add(db);
+        fixesCache.Version = 0;
+        fixesCache.Data = fixesList;
+
         _ = dbContext.SaveChanges();
 
         return new(ResultEnum.Success, onlineFixesResult.ResultObject, string.Empty);
