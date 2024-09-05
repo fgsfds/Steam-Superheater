@@ -1,6 +1,6 @@
+using Database.Server;
+using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
-using Web.Blazor.DbEntities;
-using Web.Blazor.Helpers;
 
 namespace Web.Blazor.Providers;
 

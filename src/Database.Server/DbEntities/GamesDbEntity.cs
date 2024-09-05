@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Web.Blazor.DbEntities;
+namespace Database.Server.DbEntities;
 
-[PrimaryKey(nameof(Id))]
 [Index(nameof(Name))]
 [Table(name: "games", Schema = "main")]
 public sealed class GamesDbEntity
 {
+    [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public required int Id { get; set; }

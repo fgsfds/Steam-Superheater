@@ -5,7 +5,7 @@ namespace Database.Client;
 
 public sealed class DatabaseContext : DbContext
 {
-    public DbSet<FixesDbEntity> Fixes { get; set; }
+    public DbSet<CacheDbEntity> Cache { get; set; }
     public DbSet<SettingsDbEntity> Settings { get; set; }
     public DbSet<HiddenTagsDbEntity> HiddenTags { get; set; }
     public DbSet<UpvotesDbEntity> Upvotes { get; set; }

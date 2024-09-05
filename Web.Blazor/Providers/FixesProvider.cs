@@ -6,12 +6,12 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Database.Server;
+using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Web.Blazor.Database;
-using Web.Blazor.DbEntities;
 using Web.Blazor.Helpers;
 using Web.Blazor.Telegram;
 
@@ -459,12 +459,14 @@ public sealed class FixesProvider
                     FixType = (byte)fixType,
                     Guid = fix.Guid,
                     Description = fix.Description,
+                    Changelog = null,
                     IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux),
                     IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
                     Name = fix.Name,
                     Notes = fix.Notes,
                     Version = fix.Version,
-                    IsDisabled = true
+                    IsDisabled = true,
+                    TableVersion = 0
                 };
 
                 _ = dbContext.Fixes.Add(newFixEntity);
@@ -481,11 +483,13 @@ public sealed class FixesProvider
                 existingEntity.GameId = gameEntity.Id;
                 existingEntity.FixType = (byte)fixType;
                 existingEntity.Description = fix.Description;
+                existingEntity.Changelog = null;
                 existingEntity.IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux);
                 existingEntity.IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows);
                 existingEntity.Name = fix.Name;
                 existingEntity.Notes = fix.Notes;
                 existingEntity.Version = fix.Version;
+                existingEntity.TableVersion = existingEntity.TableVersion;
             }
 
             _ = dbContext.SaveChanges();

@@ -1,4 +1,5 @@
 using Common.Entities.Fixes;
+using Common.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
@@ -27,7 +28,7 @@ public sealed class FixesController : ControllerBase
 
 
     [HttpGet("last_updated")]
-    public string GetLastUpdated() => _serverProperties.LastUpdated;
+    public string GetLastUpdated() => DateTime.Now.ToString(Consts.DateTimeFormat);
 
 
     [HttpGet]

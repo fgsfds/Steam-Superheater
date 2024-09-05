@@ -1,6 +1,6 @@
 using Common.Entities;
 using Common.Entities.Fixes;
-using Common.Helpers;
+using Database.Server;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
@@ -44,7 +44,7 @@ public class Program
 
         _ = builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
         _ = builder.Services.AddSingleton<S3Client>();
-        _ = builder.Services.AddSingleton<DatabaseContextFactory>();
+        _ = builder.Services.AddSingleton<DatabaseContextFactory>(x => new(builder.Environment.IsDevelopment()));
         _ = builder.Services.AddSingleton<TelegramBot>();
         _ = builder.Services.AddSingleton<ServerProperties>();
 
@@ -60,19 +60,6 @@ public class Program
 
         // Creating database
         var dbContext = app.Services.GetService<DatabaseContextFactory>()!.Get();
-
-        var date = dbContext.Common.Find("last_updated")?.Value!;
-
-        if (date is null)
-        {
-            properties.LastUpdated = DateTime.MinValue.ToString(Consts.DateTimeFormat);
-        }
-        else
-        {
-            var dateTime = DateTime.Parse(date);
-            properties.LastUpdated = dateTime.ToString(Consts.DateTimeFormat);
-        }
-
         dbContext.Dispose();
 
 
@@ -83,7 +70,6 @@ public class Program
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             _ = app.UseHsts();
         }
-
 
         _ = app.MapControllers();
         _ = app.UseHttpsRedirection();
@@ -100,13 +86,12 @@ public class Program
             _ = bot!.StartAsync();
         }
 
-
         app.Run();
     }
 
     private static HttpClient CreateHttpClient(IServiceProvider provider)
     {
-        var httpClient = new HttpClient();
+        HttpClient httpClient = new();
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
         return httpClient;
     }

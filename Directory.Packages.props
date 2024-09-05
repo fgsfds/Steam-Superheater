@@ -19,12 +19,14 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageVersion>
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+    <PackageVersion Include="System.Text.Json" Version="8.0.4" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.0" />
     <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
     <PackageVersion Include="Octopus.Octodiff" Version="2.0.546" />
     <PackageVersion Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
-    <PackageVersion Include="SharpCompress" Version="0.37.2" />
+    <PackageVersion Include="SharpCompress" Version="0.38.0" />
     <PackageVersion Include="Telegram.Bot" Version="21.10.1" />
     <PackageVersion Include="xunit" Version="2.9.0" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />

@@ -11,13 +11,13 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
-    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="AWSSDK.S3" />
     <PackageReference Include="Telegram.Bot" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\Common\Common.csproj" />
+    <ProjectReference Include="..\src\Database.Server\Database.Server.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,24 +1,26 @@
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Web.Blazor.DbEntities;
+namespace Database.Server.DbEntities;
 
-[PrimaryKey(nameof(Guid))]
 [Index(nameof(GameId))]
 [Index(nameof(IsDisabled))]
+[Index(nameof(TableVersion))]
 [Table(name: "fixes", Schema = "main")]
 public sealed class FixesDbEntity
 {
+    [Key]
     [Column("guid")]
     public required Guid Guid { get; init; }
 
     [ForeignKey(nameof(GameTable))]
     [Column("game_id")]
-    public int GameId { get; set; }
+    public required int GameId { get; set; }
 
     [ForeignKey(nameof(FixTypesTable))]
     [Column("fix_type_id")]
-    public byte FixType { get; set; }
+    public required byte FixType { get; set; }
 
     [Column("name")]
     public required string Name { get; set; }
@@ -33,16 +35,22 @@ public sealed class FixesDbEntity
     public required bool IsLinuxSupported { get; set; }
 
     [Column("description")]
-    public string? Description { get; set; }
+    public required string? Description { get; set; }
+
+    [Column("changelog")]
+    public required string? Changelog { get; set; }
 
     [Column("notes")]
-    public string? Notes { get; set; }
+    public required string? Notes { get; set; }
 
     [Column("is_disabled")]
-    public bool IsDisabled { get; set; }
+    public required bool IsDisabled { get; set; }
+
+    [Column("table_version")]
+    public required int TableVersion { get; set; }
 
 
     public GamesDbEntity GameTable { get; set; }
-    public FixTypeDbEntity FixTypesTable { get; set; }
+    public FixTypesDbEntity FixTypesTable { get; set; }
 }
 

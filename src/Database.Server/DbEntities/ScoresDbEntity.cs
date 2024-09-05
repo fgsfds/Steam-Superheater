@@ -1,12 +1,12 @@
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Web.Blazor.DbEntities;
+namespace Database.Server.DbEntities;
 
-[PrimaryKey(nameof(FixGuid))]
 [Table(name: "scores", Schema = "main")]
 public sealed class ScoresDbEntity
 {
+    [Key]
     [ForeignKey(nameof(FixesTable))]
     [Column("fix_guid")]
     public required Guid FixGuid { get; set; }

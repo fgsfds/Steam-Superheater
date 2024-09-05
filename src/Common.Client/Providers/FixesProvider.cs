@@ -40,7 +40,7 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var lastUpdatedResult = await CheckLastUpdatedDate(dbContext).ConfigureAwait(false);
+        var lastUpdatedResult = CheckLastUpdatedDate(dbContext);
 
         if (lastUpdatedResult.IsSuccess)
         {
@@ -62,13 +62,13 @@ public sealed class FixesProvider
         //saving new fixes to the database
         var fixesList = JsonSerializer.Serialize(onlineFixesResult.ResultObject, FixesListContext.Default.ListFixesList);
 
-        FixesDbEntity db = new() 
+        CacheDbEntity db = new() 
         { 
-            LastUpdated = DateTime.Now.ToString(Consts.DateTimeFormat), 
-            Fixes = fixesList 
+            Version = 0, 
+            Data = fixesList 
         };
 
-        _ = dbContext.Fixes.Add(db);
+        _ = dbContext.Cache.Add(db);
         _ = dbContext.SaveChanges();
 
         return new(ResultEnum.Success, onlineFixesResult.ResultObject, string.Empty);
@@ -184,44 +184,8 @@ public sealed class FixesProvider
     }
 
 
-    private async Task<Result<List<FixesList>>> CheckLastUpdatedDate(DatabaseContext dbContext)
+    private Result<List<FixesList>> CheckLastUpdatedDate(DatabaseContext dbContext)
     {
-        var lastUpdatedResponse = await _apiInterface.GetLastUpdated().ConfigureAwait(false);
-
-        if (!lastUpdatedResponse.IsSuccess)
-        {
-            return new(lastUpdatedResponse.ResultEnum, null, lastUpdatedResponse.Message);
-        }
-
-        var lastUpdatedDb = dbContext.Fixes.FirstOrDefault();
-
-        if (lastUpdatedDb is not null)
-        {
-            var lastUpdated = DateTime.ParseExact(lastUpdatedDb.LastUpdated, Consts.DateTimeFormat, null);
-
-            _logger.Info($"Local fixes cache time: {lastUpdated}");
-            _logger.Info($"Online fixes time: {lastUpdatedResponse.ResultObject}");
-
-            if (lastUpdatedResponse.ResultObject <= lastUpdated)
-            {
-                if (lastUpdatedResponse.ResultObject <= lastUpdated)
-                {
-                    try
-                    {
-                        _logger.Info($"Getting local fixes cache");
-
-                        var existingFixesList = JsonSerializer.Deserialize(lastUpdatedDb.Fixes, FixesListContext.Default.ListFixesList);
-
-                        return new(ResultEnum.Success, existingFixesList, string.Empty);
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.Info("Error while deserializing existing fixes list: " + ex.ToString());
-                    }
-                }
-            }
-        }
-
         return new(ResultEnum.Error, null, "Can't get existing fixes list");
     }
 

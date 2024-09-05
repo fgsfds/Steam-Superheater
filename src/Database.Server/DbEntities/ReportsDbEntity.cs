@@ -1,13 +1,14 @@
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Web.Blazor.DbEntities;
+namespace Database.Server.DbEntities;
 
-[PrimaryKey(nameof(Id))]
 [Index(nameof(FixGuid))]
-[Table(name: "dependencies", Schema = "main")]
-public sealed class DependenciesDbEntity
+[Table(name: "reports", Schema = "main")]
+public sealed class ReportsDbEntity
 {
+    [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
@@ -16,12 +17,10 @@ public sealed class DependenciesDbEntity
     [Column("fix_guid")]
     public required Guid FixGuid { get; set; }
 
-    [ForeignKey(nameof(FixesTable2))]
-    [Column("dependency_guid")]
-    public required Guid DependencyGuid { get; set; }
+    [Column("text")]
+    public required string ReportText { get; set; }
 
 
     public FixesDbEntity FixesTable { get; set; }
-    public FixesDbEntity FixesTable2 { get; set; }
 }
 
