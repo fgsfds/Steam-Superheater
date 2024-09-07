@@ -1,0 +1,190 @@
+﻿[
+  {
+    "Date": "2024-08-18T13:20:11.15389Z",
+    "Content": "### Added:\r\n\r\n**DOOM + DOOM II:** Nugget Doom, Nugget Doom Additions"
+  },
+  {
+    "Date": "2024-08-17T08:31:37.140009Z",
+    "Content": "### Updated:\r\n\r\n**Heretic, Hexen, Hexen DD:** Crispy Heretic/Hexen to v7.0\r\n\r\n**Doom III**: dhewm3 to v1.5.4\r\n\r\n**Tomb Raider I**: TR1X to v4.3"
+  },
+  {
+    "Date": "2024-08-09T12:00:48.096722Z",
+    "Content": "### Added:\r\n\r\n**Aliens Colonial Marines:** ACM Overhaul\r\n\r\n**Postal**: Fan Patch\r\n\r\n**Startopia**: (Ultra)Widescreen Fix\r\n\r\n**Incoming Forces**: Startup Fix\r\n\r\n**Magicka**: Magicka Fix\r\n\r\n#### No Intro Fixes for:\r\n\r\nSpec Ops The Line, Batman Arkham Knight, Call of Juarez Bound in Blood, Patrician III, DmC Devil May Cry, Star Wolves 3, Port Royale 2"
+  },
+  {
+    "Date": "2024-07-16T19:27:06.470028Z",
+    "Content": "### Added:\r\n\r\n**Parkan 2** : Widescreen Fix\r\n\r\n**Earth 2140 HD**: Unofficial Patch\r\n\r\n**Star Ocean - The Last Hope**: SO4Fix\r\n\r\n**Splinter Cell Blacklist**: Fusion Mod\r\n\r\n**DarkStar One**: Crash Fix"
+  },
+  {
+    "Date": "2024-07-02T14:26:48.712364Z",
+    "Content": "### Added\r\n\r\n**Dragon Age**: 4GB Patch, Unofficial Patches\r\n\r\n**Saints Row 3**: ZPatch\r\n\r\n**NecroVisioN**: Launcher Removal\r\n\r\n**Kingdoms of Amalur**: Disable the Battle Frenzy Sound\r\n\r\n**Two Worlds Epic Edition**: Resolution Crash Fix\r\n\r\n**Platypus II**: Deaf left ear fix\r\n\r\n#### No Intro Fixes\r\n\r\nSaints Row 3, Gat out of Hell, NecroVisioN, Kingdoms of Amalur"
+  },
+  {
+    "Date": "2024-06-18T16:34:26.600868Z",
+    "Content": "### Added:\r\n\r\n**Anachronox:** Widescreen Fix\r\n\n**Oddworld: Abe's Oddysee \\ Exoddus:** R.E.L.I.V.E.\r\n\n**Nosferatu:** Widescreen Fix\r\n\r\n### Updated:\r\n\r\n**Kingpin:** Unofficial Patch to v11.1\r\n\n**Unreal Gold:**: Unofficial Patch to v 227j"
+  },
+  {
+    "Date": "2024-06-06T07:11:57.142196Z",
+    "Content": "### Added:\r\n\r\n**Divinity II**: Div2Patch\r\n\r\n#### No intro fixes:\r\n\r\nX-Blades, Blades of Time, Konung 2"
+  },
+  {
+    "Date": "2024-05-26T06:29:55.662501Z",
+    "Content": "### Added:\r\n\r\n**Prototype**: PrototypeFix\r\n\r\n**Prototype2**: Prototype2Fix\r\n\r\n**Of Orcs and Men**: Yellow Artifacts Fix (for AMD GPU)\r\n\r\n**Mars War Logs**: Yellow Artifacts Fix (for AMD GPU)\r\n\r\n**Wasteland 2 Director's Cut**: Unofficial Patch\r\n\r\n**Bioshock**: Launch fix\r\n\r\n**Viking: Battle for Asgard**: FOV and Other Graphical Improvements\r\n\r\n**Hydrophobia Prophecy**: Graphics Cleanup Mod\r\n\r\n#### No intro fixes:\r\n\r\nOutlast, Bioshock, Fahrenheit, ELEX, Agarest Zero\r\n\r\n### Deprecated:\r\n\r\n**Prototype**: Ultimate Fix, Ultimate Fix for AMD"
+  },
+  {
+    "Date": "2024-04-15T00:00:00Z",
+    "Content": "### Added:\n\n**Rise of the Triad: Ludicrous Edition**: Minor Sprite Fixing Project and Misc Improvements, Return of the Triad Overhaul\n\n**Velvet Assassin**: Disable Motion Blur\n\n**White Day**: Sui's Hack\n\n**No Intro Fixes** for: Hunted, Rise of the Triad: Ludicrous Edition, The Long Dark\n\n### Updated:\n**Doom 3** dhewm3 to v1.5.3"
+  },
+  {
+    "Date": "2024-03-11T00:00:00Z",
+    "Content": "### Added:\n\n**Black Mirror I**: DDrawCompat\n\n**Deadfall Adventures**: Disable Head Bobbing\n\n**Jedi Knight: Dark Forces II / Mysteries of the Sith**: OpenJKDF2\n\n**Knights of the Old Republic**: Widescreen Fix, High Resolution Menus, Community Patch\n\n**Terraria**: Collector's Edition Exclusive Pet\n\n**Zwei**: Pixel Perfect Scaling"
+  },
+  {
+    "Date": "2024-02-10T00:00:00Z",
+    "Content": "### Added:\n\n**Resident Evil**: Elevator animations fix\n\n**Obscure**: Proton Fix\n\n**Prince of Persia SoT, WW, TT**: Xidi\n\n**Yakuza 0**: No Intro Fix, Remove Letterbox Mod, 4K Font Mod\n\n### Tested and enabled even more fixes for Linux/Deck"
+  },
+  {
+    "Date": "2024-01-31T00:00:00Z",
+    "Content": "### Tested and enabled many fixes for Linux/Deck"
+  },
+  {
+    "Date": "2024-01-20T00:00:00Z",
+    "Content": "### Added:\n\n**GTA IV**: Music Restoration, Music Plus, Graphics Restrictions Removal\n\n**Resident Evil 8**: Ultwawide Fix\n\n**Space Marine**: Core Fix\n\n**Enslaved**: Graphics Enhancements\n\n**No Intro Fixes** for: Morrowind\n\n### Updated:\n**GTA IV** Fusion Fix to v2.5.2\n\n**Max Payne 3**: Fusion Fix to v2.1.0\n\n**Tomb Raider I**: TR1X to v3.1.1"
+  },
+  {
+    "Date": "2024-01-11T00:00:00Z",
+    "Content": "### Added:\n\n**Superdimension Neptune VS Sega Hard Girls**: Resolution Unlock Mod\n\n**Age of Wonders**: Unofficial patch\n\n**No Intro Fixes** for: ENSLAVED, Hellblade, Neptune VS Zombies"
+  },
+  {
+    "Date": "2024-01-05T00:00:00Z",
+    "Content": "### Added:\n**TES II Daggerfall**: Daggerfall Unity\n\n**No Intro Fixes** for: Deus Ex: Mankind Divided, Far Cry 2\n\n### Updated:\n**Raze** (Duke Nukem 3D, Shadow Warrior, Blood etc.) to v1.9.1\n\n**Caesar III**: Augustus to v4.0.0\n\n**Doom 3**: The Lost Mission to v1.4\n\n**GTA IV**: FusionFix to v2.4.3\n\n**Max Payne 3**: FusionFix to v2.0.0"
+  },
+  {
+    "Date": "2023-12-26T00:00:00Z",
+    "Content": "### Added:\n**Catherine Classic**: Optimal Sound Settings\n\n"
+  },
+  {
+    "Date": "2023-12-04T00:00:00Z",
+    "Content": "### Added:\n**Blasphemous**: Ultrawide Fix\n\n**Call of Juarez**: Black Bars Removal, Ultrawide Fix\n\n**Disciples II: Rise of the Elves**: GL Wrapper\n\n**Hollow Knight**: Ultrawide Fix\n\n**PowerSlave Exhumed**: Fixes Collection\n\n**Red Faction**: Dash Faction\n\n**No Intro Fixes** for:\nDead Rising 2 / Off the Record, En Garde!, PowerSlave Exhumed\n\n### Updated:\n**Manhunt**: MPH to v1.2a"
+  },
+  {
+    "Date": "2023-11-26T00:00:00Z",
+    "Content": "## Fixes' descriptions now support markdown. Descriptions will display incorrectly in Superheater lower than 0.11.0.\n\t\t\n### Added:\n**Assassin's Creed**: Freezes Fix, Black Bars Fix for Ultrawide\n\n**The First Templar**: Launcher Skip\n\n### Updated:\n**Grand Theft Auto IV**: FusionFix to v2.1\n\n**Star Wars Dark Forces**: Force Engine to v1.09.540\n\n**Crysis / Crysis Wars**: C1-Launcher to v5\n"
+  },
+  {
+    "Date": "2023-11-22T00:00:00Z",
+    "Content": "### Added:\n**Resident Evil / Resident Evil 0**: Fusion Fix\n\n**Blood Fresh Supply**: NotBlood, Raze\n\n**Prototype**: Ultimate Fix, Ultimate Fix for AMD\n\n**SiN Gold**: Dominatrix\n\n### Updated:\n**Grand Theft Auto IV**: FusionFix to v2.0\n\n**Manhunt**: Fixer to v2.0, MPH to v1.2\n"
+  },
+  {
+    "Date": "2023-11-20T00:00:00Z",
+    "Content": "Superheater versions before 0.10.0 are deprecated and won't get any new fixes.\nUpdate to 0.10.0\n\nAdded:\nCaesar 3: Julius, Augustus \nPrince of Persia: The Two Thrones: Launcher Fix\nPrince of Persia: Warrior Within: Launcher Fix\nTomb Raider: Underworld: Ultrawide Fix\nBound by Flame: Yellow Visual Glitch on UI Fix\nBroken Sword 1: Better In-Game Font\n\nUpdated:\nTomb Raider 1: TR1X to v3.0.2"
+  },
+  {
+    "Date": "2023-11-15T00:00:00Z",
+    "Content": "Added:\nFINAL FANTASY X/X-2 HD Remaster: Launcher+\nUpdated Raze to 1.8.1 for Duke 3D, Shadow Warrior, Redneck Rampage, Blood, NAM, WWII GI"
+  },
+  {
+    "Date": "2023-11-07T14:00:00Z",
+    "Content": "Added:\nFINAL FANTASY XIII/XIII-2 : FF13Fix\nThe Longest Journey: ScummVM\nRoboCop Rogue City: Ultrawide Fix\n\nNo Intro Fixes for: Bayonetta, Etherlords 1/2, Gorky 17, Red Faction Guerrilla Re-Mars-tered, The Dark Eye: Chains of Satinav, Cyberdimension Neptunia: 4 Goddesses Online"
+  },
+  {
+    "Date": "2023-11-06T14:00:00Z",
+    "Content": "Added:\nBlood II: The Chosen: Ultimate Fix\nDuke Nukem 3D: Raze\nShadow Warrior (Classic): Raze + Addons"
+  },
+  {
+    "Date": "2023-11-06T00:00:00Z",
+    "Content": "Added:\nTomb Raider IV: tomb4 + The Times Exclusive Level\nTomb Raider V: tomb5\nTomb Raider VI: No Intro Fix"
+  },
+  {
+    "Date": "2023-11-05T00:00:00Z",
+    "Content": "Added:\nTomb Raider I: TR1X + Unfinished Business\nTomb Raider II: TR2Main + Golden Mask\nTomb Raider III: tomb3 + The Lost Artefact\n\nNo Intro Fixes for: Red Faction 2, RoboCop: Rogue City, Sleeping Dogs DE, Sudeki, The Talos Principle 2, Tomb Raider 1,2,3,4,5"
+  },
+  {
+    "Date": "2023-10-31T00:00:00Z",
+    "Content": "Added:\nCrash Bandicoot™ N. Sane Trilogy: Ultrawide Fix, No Intro Fix\nSpyro™ Reignited Trilogy: Ultrawide Fix, No Intro Fix\nThe Bureau: XCOM Declassified: No Intro Fix"
+  },
+  {
+    "Date": "2023-10-30T00:00:00Z",
+    "Content": "Added:\nThief Gold: TFix\nThief II: T2Fix\nThief: Deadly Shadows: Sneaky Upgrade\nKilling Time: Community Patch"
+  },
+  {
+    "Date": "2023-10-29T00:00:00Z",
+    "Content": "Added:\nBatman: Arkham Asylum GOTY Edition: Official PS3 DLCs\nDark Souls 3: Proper PC Experience Mod"
+  },
+  {
+    "Date": "2023-10-28T00:00:00Z",
+    "Content": "Added:\nAlien Isolation: Save confirmation dialog skipper, MotherVR\nBatman: Arkham Asylum GOTY Edition: Advanced Launcher, No Intro Fix\nBatman: Arkham City GOTY: Advanced Launcher, No Intro Fix\nBinary Domain, Mouse Improvement Mod\n\nFixed Max Payne 3 ASI Loader"
+  },
+  {
+    "Date": "2023-10-25T00:00:00Z",
+    "Content": "No Intro Fixes for: Broken Sword 1, Darksiders Warmastered Edition, Darksider 2 Deathinitive Edition, Parkan 2, Risen 1/2/3, Two Worlds Epic Edition, Two Worlds 2 HD"
+  },
+  {
+    "Date": "2023-10-17T00:00:00Z",
+    "Content": "Superheater 0.6.0 is deprecated and won't get any new fixes.\n\t\t\nUpdate to 0.7.0"
+  },
+  {
+    "Date": "2023-10-15T00:00:00Z",
+    "Content": "Added:\nManhunt: Fixer, MHP\nSepterra Core: SR"
+  },
+  {
+    "Date": "2023-10-13T00:00:00Z",
+    "Content": "Added:\nAssassin's Creed 1/2: Eagle Patch\nPsychonauts: Widescreen Fix\nKingpin: Unofficial Patch\nSniper Elite: Widescreen Fix\nJust Cause: Widescreen Fix\nNo Intro Fixes for: Assassin's Creed 1, Borderlands 2, Dishonored 1/2/DotO, Psychonauts"
+  },
+  {
+    "Date": "2023-10-09T00:00:00Z",
+    "Content": "Added:\nFlatout 1/2: ZPatch\nArx Fatalis: Arx Libertatis\nCrysys / Crysis Wars: C1-Launcher\nFortune Summoners: Performance Fix\nDeadly Premonition: dpfix, Ultrawide Fix\nNo Intro Fixes for: Alien Isolation, Castlevania: Lords of Shadow 1/2"
+  },
+  {
+    "Date": "2023-10-06T00:00:00Z",
+    "Content": "Added:\nDeus Ex: Human Revolution - Director's Cut: Crash Fix, Gold Filter Restoration\nDeus Ex: Invisible War: Visible Upgrade\nDead Island / Riptide Definitive Edition: Essential Fix\nOfficial DRM-Free Patches for Chantelise, Recettear, Tropico 3"
+  },
+  {
+    "Date": "2023-10-05T00:00:00Z",
+    "Content": "Added:\nLegacy of Kain Blood Omen 2: Re-vamped, No intro\nLegacy of Kain Defiance: Widescreen Fix, No intro\nLegacy of Kain Soul Reaver: sr1patch, No Intro\nLegacy of Kain Soul Reaver 2: Soul Fixer, Enhancer"
+  },
+  {
+    "Date": "2023-10-04T00:00:00Z",
+    "Content": "Added:\nCrazy Taxi: SilentPatch\nGun: Widescreen Fix\n\nNo intro fixes for Demonicon, Fable - The Lost Chapters, Killer is Dead, Mars: War Logs, Remember Me, Rise of the Argonauts, STAR WARS Jedi Knight, Jedi Academy, The Technomancer"
+  },
+  {
+    "Date": "2023-10-01T00:00:00Z",
+    "Content": "Added:\nReturn to Castle Wolfenstein: Unofficial Patch\nNo intro fixes for Bound by Flame, DarkStar One, Enclave, Of Orcs And Men, Velvet Assassin\n\nUpdated:\nUltrawide fixes for Tomb Rider Legend and Anniversary"
+  },
+  {
+    "Date": "2023-09-28T00:00:00Z",
+    "Content": "Added:\nCallisto Protocol: No Intro Fix\nDawn of War + Winter Assault: (Ultra)Widescreen Fix\nDawn of War + Addons: Camera Zoom Mod\nNier Automata: NAOMI\nHyperdimension Neptunia Re;Birth 1, 2, 3: Neptastic Mod"
+  },
+  {
+    "Date": "2023-09-26T00:00:00Z",
+    "Content": "Added:\nWolfenstein 3D: ECWolf source port\nVampire: The Masquerade - Bloodlines: Mandatory Fixes, Unofficial Patch Basic and Plus\nFreedom Force + FF vs the 3rd Reich: Universal Widescreen Fix"
+  },
+  {
+    "Date": "2023-09-22T00:00:00Z",
+    "Content": "Updated:\nFallout 2 Unofficial Patch to v28\nFallout 2 Restoration Project to v28\nDark Forces The Force Engine to v1.09.500"
+  },
+  {
+    "Date": "2023-09-21T00:00:00Z",
+    "Content": "Added:\nFallout 1: Et Tu\nDeus Ex: Deus Exe\nDisciples 2: GL Wrapper\nDuke Nukem Mahnattan Project: Enhanced Edition\nDesperados: Resolution Fix"
+  },
+  {
+    "Date": "2023-09-17T00:00:00Z",
+    "Content": "Added:\nDoom 3 / RoE: dhewm3, The Lost Mission, Custom resolution autoexec\nPrey 2006: Graphics Settings Fix, Ultrawide Fix\nQuake 4: Graphics Settings Fix, Ultrawide Fix\nRedneck Rampage / Rides Again: Raze port\nBlood: Raze, NotBlood ports\nPowerslave DOS: Raze port\nNAM: Raze port\nWorld War II GI: Raze port\nGTA IV: dxvk"
+  },
+  {
+    "Date": "2023-09-16T00:00:00Z",
+    "Content": "Added:\nFarCry Fix\nFallout 2 Restoration Project v27\n\nUpdated:\nFallout 2 Unofficial Patch to v27\nFalout 1 Fixt"
+  },
+  {
+    "Date": "2023-09-14T00:00:00Z",
+    "Content": "Added:\nTomb Raider Legend: Crash Fix, Ultrawide Fix, No Into Fix\nTomb Raider Anniversary: Ultrawide Fix, No Intro Fix\nTimeshift: Crash Fix, No Intro Fix\nHitman Codename 47: Widescreen Fix, No Intro Fix\nHitman Silent Assassin: Censorship Fix, Widescreen Fix, No Intro Fix\nHitman Contracts: Widescreen Fix, No Intro Fix\nHitman Blood Money: Widescreen Fix, No Intro Fix"
+  },
+  {
+    "Date": "2023-09-11T00:00:00Z",
+    "Content": "Superheater 0.3.0 released.\nYou will need to download and install this update manually from Github.\nSorry for inconvenience."
+  },
+  {
+    "Date": "2023-09-08T00:00:00Z",
+    "Content": "Initial release"
+  }
+]

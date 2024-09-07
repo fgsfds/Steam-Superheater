@@ -9,9 +9,10 @@ public sealed class FixTypesDbEntity
 {
     [Key]
     [Column("id")]
-    public required FixTypeEnum FixType { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required FixTypeEnum Id { get; set; }
 
-    [Column("type")]
-    public required string Type { get; set; }
+    [Column("name")]
+    public required string Name { get; set; }
 }
 

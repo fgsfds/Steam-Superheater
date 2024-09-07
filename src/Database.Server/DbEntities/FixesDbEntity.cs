@@ -44,6 +44,12 @@ public sealed class FixesDbEntity
     [Column("notes")]
     public required string? Notes { get; set; }
 
+    [Column("score")]
+    public required int Score{ get; set; }
+
+    [Column("installs")]
+    public required int Installs{ get; set; }
+
     [Column("is_disabled")]
     public required bool IsDisabled { get; set; }
 

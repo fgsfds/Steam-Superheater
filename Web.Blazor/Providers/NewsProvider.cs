@@ -1,4 +1,5 @@
 using Common.Entities;
+using Common.Enums;
 using Database.Server;
 using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
@@ -37,14 +38,21 @@ public sealed class NewsProvider
 
         using var dbContext = _databaseContextFactory.Get();
 
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.News)!;
+        var newTableVersion = databaseVersions.Version + 1;
+
         NewsDbEntity entity = new()
         {
             Date = date.ToUniversalTime(),
-            Content = text
+            Content = text,
+            TableVersion = 1,
         };
 
-        dbContext.News.Add(entity);
-        dbContext.SaveChanges();
+        _ = dbContext.News.Add(entity);
+        //TODO version
+        _ = databaseVersions.Version = 1;
+
+        _ = dbContext.SaveChanges();
 
         UpdateNews();
 

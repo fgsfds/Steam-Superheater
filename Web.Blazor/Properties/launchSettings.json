@@ -4,7 +4,8 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ApiPass": "123"
       },
       "dotnetRunMessages": true,
       "applicationUrl": "https://localhost:7126;http://localhost:5231"

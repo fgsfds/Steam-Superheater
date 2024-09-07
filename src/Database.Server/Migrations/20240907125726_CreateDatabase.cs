@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿#pragma warning disable IDE0058 // Expression value is never used
+
+using Common.Enums;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -15,16 +18,17 @@ public sealed partial class CreateDatabase : Migration
             name: "main");
 
         migrationBuilder.CreateTable(
-            name: "database_tables",
+            name: "database_versions",
             schema: "main",
             columns: table => new
             {
                 id = table.Column<byte>(type: "smallint", nullable: false),
-                name = table.Column<string>(type: "text", nullable: false)
+                name = table.Column<string>(type: "text", nullable: false),
+                version = table.Column<int>(type: "integer", nullable: false)
             },
             constraints: table =>
             {
-                table.PrimaryKey("PK_database_tables", x => x.id);
+                table.PrimaryKey("PK_database_versions", x => x.id);
             });
 
         migrationBuilder.CreateTable(
@@ -33,7 +37,7 @@ public sealed partial class CreateDatabase : Migration
             columns: table => new
             {
                 id = table.Column<byte>(type: "smallint", nullable: false),
-                type = table.Column<string>(type: "text", nullable: false)
+                name = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>
             {
@@ -73,7 +77,7 @@ public sealed partial class CreateDatabase : Migration
             columns: table => new
             {
                 id = table.Column<byte>(type: "smallint", nullable: false),
-                type = table.Column<string>(type: "text", nullable: false)
+                name = table.Column<string>(type: "text", nullable: false)
             },
             constraints: table =>
             {
@@ -95,27 +99,6 @@ public sealed partial class CreateDatabase : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "database_versions",
-            schema: "main",
-            columns: table => new
-            {
-                id = table.Column<byte>(type: "smallint", nullable: false),
-                table = table.Column<string>(type: "text", nullable: false),
-                version = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_database_versions", x => x.id);
-                table.ForeignKey(
-                    name: "FK_database_versions_database_tables_id",
-                    column: x => x.id,
-                    principalSchema: "main",
-                    principalTable: "database_tables",
-                    principalColumn: "id",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "fixes",
             schema: "main",
             columns: table => new
@@ -130,6 +113,8 @@ public sealed partial class CreateDatabase : Migration
                 description = table.Column<string>(type: "text", nullable: true),
                 changelog = table.Column<string>(type: "text", nullable: true),
                 notes = table.Column<string>(type: "text", nullable: true),
+                score = table.Column<int>(type: "integer", nullable: false),
+                installs = table.Column<int>(type: "integer", nullable: false),
                 is_disabled = table.Column<bool>(type: "boolean", nullable: false),
                 table_version = table.Column<int>(type: "integer", nullable: false)
             },
@@ -240,26 +225,6 @@ public sealed partial class CreateDatabase : Migration
             });
 
         migrationBuilder.CreateTable(
-            name: "installs",
-            schema: "main",
-            columns: table => new
-            {
-                fix_guid = table.Column<Guid>(type: "uuid", nullable: false),
-                value = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_installs", x => x.fix_guid);
-                table.ForeignKey(
-                    name: "FK_installs_fixes_fix_guid",
-                    column: x => x.fix_guid,
-                    principalSchema: "main",
-                    principalTable: "fixes",
-                    principalColumn: "guid",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
             name: "registry_fixes",
             schema: "main",
             columns: table => new
@@ -304,26 +269,6 @@ public sealed partial class CreateDatabase : Migration
                 table.PrimaryKey("PK_reports", x => x.id);
                 table.ForeignKey(
                     name: "FK_reports_fixes_fix_guid",
-                    column: x => x.fix_guid,
-                    principalSchema: "main",
-                    principalTable: "fixes",
-                    principalColumn: "guid",
-                    onDelete: ReferentialAction.Cascade);
-            });
-
-        migrationBuilder.CreateTable(
-            name: "scores",
-            schema: "main",
-            columns: table => new
-            {
-                fix_guid = table.Column<Guid>(type: "uuid", nullable: false),
-                value = table.Column<int>(type: "integer", nullable: false)
-            },
-            constraints: table =>
-            {
-                table.PrimaryKey("PK_scores", x => x.fix_guid);
-                table.ForeignKey(
-                    name: "FK_scores_fixes_fix_guid",
                     column: x => x.fix_guid,
                     principalSchema: "main",
                     principalTable: "fixes",
@@ -444,6 +389,57 @@ public sealed partial class CreateDatabase : Migration
             schema: "main",
             table: "tags_lists",
             column: "tag_id");
+
+
+        migrationBuilder.InsertData(
+            table: "database_versions",
+            schema: "main",
+            columns: ["id", "name", "version"],
+            values: [(byte)DatabaseTableEnum.Fixes, "Fixes", 0]);
+
+        migrationBuilder.InsertData(
+            table: "database_versions",
+            schema: "main",
+            columns: ["id", "name", "version"],
+            values: [(byte)DatabaseTableEnum.News, "News", 0]);
+
+
+        migrationBuilder.InsertData(
+            table: "fix_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)FixTypeEnum.FileFix, "File fix"]);
+
+        migrationBuilder.InsertData(
+            table: "fix_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)FixTypeEnum.RegistryFix, "Registry fix"]);
+
+        migrationBuilder.InsertData(
+            table: "fix_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)FixTypeEnum.HostsFix, "Hosts fix"]);
+
+        migrationBuilder.InsertData(
+            table: "fix_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)FixTypeEnum.TextFix, "Text fix"]);
+
+
+        migrationBuilder.InsertData(
+            table: "registry_value_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)RegistryValueTypeEnum.String, "String"]);
+
+        migrationBuilder.InsertData(
+            table: "registry_value_types",
+            schema: "main",
+            columns: ["id", "name"],
+            values: [(byte)RegistryValueTypeEnum.Dword, "Dword"]);
     }
 
     /// <inheritdoc />
@@ -466,10 +462,6 @@ public sealed partial class CreateDatabase : Migration
             schema: "main");
 
         migrationBuilder.DropTable(
-            name: "installs",
-            schema: "main");
-
-        migrationBuilder.DropTable(
             name: "news",
             schema: "main");
 
@@ -482,15 +474,7 @@ public sealed partial class CreateDatabase : Migration
             schema: "main");
 
         migrationBuilder.DropTable(
-            name: "scores",
-            schema: "main");
-
-        migrationBuilder.DropTable(
             name: "tags_lists",
-            schema: "main");
-
-        migrationBuilder.DropTable(
-            name: "database_tables",
             schema: "main");
 
         migrationBuilder.DropTable(

@@ -1,10 +1,8 @@
-using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Server.DbEntities;
 
-[Index(nameof(Name))]
 [Table(name: "games", Schema = "main")]
 public sealed class GamesDbEntity
 {

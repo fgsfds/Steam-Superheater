@@ -8,17 +8,14 @@ namespace Database.Server.DbEntities;
 public sealed class DatabaseVersionsDbEntity
 {
     [Key]
-    [ForeignKey(nameof(DatabaseTablesTable))]
     [Column("id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public required DatabaseTableEnum Id { get; set; }
 
-    [Column("table")]
-    public required string Table { get; set; }
+    [Column("name")]
+    public required string Name { get; set; }
 
     [Column("version")]
     public required int Version { get; set; }
-
-
-    public DatabaseTablesDbEntity DatabaseTablesTable { get; set; }
 }
 

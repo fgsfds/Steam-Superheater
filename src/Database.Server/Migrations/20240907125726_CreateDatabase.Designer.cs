@@ -13,7 +13,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Server.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240907110214_CreateDatabase")]
+    [Migration("20240907125726_CreateDatabase")]
     partial class CreateDatabase
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace Database.Server.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Database.Server.DbEntities.DatabaseTablesDbEntity", b =>
+            modelBuilder.Entity("Database.Server.DbEntities.DatabaseVersionsDbEntity", b =>
                 {
                     b.Property<byte>("Id")
                         .HasColumnType("smallint")
@@ -36,22 +36,6 @@ namespace Database.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("name");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("database_tables", "main");
-                });
-
-            modelBuilder.Entity("Database.Server.DbEntities.DatabaseVersionsDbEntity", b =>
-                {
-                    b.Property<byte>("Id")
-                        .HasColumnType("smallint")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Table")
-                        .IsRequired()
-                        .HasColumnType("text")
-                        .HasColumnName("table");
 
                     b.Property<int>("Version")
                         .HasColumnType("integer")
@@ -155,16 +139,16 @@ namespace Database.Server.Migrations
 
             modelBuilder.Entity("Database.Server.DbEntities.FixTypesDbEntity", b =>
                 {
-                    b.Property<byte>("FixType")
+                    b.Property<byte>("Id")
                         .HasColumnType("smallint")
                         .HasColumnName("id");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("type");
+                        .HasColumnName("name");
 
-                    b.HasKey("FixType");
+                    b.HasKey("Id");
 
                     b.ToTable("fix_types", "main");
                 });
@@ -192,6 +176,10 @@ namespace Database.Server.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("game_id");
 
+                    b.Property<int>("Installs")
+                        .HasColumnType("integer")
+                        .HasColumnName("installs");
+
                     b.Property<bool>("IsDisabled")
                         .HasColumnType("boolean")
                         .HasColumnName("is_disabled");
@@ -212,6 +200,10 @@ namespace Database.Server.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text")
                         .HasColumnName("notes");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("integer")
+                        .HasColumnName("score");
 
                     b.Property<int>("TableVersion")
                         .HasColumnType("integer")
@@ -266,21 +258,6 @@ namespace Database.Server.Migrations
                     b.HasKey("FixGuid");
 
                     b.ToTable("hosts_fixes", "main");
-                });
-
-            modelBuilder.Entity("Database.Server.DbEntities.InstallsDbEntity", b =>
-                {
-                    b.Property<Guid>("FixGuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("fix_guid");
-
-                    b.Property<int>("Installs")
-                        .HasColumnType("integer")
-                        .HasColumnName("value");
-
-                    b.HasKey("FixGuid");
-
-                    b.ToTable("installs", "main");
                 });
 
             modelBuilder.Entity("Database.Server.DbEntities.NewsDbEntity", b =>
@@ -343,10 +320,10 @@ namespace Database.Server.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("id");
 
-                    b.Property<string>("Type")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text")
-                        .HasColumnName("type");
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
@@ -376,21 +353,6 @@ namespace Database.Server.Migrations
                     b.HasIndex("FixGuid");
 
                     b.ToTable("reports", "main");
-                });
-
-            modelBuilder.Entity("Database.Server.DbEntities.ScoresDbEntity", b =>
-                {
-                    b.Property<Guid>("FixGuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("fix_guid");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("integer")
-                        .HasColumnName("value");
-
-                    b.HasKey("FixGuid");
-
-                    b.ToTable("scores", "main");
                 });
 
             modelBuilder.Entity("Database.Server.DbEntities.TagsDbEntity", b =>
@@ -439,17 +401,6 @@ namespace Database.Server.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("tags_lists", "main");
-                });
-
-            modelBuilder.Entity("Database.Server.DbEntities.DatabaseVersionsDbEntity", b =>
-                {
-                    b.HasOne("Database.Server.DbEntities.DatabaseTablesDbEntity", "DatabaseTablesTable")
-                        .WithMany()
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DatabaseTablesTable");
                 });
 
             modelBuilder.Entity("Database.Server.DbEntities.DependenciesDbEntity", b =>
@@ -518,17 +469,6 @@ namespace Database.Server.Migrations
                     b.Navigation("FixesTable");
                 });
 
-            modelBuilder.Entity("Database.Server.DbEntities.InstallsDbEntity", b =>
-                {
-                    b.HasOne("Database.Server.DbEntities.FixesDbEntity", "FixesTable")
-                        .WithMany()
-                        .HasForeignKey("FixGuid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FixesTable");
-                });
-
             modelBuilder.Entity("Database.Server.DbEntities.RegistryFixesDbEntity", b =>
                 {
                     b.HasOne("Database.Server.DbEntities.FixesDbEntity", "FixesTable")
@@ -549,17 +489,6 @@ namespace Database.Server.Migrations
                 });
 
             modelBuilder.Entity("Database.Server.DbEntities.ReportsDbEntity", b =>
-                {
-                    b.HasOne("Database.Server.DbEntities.FixesDbEntity", "FixesTable")
-                        .WithMany()
-                        .HasForeignKey("FixGuid")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("FixesTable");
-                });
-
-            modelBuilder.Entity("Database.Server.DbEntities.ScoresDbEntity", b =>
                 {
                     b.HasOne("Database.Server.DbEntities.FixesDbEntity", "FixesTable")
                         .WithMany()
