@@ -2,10 +2,10 @@ using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
-namespace Web.Blazor.Controllers;
+namespace Web.Blazor.ControllersV2;
 
 [ApiController]
-[Route("api/release")]
+[Route("api2/release")]
 public sealed class ReleaseController : ControllerBase
 {
     private readonly AppReleasesProvider _appReleasesProvider;

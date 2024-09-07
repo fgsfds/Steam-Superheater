@@ -183,6 +183,11 @@ public sealed class FixesProvider
 
     private Result<List<FixesList>> CheckLastUpdatedDate(DatabaseContext dbContext)
     {
+        var aa = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
+
+        var existingVersion = aa!.Version;
+        var newVersion = _apiInterface.
+
         return new(ResultEnum.Error, null, "Can't get existing fixes list");
     }
 

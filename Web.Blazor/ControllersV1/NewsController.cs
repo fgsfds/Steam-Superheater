@@ -2,8 +2,9 @@ using Common.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
-namespace Web.Blazor.Controllers;
+namespace Web.Blazor.ControllersV1;
 
+[Obsolete("Use V2 instead")]
 [ApiController]
 [Route("api/news")]
 public sealed class NewsController : ControllerBase
@@ -17,9 +18,13 @@ public sealed class NewsController : ControllerBase
         _newsProvider = newsProvider;
     }
 
+
+    [Obsolete("Use V2 instead")]
     [HttpGet]
     public List<NewsEntity>? GetNewsList() => _newsProvider.News;
 
+
+    [Obsolete("Use V2 instead")]
     [HttpPost("add")]
     public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
     {
@@ -35,6 +40,8 @@ public sealed class NewsController : ControllerBase
         }
     }
 
+
+    [Obsolete("Use V2 instead")]
     [HttpPut("change")]
     public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
     {

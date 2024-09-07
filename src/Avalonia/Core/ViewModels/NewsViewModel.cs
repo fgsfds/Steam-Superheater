@@ -1,6 +1,6 @@
 using Avalonia.Core.ViewModels.Popups;
 using Common.Client.Config;
-using Common.Client.Models;
+using Common.Client.Providers;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,33 +10,37 @@ namespace Avalonia.Core.ViewModels;
 
 internal sealed partial class NewsViewModel : ObservableObject
 {
-    private readonly NewsModel _newsModel;
+    private readonly NewsProvider _newsProvider;
     private readonly IConfigProvider _config;
     private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly SemaphoreSlim _locker = new(1);
 
+    private int _selectedPage = 1;
+
 
     #region Binding Properties
 
-    public ImmutableList<NewsEntity> NewsList => _newsModel.GetNews();
+    public ImmutableList<NewsEntity> NewsList => _newsProvider.PagesCount == 0 ? [] : [.. _newsProvider.GetNewsPage(_selectedPage)];
+
+    public List<int> PagesCount => Enumerable.Range(1, _newsProvider.PagesCount).ToList();
 
     public string NewsTabHeader =>
-        "News" + (_newsModel.HasUnreadNews
-        ? $" ({_newsModel.UnreadNewsCount} unread)"
+        "News" + (_newsProvider.HasUnreadNews
+        ? $" ({_newsProvider.UnreadNewsCount} unread)"
         : string.Empty);
 
     #endregion Binding Properties
 
 
     public NewsViewModel(
-        NewsModel newsModel,
+        NewsProvider newsProvider,
         IConfigProvider configProvider,
         PopupMessageViewModel popupMessage,
         PopupEditorViewModel popupEditor
         )
     {
-        _newsModel = newsModel;
+        _newsProvider = newsProvider;
         _config = configProvider;
         _popupMessage = popupMessage;
         _popupEditor = popupEditor;
@@ -59,13 +63,13 @@ internal sealed partial class NewsViewModel : ObservableObject
     [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
     private void MarkAllAsRead()
     {
-        _newsModel.MarkAllAsRead();
+        _newsProvider.MarkAllAsRead();
 
         OnPropertyChanged(nameof(NewsList));
         OnPropertyChanged(nameof(NewsTabHeader));
         MarkAllAsReadCommand.NotifyCanExecuteChanged();
     }
-    private bool MarkAllAsReadCanExecute() => _newsModel.HasUnreadNews;
+    private bool MarkAllAsReadCanExecute() => _newsProvider.HasUnreadNews;
 
     /// <summary>
     /// Add news
@@ -80,7 +84,7 @@ internal sealed partial class NewsViewModel : ObservableObject
             return;
         }
 
-        var result = await _newsModel.AddNewsAsync(newContent).ConfigureAwait(true);
+        var result = await _newsProvider.AddNewsAsync(newContent).ConfigureAwait(true);
 
         if (!result.IsSuccess)
         {
@@ -116,7 +120,7 @@ internal sealed partial class NewsViewModel : ObservableObject
             return;
         }
 
-        var result = await _newsModel.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
+        var result = await _newsProvider.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
 
         if (!result.IsSuccess)
         {
@@ -132,6 +136,16 @@ internal sealed partial class NewsViewModel : ObservableObject
         OnPropertyChanged(nameof(NewsList));
     }
 
+    /// <summary>
+    /// Edit current news content
+    /// </summary>
+    [RelayCommand]
+    private void ChangePage(int a)
+    {
+        _selectedPage = a;
+        OnPropertyChanged(nameof(NewsList));
+    }
+
     #endregion Relay Commands
 
     /// <summary>
@@ -141,7 +155,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     {
         await _locker.WaitAsync().ConfigureAwait(true);
 
-        var result = await _newsModel.UpdateNewsListAsync().ConfigureAwait(true);
+        var result = await _newsProvider.UpdateNewsListAsync().ConfigureAwait(true);
 
         if (!result.IsSuccess)
         {
@@ -154,6 +168,7 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         OnPropertyChanged(nameof(NewsList));
         OnPropertyChanged(nameof(NewsTabHeader));
+        OnPropertyChanged(nameof(PagesCount));
         MarkAllAsReadCommand.NotifyCanExecuteChanged();
 
         _ = _locker.Release();

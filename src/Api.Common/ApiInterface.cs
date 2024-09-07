@@ -1,4 +1,4 @@
-using Common.Client.Config;
+using Common;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Enums;
@@ -7,21 +7,19 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Web;
 
-namespace Common.Client.API;
+namespace Api.Common;
 
 public sealed class ApiInterface
 {
     private readonly HttpClient _httpClient;
-    private readonly IConfigProvider _config;
-
-    private string ApiUrl => _config.UseLocalApiAndRepo ? "https://localhost:7093/api" : "https://superheater.fgsfds.link/api";
+    private string _apiUrl;
 
     public ApiInterface(
-        IConfigProvider configProvider,
+        string apiUrl,
         HttpClient httpClient
         )
     {
-        _config = configProvider;
+        _apiUrl = apiUrl;
         _httpClient = httpClient;
     }
 
@@ -29,7 +27,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/last_updated").ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync($"{_apiUrl}/fixes/last_updated").ConfigureAwait(false);
 
             if (response is null)
             {
@@ -54,7 +52,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{ApiUrl}/news").ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync($"{_apiUrl}/news").ConfigureAwait(false);
 
             if (response is null)
             {
@@ -86,7 +84,7 @@ public sealed class ApiInterface
         {
             Tuple<DateTime, string, string> message = new(DateTime.Now, content, _config.ApiPassword);
 
-            var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/news/add", message).ConfigureAwait(false);
+            var response = await _httpClient.PostAsJsonAsync($"{_apiUrl}/news/add", message).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -111,7 +109,7 @@ public sealed class ApiInterface
         {
             Tuple<DateTime, string, string> message = new(date, content, _config.ApiPassword);
 
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/news/change", message).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/news/change", message).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -136,7 +134,7 @@ public sealed class ApiInterface
         {
             var encodedPath = HttpUtility.UrlEncode("superheater_uploads/" + path);
 
-            var signedUrl = await _httpClient.GetStringAsync($"{ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+            var signedUrl = await _httpClient.GetStringAsync($"{_apiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
             if (signedUrl is null)
             {
@@ -159,7 +157,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{ApiUrl}/release/{osEnum.ToString().ToLower()}").ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync($"{_apiUrl}/release/{osEnum.ToString().ToLower()}").ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(response))
             {
@@ -184,7 +182,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes").ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync($"{_apiUrl}/fixes").ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(response))
             {
@@ -214,7 +212,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -246,7 +244,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -278,7 +276,7 @@ public sealed class ApiInterface
     {
         try
         {
-            using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
+            using var response = await _httpClient.PostAsJsonAsync($"{_apiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -301,7 +299,7 @@ public sealed class ApiInterface
     {
         try
         {
-            var result = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/{guid}").ConfigureAwait(false);
+            var result = await _httpClient.GetStringAsync($"{_apiUrl}/fixes/{guid}").ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(result))
             {
@@ -333,7 +331,7 @@ public sealed class ApiInterface
         {
             Tuple<Guid, bool, string> message = new(guid, isDeleted, _config.ApiPassword);
 
-            var result = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/delete", message).ConfigureAwait(false);
+            var result = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/delete", message).ConfigureAwait(false);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -363,7 +361,7 @@ public sealed class ApiInterface
 
             Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
 
-            var result = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/add", message).ConfigureAwait(false);
+            var result = await _httpClient.PostAsJsonAsync($"{_apiUrl}/fixes/add", message).ConfigureAwait(false);
 
             if (!result.IsSuccessStatusCode)
             {

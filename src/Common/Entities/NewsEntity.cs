@@ -19,6 +19,15 @@ public sealed class NewsEntity
     /// </summary>
     [JsonIgnore]
     public bool IsNewer { get; set; }
+
+    public override string ToString()
+    {
+        return $"""
+            ##### {Date:dd.MM.yy}
+
+            {Content}
+            """;
+    }
 }
 
 [JsonSerializable(typeof(List<NewsEntity>))]
