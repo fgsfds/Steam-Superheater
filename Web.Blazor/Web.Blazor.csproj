@@ -9,20 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="News.json" />
-    <Content Remove="OldDb.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="News.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="OldDb.json">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="AWSSDK.S3" />

@@ -1,8 +1,6 @@
 using Common.Entities;
 using Common.Entities.Fixes;
 using Database.Server;
-using System.Reflection;
-using System.Text.Json;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
@@ -62,14 +60,6 @@ public class Program
 
         // Creating database
         var dbContext = app.Services.GetService<DatabaseContextFactory>()!.Get();
-
-
-
-        FillDb(app, dbContext);
-        FillNews(app, dbContext);
-
-
-
         dbContext.Dispose();
 
 
@@ -97,74 +87,6 @@ public class Program
         }
 
         app.Run();
-    }
-
-    [Obsolete]
-    private static void FillDb(WebApplication app, DatabaseContext dbContext)
-    {
-        if (dbContext.Fixes.Any())
-        {
-            return;
-        }
-
-        try
-        {
-            var fixesProvider = app.Services.GetService<FixesProvider>()!;
-
-            var resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(str => str.EndsWith("OldDb.json"));
-            string text;
-
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                text = reader.ReadToEnd();
-            }
-            var fixes = JsonSerializer.Deserialize(text, FixesListContext.Default.ListFixesList);
-
-            foreach (var game in fixes.OrderBy(x => x.GameId))
-            {
-                foreach (var fix in game.Fixes.OrderBy(x => x.Dependencies?.Count ?? 0))
-                {
-                    fixesProvider.AddFixAsync2(game.GameId, game.GameName, fix, Environment.GetEnvironmentVariable("ApiPass")!);
-                }
-            }
-        }
-        catch (Exception)
-        {
-        }
-    }
-
-    [Obsolete]
-    private static void FillNews(WebApplication app, DatabaseContext dbContext)
-    {
-        if (dbContext.News.Any())
-        {
-            return;
-        }
-
-        try
-        {
-            var newsProvider = app.Services.GetService<NewsProvider>()!;
-
-            var resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames().Single(str => str.EndsWith("News.json"));
-            string text;
-
-            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-            using (var reader = new StreamReader(stream))
-            {
-                text = reader.ReadToEnd();
-            }
-            var news = JsonSerializer.Deserialize(text, NewsEntityContext.Default.ListNewsEntity);
-
-            foreach (var @new in news)
-            {
-                newsProvider.AddNews(@new.Date, @new.Content, Environment.GetEnvironmentVariable("ApiPass")!);
-
-            }
-        }
-        catch (Exception)
-        {
-        }
     }
 
     private static HttpClient CreateHttpClient(IServiceProvider provider)
