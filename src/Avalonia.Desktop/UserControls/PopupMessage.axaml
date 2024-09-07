@@ -1,0 +1,111 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="1000"
+             d:DesignHeight="800"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels.Popups"
+             x:DataType="vm:PopupMessageViewModel"
+             x:Class="Avalonia.Desktop.UserControls.PopupMessage">
+
+    <Grid ColumnDefinitions="*,auto,*"
+          RowDefinitions="*,auto,*">
+
+        <Border Grid.ColumnSpan="3"
+                Grid.RowSpan="3"/>
+
+        <Grid Grid.Row="1"
+              Grid.Column="1"
+              RowDefinitions="auto,*,auto"
+              ColumnDefinitions="*,*"
+              MinWidth="600"
+              MaxWidth="600">
+
+            <Border Grid.RowSpan="3"
+                    Grid.ColumnSpan="2"
+                    CornerRadius="10"
+                    MinHeight="300"
+                    BorderBrush="{DynamicResource SystemAccentColor}"
+                    BorderThickness="1"
+                    Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
+                    BoxShadow="{DynamicResource Shadow}"
+                    Effect="drop-shadow(0 0 2 Gray)"></Border>
+
+            <TextBlock HorizontalAlignment="Center"
+                       Grid.Row="0"
+                       Grid.ColumnSpan="2" Grid.Column="0"
+                       Margin="30,30,30,0"
+                       Foreground="{DynamicResource SystemAccentColor} "
+                       FontWeight="Bold"
+                       FontSize="25"
+                       Text="{Binding TitleText, FallbackValue='Error'}"/>
+
+            <TextBlock HorizontalAlignment="Center"
+                       TextAlignment="Center"
+                       Grid.Row="1"
+                       Grid.ColumnSpan="2" Grid.Column="0"
+                       Margin="30"
+                       FontSize="15"
+                       TextWrapping="Wrap"
+                       Text="{Binding MessageText, FallbackValue='MESSAGE'}"/>
+
+            <Grid ColumnDefinitions="*,*"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2" Grid.Column="0"
+                  IsVisible="{Binding IsYesNo}">
+
+                <Button Grid.Column="0"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Command="{Binding OkCommand}"
+                        Background="{DynamicResource SystemAccentColor}"
+                        IsEnabled="True">
+                    Yes
+                </Button>
+
+                <Button Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Command="{Binding CancelCommand}">
+                    No
+                </Button>
+
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*"
+                  Grid.Row="2"
+                  Grid.ColumnSpan="2" Grid.Column="0"
+                  IsVisible="{Binding IsOkOnly}">
+
+                <Button Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        Margin="30"
+                        Padding="10"
+                        Width="150"
+                        Height="50"
+                        Background="{DynamicResource SystemAccentColor}"
+                        Command="{Binding OkCommand}">
+                    OK
+                </Button>
+
+            </Grid>
+
+        </Grid>
+
+    </Grid>
+
+</UserControl>

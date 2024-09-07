@@ -1,0 +1,49 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        x:Class="Avalonia.Desktop.Windows.MessageBox"
+        Title="Error"
+        SizeToContent="WidthAndHeight"
+        WindowStartupLocation="CenterScreen"
+        CanResize="False"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        RequestedThemeVariant="Default"
+        MaxWidth="800"
+        MaxHeight="600"
+        Background="{DynamicResource Background}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceInclude Source='/Styles/ThemedResources.axaml'/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid RowDefinitions="auto,*,auto">
+
+        <TextBlock HorizontalAlignment="Center"
+                   Grid.Row="0"
+                   Margin="30"
+                   Foreground="{DynamicResource SystemAccentColor}"
+                   FontWeight="Bold"
+                   FontSize="25"
+                   Text="Critical Error"/>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalAlignment="Center"
+                      Margin="30,0">
+            <TextBlock Name="TextBlock"
+                       TextWrapping="Wrap"/>
+        </ScrollViewer>
+
+        <Button Click="ButtonClick"
+                Background="{DynamicResource SystemAccentColor}"
+                Grid.Row="2"
+                Margin="30"
+                HorizontalAlignment="Center">
+            Close
+        </Button>
+    </Grid>
+
+</Window>

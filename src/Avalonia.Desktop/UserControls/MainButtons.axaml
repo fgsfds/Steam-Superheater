@@ -1,0 +1,132 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
+             xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
+             x:DataType="vm:MainViewModel"
+             x:Class="Avalonia.Desktop.UserControls.MainButtons">
+
+    <UserControl.Resources>
+        <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!--Launch/update game-->
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0">
+
+            <Button Command="{Binding UpdateGamesCommand}"
+                    Width="{Binding $self.Bounds.Height}"
+                    Margin="0,0,3,0"
+                    Padding="8"
+                    ToolTip.Tip="Update list of fixes">
+                <Grid>
+                    <TextBlock Foreground="Transparent">x</TextBlock>
+                    <i:Icon Value="fa-sync" Animation="Spin" IsVisible="{Binding IsInProgress}" />
+                    <i:Icon Value="fa-sync" IsVisible="{Binding !IsInProgress}" />
+                </Grid>
+            </Button>
+
+            <StackPanel VerticalAlignment="Center"
+                        IsVisible="{Binding SelectedGame, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <Button Name="LaunchButton"
+                        Command="{Binding LaunchGameCommand}"
+                        Content="{Binding LaunchGameButtonText, FallbackValue=Launch game...}"
+                        Margin="3,0"
+                        Padding="8"
+                        Background="{DynamicResource SystemAccentColor}"
+                        IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}"/>
+            </StackPanel>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Column="2">
+
+            <StackPanel VerticalAlignment="Center" IsVisible="{Binding SelectedFixVariants, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+                <!--Variants-->
+                <ComboBox Padding="8"
+                          Margin="3,0"
+                          MinWidth="150"
+                          IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}"
+                          ItemsSource="{Binding SelectedFixVariants}"
+                          SelectedItem="{Binding SelectedFixVariant}"/>
+
+                <!--Steam Deck selector-->
+                <Button Command="{Binding ShowVariantsPopupCommand}"
+                        Content="{Binding ShowVariantsPopupButtonText, FallbackValue='Select variant...'}"
+                        IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}"
+                        Padding="8"
+                        Margin="3,0"/>
+
+            </StackPanel>
+
+            <Button Name="CancelButton"
+                    Command="{Binding CancelCommand}"
+                    Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
+                    Content="Cancel"
+                    IsVisible="{Binding LockButtons}"
+                    Padding="8"/>
+
+            <StackPanel Orientation="Horizontal" IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+                <Button Name="InstallButton"
+                        Command="{Binding InstallFixCommand}"
+                        Margin="3,0"
+                        Background="{DynamicResource SystemAccentColor}"
+                        IsVisible="{Binding !SelectedFix.IsOutdated}"
+                        Content="{Binding InstallButtonText, FallbackValue='Install'}"
+                        Padding="8"/>
+
+                <Button Name="UpdateButton"
+                        Command="{Binding UpdateFixCommand}"
+                        Margin="3,0"
+                        Background="{DynamicResource SystemAccentColor}"
+                        IsVisible="{Binding SelectedFix.IsOutdated}"
+                        Padding="8">
+                    Update
+                </Button>
+
+                <Button Name="UninstallButton"
+                        Command="{Binding UninstallFixCommand}"
+                        Margin="3,0"
+                        Background="{DynamicResource SystemAccentColor}"
+                        Padding="8">
+                    Uninstall
+                </Button>
+
+                <Button Name="OpenConfig"
+                        Command="{Binding OpenConfigCommand}"
+                        Margin="3,0,0,0"
+                        Padding="8">
+                    Open config...
+                </Button>
+
+            </StackPanel>
+
+            <Button Command="{Binding CloseAppCommand}"
+                    Background="{DynamicResource SystemAccentColor}"
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}"
+                    Margin="3,0,0,0"
+                    Padding="8">
+                Close
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>
