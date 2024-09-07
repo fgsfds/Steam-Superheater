@@ -1,4 +1,4 @@
-using Common.Client.API;
+using Api.Common;
 using Common.Client.Config;
 using Common.Entities;
 using Database.Client;
@@ -7,7 +7,7 @@ namespace Common.Client.Providers;
 
 public sealed class NewsProvider
 {
-    const byte NewsPerPage = 10;
+    private const byte NewsPerPage = 10;
 
     private readonly ApiInterface _apiInterface;
     private readonly GamesProvider _gamesProvider;

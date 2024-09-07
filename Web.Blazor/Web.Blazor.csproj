@@ -16,7 +16,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Common\Common.csproj" />
     <ProjectReference Include="..\src\Database.Server\Database.Server.csproj" />
   </ItemGroup>
 

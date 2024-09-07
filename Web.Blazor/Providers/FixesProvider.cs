@@ -456,7 +456,7 @@ public sealed class FixesProvider
                 FixesDbEntity newFixEntity = new()
                 {
                     GameId = gameEntity.Id,
-                    FixType = (byte)fixType,
+                    FixType = fixType,
                     Guid = fix.Guid,
                     Description = fix.Description,
                     Changelog = null,
@@ -481,7 +481,7 @@ public sealed class FixesProvider
             else
             {
                 existingEntity.GameId = gameEntity.Id;
-                existingEntity.FixType = (byte)fixType;
+                existingEntity.FixType = fixType;
                 existingEntity.Description = fix.Description;
                 existingEntity.Changelog = null;
                 existingEntity.IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux);
@@ -530,7 +530,7 @@ public sealed class FixesProvider
                     FixGuid = regFix.Guid,
                     Key = regFix.Key,
                     ValueName = regFix.ValueName,
-                    ValueType = (byte)regFix.ValueType,
+                    ValueType = regFix.ValueType,
                     NewValueData = regFix.NewValueData
                 };
 

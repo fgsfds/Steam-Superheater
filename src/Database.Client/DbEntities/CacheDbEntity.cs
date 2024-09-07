@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Client.DbEntities;
 
-[Table(name: "cache", Schema = "main")]
+[Table(name: "cache")]
 public sealed class CacheDbEntity
 {
     [Key]

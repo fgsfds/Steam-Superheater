@@ -1,4 +1,4 @@
-using Common.Client.API;
+using Api.Common;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
@@ -186,7 +186,6 @@ public sealed class FixesProvider
         var aa = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
 
         var existingVersion = aa!.Version;
-        var newVersion = _apiInterface.
 
         return new(ResultEnum.Error, null, "Can't get existing fixes list");
     }

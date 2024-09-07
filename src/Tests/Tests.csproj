@@ -54,7 +54,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

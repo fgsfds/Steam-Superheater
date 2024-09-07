@@ -5,6 +5,12 @@
       <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="API\**" />
+    <EmbeddedResource Remove="API\**" />
+    <None Remove="API\**" />
+  </ItemGroup>
+
     <ItemGroup>
         <PackageReference Include="AddSealed">
             <PrivateAssets>all</PrivateAssets>
@@ -20,6 +26,7 @@
   </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\Database.Client\Database.Client.csproj" />
     </ItemGroup>

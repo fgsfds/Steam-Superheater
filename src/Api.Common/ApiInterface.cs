@@ -12,7 +12,7 @@ namespace Api.Common;
 public sealed class ApiInterface
 {
     private readonly HttpClient _httpClient;
-    private string _apiUrl;
+    private readonly string _apiUrl;
 
     public ApiInterface(
         string apiUrl,
@@ -82,7 +82,7 @@ public sealed class ApiInterface
     {
         try
         {
-            Tuple<DateTime, string, string> message = new(DateTime.Now, content, _config.ApiPassword);
+            Tuple<DateTime, string, string> message = new(DateTime.Now, content, "");
 
             var response = await _httpClient.PostAsJsonAsync($"{_apiUrl}/news/add", message).ConfigureAwait(false);
 
@@ -107,7 +107,7 @@ public sealed class ApiInterface
     {
         try
         {
-            Tuple<DateTime, string, string> message = new(date, content, _config.ApiPassword);
+            Tuple<DateTime, string, string> message = new(date, content, "");
 
             var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/news/change", message).ConfigureAwait(false);
 
@@ -329,7 +329,7 @@ public sealed class ApiInterface
     {
         try
         {
-            Tuple<Guid, bool, string> message = new(guid, isDeleted, _config.ApiPassword);
+            Tuple<Guid, bool, string> message = new(guid, isDeleted, "");
 
             var result = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/delete", message).ConfigureAwait(false);
 
@@ -359,7 +359,7 @@ public sealed class ApiInterface
                 FixesListContext.Default.BaseFixEntity
                 );
 
-            Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, _config.ApiPassword);
+            Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, "");
 
             var result = await _httpClient.PostAsJsonAsync($"{_apiUrl}/fixes/add", message).ConfigureAwait(false);
 

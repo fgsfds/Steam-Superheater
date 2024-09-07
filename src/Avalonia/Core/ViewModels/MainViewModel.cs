@@ -1,9 +1,9 @@
+using Api.Common;
 using Avalonia.Core.Helpers;
 using Avalonia.Core.ViewModels.Popups;
 using Avalonia.Input.Platform;
 using Common;
 using Common.Client;
-using Common.Client.API;
 using Common.Client.Config;
 using Common.Client.FixTools;
 using Common.Client.Models;
@@ -17,7 +17,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Avalonia.Core.ViewModels;
 

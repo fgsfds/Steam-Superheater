@@ -35,7 +35,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\Common.csproj" />
     <ProjectReference Include="..\Core\Avalonia.Core.csproj" />
   </ItemGroup>
 </Project>

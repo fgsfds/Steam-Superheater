@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Client.DbEntities;
 
-[Table(name: "hidden_tags", Schema = "main")]
+[Table(name: "hidden_tags")]
 public sealed class HiddenTagsDbEntity
 {
     [Key]

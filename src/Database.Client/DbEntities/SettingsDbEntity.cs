@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Client.DbEntities;
 
-[Table(name: "settings", Schema = "main")]
+[Table(name: "settings")]
 public sealed class SettingsDbEntity
 {
     [Key]
