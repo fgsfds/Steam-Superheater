@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Net;
 using System.Text;
-using System.Web.Http;
 
 namespace Web.Blazor.Helpers;
 
@@ -11,14 +9,14 @@ public sealed class AuthorizationHandler : IAuthorizationHandler
     {
         if (context.Resource is not DefaultHttpContext httpContext)
         {
-            throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return Task.CompletedTask;
         }
 
         var authHeader = httpContext.Request.Headers.Authorization;
 
         if (string.IsNullOrEmpty(authHeader))
         {
-            throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return Task.CompletedTask;
         }
 
         var encodedUsernamePassword = authHeader.ToString()["Basic ".Length..].Trim();
@@ -29,7 +27,7 @@ public sealed class AuthorizationHandler : IAuthorizationHandler
 
         if (!pass.Equals(apiPassword))
         {
-            throw new HttpResponseException(HttpStatusCode.Unauthorized);
+            return Task.CompletedTask;
         }
 
         context.Succeed(context.PendingRequirements.First());
