@@ -12,6 +12,7 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="AWSSDK.S3" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Core" />
     <PackageReference Include="Telegram.Bot" />
   </ItemGroup>
 

@@ -20,7 +20,7 @@ public sealed class FixesController : ControllerBase
 
 
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IEnumerable<FixesList>), StatusCodes.Status200OK)]
     public ActionResult<IEnumerable<FixesList>> GetFixesList([FromQuery] int v = 0)
     {
         var news = _fixesProvider.GetFixesList(v);
@@ -33,11 +33,11 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    public ActionResult CheckIfFixExists([FromQuery] Guid? guid)
+    public StatusCodeResult CheckIfFixExists([FromQuery] Guid? guid)
     {
         if (guid is null)
         {
-            return BadRequest("Provide a valid GUID");
+            return BadRequest();
         }
 
         var result = _fixesProvider.CheckIfFixExists(guid.Value);
@@ -48,13 +48,13 @@ public sealed class FixesController : ControllerBase
         }
         else
         {
-            return NotFound("Fix doesn't exist");
+            return NotFound();
         }
     }
 
 
     [HttpPut("installs/add")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(IncreaseInstallsCountOutMessage), StatusCodes.Status200OK)]
     public ActionResult<IncreaseInstallsCountOutMessage> AddNumberOfInstalls([FromBody] IncreaseInstallsCountInMessage message)
     {
         var installsCount = _fixesProvider.IncreaseFixInstallsCount(message.FixGuid);
@@ -66,6 +66,7 @@ public sealed class FixesController : ControllerBase
 
 
     [HttpPut("score/change")]
+    [ProducesResponseType(typeof(ChangeScoreOutMessage), StatusCodes.Status200OK)]
     public async Task<ActionResult<ChangeScoreOutMessage>> ChangeScoreAsync([FromBody] ChangeScoreInMessage message)
     {
         var score = await _fixesProvider.ChangeFixScoreAsync(message.FixGuid, message.Increment);
@@ -79,9 +80,9 @@ public sealed class FixesController : ControllerBase
     [HttpPost("report")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult> ReportFixAsync([FromBody] Tuple<Guid, string> message)
+    public async Task<StatusCodeResult> ReportFixAsync([FromBody] ReportFixInMessage message)
     {
-        var result = await _fixesProvider.AddReportAsync(message.Item1, message.Item2);
+        var result = await _fixesProvider.AddReportAsync(message.FixGuid, message.Text);
 
         if (result)
         {
