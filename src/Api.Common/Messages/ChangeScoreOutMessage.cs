@@ -1,6 +1,12 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct ChangeScoreOutMessage
+namespace Api.Common.Messages;
+
+public sealed class ChangeScoreOutMessage
 {
-    public required readonly int Score { get; init; }
+    public required int Score { get; init; }
 }
+
+
+[JsonSerializable(typeof(ChangeScoreOutMessage))]
+public sealed partial class ChangeScoreOutMessageContext : JsonSerializerContext;

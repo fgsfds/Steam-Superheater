@@ -1,3 +1,4 @@
+using Api.Common.Messages;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Database.Server;
@@ -27,6 +28,16 @@ public class Program
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsEntityContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddChangeNewsInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddFixInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeFixStateInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeScoreInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeScoreOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(DatabaseVersionsOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GetReleasesOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ReportFixInMessageContext.Default);
         });
 
         // Don't run tasks in dev mode

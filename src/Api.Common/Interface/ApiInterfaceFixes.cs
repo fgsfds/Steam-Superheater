@@ -11,7 +11,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{_apiUrl}/fixes").ConfigureAwait(false);
+            var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes").ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(response))
             {
@@ -41,7 +41,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -73,7 +73,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -105,7 +105,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            using var response = await _httpClient.PostAsJsonAsync($"{_apiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
+            using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -128,7 +128,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var result = await _httpClient.GetStringAsync($"{_apiUrl}/fixes/{guid}").ConfigureAwait(false);
+            var result = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/{guid}").ConfigureAwait(false);
 
             if (string.IsNullOrEmpty(result))
             {
@@ -160,7 +160,7 @@ public sealed partial class ApiInterface
         {
             Tuple<Guid, bool, string> message = new(guid, isDeleted, "");
 
-            var result = await _httpClient.PutAsJsonAsync($"{_apiUrl}/fixes/delete", message).ConfigureAwait(false);
+            var result = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/delete", message).ConfigureAwait(false);
 
             if (!result.IsSuccessStatusCode)
             {
@@ -190,7 +190,7 @@ public sealed partial class ApiInterface
 
             Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, "");
 
-            var result = await _httpClient.PostAsJsonAsync($"{_apiUrl}/fixes/add", message).ConfigureAwait(false);
+            var result = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/add", message).ConfigureAwait(false);
 
             if (!result.IsSuccessStatusCode)
             {

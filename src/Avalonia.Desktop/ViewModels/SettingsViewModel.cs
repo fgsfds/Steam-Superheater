@@ -1,8 +1,8 @@
 using Avalonia.Desktop.Helpers;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
+using Common;
 using Common.Client;
-using Common.Client.Config;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;

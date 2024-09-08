@@ -1,7 +1,13 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct ReportFixInMessage
+namespace Api.Common.Messages;
+
+public sealed class ReportFixInMessage
 {
-    public required readonly Guid FixGuid{ get; init; }
-    public required readonly string Text { get; init; }
+    public required Guid FixGuid{ get; init; }
+    public required string Text { get; init; }
 }
+
+
+[JsonSerializable(typeof(ReportFixInMessage))]
+public sealed partial class ReportFixInMessageContext : JsonSerializerContext;

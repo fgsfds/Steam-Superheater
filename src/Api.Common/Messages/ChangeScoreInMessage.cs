@@ -1,7 +1,13 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct ChangeScoreInMessage
+namespace Api.Common.Messages;
+
+public sealed class ChangeScoreInMessage
 {
-    public required readonly Guid FixGuid { get; init; }
-    public required readonly sbyte Increment { get; init; }
+    public required Guid FixGuid { get; init; }
+    public required sbyte Increment { get; init; }
 }
+
+
+[JsonSerializable(typeof(ChangeScoreInMessage))]
+public sealed partial class ChangeScoreInMessageContext : JsonSerializerContext;

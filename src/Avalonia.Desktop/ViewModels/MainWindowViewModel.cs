@@ -1,5 +1,5 @@
 using Avalonia.Desktop.ViewModels.Popups;
-using Common.Client.Config;
+using Common;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Avalonia.Desktop.ViewModels;

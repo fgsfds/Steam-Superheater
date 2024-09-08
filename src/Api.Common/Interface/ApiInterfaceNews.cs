@@ -1,7 +1,7 @@
-﻿using Common;
+﻿using Api.Common.Messages;
+using Common;
 using Common.Entities;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace Api.Common.Interface;
 
@@ -11,14 +11,14 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{_apiUrl}/news").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/news").ConfigureAwait(false);
 
-            if (response is null)
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting news");
             }
 
-            var news = JsonSerializer.Deserialize(response, NewsEntityContext.Default.ListNewsEntity);
+            var news = await response.Content.ReadFromJsonAsync(NewsEntityContext.Default.ListNewsEntity).ConfigureAwait(false);
 
             if (news is null)
             {
@@ -41,9 +41,16 @@ public sealed partial class ApiInterface
     {
         try
         {
-            Tuple<DateTime, string, string> message = new(DateTime.Now, content, "");
+            AddChangeNewsInMessage message = new()
+            {
+                Date = DateTime.Now,
+                Content = content
+            };
 
-            var response = await _httpClient.PostAsJsonAsync($"{_apiUrl}/news/add", message).ConfigureAwait(false);
+            using HttpRequestMessage requestMessage = new(HttpMethod.Post, $"{ApiUrl}/news/add");
+            requestMessage.Headers.Authorization = new("admin", _configProvider.ApiPassword);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -66,9 +73,16 @@ public sealed partial class ApiInterface
     {
         try
         {
-            Tuple<DateTime, string, string> message = new(date, content, "");
+            AddChangeNewsInMessage message = new()
+            {
+                Date = date,
+                Content = content
+            };
 
-            var response = await _httpClient.PutAsJsonAsync($"{_apiUrl}/news/change", message).ConfigureAwait(false);
+            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/news/change");
+            requestMessage.Headers.Authorization = new("admin", _configProvider.ApiPassword);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {

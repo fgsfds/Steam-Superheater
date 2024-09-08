@@ -10,13 +10,16 @@ namespace Api.Common.Interface;
 public sealed partial class ApiInterface
 {
     private readonly HttpClient _httpClient;
-    private readonly string _apiUrl;
+    private readonly IConfigProvider _configProvider;
+
+    private string ApiUrl => _configProvider.UseLocalApiAndRepo ? "https://localhost:7126/api2" : "https://superheater.fgsfds.link/api2";
 
     public ApiInterface(
-        HttpClient httpClient
+        HttpClient httpClient,
+        IConfigProvider configProvider
         )
     {
-        _apiUrl = "https://superheater.fgsfds.link/api2";
+        _configProvider = configProvider;
         _httpClient = httpClient;
     }
 
@@ -26,7 +29,7 @@ public sealed partial class ApiInterface
         {
             var encodedPath = HttpUtility.UrlEncode("superheater_uploads/" + path);
 
-            var response = await _httpClient.GetAsync($"{_apiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -51,16 +54,16 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{_apiUrl}/releases").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/releases").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting latest release");
             }
 
-            var releases = await response.Content.ReadFromJsonAsync<GetReleasesOutMessage>().ConfigureAwait(false);
+            var releases = await response.Content.ReadFromJsonAsync(GetReleasesOutMessageContext.Default.DictionaryOSEnumAppReleaseEntity).ConfigureAwait(false);
 
-            return new(ResultEnum.Success, releases.Releases[osEnum], string.Empty);
+            return new(ResultEnum.Success, releases![osEnum], string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {

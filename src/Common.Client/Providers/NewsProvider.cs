@@ -145,7 +145,11 @@ public sealed class NewsProvider
         {
             foreach (var news in item.Value)
             {
-                news.IsNewer = news.Date > _config.LastReadNewsDate;
+                if (news.Date > _config.LastReadNewsDate)
+                {
+                    news.IsNewer = true;
+                    UnreadNewsCount++;
+                }
             }
         }
     }

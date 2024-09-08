@@ -1,12 +1,12 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data.Core.Plugins;
 using Avalonia.Desktop.DI;
 using Avalonia.Desktop.Windows;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
+using Common;
 using Common.Client;
-using Common.Client.Config;
 using Common.Client.DI;
 using Common.Enums;
 using Common.Helpers;

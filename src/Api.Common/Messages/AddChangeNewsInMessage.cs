@@ -1,7 +1,13 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct AddChangeNewsInMessage
+namespace Api.Common.Messages;
+
+public sealed class AddChangeNewsInMessage
 {
-    public required readonly DateTime Date { get; init; }
-    public required readonly string Content { get; init; }
+    public required DateTime Date { get; init; }
+    public required string Content { get; init; }
 }
+
+
+[JsonSerializable(typeof(AddChangeNewsInMessage))]
+public sealed partial class AddChangeNewsInMessageContext : JsonSerializerContext;

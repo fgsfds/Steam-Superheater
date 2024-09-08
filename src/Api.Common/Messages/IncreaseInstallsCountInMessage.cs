@@ -1,6 +1,12 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct IncreaseInstallsCountInMessage
+namespace Api.Common.Messages;
+
+public sealed class IncreaseInstallsCountInMessage
 {
-    public required readonly Guid FixGuid { get; init; }
+    public required Guid FixGuid { get; init; }
 }
+
+
+[JsonSerializable(typeof(IncreaseInstallsCountInMessage))]
+public sealed partial class IncreaseInstallsCountInMessageContext : JsonSerializerContext;

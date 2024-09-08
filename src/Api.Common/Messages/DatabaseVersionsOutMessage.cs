@@ -1,8 +1,13 @@
 ﻿using Common.Enums;
+using System.Text.Json.Serialization;
 
 namespace Api.Common.Messages;
 
-public readonly struct DatabaseVersionsOutMessage
+public sealed class DatabaseVersionsOutMessage
 {
-    public required readonly Dictionary<DatabaseTableEnum, int> Versions { get; init; }
+    public required Dictionary<DatabaseTableEnum, int> Versions { get; init; }
 }
+
+
+[JsonSerializable(typeof(DatabaseVersionsOutMessage))]
+public sealed partial class DatabaseVersionsOutMessageContext : JsonSerializerContext;

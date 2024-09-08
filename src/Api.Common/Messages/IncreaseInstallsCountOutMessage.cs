@@ -1,6 +1,12 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct IncreaseInstallsCountOutMessage
+namespace Api.Common.Messages;
+
+public sealed class IncreaseInstallsCountOutMessage
 {
-    public required readonly int InstallsCount { get; init; }
+    public required int InstallsCount { get; init; }
 }
+
+
+[JsonSerializable(typeof(IncreaseInstallsCountOutMessage))]
+public sealed partial class IncreaseInstallsCountOutMessageContext : JsonSerializerContext;

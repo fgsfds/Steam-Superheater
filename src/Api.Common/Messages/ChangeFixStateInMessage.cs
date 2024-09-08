@@ -1,7 +1,13 @@
-﻿namespace Api.Common.Messages;
+﻿using System.Text.Json.Serialization;
 
-public readonly struct ChangeFixStateInMessage
+namespace Api.Common.Messages;
+
+public sealed class ChangeFixStateInMessage
 {
-    public required readonly Guid FixGuid { get; init; }
-    public required readonly bool IsDisabled { get; init; }
+    public required Guid FixGuid { get; init; }
+    public required bool IsDisabled { get; init; }
 }
+
+
+[JsonSerializable(typeof(ChangeFixStateInMessage))]
+public sealed partial class ChangeFixStateInMessageContext : JsonSerializerContext;
