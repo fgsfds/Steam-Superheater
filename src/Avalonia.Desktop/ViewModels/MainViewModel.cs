@@ -1,4 +1,4 @@
-using Api.Common;
+using Api.Common.Interface;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Input.Platform;

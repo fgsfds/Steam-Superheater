@@ -1,4 +1,4 @@
-using Api.Messages;
+using Api.Common.Messages;
 using Common.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

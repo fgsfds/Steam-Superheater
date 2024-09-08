@@ -3,7 +3,7 @@ using Common.Entities;
 using System.Net.Http.Json;
 using System.Text.Json;
 
-namespace Api.Common;
+namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {

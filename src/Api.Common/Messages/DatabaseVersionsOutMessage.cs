@@ -1,6 +1,6 @@
 ﻿using Common.Enums;
 
-namespace Api.Messages;
+namespace Api.Common.Messages;
 
 public readonly struct DatabaseVersionsOutMessage
 {

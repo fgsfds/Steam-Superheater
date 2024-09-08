@@ -1,4 +1,4 @@
-using Api.Common;
+using Api.Common.Interface;
 using Common.Client.Config;
 using Common.Entities;
 using Database.Client;

@@ -1,4 +1,4 @@
-using Api.Common;
+using Api.Common.Interface;
 using Common.Client.Config;
 using Common.Client.Providers;
 using Common.Entities.Fixes;

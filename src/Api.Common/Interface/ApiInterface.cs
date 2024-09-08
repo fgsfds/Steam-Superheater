@@ -1,10 +1,11 @@
+using Api.Common.Messages;
 using Common;
 using Common.Entities;
 using Common.Enums;
-using System.Text.Json;
+using System.Net.Http.Json;
 using System.Web;
 
-namespace Api.Common;
+namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
@@ -16,7 +17,6 @@ public sealed partial class ApiInterface
         )
     {
         _apiUrl = "https://superheater.fgsfds.link/api2";
-        _apiUrl = "http://localhost:7126/api2";
         _httpClient = httpClient;
     }
 
@@ -26,14 +26,16 @@ public sealed partial class ApiInterface
         {
             var encodedPath = HttpUtility.UrlEncode("superheater_uploads/" + path);
 
-            var signedUrl = await _httpClient.GetStringAsync($"{_apiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{_apiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
-            if (signedUrl is null)
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting signed URL");
             }
 
-            return new(ResultEnum.Success, signedUrl, string.Empty);
+            var url = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return new(ResultEnum.Success, url, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -49,16 +51,16 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{_apiUrl}/release/{osEnum.ToString().ToLower()}").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{_apiUrl}/releases").ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(response))
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting latest release");
             }
 
-            var release = JsonSerializer.Deserialize(response, AppReleaseEntityContext.Default.AppReleaseEntity);
+            var releases = await response.Content.ReadFromJsonAsync<GetReleasesOutMessage>().ConfigureAwait(false);
 
-            return new(ResultEnum.Success, release, string.Empty);
+            return new(ResultEnum.Success, releases.Releases[osEnum], string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {

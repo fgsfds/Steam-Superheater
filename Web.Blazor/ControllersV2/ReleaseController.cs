@@ -1,4 +1,6 @@
-using Api.Messages;
+using Api.Common.Messages;
+using Common.Entities;
+using Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
@@ -21,7 +23,11 @@ public sealed class ReleaseController : ControllerBase
     [ProducesResponseType(typeof(GetReleasesOutMessage), StatusCodes.Status200OK)]
     public ActionResult<GetReleasesOutMessage> GetReleases()
     {
-        GetReleasesOutMessage result = new() { Windows = _appReleasesProvider.WindowsRelease, Linux = _appReleasesProvider.LinuxRelease };
+        Dictionary<OSEnum, AppReleaseEntity> releases = [];
+        releases.Add(OSEnum.Windows, _appReleasesProvider.WindowsRelease);
+        releases.Add(OSEnum.Linux, _appReleasesProvider.LinuxRelease);
+
+        GetReleasesOutMessage result = new() { Releases = releases };
 
         return Ok(result);
     }

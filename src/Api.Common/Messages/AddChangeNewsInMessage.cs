@@ -1,4 +1,4 @@
-﻿namespace Api.Messages;
+﻿namespace Api.Common.Messages;
 
 public readonly struct AddChangeNewsInMessage
 {

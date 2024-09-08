@@ -1,4 +1,4 @@
-using Api.Messages;
+using Api.Common.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 

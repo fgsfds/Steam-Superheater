@@ -1,4 +1,4 @@
-using Api.Common;
+using Api.Common.Interface;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;

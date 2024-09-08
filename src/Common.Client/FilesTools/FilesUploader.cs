@@ -1,4 +1,4 @@
-using Api.Common;
+using Api.Common.Interface;
 
 namespace Common.Client.FilesTools;
 

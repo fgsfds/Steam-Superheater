@@ -1,6 +1,6 @@
 ﻿using Common.Entities.Fixes;
 
-namespace Api.Messages;
+namespace Api.Common.Messages;
 
 public readonly struct AddFixInMessage
 {
