@@ -1,11 +1,11 @@
-using Common.Entities;
+using Api.Messages;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV2;
 
 [ApiController]
-[Route("api2/release")]
+[Route("api2/releases")]
 public sealed class ReleaseController : ControllerBase
 {
     private readonly AppReleasesProvider _appReleasesProvider;
@@ -17,18 +17,13 @@ public sealed class ReleaseController : ControllerBase
     }
 
 
-    [HttpGet("windows")]
-    [ProducesResponseType(typeof(AppReleaseEntity), StatusCodes.Status200OK)]
-    public ActionResult<AppReleaseEntity> GetWindowsRelease()
+    [HttpGet]
+    [ProducesResponseType(typeof(GetReleasesOutMessage), StatusCodes.Status200OK)]
+    public ActionResult<GetReleasesOutMessage> GetReleases()
     {
-        return Ok(_appReleasesProvider.WindowsRelease);
-    }
+        GetReleasesOutMessage result = new() { Windows = _appReleasesProvider.WindowsRelease, Linux = _appReleasesProvider.LinuxRelease };
 
-    [HttpGet("linux")]
-    [ProducesResponseType(typeof(AppReleaseEntity), StatusCodes.Status200OK)]
-    public ActionResult<AppReleaseEntity> GetLinuxRelease()
-    {
-        return Ok(_appReleasesProvider.LinuxRelease);
+        return Ok(result);
     }
 }
 
