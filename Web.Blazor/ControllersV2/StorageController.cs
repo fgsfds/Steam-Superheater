@@ -10,21 +10,33 @@ public sealed class StorageController : ControllerBase
 {
     private readonly S3Client _s3controller;
 
-    public StorageController(
-        S3Client s3controller
-        )
+    public StorageController(S3Client s3controller)
     {
         _s3controller = s3controller;
     }
 
+
     [HttpGet("url/{path}")]
-    public string GetSignedUrl(string path)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public ActionResult<string> GetSignedUrl(string path)
     {
         var filePath = HttpUtility.UrlDecode(path);
 
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            return BadRequest();
+        }
+
         var signedUrl = _s3controller.GetSignedUrl(filePath);
 
-        return signedUrl;
+        if (string.IsNullOrWhiteSpace(signedUrl))
+        {
+            return StatusCode(500);
+        }
+
+        return Ok(signedUrl);
     }
 }
 

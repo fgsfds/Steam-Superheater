@@ -11,9 +11,8 @@ public sealed class NewsController : ControllerBase
 {
     private readonly NewsProvider _newsProvider;
 
-    public NewsController(
-        NewsProvider newsProvider
-        )
+
+    public NewsController(NewsProvider newsProvider)
     {
         _newsProvider = newsProvider;
     }
@@ -21,40 +20,6 @@ public sealed class NewsController : ControllerBase
 
     [Obsolete("Use V2 instead")]
     [HttpGet]
-    public List<NewsEntity>? GetNewsList() => _newsProvider.News;
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpPost("add")]
-    public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
-    {
-        var result = _newsProvider.AddNews(message.Item1, message.Item2, message.Item3);
-
-        if (result)
-        {
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-    }
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpPut("change")]
-    public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
-    {
-        var result = _newsProvider.ChangeNews(message.Item1, message.Item2, message.Item3);
-
-        if (result)
-        {
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-    }
+    public List<NewsEntity>? GetNewsList() => _newsProvider.GetNews(0);
 }
 

@@ -1,4 +1,6 @@
+using Api.Messages;
 using Common.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
@@ -10,20 +12,29 @@ public sealed class NewsController : ControllerBase
 {
     private readonly NewsProvider _newsProvider;
 
-    public NewsController(
-        NewsProvider newsProvider
-        )
+
+    public NewsController(NewsProvider newsProvider)
     {
         _newsProvider = newsProvider;
     }
 
-    [HttpGet]
-    public List<NewsEntity>? GetNewsList() => _newsProvider.News;
 
-    [HttpPost("add")]
-    public StatusCodeResult AddNews([FromBody] Tuple<DateTime, string, string> message)
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<List<NewsEntity>> GetNewsList([FromQuery] int v = 0)
     {
-        var result = _newsProvider.AddNews(message.Item1, message.Item2, message.Item3);
+        var news = _newsProvider.GetNews(v);
+
+        return Ok(news);
+    }
+
+    [Authorize]
+    [HttpPost("add")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public StatusCodeResult AddNews([FromBody] AddChangeNewsInMessage message)
+    {
+        var result = _newsProvider.AddNews(message.Date, message.Content);
 
         if (result)
         {
@@ -31,14 +42,17 @@ public sealed class NewsController : ControllerBase
         }
         else
         {
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 
+    [Authorize]
     [HttpPut("change")]
-    public StatusCodeResult ChangeNews([FromBody] Tuple<DateTime, string, string> message)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public StatusCodeResult ChangeNews([FromBody] AddChangeNewsInMessage message)
     {
-        var result = _newsProvider.ChangeNews(message.Item1, message.Item2, message.Item3);
+        var result = _newsProvider.ChangeNews(message.Date, message.Content);
 
         if (result)
         {
@@ -46,8 +60,7 @@ public sealed class NewsController : ControllerBase
         }
         else
         {
-            return StatusCode(StatusCodes.Status403Forbidden);
+            return StatusCode(StatusCodes.Status500InternalServerError);
         }
     }
 }
-

@@ -29,7 +29,7 @@ public sealed class S3Client : IDisposable
     /// </summary>
     /// <param name="file">File name</param>
     /// <returns>Signed URL</returns>
-    public string GetSignedUrl(string file)
+    public string? GetSignedUrl(string file)
     {
         GetPreSignedUrlRequest request = new()
         {
@@ -39,7 +39,16 @@ public sealed class S3Client : IDisposable
             Verb = HttpVerb.PUT
         };
 
-        var url = _s3client.GetPreSignedURL(request);
+        string? url;
+
+        try
+        {
+            url = _s3client.GetPreSignedURL(request);
+        }
+        catch
+        {
+            return null;
+        }
 
         return url;
     }

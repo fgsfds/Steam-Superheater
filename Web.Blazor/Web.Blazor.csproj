@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\src\Api.Messages\Api.Messages.csproj" />
     <ProjectReference Include="..\src\Database.Server\Database.Server.csproj" />
   </ItemGroup>
 

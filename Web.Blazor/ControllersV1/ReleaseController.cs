@@ -11,9 +11,8 @@ public sealed class ReleaseController : ControllerBase
 {
     private readonly AppReleasesProvider _appReleasesProvider;
 
-    public ReleaseController(
-        AppReleasesProvider appReleasesProvider
-        )
+
+    public ReleaseController(AppReleasesProvider appReleasesProvider)
     {
         _appReleasesProvider = appReleasesProvider;
     }

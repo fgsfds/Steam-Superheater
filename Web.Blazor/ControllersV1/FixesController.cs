@@ -1,9 +1,7 @@
 using Common.Entities.Fixes;
-using Common.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
-using static Web.Blazor.Providers.StatsProvider;
 
 namespace Web.Blazor.ControllersV1;
 
@@ -13,29 +11,17 @@ namespace Web.Blazor.ControllersV1;
 public sealed class FixesController : ControllerBase
 {
     private readonly FixesProvider _fixesProvider;
-    private readonly StatsProvider _statsProvider;
-    private readonly ServerProperties _serverProperties;
 
-    public FixesController(
-        FixesProvider fixesProvider,
-        StatsProvider statsProvider,
-        ServerProperties serverProperties
-        )
+
+    public FixesController(FixesProvider fixesProvider)
     {
         _fixesProvider = fixesProvider;
-        _statsProvider = statsProvider;
-        _serverProperties = serverProperties;
     }
 
 
     [Obsolete("Use V2 instead")]
-    [HttpGet("last_updated")]
-    public string GetLastUpdated() => DateTime.Now.ToString(Consts.DateTimeFormat);
-
-
-    [Obsolete("Use V2 instead")]
     [HttpGet]
-    public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList();
+    public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList(0);
 
 
     [Obsolete("Use V2 instead")]
@@ -56,61 +42,5 @@ public sealed class FixesController : ControllerBase
     [Obsolete("Use V2 instead")]
     [HttpPost("report")]
     public async Task ReportFixAsync([FromBody] Tuple<Guid, string> message) => await _fixesProvider.AddReportAsync(message.Item1, message.Item2);
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpPut("delete")]
-    public StatusCodeResult ChangeFixState([FromBody] Tuple<Guid, bool, string> message)
-    {
-        var result = _fixesProvider.ChangeFixDisabledState(message.Item1, message.Item2, message.Item3);
-
-        if (result)
-        {
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-    }
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpPost("add")]
-    public async Task<StatusCodeResult> AddFixToDbAsync([FromBody] Tuple<int, string, string, string> message)
-    {
-        var result = await _fixesProvider.AddFixAsync(message.Item1, message.Item2, message.Item3, message.Item4);
-
-        if (result)
-        {
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-    }
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpPost("check")]
-    public async Task<StatusCodeResult> ForceCheckFixesAsync([FromBody] string password)
-    {
-        var result = await _fixesProvider.ForceCheckFixesAsync(password);
-
-        if (result)
-        {
-            return StatusCode(StatusCodes.Status200OK);
-        }
-        else
-        {
-            return StatusCode(StatusCodes.Status403Forbidden);
-        }
-    }
-
-
-    [Obsolete("Use V2 instead")]
-    [HttpGet("stats")]
-    public FixesStats? GetFixesStats() => _statsProvider.Stats;
 }
 

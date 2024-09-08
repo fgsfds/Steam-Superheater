@@ -15,11 +15,11 @@ public sealed class ApiInterface
     private readonly string _apiUrl;
 
     public ApiInterface(
-        string apiUrl,
         HttpClient httpClient
         )
     {
-        _apiUrl = apiUrl;
+        _apiUrl = "https://superheater.fgsfds.link/api2";
+        _apiUrl = "http://localhost:7126/api2";
         _httpClient = httpClient;
     }
 

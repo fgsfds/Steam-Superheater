@@ -11,9 +11,8 @@ public sealed class StorageController : ControllerBase
 {
     private readonly S3Client _s3controller;
 
-    public StorageController(
-        S3Client s3controller
-        )
+
+    public StorageController(S3Client s3controller)
     {
         _s3controller = s3controller;
     }

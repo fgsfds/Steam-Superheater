@@ -28,6 +28,6 @@ else
 
     protected override void OnInitialized()
     {
-        _newsList = NewsProvider.News;
+        _newsList = NewsProvider.GetNews(0);
     }
 }

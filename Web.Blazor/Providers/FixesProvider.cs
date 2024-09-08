@@ -43,7 +43,7 @@ public sealed class FixesProvider
     /// <summary>
     /// Get list of fixes from the database
     /// </summary>
-    public IEnumerable<FixesList> GetFixesList()
+    public IEnumerable<FixesList> GetFixesList(int version)
     {
         Stopwatch sw = new();
         sw.Start();
@@ -51,8 +51,14 @@ public sealed class FixesProvider
         //disposed later
         var dbContext = _dbContextFactory.Get();
 
+        var fixesDb = dbContext.Fixes.AsNoTracking().Where(x => x.TableVersion > version).OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
+
+        if (fixesDb.Count == 0)
+        {
+            return [];
+        }
+        
         var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
-        var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
         var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
         var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
         var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
@@ -69,6 +75,11 @@ public sealed class FixesProvider
         foreach (var game in games)
         {
             var fixes = fixesDb[game.Id];
+
+            if (!fixes.Any())
+            {
+                continue;
+            }
 
             List<BaseFixEntity> baseFixEntities = new(fixes.Count());
 
@@ -144,7 +155,7 @@ public sealed class FixesProvider
                         Key = regFix.Key,
                         ValueName = regFix.ValueName,
                         NewValueData = regFix.NewValueData,
-                        ValueType = (RegistryValueTypeEnum)regFix.ValueType
+                        ValueType = regFix.ValueType
                     };
 
                     baseFixEntities.Add(fileFixEntity);
@@ -226,7 +237,6 @@ public sealed class FixesProvider
 
         _ = dbContext.SaveChanges();
 
-
         var names = (from fixx in dbContext.Fixes
                      join gamee in dbContext.Games
                      on fixx.GameId equals gamee.Id
@@ -262,7 +272,7 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">Fix guid</param>
     /// <param name="text">Report text</param>
-    public async Task AddReportAsync(Guid fixGuid, string text)
+    public async Task<bool> AddReportAsync(Guid fixGuid, string text)
     {
         using var dbContext = _dbContextFactory.Get();
 
@@ -284,6 +294,8 @@ public sealed class FixesProvider
                  .First();
 
         await _bot.SendMessageAsync($"Fix score changed: {names.Item1} - {names.Item2} text {text}");
+
+        return true;
     }
 
     /// <summary>
@@ -305,17 +317,8 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">Fix guid</param>
     /// <param name="isDisabled">Is disabled</param>
-    /// <param name="password">API password</param>
-    /// <returns></returns>
-    public bool ChangeFixDisabledState(Guid fixGuid, bool isDisabled, string password)
+    public bool ChangeFixDisabledState(Guid fixGuid, bool isDisabled)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         using var dbContext = _dbContextFactory.Get();
         var entity = dbContext.Fixes.Find(fixGuid);
 
@@ -328,208 +331,9 @@ public sealed class FixesProvider
         return true;
     }
 
-    public async Task<bool> ForceCheckFixesAsync(string password)
+    public async Task<bool> ForceCheckFixesAsync()
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         await CheckFixesAsync();
-
-        return true;
-    }
-    
-    [Obsolete]
-    public async Task<bool> AddFixAsync2(int gameId, string gameName, BaseFixEntity fix, string password)
-    {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
-        Guard.IsNotNull(fix);
-
-        using var dbContext = _dbContextFactory.Get();
-        using (var transaction = dbContext.Database.BeginTransaction())
-        {
-            var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes);
-
-            //adding or modifying game
-            var gameEntity = dbContext.Games.Find(gameId);
-
-            if (gameEntity is null)
-            {
-                GamesDbEntity newGameEntity = new()
-                {
-                    Id = gameId,
-                    Name = gameName
-                };
-
-                _ = dbContext.Games.Add(newGameEntity);
-                _ = dbContext.SaveChanges();
-
-                gameEntity = dbContext.Games.Find(gameId);
-
-                if (gameEntity is null)
-                {
-                    _logger.LogError("Error while adding new game");
-                    return false;
-                }
-            }
-            else
-            {
-                gameEntity.Name = gameName;
-            }
-
-
-            //adding or modifying base fix
-            var existingEntity = dbContext.Fixes.Find(fix.Guid);
-
-            var fixType = fix is FileFixEntity ? FixTypeEnum.FileFix :
-                            fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
-                            fix is HostsFixEntity ? FixTypeEnum.HostsFix :
-                            fix is TextFixEntity ? FixTypeEnum.TextFix :
-                            0;
-
-            FixesDbEntity newFixEntity = new()
-            {
-                GameId = gameEntity.Id,
-                FixType = fixType,
-                Guid = fix.Guid,
-                Description = fix.Description,
-                Changelog = null,
-                IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux),
-                IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
-                Name = fix.Name,
-                Notes = fix.Notes,
-                Version = fix.Version,
-                IsDisabled = fix.IsDisabled,
-                TableVersion = 1,
-                Score = fix.Score,
-                Installs = fix.Installs
-            };
-
-            _ = dbContext.Fixes.Add(newFixEntity);
-            existingEntity = dbContext.Fixes.Find(fix.Guid);
-
-            if (existingEntity is null)
-            {
-                _logger.LogError("Error while adding new fix");
-                return false;
-            }
-
-            _ = dbContext.SaveChanges();
-
-
-            //removing existing sub fix and adding new one
-            if (fix is FileFixEntity fileFix)
-            {
-                FileFixesDbEntity newSubFixEntity = new()
-                {
-                    FixGuid = fileFix.Guid,
-                    Url = fileFix.Url,
-                    FileSize = fileFix.FileSize,
-                    MD5 = fileFix.MD5,
-                    InstallFolder = fileFix.InstallFolder,
-                    ConfigFile = fileFix.ConfigFile,
-                    FilesToDelete = fileFix.FilesToDelete,
-                    FilesToBackup = fileFix.FilesToBackup,
-                    FilesToPatch = fileFix.FilesToPatch,
-                    RunAfterInstall = fileFix.RunAfterInstall,
-                    Variants = fileFix.Variants,
-                    SharedFixGuid = fileFix.SharedFixGuid,
-                    SharedFixInstallFolder = fileFix.SharedFixInstallFolder,
-                    WineDllOverrides = fileFix.WineDllOverrides
-                };
-
-                _ = dbContext.FileFixes.Add(newSubFixEntity);
-            }
-            else if (fix is RegistryFixEntity regFix)
-            {
-                RegistryFixesDbEntity newSubFixEntity = new()
-                {
-                    FixGuid = regFix.Guid,
-                    Key = regFix.Key,
-                    ValueName = regFix.ValueName,
-                    ValueType = regFix.ValueType,
-                    NewValueData = regFix.NewValueData
-                };
-
-                _ = dbContext.RegistryFixes.Add(newSubFixEntity);
-            }
-            else if (fix is HostsFixEntity hostsFix)
-            {
-                HostsFixesDbEntity newSubFixEntity = new()
-                {
-                    FixGuid = hostsFix.Guid,
-                    Entries = hostsFix.Entries
-                };
-
-                _ = dbContext.HostsFixes.Add(newSubFixEntity);
-            }
-            else if (fix is TextFixEntity textFix)
-            {
-                //nothing to do
-            }
-
-            _ = dbContext.SaveChanges();
-
-
-            //removing existing and adding new tags
-            if (fix.Tags is not null)
-            {
-                foreach (var tag in fix.Tags.ToList())
-                {
-                    var existingTag = dbContext.Tags.SingleOrDefault(x => x.Tag == tag);
-
-                    if (existingTag is null)
-                    {
-                        var neww = dbContext.Tags.Add(new() { Tag = tag });
-                        _ = dbContext.SaveChanges();
-
-                        existingTag = dbContext.Tags.SingleOrDefault(x => x.Tag == tag);
-                    }
-
-                    TagsListsDbEntity newEntity = new()
-                    {
-                        FixGuid = fix.Guid,
-                        TagId = existingTag!.Id
-                    };
-
-                    _ = dbContext.TagsLists.Add(newEntity);
-                }
-            }
-
-            _ = dbContext.SaveChanges();
-
-
-            //removing existing and adding new dependencies
-            if (fix.Dependencies is not null)
-            {
-                foreach (var tag in fix.Dependencies.ToList())
-                {
-                    DependenciesDbEntity newEntity = new()
-                    {
-                        FixGuid = fix.Guid,
-                        DependencyGuid = tag
-                    };
-
-                    _ = dbContext.Dependencies.Add(newEntity);
-                }
-            }
-
-            _ = dbContext.SaveChanges();
-
-            databaseVersions.Version = 1;
-            _ = dbContext.SaveChanges();
-
-            transaction.Commit();
-        }
 
         return true;
     }
@@ -540,18 +344,10 @@ public sealed class FixesProvider
     /// <param name="gameId">Game id</param>
     /// <param name="gameName">Game name</param>
     /// <param name="fixJson">Fix</param>
-    /// <param name="password">API password</param>
     /// <returns>Is successfully added</returns>
-    public async Task<bool> AddFixAsync(int gameId, string gameName, string fixJson, string password)
+    public async Task<bool> AddFixAsync(int gameId, string gameName, BaseFixEntity fix)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
-        var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
+        //var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
 
         Guard.IsNotNull(fix);
 

@@ -36,7 +36,7 @@ public sealed class DatabaseContext : DbContext
     {
         if (_isDevMode)
         {
-            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater;Username=postgres;Password=123;Include Error Detail=True");
+            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater2;Username=postgres;Password=123;Include Error Detail=True");
         }
         else
         {
@@ -44,7 +44,7 @@ public sealed class DatabaseContext : DbContext
             var dbport = Environment.GetEnvironmentVariable("DbPort")!;
             var user = Environment.GetEnvironmentVariable("DbUser")!;
             var password = Environment.GetEnvironmentVariable("DbPass")!;
-            _ = optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater;Username={user};Password={password}");
+            _ = optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater2;Username={user};Password={password}");
         }
     }
 }
