@@ -44,7 +44,7 @@ public sealed class NewsProvider
     /// </summary>
     public async Task<Result> UpdateNewsListAsync()
     {
-        var result = await _apiInterface.GetNewsListAsync().ConfigureAwait(false);
+        var result = await _apiInterface.GetNewsListAsync(0).ConfigureAwait(false);
 
         if (result.IsSuccess)
         {

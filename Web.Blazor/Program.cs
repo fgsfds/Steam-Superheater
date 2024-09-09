@@ -36,6 +36,8 @@ public class Program
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeScoreOutMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(CheckIfFixExistsOutMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(DatabaseVersionsOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GetFixesOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GetNewsOutMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GetReleasesOutMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountInMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountOutMessageContext.Default);

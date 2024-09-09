@@ -8,25 +8,25 @@ namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
-    public async Task<Result<List<NewsEntity>?>> GetNewsListAsync()
+    public async Task<Result<List<NewsEntity>?>> GetNewsListAsync(int version)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/news").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/news?v={version}").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting news");
             }
 
-            var news = await response.Content.ReadFromJsonAsync(NewsEntityContext.Default.ListNewsEntity).ConfigureAwait(false);
+            var news = await response.Content.ReadFromJsonAsync(GetNewsOutMessageContext.Default.GetNewsOutMessage).ConfigureAwait(false);
 
             if (news is null)
             {
                 return new(ResultEnum.Error, null, "Error while deserializing news");
             }
 
-            return new(ResultEnum.Success, news, string.Empty);
+            return new(ResultEnum.Success, news.News, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {

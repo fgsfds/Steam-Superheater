@@ -1,8 +1,10 @@
 using Api.Common.Messages;
 using Common.Entities.Fixes;
+using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Blazor.ControllersV2;
 
@@ -11,21 +13,45 @@ namespace Web.Blazor.ControllersV2;
 public sealed class FixesController : ControllerBase
 {
     private readonly FixesProvider _fixesProvider;
+    private readonly DatabaseVersionsProvider _databaseVersionsProvider;
 
 
-    public FixesController(FixesProvider fixesProvider)
+    public FixesController(
+        FixesProvider fixesProvider,
+        DatabaseVersionsProvider databaseVersionsProvider
+        )
     {
         _fixesProvider = fixesProvider;
+        _databaseVersionsProvider = databaseVersionsProvider;
     }
 
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<FixesList>), StatusCodes.Status200OK)]
-    public ActionResult<IEnumerable<FixesList>> GetFixesList([FromQuery] int v = 0)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<GetFixesOutMessageContext> GetFixesList([FromQuery] int v = 0)
     {
-        var news = _fixesProvider.GetFixesList(v);
+        var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.Fixes];
 
-        return Ok(news);
+        if (v >= version)
+        {
+            return NotFound();
+        }
+
+        var fixes = _fixesProvider.GetFixesList(v);
+
+        if (fixes is null or [])
+        {
+            return NotFound();
+        }
+
+        GetFixesOutMessage result = new()
+        {
+            Fixes = fixes,
+            Version = version
+        };
+
+        return Ok(result);
     }
 
 

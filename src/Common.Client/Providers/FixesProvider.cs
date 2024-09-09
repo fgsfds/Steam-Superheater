@@ -40,16 +40,13 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var lastUpdatedResult = CheckLastUpdatedDate(dbContext);
+        var cachedFixesDbEntity = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
 
-        if (lastUpdatedResult.IsSuccess)
-        {
-            return lastUpdatedResult;
-        }
+        var fixes = JsonSerializer.Deserialize(cachedFixesDbEntity.Data, FixesListContext.Default.ListFixesList);
 
         _logger.Info("Getting online fixes");
 
-        var onlineFixesResult = await _apiInterface.GetFixesListAsync().ConfigureAwait(false);
+        var onlineFixesResult = await _apiInterface.GetFixesListAsync(cachedFixesDbEntity.Version).ConfigureAwait(false);
 
         if (!onlineFixesResult.IsSuccess)
         {
@@ -178,16 +175,6 @@ public sealed class FixesProvider
         var result = await _apiInterface.AddFixToDbAsync(gameId, gameName, fix).ConfigureAwait(false);
 
         return result;
-    }
-
-
-    private Result<List<FixesList>> CheckLastUpdatedDate(DatabaseContext dbContext)
-    {
-        var aa = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
-
-        var existingVersion = aa!.Version;
-
-        return new(ResultEnum.Error, null, "Can't get existing fixes list");
     }
 
     private Result PrepareFixes(BaseFixEntity fix)

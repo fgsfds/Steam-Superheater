@@ -1,5 +1,5 @@
 using Api.Common.Messages;
-using Common.Entities;
+using Common.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
@@ -11,21 +11,45 @@ namespace Web.Blazor.ControllersV2;
 public sealed class NewsController : ControllerBase
 {
     private readonly NewsProvider _newsProvider;
+    private readonly DatabaseVersionsProvider _databaseVersionsProvider;
 
 
-    public NewsController(NewsProvider newsProvider)
+    public NewsController(
+        NewsProvider newsProvider,
+        DatabaseVersionsProvider databaseVersionsProvider
+        )
     {
         _newsProvider = newsProvider;
+        _databaseVersionsProvider = databaseVersionsProvider;
     }
 
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public ActionResult<List<NewsEntity>> GetNewsList([FromQuery] int v = 0)
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<GetNewsOutMessage> GetNewsList([FromQuery] int v = 0)
     {
+        var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.News];
+
+        if (v >= version)
+        {
+            return NotFound();
+        }
+
         var news = _newsProvider.GetNews(v);
 
-        return Ok(news);
+        if (news is null or [])
+        {
+            return NotFound();
+        }
+
+        GetNewsOutMessage result = new()
+        {
+            News = news,
+            Version = version
+        };
+
+        return Ok(result);
     }
 
     [Authorize]

@@ -42,7 +42,7 @@ public sealed class FixesProvider
     /// <summary>
     /// Get list of fixes from the database
     /// </summary>
-    public IEnumerable<FixesList> GetFixesList(int version)
+    public List<FixesList> GetFixesList(int version)
     {
         Stopwatch sw = new();
         sw.Start();
