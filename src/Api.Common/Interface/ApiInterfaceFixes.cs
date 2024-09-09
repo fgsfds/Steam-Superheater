@@ -1,5 +1,7 @@
-﻿using Common;
+﻿using Api.Common.Messages;
+using Common;
 using Common.Entities.Fixes;
+using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -11,16 +13,16 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetStringAsync($"{ApiUrl}/fixes").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes").ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(response))
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while getting fixes");
             }
 
-            var fixesList = JsonSerializer.Deserialize(response, FixesListContext.Default.ListFixesList);
+            var fixesList = await response.Content.ReadFromJsonAsync(FixesListContext.Default.ListFixesList).ConfigureAwait(false);
 
-            if (string.IsNullOrWhiteSpace(response))
+            if (fixesList is null)
             {
                 return new(ResultEnum.Error, null, "Error while deserializing fixes");
             }
@@ -41,23 +43,31 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score/change", new Tuple<Guid, sbyte>(guid, increment)).ConfigureAwait(false);
+            ChangeScoreInMessage message = new()
+            {
+                FixGuid = guid,
+                Increment = increment
+            };
 
-            if (!response.IsSuccessStatusCode)
+            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score/change");
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while chaging fix score");
             }
 
-            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var result = await response.Content.ReadFromJsonAsync(ChangeScoreOutMessageContext.Default.ChangeScoreOutMessage).ConfigureAwait(false);
 
-            var isParsed = int.TryParse(responseStr, out var newScore);
-
-            if (!isParsed)
+            if (result is null)
             {
                 return new(ResultEnum.Error, null, "Error while deserializing new score");
             }
 
-            return new(ResultEnum.Success, newScore, string.Empty);
+            return new(ResultEnum.Success, result.Score, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -73,23 +83,30 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs/add", guid).ConfigureAwait(false);
+            IncreaseInstallsCountInMessage message = new()
+            {
+                FixGuid = guid
+            };
+
+            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score/add");
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, null, "Error while chaging fix score");
             }
 
-            var responseStr = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var result = await response.Content.ReadFromJsonAsync(IncreaseInstallsCountOutMessageContext.Default.IncreaseInstallsCountOutMessage).ConfigureAwait(false);
 
-            var isParsed = int.TryParse(responseStr, out var newInatallsNum);
-
-            if (!isParsed)
+            if (result is null)
             {
                 return new(ResultEnum.Error, null, "Error while deserializing new score");
             }
 
-            return new(ResultEnum.Success, newInatallsNum, string.Empty);
+            return new(ResultEnum.Success, result.InstallsCount, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -105,9 +122,15 @@ public sealed partial class ApiInterface
     {
         try
         {
-            using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/report", new Tuple<Guid, string>(guid, text)).ConfigureAwait(false);
+            ReportFixInMessage message = new()
+            {
+                FixGuid = guid,
+                Text = text
+            };
 
-            if (!response.IsSuccessStatusCode)
+            using var response = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/report", message, ReportFixInMessageContext.Default.ReportFixInMessage).ConfigureAwait(false);
+
+            if (response is null || !response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, "Error while sending report");
             }
@@ -124,33 +147,33 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result> CheckIfFixEsistsAsync(Guid guid)
+    public async Task<Result<int?>> CheckIfFixExistsAsync(Guid guid)
     {
         try
         {
-            var result = await _httpClient.GetStringAsync($"{ApiUrl}/fixes/{guid}").ConfigureAwait(false);
+            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/exists?guid={guid}").ConfigureAwait(false);
 
-            if (string.IsNullOrEmpty(result))
+            if (response is null)
             {
-                return new(ResultEnum.Error, "Error while checking fix");
+                return new(ResultEnum.Error, null, "Error while checking fix");
             }
 
-            var isParsed = bool.TryParse(result, out var doesExist);
+            var result = await response.Content.ReadFromJsonAsync(CheckIfFixExistsOutMessageContext.Default.CheckIfFixExistsOutMessage).ConfigureAwait(false);
 
-            if (!isParsed)
+            if (result is null)
             {
-                return new(ResultEnum.Error, "Error while deserializing result");
+                return new(ResultEnum.Error, null, "Error while deserializing result");
             }
 
-            return new(doesExist ? ResultEnum.Exists : ResultEnum.NotFound, string.Empty);
+            return new(ResultEnum.Success, result.CurrentVersion, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
-            return new(ResultEnum.Error, "API is not responding");
+            return new(ResultEnum.Error, null, "API is not responding");
         }
         catch
         {
-            return new(ResultEnum.Error, "Error while checking fix");
+            return new(ResultEnum.Error, null, "Error while checking fix");
         }
     }
 

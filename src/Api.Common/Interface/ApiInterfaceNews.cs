@@ -1,6 +1,7 @@
 ﻿using Api.Common.Messages;
 using Common;
 using Common.Entities;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Api.Common.Interface;
@@ -48,7 +49,8 @@ public sealed partial class ApiInterface
             };
 
             using HttpRequestMessage requestMessage = new(HttpMethod.Post, $"{ApiUrl}/news/add");
-            requestMessage.Headers.Authorization = new("admin", _configProvider.ApiPassword);
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, AddChangeNewsInMessageContext.Default.AddChangeNewsInMessage);
 
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
@@ -80,7 +82,8 @@ public sealed partial class ApiInterface
             };
 
             using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/news/change");
-            requestMessage.Headers.Authorization = new("admin", _configProvider.ApiPassword);
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, AddChangeNewsInMessageContext.Default.AddChangeNewsInMessage);
 
             var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 

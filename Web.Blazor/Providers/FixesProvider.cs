@@ -303,13 +303,18 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">FIx guid</param>
     /// <returns>Does fix exist</returns>
-    public bool CheckIfFixExists(Guid fixGuid)
+    public int? CheckIfFixExists(Guid fixGuid)
     {
         using var dbContext = _dbContextFactory.Get();
 
         var entity = dbContext.Fixes.Find(fixGuid);
 
-        return entity is not null;
+        if (entity is null)
+        {
+            return null;
+        }
+
+        return entity.Version;
     }
 
     /// <summary>

@@ -3,6 +3,7 @@ using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
+using Microsoft.AspNetCore.Http;
 
 namespace Web.Blazor.ControllersV2;
 
@@ -31,25 +32,28 @@ public sealed class FixesController : ControllerBase
 
     [HttpGet("exists")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(string), StatusCodes.Status404NotFound)]
-    public StatusCodeResult CheckIfFixExists([FromQuery] Guid? guid)
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<CheckIfFixExistsOutMessage> CheckIfFixExists([FromQuery] Guid? guid)
     {
         if (guid is null)
         {
             return BadRequest();
         }
 
-        var result = _fixesProvider.CheckIfFixExists(guid.Value);
+        var currentVersion = _fixesProvider.CheckIfFixExists(guid.Value);
 
-        if (result)
-        {
-            return Ok();
-        }
-        else
+        if (currentVersion is null)
         {
             return NotFound();
         }
+
+        CheckIfFixExistsOutMessage result = new()
+        {
+            CurrentVersion = currentVersion
+        };
+
+        return Ok(result);
     }
 
 

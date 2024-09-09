@@ -26,7 +26,7 @@ public sealed class FixesController : ControllerBase
 
     [Obsolete("Use V2 instead")]
     [HttpGet("{guid:Guid}")]
-    public bool CheckIfFixEsists(Guid guid) => _fixesProvider.CheckIfFixExists(guid);
+    public bool CheckIfFixEsists(Guid guid) => _fixesProvider.CheckIfFixExists(guid) is not null;
 
 
     [Obsolete("Use V2 instead")]

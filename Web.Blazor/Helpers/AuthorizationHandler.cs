@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Text;
+using System.Net;
 
 namespace Web.Blazor.Helpers;
 
@@ -19,9 +19,7 @@ public sealed class AuthorizationHandler : IAuthorizationHandler
             return Task.CompletedTask;
         }
 
-        var encodedUsernamePassword = authHeader.ToString()["Basic ".Length..].Trim();
-        var encoded = Encoding.GetEncoding("iso-8859-1").GetString(Convert.FromBase64String(encodedUsernamePassword));
-        var pass = encoded.Split(':')[1];
+        var pass = authHeader.ToString()[AuthenticationSchemes.Basic.ToString().Length..].Trim();
 
         var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
 
