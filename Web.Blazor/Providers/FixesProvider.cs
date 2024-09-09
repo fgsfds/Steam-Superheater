@@ -11,7 +11,6 @@ using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Text.Json;
 using Web.Blazor.Telegram;
 
 namespace Web.Blazor.Providers;
@@ -348,12 +347,10 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="gameId">Game id</param>
     /// <param name="gameName">Game name</param>
-    /// <param name="fixJson">Fix</param>
+    /// <param name="fix">Fix</param>
     /// <returns>Is successfully added</returns>
     public async Task<bool> AddFixAsync(int gameId, string gameName, BaseFixEntity fix)
     {
-        //var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
-
         Guard.IsNotNull(fix);
 
         if (fix is FileFixEntity fileFix1 &&

@@ -61,9 +61,9 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while getting latest release");
             }
 
-            var releases = await response.Content.ReadFromJsonAsync(GetReleasesOutMessageContext.Default.DictionaryOSEnumAppReleaseEntity).ConfigureAwait(false);
+            var releases = await response.Content.ReadFromJsonAsync(GetReleasesOutMessageContext.Default.GetReleasesOutMessage).ConfigureAwait(false);
 
-            return new(ResultEnum.Success, releases![osEnum], string.Empty);
+            return new(ResultEnum.Success, releases!.Releases[osEnum], string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {

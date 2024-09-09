@@ -10,8 +10,6 @@ public sealed class NewsProvider
 {
     private readonly DatabaseContextFactory _databaseContextFactory;
 
-    //private List<NewsEntity>? _news;
-
 
     public NewsProvider(DatabaseContextFactory databaseContextFactory)
     {
@@ -64,8 +62,6 @@ public sealed class NewsProvider
 
         _ = dbContext.SaveChanges();
 
-        //UpdateCache();
-
         return true;
     }
 
@@ -89,28 +85,6 @@ public sealed class NewsProvider
         entity.Content = text;
         _ = dbContext.SaveChanges();
 
-        //UpdateCache();
-
         return true;
     }
-
-
-    /// <summary>
-    /// Get list of news from the database
-    /// </summary>
-    //private void UpdateCache()
-    //{
-    //    using var dbContext = _databaseContextFactory.Get();
-    //    var newsEntities = dbContext.News.AsNoTracking().OrderByDescending(static x => x.Date).ToList();
-
-    //    var news = newsEntities.ConvertAll(x =>
-    //        new NewsEntity()
-    //        {
-    //            Date = x.Date.ToUniversalTime(),
-    //            Content = x.Content
-    //        }
-    //    );
-
-    //    _news = news;
-    //}
 }
