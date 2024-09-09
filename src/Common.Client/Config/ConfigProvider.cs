@@ -1,7 +1,7 @@
 using Common.Enums;
-using Common.Helpers;
 using Database.Client;
 using System.Runtime.CompilerServices;
+using static Common.IConfigProvider;
 
 namespace Common.Client.Config;
 
@@ -9,7 +9,6 @@ public sealed class ConfigProvider : IConfigProvider
 {
     private readonly DatabaseContext _dbContext;
 
-    public delegate void ParameterChanged(string parameterName);
     public event ParameterChanged ParameterChangedEvent;
 
     public ConfigProvider(DatabaseContextFactory dbContextFactory)

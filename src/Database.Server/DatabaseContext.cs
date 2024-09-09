@@ -11,15 +11,11 @@ public sealed class DatabaseContext : DbContext
     public DbSet<DependenciesDbEntity> Dependencies { get; set; }
     public DbSet<FileFixesDbEntity> FileFixes { get; set; }
     public DbSet<FixesDbEntity> Fixes { get; set; }
-    public DbSet<FixTypesDbEntity> FixTypes { get; set; }
     public DbSet<GamesDbEntity> Games { get; set; }
     public DbSet<HostsFixesDbEntity> HostsFixes { get; set; }
-    public DbSet<InstallsDbEntity> Installs { get; set; }
     public DbSet<NewsDbEntity> News { get; set; }
     public DbSet<RegistryFixesDbEntity> RegistryFixes { get; set; }
-    public DbSet<RegistryValueTypesDbEntity> RegistryValueTypes { get; set; }
     public DbSet<ReportsDbEntity> Reports { get; set; }
-    public DbSet<ScoresDbEntity> Scores { get; set; }
     public DbSet<TagsDbEntity> Tags { get; set; }
     public DbSet<TagsListsDbEntity> TagsLists { get; set; }
 
@@ -40,7 +36,7 @@ public sealed class DatabaseContext : DbContext
     {
         if (_isDevMode)
         {
-            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater;Username=postgres;Password=123;Include Error Detail=True");
+            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater2;Username=postgres;Password=123;Include Error Detail=True");
         }
         else
         {
@@ -48,7 +44,7 @@ public sealed class DatabaseContext : DbContext
             var dbport = Environment.GetEnvironmentVariable("DbPort")!;
             var user = Environment.GetEnvironmentVariable("DbUser")!;
             var password = Environment.GetEnvironmentVariable("DbPass")!;
-            _ = optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater;Username={user};Password={password}");
+            _ = optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database=superheater2;Username={user};Password={password}");
         }
     }
 }

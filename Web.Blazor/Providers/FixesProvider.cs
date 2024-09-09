@@ -11,8 +11,6 @@ using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Security.Cryptography;
-using System.Text.Json;
-using Web.Blazor.Helpers;
 using Web.Blazor.Telegram;
 
 namespace Web.Blazor.Providers;
@@ -44,7 +42,7 @@ public sealed class FixesProvider
     /// <summary>
     /// Get list of fixes from the database
     /// </summary>
-    public IEnumerable<FixesList> GetFixesList()
+    public IEnumerable<FixesList> GetFixesList(int version)
     {
         Stopwatch sw = new();
         sw.Start();
@@ -52,8 +50,14 @@ public sealed class FixesProvider
         //disposed later
         var dbContext = _dbContextFactory.Get();
 
+        var fixesDb = dbContext.Fixes.AsNoTracking().Where(x => x.TableVersion > version).OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
+
+        if (fixesDb.Count == 0)
+        {
+            return [];
+        }
+        
         var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
-        var fixesDb = dbContext.Fixes.AsNoTracking().OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
         var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
         var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
         var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
@@ -63,9 +67,6 @@ public sealed class FixesProvider
         var tagsIdsDb = dbContext.TagsLists.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.TagId);
         var dependencies = dbContext.Dependencies.AsNoTracking().ToLookup(static x => x.FixGuid, static x => x.DependencyGuid);
 
-        var installsDb = dbContext.Installs.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Installs);
-        var scoresDb = dbContext.Scores.AsNoTracking().ToDictionary(static x => x.FixGuid, static x => x.Score);
-
         dbContext.Dispose();
 
         List<FixesList> fixesLists = new(games.Count);
@@ -74,11 +75,15 @@ public sealed class FixesProvider
         {
             var fixes = fixesDb[game.Id];
 
+            if (!fixes.Any())
+            {
+                continue;
+            }
+
             List<BaseFixEntity> baseFixEntities = new(fixes.Count());
 
             foreach (var fix in fixes)
             {
-                var type = (FixTypeEnum)fix.FixType;
                 var deps = dependencies[fix.Guid];
                 var tags = tagsIdsDb[fix.Guid].Select(x => tagsDict[x]);
 
@@ -93,7 +98,7 @@ public sealed class FixesProvider
                     supportedOSes = supportedOSes.AddFlag(OSEnum.Linux);
                 }
 
-                if (type is FixTypeEnum.FileFix)
+                if (fix.FixType is FixTypeEnum.FileFix)
                 {
                     var fileFix = fileFixesDb[fix.Guid];
 
@@ -106,8 +111,8 @@ public sealed class FixesProvider
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = installsDb.GetValueOrDefault(fix.Guid),
-                        Score = scoresDb.GetValueOrDefault(fix.Guid),
+                        Installs = fix.Installs,
+                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
@@ -128,7 +133,7 @@ public sealed class FixesProvider
 
                     baseFixEntities.Add(fileFixEntity);
                 }
-                else if (type is FixTypeEnum.RegistryFix)
+                else if (fix.FixType is FixTypeEnum.RegistryFix)
                 {
                     var regFix = regFixesDb[fix.Guid];
 
@@ -141,20 +146,20 @@ public sealed class FixesProvider
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = installsDb.GetValueOrDefault(fix.Guid),
-                        Score = scoresDb.GetValueOrDefault(fix.Guid),
+                        Installs = fix.Installs,
+                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
                         Key = regFix.Key,
                         ValueName = regFix.ValueName,
                         NewValueData = regFix.NewValueData,
-                        ValueType = (RegistryValueTypeEnum)regFix.ValueType
+                        ValueType = regFix.ValueType
                     };
 
                     baseFixEntities.Add(fileFixEntity);
                 }
-                else if (type is FixTypeEnum.HostsFix)
+                else if (fix.FixType is FixTypeEnum.HostsFix)
                 {
                     var hostsFix = hostsFixesDb[fix.Guid];
 
@@ -167,8 +172,8 @@ public sealed class FixesProvider
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = installsDb.GetValueOrDefault(fix.Guid),
-                        Score = scoresDb.GetValueOrDefault(fix.Guid),
+                        Installs = fix.Installs,
+                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
@@ -177,7 +182,7 @@ public sealed class FixesProvider
 
                     baseFixEntities.Add(fileFixEntity);
                 }
-                else if (type is FixTypeEnum.TextFix)
+                else if (fix.FixType is FixTypeEnum.TextFix)
                 {
                     TextFixEntity textFixEntity = new()
                     {
@@ -188,8 +193,8 @@ public sealed class FixesProvider
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = installsDb.GetValueOrDefault(fix.Guid),
-                        Score = scoresDb.GetValueOrDefault(fix.Guid),
+                        Installs = fix.Installs,
+                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled
                     };
@@ -224,29 +229,12 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var fix = dbContext.Scores.Find(fixGuid);
+        var fix = dbContext.Fixes.Find(fixGuid)!;
 
-        int newScore;
-
-        if (fix is null)
-        {
-            ScoresDbEntity newScoreEntity = new()
-            {
-                FixGuid = fixGuid,
-                Score = increment
-            };
-
-            _ = dbContext.Scores.Add(newScoreEntity);
-            newScore = increment;
-        }
-        else
-        {
-            fix.Score += increment;
-            newScore = fix.Score;
-        }
+        fix.Score += increment;
+        var newScore = fix.Score;
 
         _ = dbContext.SaveChanges();
-
 
         var names = (from fixx in dbContext.Fixes
                      join gamee in dbContext.Games
@@ -269,26 +257,10 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var fix = dbContext.Installs.Find(fixGuid);
+        var fix = dbContext.Fixes.Find(fixGuid)!;
 
-        int newInstalls;
-
-        if (fix is null)
-        {
-            InstallsDbEntity newInstallsEntity = new()
-            {
-                FixGuid = fixGuid,
-                Installs = 1
-            };
-
-            _ = dbContext.Installs.Add(newInstallsEntity);
-            newInstalls = 1;
-        }
-        else
-        {
-            fix.Installs += 1;
-            newInstalls = fix.Installs;
-        }
+        fix.Installs += 1;
+        var newInstalls = fix.Installs;
 
         _ = dbContext.SaveChanges();
         return newInstalls;
@@ -299,7 +271,7 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">Fix guid</param>
     /// <param name="text">Report text</param>
-    public async Task AddReportAsync(Guid fixGuid, string text)
+    public async Task<bool> AddReportAsync(Guid fixGuid, string text)
     {
         using var dbContext = _dbContextFactory.Get();
 
@@ -321,6 +293,8 @@ public sealed class FixesProvider
                  .First();
 
         await _bot.SendMessageAsync($"Fix score changed: {names.Item1} - {names.Item2} text {text}");
+
+        return true;
     }
 
     /// <summary>
@@ -328,13 +302,18 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">FIx guid</param>
     /// <returns>Does fix exist</returns>
-    public bool CheckIfFixExists(Guid fixGuid)
+    public int? CheckIfFixExists(Guid fixGuid)
     {
         using var dbContext = _dbContextFactory.Get();
 
         var entity = dbContext.Fixes.Find(fixGuid);
 
-        return entity is not null;
+        if (entity is null)
+        {
+            return null;
+        }
+
+        return entity.Version;
     }
 
     /// <summary>
@@ -342,17 +321,8 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="fixGuid">Fix guid</param>
     /// <param name="isDisabled">Is disabled</param>
-    /// <param name="password">API password</param>
-    /// <returns></returns>
-    public bool ChangeFixDisabledState(Guid fixGuid, bool isDisabled, string password)
+    public bool ChangeFixDisabledState(Guid fixGuid, bool isDisabled)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         using var dbContext = _dbContextFactory.Get();
         var entity = dbContext.Fixes.Find(fixGuid);
 
@@ -365,15 +335,8 @@ public sealed class FixesProvider
         return true;
     }
 
-    public async Task<bool> ForceCheckFixesAsync(string password)
+    public async Task<bool> ForceCheckFixesAsync()
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         await CheckFixesAsync();
 
         return true;
@@ -384,20 +347,10 @@ public sealed class FixesProvider
     /// </summary>
     /// <param name="gameId">Game id</param>
     /// <param name="gameName">Game name</param>
-    /// <param name="fixJson">Fix</param>
-    /// <param name="password">API password</param>
-    /// <returns>Is adding successful</returns>
-    public async Task<bool> AddFixAsync(int gameId, string gameName, string fixJson, string password)
+    /// <param name="fix">Fix</param>
+    /// <returns>Is successfully added</returns>
+    public async Task<bool> AddFixAsync(int gameId, string gameName, BaseFixEntity fix)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
-        var fix = JsonSerializer.Deserialize(fixJson, FixesListContext.Default.BaseFixEntity);
-
         Guard.IsNotNull(fix);
 
         if (fix is FileFixEntity fileFix1 &&
@@ -414,6 +367,9 @@ public sealed class FixesProvider
         using var dbContext = _dbContextFactory.Get();
         using (var transaction = dbContext.Database.BeginTransaction())
         {
+            var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
+            var newTableVersion = databaseVersions.Version + 1;
+
             //adding or modifying game
             var gameEntity = dbContext.Games.Find(gameId);
 
@@ -456,7 +412,7 @@ public sealed class FixesProvider
                 FixesDbEntity newFixEntity = new()
                 {
                     GameId = gameEntity.Id,
-                    FixType = (byte)fixType,
+                    FixType = fixType,
                     Guid = fix.Guid,
                     Description = fix.Description,
                     Changelog = null,
@@ -466,7 +422,9 @@ public sealed class FixesProvider
                     Notes = fix.Notes,
                     Version = fix.Version,
                     IsDisabled = true,
-                    TableVersion = 0
+                    TableVersion = newTableVersion,
+                    Score = 0,
+                    Installs = 0
                 };
 
                 _ = dbContext.Fixes.Add(newFixEntity);
@@ -481,7 +439,7 @@ public sealed class FixesProvider
             else
             {
                 existingEntity.GameId = gameEntity.Id;
-                existingEntity.FixType = (byte)fixType;
+                existingEntity.FixType = fixType;
                 existingEntity.Description = fix.Description;
                 existingEntity.Changelog = null;
                 existingEntity.IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux);
@@ -489,7 +447,7 @@ public sealed class FixesProvider
                 existingEntity.Name = fix.Name;
                 existingEntity.Notes = fix.Notes;
                 existingEntity.Version = fix.Version;
-                existingEntity.TableVersion = existingEntity.TableVersion;
+                existingEntity.TableVersion = newTableVersion;
             }
 
             _ = dbContext.SaveChanges();
@@ -530,7 +488,7 @@ public sealed class FixesProvider
                     FixGuid = regFix.Guid,
                     Key = regFix.Key,
                     ValueName = regFix.ValueName,
-                    ValueType = (byte)regFix.ValueType,
+                    ValueType = regFix.ValueType,
                     NewValueData = regFix.NewValueData
                 };
 
@@ -600,6 +558,9 @@ public sealed class FixesProvider
                 }
             }
 
+            _ = dbContext.SaveChanges();
+
+            databaseVersions.Version = newTableVersion;
             _ = dbContext.SaveChanges();
 
             transaction.Commit();

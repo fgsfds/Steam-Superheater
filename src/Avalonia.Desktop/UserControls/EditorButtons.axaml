@@ -1,0 +1,86 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             x:DataType="vm:EditorViewModel"
+             x:Class="Avalonia.Desktop.UserControls.EditorButtons">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Left"
+                    Grid.Column="0">
+
+            <ComboBox Name="GamesComboBox"
+                      Margin="0,0,3,0"
+                      Width="200"
+                      Padding="8"
+                      VerticalAlignment="Center"
+                      Height="{Binding #HowToSubmitButton.Bounds.Height}"
+                      ItemsSource="{Binding AvailableGamesList}"
+                      SelectedItem="{Binding SelectedAvailableGame}"
+                      IsEnabled="{Binding !IsEmpty}"/>
+
+            <Button Height="{Binding #HowToSubmitButton.Bounds.Height}"
+                    Width="{Binding $self.Bounds.Height}"
+                    Margin="3,0"
+                    Padding="8"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding AddNewGameCommand}">
+                <i:Icon Value="fa-plus" />
+            </Button>
+
+            <Button Height="{Binding #HowToSubmitButton.Bounds.Height}"
+                    Width="{Binding $self.Bounds.Height}"
+                    Margin="3,0"
+                    Padding="8"
+                    Command="{Binding UpdateGamesCommand}">
+                <Grid>
+                    <i:Icon Value="fa-sync" Animation="Spin" IsVisible="{Binding IsInProgress}" />
+                    <i:Icon Value="fa-sync" IsVisible="{Binding !IsInProgress}" />
+                </Grid>
+            </Button>
+
+            <TextBlock
+                Margin="3,0"
+                Padding="8"
+                VerticalAlignment="Center"
+                IsVisible="{Binding IsEmpty}"
+                FontWeight="Bold">
+                &lt;- Press to start
+            </TextBlock>
+
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal"
+                    HorizontalAlignment="Right"
+                    Grid.Column="2">
+
+            <Button Name="CancelButton"
+                    Command="{Binding CancelCommand}"
+                    Margin="3,0"
+                    Background="{DynamicResource SystemAccentColor}"
+                    Content="Cancel"
+                    Padding="8"
+                    IsVisible="{Binding LockButtons}"/>
+
+            <Button Name="HowToSubmitButton"
+                    Margin="3,0"
+                    Padding="8"
+                    Click="HowToSubmitButtonClick"
+                    Background="{DynamicResource SystemAccentColor}">
+                How to submit fixes...
+            </Button>
+
+        </StackPanel>
+
+    </Grid>
+</UserControl>

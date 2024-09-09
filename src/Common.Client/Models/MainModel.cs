@@ -1,5 +1,4 @@
-using Common.Client.API;
-using Common.Client.Config;
+using Api.Common.Interface;
 using Common.Client.Providers;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -376,7 +375,7 @@ public sealed class MainModel
 
         if (response.IsSuccess)
         {
-            fix.Score = response.ResultObject;
+            fix.Score = response.ResultObject.Value;
 
             _config.ChangeFixUpvoteState(fix.Guid, needTpUpvote);
         }
@@ -398,7 +397,7 @@ public sealed class MainModel
             return;
         }
 
-        fix.Installs = result.ResultObject;
+        fix.Installs = result.ResultObject.Value;
     }
 }
 

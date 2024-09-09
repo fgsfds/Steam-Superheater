@@ -1,0 +1,268 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
+             x:DataType="vm:SettingsViewModel"
+             x:Class="Avalonia.Desktop.Pages.SettingsPage">
+
+    <Grid RowDefinitions="auto,*,auto">
+
+        <StackPanel Grid.Row="0" Orientation="Vertical">
+
+            <!--Delete archive switch-->
+            <Grid ColumnDefinitions="auto,auto,auto">
+
+                <ToggleSwitch IsChecked="{Binding DeleteArchivesCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Delete archive after installing a fix
+                </TextBlock>
+
+                <Button Grid.Column="2"
+                        Margin="5"
+                        Content="{Binding DeleteButtonText}"
+                        IsVisible="{Binding ZipFilesCount, Converter={x:Static ObjectConverters.IsNotNull}}"
+                        Command="{Binding DeleteFilesCommand}"/>
+
+            </Grid>
+
+            <!--Open config switch-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <ToggleSwitch IsChecked="{Binding OpenConfigCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Open config after installing a fix
+                </TextBlock>
+
+            </Grid>
+
+            <!--Show uninstalled games-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <ToggleSwitch IsChecked="{Binding ShowUninstalledGamesCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Show uninstalled games in the list
+                </TextBlock>
+
+            </Grid>
+
+            <!--Unsupported fixes-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <ToggleSwitch IsChecked="{Binding ShowUnsupportedFixesCheckbox}"
+                              Grid.Column="0"
+                              VerticalAlignment="Center"
+                              OnContent=""
+                              OffContent=""
+                              Margin="5"/>
+
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Show fixes that are not supported by the current OS
+                </TextBlock>
+
+            </Grid>
+
+            <!--Hidden tags-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Center"
+                           Margin="5">
+                    Hidden tags
+                </TextBlock>
+
+                <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Grid.Column="1"
+                         Margin="5"
+                         ItemsSource="{Binding HiddenTagsList}">
+
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="5">
+
+                                <TextBlock Text="{Binding}"
+                                           VerticalAlignment="Center"
+                                           Margin="5"/>
+
+                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:SettingsViewModel)DataContext).RemoveTagCommand}"
+                                        CommandParameter="{Binding}"
+                                        Width="{Binding $self.Bounds.Height}"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center"
+                                        IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                        ToolTip.Tip="Unhide tag">
+                                    <i:Icon Value="fa-x" />
+                                </Button>
+
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
+
+            </Grid>
+
+            <!--Theme selection-->
+            <Grid ColumnDefinitions="auto,*">
+
+                <StackPanel Orientation="Horizontal" Margin="5">
+
+                    <TextBlock Margin="5"
+                               VerticalAlignment="Center">
+                        Theme
+                    </TextBlock>
+
+                    <RadioButton GroupName="theme"
+                                 Margin="5"
+                                 Command="{Binding SetDefaultThemeCommand}"
+                                 IsChecked="{Binding IsDefaultTheme}">
+                        System
+                    </RadioButton>
+
+                    <RadioButton GroupName="theme"
+                                 Margin="5"
+                                 Command="{Binding SetLightThemeCommand}"
+                                 IsChecked="{Binding IsLightTheme}">
+                        Light
+                    </RadioButton>
+
+                    <RadioButton GroupName="theme"
+                                 Margin="5"
+                                 Command="{Binding SetDarkThemeCommand}"
+                                 IsChecked="{Binding IsDarkTheme}">
+                        Dark
+                    </RadioButton>
+
+                </StackPanel>
+
+            </Grid>
+
+            <!--Advanced settings-->
+            <Expander Header="Developer settings"
+                      HorizontalAlignment="Stretch"
+                      IsExpanded="True"
+                      IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
+                      Margin="5">
+
+                <StackPanel Orientation="Vertical">
+
+                    <!--Local API switch-->
+                    <Grid ColumnDefinitions="auto,*">
+
+                        <ToggleSwitch IsChecked="{Binding UseLocalApiCheckbox}"
+                                      Grid.Column="0"
+                                      VerticalAlignment="Center"
+                                      OnContent=""
+                                      OffContent=""
+                                      Margin="5"/>
+
+                        <TextBlock Grid.Column="1"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            Use localhost for API and local folder for files repo
+                        </TextBlock>
+
+                    </Grid>
+
+                    <!--Path to local repo-->
+                    <Grid ColumnDefinitions="auto,*,auto,auto">
+
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            Path to local repository
+                        </TextBlock>
+
+                        <TextBox Text="{Binding PathToLocalRepoTextBox}"
+                                 Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 Margin="5"/>
+
+                        <Button Command="{Binding OpenFolderPickerCommand}"
+                                Grid.Column="2"
+                                Margin="0,0,5,0">
+                            ...
+                        </Button>
+
+                        <Button Command="{Binding SaveLocalRepoPathCommand}"
+                                Grid.Column="3">
+                            Save
+                        </Button>
+
+                    </Grid>
+
+                    <!--API password-->
+                    <Grid ColumnDefinitions="auto,*,auto">
+
+                        <TextBlock Grid.Column="0"
+                                   VerticalAlignment="Center"
+                                   Margin="5">
+                            API password
+                        </TextBlock>
+
+                        <TextBox Text="{Binding ApiPasswordTextBox}"
+                                 Grid.Column="1"
+                                 VerticalAlignment="Center"
+                                 Margin="5"/>
+
+                        <Button Command="{Binding SaveApiPasswordCommand}"
+                                Grid.Column="3">
+                            Save
+                        </Button>
+
+                    </Grid>
+
+                </StackPanel>
+            </Expander>
+
+        </StackPanel>
+
+        <Button Grid.Row="2"
+                Margin="5"
+                Padding="8"
+                HorizontalAlignment="Right"
+                Command="{Binding OpenConfigXMLCommand}"
+                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
+            Open config XML...
+        </Button>
+
+    </Grid>
+</UserControl>

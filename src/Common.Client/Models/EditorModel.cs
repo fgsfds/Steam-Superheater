@@ -1,4 +1,4 @@
-using Common.Client.API;
+using Api.Common.Interface;
 using Common.Client.FilesTools;
 using Common.Client.Providers;
 using Common.Entities;
@@ -315,9 +315,9 @@ public sealed class EditorModel
     /// </summary>
     public async Task<Result> CheckFixBeforeUploadAsync(BaseFixEntity fix)
     {
-        var doesFixExists = await _apiInterface.CheckIfFixEsistsAsync(fix.Guid).ConfigureAwait(false);
+        var doesFixExists = await _apiInterface.CheckIfFixExistsAsync(fix.Guid).ConfigureAwait(false);
 
-        if (!doesFixExists.IsSuccess || doesFixExists.ResultEnum is ResultEnum.Exists)
+        if (doesFixExists.IsSuccess && doesFixExists.ResultObject.HasValue)
         {
             return new(
                 ResultEnum.Error,

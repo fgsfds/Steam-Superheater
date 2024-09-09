@@ -65,12 +65,12 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Number of installs
     /// </summary>
-    public int? Installs { get; set; }
+    public int Installs { get; set; }
 
     /// <summary>
     /// Fix's score
     /// </summary>
-    public int? Score { get; set; }
+    public int Score { get; set; }
 
     /// <summary>
     /// Is fix disabled in the database

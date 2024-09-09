@@ -1,4 +1,4 @@
-using Common.Client.API;
+using Api.Common.Interface;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
@@ -183,6 +183,10 @@ public sealed class FixesProvider
 
     private Result<List<FixesList>> CheckLastUpdatedDate(DatabaseContext dbContext)
     {
+        var aa = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
+
+        var existingVersion = aa!.Version;
+
         return new(ResultEnum.Error, null, "Can't get existing fixes list");
     }
 

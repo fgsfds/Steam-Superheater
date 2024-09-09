@@ -16,12 +16,13 @@ public static class ProvidersBindings
         else
         {
             _ = container.AddSingleton<IConfigProvider, ConfigProvider>();
-            _ = container.AddSingleton<DatabaseContextFactory>();
         }
 
+        _ = container.AddSingleton<DatabaseContextFactory>();
         _ = container.AddSingleton<GamesProvider>();
         _ = container.AddSingleton<FixesProvider>();
         _ = container.AddSingleton<InstalledFixesProvider>();
+        _ = container.AddSingleton<NewsProvider>();
     }
 }
 

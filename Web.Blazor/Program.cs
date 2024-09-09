@@ -1,6 +1,8 @@
+using Api.Common.Messages;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Database.Server;
+using Microsoft.AspNetCore.Authorization;
 using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 using Web.Blazor.Tasks;
@@ -26,6 +28,18 @@ public class Program
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsEntityContext.Default);
+
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddChangeNewsInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddFixInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeFixStateInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeScoreInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ChangeScoreOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(CheckIfFixExistsOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(DatabaseVersionsOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GetReleasesOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountInMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(IncreaseInstallsCountOutMessageContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(ReportFixInMessageContext.Default);
         });
 
         // Don't run tasks in dev mode
@@ -41,12 +55,15 @@ public class Program
         _ = builder.Services.AddSingleton<NewsProvider>();
         _ = builder.Services.AddSingleton<AppReleasesProvider>();
         _ = builder.Services.AddSingleton<StatsProvider>();
+        _ = builder.Services.AddSingleton<DatabaseVersionsProvider>();
 
         _ = builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
         _ = builder.Services.AddSingleton<S3Client>();
         _ = builder.Services.AddSingleton<DatabaseContextFactory>(x => new(builder.Environment.IsDevelopment()));
         _ = builder.Services.AddSingleton<TelegramBot>();
         _ = builder.Services.AddSingleton<ServerProperties>();
+
+        _ = builder.Services.AddSingleton<IAuthorizationHandler, AuthorizationHandler>();
 
 
         var app = builder.Build();
@@ -75,6 +92,7 @@ public class Program
         _ = app.UseHttpsRedirection();
         _ = app.UseStaticFiles();
         _ = app.UseRouting();
+        _ = app.UseAuthorization();
         _ = app.MapBlazorHub();
         _ = app.MapFallbackToPage("/_Host");
 

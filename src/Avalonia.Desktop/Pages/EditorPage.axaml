@@ -1,0 +1,22 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:usc="clr-namespace:Avalonia.Desktop.UserControls"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             x:DataType="vm:EditorViewModel"
+             x:Class="Avalonia.Desktop.Pages.EditorPage">
+
+    <Grid RowDefinitions="auto,*,auto,auto">
+
+        <usc:SearchBar Grid.Row="0" Margin="5"/>
+
+        <usc:EditorLists Grid.Row="1" Margin="5"/>
+
+        <usc:EditorButtons Grid.Row="2" Margin="5"/>
+
+        <usc:ProgressBar Grid.Row="3" Margin="5"/>
+
+    </Grid>
+</UserControl>

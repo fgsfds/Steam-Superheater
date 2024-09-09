@@ -1,7 +1,11 @@
-﻿namespace Common.Enums;
+﻿using System.ComponentModel;
+
+namespace Common.Enums;
 
 public enum DatabaseTableEnum : byte
 {
-    Fixes = 0,
-    News = 1
+    [Description("Fixes")]
+    Fixes = 1,
+    [Description("News")]
+    News = 2
 }

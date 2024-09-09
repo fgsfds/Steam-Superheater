@@ -9,7 +9,6 @@ public static class ModelsBindings
     {
         _ = container.AddSingleton<EditorModel>();
         _ = container.AddSingleton<MainModel>();
-        _ = container.AddSingleton<NewsModel>();
     }
 }
 

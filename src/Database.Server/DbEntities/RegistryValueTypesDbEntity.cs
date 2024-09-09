@@ -9,9 +9,10 @@ public sealed class RegistryValueTypesDbEntity
 {
     [Key]
     [Column("id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
     public required RegistryValueTypeEnum Id { get; set; }
 
-    [Column("type")]
-    public required string Type { get; set; }
+    [Column("name")]
+    public required string Name { get; set; }
 }
 

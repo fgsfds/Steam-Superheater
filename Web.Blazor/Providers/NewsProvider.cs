@@ -1,4 +1,5 @@
 using Common.Entities;
+using Common.Enums;
 using Database.Server;
 using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +10,31 @@ public sealed class NewsProvider
 {
     private readonly DatabaseContextFactory _databaseContextFactory;
 
-    public List<NewsEntity>? News { get; private set; }
-
 
     public NewsProvider(DatabaseContextFactory databaseContextFactory)
     {
         _databaseContextFactory = databaseContextFactory;
+    }
 
-        UpdateNews();
+
+    public List<NewsEntity>? GetNews(int version)
+    {
+        using var dbContext = _databaseContextFactory.Get();
+        var newsEntities = dbContext.News.AsNoTracking().Where(x => x.TableVersion > version).OrderByDescending(static x => x.Date).ToList();
+
+        if (newsEntities is null || newsEntities.Count == 0)
+        {
+            return null;
+        }
+
+        var news = newsEntities.ConvertAll(static x =>
+            new NewsEntity()
+            {
+                Date = x.Date.ToUniversalTime(),
+                Content = x.Content
+            });
+
+        return news;
     }
 
     /// <summary>
@@ -24,29 +42,25 @@ public sealed class NewsProvider
     /// </summary>
     /// <param name="date">News date</param>
     /// <param name="text">News text</param>
-    /// <param name="password">API password</param>
     /// <returns>News successfully added</returns>
-    public bool AddNews(DateTime date, string text, string password)
+    public bool AddNews(DateTime date, string text)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         using var dbContext = _databaseContextFactory.Get();
+
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.News)!;
+        var newTableVersion = databaseVersions.Version + 1;
 
         NewsDbEntity entity = new()
         {
             Date = date.ToUniversalTime(),
-            Content = text
+            Content = text,
+            TableVersion = newTableVersion,
         };
 
-        dbContext.News.Add(entity);
-        dbContext.SaveChanges();
+        _ = dbContext.News.Add(entity);
+        _ = databaseVersions.Version = newTableVersion;
 
-        UpdateNews();
+        _ = dbContext.SaveChanges();
 
         return true;
     }
@@ -56,17 +70,9 @@ public sealed class NewsProvider
     /// </summary>
     /// <param name="date">News date</param>
     /// <param name="text">News text</param>
-    /// <param name="password">API password</param>
     /// <returns>News successfully changed</returns>
-    public bool ChangeNews(DateTime date, string text, string password)
+    public bool ChangeNews(DateTime date, string text)
     {
-        var apiPassword = Environment.GetEnvironmentVariable("ApiPass")!;
-
-        if (!apiPassword.Equals(password))
-        {
-            return false;
-        }
-
         using var dbContext = _databaseContextFactory.Get();
 
         var entity = dbContext.News.Find(date);
@@ -77,31 +83,8 @@ public sealed class NewsProvider
         }
 
         entity.Content = text;
-        dbContext.SaveChanges();
-
-        UpdateNews();
+        _ = dbContext.SaveChanges();
 
         return true;
     }
-
-
-    /// <summary>
-    /// Get list of news from the database
-    /// </summary>
-    private void UpdateNews()
-    {
-        using var dbContext = _databaseContextFactory.Get();
-        var newsEntities = dbContext.News.AsNoTracking().OrderByDescending(static x => x.Date).ToList();
-
-        var news = newsEntities.ConvertAll(x =>
-            new NewsEntity()
-            {
-                Date = x.Date.ToUniversalTime(),
-                Content = x.Content
-            }
-        );
-
-        News = news;
-    }
 }
-

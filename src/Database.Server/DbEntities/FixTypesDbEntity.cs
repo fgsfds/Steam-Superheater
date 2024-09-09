@@ -1,3 +1,4 @@
+using Common.Enums;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,9 +9,10 @@ public sealed class FixTypesDbEntity
 {
     [Key]
     [Column("id")]
-    public required byte Id { get; set; }
+    [DatabaseGenerated(DatabaseGeneratedOption.None)]
+    public required FixTypeEnum Id { get; set; }
 
-    [Column("type")]
-    public required string Type { get; set; }
+    [Column("name")]
+    public required string Name { get; set; }
 }
 

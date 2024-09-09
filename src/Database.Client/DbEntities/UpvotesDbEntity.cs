@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Client.DbEntities;
 
-[Table(name: "upvotes", Schema = "main")]
+[Table(name: "upvotes")]
 public sealed class UpvotesDbEntity
 {
     [Key]
