@@ -4,7 +4,6 @@ using Avalonia.Desktop.Windows;
 using Avalonia.Platform.Storage;
 using Common;
 using Common.Client;
-using Common.Client.Config;
 using Common.Client.Models;
 using Common.Client.Providers;
 using Common.Entities;
@@ -20,7 +19,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Threading;
 
 namespace Avalonia.Desktop.ViewModels;
 

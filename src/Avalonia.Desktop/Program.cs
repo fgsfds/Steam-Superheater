@@ -1,4 +1,3 @@
-using Avalonia.Desktop;
 using Common.Client;
 using Common.Helpers;
 using Projektanker.Icons.Avalonia;

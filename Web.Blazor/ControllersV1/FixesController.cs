@@ -1,6 +1,5 @@
 using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Mvc;
-using Web.Blazor.Helpers;
 using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV1;

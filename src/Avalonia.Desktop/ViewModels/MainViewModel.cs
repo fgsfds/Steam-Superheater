@@ -4,7 +4,6 @@ using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Input.Platform;
 using Common;
 using Common.Client;
-using Common.Client.Config;
 using Common.Client.FixTools;
 using Common.Client.Models;
 using Common.Entities.Fixes;
