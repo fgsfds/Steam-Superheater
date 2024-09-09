@@ -3,7 +3,6 @@ using Common.Entities.Fixes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
-using Microsoft.AspNetCore.Http;
 
 namespace Web.Blazor.ControllersV2;
 
@@ -69,7 +68,7 @@ public sealed class FixesController : ControllerBase
     }
 
 
-    [HttpPut("score/change")]
+    [HttpPut("score")]
     [ProducesResponseType(typeof(ChangeScoreOutMessage), StatusCodes.Status200OK)]
     public async Task<ActionResult<ChangeScoreOutMessage>> ChangeScoreAsync([FromBody] ChangeScoreInMessage message)
     {

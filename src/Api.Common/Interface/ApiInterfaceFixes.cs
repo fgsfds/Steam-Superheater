@@ -3,7 +3,6 @@ using Common;
 using Common.Entities.Fixes;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
 
 namespace Api.Common.Interface;
 
@@ -49,7 +48,7 @@ public sealed partial class ApiInterface
                 Increment = increment
             };
 
-            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score/change");
+            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score");
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage);
 
@@ -177,20 +176,28 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result> ChangeFixStateAsync(Guid guid, bool isDeleted)
+    public async Task<Result> ChangeFixStateAsync(Guid guid, bool isDisabled)
     {
         try
         {
-            Tuple<Guid, bool, string> message = new(guid, isDeleted, "");
+            ChangeFixStateInMessage message = new()
+            {
+                FixGuid = guid,
+                IsDisabled = isDisabled
+            };
 
-            var result = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/delete", message).ConfigureAwait(false);
+            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/state");
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, ChangeFixStateInMessageContext.Default.ChangeFixStateInMessage);
 
-            if (!result.IsSuccessStatusCode)
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, "Error while changing fix state");
             }
 
-            return new(ResultEnum.Success, $"Succesfully {(isDeleted ? "disabled" : "enbaled")} fix");
+            return new(ResultEnum.Success, $"Succesfully {(isDisabled ? "disabled" : "enbaled")} fix");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -206,16 +213,20 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var jsonStr = JsonSerializer.Serialize(
-                fix,
-                FixesListContext.Default.BaseFixEntity
-                );
+            AddFixInMessage message = new()
+            {
+                GameId = gameId,
+                GameName = gameName,
+                Fix = fix
+            };
 
-            Tuple<int, string, string, string> message = new(gameId, gameName, jsonStr, "");
+            using HttpRequestMessage requestMessage = new(HttpMethod.Post, $"{ApiUrl}/fixes/add");
+            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
+            requestMessage.Content = JsonContent.Create(message, AddFixInMessageContext.Default.AddFixInMessage);
 
-            var result = await _httpClient.PostAsJsonAsync($"{ApiUrl}/fixes/add", message).ConfigureAwait(false);
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
-            if (!result.IsSuccessStatusCode)
+            if (!response.IsSuccessStatusCode)
             {
                 return new(ResultEnum.Error, "Error while adding fix");
             }
