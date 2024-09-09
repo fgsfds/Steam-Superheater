@@ -53,11 +53,11 @@ public sealed class TelegramBot
             _logger.LogInformation("Pong");
             await SendMessageAsync("Pong").ConfigureAwait(false);
         }
-        else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogInformation("Check message received");
-            _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
-        }
+        //else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
+        //{
+        //    _logger.LogInformation("Check message received");
+        //    _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
+        //}
     }
 
     private async Task OnError(Exception exception, HandleErrorSource source)

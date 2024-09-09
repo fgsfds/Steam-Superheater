@@ -335,13 +335,6 @@ public sealed class FixesProvider
         return true;
     }
 
-    public async Task<bool> ForceCheckFixesAsync()
-    {
-        await CheckFixesAsync();
-
-        return true;
-    }
-
     /// <summary>
     /// Add or change fix in the database
     /// </summary>

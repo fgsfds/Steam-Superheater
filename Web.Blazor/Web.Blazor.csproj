@@ -12,13 +12,11 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="AWSSDK.S3" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" />
     <PackageReference Include="Telegram.Bot" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\src\Api.Common\Api.Common.csproj" />
-    <ProjectReference Include="..\src\Api.Messages\Api.Messages.csproj" />
     <ProjectReference Include="..\src\Database.Server\Database.Server.csproj" />
   </ItemGroup>
 

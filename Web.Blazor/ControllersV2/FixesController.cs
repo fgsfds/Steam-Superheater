@@ -134,24 +134,4 @@ public sealed class FixesController : ControllerBase
             return StatusCode(500);
         }
     }
-
-
-    [Authorize]
-    [HttpPost("check")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [ProducesDefaultResponseType]
-    public async Task<StatusCodeResult> ForceCheckFixesAsync()
-    {
-        var result = await _fixesProvider.ForceCheckFixesAsync();
-
-        if (result)
-        {
-            return Ok();
-        }
-        else
-        {
-            return StatusCode(500);
-        }
-    }
 }
