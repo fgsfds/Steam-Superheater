@@ -1,6 +1,8 @@
 using Api.Common.Interface;
 using Common.Entities;
+using Common.Enums;
 using Database.Client;
+using System.Text.Json;
 
 namespace Common.Client.Providers;
 
@@ -44,29 +46,40 @@ public sealed class NewsProvider
     /// </summary>
     public async Task<Result> UpdateNewsListAsync()
     {
-        var result = await _apiInterface.GetNewsListAsync(0).ConfigureAwait(false);
+        using var dbContext = _dbContextFactory.Get();
+        var currentNewsVersion = dbContext.Cache.Find(DatabaseTableEnum.News)?.Version;
+        var data = dbContext.Cache.Find(DatabaseTableEnum.News);
+        var currentNewsList = JsonSerializer.Deserialize(data.Data, NewsEntityContext.Default.ListNewsEntity);
 
-        if (result.IsSuccess)
+        var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion.Value).ConfigureAwait(false);
+
+        if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
         {
-            _newsEntitiesPages = [];
+            currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
+            data.Version = newNewsList.ResultObject.Version;
+            data.Data = JsonSerializer.Serialize(currentNewsList, NewsEntityContext.Default.ListNewsEntity);
 
-            byte a = 1;
-
-            while (result.ResultObject.Count > 0)
-            {
-                var elements = result.ResultObject.Take(NewsPerPage).ToList();
-
-                _newsEntitiesPages.Add(a, elements);
-
-                result.ResultObject.RemoveRange(0, elements.Count);
-
-                a++;
-            }
-
-            UpdateReadStatusOfExistingNews();
+            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        return new(result.ResultEnum, result.Message);
+        _newsEntitiesPages = [];
+
+        byte page = 1;
+
+        while (currentNewsList.Count > 0)
+        {
+            var elements = currentNewsList.Take(NewsPerPage).ToList();
+
+            _newsEntitiesPages.Add(page, elements);
+
+            currentNewsList.RemoveRange(0, elements.Count);
+
+            page++;
+        }
+
+        UpdateReadStatusOfExistingNews();
+
+        return new(newNewsList.ResultEnum, newNewsList.Message);
     }
 
     public List<NewsEntity> GetNewsPage(int page) => _newsEntitiesPages[page];

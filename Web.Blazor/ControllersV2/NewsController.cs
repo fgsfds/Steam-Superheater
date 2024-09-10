@@ -26,21 +26,22 @@ public sealed class NewsController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesDefaultResponseType]
     public ActionResult<GetNewsOutMessage> GetNewsList([FromQuery] int v = 0)
     {
         var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.News];
 
         if (v >= version)
         {
-            return NotFound();
+            return NoContent();
         }
 
         var news = _newsProvider.GetNews(v);
 
         if (news is null or [])
         {
-            return NotFound();
+            return NoContent();
         }
 
         GetNewsOutMessage result = new()

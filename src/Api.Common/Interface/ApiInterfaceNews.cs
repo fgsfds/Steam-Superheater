@@ -1,6 +1,5 @@
 ﻿using Api.Common.Messages;
 using Common;
-using Common.Entities;
 using System.Net;
 using System.Net.Http.Json;
 
@@ -8,7 +7,7 @@ namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
-    public async Task<Result<List<NewsEntity>?>> GetNewsListAsync(int version)
+    public async Task<Result<GetNewsOutMessage>> GetNewsListAsync(int version)
     {
         try
         {
@@ -19,6 +18,11 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while getting news");
             }
 
+            if (response.StatusCode is HttpStatusCode.NoContent)
+            {
+                return new(ResultEnum.Success, null, "No updated news found");
+            }
+
             var news = await response.Content.ReadFromJsonAsync(GetNewsOutMessageContext.Default.GetNewsOutMessage).ConfigureAwait(false);
 
             if (news is null)
@@ -26,7 +30,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while deserializing news");
             }
 
-            return new(ResultEnum.Success, news.News, string.Empty);
+            return new(ResultEnum.Success, news, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
