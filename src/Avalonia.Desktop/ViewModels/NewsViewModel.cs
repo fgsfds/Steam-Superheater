@@ -1,10 +1,11 @@
 using Avalonia.Desktop.ViewModels.Popups;
+using AvaloniaEdit.Utils;
 using Common;
 using Common.Client.Providers;
 using Common.Entities;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 
 namespace Avalonia.Desktop.ViewModels;
 
@@ -15,20 +16,20 @@ internal sealed partial class NewsViewModel : ObservableObject
     private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly SemaphoreSlim _locker = new(1);
-
-    private int _selectedPage = 1;
+    private int _loadedPage = 1;
 
 
     #region Binding Properties
 
-    public ImmutableList<NewsEntity> NewsList => _newsProvider.PagesCount == 0 ? [] : [.. _newsProvider.GetNewsPage(_selectedPage)];
-
-    public List<int> PagesCount => Enumerable.Range(1, _newsProvider.PagesCount).ToList();
+    public ObservableCollection<NewsEntity> NewsList { get; private set; }
 
     public string NewsTabHeader =>
         "News" + (_newsProvider.HasUnreadNews
         ? $" ({_newsProvider.UnreadNewsCount} unread)"
         : string.Empty);
+
+    [ObservableProperty]
+    private Vector _scrollOffset;
 
     #endregion Binding Properties
 
@@ -46,6 +47,8 @@ internal sealed partial class NewsViewModel : ObservableObject
         _popupEditor = popupEditor;
 
         _config.ParameterChangedEvent += OnParameterChangedEvent;
+
+        NewsList = [];
     }
 
 
@@ -64,10 +67,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     private void MarkAllAsRead()
     {
         _newsProvider.MarkAllAsRead();
-
-        OnPropertyChanged(nameof(NewsList));
-        OnPropertyChanged(nameof(NewsTabHeader));
-        MarkAllAsReadCommand.NotifyCanExecuteChanged();
+        ResetNewsList();
     }
     private bool MarkAllAsReadCanExecute() => _newsProvider.HasUnreadNews;
 
@@ -96,8 +96,6 @@ internal sealed partial class NewsViewModel : ObservableObject
 
             return;
         }
-
-        OnPropertyChanged(nameof(NewsList));
     }
 
     /// <summary>
@@ -132,18 +130,24 @@ internal sealed partial class NewsViewModel : ObservableObject
 
             return;
         }
-
-        OnPropertyChanged(nameof(NewsList));
     }
 
     /// <summary>
     /// Edit current news content
     /// </summary>
     [RelayCommand]
-    private void ChangePage(int a)
+    private void LoadNextPage()
     {
-        _selectedPage = a;
-        OnPropertyChanged(nameof(NewsList));
+        if (_loadedPage == _newsProvider.PagesCount)
+        {
+            return;
+        }
+
+        _loadedPage++;
+
+        var news = _newsProvider.GetNewsPage(_loadedPage);
+
+        NewsList.AddRange(news);
     }
 
     #endregion Relay Commands
@@ -166,12 +170,26 @@ internal sealed partial class NewsViewModel : ObservableObject
                 );
         }
 
-        OnPropertyChanged(nameof(NewsList));
-        OnPropertyChanged(nameof(NewsTabHeader));
-        OnPropertyChanged(nameof(PagesCount));
-        MarkAllAsReadCommand.NotifyCanExecuteChanged();
+        ResetNewsList();
 
         _ = _locker.Release();
+    }
+
+    /// <summary>
+    /// Load first page and scroll to the top
+    /// </summary>
+    private void ResetNewsList()
+    {
+        _loadedPage = 1;
+        NewsList.Clear();
+
+        ScrollOffset = new();
+
+        var news = _newsProvider.GetNewsPage(1);
+        NewsList.AddRange(news);
+
+        OnPropertyChanged(nameof(NewsTabHeader));
+        MarkAllAsReadCommand.NotifyCanExecuteChanged();
     }
 
     private async void OnParameterChangedEvent(string parameterName)

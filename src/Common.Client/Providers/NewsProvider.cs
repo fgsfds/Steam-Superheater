@@ -6,7 +6,7 @@ namespace Common.Client.Providers;
 
 public sealed class NewsProvider
 {
-    private const byte NewsPerPage = 10;
+    private const byte NewsPerPage = 5;
 
     private readonly ApiInterface _apiInterface;
     private readonly GamesProvider _gamesProvider;
@@ -144,6 +144,8 @@ public sealed class NewsProvider
         {
             foreach (var news in item.Value)
             {
+                news.IsNewer = false;
+
                 if (news.Date > _config.LastReadNewsDate)
                 {
                     news.IsNewer = true;
