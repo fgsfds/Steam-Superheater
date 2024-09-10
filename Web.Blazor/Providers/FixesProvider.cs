@@ -226,12 +226,18 @@ public sealed class FixesProvider
     /// <param name="increment">Increment</param>
     /// <returns>New score</returns>
     public async Task<int> ChangeFixScoreAsync(Guid fixGuid, sbyte increment)
-    {
+    { 
         using var dbContext = _dbContextFactory.Get();
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
+        var newTableVersion = databaseVersions.Version + 1;
+
         fix.Score += increment;
+        fix.TableVersion = newTableVersion;
+        databaseVersions.Version = newTableVersion;
+
         var newScore = fix.Score;
 
         _ = dbContext.SaveChanges();
@@ -259,10 +265,17 @@ public sealed class FixesProvider
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
+        var newTableVersion = databaseVersions.Version + 1;
+
         fix.Installs += 1;
+        fix.TableVersion = newTableVersion;
+        databaseVersions.Version = newTableVersion;
+
         var newInstalls = fix.Installs;
 
         _ = dbContext.SaveChanges();
+
         return newInstalls;
     }
 
@@ -306,14 +319,14 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var entity = dbContext.Fixes.Find(fixGuid);
+        var fix = dbContext.Fixes.Find(fixGuid);
 
-        if (entity is null)
+        if (fix is null)
         {
             return null;
         }
 
-        return entity.Version;
+        return fix.Version;
     }
 
     /// <summary>
@@ -324,11 +337,16 @@ public sealed class FixesProvider
     public bool ChangeFixDisabledState(Guid fixGuid, bool isDisabled)
     {
         using var dbContext = _dbContextFactory.Get();
-        var entity = dbContext.Fixes.Find(fixGuid);
+        var fix = dbContext.Fixes.Find(fixGuid);
 
-        Guard.IsNotNull(entity);
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
+        var newTableVersion = databaseVersions.Version + 1;
 
-        entity.IsDisabled = isDisabled;
+        Guard.IsNotNull(fix);
+
+        fix.IsDisabled = isDisabled;
+        fix.TableVersion = newTableVersion;
+        databaseVersions.Version = newTableVersion;
 
         _ = dbContext.SaveChanges();
 

@@ -53,11 +53,7 @@ public sealed partial class ApiInterface
                 Increment = increment
             };
 
-            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score");
-            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
-            requestMessage.Content = JsonContent.Create(message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage);
-
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score", message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -92,11 +88,7 @@ public sealed partial class ApiInterface
                 FixGuid = guid
             };
 
-            using HttpRequestMessage requestMessage = new(HttpMethod.Put, $"{ApiUrl}/fixes/score/add");
-            requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
-            requestMessage.Content = JsonContent.Create(message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage);
-
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -225,7 +217,7 @@ public sealed partial class ApiInterface
                 Fix = fix
             };
 
-            using HttpRequestMessage requestMessage = new(HttpMethod.Post, $"{ApiUrl}/fixes/add");
+            using HttpRequestMessage requestMessage = new(HttpMethod.Post, $"{ApiUrl}/fixes");
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, AddFixInMessageContext.Default.AddFixInMessage);
 

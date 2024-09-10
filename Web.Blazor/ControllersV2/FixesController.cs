@@ -80,7 +80,7 @@ public sealed class FixesController : ControllerBase
     }
 
 
-    [HttpPut("installs/add")]
+    [HttpPut("installs")]
     [ProducesResponseType(typeof(IncreaseInstallsCountOutMessage), StatusCodes.Status200OK)]
     public ActionResult<IncreaseInstallsCountOutMessage> AddNumberOfInstalls([FromBody] IncreaseInstallsCountInMessage message)
     {
@@ -142,7 +142,7 @@ public sealed class FixesController : ControllerBase
 
 
     [Authorize]
-    [HttpPost("add")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<StatusCodeResult> AddFixToDbAsync([FromBody] AddFixInMessage message)
