@@ -1,5 +1,5 @@
-dotnet publish ".\src\Avalonia\Desktop\Avalonia.Desktop.csproj" -p:PublishProfile=Windows
-dotnet publish ".\src\Avalonia\Desktop\Avalonia.Desktop.csproj" -p:PublishProfile=Linux
+dotnet publish ".\src\Avalonia.Desktop\Avalonia.Desktop.csproj" -p:PublishProfile=Windows
+dotnet publish ".\src\Avalonia.Desktop\Avalonia.Desktop.csproj" -p:PublishProfile=Linux
 
 $version = (Get-Item .\publish\Superheater.exe).VersionInfo.FileVersion
 $version = $version.Substring(0,$version.Length-2)
