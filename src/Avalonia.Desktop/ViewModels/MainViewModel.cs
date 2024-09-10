@@ -230,8 +230,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 return false;
             }
 
-            if (SelectedGame is null ||
-                !SelectedGame.IsGameInstalled)
+            if (SelectedGame is null)
             {
                 return false;
             }
