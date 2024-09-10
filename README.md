@@ -88,6 +88,10 @@ Download latest release for your platform from <a href="https://github.com/fgsfd
 
 Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b> 
 
-### Links
+For **Steam Deck** see <a href="https://github.com/fgsfds/Steam-Superheater/wiki/Deck-install-guide">this guide</a>
 
-<img align="left" height="32" src="https://superheater.fgsfds.link/logo.png"> <a href="[https://discord.gg/mWvKyxR4et](https://superheater.fgsfds.link/)"> <a href="https://superheater.fgsfds.link/">Superheater website</a>
+## Links
+
+<a href="https://superheater.fgsfds.link">Superheater website</a>
+
+<a href="https://discord.gg/mWvKyxR4et">Discord server
