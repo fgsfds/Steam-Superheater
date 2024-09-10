@@ -40,32 +40,27 @@ public sealed class FixesProvider
     {
         using var dbContext = _dbContextFactory.Get();
 
-        var cachedFixesDbEntity = dbContext.Cache.Find(DatabaseTableEnum.Fixes);
+        var fixesCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.Fixes)!;
+        var currentFixesVersion = fixesCacheDbEntity.Version!;
+        var currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
 
-        var fixes = JsonSerializer.Deserialize(cachedFixesDbEntity.Data, FixesListContext.Default.ListFixesList);
+        //TODO Add proper versioning
+        var newFixesList = await _apiInterface.GetFixesListAsync(0).ConfigureAwait(false);
 
-        _logger.Info("Getting online fixes");
-
-        var onlineFixesResult = await _apiInterface.GetFixesListAsync(cachedFixesDbEntity.Version).ConfigureAwait(false);
-
-        if (!onlineFixesResult.IsSuccess)
+        if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
         {
-            return new(onlineFixesResult.ResultEnum, null, onlineFixesResult.Message);
+            _logger.Info("Getting online fixes");
+
+            currentFixesList = newFixesList.ResultObject!.Fixes;
+            fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
+            fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
+
+            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
-        SharedFixes = onlineFixesResult.ResultObject.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
+        SharedFixes = currentFixesList.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
 
-        //saving new fixes to the database
-        var fixesList = JsonSerializer.Serialize(onlineFixesResult.ResultObject, FixesListContext.Default.ListFixesList);
-
-        var fixesCache = dbContext.Cache.Find(DatabaseTableEnum.Fixes)!;
-
-        fixesCache.Version = 0;
-        fixesCache.Data = fixesList;
-
-        _ = dbContext.SaveChanges();
-
-        return new(ResultEnum.Success, onlineFixesResult.ResultObject, string.Empty);
+        return new(ResultEnum.Success, currentFixesList, string.Empty);
     }
 
     /// <summary>

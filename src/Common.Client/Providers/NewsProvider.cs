@@ -47,17 +47,20 @@ public sealed class NewsProvider
     public async Task<Result> UpdateNewsListAsync()
     {
         using var dbContext = _dbContextFactory.Get();
-        var currentNewsVersion = dbContext.Cache.Find(DatabaseTableEnum.News)?.Version;
-        var data = dbContext.Cache.Find(DatabaseTableEnum.News);
-        var currentNewsList = JsonSerializer.Deserialize(data.Data, NewsEntityContext.Default.ListNewsEntity);
 
-        var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion.Value).ConfigureAwait(false);
+        var newsCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.News)!;
+        var currentNewsVersion = newsCacheDbEntity.Version!;
+        var currentNewsList = JsonSerializer.Deserialize(newsCacheDbEntity.Data, NewsEntityContext.Default.ListNewsEntity)!;
+
+        var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
 
         if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
         {
+            _logger.Info("Getting online news");
+
             currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
-            data.Version = newNewsList.ResultObject.Version;
-            data.Data = JsonSerializer.Serialize(currentNewsList, NewsEntityContext.Default.ListNewsEntity);
+            newsCacheDbEntity.Version = newNewsList.ResultObject.Version;
+            newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsEntityContext.Default.ListNewsEntity);
 
             _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }

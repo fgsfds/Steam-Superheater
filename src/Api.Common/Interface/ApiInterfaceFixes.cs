@@ -8,7 +8,7 @@ namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
-    public async Task<Result<List<FixesList>?>> GetFixesListAsync(int version)
+    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int version)
     {
         try
         {
@@ -19,6 +19,11 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while getting fixes");
             }
 
+            if (response.StatusCode is HttpStatusCode.NoContent)
+            {
+                return new(ResultEnum.Success, null, "No updated fixes found");
+            }
+
             var fixesList = await response.Content.ReadFromJsonAsync(GetFixesOutMessageContext.Default.GetFixesOutMessage).ConfigureAwait(false);
 
             if (fixesList is null)
@@ -26,7 +31,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while deserializing fixes");
             }
 
-            return new(ResultEnum.Success, fixesList.Fixes, string.Empty);
+            return new(ResultEnum.Success, fixesList, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
