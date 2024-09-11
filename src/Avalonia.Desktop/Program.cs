@@ -49,10 +49,13 @@ public static class Program
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        var exe = Path.Combine(ClientProperties.WorkingFolder, ClientProperties.ExecutableName);
-        var args = "--crash " + $@"""{e.ExceptionObject}""";
+        if (!ClientProperties.IsDeveloperMode)
+        {
+            var exe = Path.Combine(ClientProperties.WorkingFolder, ClientProperties.ExecutableName);
+            var args = "--crash " + $@"""{e.ExceptionObject}""";
 
-        _ = System.Diagnostics.Process.Start(exe, args);
+            _ = System.Diagnostics.Process.Start(exe, args);
+        }
 
         Environment.FailFast(string.Empty);
     }

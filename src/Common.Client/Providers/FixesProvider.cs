@@ -95,7 +95,7 @@ public sealed class FixesProvider
     {
         var fixesLists = await GetFixesListAsync().ConfigureAwait(false);
 
-        if (!fixesLists.IsSuccess)
+        if (fixesLists.ResultObject is null)
         {
             return new(fixesLists.ResultEnum, null, fixesLists.Message);
         }
