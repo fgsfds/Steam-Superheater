@@ -1,3 +1,4 @@
+using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.ViewModels.Popups;
 using AvaloniaEdit.Utils;
 using Common;
@@ -163,10 +164,12 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         if (!result.IsSuccess)
         {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Error
                 );
         }
 

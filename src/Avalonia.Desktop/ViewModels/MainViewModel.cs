@@ -1,4 +1,5 @@
 using Api.Common.Interface;
+using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Input.Platform;
@@ -6,6 +7,7 @@ using Common;
 using Common.Client;
 using Common.Client.FixTools;
 using Common.Client.Models;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
@@ -465,7 +467,6 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             if (!res)
             {
                 return;
-                //return new(ResultEnum.Cancelled, string.Empty);
             }
 
             foreach (var dep in dependantFixes)
@@ -474,10 +475,12 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
                 if (!result.IsSuccess)
                 {
-                    _popupMessage.Show(
-                        "Error",
-                        result.Message,
-                        PopupMessageType.OkOnly
+                    var length2 = App.Random.Next(1, 100);
+                    string repeatedString2 = new string('\u200B', length2);
+
+                    App.NotificationManager.Show(
+                        result.Message + repeatedString2,
+                        NotificationType.Error
                         );
 
                     return;
@@ -493,10 +496,12 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         IsInProgress = false;
 
-        _popupMessage.Show(
-            fixUninstallResult.IsSuccess ? "Success" : "Error",
-            fixUninstallResult.Message,
-            PopupMessageType.OkOnly
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
+
+        App.NotificationManager.Show(
+            fixUninstallResult.Message + repeatedString,
+            fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
     private bool UninstallFixCanExecute()
@@ -529,7 +534,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// Open config file for selected fix
     /// </summary>
     [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
-    private void OpenConfig() => OpenConfigFileAsync();
+    private void OpenConfig()
+    {
+        OpenConfigFileAsync(SelectedGame?.Game, SelectedFix);
+    }
+
     private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
 
 
@@ -747,10 +756,12 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         var result = await _apiInterface.ReportFixAsync(SelectedFix.Guid, reportText).ConfigureAwait(true);
 
-        _popupMessage.Show(
-            "Report fix",
-            result.IsSuccess ? "Report sent" : result.Message,
-            PopupMessageType.OkOnly
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
+
+        App.NotificationManager.Show(
+            result.Message + repeatedString,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
 
@@ -887,10 +898,12 @@ Do you still want to install the fix?",
 
         if (!result.IsSuccess)
         {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Error
                 );
 
             return result;
@@ -898,23 +911,27 @@ Do you still want to install the fix?",
 
         await FillGamesListAsync().ConfigureAwait(true);
 
-        if (SelectedFix is FileFixEntity fileFix &&
+        if (fix is FileFixEntity fileFix &&
             fileFix.ConfigFile is not null &&
             _config.OpenConfigAfterInstall)
         {
-            _popupMessage.Show(
-                "Success",
-                result.Message + Environment.NewLine + Environment.NewLine + "Open config file?",
-                PopupMessageType.YesNo,
-                OpenConfigFileAsync
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + Environment.NewLine + "Open config file?" + repeatedString, 
+                NotificationType.Information, 
+                onClick: () => OpenConfigFileAsync(fixesList.Game, fileFix)
                 );
         }
         else
         {
-            _popupMessage.Show(
-                "Success",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Success
                 );
         }
 
@@ -936,10 +953,12 @@ Do you still want to install the fix?",
 
         if (!result.IsSuccess)
         {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Error
                 );
         }
 
@@ -977,13 +996,13 @@ Do you still want to install the fix?",
     /// <summary>
     /// Open config file for selected fix
     /// </summary>
-    private async void OpenConfigFileAsync()
+    private async void OpenConfigFileAsync(GameEntity? game, BaseFixEntity? fix)
     {
-        var fileFix = SelectedFix as FileFixEntity;
+        Guard2.IsOfType<FileFixEntity>(fix, out var fileFix);
         Guard.IsNotNull(fileFix?.ConfigFile);
-        Guard.IsNotNull(SelectedGame?.Game);
+        Guard.IsNotNull(game);
 
-        var pathToConfig = Path.Combine(SelectedGame.Game.InstallDir, fileFix.ConfigFile);
+        var pathToConfig = Path.Combine(game.InstallDir, fileFix.ConfigFile);
 
         if (fileFix.ConfigFile.EndsWith(".exe"))
         {

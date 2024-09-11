@@ -1,3 +1,4 @@
+using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
@@ -661,7 +662,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                 PopupMessageType.OkOnly
                 );
 
-
             LockButtons = false;
             return;
         }
@@ -1066,10 +1066,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (!result.IsSuccess)
         {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Error
                 );
         }
 

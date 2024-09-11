@@ -1,7 +1,9 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Notifications;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Desktop.DI;
+using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.Windows;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -17,6 +19,9 @@ namespace Avalonia.Desktop;
 
 public sealed class App : Application
 {
+    public static WindowNotificationManager NotificationManager { get; private set; }
+    public static Random Random { get; private set; }
+
     private static readonly Mutex _mutex = new(false, "Superheater");
     private static Logger? _logger = null;
 
@@ -93,6 +98,15 @@ public sealed class App : Application
                 desktop.MainWindow = new MainWindow();
                 desktop.Exit += OnAppExit;
             }
+
+            NotificationManager = new(AvaloniaProperties.TopLevel)
+            {
+                MaxItems = 3,
+                Position = NotificationPosition.TopRight,
+                Margin = new(0, 50, 10, 0)
+            };
+
+            Random = new();
 
             base.OnFrameworkInitializationCompleted();
         }
