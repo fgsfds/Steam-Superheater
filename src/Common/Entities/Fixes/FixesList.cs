@@ -21,7 +21,7 @@ public sealed class FixesList
     /// <summary>
     /// List of fixes
     /// </summary>
-    public required List<BaseFixEntity> Fixes { get; init; }
+    public required List<BaseFixEntity> Fixes { get; set; }
 
     /// <summary>
     /// Game entity

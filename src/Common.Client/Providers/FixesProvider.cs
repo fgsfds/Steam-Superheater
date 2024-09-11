@@ -44,14 +44,39 @@ public sealed class FixesProvider
         var currentFixesVersion = fixesCacheDbEntity.Version!;
         var currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
 
-        //TODO Add proper versioning
-        var newFixesList = await _apiInterface.GetFixesListAsync(0).ConfigureAwait(false);
+        var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion).ConfigureAwait(false);
 
         if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
         {
-            _logger.Info("Getting online fixes");
+            foreach (var newGame in newFixesList.ResultObject.Fixes)
+            {
+                var existingGame = currentFixesList.FirstOrDefault(x => x.GameId == newGame.GameId);
 
-            currentFixesList = newFixesList.ResultObject!.Fixes;
+                if (existingGame is null)
+                {
+                    currentFixesList.Add(newGame);
+                    currentFixesList = [.. currentFixesList.OrderBy(static x => x.GameName)];
+                }
+                else
+                {
+                    foreach (var newFix in newGame.Fixes)
+                    {
+                        var existingFix = existingGame.Fixes.FirstOrDefault(x => x.Guid == newFix.Guid);
+
+                        if (existingFix is null)
+                        {
+                            existingGame.Fixes.Add(newFix);
+                            existingGame.Fixes = [.. existingGame.Fixes.OrderBy(static x => x.Name)];
+                        }
+                        else
+                        {
+                            var index = existingGame.Fixes.IndexOf(existingFix);
+                            existingGame.Fixes[index] = newFix;
+                        }
+                    }
+                }
+            }
+
             fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
             fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
 
@@ -60,7 +85,7 @@ public sealed class FixesProvider
 
         SharedFixes = currentFixesList.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
 
-        return new(ResultEnum.Success, currentFixesList, string.Empty);
+        return new(newFixesList.ResultEnum, currentFixesList, newFixesList.Message);
     }
 
     /// <summary>

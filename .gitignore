@@ -456,3 +456,5 @@ $RECYCLE.BIN/
 /src/Avalonia/Superheater.Desktop/Properties/launchSettings.json
 /config.json
 /config.db
+/config.db-shm
+/config.db-wal
