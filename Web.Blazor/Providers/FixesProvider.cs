@@ -432,7 +432,7 @@ public sealed class FixesProvider
                     Name = fix.Name,
                     Notes = fix.Notes,
                     Version = fix.Version,
-                    IsDisabled = true,
+                    IsDisabled = false,
                     TableVersion = newTableVersion,
                     Score = 0,
                     Installs = 0

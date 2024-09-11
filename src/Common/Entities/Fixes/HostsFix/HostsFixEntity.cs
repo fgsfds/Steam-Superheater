@@ -15,7 +15,7 @@ public sealed class HostsFixEntity : BaseFixEntity
         Dependencies = null;
         Tags = null;
         SupportedOSes = OSEnum.Windows;
-        IsDisabled = true;
+        IsDisabled = false;
 
         Entries = [];
     }

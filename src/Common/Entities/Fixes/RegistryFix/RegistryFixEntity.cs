@@ -15,7 +15,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
         Dependencies = null;
         Tags = null;
         SupportedOSes = OSEnum.Windows;
-        IsDisabled = true;
+        IsDisabled = false;
 
         Key = string.Empty;
         ValueName = string.Empty;

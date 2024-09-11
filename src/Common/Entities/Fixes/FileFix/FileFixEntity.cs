@@ -20,7 +20,7 @@ public sealed class FileFixEntity : BaseFixEntity
         Dependencies = null;
         Tags = null;
         SupportedOSes = OSEnum.Windows;
-        IsDisabled = true;
+        IsDisabled = false;
 
         Url = null;
         FileSize = null;

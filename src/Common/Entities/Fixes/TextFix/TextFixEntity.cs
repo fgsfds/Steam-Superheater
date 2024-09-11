@@ -15,7 +15,7 @@ public sealed class TextFixEntity : BaseFixEntity
         Dependencies = null;
         Tags = null;
         SupportedOSes = OSEnum.Windows;
-        IsDisabled = true;
+        IsDisabled = false;
     }
 
     [SetsRequiredMembers]
