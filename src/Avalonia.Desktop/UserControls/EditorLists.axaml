@@ -47,6 +47,9 @@
                     <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenSteamStoreCommand}"/>
                     <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenPCGamingWikiCommand}"/>
                     <MenuItem Margin="5" Header="Open SteamDB page..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenSteamDBCommand}"/>
+                    <Separator/>
+                    <MenuItem Margin="5" Header="Copy game name" Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).CopyGameNameCommand}"/>
+
                 </ContextMenu>
             </ListBox.ContextMenu>
 

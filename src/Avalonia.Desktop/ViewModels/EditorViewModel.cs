@@ -2,6 +2,7 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using Common;
 using Common.Client;
@@ -994,6 +995,19 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             FileName = @$"https://steamdb.info/app/{SelectedGame.GameId}/config/",
             UseShellExecute = true
         });
+    }
+
+
+    /// <summary>
+    /// Open SteamDB page for selected game
+    /// </summary>
+    [RelayCommand]
+    private Task CopyGameNameAsync()
+    {
+        Guard.IsNotNull(SelectedGame);
+
+        var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? ThrowHelper.ThrowArgumentNullException<IClipboard>("Error while getting clipboard implementation");
+        return clipboard.SetTextAsync(SelectedGame.GameName);
     }
 
 
