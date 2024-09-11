@@ -66,7 +66,7 @@ public sealed class FixesProvider
                         if (existingFix is null)
                         {
                             existingGame.Fixes.Add(newFix);
-                            existingGame.Fixes = [.. existingGame.Fixes.OrderBy(static x => x.Name)];
+                            existingGame.Fixes = [.. existingGame.Fixes.OrderBy(static x => x.Name).ThenBy(x => x.Tags?.Contains("#nointro"))];
                         }
                         else
                         {
