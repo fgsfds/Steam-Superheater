@@ -52,7 +52,7 @@ public sealed class EditorModel
     {
         var result = await _fixesProvider.GetFixesListAsync().ConfigureAwait(false);
 
-        if (!result.IsSuccess)
+        if (result.ResultObject is null)
         {
             return new(result.ResultEnum, result.Message);
         }
@@ -61,7 +61,7 @@ public sealed class EditorModel
 
         await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
 
-        return new(ResultEnum.Success, string.Empty);
+        return new(result.ResultEnum, result.Message);
     }
 
     /// <summary>

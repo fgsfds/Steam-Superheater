@@ -43,7 +43,7 @@ public sealed class MainModel
     {
         var result = await _fixesProvider.GetPreparedFixesListAsync().ConfigureAwait(false);
 
-        if (!result.IsSuccess)
+        if (result.ResultObject is null)
         {
             return new(result.ResultEnum, result.Message);
         }
@@ -52,7 +52,7 @@ public sealed class MainModel
 
         _combinedEntitiesList = games;
 
-        return new(ResultEnum.Success, "Games list updated successfully");
+        return new(result.ResultEnum, result.Message);
     }
 
     /// <summary>

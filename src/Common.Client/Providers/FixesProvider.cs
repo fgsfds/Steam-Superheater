@@ -174,7 +174,7 @@ public sealed class FixesProvider
 
         var result = fixesLists.ResultObject.OrderByDescending(static x => x.IsGameInstalled);
 
-        return new(ResultEnum.Success, [.. result], string.Empty);
+        return new(fixesLists.ResultEnum, [.. result], fixesLists.Message);
     }
 
     /// <summary>
