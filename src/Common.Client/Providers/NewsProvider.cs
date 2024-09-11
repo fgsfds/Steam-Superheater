@@ -99,16 +99,9 @@ public sealed class NewsProvider
         string content
         )
     {
-        var result1 = await _apiInterface.ChangeNewsAsync(date, content).ConfigureAwait(false);
+        var result = await _apiInterface.ChangeNewsAsync(date, content).ConfigureAwait(false);
 
-        if (!result1.IsSuccess)
-        {
-            return result1;
-        }
-
-        var result2 = await UpdateNewsListAsync().ConfigureAwait(false);
-
-        return result2;
+        return result;
     }
 
     /// <summary>
@@ -117,16 +110,9 @@ public sealed class NewsProvider
     /// <param name="content">News content</param>
     public async Task<Result> AddNewsAsync(string content)
     {
-        var result1 = await _apiInterface.AddNewsAsync(content).ConfigureAwait(false);
+        var result = await _apiInterface.AddNewsAsync(content).ConfigureAwait(false);
 
-        if (!result1.IsSuccess)
-        {
-            return result1;
-        }
-
-        var result2 = await UpdateNewsListAsync().ConfigureAwait(false);
-
-        return result2;
+        return result;
     }
 
     /// <summary>

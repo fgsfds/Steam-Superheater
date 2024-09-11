@@ -14,7 +14,6 @@ internal sealed partial class NewsViewModel : ObservableObject
 {
     private readonly NewsProvider _newsProvider;
     private readonly IConfigProvider _config;
-    private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly SemaphoreSlim _locker = new(1);
     private int _loadedPage = 1;
@@ -38,13 +37,11 @@ internal sealed partial class NewsViewModel : ObservableObject
     public NewsViewModel(
         NewsProvider newsProvider,
         IConfigProvider configProvider,
-        PopupMessageViewModel popupMessage,
         PopupEditorViewModel popupEditor
         )
     {
         _newsProvider = newsProvider;
         _config = configProvider;
-        _popupMessage = popupMessage;
         _popupEditor = popupEditor;
 
         _config.ParameterChangedEvent += OnParameterChangedEvent;
@@ -87,15 +84,17 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         var result = await _newsProvider.AddNewsAsync(newContent).ConfigureAwait(true);
 
-        if (!result.IsSuccess)
-        {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
-                );
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
 
-            return;
+        App.NotificationManager.Show(
+            result.Message + repeatedString,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
+            );
+
+        if (result.IsSuccess)
+        {
+            await UpdateAsync().ConfigureAwait(false);
         }
     }
 
@@ -121,15 +120,17 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         var result = await _newsProvider.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
 
-        if (!result.IsSuccess)
-        {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
-                );
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
 
-            return;
+        App.NotificationManager.Show(
+            result.Message + repeatedString,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
+            );
+
+        if (result.IsSuccess)
+        {
+            await UpdateAsync().ConfigureAwait(false);
         }
     }
 

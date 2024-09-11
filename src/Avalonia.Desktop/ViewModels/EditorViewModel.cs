@@ -31,7 +31,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly FixesProvider _fixesProvider;
     private readonly IConfigProvider _config;
     private readonly PopupEditorViewModel _popupEditor;
-    private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
     private readonly GamesProvider _gamesProvider;
@@ -487,7 +486,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         FixesProvider fixesProvider,
         IConfigProvider config,
         PopupEditorViewModel popupEditor,
-        PopupMessageViewModel popupMessage,
         PopupStackViewModel popupStack,
         GamesProvider gamesProvider,
         ProgressReport progressReport
@@ -498,7 +496,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         _fixesProvider = fixesProvider;
         _config = config;
         _popupEditor = popupEditor;
-        _popupMessage = popupMessage;
         _popupStack = popupStack;
         _gamesProvider = gamesProvider;
         _progressReport = progressReport;
@@ -550,10 +547,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
-        _popupMessage.Show(
-            result.IsSuccess ? "Success" : "Error",
-            result.Message,
-            PopupMessageType.OkOnly
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
+
+        App.NotificationManager.Show(
+            result.Message + repeatedString,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
     private bool AddFixToDbCanExecute() => SelectedFix is not null;
@@ -572,10 +571,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         OnPropertyChanged(nameof(DisableFixButtonText));
         OnPropertyChanged(nameof(SelectedGameFixesList));
 
-        _popupMessage.Show(
-            result.IsSuccess ? "Success" : "Error",
-            result.Message,
-            PopupMessageType.OkOnly
+        var length = App.Random.Next(1, 100);
+        string repeatedString = new string('\u200B', length);
+
+        App.NotificationManager.Show(
+            result.Message + repeatedString,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
     private bool DisableFixCanExecute() => SelectedFix is not null;
@@ -657,10 +658,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (!canUpload.IsSuccess)
         {
-            _popupMessage.Show(
-                "Error",
-                canUpload.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                canUpload.Message + repeatedString,
+                NotificationType.Error
                 );
 
             LockButtons = false;
@@ -680,23 +683,27 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (result.IsSuccess)
         {
-            _popupMessage.Show(
-                "Success",
-                """
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                $"""
                     Fix successfully uploaded.
                     It will be added to the database after developer's review.
 
-                    Thank you.
+                    Thank you.{repeatedString}
                     """,
-                PopupMessageType.OkOnly
+                NotificationType.Success
                 );
         }
         else
         {
-            _popupMessage.Show(
-                "Error",
-                result.Message,
-                PopupMessageType.OkOnly
+            var length = App.Random.Next(1, 100);
+            string repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                result.Message + repeatedString,
+                NotificationType.Error
                 );
         }
 
