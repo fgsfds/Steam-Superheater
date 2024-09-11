@@ -14,123 +14,154 @@ public sealed class ConfigProvider : IConfigProvider
     public ConfigProvider(DatabaseContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
+
+        using var dbContext = dbContextFactory.Get();
+
+        _theme = Enum.TryParse<ThemeEnum>(dbContext.Settings.Find([nameof(Theme)])?.Value, out var result) ? result : ThemeEnum.System;
+        _showUninstalledGames = bool.TryParse(dbContext.Settings.Find([nameof(ShowUninstalledGames)])?.Value, out var result2) && result2;
+        _showUnsupportedFixes = bool.TryParse(dbContext.Settings.Find([nameof(ShowUnsupportedFixes)])?.Value, out var result3) && result3;
+        _deleteZipsAfterInstall = bool.TryParse(dbContext.Settings.Find([nameof(DeleteZipsAfterInstall)])?.Value, out var result4) && result4;
+        _openConfigAfterInstall = bool.TryParse(dbContext.Settings.Find([nameof(OpenConfigAfterInstall)])?.Value, out var result5) && result5;
+        _useLocalApiAndRepo = bool.TryParse(dbContext.Settings.Find([nameof(UseLocalApiAndRepo)])?.Value, out var result6) && result6;
+        _localRepoPath = dbContext.Settings.Find([nameof(LocalRepoPath)])?.Value ?? string.Empty;
+        _apiPassword = dbContext.Settings.Find([nameof(ApiPassword)])?.Value ?? string.Empty;
+        _lastReadNewsDate = DateTime.TryParse(dbContext.Settings.Find([nameof(LastReadNewsDate)])?.Value, out var time) ? time : DateTime.MinValue;
+        _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
+        _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
     }
 
+    private ThemeEnum _theme;
     public ThemeEnum Theme
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return Enum.TryParse<ThemeEnum>(dbContext.Settings.Find([nameof(Theme)])?.Value, out var result) ? result : ThemeEnum.System;
+            return _theme;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _theme = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private bool _showUninstalledGames;
     public bool ShowUninstalledGames
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return bool.TryParse(dbContext.Settings.Find([nameof(ShowUninstalledGames)])?.Value, out var result) ? result : true;
+            return _showUninstalledGames;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _showUninstalledGames = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private bool _showUnsupportedFixes;
     public bool ShowUnsupportedFixes
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return bool.TryParse(dbContext.Settings.Find([nameof(ShowUnsupportedFixes)])?.Value, out var result) && result;
+            return _showUnsupportedFixes;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _showUnsupportedFixes = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private bool _deleteZipsAfterInstall;
     public bool DeleteZipsAfterInstall
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return bool.TryParse(dbContext.Settings.Find([nameof(DeleteZipsAfterInstall)])?.Value, out var result) && result;
+            return _deleteZipsAfterInstall;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _deleteZipsAfterInstall = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private bool _openConfigAfterInstall;
     public bool OpenConfigAfterInstall
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return bool.TryParse(dbContext.Settings.Find([nameof(OpenConfigAfterInstall)])?.Value, out var result) && result;
+            return _openConfigAfterInstall;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _openConfigAfterInstall = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private bool _useLocalApiAndRepo;
     public bool UseLocalApiAndRepo
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return bool.TryParse(dbContext.Settings.Find([nameof(UseLocalApiAndRepo)])?.Value, out var result) && result;
+            return _useLocalApiAndRepo;
         }
-
-        set => SetSettingsValue(value.ToString());
+        set
+        {
+            _useLocalApiAndRepo = value;
+            SetSettingsDbValue(value.ToString());
+        }
     }
 
+    private string _localRepoPath;
     public string LocalRepoPath
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return dbContext.Settings.Find([nameof(LocalRepoPath)])?.Value ?? string.Empty;
+            return _localRepoPath;
         }
-
-        set => SetSettingsValue(value);
+        set
+        {
+            _localRepoPath = value;
+            SetSettingsDbValue(value);
+        }
     }
 
+    private string _apiPassword;
     public string ApiPassword
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return dbContext.Settings.Find([nameof(ApiPassword)])?.Value ?? string.Empty;
+            return _apiPassword;
         }
-
-        set => SetSettingsValue(value);
+        set
+        {
+            _apiPassword = value;
+            SetSettingsDbValue(value);
+        }
     }
 
+    private DateTime _lastReadNewsDate;
     public DateTime LastReadNewsDate
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return DateTime.TryParse(dbContext.Settings.Find([nameof(LastReadNewsDate)])?.Value, out var time) ? time : DateTime.MinValue;
+            return _lastReadNewsDate;
         }
-
-        set => SetSettingsValue(value.ToUniversalTime().ToString());
+        set
+        {
+            _lastReadNewsDate = value;
+            SetSettingsDbValue(value.ToUniversalTime().ToString());
+        }
     }
 
+    private Dictionary<Guid, bool> _upvotes;
     public Dictionary<Guid, bool> Upvotes
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
+            return _upvotes;
         }
     }
 
@@ -165,16 +196,16 @@ public sealed class ConfigProvider : IConfigProvider
         }
 
         _ = dbContext.SaveChanges();
+        _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
         ParameterChangedEvent?.Invoke(nameof(Upvotes));
     }
 
+    private HashSet<string> _hiddenTags;
     public HashSet<string> HiddenTags
     {
         get
         {
-            using var dbContext = _dbContextFactory.Get();
-
-            return [.. dbContext.HiddenTags.Select(x => x.Tag)];
+            return _hiddenTags;
         }
     }
 
@@ -208,11 +239,12 @@ public sealed class ConfigProvider : IConfigProvider
         }
 
         _ = dbContext.SaveChanges();
+        _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
         ParameterChangedEvent?.Invoke(nameof(HiddenTags));
     }
 
 
-    private void SetSettingsValue(string value, [CallerMemberName] string caller = "")
+    private void SetSettingsDbValue(string value, [CallerMemberName] string caller = "")
     {
         using var dbContext = _dbContextFactory.Get();
 
