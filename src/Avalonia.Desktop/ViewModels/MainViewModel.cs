@@ -1002,6 +1002,11 @@ Do you still want to install the fix?",
         Guard.IsNotNull(fileFix?.ConfigFile);
         Guard.IsNotNull(game);
 
+        if (!fix.IsInstalled)
+        {
+            return;
+        }
+
         var pathToConfig = Path.Combine(game.InstallDir, fileFix.ConfigFile);
 
         if (fileFix.ConfigFile.EndsWith(".exe"))
