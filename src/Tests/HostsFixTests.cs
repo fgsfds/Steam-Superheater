@@ -56,7 +56,7 @@ public sealed class HostsFixTests : IDisposable
         container.AddScoped<InstalledFixesProvider>();
         container.AddScoped<FixesProvider>();
         container.AddScoped<GamesProvider>();
-        CommonBindings.Load(container);
+        CommonBindings.Load(container, true);
 
         _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
         _hostsFilePath = Path.Combine(_testDirectory, "hosts");

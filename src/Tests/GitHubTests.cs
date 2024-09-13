@@ -4,6 +4,7 @@ using Common.Client;
 using Common.Client.Config;
 using Common.Client.DI;
 using Common.Client.FilesTools;
+using Common.Client.Logger;
 using Common.Client.Providers;
 using Database.Client;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +25,7 @@ public sealed class GitHubTests
         _ = container.AddScoped<IConfigProvider, ConfigProviderFake>();
         _ = container.AddTransient<AppUpdateInstaller>();
         _ = container.AddTransient<HttpClient>();
-        _ = container.AddTransient<Logger>();
+        _ = container.AddTransient<LoggerToFile>();
         _ = container.AddTransient<ArchiveTools>();
         _ = container.AddTransient<ProgressReport>();
         _ = container.AddTransient<ApiInterface>();

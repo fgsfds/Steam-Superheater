@@ -56,7 +56,7 @@ public sealed partial class FileFixTests
         container.AddScoped<InstalledFixesProvider>();
         container.AddScoped<FixesProvider>();
         container.AddScoped<GamesProvider>();
-        CommonBindings.Load(container);
+        CommonBindings.Load(container, true);
 
         ClearTempFolders();
 

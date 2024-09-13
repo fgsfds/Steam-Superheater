@@ -1,5 +1,7 @@
 using Common.Client.Config;
 using Common.Client.Providers;
+using Common.Client.Providers.Fakes;
+using Common.Client.Providers.Interfaces;
 using Database.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,17 +14,20 @@ public static class ProvidersBindings
         if (isDesigner)
         {
             _ = container.AddSingleton<IConfigProvider, ConfigProviderFake>();
-        }
-        else
-        {
-            _ = container.AddSingleton<IConfigProvider, ConfigProvider>();
+            _ = container.AddSingleton<IFixesProvider, FixesProviderFake>();
+            _ = container.AddSingleton<INewsProvider, NewsProviderFake>();
+            _ = container.AddSingleton<IGamesProvider, GamesProviderFake>();
+            _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProviderFake>();
+
+            return;
         }
 
+        _ = container.AddSingleton<IConfigProvider, ConfigProvider>();
+        _ = container.AddSingleton<IFixesProvider, FixesProvider>();
+        _ = container.AddSingleton<INewsProvider, NewsProvider>();
+        _ = container.AddSingleton<IGamesProvider, GamesProvider>();
+        _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProvider>();
         _ = container.AddSingleton<DatabaseContextFactory>();
-        _ = container.AddSingleton<GamesProvider>();
-        _ = container.AddSingleton<FixesProvider>();
-        _ = container.AddSingleton<InstalledFixesProvider>();
-        _ = container.AddSingleton<NewsProvider>();
     }
 }
 

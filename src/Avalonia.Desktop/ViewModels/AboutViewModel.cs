@@ -1,5 +1,6 @@
 using Common;
 using Common.Client;
+using Common.Client.Logger;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -8,7 +9,7 @@ namespace Avalonia.Desktop.ViewModels;
 public sealed partial class AboutViewModel : ObservableObject
 {
     private readonly AppUpdateInstaller _updateInstaller;
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
 
     #region Binding Properties
@@ -46,7 +47,7 @@ public sealed partial class AboutViewModel : ObservableObject
 
     public AboutViewModel(
         AppUpdateInstaller updateInstaller,
-        Logger logger)
+        ILogger logger)
     {
         _updateInstaller = updateInstaller;
         _logger = logger;

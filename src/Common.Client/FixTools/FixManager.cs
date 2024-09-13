@@ -1,7 +1,8 @@
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
-using Common.Client.Providers;
+using Common.Client.Logger;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -26,9 +27,9 @@ public sealed class FixManager
     private readonly HostsFixUninstaller _hostsFixUninstaller;
     private readonly HostsFixUpdater _hostsFixUpdater;
 
-    private readonly InstalledFixesProvider _installedFixesProvider;
+    private readonly IInstalledFixesProvider _installedFixesProvider;
 
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
 
     public FixManager(
@@ -44,9 +45,9 @@ public sealed class FixManager
         HostsFixUninstaller hostsFixUninstaller,
         HostsFixUpdater hostsFixUpdater,
 
-        InstalledFixesProvider installedFixesProvider,
+        IInstalledFixesProvider installedFixesProvider,
 
-        Logger logger
+        ILogger logger
         )
     {
         _fileFixInstaller = fileFixInstaller;

@@ -1,6 +1,6 @@
 using Api.Common.Interface;
 using Common.Client.FilesTools;
-using Common.Client.Providers;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -17,8 +17,8 @@ namespace Common.Client.Models;
 
 public sealed class EditorModel
 {
-    private readonly FixesProvider _fixesProvider;
-    private readonly GamesProvider _gamesProvider;
+    private readonly IFixesProvider _fixesProvider;
+    private readonly IGamesProvider _gamesProvider;
     private readonly FilesUploader _filesUploader;
     private readonly ApiInterface _apiInterface;
 
@@ -32,8 +32,8 @@ public sealed class EditorModel
 
 
     public EditorModel(
-        FixesProvider fixesProvider,
-        GamesProvider gamesProvider,
+        IFixesProvider fixesProvider,
+        IGamesProvider gamesProvider,
         FilesUploader filesUploader,
         ApiInterface apiInterface
         )

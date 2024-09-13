@@ -1,4 +1,5 @@
 using Api.Common.Interface;
+using Common.Client.Providers.Interfaces;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
@@ -8,34 +9,29 @@ using System.Text.Json;
 
 namespace Common.Client.Providers;
 
-public sealed class FixesProvider
+public sealed class FixesProvider : IFixesProvider
 {
     private readonly ApiInterface _apiInterface;
-    private readonly GamesProvider _gamesProvider;
-    private readonly InstalledFixesProvider _installedFixesProvider;
+    private readonly IGamesProvider _gamesProvider;
+    private readonly IInstalledFixesProvider _installedFixesProvider;
     private readonly DatabaseContextFactory _dbContextFactory;
-    private readonly Logger _logger;
 
-    public volatile IEnumerable<FileFixEntity>? SharedFixes;
+    public IEnumerable<FileFixEntity>? SharedFixes { get; private set; }
 
     public FixesProvider(
         ApiInterface apiInterface,
-        GamesProvider gamesProvider,
-        InstalledFixesProvider installedFixesProvider,
-        DatabaseContextFactory dbContextFactory,
-        Logger logger
+        IGamesProvider gamesProvider,
+        IInstalledFixesProvider installedFixesProvider,
+        DatabaseContextFactory dbContextFactory
         )
     {
         _apiInterface = apiInterface;
         _gamesProvider = gamesProvider;
         _installedFixesProvider = installedFixesProvider;
         _dbContextFactory = dbContextFactory;
-        _logger = logger;
     }
 
-    /// <summary>
-    /// Get fixes list from online or local repo
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<Result<List<FixesList>>> GetFixesListAsync()
     {
         using var dbContext = _dbContextFactory.Get();
@@ -88,9 +84,7 @@ public sealed class FixesProvider
         return new(newFixesList.ResultEnum, currentFixesList, newFixesList.Message);
     }
 
-    /// <summary>
-    /// Get list of fixes sorted by dependency, with added game entities, and installed fixes
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<Result<List<FixesList>?>> GetPreparedFixesListAsync()
     {
         var fixesLists = await GetFixesListAsync().ConfigureAwait(false);
@@ -177,12 +171,7 @@ public sealed class FixesProvider
         return new(fixesLists.ResultEnum, [.. result], fixesLists.Message);
     }
 
-    /// <summary>
-    /// Add or modify fix int the database
-    /// </summary>
-    /// <param name="gameId">Game id</param>
-    /// <param name="gameName">Game name</param>
-    /// <param name="fix">Fix</param>
+    /// <inheritdoc/>
     public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
     {
         var fileFixResult = PrepareFixes(fix);
@@ -196,6 +185,7 @@ public sealed class FixesProvider
 
         return result;
     }
+
 
     private Result PrepareFixes(BaseFixEntity fix)
     {

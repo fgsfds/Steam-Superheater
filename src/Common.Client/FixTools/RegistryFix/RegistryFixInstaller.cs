@@ -1,3 +1,4 @@
+using Common.Client.Logger;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
@@ -9,10 +10,10 @@ namespace Common.Client.FixTools.RegistryFix;
 
 public sealed class RegistryFixInstaller
 {
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
 
-    public RegistryFixInstaller(Logger logger)
+    public RegistryFixInstaller(ILogger logger)
     {
         _logger = logger;
     }

@@ -1,16 +1,17 @@
 using Api.Common.Interface;
+using Common.Client.Logger;
 
 namespace Common.Client.FilesTools;
 
 public sealed class FilesUploader
 {
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
     private readonly ApiInterface _apiInterface;
     private readonly ProgressReport _progressReport;
 
 
     public FilesUploader(
-        Logger logger,
+        ILogger logger,
         ApiInterface apiInterface,
         ProgressReport progressReport)
     {

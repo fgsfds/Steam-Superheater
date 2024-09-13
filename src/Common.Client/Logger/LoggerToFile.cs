@@ -1,15 +1,16 @@
 using CommunityToolkit.Diagnostics;
+using System.Diagnostics;
 
-namespace Common.Client;
+namespace Common.Client.Logger;
 
-public sealed class Logger
+public sealed class LoggerToFile : ILogger
 {
     private readonly object _lock = new();
     private readonly List<string> _buffer = [];
 
     public string LogFile { get; init; }
 
-    public Logger()
+    public LoggerToFile()
     {
         LogFile = Path.Combine(ClientProperties.WorkingFolder, "superheater.log");
 
@@ -26,9 +27,17 @@ public sealed class Logger
         }
     }
 
-    public void Info(string message) => Log(message, "Info");
+    public void Info(string message)
+    {
+        Debug.WriteLine(message);
+        Log(message, "Info");
+    }
 
-    public void Error(string message) => Log(message, "Error");
+    public void Error(string message)
+    {
+        Debug.WriteLine(message);
+        Log(message, "Error");
+    }
 
     /// <summary>
     /// Add message to the log file

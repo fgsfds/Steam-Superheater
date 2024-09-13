@@ -1,5 +1,6 @@
 using Common.Client;
 using Common.Client.DI;
+using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Entities;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,14 +20,14 @@ public sealed class ParsingTests
         var container = BindingsManager.Instance;
         container.AddTransient<GamesProvider>();
         container.AddTransient<SteamTools>();
-        container.AddTransient<Logger>();
+        container.AddTransient<LoggerToFile>();
     }
 
     [Fact]
     public void GetGameEntityFromAcfTest()
     {
         var steamTools = BindingsManager.Provider.GetRequiredService<SteamTools>();
-        var logger = BindingsManager.Provider.GetRequiredService<Logger>();
+        var logger = BindingsManager.Provider.GetRequiredService<LoggerToFile>();
 
         var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
 

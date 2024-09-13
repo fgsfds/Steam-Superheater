@@ -476,7 +476,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 if (!result.IsSuccess)
                 {
                     var length2 = App.Random.Next(1, 100);
-                    string repeatedString2 = new string('\u200B', length2);
+                    var repeatedString2 = new string('\u200B', length2);
 
                     App.NotificationManager.Show(
                         result.Message + repeatedString2,
@@ -497,7 +497,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         IsInProgress = false;
 
         var length = App.Random.Next(1, 100);
-        string repeatedString = new string('\u200B', length);
+        var repeatedString = new string('\u200B', length);
 
         App.NotificationManager.Show(
             fixUninstallResult.Message + repeatedString,
@@ -757,7 +757,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         var result = await _apiInterface.ReportFixAsync(SelectedFix.Guid, reportText).ConfigureAwait(true);
 
         var length = App.Random.Next(1, 100);
-        string repeatedString = new string('\u200B', length);
+        var repeatedString = new string('\u200B', length);
 
         App.NotificationManager.Show(
             result.Message + repeatedString,
@@ -899,7 +899,7 @@ Do you still want to install the fix?",
         if (!result.IsSuccess)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + repeatedString,
@@ -916,7 +916,7 @@ Do you still want to install the fix?",
             _config.OpenConfigAfterInstall)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + Environment.NewLine + "Open config file?" + repeatedString, 
@@ -927,7 +927,7 @@ Do you still want to install the fix?",
         else
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + repeatedString,
@@ -954,7 +954,7 @@ Do you still want to install the fix?",
         if (!result.IsSuccess)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + repeatedString,

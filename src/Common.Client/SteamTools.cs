@@ -1,3 +1,4 @@
+using Common.Client.Logger;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Win32;
 
@@ -5,12 +6,12 @@ namespace Common.Client;
 
 public sealed class SteamTools
 {
-    public readonly Logger _logger;
+    public readonly ILogger _logger;
 
     public string? SteamInstallPath { get; }
 
 
-    public SteamTools(Logger logger)
+    public SteamTools(ILogger logger)
     {
         _logger = logger;
         SteamInstallPath = GetSteamInstallPath();

@@ -1,3 +1,5 @@
+using Common.Client.Logger;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Helpers;
@@ -7,17 +9,17 @@ using System.Text.Json;
 
 namespace Common.Client.Providers;
 
-public sealed class InstalledFixesProvider
+public sealed class InstalledFixesProvider : IInstalledFixesProvider
 {
-    private readonly Logger _logger;
-    private readonly GamesProvider _gamesProvider;
+    private readonly ILogger _logger;
+    private readonly IGamesProvider _gamesProvider;
 
     private List<BaseInstalledFixEntity>? _cache;
 
 
     public InstalledFixesProvider(
-        GamesProvider gamesProvider,
-        Logger logger
+        IGamesProvider gamesProvider,
+        ILogger logger
         )
     {
         _gamesProvider = gamesProvider;
@@ -25,6 +27,7 @@ public sealed class InstalledFixesProvider
     }
 
 
+    /// <inheritdoc/>
     public async Task<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
     {
         if (_cache is not null)
@@ -39,11 +42,7 @@ public sealed class InstalledFixesProvider
         return [.. _cache];
     }
 
-    /// <summary>
-    /// Add installed fix to cache and create json
-    /// </summary>
-    /// <param name="game">Game</param>
-    /// <param name="installedFix">Installed fix entity</param>
+    /// <inheritdoc/>
     public Result CreateInstalledJson(
         GameEntity game,
         BaseInstalledFixEntity installedFix
@@ -72,11 +71,7 @@ public sealed class InstalledFixesProvider
         return new(ResultEnum.Success, string.Empty);
     }
 
-    /// <summary>
-    /// Remove installed fix from cache and disk
-    /// </summary>
-    /// <param name="game">Game</param>
-    /// <param name="fixGuid">Fix guid</param>
+    /// <inheritdoc/>
     public Result RemoveInstalledJson(GameEntity game, Guid fixGuid)
     {
         Guard.IsNotNull(_cache);

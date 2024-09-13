@@ -10,6 +10,7 @@ using Avalonia.Styling;
 using Common;
 using Common.Client;
 using Common.Client.DI;
+using Common.Client.Logger;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
@@ -23,7 +24,7 @@ public sealed class App : Application
     public static Random Random { get; private set; }
 
     private static readonly Mutex _mutex = new(false, "Superheater");
-    private static Logger? _logger = null;
+    private static ILogger? _logger = null;
 
     public override void Initialize()
     {
@@ -32,30 +33,33 @@ public sealed class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
-        if (ClientProperties.HasCrashed is not null && ClientProperties.HasCrashed.Item1)
+        if (ClientProperties.HasCrashed is not null && ClientProperties.HasCrashed.Item1 && !Design.IsDesignMode)
         {
             var messageBox = new MessageBox(ClientProperties.HasCrashed.Item2);
             messageBox.Show();
             return;
         }
 
-        if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
+        if (!Design.IsDesignMode)
         {
-            var messageBox = new MessageBox($"""
+            if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
+            {
+                var messageBox = new MessageBox($"""
                 Superheater doesn't have write access to
                 {ClientProperties.WorkingFolder}
                 and can't be launched. 
                 Move it to the folder where you have write access.
                 """);
-            messageBox.Show();
-            return;
-        }
+                messageBox.Show();
+                return;
+            }
 
-        if (!_mutex.WaitOne(1000, false))
-        {
-            var messageBox = new MessageBox($"You can't launch multiple instances of Superheater");
-            messageBox.Show();
-            return;
+            if (!_mutex.WaitOne(1000, false))
+            {
+                var messageBox = new MessageBox($"You can't launch multiple instances of Superheater");
+                messageBox.Show();
+                return;
+            }
         }
 
         try
@@ -64,11 +68,11 @@ public sealed class App : Application
 
             ModelsBindings.Load(container);
             ViewModelsBindings.Load(container);
-            CommonBindings.Load(container);
+            CommonBindings.Load(container, Design.IsDesignMode);
             ProvidersBindings.Load(container, Design.IsDesignMode);
 
             var theme = BindingsManager.Provider.GetRequiredService<IConfigProvider>().Theme;
-            _logger = BindingsManager.Provider.GetRequiredService<Logger>();
+            _logger = BindingsManager.Provider.GetRequiredService<ILogger>();
 
             var themeEnum = theme switch
             {
@@ -112,6 +116,11 @@ public sealed class App : Application
         }
         catch (Exception ex)
         {
+            if (Design.IsDesignMode)
+            {
+                return;
+            }
+
             var messageBox = new MessageBox(ex.ToString());
             messageBox.Show();
 
@@ -149,6 +158,11 @@ public sealed class App : Application
     /// </summary>
     private static void Cleanup()
     {
+        if (Design.IsDesignMode)
+        {
+            return;
+        }
+
         _logger?.Info("Starting cleanup");
 
         var files = Directory.GetFiles(ClientProperties.WorkingFolder);

@@ -1,4 +1,6 @@
 using Api.Common.Interface;
+using Common.Client.Logger;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Enums;
 using Database.Client;
@@ -6,15 +8,14 @@ using System.Text.Json;
 
 namespace Common.Client.Providers;
 
-public sealed class NewsProvider
+public sealed class NewsProvider : INewsProvider
 {
     private const byte NewsPerPage = 5;
 
     private readonly ApiInterface _apiInterface;
-    private readonly GamesProvider _gamesProvider;
     private readonly DatabaseContextFactory _dbContextFactory;
     private readonly IConfigProvider _config;
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
     private Dictionary<int, List<NewsEntity>> _newsEntitiesPages = [];
 
@@ -27,23 +28,19 @@ public sealed class NewsProvider
 
     public NewsProvider(
         ApiInterface apiInterface,
-        GamesProvider gamesProvider,
         DatabaseContextFactory dbContextFactory,
         IConfigProvider configProvider,
-        Logger logger
+        ILogger logger
         )
     {
         _apiInterface = apiInterface;
-        _gamesProvider = gamesProvider;
         _dbContextFactory = dbContextFactory;
         _config = configProvider;
         _logger = logger;
     }
 
 
-    /// <summary>
-    /// Get list of news from online or local repo
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<Result> UpdateNewsListAsync()
     {
         using var dbContext = _dbContextFactory.Get();
@@ -85,15 +82,10 @@ public sealed class NewsProvider
         return new(newNewsList.ResultEnum, newNewsList.Message);
     }
 
+    /// <inheritdoc/>
     public List<NewsEntity> GetNewsPage(int page) => _newsEntitiesPages[page];
-
-
-
-    /// <summary>
-    /// Change content of the existing news
-    /// </summary>
-    /// <param name="date">Date of the news</param>
-    /// <param name="content">Content</param>
+    
+    /// <inheritdoc/>
     public async Task<Result> ChangeNewsContentAsync(
         DateTime date,
         string content
@@ -104,10 +96,7 @@ public sealed class NewsProvider
         return result;
     }
 
-    /// <summary>
-    /// Add news
-    /// </summary>
-    /// <param name="content">News content</param>
+    /// <inheritdoc/>
     public async Task<Result> AddNewsAsync(string content)
     {
         var result = await _apiInterface.AddNewsAsync(content).ConfigureAwait(false);
@@ -115,9 +104,7 @@ public sealed class NewsProvider
         return result;
     }
 
-    /// <summary>
-    /// Mark all news as read
-    /// </summary>
+    /// <inheritdoc/>
     public void MarkAllAsRead()
     {
         UpdateConfigLastReadVersion();

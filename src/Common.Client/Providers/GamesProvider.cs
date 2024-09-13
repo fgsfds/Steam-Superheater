@@ -1,26 +1,26 @@
+using Common.Client.Logger;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using CommunityToolkit.Diagnostics;
 using System.Collections.Immutable;
 
 namespace Common.Client.Providers;
 
-public sealed class GamesProvider
+public sealed class GamesProvider : IGamesProvider
 {
     private readonly SteamTools _steamTools;
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
     public GamesProvider(
         SteamTools steamTools,
-        Logger logger
+        ILogger logger
         )
     {
         _steamTools = steamTools;
         _logger = logger;
     }
 
-    /// <summary>
-    /// Get list of installed games
-    /// </summary>
+    /// <inheritdoc/>
     public async Task<ImmutableList<GameEntity>> GetGamesListAsync()
     {
         _logger.Info("Creating games cache list");

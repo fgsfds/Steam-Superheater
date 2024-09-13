@@ -7,7 +7,7 @@ using Avalonia.Platform.Storage;
 using Common;
 using Common.Client;
 using Common.Client.Models;
-using Common.Client.Providers;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -28,12 +28,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 {
     private readonly EditorModel _editorModel;
     private readonly MainViewModel _mainViewModel;
-    private readonly FixesProvider _fixesProvider;
+    private readonly IFixesProvider _fixesProvider;
     private readonly IConfigProvider _config;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
-    private readonly GamesProvider _gamesProvider;
+    private readonly IGamesProvider _gamesProvider;
     private readonly SemaphoreSlim _locker = new(1);
 
     private CancellationTokenSource _cancellationTokenSource;
@@ -483,11 +483,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     public EditorViewModel(
         EditorModel editorModel,
         MainViewModel mainViewModel,
-        FixesProvider fixesProvider,
+        IFixesProvider fixesProvider,
         IConfigProvider config,
         PopupEditorViewModel popupEditor,
         PopupStackViewModel popupStack,
-        GamesProvider gamesProvider,
+        IGamesProvider gamesProvider,
         ProgressReport progressReport
         )
     {
@@ -548,7 +548,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
         var length = App.Random.Next(1, 100);
-        string repeatedString = new string('\u200B', length);
+        var repeatedString = new string('\u200B', length);
 
         App.NotificationManager.Show(
             result.Message + repeatedString,
@@ -572,7 +572,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         OnPropertyChanged(nameof(SelectedGameFixesList));
 
         var length = App.Random.Next(1, 100);
-        string repeatedString = new string('\u200B', length);
+        var repeatedString = new string('\u200B', length);
 
         App.NotificationManager.Show(
             result.Message + repeatedString,
@@ -659,7 +659,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         if (!canUpload.IsSuccess)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 canUpload.Message + repeatedString,
@@ -684,7 +684,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         if (result.IsSuccess)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 $"""
@@ -699,7 +699,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         else
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + repeatedString,
@@ -1088,7 +1088,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         if (!result.IsSuccess)
         {
             var length = App.Random.Next(1, 100);
-            string repeatedString = new string('\u200B', length);
+            var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
                 result.Message + repeatedString,

@@ -1,3 +1,4 @@
+using Common.Client.Logger;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using System.Net.Http.Headers;
@@ -9,13 +10,13 @@ public sealed class FilesDownloader
 {
     private readonly ProgressReport _progressReport;
     private readonly HttpClient _httpClient;
-    private readonly Logger _logger;
+    private readonly ILogger _logger;
 
 
     public FilesDownloader(
         ProgressReport progressReport,
         HttpClient httpClient,
-        Logger logger
+        ILogger logger
         )
     {
         _progressReport = progressReport;

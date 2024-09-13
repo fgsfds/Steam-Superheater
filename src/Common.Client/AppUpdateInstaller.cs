@@ -1,5 +1,6 @@
 using Api.Common.Interface;
 using Common.Client.FilesTools;
+using Common.Client.Logger;
 using Common.Entities;
 using Common.Enums;
 using Common.Helpers;
@@ -11,12 +12,12 @@ namespace Common.Client;
 public sealed class AppUpdateInstaller(
     FilesDownloader filesDownloader,
     ApiInterface apiInterface,
-    Logger logger
+    ILogger logger
     )
 {
     private readonly FilesDownloader _filesDownloader = filesDownloader;
     private readonly ApiInterface _apiInterface = apiInterface;
-    private readonly Logger _logger = logger;
+    private readonly ILogger _logger = logger;
 
     private AppReleaseEntity? _update;
 

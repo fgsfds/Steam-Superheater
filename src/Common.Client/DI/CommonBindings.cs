@@ -4,14 +4,24 @@ using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
+using Common.Client.Logger;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Client.DI;
 
 public static class CommonBindings
 {
-    public static void Load(ServiceCollection container)
+    public static void Load(ServiceCollection container, bool isDesigner)
     {
+        if (isDesigner)
+        {
+            _ = container.AddSingleton<ILogger, LoggerToConsole>();
+        }
+        else
+        {
+            _ = container.AddSingleton<ILogger, LoggerToFile>();
+        }
+
         _ = container.AddTransient<AppUpdateInstaller>();
 
         _ = container.AddTransient<FileFixInstaller>();
@@ -34,7 +44,6 @@ public static class CommonBindings
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<HttpClient>(CreateHttpClient);
         _ = container.AddSingleton<SteamTools>();
-        _ = container.AddSingleton<Logger>();
         _ = container.AddSingleton<ApiInterface>();
     }
 

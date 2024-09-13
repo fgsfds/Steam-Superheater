@@ -1,5 +1,5 @@
 using Api.Common.Interface;
-using Common.Client.Providers;
+using Common.Client.Providers.Interfaces;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
@@ -11,8 +11,8 @@ namespace Common.Client.Models;
 public sealed class MainModel
 {
     private readonly IConfigProvider _config;
-    private readonly FixesProvider _fixesProvider;
-    private readonly GamesProvider _gamesProvider;
+    private readonly IFixesProvider _fixesProvider;
+    private readonly IGamesProvider _gamesProvider;
     private readonly ApiInterface _apiInterface;
 
     private List<FixesList> _combinedEntitiesList = [];
@@ -24,8 +24,8 @@ public sealed class MainModel
 
     public MainModel(
         IConfigProvider configProvider,
-        FixesProvider fixesProvider,
-        GamesProvider gamesProvider,
+        IFixesProvider fixesProvider,
+        IGamesProvider gamesProvider,
         ApiInterface apiInterface
         )
     {
