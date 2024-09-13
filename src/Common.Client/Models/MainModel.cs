@@ -116,12 +116,10 @@ public sealed class MainModel
             {
                 var existingFix = existingGame.Fixes.FirstOrDefault(x => x.Guid == additionalFix.Fixes[0].Guid);
 
-                if (existingFix is not null)
+                if (existingFix is null)
                 {
-                    _ = existingGame.Fixes.Remove(existingFix);
+                    existingGame.Fixes.Add(additionalFix.Fixes[0]);
                 }
-
-                existingGame.Fixes.Add(additionalFix.Fixes[0]);
             }
             else
             {
