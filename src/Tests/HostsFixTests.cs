@@ -1,12 +1,12 @@
-using Common;
-using Common.Client.Config;
-using Common.Client.DI;
 using Common.Client.FixTools;
+using Common.Client.FixTools.HostsFix;
+using Common.Client.Logger;
 using Common.Client.Providers;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
-using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace Tests;
 
@@ -18,12 +18,11 @@ public sealed class HostsFixTests : IDisposable
 {
     private const string TestTempFolder = "test_temp";
 
-    private readonly string _rootDirectory = Directory.GetCurrentDirectory();
+    private readonly string _rootDirectory;
     private readonly string _testDirectory;
     private readonly string _hostsFilePath;
 
     private readonly FixManager _fixManager;
-    private readonly InstalledFixesProvider _installedFixesProvider;
 
     private readonly GameEntity _gameEntity = new()
     {
@@ -50,14 +49,7 @@ public sealed class HostsFixTests : IDisposable
             return;
         }
 
-        BindingsManager.Reset();
-        var container = BindingsManager.Instance;
-        container.AddScoped<IConfigProvider, ConfigProviderFake>();
-        container.AddScoped<InstalledFixesProvider>();
-        container.AddScoped<FixesProvider>();
-        container.AddScoped<GamesProvider>();
-        CommonBindings.Load(container, true);
-
+        _rootDirectory = Directory.GetCurrentDirectory();
         _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
         _hostsFilePath = Path.Combine(_testDirectory, "hosts");
 
@@ -66,19 +58,32 @@ public sealed class HostsFixTests : IDisposable
             Directory.Delete(TestTempFolder, true);
         }
 
-        Directory.CreateDirectory(TestTempFolder);
+        _ = Directory.CreateDirectory(TestTempFolder);
         Directory.SetCurrentDirectory(_testDirectory);
-
-        _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
-        _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
-
-        //create cache;
-        _ = _installedFixesProvider.GetInstalledFixesListAsync().Result;
 
         File.Copy(
             Path.Combine(_rootDirectory, "Resources\\hosts"),
             _hostsFilePath,
             true
+            );
+
+        HostsFixInstaller hostsFixInstaller = new();
+        HostsFixUninstaller hostsFixUninstaller = new();
+        InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
+        _ = installedFixesProvider.GetInstalledFixesListAsync();
+
+        _fixManager = new(
+        null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            hostsFixInstaller,
+            hostsFixUninstaller,
+            null!,
+            installedFixesProvider,
+            new Mock<ILogger>().Object
             );
     }
 
@@ -99,25 +104,26 @@ public sealed class HostsFixTests : IDisposable
     #region Tests
 
     [Fact]
-    public async Task InstallUninstallFixTest()
+    public async Task InstallUninstallHostsFixTest()
     {
         if (!OperatingSystem.IsWindows())
         {
             return;
-        }
-
-        //Preparations
-        var gameEntity = _gameEntity;
-        var fixEntity = _fixEntity;
+        }        
 
         //Install Fix
-        await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true, new(), _hostsFilePath).ConfigureAwait(true);
+        var installResult = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, new(), _hostsFilePath).ConfigureAwait(true);
 
-        CheckInstalled(fixEntity.Guid.ToString());
+        Assert.True(installResult.IsSuccess);
 
-        _fixManager.UninstallFix(gameEntity, fixEntity, _hostsFilePath);
+        CheckInstalled(_fixEntity.Guid.ToString());
 
-        CheckUninstalled(fixEntity.Guid.ToString());
+        //Uninstall Fix
+        var uninstallResult = _fixManager.UninstallFix(_gameEntity, _fixEntity, _hostsFilePath);
+
+        Assert.True(uninstallResult.IsSuccess);
+
+        CheckUninstalled(_fixEntity.Guid.ToString());
     }
 
     #endregion Tests

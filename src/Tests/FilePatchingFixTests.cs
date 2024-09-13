@@ -26,7 +26,7 @@ public sealed partial class FileFixTests
             FilesToPatch = ["install folder\\start game.exe"]
         };
 
-        await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+        _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{

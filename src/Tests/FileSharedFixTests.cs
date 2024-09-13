@@ -83,7 +83,7 @@ public sealed partial class FileFixTests : IDisposable
 
     private async Task InstallAsync(FileFixEntity fixEntity)
     {
-        await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+        _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -121,7 +121,7 @@ public sealed partial class FileFixTests : IDisposable
         fixEntity.Version = 2;
         fixEntity.Url = _testFixV2Zip;
 
-        await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+        _ = await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
@@ -169,7 +169,7 @@ public sealed partial class FileFixTests : IDisposable
 
         fixEntity.SharedFix = sharedFixEntity2;
 
-        await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
+        _ = await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 
@@ -206,7 +206,7 @@ public sealed partial class FileFixTests : IDisposable
     private void Uninstall(FileFixEntity fixEntity)
     {
         //uninstall
-        _fixManager.UninstallFix(_gameEntity, fixEntity);
+        _ = _fixManager.UninstallFix(_gameEntity, fixEntity);
 
         Assert.False(Directory.Exists(Path.Combine("game", "shared install folder")));
 

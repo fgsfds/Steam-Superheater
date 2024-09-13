@@ -1,9 +1,8 @@
 using Common.Client;
-using Common.Client.DI;
 using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Entities;
-using Microsoft.Extensions.DependencyInjection;
+using Moq;
 using System.Reflection;
 
 namespace Tests;
@@ -14,29 +13,20 @@ namespace Tests;
 [Collection("Sync")]
 public sealed class ParsingTests
 {
-    public ParsingTests()
-    {
-        BindingsManager.Reset();
-        var container = BindingsManager.Instance;
-        container.AddTransient<GamesProvider>();
-        container.AddTransient<SteamTools>();
-        container.AddTransient<LoggerToFile>();
-    }
-
     [Fact]
     public void GetGameEntityFromAcfTest()
     {
-        var steamTools = BindingsManager.Provider.GetRequiredService<SteamTools>();
-        var logger = BindingsManager.Provider.GetRequiredService<LoggerToFile>();
+        Mock<ILogger> loggerMock = new();
+        SteamTools steamTools = new(loggerMock.Object);
 
         var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
 
         Assert.NotNull(method);
 
-        var result = method.Invoke(new GamesProvider(steamTools, logger), [Path.Combine("Resources", "test_manifest.acf")]);
+        var result = method.Invoke(new GamesProvider(steamTools, loggerMock.Object), [Path.Combine("Resources", "test_manifest.acf")]);
 
         Assert.NotNull(result);
-        Assert.IsType<GameEntity>(result);
+        _ = Assert.IsType<GameEntity>(result);
 
         var gameEntity = (GameEntity)result;
 
