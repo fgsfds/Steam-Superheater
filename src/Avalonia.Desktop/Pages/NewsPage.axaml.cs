@@ -1,7 +1,5 @@
 using Avalonia.Controls;
-using Avalonia.Controls.Presenters;
 using Avalonia.Desktop.ViewModels;
-using Avalonia.Interactivity;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -30,13 +28,6 @@ public sealed partial class NewsPage : UserControl
         {
             ((NewsViewModel)DataContext).LoadNextPageCommand.Execute(null);
         }
-
-        //var percent = (offset / ext) * 100;
-
-        //if (percent > 90)
-        //{
-        //    ((NewsViewModel)DataContext).LoadNextPageCommand.Execute(null);
-        //}
     }
 }
 

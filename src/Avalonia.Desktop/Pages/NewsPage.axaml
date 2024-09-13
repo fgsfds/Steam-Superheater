@@ -39,82 +39,63 @@
 
                                     <Style Selector="Border.IsNew">
                                         <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
-                                        <Setter Property="BorderThickness" Value="3"/>
+                                        <Setter Property="BorderThickness" Value="2"/>
                                     </Style>
 
                                 </Border.Styles>
 
+                                <Grid RowDefinitions="auto,*">
+
+                                    <Border Grid.Row="0"
+                                            Classes.IsNew="{Binding IsNewer}">
+
+                                        <Border.Styles>
+
+                                            <Style Selector="Border">
+                                                <Setter Property="Background" Value="{DynamicResource ExpanderContentBorderBrush}"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                            </Style>
+
+                                            <Style Selector="Border.IsNew">
+                                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                                <Setter Property="BorderThickness" Value="0"/>
+                                            </Style>
+
+                                        </Border.Styles>
+
+
+                                    </Border>
+
+                                    <TextBlock Margin="20,10"
+                                               VerticalAlignment="Center"
+                                               Grid.Row="0"
+                                               FontWeight="Bold"
+                                               FontSize="15"
+                                               Text="{Binding DateFormatted}"/>
+
+                                    <md:MarkdownScrollViewer Margin="20,10" Grid.Row="1" Markdown="{Binding Content}">
+
+                                        <md:MarkdownScrollViewer.Styles>
+                                            <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
+                                        </md:MarkdownScrollViewer.Styles>
+
+                                    </md:MarkdownScrollViewer>
+
+                                    <Button Grid.Row="0"
+                                            Margin="15"
+                                            Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).EditNewsCommand}"
+                                            IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
+                                            CommandParameter="{Binding Date}"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Top">
+                                        Edit...
+                                    </Button>
+
+                                </Grid>
+
                             </Border>
 
-                            <md:MarkdownScrollViewer Margin="20,15" Grid.Row="0" Markdown="{Binding}">
-
-                                <md:MarkdownScrollViewer.Styles>
-                                    <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                                </md:MarkdownScrollViewer.Styles>
-
-                            </md:MarkdownScrollViewer>
-
-                            <Button Grid.Row="0"
-                                    Margin="15"
-                                    Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).EditNewsCommand}"
-                                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
-                                    CommandParameter="{Binding Date}"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Top">
-                                Edit...
-                            </Button>
-
                         </Grid>
-
-                        <!--<StackPanel Orientation="Vertical">
-
-                        <Expander Header="{Binding Date, StringFormat=dd.MM.yyyy}"
-                        HorizontalAlignment="Stretch"
-                        Margin="2"
-                        IsExpanded="True"
-                        Classes.IsNew="{Binding IsNewer}">
-
-                        <Expander.Styles>
-
-                        <Style Selector=".IsNew /template/ ToggleButton">
-                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
-
-                        <Style Selector="^:pointerover /template/ Border#ToggleButtonBackground">
-                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
-                        </Style>
-
-                        <Style Selector="^:pressed /template/ Border#ToggleButtonBackground">
-                        <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
-                        </Style>
-
-                        </Style>
-
-                        </Expander.Styles>
-
-                        <Grid RowDefinitions="*">
-
-                        <md:MarkdownScrollViewer Grid.Row="0" Markdown="{Binding Content}">
-
-                        <md:MarkdownScrollViewer.Styles>
-                        <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                        </md:MarkdownScrollViewer.Styles>
-
-                        </md:MarkdownScrollViewer>
-
-                        <Button Grid.Row="0"
-                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:NewsViewModel)DataContext).EditNewsCommand}"
-                        IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}"
-                        CommandParameter="{Binding Date}"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
-                        Edit...
-                        </Button>
-
-                        </Grid>
-
-                        </Expander>
-
-                        </StackPanel>-->
 
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>

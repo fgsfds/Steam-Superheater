@@ -20,14 +20,8 @@ public sealed class NewsEntity
     [JsonIgnore]
     public bool IsNewer { get; set; }
 
-    public override string ToString()
-    {
-        return $"""
-            ##### {Date:dd.MM.yy}
-
-            {Content}
-            """;
-    }
+    [JsonIgnore]
+    public string DateFormatted => Date.ToString("dd.MM.yy");
 }
 
 [JsonSerializable(typeof(List<NewsEntity>))]
