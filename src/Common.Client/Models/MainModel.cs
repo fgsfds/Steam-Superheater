@@ -120,6 +120,11 @@ public sealed class MainModel
                 {
                     existingGame.Fixes.Add(additionalFix.Fixes[0]);
                 }
+                else
+                {
+                    _ = existingGame.Fixes.Remove(existingFix);
+                    existingGame.Fixes.Add(existingFix);
+                }
             }
             else
             {
