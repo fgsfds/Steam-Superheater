@@ -1,206 +1,221 @@
-//using Common.Config;
-//using Common.DI;
-//using Common.Entities;
-//using Common.Entities.Fixes.RegistryFix;
-//using Common.Enums;
-//using Common.FixTools;
-//using Common.Helpers;
-//using Common.Providers;
-//using Microsoft.Extensions.DependencyInjection;
-//using Microsoft.Win32;
-//using System.Runtime.InteropServices;
-//using System.Security.Cryptography;
+using Common.Client.FixTools;
+using Common.Client.FixTools.RegistryFix;
+using Common.Client.Logger;
+using Common.Client.Providers;
+using Common.Client.Providers.Interfaces;
+using Common.Entities;
+using Common.Entities.Fixes.RegistryFix;
+using Common.Enums;
+using Common.Helpers;
+using Microsoft.Win32;
+using Moq;
 
-//namespace Tests
-//
-//    /// <summary>
-//    /// Tests that use instance data and should be run in a single thread
-//    /// </summary>
-//    [Collection("Sync")]
-//    public sealed class RegistryFixTests : IDisposable
-//    {
-//        private const string GameDir = "C:\\games\\test game\\";
-//        private const string GameExe = "game exe.exe";
-//        private const string RegKey = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test";
+namespace Tests;
 
-//        private readonly FixManager _fixManager;
-//        private readonly InstalledFixesProvider _installedFixesProvider;
+/// <summary>
+/// Tests that use instance data and should be run in a single thread
+/// </summary>
+[Collection("Sync")]
+public sealed class RegistryFixTests : IDisposable
+{
+    private readonly FixManager _fixManager;
 
-//        private readonly GameEntity _gameEntity = new()
-//        {
-//            Id = 1,
-//            Name = "test game",
-//            InstallDir = GameDir
-//        };
+    private readonly GameEntity _gameEntity = new()
+    {
+        Id = 1,
+        Name = "test game",
+        InstallDir = Helpers.GameDir,
+        Icon = string.Empty
+    };
 
-//        private readonly RegistryFixEntity _fixEntity = new()
-//        {
-//            Name = "test fix",
-//            Version = 1,
-//            Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-//            Key = "HKEY_CURRENT_USER\\" + RegKey,
-//            ValueName = "{gamefolder}\\" + GameExe,
-//            NewValueData = "~ RUNASADMIN",
-//            ValueType = RegistryValueTypeEnum.String,
-//            SupportedOSes = OSEnum.Windows
-//        };
+    private readonly RegistryFixEntity _fixEntity = new()
+    {
+        Name = "test fix",
+        Version = 1,
+        Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+        Key = "HKEY_CURRENT_USER\\" + Helpers.RegKey,
+        ValueName = "{gamefolder}\\" + Helpers.GameExe,
+        NewValueData = "~ RUNASADMIN",
+        ValueType = RegistryValueTypeEnum.String,
+        SupportedOSes = OSEnum.Windows
+    };
 
-//        #region Test Preparations
+    #region Test Preparations
 
-//        public RegistryFixTests()
-//        {
-//            BindingsManager.Reset();
-//            var container = BindingsManager.Instance;
-//            container.AddScoped<ConfigProvider>();
-//            container.AddScoped<InstalledFixesProvider>();
-//            CommonBindings.Load(container);
+    public RegistryFixTests()
+    {
+        _ = Directory.CreateDirectory(Helpers.TestFolder);
+        Directory.SetCurrentDirectory(Helpers.TestFolder);
 
-//            _fixManager = BindingsManager.Provider.GetRequiredService<FixManager>();
-//            _installedFixesProvider = BindingsManager.Provider.GetRequiredService<InstalledFixesProvider>();
-//        }
+        InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
+        _ = installedFixesProvider.GetInstalledFixesListAsync();
 
-//        public void Dispose()
-//        {
-//            if (!OperatingSystem.IsWindows())
-//            {
-//                return;
-//            }
+        RegistryFixInstaller registryFixInstaller = new(new Mock<ILogger>().Object);
+        RegistryFixUninstaller registryFixUninstaller = new();
 
-//            var dir = Directory.GetCurrentDirectory();
+        _fixManager = new(
+            null!,
+            null!,
+            null!,
+            registryFixInstaller,
+            registryFixUninstaller,
+            null!,
+            null!,
+            null!,
+            null!,
+            installedFixesProvider,
+            new Mock<ILogger>().Object
+            );
+    }
 
-//            using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags", true))
-//            {
-//                if (key is null)
-//                {
-//                    return;
-//                }
+    public void Dispose()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
 
-//                key.DeleteSubKey("Layers_test");
-//            }
+        using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags", true))
+        {
+            if (key is null)
+            {
+                return;
+            }
 
-//            File.Delete(Path.Combine(dir, Consts.ConfigFile));
-//            File.Delete(Path.Combine(dir, Consts.InstalledFile));
-//        }
+            key.DeleteSubKey("Layers_test", false);
+        }
 
-//        #endregion Test Preparations
+        Directory.SetCurrentDirectory(Helpers.RootFolder);
 
-//        #region Tests
+        if (Directory.Exists(Helpers.TestFolder))
+        {
+            Directory.Delete(Helpers.TestFolder, true);
+        }
+    }
 
-//        [Fact]
-//        public async Task InstallUninstallFixTest()
-//        {
-//            if (!OperatingSystem.IsWindows())
-//            {
-//                Assert.Fail();
-//                return;
-//            }
+    #endregion Test Preparations
 
-//            //Preparations
-//            var gameEntity = _gameEntity;
-//            var fixEntity = _fixEntity;
+    #region Tests
 
-//            //Install Fix
-//            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
+    [Fact]
+    public async Task InstallUninstallFixTest()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
 
-//            await _installedFixesProvider.SaveInstalledFixesAsync();
+        //Install Fix
+        _ = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, CancellationToken.None).ConfigureAwait(true);
 
-//            //Check installed.fix hash
-//            using (var md5 = MD5.Create())
-//            {
-//                await using (var stream = File.OpenRead(Consts.InstalledFile))
-//                {
-//                    var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
+        //Check if registry value is created
+        using (var key = Registry.CurrentUser.OpenSubKey(Helpers.RegKey, true))
+        {
+            Assert.NotNull(key);
 
-//                    Assert.Equal("CDF4CB5E941EDBBB1984977DAD4D2F29", hash);
-//                }
-//            }
+            var value = (string?)key.GetValue(Helpers.GameDir + "\\" + Helpers.GameExe, null);
 
-//            //Check if registry value is created
-//            installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
-//            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
-//            {
-//                Assert.NotNull(key);
+            if (value is null)
+            {
+                _ = _fixManager.UninstallFix(_gameEntity, _fixEntity);
+                Assert.Fail();
+            }
 
-//                var value = (string?)key.GetValue(installedRegFix.ValueName, null);
+            Assert.Equal(_fixEntity.NewValueData, value);
+        }
 
-//                Assert.Equal(fixEntity.NewValueData, value);
-//            }
+        //Check created json
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
+        var installedExpected = $@"{{
+  ""$type"": ""RegistryFix"",
+  ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
+  ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
+  ""ValueType"": ""String"",
+  ""OriginalValue"": null,
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
 
-//            //Uninstall fix
-//            _fixManager.UninstallFix(gameEntity, fixEntity);
+        Assert.Equal(installedExpected, installedActual);
 
-//            //Check if registry value is removed
-//            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
-//            {
-//                Assert.NotNull(key);
+        //Uninstall fix
+        _ = _fixManager.UninstallFix(_gameEntity, _fixEntity);
 
-//                var value = key.GetValue(installedRegFix.ValueName, null);
+        //Check if registry value is removed
+        using (var key = Registry.CurrentUser.OpenSubKey(Helpers.RegKey, true))
+        {
+            Assert.NotNull(key);
 
-//                Assert.Null(value);
-//            }
-//        }
+            var value = key.GetValue(Helpers.GameDir + "\\" + Helpers.GameExe, null);
 
-//        [Fact]
-//        public async Task InstallUninstallReplaceFixTest()
-//        {
-//            if (!OperatingSystem.IsWindows())
-//            {
-//                Assert.Fail();
-//                return;
-//            }
+            Assert.Null(value);
+        }
+    }
 
-//            const string OldValue = "OLD VALUE";
+    [Fact]
+    public async Task InstallUninstallReplaceFixTest()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
 
-//            //Preparations
-//            using (var key = Registry.CurrentUser.CreateSubKey(RegKey))
-//            {
-//                key.SetValue(GameDir + GameExe, OldValue);
-//            }
+        const string OldValue = "OLD VALUE";
 
-//            var gameEntity = _gameEntity;
-//            var fixEntity = _fixEntity;
+        //Preparations
+        using (var key = Registry.CurrentUser.CreateSubKey(Helpers.RegKey))
+        {
+            key.SetValue(Helpers.GameDir + "\\" + Helpers.GameExe, OldValue);
+        }
 
-//            //Install Fix
-//            await _fixManager.InstallFixAsync(gameEntity, fixEntity, null, true);
+        //Install Fix
+        _ = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, CancellationToken.None).ConfigureAwait(true);
 
-//            await _installedFixesProvider.SaveInstalledFixesAsync();
+        //Check created json
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
+        var installedExpected = $@"{{
+  ""$type"": ""RegistryFix"",
+  ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
+  ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
+  ""ValueType"": ""String"",
+  ""OriginalValue"": ""OLD VALUE"",
+  ""GameId"": 1,
+  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
+  ""Version"": 1
+}}";
 
-//            //Check installed.fix hash
-//            using (var md5 = MD5.Create())
-//            {
-//                await using (var stream = File.OpenRead(Consts.InstalledFile))
-//                {
-//                    var hash = Convert.ToHexString(await md5.ComputeHashAsync(stream));
+        Assert.Equal(installedExpected, installedActual);
 
-//                    Assert.Equal("9E0AC8E1BCF3CECDACDBDE29AFA3818E", hash);
-//                }
-//            }
+        //Check if registry value is set
+        using (var key = Registry.CurrentUser.OpenSubKey(Helpers.RegKey, true))
+        {
+            Assert.NotNull(key);
 
-//            //Check if registry value is set
-//            installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
-//            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
-//            {
-//                Assert.NotNull(key);
+            var value = (string?)key.GetValue(Helpers.GameDir + "\\" + Helpers.GameExe, null);
 
-//                var value = (string?)key.GetValue(installedRegFix.ValueName, null);
+            if (value is null)
+            {
+                _ = _fixManager.UninstallFix(_gameEntity, _fixEntity);
+                Assert.Fail();
+            }
 
-//                Assert.Equal(fixEntity.NewValueData, value);
-//            }
+            Assert.Equal(_fixEntity.NewValueData, value);
+        }
 
-//            //Uninstall fix
-//            _fixManager.UninstallFix(gameEntity, fixEntity);
+        //Uninstall fix
+        _ = _fixManager.UninstallFix(_gameEntity, _fixEntity);
 
-//            //Check if registry value is reverted
-//            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
-//            {
-//                Assert.NotNull(key);
+        //Check if registry value is reverted
+        using (var key = Registry.CurrentUser.OpenSubKey(Helpers.RegKey, true))
+        {
+            Assert.NotNull(key);
 
-//                var value = (string?)key.GetValue(installedRegFix.ValueName, null);
+            var value = (string?)key.GetValue(Helpers.GameDir + "\\" + Helpers.GameExe, null);
 
-//                Assert.Equal(OldValue, value);
-//            }
-//        }
+            Assert.Equal(OldValue, value);
+        }
+    }
 
-//        #endregion Tests
-//    }
-//
+    #endregion Tests
+}

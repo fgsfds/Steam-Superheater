@@ -92,14 +92,14 @@ public sealed partial class FileFixTests : IDisposable
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe"",
-    ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""install folder{Helpers.SeparatorForJson}start game.exe"",
+    ""install folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": {{
     ""BackupFolder"": null,
     ""FilesList"": [
-      ""shared install folder{SeparatorForJson}"",
-      ""shared install folder{SeparatorForJson}shared fix file.txt""
+      ""shared install folder{Helpers.SeparatorForJson}"",
+      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -133,13 +133,13 @@ public sealed partial class FileFixTests : IDisposable
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe""
+    ""install folder{Helpers.SeparatorForJson}start game.exe""
   ],
   ""InstalledSharedFix"": {{
     ""BackupFolder"": null,
     ""FilesList"": [
-      ""shared install folder{SeparatorForJson}"",
-      ""shared install folder{SeparatorForJson}shared fix file.txt""
+      ""shared install folder{Helpers.SeparatorForJson}"",
+      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,
@@ -178,15 +178,15 @@ public sealed partial class FileFixTests : IDisposable
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe"",
-    ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""install folder{Helpers.SeparatorForJson}start game.exe"",
+    ""install folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": {{
     ""BackupFolder"": null,
     ""FilesList"": [
-      ""shared install folder{SeparatorForJson}"",
-      ""shared install folder{SeparatorForJson}shared fix file 2.txt"",
-      ""shared install folder{SeparatorForJson}shared fix file.txt""
+      ""shared install folder{Helpers.SeparatorForJson}"",
+      ""shared install folder{Helpers.SeparatorForJson}shared fix file 2.txt"",
+      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
     ],
     ""InstalledSharedFix"": null,
     ""WineDllOverrides"": null,

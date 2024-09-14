@@ -33,7 +33,7 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix_with_patch"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe.octodiff""
+    ""install folder{Helpers.SeparatorForJson}start game.exe.octodiff""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,

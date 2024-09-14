@@ -1,4 +1,5 @@
 using Common;
+using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.Logger;
@@ -18,46 +19,25 @@ namespace Tests;
 [Collection("Sync")]
 public sealed partial class FileFixTests
 {
-    private static string SeparatorForJson
-    {
-        get
-        {
-            if (OperatingSystem.IsWindows())
-            {
-                return "\\\\";
-            }
-
-            return "/";
-        }
-    }
-
-    private const string TestTempFolder = "test_temp";
-
-    private readonly string _testFixZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix.zip");
-    private readonly string _testFixV2Zip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_v2.zip");
-    private readonly string _testFixVariantZip = Path.Combine(Directory.GetCurrentDirectory(), "Resources", "test_fix_variant.zip");
-
-    private readonly string _rootDirectory;
-    private readonly string _testDirectory;
-    private readonly HttpClient _httpClient;
-
+    private readonly string _testFixZip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix.zip");
+    private readonly string _testFixV2Zip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix_v2.zip");
+    private readonly string _testFixVariantZip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix_variant.zip");
+    
     private readonly GameEntity _gameEntity;
     private readonly FileFixEntity _fileFixEntity;
     private readonly FileFixEntity _fileFixVariantEntity;
 
+    private readonly HttpClient _httpClient;
     private readonly FixManager _fixManager;
 
     #region Test Preparations
 
     public FileFixTests()
     {
-        _rootDirectory = Directory.GetCurrentDirectory();
-
         ClearTempFolders();
 
-        _ = Directory.CreateDirectory(TestTempFolder);
-        _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
-        Directory.SetCurrentDirectory(_testDirectory);
+        _ = Directory.CreateDirectory(Helpers.TestFolder);
+        Directory.SetCurrentDirectory(Helpers.TestFolder);
 
         _gameEntity = new()
         {
@@ -99,7 +79,7 @@ public sealed partial class FileFixTests
         FileFixInstaller fileFixInstaller = new(
             new Mock<IConfigProvider>().Object,
             new(new()),
-            new(new(), _httpClient, new Mock<ILogger>().Object),
+            new FilesDownloader(new(), _httpClient, new Mock<ILogger>().Object),
             new(),
             new Mock<ILogger>().Object
             );
@@ -124,11 +104,11 @@ public sealed partial class FileFixTests
 
     public void Dispose()
     {
-        Directory.SetCurrentDirectory(_rootDirectory);
+        Directory.SetCurrentDirectory(Helpers.RootFolder);
 
         ClearTempFolders();
 
-        foreach (var file in Directory.GetFiles(_rootDirectory))
+        foreach (var file in Directory.GetFiles(Helpers.RootFolder))
         {
             if (file.EndsWith(".zip"))
             {
@@ -141,9 +121,9 @@ public sealed partial class FileFixTests
 
     private static void ClearTempFolders()
     {
-        if (Directory.Exists(TestTempFolder))
+        if (Directory.Exists(Helpers.TestFolder))
         {
-            Directory.Delete(TestTempFolder, true);
+            Directory.Delete(Helpers.TestFolder, true);
         }
 
         if (Directory.Exists(Path.Combine("C:", "Windows", "temp", "test_fix")))
@@ -243,10 +223,10 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": null,
   ""FilesList"": [
-    ""new folder{SeparatorForJson}"",
-    ""new folder{SeparatorForJson}start game.exe"",
-    ""new folder{SeparatorForJson}subfolder{SeparatorForJson}"",
-    ""new folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""new folder{Helpers.SeparatorForJson}"",
+    ""new folder{Helpers.SeparatorForJson}start game.exe"",
+    ""new folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}"",
+    ""new folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,
@@ -286,10 +266,10 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": null,
   ""FilesList"": [
-    ""new folder{SeparatorForJson}"",
-    ""new folder{SeparatorForJson}start game.exe"",
-    ""new folder{SeparatorForJson}subfolder{SeparatorForJson}"",
-    ""new folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""new folder{Helpers.SeparatorForJson}"",
+    ""new folder{Helpers.SeparatorForJson}start game.exe"",
+    ""new folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}"",
+    ""new folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,
@@ -338,10 +318,10 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": null,
   ""FilesList"": [
-    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}"",
-    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}start game.exe"",
-    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}subfolder{SeparatorForJson}"",
-    ""C:{SeparatorForJson}Windows{SeparatorForJson}temp{SeparatorForJson}test_fix{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""C:{Helpers.SeparatorForJson}Windows{Helpers.SeparatorForJson}temp{Helpers.SeparatorForJson}test_fix{Helpers.SeparatorForJson}"",
+    ""C:{Helpers.SeparatorForJson}Windows{Helpers.SeparatorForJson}temp{Helpers.SeparatorForJson}test_fix{Helpers.SeparatorForJson}start game.exe"",
+    ""C:{Helpers.SeparatorForJson}Windows{Helpers.SeparatorForJson}temp{Helpers.SeparatorForJson}test_fix{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}"",
+    ""C:{Helpers.SeparatorForJson}Windows{Helpers.SeparatorForJson}temp{Helpers.SeparatorForJson}test_fix{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,
@@ -520,8 +500,8 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe"",
-    ""install folder{SeparatorForJson}subfolder{SeparatorForJson}file.txt""
+    ""install folder{Helpers.SeparatorForJson}start game.exe"",
+    ""install folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,
@@ -571,7 +551,7 @@ public sealed partial class FileFixTests
   ""$type"": ""FileFix"",
   ""BackupFolder"": ""test_fix"",
   ""FilesList"": [
-    ""install folder{SeparatorForJson}start game.exe""
+    ""install folder{Helpers.SeparatorForJson}start game.exe""
   ],
   ""InstalledSharedFix"": null,
   ""WineDllOverrides"": null,
@@ -585,9 +565,9 @@ public sealed partial class FileFixTests
 
     private string PrepareGameFolder()
     {
-        var gameFolder = Path.Combine(_testDirectory, "game");
+        var gameFolder = Path.Combine(Helpers.TestFolder, "game");
 
-        ZipFile.ExtractToDirectory(Path.Combine(_rootDirectory, "Resources", "test_game.zip"), gameFolder);
+        ZipFile.ExtractToDirectory(Path.Combine(Helpers.RootFolder, "Resources", "test_game.zip"), gameFolder);
 
         return gameFolder;
     }

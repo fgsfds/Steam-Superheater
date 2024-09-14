@@ -16,10 +16,6 @@ namespace Tests;
 [Collection("Sync")]
 public sealed class HostsFixTests : IDisposable
 {
-    private const string TestTempFolder = "test_temp";
-
-    private readonly string _rootDirectory;
-    private readonly string _testDirectory;
     private readonly string _hostsFilePath;
 
     private readonly FixManager _fixManager;
@@ -48,21 +44,18 @@ public sealed class HostsFixTests : IDisposable
         {
             return;
         }
+        _hostsFilePath = Path.Combine(Helpers.TestFolder, "hosts");
 
-        _rootDirectory = Directory.GetCurrentDirectory();
-        _testDirectory = Path.Combine(_rootDirectory, TestTempFolder);
-        _hostsFilePath = Path.Combine(_testDirectory, "hosts");
-
-        if (Directory.Exists(TestTempFolder))
+        if (Directory.Exists(Helpers.TestFolder))
         {
-            Directory.Delete(TestTempFolder, true);
+            Directory.Delete(Helpers.TestFolder, true);
         }
 
-        _ = Directory.CreateDirectory(TestTempFolder);
-        Directory.SetCurrentDirectory(_testDirectory);
+        _ = Directory.CreateDirectory(Helpers.TestFolder);
+        Directory.SetCurrentDirectory(Helpers.TestFolder);
 
         File.Copy(
-            Path.Combine(_rootDirectory, "Resources\\hosts"),
+            Path.Combine(Helpers.RootFolder, "Resources\\hosts"),
             _hostsFilePath,
             true
             );
@@ -94,9 +87,12 @@ public sealed class HostsFixTests : IDisposable
             return;
         }
 
-        Directory.SetCurrentDirectory(_rootDirectory);
+        Directory.SetCurrentDirectory(Helpers.RootFolder);
 
-        Directory.Delete(TestTempFolder, true);
+        if (Directory.Exists(Helpers.TestFolder))
+        {
+            Directory.Delete(Helpers.TestFolder, true);
+        }
     }
 
     #endregion Test Preparations
