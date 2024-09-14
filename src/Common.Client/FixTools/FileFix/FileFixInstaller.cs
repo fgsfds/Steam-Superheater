@@ -1,4 +1,5 @@
 using Common.Client.FilesTools;
+using Common.Client.FilesTools.Interfaces;
 using Common.Client.Logger;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -15,7 +16,7 @@ public sealed class FileFixInstaller
 {
     private readonly IConfigProvider _configEntity;
     private readonly ArchiveTools _archiveTools;
-    private readonly FilesDownloader _filesDownloader;
+    private readonly IFilesDownloader _filesDownloader;
     private readonly ProgressReport _progressReport;
     private readonly ILogger _logger;
 
@@ -23,7 +24,7 @@ public sealed class FileFixInstaller
     public FileFixInstaller(
         IConfigProvider config,
         ArchiveTools archiveTools,
-        FilesDownloader filesDownloader,
+        IFilesDownloader filesDownloader,
         ProgressReport progressReport,
         ILogger logger
         )

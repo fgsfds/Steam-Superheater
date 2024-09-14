@@ -1,5 +1,6 @@
 using Api.Common.Interface;
 using Common.Client.FilesTools;
+using Common.Client.FilesTools.Interfaces;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
@@ -39,7 +40,7 @@ public static class CommonBindings
         _ = container.AddTransient<FixManager>();
         _ = container.AddTransient<ArchiveTools>();
 
-        _ = container.AddSingleton<FilesDownloader>();
+        _ = container.AddSingleton<IFilesDownloader, FilesDownloader>();
         _ = container.AddSingleton<FilesUploader>();
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<HttpClient>(CreateHttpClient);
