@@ -123,18 +123,23 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            if (SelectedFix is null)
-            {
-                return string.Empty;
-            }
+            string? result;
 
-            if (SelectedFix is FileFixEntity fileFix &&
+            if (SelectedFix?.Description is null)
+            {
+                return null;
+            }
+            else if (SelectedFix is FileFixEntity fileFix &&
                 fileFix.SharedFix is not null)
             {
-                return fileFix.SharedFix.Description + Environment.NewLine + Environment.NewLine + fileFix.Description;
+                result = fileFix.SharedFix.Description + Environment.NewLine + Environment.NewLine + fileFix.Description;
+            }
+            else
+            {
+                result = SelectedFix.Description;
             }
 
-            return SelectedFix.Description;
+            return Markdig.Markdown.ToHtml(result);
         }
     }
 

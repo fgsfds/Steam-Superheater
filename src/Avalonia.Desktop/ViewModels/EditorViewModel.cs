@@ -218,8 +218,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             SelectedFix.Description = value;
             OnPropertyChanged();
+            OnPropertyChanged(nameof(SelectedFixDescriptionHtml));
         }
     }
+
+    public string SelectedFixDescriptionHtml => Markdig.Markdown.ToHtml(SelectedFixDescription);
 
     public BaseFixEntity? SelectedSharedFix
     {
@@ -424,6 +427,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
     [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
+    [NotifyPropertyChangedFor(nameof(SelectedFixDescriptionHtml))]
     [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
     [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
     [NotifyCanExecuteChangedFor(nameof(DisableFixCommand))]

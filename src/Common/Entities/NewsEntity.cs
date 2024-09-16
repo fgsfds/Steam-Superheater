@@ -22,6 +22,9 @@ public sealed class NewsEntity
 
     [JsonIgnore]
     public string DateFormatted => Date.ToString("dd.MM.yy");
+
+    [JsonIgnore]
+    public string ContentHtml => Markdig.Markdown.ToHtml(Content);
 }
 
 [JsonSerializable(typeof(List<NewsEntity>))]

@@ -7,6 +7,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:Avalonia="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
              x:DataType="vm:MainViewModel"
              x:Class="Avalonia.Desktop.UserControls.MainLists">
 
@@ -198,15 +199,18 @@
 
                 <TabItem Header="Description" IsVisible="{Binding SelectedFixDescription, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}">
-                        <md:MarkdownScrollViewer.Styles>
-                            <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                        </md:MarkdownScrollViewer.Styles>
-                    </md:MarkdownScrollViewer>
+                    <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
+                                        IsSelectionEnabled="False"
+                                        Text="{Binding SelectedFixDescription}"/>
+
                 </TabItem>
 
                 <TabItem Header="Changelog" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
-                    <TextBlock TextWrapping="Wrap" Text="{Binding SelectedFixChangelog}"/>
+
+                    <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
+                                        IsSelectionEnabled="False"
+                                        Text="{Binding SelectedFixChangelog}"/>
+
                 </TabItem>
 
             </TabControl>

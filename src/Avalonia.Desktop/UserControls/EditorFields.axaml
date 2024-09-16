@@ -7,6 +7,7 @@
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1000"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:Avalonia="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
              x:DataType="vm:EditorViewModel"
              x:Class="Avalonia.Desktop.UserControls.EditorFields">
 
@@ -602,14 +603,10 @@
                      AcceptsReturn="True"
                      IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
 
-            <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"
-                                     IsVisible="{Binding IsChecked, ElementName=MdToggle}">
-
-                <md:MarkdownScrollViewer.Styles>
-                    <StyleInclude Source="/Styles/MarkdownStyle.axaml"/>
-                </md:MarkdownScrollViewer.Styles>
-
-            </md:MarkdownScrollViewer>
+            <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
+                                IsSelectionEnabled="False"
+                                Text="{Binding SelectedFixDescriptionHtml}"
+                                IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
 
             <ToggleButton Name="MdToggle"
                           HorizontalAlignment="Right"
