@@ -1,9 +1,13 @@
 using Common.Enums;
 
-namespace Common.Entities.Fixes.RegistryFix;
+namespace Common.Entities.Fixes.RegistryFixV2;
 
-[Obsolete]
-public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
+public sealed class RegistryInstalledFixV2Entity : BaseInstalledFixEntity
+{
+    public required List<RegistryInstalledEntry> Entries { get; set; }
+}
+
+public sealed class RegistryInstalledEntry
 {
     /// <summary>
     /// Registry key
@@ -25,4 +29,3 @@ public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
     /// </summary>
     public string? OriginalValue { get; init; }
 }
-

@@ -3,8 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.Fixes.RegistryFix;
 
+[Obsolete]
 public sealed class RegistryFixEntity : BaseFixEntity
 {
+    [Obsolete]
     [SetsRequiredMembers]
     public RegistryFixEntity()
     {
@@ -23,6 +25,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
         ValueType = RegistryValueTypeEnum.String;
     }
 
+    [Obsolete]
     [SetsRequiredMembers]
     public RegistryFixEntity(BaseFixEntity fix)
     {

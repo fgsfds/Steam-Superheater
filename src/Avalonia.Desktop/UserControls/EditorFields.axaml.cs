@@ -23,5 +23,15 @@ public sealed partial class EditorFields : UserControl
             VersionTextBox.SelectAll();
         }
     }
+
+    private void Carousel_Next(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        slides.Previous();
+    }
+
+    private void Carousel_Prev(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        slides.Next();
+    }
 }
 

@@ -1,7 +1,7 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.RegistryFixV2;
 using Common.Enums;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Win32;
 
@@ -21,40 +21,84 @@ public sealed class RegistryFixUninstaller
             return;
         }
 
-        Guard2.IsOfType<RegistryInstalledFixEntity>(installedFix, out var installedRegFix);
-
-        var newKey = installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
-
-        using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
+        if (installedFix is RegistryInstalledFixEntity installedRegFix)
         {
-            if (key is null)
-            {
-                return;
-            }
+            var newKey = installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
 
-            if (installedRegFix.OriginalValue is null)
+            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
             {
-                key.DeleteValue(installedRegFix.ValueName);
-            }
-            else
-            {
-                switch (installedRegFix.ValueType)
+                if (key is null)
                 {
-                    case RegistryValueTypeEnum.String:
-                        key.SetValue(installedRegFix.ValueName, installedRegFix.OriginalValue);
-                        break;
-                    case RegistryValueTypeEnum.Dword:
-                        {
-                            var intValue = int.Parse(installedRegFix.OriginalValue);
-                            key.SetValue(installedRegFix.ValueName, intValue);
+                    return;
+                }
+
+                if (installedRegFix.OriginalValue is null)
+                {
+                    key.DeleteValue(installedRegFix.ValueName);
+                }
+                else
+                {
+                    switch (installedRegFix.ValueType)
+                    {
+                        case RegistryValueTypeEnum.String:
+                            key.SetValue(installedRegFix.ValueName, installedRegFix.OriginalValue);
                             break;
-                        }
-                    default:
-                        ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {installedRegFix.ValueType.GetType()}");
-                        break;
+                        case RegistryValueTypeEnum.Dword:
+                            {
+                                var intValue = int.Parse(installedRegFix.OriginalValue);
+                                key.SetValue(installedRegFix.ValueName, intValue);
+                                break;
+                            }
+                        default:
+                            ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {installedRegFix.ValueType.GetType()}");
+                            break;
+                    }
                 }
             }
         }
+        else if (installedFix is RegistryInstalledFixV2Entity installedRegFixV2)
+        {
+            foreach (var fix in installedRegFixV2.Entries)
+            {
+                var newKey = fix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
+
+                using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
+                {
+                    if (key is null)
+                    {
+                        return;
+                    }
+
+                    if (fix.OriginalValue is null)
+                    {
+                        key.DeleteValue(fix.ValueName);
+                    }
+                    else
+                    {
+                        switch (fix.ValueType)
+                        {
+                            case RegistryValueTypeEnum.String:
+                                key.SetValue(fix.ValueName, fix.OriginalValue);
+                                break;
+                            case RegistryValueTypeEnum.Dword:
+                                {
+                                    var intValue = int.Parse(fix.OriginalValue);
+                                    key.SetValue(fix.ValueName, intValue);
+                                    break;
+                                }
+                            default:
+                                ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            ThrowHelper.ThrowNotSupportedException();
+        }
+        
     }
 }
 

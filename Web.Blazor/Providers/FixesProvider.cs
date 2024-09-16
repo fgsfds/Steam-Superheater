@@ -2,6 +2,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -59,7 +60,7 @@ public sealed class FixesProvider
         
         var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
         var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
-        var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
+        var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToLookup(static x => x.FixGuid);
         var hostsFixesDb = dbContext.HostsFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
 
         var tagsDict = dbContext.Tags.AsNoTracking().ToDictionary(static x => x.Id, static x => x.Tag);
@@ -135,9 +136,9 @@ public sealed class FixesProvider
                 }
                 else if (fix.FixType is FixTypeEnum.RegistryFix)
                 {
-                    var regFix = regFixesDb[fix.Guid];
+                    var regFix = regFixesDb[fix.Guid].First();
 
-                    RegistryFixEntity fileFixEntity = new()
+                    RegistryFixEntity regFixEntity = new()
                     {
                         Name = fix.Name,
                         Version = fix.Version,
@@ -157,13 +158,47 @@ public sealed class FixesProvider
                         ValueType = regFix.ValueType
                     };
 
-                    baseFixEntities.Add(fileFixEntity);
+                    baseFixEntities.Add(regFixEntity);
+                }
+                else if (fix.FixType is FixTypeEnum.RegistryFixV2)
+                {
+                    List<RegistryEntry> entries = [];
+
+                    foreach (var entry in regFixesDb[fix.Guid])
+                    {
+                        entries.Add(new RegistryEntry()
+                        {
+                            Key = entry.Key,
+                            ValueName = entry.ValueName,
+                            ValueType = entry.ValueType,
+                            NewValueData = entry.NewValueData,
+                        });
+                    }
+
+                    RegistryFixV2Entity regFixEntity = new()
+                    {
+                        Name = fix.Name,
+                        Version = fix.Version,
+                        Guid = fix.Guid,
+                        Description = fix.Description,
+                        Dependencies = !deps.Any() ? null : [.. deps],
+                        Tags = !tags.Any() ? null : [.. tags],
+                        SupportedOSes = supportedOSes,
+                        Installs = fix.Installs,
+                        Score = fix.Score,
+                        Notes = fix.Notes,
+                        IsDisabled = fix.IsDisabled,
+
+                        Entries = entries
+                    };
+
+                    baseFixEntities.Add(regFixEntity);
                 }
                 else if (fix.FixType is FixTypeEnum.HostsFix)
                 {
                     var hostsFix = hostsFixesDb[fix.Guid];
 
-                    HostsFixEntity fileFixEntity = new()
+                    HostsFixEntity hostsFixEntity = new()
                     {
                         Name = fix.Name,
                         Version = fix.Version,
@@ -180,7 +215,7 @@ public sealed class FixesProvider
                         Entries = hostsFix.Entries
                     };
 
-                    baseFixEntities.Add(fileFixEntity);
+                    baseFixEntities.Add(hostsFixEntity);
                 }
                 else if (fix.FixType is FixTypeEnum.TextFix)
                 {
@@ -414,9 +449,10 @@ public sealed class FixesProvider
 
             var fixType = fix is FileFixEntity ? FixTypeEnum.FileFix :
                             fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
+                            fix is RegistryFixV2Entity ? FixTypeEnum.RegistryFixV2 :
                             fix is HostsFixEntity ? FixTypeEnum.HostsFix :
                             fix is TextFixEntity ? FixTypeEnum.TextFix :
-                            0;
+                            ThrowHelper.ThrowNotSupportedException<FixTypeEnum>();
 
             if (existingEntity is null)
             {
@@ -505,6 +541,22 @@ public sealed class FixesProvider
 
                 _ = dbContext.RegistryFixes.Add(newFixEntity);
             }
+            else if (fix is RegistryFixV2Entity regFix2)
+            {
+                foreach (var entry in regFix2.Entries)
+                {
+                    RegistryFixesDbEntity newFixEntity = new()
+                    {
+                        FixGuid = regFix2.Guid,
+                        Key = entry.Key,
+                        ValueName = entry.ValueName,
+                        ValueType = entry.ValueType,
+                        NewValueData = entry.NewValueData
+                    };
+
+                    _ = dbContext.RegistryFixes.Add(newFixEntity);
+                }
+            }
             else if (fix is HostsFixEntity hostsFix)
             {
                 HostsFixesDbEntity newFixEntity = new()
@@ -518,6 +570,10 @@ public sealed class FixesProvider
             else if (fix is TextFixEntity textFix)
             {
                 //nothing to do
+            }
+            else
+            {
+                ThrowHelper.ThrowNotSupportedException();
             }
 
             _ = dbContext.SaveChanges();
@@ -710,10 +766,10 @@ public sealed class FixesProvider
             _ = dbContext.FileFixes.Remove(a);
         }
 
-        var b = dbContext.RegistryFixes.Find(existingEntity.Guid);
-        if (b is not null)
+        var b = dbContext.RegistryFixes.Where(x => x.FixGuid == existingEntity.Guid);
+        if (b is not null && b.Any())
         {
-            _ = dbContext.RegistryFixes.Remove(b);
+           dbContext.RegistryFixes.RemoveRange(b);
         }
 
         var c = dbContext.HostsFixes.Find(existingEntity.Guid);

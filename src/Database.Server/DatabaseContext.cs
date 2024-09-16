@@ -36,7 +36,7 @@ public sealed class DatabaseContext : DbContext
     {
         if (_isDevMode)
         {
-            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater2;Username=postgres;Password=123;Include Error Detail=True");
+            _ = optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=superheater;Username=postgres;Password=123;Include Error Detail=True");
         }
         else
         {

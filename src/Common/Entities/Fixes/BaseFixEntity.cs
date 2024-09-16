@@ -1,6 +1,7 @@
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using System.Text;
@@ -14,6 +15,7 @@ namespace Common.Entities.Fixes;
 [JsonDerivedType(typeof(FileFixEntity), typeDiscriminator: "FileFix")]
 [JsonDerivedType(typeof(HostsFixEntity), typeDiscriminator: "HostsFix")]
 [JsonDerivedType(typeof(RegistryFixEntity), typeDiscriminator: "RegistryFix")]
+[JsonDerivedType(typeof(RegistryFixV2Entity), typeDiscriminator: "RegistryFixV2")]
 [JsonDerivedType(typeof(TextFixEntity), typeDiscriminator: "TextFix")]
 public abstract class BaseFixEntity
 {

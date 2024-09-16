@@ -11,6 +11,8 @@ public enum FixTypeEnum : byte
     [Description("Hosts fix")]
     HostsFix = 3,
     [Description("Text fix")]
-    TextFix = 4
+    TextFix = 4,
+    [Description("Registry fix V2")]
+    RegistryFixV2 = 5
 }
 

@@ -1,5 +1,6 @@
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
+using Avalonia.Desktop.UserControls;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
 using Avalonia.Input.Platform;
@@ -12,7 +13,7 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -30,6 +31,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly MainViewModel _mainViewModel;
     private readonly IFixesProvider _fixesProvider;
     private readonly IConfigProvider _config;
+    private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
@@ -52,6 +54,19 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
     public ImmutableList<FileFixEntity>? SharedFixesList => _fixesProvider.SharedFixes is null ? null :[.. _fixesProvider.SharedFixes];
+
+    public List<RegistryEntry>? SelectedRegistryFixEntries
+    {
+        get
+        {
+            if (SelectedFix is not RegistryFixV2Entity regFix)
+            {
+                return null;
+            }
+
+            return regFix.Entries;
+        }
+    }
 
     public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
@@ -226,7 +241,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public BaseFixEntity? SelectedSharedFix
     {
-        get => SelectedFix is not FileFixEntity fileFix ? null : SharedFixesList?.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
+        get => SelectedFix is not FileFixEntity fileFix || fileFix.SharedFixGuid is null ? null : SharedFixesList?.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
         set
         {
             Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
@@ -286,7 +301,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public bool IsRegistryFixType
     {
-        get => SelectedFix is RegistryFixEntity;
+        get => SelectedFix is RegistryFixV2Entity;
         set
         {
             Guard.IsNotNull(SelectedGame);
@@ -294,10 +309,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             if (value)
             {
-                _editorModel.ChangeFixType<RegistryFixEntity>(SelectedGame.Fixes, SelectedFix);
+                _editorModel.ChangeFixType<RegistryFixV2Entity>(SelectedGame.Fixes, SelectedFix);
 
                 var index = SelectedFixIndex;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
+                OnPropertyChanged(nameof(SelectedRegistryFixEntries));
                 SelectedFixIndex = index;
             }
         }
@@ -341,54 +357,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
-    public bool IsStringValueType
-    {
-        get
-        {
-            if (SelectedFix is RegistryFixEntity regFix)
-            {
-                return regFix.ValueType is RegistryValueTypeEnum.String;
-            }
-
-            return false;
-        }
-        set
-        {
-            if (value && SelectedFix is RegistryFixEntity regFix)
-            {
-                regFix.ValueType = RegistryValueTypeEnum.String;
-                OnPropertyChanged(nameof(IsDwordValueType));
-                return;
-            }
-
-            ThrowHelper.ThrowArgumentException(nameof(SelectedFix));
-        }
-    }
-
-    public bool IsDwordValueType
-    {
-        get
-        {
-            if (SelectedFix is RegistryFixEntity regFix)
-            {
-                return regFix.ValueType is RegistryValueTypeEnum.Dword;
-            }
-
-            return false;
-        }
-        set
-        {
-            if (value && SelectedFix is RegistryFixEntity regFix)
-            {
-                regFix.ValueType = RegistryValueTypeEnum.Dword;
-                OnPropertyChanged(nameof(IsStringValueType));
-                return;
-            }
-
-            ThrowHelper.ThrowArgumentException(nameof(SelectedFix));
-        }
-    }
-
     public bool IsSharedFixSelected => SelectedSharedFix is not null;
 
 
@@ -420,8 +388,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(IsFileFixType))]
     [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
     [NotifyPropertyChangedFor(nameof(IsTextFixType))]
-    [NotifyPropertyChangedFor(nameof(IsStringValueType))]
-    [NotifyPropertyChangedFor(nameof(IsDwordValueType))]
     [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
     [NotifyPropertyChangedFor(nameof(SelectedFixWineDllsOverrides))]
     [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
@@ -429,6 +395,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescriptionHtml))]
     [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
+    [NotifyPropertyChangedFor(nameof(SelectedRegistryFixEntries))]
     [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
     [NotifyCanExecuteChangedFor(nameof(DisableFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
@@ -489,6 +456,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         MainViewModel mainViewModel,
         IFixesProvider fixesProvider,
         IConfigProvider config,
+        PopupMessageViewModel popupMessage,
         PopupEditorViewModel popupEditor,
         PopupStackViewModel popupStack,
         IGamesProvider gamesProvider,
@@ -499,6 +467,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         _mainViewModel = mainViewModel;
         _fixesProvider = fixesProvider;
         _config = config;
+        _popupMessage = popupMessage;
         _popupEditor = popupEditor;
         _popupStack = popupStack;
         _gamesProvider = gamesProvider;
@@ -1067,12 +1036,41 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         Guard.IsNotNull(SelectedGame);
         Guard.IsNotNull(SelectedFix);
 
-        _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var fixJson);
+        _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out _, out var fixJson);
         await _mainViewModel.TestFixAsync(fixJson).ConfigureAwait(true);
 
         ((MainWindow)AvaloniaProperties.MainWindow).SwitchTab(MainWindowTabsEnum.MainTab);
     }
     private bool TestFixCanExecute() => SelectedFix is not null;
+
+
+    /// <summary>
+    /// Test newly added fix
+    /// </summary>
+    [RelayCommand]
+    private void PreviewJson()
+    {
+        Guard.IsNotNull(SelectedGame);
+        Guard.IsNotNull(SelectedFix);
+
+        _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var newFixJson, out _);
+
+        _popupMessage.Show("JSON Preview", newFixJson, PopupMessageType.OkOnly);
+    }
+
+
+    /// <summary>
+    /// Test newly added fix
+    /// </summary>
+    [RelayCommand]
+    private void AddRegFixEntry()
+    {
+        var regFix = SelectedFix as RegistryFixV2Entity;
+
+        regFix.Entries = [.. regFix.Entries.Append(new())];
+
+        OnPropertyChanged(nameof(SelectedRegistryFixEntries));
+    }
 
     #endregion Relay Commands
 

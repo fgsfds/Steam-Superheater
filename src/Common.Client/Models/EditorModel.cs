@@ -6,6 +6,7 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
+using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -260,7 +261,7 @@ public sealed class EditorModel
         CancellationToken cancellationToken
         )
     {
-        var fixFilePath = CreateFixJson(fixesList, fix, false, out _);
+        var fixFilePath = CreateFixJson(fixesList, fix, false, out _ , out _);
 
         List<string> filesToUpload = [fixFilePath];
 
@@ -286,6 +287,7 @@ public sealed class EditorModel
         FixesList fixesList,
         BaseFixEntity fix,
         bool isTestFix,
+        out string newFixJsonString,
         out FixesList newFixesList
         )
     {
@@ -302,11 +304,12 @@ public sealed class EditorModel
             Fixes = [fix]
         };
 
-        var fixJson = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
+        newFixJsonString = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
         var fixFilePath = Path.Combine(ClientProperties.WorkingFolder, "fix.json");
 
-        File.WriteAllText(fixFilePath, fixJson);
+        File.WriteAllText(fixFilePath, newFixJsonString);
+
         return fixFilePath;
     }
 
@@ -395,9 +398,19 @@ public sealed class EditorModel
     {
         var fixIndex = fixesList.IndexOf(fix);
 
-        if (typeof(T) == typeof(RegistryFixEntity))
+        if (typeof(T) == typeof(RegistryFixV2Entity))
         {
-            RegistryFixEntity newFix = new(fix);
+            RegistryFixV2Entity newFix;
+
+            if (fix is RegistryFixEntity regFix)
+            {
+                newFix = new RegistryFixV2Entity(regFix);
+            }
+            else
+            {
+                newFix = new RegistryFixV2Entity(fix);
+            }
+
             fixesList[fixIndex] = newFix;
         }
         else if (typeof(T) == typeof(FileFixEntity))

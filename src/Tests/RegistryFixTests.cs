@@ -127,11 +127,15 @@ public sealed class RegistryFixTests : IDisposable
         //Check created json
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
-  ""$type"": ""RegistryFix"",
-  ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
-  ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
-  ""ValueType"": ""String"",
-  ""OriginalValue"": null,
+  ""$type"": ""RegistryFixV2"",
+  ""Entries"": [
+    {{
+      ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
+      ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
+      ""ValueType"": ""String"",
+      ""OriginalValue"": null
+    }}
+  ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
   ""Version"": 1
@@ -175,11 +179,15 @@ public sealed class RegistryFixTests : IDisposable
         //Check created json
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
-  ""$type"": ""RegistryFix"",
-  ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
-  ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
-  ""ValueType"": ""String"",
-  ""OriginalValue"": ""OLD VALUE"",
+  ""$type"": ""RegistryFixV2"",
+  ""Entries"": [
+    {{
+      ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
+      ""ValueName"": ""{Helpers.TestFolder.Replace("\\", Helpers.SeparatorForJson)}{Helpers.SeparatorForJson}game_dir{Helpers.SeparatorForJson}game exe.exe"",
+      ""ValueType"": ""String"",
+      ""OriginalValue"": ""OLD VALUE""
+    }}
+  ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
   ""Version"": 1
