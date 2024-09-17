@@ -140,7 +140,8 @@ internal sealed partial class NewsViewModel : ObservableObject
     [RelayCommand]
     private void LoadNextPage()
     {
-        if (_loadedPage == _newsProvider.PagesCount)
+        if (_loadedPage == _newsProvider.PagesCount ||
+            _newsProvider.PagesCount == 0)
         {
             return;
         }
