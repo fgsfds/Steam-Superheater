@@ -8,6 +8,7 @@ using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Database.Client;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -18,6 +19,7 @@ internal sealed partial class SettingsViewModel : ObservableObject
     private readonly IConfigProvider _config;
     private readonly FileSystemWatcher _watcher;
     private readonly List<string> _archivesExtensions = [".zip", ".7z"];
+    private readonly DatabaseContextFactory _dbContextFactory;
 
     #region Binding Properties
 
@@ -132,9 +134,13 @@ internal sealed partial class SettingsViewModel : ObservableObject
     #endregion Binding Properties
 
 
-    public SettingsViewModel(IConfigProvider config)
+    public SettingsViewModel(
+        IConfigProvider config,
+        DatabaseContextFactory dbContextFactory
+        )
     {
         _config = config;
+        _dbContextFactory = dbContextFactory;
 
         DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
         OpenConfigCheckbox = _config.OpenConfigAfterInstall;
@@ -254,6 +260,20 @@ internal sealed partial class SettingsViewModel : ObservableObject
         }
 
         OnPropertyChanged(nameof(ZipFilesCount));
+    }
+
+
+    [RelayCommand]
+    private void DropCache()
+    {
+        using var dbContext = _dbContextFactory.Get();
+
+        dbContext.Cache.Find(DatabaseTableEnum.Fixes)!.Version = 0;
+        dbContext.Cache.Find(DatabaseTableEnum.Fixes)!.Data = "[]";
+        dbContext.Cache.Find(DatabaseTableEnum.News)!.Version = 0;
+        dbContext.Cache.Find(DatabaseTableEnum.News)!.Data = "[]";
+
+        _ = dbContext.SaveChanges();
     }
 
     #endregion Relay Commands

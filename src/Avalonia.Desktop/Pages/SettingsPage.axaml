@@ -250,6 +250,8 @@
 
                     </Grid>
 
+                    <Button Margin="5" Command="{Binding DropCacheCommand}">Drop cache</Button>
+
                 </StackPanel>
             </Expander>
 
