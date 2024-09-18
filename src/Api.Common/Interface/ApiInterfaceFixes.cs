@@ -8,11 +8,20 @@ namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
-    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int version)
+    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes?v={version}").ConfigureAwait(false);
+            GetFixesInMessage message = new()
+            {
+                TableVersion = tableVersion,
+                AppVersion = appVersion
+            };
+
+            using HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{ApiUrl}/fixes");
+            requestMessage.Content = JsonContent.Create(message, GetFixesInMessageContext.Default.GetFixesInMessage);
+
+            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {

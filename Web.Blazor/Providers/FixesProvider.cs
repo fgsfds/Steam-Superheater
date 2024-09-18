@@ -43,7 +43,7 @@ public sealed class FixesProvider
     /// <summary>
     /// Get list of fixes from the database
     /// </summary>
-    public List<FixesList> GetFixesList(int version)
+    public List<FixesList> GetFixesList(int tableVersion, Version? appVersion)
     {
         Stopwatch sw = new();
         sw.Start();
@@ -51,7 +51,7 @@ public sealed class FixesProvider
         //disposed later
         var dbContext = _dbContextFactory.Get();
 
-        var fixesDb = dbContext.Fixes.AsNoTracking().Where(x => x.TableVersion > version).OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
+        var fixesDb = dbContext.Fixes.AsNoTracking().Where(x => x.TableVersion > tableVersion).OrderBy(static x => x.Name.StartsWith("No Intro")).ThenBy(x => x.Name).ToLookup(static x => x.GameId);
 
         if (fixesDb.Count == 0)
         {
@@ -85,6 +85,14 @@ public sealed class FixesProvider
 
             foreach (var fix in fixes)
             {
+                if (appVersion <= new Version(1,2,0))
+                {
+                    if (fix.FixType is FixTypeEnum.RegistryFixV2)
+                    {
+                        continue;
+                    }
+                }
+
                 var deps = dependencies[fix.Guid];
                 var tags = tagsIdsDb[fix.Guid].Select(x => tagsDict[x]);
 

@@ -27,16 +27,16 @@ public sealed class FixesController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public ActionResult<GetFixesOutMessageContext> GetFixesList([FromQuery] int v = 0)
+    public ActionResult<GetFixesOutMessageContext> GetFixesList([FromBody] GetFixesInMessage message)
     {
         var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.Fixes];
 
-        if (v >= version)
+        if (message.TableVersion >= version)
         {
             return NoContent();
         }
 
-        var fixes = _fixesProvider.GetFixesList(v);
+        var fixes = _fixesProvider.GetFixesList(message.TableVersion, message.AppVersion);
 
         if (fixes is null or [])
         {

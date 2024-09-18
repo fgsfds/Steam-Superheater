@@ -20,7 +20,7 @@ public sealed class FixesController : ControllerBase
 
     [Obsolete("Use V2 instead")]
     [HttpGet]
-    public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList(0);
+    public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList(0, new Version(1, 2, 0));
 
 
     [Obsolete("Use V2 instead")]

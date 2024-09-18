@@ -40,7 +40,7 @@ public sealed class FixesProvider : IFixesProvider
         var currentFixesVersion = fixesCacheDbEntity.Version!;
         var currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
 
-        var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion).ConfigureAwait(false);
+        var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion, ClientProperties.CurrentVersion).ConfigureAwait(false);
 
         if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
         {
