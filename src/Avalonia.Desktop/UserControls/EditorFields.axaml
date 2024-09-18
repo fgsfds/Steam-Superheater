@@ -568,7 +568,7 @@
             </Grid>
 
             <!--Dependencies-->
-            <Grid ColumnDefinitions="*,auto,*" RowDefinitions="*,*,*">
+            <Grid ColumnDefinitions="*,auto,*" RowDefinitions="*,*,*" Margin="5">
 
                 <TextBlock Text="Available fixes"
                            Grid.Row="0" Grid.Column="0"
@@ -613,7 +613,7 @@
 
             </Grid>
 
-            <!--Description-->
+            <!--Preview JSON-->
             <Grid Margin="5">
                 <Button Command="{Binding PreviewJsonCommand}">Preview JSON...</Button>
             </Grid>
@@ -621,17 +621,68 @@
         </StackPanel>
 
         <!--Description-->
-        <Grid ColumnDefinitions="*" Grid.Row="1" Margin="5">
+        <Grid ColumnDefinitions="*" Grid.Row="1" Margin="0">
 
-            <TextBox Text="{Binding SelectedFixDescription, Mode=TwoWay}"
-                     TextWrapping="Wrap"
-                     AcceptsReturn="True"
-                     IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
+            <TabControl>
 
-            <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
-                                IsSelectionEnabled="False"
-                                Text="{Binding SelectedFixDescriptionHtml}"
-                                IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
+                <TabControl.Styles>
+
+                    <Style Selector="TabControl">
+                        <Setter Property="Background"/>
+                        <Setter Property="Padding" Value="3"/>
+                    </Style>
+
+                    <Style Selector="TabItem">
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="10 3"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+
+                        <Style Selector="^:selected">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="10 3"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+
+                        <Style Selector="^:selected /template/ Border#PART_SelectedPipe">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="10 3"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+
+                    </Style>
+                </TabControl.Styles>
+
+                <TabItem Header="Description">
+                    <Panel>
+                        <TextBox Text="{Binding SelectedFixDescription, Mode=TwoWay}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
+
+                        <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
+                                            IsSelectionEnabled="False"
+                                            Text="{Binding SelectedFixDescriptionHtml}"
+                                            IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
+                    </Panel>
+                </TabItem>
+                <TabItem Header="Changelog">
+                    <Panel>
+                        <TextBox Text="{Binding SelectedFixChangelog, Mode=TwoWay}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
+
+                        <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
+                                            IsSelectionEnabled="False"
+                                            Text="{Binding SelectedFixChangelogHtml}"
+                                            IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
+                    </Panel>
+                </TabItem>
+            </TabControl>
+
+
 
             <ToggleButton Name="MdToggle"
                           HorizontalAlignment="Right"

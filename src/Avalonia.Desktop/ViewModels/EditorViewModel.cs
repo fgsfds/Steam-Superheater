@@ -4,6 +4,7 @@ using Avalonia.Desktop.UserControls;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
 using Avalonia.Input.Platform;
+using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Common;
 using Common.Client;
@@ -249,7 +250,21 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
+    public string SelectedFixChangelog
+    {
+        get => SelectedFix?.Changelog ?? string.Empty;
+        set
+        {
+            Guard.IsNotNull(SelectedFix);
+
+            SelectedFix.Changelog = value;
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SelectedFixChangelogHtml));
+        }
+    }
+
     public string SelectedFixDescriptionHtml => Markdig.Markdown.ToHtml(SelectedFixDescription);
+    public string SelectedFixChangelogHtml => Markdig.Markdown.ToHtml(SelectedFixChangelog);
 
     public BaseFixEntity? SelectedSharedFix
     {
@@ -407,6 +422,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescriptionHtml))]
+    [NotifyPropertyChangedFor(nameof(SelectedFixChangelog))]
+    [NotifyPropertyChangedFor(nameof(SelectedFixChangelogHtml))]
     [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
     [NotifyPropertyChangedFor(nameof(SelectedRegistryFixEntries))]
     [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
@@ -1068,7 +1085,13 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var newFixJson, out _);
 
-        _popupMessage.Show("JSON Preview", newFixJson, PopupMessageType.OkOnly);
+        _popupMessage.Show(
+            "JSON Preview", 
+            newFixJson, 
+            PopupMessageType.OkOnly,
+            null,
+            HorizontalAlignment.Left
+            );
     }
 
 

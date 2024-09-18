@@ -27,8 +27,7 @@
                     BorderBrush="{DynamicResource SystemAccentColor}"
                     BorderThickness="1"
                     Background="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
-                    BoxShadow="{DynamicResource Shadow}"
-                    Effect="drop-shadow(0 0 2 Gray)"></Border>
+                    BoxShadow="{DynamicResource Shadow}"/>
 
             <TextBlock HorizontalAlignment="Center"
                        Grid.Row="0"

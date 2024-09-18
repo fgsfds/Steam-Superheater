@@ -1,3 +1,4 @@
+using Avalonia.Layout;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -28,6 +29,9 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
 
     [ObservableProperty]
     private string _messageText = string.Empty;
+
+    [ObservableProperty]
+    private HorizontalAlignment _textAlignment;
 
     #endregion Binding Properties
 
@@ -67,7 +71,8 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
         string title,
         string message,
         PopupMessageType type,
-        Action? okAction = null
+        Action? okAction = null,
+        HorizontalAlignment alignment = HorizontalAlignment.Center
         )
     {
         ChangePopupType(type);
@@ -75,6 +80,7 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
         _okAction = okAction;
         TitleText = title;
         MessageText = message;
+        TextAlignment = alignment;
 
         IsVisible = true;
         PopupShownEvent?.Invoke(true);
@@ -97,7 +103,8 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
         string title,
         string message,
         PopupMessageType type,
-        Action? okAction = null
+        Action? okAction = null,
+        HorizontalAlignment alignment = HorizontalAlignment.Center
         )
     {
         ChangePopupType(type);
@@ -105,6 +112,7 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
         _okAction = okAction;
         TitleText = title;
         MessageText = message;
+        TextAlignment = alignment;
 
         IsVisible = true;
         PopupShownEvent?.Invoke(true);

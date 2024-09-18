@@ -203,6 +203,10 @@ public sealed class FixesProvider : IFixesProvider
         {
             fix.Description = null;
         }
+        if (string.IsNullOrWhiteSpace(fix.Changelog))
+        {
+            fix.Changelog = null;
+        }
         if (string.IsNullOrWhiteSpace(fix.Notes))
         {
             fix.Notes = null;
