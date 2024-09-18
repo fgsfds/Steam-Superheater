@@ -6,7 +6,7 @@ public sealed class FileCheckerTask : IHostedService, IDisposable
 {
     private readonly FixesProvider _fixesProvider;
 
-    private Timer _timer;
+    private Timer? _timer;
 
     public FileCheckerTask(
         FixesProvider fixesProvider
@@ -34,7 +34,7 @@ public sealed class FileCheckerTask : IHostedService, IDisposable
 
     public Task StopAsync(CancellationToken stoppingToken)
     {
-        _timer?.Change(Timeout.Infinite, 0);
+        _ = _timer?.Change(Timeout.Infinite, 0);
 
         return Task.CompletedTask;
     }

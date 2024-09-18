@@ -146,6 +146,7 @@ public sealed class RegistryFixInstaller
                 GameId = game.Id,
                 Guid = fixes.Guid,
                 Version = fixes.Version,
+                VersionStr = fixes.VersionStr,
                 Entries = installedEntries
             },
             Message = "Successfully installed fix"

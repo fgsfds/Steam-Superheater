@@ -1,3 +1,4 @@
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider adding the 'required' modifier or declaring as nullable.
 using Common.Enums;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
@@ -26,8 +27,11 @@ public sealed class FixesDbEntity
     [Column("name")]
     public required string Name { get; set; }
 
+    [Column("version_old")]
+    public required int VersionOld { get; set; }
+
     [Column("version")]
-    public required int Version { get; set; }
+    public required string? Version { get; set; }
 
     [Column("is_windows_supported")]
     public required bool IsWindowsSupported { get; set; }

@@ -38,7 +38,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly IGamesProvider _gamesProvider;
     private readonly SemaphoreSlim _locker = new(1);
 
-    private CancellationTokenSource _cancellationTokenSource;
+    private CancellationTokenSource? _cancellationTokenSource;
 
 
     #region Binding Properties
@@ -114,6 +114,18 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             Guard.IsNotNull(SelectedFix);
 
             SelectedFix.Version = value;
+            OnPropertyChanged(nameof(SelectedGameFixesList));
+        }
+    }
+
+    public string? SelectedFixVersionStr
+    {
+        get => SelectedFix?.VersionStr;
+        set
+        {
+            Guard.IsNotNull(SelectedFix);
+
+            SelectedFix.VersionStr = value;
             OnPropertyChanged(nameof(SelectedGameFixesList));
         }
     }
@@ -372,6 +384,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedFixName))]
     [NotifyPropertyChangedFor(nameof(SelectedFixVersion))]
+    [NotifyPropertyChangedFor(nameof(SelectedFixVersionStr))]
     [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
     [NotifyPropertyChangedFor(nameof(SelectedAvailableDependency))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
@@ -418,11 +431,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
-    private BaseFixEntity _selectedAvailableDependency;
+    private BaseFixEntity? _selectedAvailableDependency;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(RemoveDependencyCommand))]
-    private BaseFixEntity _selectedDependency;
+    private BaseFixEntity? _selectedDependency;
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]

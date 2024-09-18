@@ -20,8 +20,8 @@ namespace Avalonia.Desktop;
 
 public sealed class App : Application
 {
-    public static WindowNotificationManager NotificationManager { get; private set; }
-    public static Random Random { get; private set; }
+    public static WindowNotificationManager? NotificationManager { get; private set; }
+    public static Random? Random { get; private set; }
 
     private static readonly Mutex _mutex = new(false, "Superheater");
     private static ILogger? _logger = null;

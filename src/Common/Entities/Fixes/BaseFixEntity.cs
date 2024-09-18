@@ -4,6 +4,7 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
+using Common.Helpers;
 using System.Text;
 using System.Text.Json.Serialization;
 
@@ -32,7 +33,14 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Fix version
     /// </summary>
+    [Obsolete("Remove later")]
     public required int Version { get; set; }
+
+    /// <summary>
+    /// Fix version
+    /// </summary>
+    [Obsolete("Make required later")]
+    public string? VersionStr { get; set; }
 
     /// <summary>
     /// Supported OSes
@@ -107,7 +115,29 @@ public abstract class BaseFixEntity
     /// Is there a newer version of the fix
     /// </summary>
     [JsonIgnore]
-    public virtual bool IsOutdated => InstalledFix is not null && InstalledFix.Version < Version;
+    public virtual bool IsOutdated
+    {
+        get
+        {
+            if (InstalledFix is null)
+            {
+                return false;
+            }
+
+            if (InstalledFix.VersionStr is not null &&
+                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr, "<"))
+            {
+                return true;
+            }
+
+            if (InstalledFix.Version < Version)
+            {
+                return true;
+            }
+
+            return false;
+        }
+    }
 
     [JsonIgnore]
     public int DependencyLevel { get; set; } = 0;

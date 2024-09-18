@@ -7,6 +7,7 @@ using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.FileFix;
+using Common.Enums;
 using Common.Helpers;
 using Moq;
 using System.IO.Compression;
@@ -51,24 +52,28 @@ public sealed partial class FileFixTests
         {
             Name = "test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
             FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
             FilesToBackup = ["install folder\\file to backup.txt"],
-            MD5 = "4E9DE15FC40592B26421E05882C2F6F7"
+            MD5 = "4E9DE15FC40592B26421E05882C2F6F7",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _fileFixVariantEntity = new()
         {
             Name = "test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixVariantZip,
             InstallFolder = "install folder",
             FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
             FilesToBackup = ["install folder\\file to backup.txt"],
-            MD5 = "4E9DE15FC40592B26421E05882C2F6F7"
+            MD5 = "4E9DE15FC40592B26421E05882C2F6F7",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
@@ -188,9 +193,11 @@ public sealed partial class FileFixTests
         {
             Name = "test fix compromised",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = $"{Consts.FilesBucketUrl}nointro/bsp_nointro.zip",
-            MD5 = "badMD5"
+            MD5 = "badMD5",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false, new()).ConfigureAwait(true);
@@ -209,9 +216,11 @@ public sealed partial class FileFixTests
         {
             Name = "test fix new folder",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
-            InstallFolder = "new folder"
+            InstallFolder = "new folder",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -252,9 +261,11 @@ public sealed partial class FileFixTests
         {
             Name = "test fix new folder",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
-            InstallFolder = "new folder"
+            InstallFolder = "new folder",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -304,9 +315,11 @@ public sealed partial class FileFixTests
         {
             Name = "test fix absolute pack",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
-            InstallFolder = Path.Combine("C:", "Windows", "temp", "test_fix")
+            InstallFolder = Path.Combine("C:", "Windows", "temp", "test_fix"),
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -352,9 +365,11 @@ public sealed partial class FileFixTests
         {
             Name = "test fix absolute pack",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
-            InstallFolder = Path.Combine("{documents}", "test_fix")
+            InstallFolder = Path.Combine("{documents}", "test_fix"),
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -407,12 +422,14 @@ public sealed partial class FileFixTests
         {
             Name = "test fix",
             Version = 2,
+            VersionStr = "2.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixV2Zip,
             InstallFolder = "install folder",
             FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
             FilesToBackup = ["install folder\\file to backup.txt"],
-            InstalledFix = fileFix.InstalledFix
+            InstalledFix = fileFix.InstalledFix,
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.UpdateFixAsync(gameEntity, newFileFix, null, true, new()).ConfigureAwait(true);

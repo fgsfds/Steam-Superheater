@@ -7,11 +7,12 @@ namespace Common.Entities.Fixes.RegistryFix;
 public sealed class RegistryFixEntity : BaseFixEntity
 {
     [Obsolete]
-    [SetsRequiredMembers]
+    //[SetsRequiredMembers]
     public RegistryFixEntity()
     {
         Name = string.Empty;
         Version = 1;
+        VersionStr = null;
         Guid = Guid.NewGuid();
         Description = null;
         Dependencies = null;
@@ -31,6 +32,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
+        VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
         Dependencies = fix.Dependencies;

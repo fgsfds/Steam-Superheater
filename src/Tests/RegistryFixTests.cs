@@ -32,6 +32,7 @@ public sealed class RegistryFixTests : IDisposable
     {
         Name = "test fix",
         Version = 1,
+        VersionStr = "1.0",
         Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
         Key = "HKEY_CURRENT_USER\\" + Helpers.RegKey,
         ValueName = "{gamefolder}\\" + Helpers.GameExe,

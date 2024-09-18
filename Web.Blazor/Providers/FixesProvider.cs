@@ -106,7 +106,8 @@ public sealed class FixesProvider
                     FileFixEntity fileFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.Version,
+                        Version = fix.VersionOld,
+                        VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Dependencies = !deps.Any() ? null : [.. deps],
@@ -141,7 +142,8 @@ public sealed class FixesProvider
                     RegistryFixEntity regFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.Version,
+                        Version = fix.VersionOld,
+                        VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Dependencies = !deps.Any() ? null : [.. deps],
@@ -178,7 +180,8 @@ public sealed class FixesProvider
                     RegistryFixV2Entity regFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.Version,
+                        Version = fix.VersionOld,
+                        VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Dependencies = !deps.Any() ? null : [.. deps],
@@ -201,7 +204,8 @@ public sealed class FixesProvider
                     HostsFixEntity hostsFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.Version,
+                        Version = fix.VersionOld,
+                        VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Dependencies = !deps.Any() ? null : [.. deps],
@@ -222,7 +226,8 @@ public sealed class FixesProvider
                     TextFixEntity textFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.Version,
+                        Version = fix.VersionOld,
+                        VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Dependencies = !deps.Any() ? null : [.. deps],
@@ -361,7 +366,7 @@ public sealed class FixesProvider
             return null;
         }
 
-        return fix.Version;
+        return fix.VersionOld;
     }
 
     /// <summary>
@@ -467,7 +472,8 @@ public sealed class FixesProvider
                     IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
                     Name = fix.Name,
                     Notes = fix.Notes,
-                    Version = fix.Version,
+                    VersionOld = fix.Version,
+                    Version = fix.VersionStr,
                     IsDisabled = false,
                     TableVersion = newTableVersion,
                     Score = 0,
@@ -493,7 +499,8 @@ public sealed class FixesProvider
                 existingEntity.IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows);
                 existingEntity.Name = fix.Name;
                 existingEntity.Notes = fix.Notes;
-                existingEntity.Version = fix.Version;
+                existingEntity.VersionOld = fix.Version;
+                existingEntity.Version = fix.VersionStr;
                 existingEntity.TableVersion = newTableVersion;
             }
 

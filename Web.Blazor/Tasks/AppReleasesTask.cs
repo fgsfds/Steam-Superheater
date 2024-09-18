@@ -6,7 +6,7 @@ public sealed class AppReleasesTask : IHostedService, IDisposable
 {
     private readonly AppReleasesProvider _appReleasesProvider;
 
-    private Timer _timer;
+    private Timer? _timer;
 
     public AppReleasesTask(
         AppReleasesProvider appReleasesProvider

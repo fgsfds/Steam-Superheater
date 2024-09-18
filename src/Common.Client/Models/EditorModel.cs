@@ -133,7 +133,7 @@ public sealed class EditorModel
         {
             GameId = game.Id,
             GameName = game.Name,
-            Fixes = [new FileFixEntity()]
+            Fixes = [new FileFixEntity(true)]
         };
 
         _fixesList.Add(newFix);
@@ -150,7 +150,7 @@ public sealed class EditorModel
     /// <returns>New fix entity</returns>
     public FileFixEntity AddNewFix(FixesList game)
     {
-        FileFixEntity newFix = new();
+        FileFixEntity newFix = new(true);
 
         game.Fixes.Add(newFix);
 
@@ -332,7 +332,8 @@ public sealed class EditorModel
         }
 
         if (string.IsNullOrEmpty(fix.Name) ||
-            fix.Version < 1)
+            fix.Version < 1 ||
+            string.IsNullOrEmpty(fix.VersionStr))
         {
             return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
         }

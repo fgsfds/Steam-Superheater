@@ -7,11 +7,12 @@ namespace Common.Entities.Fixes.RegistryFixV2;
 
 public sealed class RegistryFixV2Entity : BaseFixEntity
 {
-    [SetsRequiredMembers]
+    //[SetsRequiredMembers]
     public RegistryFixV2Entity()
     {
         Name = string.Empty;
         Version = 1;
+        VersionStr = null;
         Guid = Guid.NewGuid();
         Description = null;
         Dependencies = null;
@@ -27,6 +28,7 @@ public sealed class RegistryFixV2Entity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
+        VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
         Dependencies = fix.Dependencies;
@@ -42,6 +44,7 @@ public sealed class RegistryFixV2Entity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
+        VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
         Dependencies = fix.Dependencies;
@@ -120,6 +123,9 @@ public sealed class RegistryEntry
     [SetsRequiredMembers]
     public RegistryEntry()
     {
+        Key = string.Empty;
+        ValueName = string.Empty;
+        NewValueData = string.Empty;
         ValueType = RegistryValueTypeEnum.String;
     }
 }

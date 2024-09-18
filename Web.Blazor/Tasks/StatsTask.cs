@@ -6,7 +6,7 @@ public sealed class StatsTask : IHostedService, IDisposable
 {
     private readonly StatsProvider _statsProvider;
 
-    private Timer _timer;
+    private Timer? _timer;
 
     public StatsTask(
         StatsProvider statsProvider

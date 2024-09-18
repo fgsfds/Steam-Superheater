@@ -9,7 +9,7 @@ public sealed class ConfigProvider : IConfigProvider
 {
     private readonly DatabaseContextFactory _dbContextFactory;
 
-    public event ParameterChanged ParameterChangedEvent;
+    public event ParameterChanged? ParameterChangedEvent;
 
     public ConfigProvider(DatabaseContextFactory dbContextFactory)
     {

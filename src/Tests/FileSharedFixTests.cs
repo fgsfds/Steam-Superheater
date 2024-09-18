@@ -1,4 +1,5 @@
 using Common.Entities.Fixes.FileFix;
+using Common.Enums;
 using Common.Helpers;
 
 namespace Tests;
@@ -23,20 +24,24 @@ public sealed partial class FileFixTests : IDisposable
         {
             Name = "shared test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-            Url = _testFixSharedZip
+            Url = _testFixSharedZip,
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         FileFixEntity fixEntity = new()
         {
             Name = "test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
             SharedFix = sharedFixEntity,
             SharedFixGuid = sharedFixEntity.Guid,
-            SharedFixInstallFolder = "shared install folder"
+            SharedFixInstallFolder = "shared install folder",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         await InstallAsync(fixEntity).ConfigureAwait(true);
@@ -56,20 +61,24 @@ public sealed partial class FileFixTests : IDisposable
         {
             Name = "shared test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-            Url = _testFixSharedZip
+            Url = _testFixSharedZip,
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         FileFixEntity fixEntity = new()
         {
             Name = "test fix",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
             SharedFix = sharedFixEntity,
             SharedFixGuid = sharedFixEntity.Guid,
-            SharedFixInstallFolder = "shared install folder"
+            SharedFixInstallFolder = "shared install folder",
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         await InstallAsync(fixEntity).ConfigureAwait(true);
@@ -163,8 +172,10 @@ public sealed partial class FileFixTests : IDisposable
         {
             Name = "shared test fix",
             Version = 2,
+            VersionStr = "2.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
-            Url = _testFixShared2Zip
+            Url = _testFixShared2Zip,
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         fixEntity.SharedFix = sharedFixEntity2;

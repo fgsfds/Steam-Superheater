@@ -5,7 +5,7 @@ dotnet_diagnostic.IDE0058.severity = warning
 
 dotnet_diagnostic.CA2002.severity = warning
 
-dotnet_diagnostic.CS8618.severity = none
+dotnet_diagnostic.CS8618.severity = error
 
 # XML doc warnings
 dotnet_diagnostic.CS1591.severity = none

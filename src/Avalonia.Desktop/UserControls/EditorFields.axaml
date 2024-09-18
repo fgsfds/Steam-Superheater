@@ -97,6 +97,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="auto" />
                     <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
                 </Grid.ColumnDefinitions>
 
                 <!--Name-->
@@ -128,6 +129,11 @@
                          TextChanged="VersionTextBoxChanged"
                          Width="100"
                          Margin="0,3" />
+
+                <TextBox Grid.Column="4"
+                         Text="{Binding SelectedFixVersionStr, Mode=TwoWay}"
+                         Width="100"
+                         Margin="3,3,0,3" />
             </Grid>
 
             <!--Tags-->

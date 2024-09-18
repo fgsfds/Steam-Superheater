@@ -17,7 +17,7 @@ public sealed class ConfigProviderFake : IConfigProvider
     public ThemeEnum Theme { get; set; } = ThemeEnum.System;
     public Dictionary<Guid, bool> Upvotes { get; set; } = [];
 
-    public event ParameterChanged ParameterChangedEvent;
+    public event ParameterChanged? ParameterChangedEvent;
 
     public void ChangeFixUpvoteState(Guid fixGuid, bool needToUpvote) { }
     public void ChangeTagState(string tag, bool needToHide) { }

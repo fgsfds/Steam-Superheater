@@ -10,11 +10,16 @@ namespace Common.Entities.Fixes.FileFix;
 /// </summary>
 public sealed class FileFixEntity : BaseFixEntity
 {
-    [SetsRequiredMembers]
     public FileFixEntity()
+    {
+    }
+
+    [SetsRequiredMembers]
+    public FileFixEntity(bool _)
     {
         Name = string.Empty;
         Version = 1;
+        VersionStr = null;
         Guid = Guid.NewGuid();
         Description = null;
         Dependencies = null;
@@ -42,6 +47,7 @@ public sealed class FileFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
+        VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
         Dependencies = fix.Dependencies;
@@ -179,12 +185,23 @@ public sealed class FileFixEntity : BaseFixEntity
     {
         get
         {
-            if (InstalledFix is not null && InstalledFix.Version < Version)
+            if (InstalledFix is null)
+            {
+                return false;
+            }
+
+            if (SharedFix is not null && SharedFix.IsOutdated)
             {
                 return true;
             }
 
-            if (SharedFix is not null && SharedFix.IsOutdated)
+            if (InstalledFix.VersionStr is not null &&
+                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr, "<"))
+            {
+                return true;
+            }
+
+            if (InstalledFix.Version < Version)
             {
                 return true;
             }
@@ -199,6 +216,7 @@ public sealed class FileFixEntity : BaseFixEntity
         {
             Name = this.Name,
             Version = this.Version,
+            VersionStr = this.VersionStr,
             Guid = this.Guid,
             Description = this.Description,
             Dependencies = this.Dependencies,

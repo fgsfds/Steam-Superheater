@@ -4,5 +4,5 @@ public sealed class ServerProperties
 {
     public bool IsDevMode { get; set; } = false;
 
-    public string LastUpdated { get; set; }
+    public string LastUpdated { get; set; } = DateTime.MinValue.ToUniversalTime().ToString();
 }

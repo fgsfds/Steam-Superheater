@@ -1,4 +1,5 @@
 using Common.Entities.Fixes.FileFix;
+using Common.Enums;
 using Common.Helpers;
 
 namespace Tests;
@@ -20,10 +21,12 @@ public sealed partial class FileFixTests
         {
             Name = "test fix with patch",
             Version = 1,
+            VersionStr = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixPatchZip,
             InstallFolder = "install folder",
-            FilesToPatch = ["install folder\\start game.exe"]
+            FilesToPatch = ["install folder\\start game.exe"],
+            SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);

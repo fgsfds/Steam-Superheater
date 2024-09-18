@@ -5,6 +5,7 @@ using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
+using Common.Enums;
 using Common.Helpers;
 using Moq;
 
@@ -32,18 +33,16 @@ public sealed class HostsFixTests : IDisposable
     {
         Name = "test fix",
         Version = 1,
+        VersionStr = "1.0",
         Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-        Entries = ["123 added entry "]
+        Entries = ["123 added entry "],
+        SupportedOSes = OSEnum.Windows
     };
 
     #region Test Preparations
 
     public HostsFixTests()
     {
-        if (!OperatingSystem.IsWindows())
-        {
-            return;
-        }
         _hostsFilePath = Path.Combine(Helpers.TestFolder, "hosts");
 
         if (Directory.Exists(Helpers.TestFolder))

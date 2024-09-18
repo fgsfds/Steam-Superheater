@@ -5,11 +5,12 @@ namespace Common.Entities.Fixes.TextFix;
 
 public sealed class TextFixEntity : BaseFixEntity
 {
-    [SetsRequiredMembers]
+    //[SetsRequiredMembers]
     public TextFixEntity()
     {
         Name = string.Empty;
         Version = 1;
+        VersionStr = null;
         Guid = Guid.NewGuid();
         Description = null;
         Dependencies = null;
@@ -23,6 +24,7 @@ public sealed class TextFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
+        VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
         Dependencies = null;
