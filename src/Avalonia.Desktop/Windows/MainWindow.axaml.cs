@@ -18,6 +18,8 @@ public sealed partial class MainWindow : Window
 
         DataContext = vm;
 
+        this.AttachDevTools();
+
         InitializeComponent();
 
         ((IPopup)PopupEditor.DataContext!).PopupShownEvent += Popup_IsShown;
