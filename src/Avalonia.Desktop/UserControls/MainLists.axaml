@@ -199,16 +199,14 @@
 
                 <TabItem Header="Description" IsVisible="{Binding SelectedFixDescription, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
-                                        IsSelectionEnabled="False"
+                    <Avalonia:HtmlPanel IsSelectionEnabled="False"
                                         Text="{Binding SelectedFixDescription}"/>
 
                 </TabItem>
 
                 <TabItem Header="Changelog" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
-                                        IsSelectionEnabled="False"
+                    <Avalonia:HtmlPanel IsSelectionEnabled="False"
                                         Text="{Binding SelectedFixChangelog}"/>
 
                 </TabItem>

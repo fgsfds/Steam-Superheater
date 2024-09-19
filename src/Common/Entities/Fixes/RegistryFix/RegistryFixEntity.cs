@@ -15,6 +15,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
         VersionStr = null;
         Guid = Guid.NewGuid();
         Description = null;
+        Changelog = null;
         Dependencies = null;
         Tags = null;
         SupportedOSes = OSEnum.Windows;
@@ -35,6 +36,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
         VersionStr = null;
         Guid = fix.Guid;
         Description = fix.Description;
+        Changelog = fix.Changelog;
         Dependencies = fix.Dependencies;
         Tags = fix.Tags;
         SupportedOSes = OSEnum.Windows;

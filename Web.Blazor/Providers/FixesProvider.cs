@@ -118,6 +118,7 @@ public sealed class FixesProvider
                         VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
+                        Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
@@ -154,6 +155,7 @@ public sealed class FixesProvider
                         VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
+                        Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
@@ -192,6 +194,7 @@ public sealed class FixesProvider
                         VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
+                        Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
@@ -216,6 +219,7 @@ public sealed class FixesProvider
                         VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
+                        Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
@@ -238,6 +242,7 @@ public sealed class FixesProvider
                         VersionStr = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
+                        Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
@@ -475,7 +480,7 @@ public sealed class FixesProvider
                     FixType = fixType,
                     Guid = fix.Guid,
                     Description = fix.Description,
-                    Changelog = null,
+                    Changelog = fix.Changelog,
                     IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux),
                     IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
                     Name = fix.Name,
@@ -502,7 +507,7 @@ public sealed class FixesProvider
                 existingEntity.GameId = gameEntity.Id;
                 existingEntity.FixType = fixType;
                 existingEntity.Description = fix.Description;
-                existingEntity.Changelog = null;
+                existingEntity.Changelog = fix.Changelog;
                 existingEntity.IsLinuxSupported = fix.SupportedOSes.HasFlag(OSEnum.Linux);
                 existingEntity.IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows);
                 existingEntity.Name = fix.Name;

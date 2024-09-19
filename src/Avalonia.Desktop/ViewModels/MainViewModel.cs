@@ -147,12 +147,12 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            if (SelectedFix is null)
+            if (SelectedFix?.Changelog is null)
             {
-                return string.Empty;
+                return null;
             }
 
-            return SelectedFix.Changelog;
+            return Markdig.Markdown.ToHtml(SelectedFix.Changelog);
         }
     }
 
@@ -285,6 +285,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyPropertyChangedFor(nameof(InstallButtonText))]
     [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
+    [NotifyPropertyChangedFor(nameof(SelectedFixChangelog))]
     [NotifyPropertyChangedFor(nameof(SelectedFixNumberOfInstalls))]
     [NotifyPropertyChangedFor(nameof(SelectedFixScore))]
     [NotifyPropertyChangedFor(nameof(IsSelectedFixUpvoted))]
