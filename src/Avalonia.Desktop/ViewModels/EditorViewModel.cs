@@ -245,7 +245,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             SelectedFix.Description = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(SelectedFixDescriptionHtml));
         }
     }
 
@@ -258,12 +257,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             SelectedFix.Changelog = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(SelectedFixChangelogHtml));
         }
     }
-
-    public string SelectedFixDescriptionHtml => Markdig.Markdown.ToHtml(SelectedFixDescription);
-    public string SelectedFixChangelogHtml => Markdig.Markdown.ToHtml(SelectedFixChangelog);
 
     public BaseFixEntity? SelectedSharedFix
     {
@@ -420,9 +415,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
     [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixDescriptionHtml))]
     [NotifyPropertyChangedFor(nameof(SelectedFixChangelog))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixChangelogHtml))]
     [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
     [NotifyPropertyChangedFor(nameof(SelectedRegistryFixEntries))]
     [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]

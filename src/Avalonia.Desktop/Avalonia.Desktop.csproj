@@ -45,10 +45,10 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Markdown.Avalonia" />
     <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Markdig" />
   </ItemGroup>
 
   <ItemGroup>

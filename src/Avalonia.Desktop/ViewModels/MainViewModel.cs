@@ -139,7 +139,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 result = SelectedFix.Description;
             }
 
-            return Markdig.Markdown.ToHtml(result);
+            return result.Replace("`", string.Empty);
         }
     }
 
@@ -152,7 +152,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 return null;
             }
 
-            return Markdig.Markdown.ToHtml(SelectedFix.Changelog);
+            return SelectedFix.Changelog.Replace("`", string.Empty);
         }
     }
 

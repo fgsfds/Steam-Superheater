@@ -15,6 +15,7 @@
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.0.3" />
     <PackageVersion Include="Markdig" Version="0.37.0" />
+    <PackageVersion Include="Markdown.Avalonia" Version="11.0.3-a1" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

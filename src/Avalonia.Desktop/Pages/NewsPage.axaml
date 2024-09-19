@@ -6,7 +6,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
-             xmlns:Avalonia="clr-namespace:TheArtOfDev.HtmlRenderer.Avalonia;assembly=Avalonia.HtmlRenderer"
              x:DataType="vm:NewsViewModel"
              x:Class="Avalonia.Desktop.Pages.NewsPage">
 
@@ -74,11 +73,9 @@
                                                FontSize="15"
                                                Text="{Binding DateFormatted}"/>
 
-                                    <Avalonia:HtmlPanel AvoidImagesLateLoading="True"
-                                                        Margin="20,0,20,10"
-                                                        Grid.Row="1"
-                                                        IsSelectionEnabled="False"
-                                                        Text="{Binding ContentHtml}"/>
+                                    <md:MarkdownScrollViewer Markdown="{Binding ContentHtml}"
+                                                             Margin="20,10,20,10"
+                                                             Grid.Row="1"/>
 
                                     <Button Grid.Row="0"
                                             Margin="15"
