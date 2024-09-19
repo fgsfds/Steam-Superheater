@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-public class VersionCompareTests
+public sealed class VersionCompareTests
 {
     [Theory]
     [InlineData("1.1", "==1.1")]

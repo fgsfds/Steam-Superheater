@@ -9,8 +9,8 @@ public sealed class AppReleasesProvider
     private readonly ILogger<AppReleasesProvider> _logger;
     private readonly HttpClient _httpClient;
 
-    public AppReleaseEntity? WindowsRelease { get; private set; }
-    public AppReleaseEntity? LinuxRelease { get; private set; }
+    public AppReleaseEntity WindowsRelease { get; private set; }
+    public AppReleaseEntity LinuxRelease { get; private set; }
 
     public AppReleasesProvider(
         ILogger<AppReleasesProvider> logger,
@@ -18,6 +18,10 @@ public sealed class AppReleasesProvider
     {
         _logger = logger;
         _httpClient = httpClient;
+
+        //initialized later
+        WindowsRelease = null!;
+        LinuxRelease = null!;
     }
 
     /// <summary>

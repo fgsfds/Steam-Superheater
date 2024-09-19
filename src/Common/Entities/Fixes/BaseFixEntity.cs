@@ -34,7 +34,7 @@ public abstract class BaseFixEntity
     /// Fix version
     /// </summary>
     [Obsolete("Remove later")]
-    public required int Version { get; set; }
+    public int Version { get; set; }
 
     /// <summary>
     /// Fix version
@@ -125,7 +125,7 @@ public abstract class BaseFixEntity
             }
 
             if (InstalledFix.VersionStr is not null &&
-                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr, "<"))
+                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr!, "<"))
             {
                 return true;
             }

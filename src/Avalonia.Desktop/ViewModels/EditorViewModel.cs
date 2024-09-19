@@ -1,6 +1,5 @@
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
-using Avalonia.Desktop.UserControls;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
 using Avalonia.Input.Platform;
@@ -600,6 +599,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private void AddDependency()
     {
         Guard.IsNotNull(SelectedFix);
+        Guard.IsNotNull(SelectedAvailableDependency);
 
         _editorModel.AddDependencyForFix(SelectedFix, SelectedAvailableDependency);
 
@@ -616,6 +616,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private void RemoveDependency()
     {
         Guard.IsNotNull(SelectedFix);
+        Guard.IsNotNull(SelectedDependency);
 
         _editorModel.RemoveDependencyForFix(SelectedFix, SelectedDependency);
 
@@ -718,7 +719,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     /// Cancel ongoing task
     /// </summary>
     [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
-    private async Task CancelAsync() => await _cancellationTokenSource.CancelAsync().ConfigureAwait(true);
+    private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
 
 
@@ -1101,7 +1102,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void AddRegFixEntry()
     {
-        var regFix = SelectedFix as RegistryFixV2Entity;
+        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
 
         regFix.Entries = [.. regFix.Entries.Append(new())];
 

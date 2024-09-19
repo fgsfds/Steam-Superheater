@@ -198,7 +198,7 @@ public sealed class FileFixEntity : BaseFixEntity
             }
 
             if (InstalledFix.VersionStr is not null &&
-                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr, "<"))
+                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr!, "<"))
             {
                 return true;
             }

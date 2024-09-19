@@ -26,7 +26,7 @@ public sealed class StorageController : ControllerBase
 
         var signedUrl = _s3controller.GetSignedUrl(filePath);
 
-        return signedUrl;
+        return signedUrl!;
     }
 }
 

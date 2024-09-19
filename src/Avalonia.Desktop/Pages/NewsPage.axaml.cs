@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Desktop.ViewModels;
 using Common.Client.DI;
+using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Avalonia.Desktop.Pages;
@@ -19,14 +20,17 @@ public sealed partial class NewsPage : UserControl
 
     }
 
-    private void ScrollViewer_ScrollChanged(object? sender, Avalonia.Controls.ScrollChangedEventArgs e)
+    private void ScrollViewer_ScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
-        var offset = ((ScrollViewer)sender).Offset.Y;
-        var ext = ((ScrollViewer)sender).Extent.Height - ((ScrollViewer)sender).Bounds.Height;
+        Guard2.IsOfType<ScrollViewer>(sender, out var scrollViewer);
+        Guard2.IsOfType<NewsViewModel>(DataContext, out var newsViewModel);
+
+        var offset = scrollViewer.Offset.Y;
+        var ext = scrollViewer.Extent.Height - scrollViewer.Bounds.Height;
 
         if (ext - offset < 100)
         {
-            ((NewsViewModel)DataContext).LoadNextPageCommand.Execute(null);
+            newsViewModel.LoadNextPageCommand.Execute(null);
         }
     }
 }

@@ -66,6 +66,7 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
     /// <param name="message">Popup message</param>
     /// <param name="type">Popup type</param>
     /// <param name="okAction">Action that performs on OK button press</param>
+    /// <param name="alignment">Message text alignment</param>
     /// <returns>true if Ok or Yes pressed, false if Cancel pressed</returns>
     public async Task<bool> ShowAndGetResultAsync(
         string title,
@@ -99,6 +100,7 @@ public sealed partial class PopupMessageViewModel : ObservableObject, IPopup
     /// <param name="message">Popup message</param>
     /// <param name="type">Popup type</param>
     /// <param name="okAction">Action that performs on OK button press</param>
+    /// <param name="alignment">Message text alignment</param>
     public void Show(
         string title,
         string message,

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Server.Migrations
 {
     /// <inheritdoc />
-    public partial class AddRegFixV2 : Migration
+    public sealed partial class AddRegFixV2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

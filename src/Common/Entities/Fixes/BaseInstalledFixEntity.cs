@@ -27,7 +27,7 @@ public abstract class BaseInstalledFixEntity
     /// Installed version
     /// </summary>
     [Obsolete("Remove later")]
-    public required int Version { get; init; }
+    public int Version { get; init; }
 
     /// <summary>
     /// Installed version

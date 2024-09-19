@@ -5,7 +5,7 @@
 namespace Database.Server.Migrations;
 
 /// <inheritdoc />
-public partial class AddVersionString : Migration
+public sealed partial class AddVersionString : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

@@ -10,9 +10,9 @@
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.2.0-beta2" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.2.0-beta2" />
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.402.11" />
-    <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.3.1" />
-    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.1" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.403" />
+    <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.3.2" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.0.3" />
     <PackageVersion Include="Markdig" Version="0.37.0" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
