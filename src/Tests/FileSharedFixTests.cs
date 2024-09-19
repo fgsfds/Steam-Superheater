@@ -114,12 +114,14 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 1
+    ""Version"": 1,
+    ""VersionStr"": ""1.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -128,6 +130,7 @@ public sealed partial class FileFixTests : IDisposable
     private async Task UpdateMainFixAsync(FileFixEntity fixEntity)
     {
         fixEntity.Version = 2;
+        fixEntity.VersionStr = "2.0";
         fixEntity.Url = _testFixV2Zip;
 
         _ = await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -154,12 +157,14 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 1
+    ""Version"": 1,
+    ""VersionStr"": ""1.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 2
+  ""Version"": 2,
+  ""VersionStr"": ""2.0""
 }}";
 
         Assert.Equal(newFileExpected, newFileActual);
@@ -203,12 +208,14 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 2
+    ""Version"": 2,
+    ""VersionStr"": ""2.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);

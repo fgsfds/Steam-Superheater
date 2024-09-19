@@ -241,7 +241,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -286,7 +287,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -340,7 +342,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -392,7 +395,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -524,7 +528,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(textExpected, textActual);
@@ -574,7 +579,8 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 2
+  ""Version"": 2,
+  ""VersionStr"": ""2.0""
 }}";
 
         Assert.Equal(textExpected, textActual);

@@ -43,6 +43,13 @@ public sealed class HostsFixTests : IDisposable
 
     public HostsFixTests()
     {
+        if (!OperatingSystem.IsWindows())
+        {
+            _hostsFilePath = string.Empty;
+            _fixManager = null!;
+            return;
+        }
+
         _hostsFilePath = Path.Combine(Helpers.TestFolder, "hosts");
 
         if (Directory.Exists(Helpers.TestFolder))
@@ -145,7 +152,8 @@ public sealed class HostsFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(hostsActual1, hostsExpected1);

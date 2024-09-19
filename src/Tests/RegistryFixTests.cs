@@ -45,6 +45,12 @@ public sealed class RegistryFixTests : IDisposable
 
     public RegistryFixTests()
     {
+        if (!OperatingSystem.IsWindows())
+        {
+            _fixManager = null!;
+            return;
+        }
+
         _ = Directory.CreateDirectory(Helpers.TestFolder);
         Directory.SetCurrentDirectory(Helpers.TestFolder);
 
@@ -139,7 +145,8 @@ public sealed class RegistryFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -191,7 +198,8 @@ public sealed class RegistryFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1
+  ""Version"": 1,
+  ""VersionStr"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
