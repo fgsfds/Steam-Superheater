@@ -4,6 +4,7 @@
 
     <Application.Styles>
         <FluentTheme DensityStyle="Compact" />
+        <StyleInclude Source="/Styles/Notification.axaml" />
     </Application.Styles>
 
 </Application>

@@ -1,0 +1,56 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:avalonia_controls_notifications="using:Avalonia.Controls.Notifications"
+        xmlns:avalonia_controls="using:Avalonia.Controls">
+
+    <Design.PreviewWith>
+        <NotificationCard>Test message</NotificationCard>
+    </Design.PreviewWith>
+
+    <Style Selector="NotificationCard">
+        <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"/>
+        <Setter Property="CornerRadius" Value="5"/>
+
+
+        <Style Selector="^:success">
+            <Setter Property="BorderBrush" Value="{DynamicResource NotificationCardSuccessBackgroundBrush}"/>
+        </Style>
+        <Style Selector="^:warning">
+            <Setter Property="BorderBrush" Value="{DynamicResource NotificationCardWarningBackgroundBrush}"/>
+        </Style>
+        <Style Selector="^:error">
+            <Setter Property="BorderBrush" Value="{DynamicResource NotificationCardErrorBackgroundBrush}"/>
+        </Style>
+
+
+        <Style Selector="^:information /template/ Border">
+            <Setter Property="BoxShadow" Value="0 0 0 0 Transparent"/>
+        </Style>
+        <Style Selector="^:success /template/ Border">
+            <Setter Property="BoxShadow" Value="0 0 0 0 Transparent"/>
+        </Style>
+        <Style Selector="^:warning /template/ Border">
+            <Setter Property="BoxShadow" Value="0 0 0 0 Transparent"/>
+        </Style>
+        <Style Selector="^:error /template/ Border">
+            <Setter Property="BoxShadow" Value="0 0 0 0 Transparent"/>
+        </Style>
+
+
+        <Style Selector="^:information /template/ Panel#PART_HeaderBar">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="^:success /template/ Panel#PART_HeaderBar">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="^:warning /template/ Panel#PART_HeaderBar">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+        <Style Selector="^:error /template/ Panel#PART_HeaderBar">
+            <Setter Property="Background" Value="Transparent"/>
+        </Style>
+    </Style>
+
+</Styles>
