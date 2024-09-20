@@ -15,6 +15,7 @@ public interface IConfigProvider
     ThemeEnum Theme { get; set; }
     Dictionary<Guid, bool> Upvotes { get; }
     bool UseLocalApiAndRepo { get; set; }
+    bool AllowEventsInvoking { get; set; }
 
     void ChangeFixUpvoteState(Guid fixGuid, bool needToUpvote);
     void ChangeTagState(string tag, bool needToHide);

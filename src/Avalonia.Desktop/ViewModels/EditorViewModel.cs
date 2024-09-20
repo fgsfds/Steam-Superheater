@@ -509,7 +509,11 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     /// Update games list
     /// </summary>
     [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
-    private Task UpdateGamesAsync() => UpdateAsync();
+    private Task UpdateGamesAsync()
+    {
+        return UpdateAsync(true);
+    }
+
     private bool UpdateGamesCanExecute() => IsInProgress is false;
 
 
@@ -922,7 +926,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedGame);
 
-        var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+        var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
         var game = games.FirstOrDefault(x => x.Id == SelectedGame.GameId);
 
         if (game is null)
@@ -1108,12 +1112,13 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     /// <summary>
     /// Update games list
     /// </summary>
-    private async Task UpdateAsync()
+    /// <param name="dropCache">Drop current and create new cache</param>
+    private async Task UpdateAsync(bool dropCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
         IsInProgress = true;
 
-        var result = await _editorModel.UpdateListsAsync().ConfigureAwait(true);
+        var result = await _editorModel.UpdateListsAsync(dropCache).ConfigureAwait(true);
 
         FillGamesList();
 
@@ -1160,12 +1165,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
-    private async void OnParameterChangedEvent(string parameterName)
+    private void OnParameterChangedEvent(string parameterName)
     {
-        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
-            parameterName.Equals(nameof(_config.LocalRepoPath)))
+        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
         {
-            await UpdateAsync().ConfigureAwait(true);
+            _editorModel.DropFixesList();
+            OnPropertyChanged(nameof(FilteredGamesList));
         }
     }
 

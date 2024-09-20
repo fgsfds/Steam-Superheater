@@ -11,6 +11,7 @@ public sealed class ConfigProvider : IConfigProvider
 
     public event ParameterChanged? ParameterChangedEvent;
 
+
     public ConfigProvider(DatabaseContextFactory dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
@@ -29,6 +30,10 @@ public sealed class ConfigProvider : IConfigProvider
         _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
         _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
     }
+
+
+    public bool AllowEventsInvoking { get; set; }
+
 
     private ThemeEnum _theme;
     public ThemeEnum Theme
@@ -197,7 +202,11 @@ public sealed class ConfigProvider : IConfigProvider
 
         _ = dbContext.SaveChanges();
         _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
-        ParameterChangedEvent?.Invoke(nameof(Upvotes));
+
+        if (AllowEventsInvoking)
+        {
+            ParameterChangedEvent?.Invoke(nameof(Upvotes));
+        }
     }
 
     private HashSet<string> _hiddenTags;
@@ -240,7 +249,11 @@ public sealed class ConfigProvider : IConfigProvider
 
         _ = dbContext.SaveChanges();
         _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
-        ParameterChangedEvent?.Invoke(nameof(HiddenTags));
+
+        if (AllowEventsInvoking)
+        {
+            ParameterChangedEvent?.Invoke(nameof(HiddenTags));
+        }
     }
 
 
@@ -260,7 +273,11 @@ public sealed class ConfigProvider : IConfigProvider
         }
 
         _ = dbContext.SaveChanges();
-        ParameterChangedEvent?.Invoke(caller);
+
+        if (AllowEventsInvoking)
+        {
+            ParameterChangedEvent?.Invoke(caller);
+        }
     }
 }
 

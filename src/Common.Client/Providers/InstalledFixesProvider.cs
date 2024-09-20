@@ -6,6 +6,7 @@ using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using System.Collections.Immutable;
 using System.Text.Json;
+using System.Threading;
 
 namespace Common.Client.Providers;
 
@@ -13,6 +14,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 {
     private readonly ILogger _logger;
     private readonly IGamesProvider _gamesProvider;
+    private readonly SemaphoreSlim _semaphore = new(1);
 
     private List<BaseInstalledFixEntity>? _cache;
 
@@ -35,11 +37,20 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
             return [.. _cache];
         }
 
-        await CreateCacheAsync().ConfigureAwait(false);
+        try
+        {
+            await _semaphore.WaitAsync().ConfigureAwait(false);
 
-        Guard.IsNotNull(_cache);
+            await UpdateCacheAsync().ConfigureAwait(false);
 
-        return [.. _cache];
+            Guard.IsNotNull(_cache);
+
+            return [.. _cache];
+        }
+        finally
+        {
+            _ = _semaphore.Release();
+        }
     }
 
     /// <inheritdoc/>
@@ -72,7 +83,10 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
     }
 
     /// <inheritdoc/>
-    public Result RemoveInstalledJson(GameEntity game, Guid fixGuid)
+    public Result RemoveInstalledJson(
+        GameEntity game, 
+        Guid fixGuid
+        )
     {
         Guard.IsNotNull(_cache);
 
@@ -93,15 +107,15 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
 
     /// <summary>
-    /// Create installed fixes cache
+    /// Update installed fixes cache
     /// </summary>
-    private async Task CreateCacheAsync()
+    private async Task UpdateCacheAsync()
     {
         _logger.Info("Requesting installed fixes");
 
         _cache = [];
 
-        var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+        var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
 
         foreach (var gameInstallDir in games.Select(static x => x.InstallDir).Distinct())
         {

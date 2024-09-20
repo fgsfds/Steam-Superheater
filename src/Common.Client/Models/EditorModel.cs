@@ -49,9 +49,10 @@ public sealed class EditorModel
     /// <summary>
     /// Update list of fixes from online or local repo
     /// </summary>
-    public async Task<Result> UpdateListsAsync()
+    /// <param name="dropCache">Drop current and create new cache</param>
+    public async Task<Result> UpdateListsAsync(bool dropCache)
     {
-        var result = await _fixesProvider.GetFixesListAsync().ConfigureAwait(false);
+        var result = await _fixesProvider.GetFixesListAsync(dropCache).ConfigureAwait(false);
 
         if (result.ResultObject is null)
         {
@@ -60,7 +61,7 @@ public sealed class EditorModel
 
         _fixesList = result.ResultObject;
 
-        await UpdateListOfAvailableGamesAsync().ConfigureAwait(false);
+        await UpdateListOfAvailableGamesAsync(dropCache).ConfigureAwait(false);
 
         return new(result.ResultEnum, result.Message);
     }
@@ -120,6 +121,14 @@ public sealed class EditorModel
         }
 
         return [.. _fixesList.Where(x => !x.IsEmpty && x.GameName.Contains(search, StringComparison.OrdinalIgnoreCase))];
+    }
+
+    /// <summary>
+    /// Drop current fixes cache
+    /// </summary>
+    public void DropFixesList()
+    {
+        _fixesList = [];
     }
 
     /// <summary>
@@ -438,9 +447,10 @@ public sealed class EditorModel
     /// <summary>
     /// Create or update list of games that can be added to the fixes list
     /// </summary>
-    private async Task UpdateListOfAvailableGamesAsync()
+    /// <param name="dropCache">Drop current and create new cache</param>
+    private async Task UpdateListOfAvailableGamesAsync(bool dropCache)
     {
-        var installedGames = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+        var installedGames = await _gamesProvider.GetGamesListAsync(dropCache).ConfigureAwait(false);
 
         _availableGamesList = new(installedGames.Count);
 

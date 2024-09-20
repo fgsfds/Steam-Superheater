@@ -142,6 +142,8 @@ internal sealed partial class SettingsViewModel : ObservableObject
         _config = config;
         _dbContextFactory = dbContextFactory;
 
+        _config.AllowEventsInvoking = false;
+
         DeleteArchivesCheckbox = _config.DeleteZipsAfterInstall;
         OpenConfigCheckbox = _config.OpenConfigAfterInstall;
         UseLocalApiCheckbox = _config.UseLocalApiAndRepo;
@@ -151,6 +153,8 @@ internal sealed partial class SettingsViewModel : ObservableObject
         ApiPasswordTextBox = _config.ApiPassword;
 
         _config.ParameterChangedEvent += OnParameterChangedEvent;
+
+        _config.AllowEventsInvoking = true;
 
         _watcher = new FileSystemWatcher(ClientProperties.WorkingFolder);
         _watcher.NotifyFilter = NotifyFilters.FileName;

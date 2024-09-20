@@ -16,6 +16,7 @@ public sealed class ConfigProviderFake : IConfigProvider
     public DateTime LastReadNewsDate { get; set; } = DateTime.MinValue;
     public ThemeEnum Theme { get; set; } = ThemeEnum.System;
     public Dictionary<Guid, bool> Upvotes { get; set; } = [];
+    public bool AllowEventsInvoking { get; set; } = false;
 
     public event ParameterChanged? ParameterChangedEvent;
 

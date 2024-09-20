@@ -6,8 +6,13 @@ namespace Common.Client.Providers.Fakes;
 
 public sealed class GamesProviderFake : IGamesProvider
 {
-    public Task<ImmutableList<GameEntity>> GetGamesListAsync()
+    public Task<ImmutableList<GameEntity>> GetGamesListAsync(bool dropCache)
     {
         return new(() => []);
+    }
+
+    public Task UpdateCacheAsync()
+    {
+        return Task.CompletedTask;
     }
 }

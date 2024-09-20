@@ -8,12 +8,14 @@ public interface IFixesProvider
     /// <summary>
     /// Get fixes list from online or local repo
     /// </summary>
-    Task<Result<List<FixesList>>> GetFixesListAsync();
+    /// <param name="dropCache">Drop current and create new cache</param>
+    Task<Result<List<FixesList>>> GetFixesListAsync(bool dropCache);
 
     /// <summary>
     /// Get list of fixes sorted by dependency, with added game entities, and installed fixes
     /// </summary>
-    Task<Result<List<FixesList>?>> GetPreparedFixesListAsync();
+    /// <param name="dropCache">Drop current and create new cache</param>
+    Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool dropCache);
 
     /// <summary>
     /// Add or modify fix int the database

@@ -392,7 +392,10 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// VM initialization
     /// </summary>
     [RelayCommand]
-    private Task InitializeAsync() => UpdateAsync();
+    private Task InitializeAsync()
+    {        
+        return UpdateAsync(true);
+    }
 
 
     /// <summary>
@@ -401,7 +404,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
     private async Task UpdateGamesAsync()
     {
-        await UpdateAsync().ConfigureAwait(true);
+        await UpdateAsync(true).ConfigureAwait(true);
 
         InstallFixCommand.NotifyCanExecuteChanged();
         UninstallFixCommand.NotifyCanExecuteChanged();
@@ -967,13 +970,14 @@ Do you still want to install the fix?",
     /// <summary>
     /// Update games list
     /// </summary>
-    private async Task UpdateAsync()
+    /// <param name="dropCache">Drop current and create new cache</param>
+    private async Task UpdateAsync(bool dropCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
         IsInProgress = true;
         ProgressBarText = "Updating...";
 
-        var result = await _mainModel.UpdateGamesListAsync().ConfigureAwait(true);
+        var result = await _mainModel.UpdateGamesListAsync(dropCache).ConfigureAwait(true);
 
         await FillGamesListAsync().ConfigureAwait(true);
 
@@ -1118,10 +1122,9 @@ Do you still want to install the fix?",
             await FillGamesListAsync().ConfigureAwait(true);
         }
 
-        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)) ||
-            parameterName.Equals(nameof(_config.LocalRepoPath)))
+        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
         {
-            await UpdateAsync().ConfigureAwait(true);
+            await UpdateAsync(true).ConfigureAwait(true);
         }
     }
 }

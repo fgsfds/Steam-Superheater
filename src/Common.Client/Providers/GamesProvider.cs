@@ -10,6 +10,10 @@ public sealed class GamesProvider : IGamesProvider
 {
     private readonly SteamTools _steamTools;
     private readonly ILogger _logger;
+    private readonly SemaphoreSlim _semaphore = new(1);
+
+    private ImmutableList<GameEntity>? _cache;
+
 
     public GamesProvider(
         SteamTools steamTools,
@@ -20,8 +24,37 @@ public sealed class GamesProvider : IGamesProvider
         _logger = logger;
     }
 
+
     /// <inheritdoc/>
-    public async Task<ImmutableList<GameEntity>> GetGamesListAsync()
+    public async Task<ImmutableList<GameEntity>> GetGamesListAsync(bool dropCache)
+    {
+        if (_cache is not null && !dropCache)
+        {
+            return _cache;
+        }
+
+        try
+        {
+            await _semaphore.WaitAsync().ConfigureAwait(false);
+
+            await UpdateCacheAsync().ConfigureAwait(false);
+
+            Guard.IsNotNull(_cache);
+
+            return _cache;
+        }
+        finally 
+        { 
+            _ = _semaphore.Release(); 
+        }
+    }
+
+
+    /// <summary>
+    /// Update games cache
+    /// </summary>
+    /// <returns></returns>
+    private async Task UpdateCacheAsync()
     {
         _logger.Info("Creating games cache list");
 
@@ -50,7 +83,7 @@ public sealed class GamesProvider : IGamesProvider
 
         _logger.Info($"Added {list.Count} games to the cache");
 
-        return list;
+        _cache = list;
     }
 
     /// <summary>

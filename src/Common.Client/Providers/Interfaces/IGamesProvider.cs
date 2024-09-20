@@ -8,5 +8,6 @@ public interface IGamesProvider
     /// <summary>
     /// Get list of installed games
     /// </summary>
-    Task<ImmutableList<GameEntity>> GetGamesListAsync();
+    /// <param name="dropCache">Drop current and create new cache</param>
+    Task<ImmutableList<GameEntity>> GetGamesListAsync(bool dropCache);
 }

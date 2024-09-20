@@ -37,11 +37,12 @@ public sealed class MainModel
 
 
     /// <summary>
-    /// Update list of games either from cache or by downloading fixes.xml from repo
+    /// Update list of games
     /// </summary>
-    public async Task<Result> UpdateGamesListAsync()
+    /// <param name="dropCache">Drop current and create new cache</param>
+    public async Task<Result> UpdateGamesListAsync(bool dropCache)
     {
-        var result = await _fixesProvider.GetPreparedFixesListAsync().ConfigureAwait(false);
+        var result = await _fixesProvider.GetPreparedFixesListAsync(dropCache).ConfigureAwait(false);
 
         if (result.ResultObject is null)
         {
@@ -128,13 +129,12 @@ public sealed class MainModel
             }
             else
             {
-                var games = await _gamesProvider.GetGamesListAsync().ConfigureAwait(false);
+                var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
                 var game = games.FirstOrDefault(x => x.Id == additionalFix.GameId);
 
                 additionalFix.Game = game;
                 fixesList.Add(additionalFix);
             }
-
         }
 
         if (!string.IsNullOrEmpty(tag))
