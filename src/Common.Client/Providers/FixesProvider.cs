@@ -234,7 +234,7 @@ public sealed class FixesProvider : IFixesProvider
             message = newFixesList.Message;
         }
 
-        SharedFixes = currentFixesList.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
+        SharedFixes = currentFixesList.FirstOrDefault(static x => x.GameId == 0)?.Fixes.Select(static x => x as FileFixEntity)!;
 
         _cache = currentFixesList;
 
