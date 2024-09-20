@@ -7,6 +7,7 @@ using Common;
 using Common.Client;
 using Common.Client.FixTools;
 using Common.Client.Models;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -26,6 +27,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private readonly MainModel _mainModel;
     private readonly ApiInterface _apiInterface;
     private readonly FixManager _fixManager;
+    private readonly IFixesProvider _fixesProvider;
     private readonly IConfigProvider _config;
     private readonly PopupMessageViewModel _popupMessage;
     private readonly PopupEditorViewModel _popupEditor;
@@ -160,17 +162,25 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            if (SelectedFix?.Installs is null)
+            if (SelectedFix is null ||
+                _fixesProvider.Installs is null)
             {
-                return null;
+                return "-";
             }
 
-            if (SelectedFix.Installs == 1)
+            var result = _fixesProvider.Installs.TryGetValue(SelectedFix.Guid, out var installs);
+
+            if (result)
             {
-                return "1 install";
+                if (installs == 1)
+                {
+                    return "1 install";
+                }
+
+                return $"{installs} installs";
             }
 
-            return $"{SelectedFix.Installs} installs";
+            return string.Empty;
         }
     }
 
@@ -178,12 +188,20 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            if (SelectedFix?.Score is null)
+            if (SelectedFix is null ||
+                _fixesProvider.Scores is null)
             {
                 return "-";
             }
 
-            return SelectedFix.Score.ToString()!;
+            var result = _fixesProvider.Scores.TryGetValue(SelectedFix.Guid, out var score);
+
+            if (result)
+            {
+                return score.ToString();
+            }
+
+            return "-";
         }
     }
 
@@ -342,6 +360,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         MainModel mainModel,
         ApiInterface apiInterface,
         FixManager fixManager,
+        IFixesProvider fixesProvider,
         IConfigProvider config,
         PopupMessageViewModel popupMessage,
         PopupEditorViewModel popupEditor,
@@ -352,6 +371,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         _mainModel = mainModel;
         _apiInterface = apiInterface;
         _fixManager = fixManager;
+        _fixesProvider = fixesProvider;
         _config = config;
         _popupMessage = popupMessage;
         _popupEditor = popupEditor;

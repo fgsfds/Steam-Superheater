@@ -248,4 +248,34 @@ public sealed partial class ApiInterface
             return new(ResultEnum.Error, "Error while adding fix");
         }
     }
+
+    public async Task<Result<GetFixesStatsOutMessage>> GetFixesStats()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/stats").ConfigureAwait(false);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                return new(ResultEnum.Error, null, "Error while getting fixes stats");
+            }
+
+            var result = await response.Content.ReadFromJsonAsync(GetFixesStatsOutMessageContext.Default.GetFixesStatsOutMessage).ConfigureAwait(false);
+
+            if (result is null)
+            {
+                return new(ResultEnum.Error, null, "Error while deserializing result");
+            }
+
+            return new(ResultEnum.Success, result, "Succesfully got fixes stats");
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            return new(ResultEnum.Error, null, "API is not responding");
+        }
+        catch
+        {
+            return new(ResultEnum.Error, null, "Error while getting fixes stats");
+        }
+    }
 }

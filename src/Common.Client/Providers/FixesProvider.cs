@@ -17,6 +17,8 @@ public sealed class FixesProvider : IFixesProvider
     private readonly DatabaseContextFactory _dbContextFactory;
 
     public IEnumerable<FileFixEntity>? SharedFixes { get; private set; }
+    public Dictionary<Guid, int>? Installs { get; private set; }
+    public Dictionary<Guid, int>? Scores { get; private set; }
 
     public FixesProvider(
         ApiInterface apiInterface,
@@ -77,6 +79,14 @@ public sealed class FixesProvider : IFixesProvider
             fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
 
             _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        var fixesStats = await _apiInterface.GetFixesStats().ConfigureAwait(false);
+
+        if (fixesStats.IsSuccess)
+        {
+            Installs = fixesStats.ResultObject.Installs;
+            Scores = fixesStats.ResultObject.Scores;
         }
 
         SharedFixes = currentFixesList.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;

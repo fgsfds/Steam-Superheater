@@ -24,4 +24,6 @@ public interface IFixesProvider
     Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix);
 
     IEnumerable<FileFixEntity>? SharedFixes { get; }
+    Dictionary<Guid, int>? Installs { get; }
+    Dictionary<Guid, int>? Scores { get; }
 }

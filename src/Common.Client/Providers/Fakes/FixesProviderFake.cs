@@ -22,4 +22,8 @@ public sealed class FixesProviderFake : IFixesProvider
     }
 
     public IEnumerable<FileFixEntity>? SharedFixes => [];
+
+    public Dictionary<Guid, int>? Installs => [];
+
+    public Dictionary<Guid, int>? Scores => [];
 }

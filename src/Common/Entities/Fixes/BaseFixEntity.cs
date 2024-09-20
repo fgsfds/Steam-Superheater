@@ -75,11 +75,13 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Number of installs
     /// </summary>
+    [Obsolete]
     public int Installs { get; set; }
 
     /// <summary>
     /// Fix's score
     /// </summary>
+    [Obsolete]
     public int Score { get; set; }
 
     /// <summary>

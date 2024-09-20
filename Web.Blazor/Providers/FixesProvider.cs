@@ -284,12 +284,7 @@ public sealed class FixesProvider
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
-        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
-        var newTableVersion = databaseVersions.Version + 1;
-
         fix.Score += increment;
-        fix.TableVersion = newTableVersion;
-        databaseVersions.Version = newTableVersion;
 
         var newScore = fix.Score;
 
@@ -318,12 +313,7 @@ public sealed class FixesProvider
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
-        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
-        var newTableVersion = databaseVersions.Version + 1;
-
         fix.Installs += 1;
-        fix.TableVersion = newTableVersion;
-        databaseVersions.Version = newTableVersion;
 
         var newInstalls = fix.Installs;
 
@@ -765,6 +755,22 @@ public sealed class FixesProvider
         await _bot.SendMessageAsync($"Fixes check ended");
 
         _isCheckFixesRunning = false;
+    }
+
+    public (Dictionary<Guid, int>, Dictionary<Guid, int>) GetFixesStats()
+    {
+        Dictionary<Guid, int> installs = [];
+        Dictionary<Guid, int> scores = [];
+
+        using var dbContext = _dbContextFactory.Get();
+
+        foreach (var fix in dbContext.Fixes)
+        {
+            installs.Add(fix.Guid, fix.Installs);
+            scores.Add(fix.Guid, fix.Score);
+        }
+
+        return (installs, scores);
     }
 
 

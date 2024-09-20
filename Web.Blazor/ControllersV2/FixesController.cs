@@ -53,6 +53,22 @@ public sealed class FixesController : ControllerBase
     }
 
 
+    [HttpGet("stats")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public ActionResult<GetFixesOutMessageContext> GetFixesStats()
+    {
+        var stats = _fixesProvider.GetFixesStats();
+
+        GetFixesStatsOutMessage result = new()
+        {
+            Installs = stats.Item1,
+            Scores = stats.Item2,
+        };
+
+        return Ok(result);
+    }
+
+
     [HttpGet("exists")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
