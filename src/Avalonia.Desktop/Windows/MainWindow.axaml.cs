@@ -18,7 +18,9 @@ public sealed partial class MainWindow : Window
 
         DataContext = vm;
 
+#if DEBUG
         this.AttachDevTools();
+#endif
 
         InitializeComponent();
 
