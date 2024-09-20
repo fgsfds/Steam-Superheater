@@ -380,7 +380,10 @@ public sealed class MainModel
 
         if (response.IsSuccess)
         {
-            fix.Score = response.ResultObject.Value;
+            if (_fixesProvider.Scores is not null)
+            {
+                _fixesProvider.Scores[fix.Guid] = response.ResultObject.Value;
+            }
 
             _config.ChangeFixUpvoteState(fix.Guid, needTpUpvote);
         }
@@ -402,7 +405,10 @@ public sealed class MainModel
             return;
         }
 
-        fix.Installs = result.ResultObject.Value;
+        if (_fixesProvider.Installs is not null)
+        {
+            _fixesProvider.Installs[fix.Guid] = result.ResultObject.Value;
+        }
     }
 }
 

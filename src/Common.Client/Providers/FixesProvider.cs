@@ -178,6 +178,9 @@ public sealed class FixesProvider : IFixesProvider
         var result = ResultEnum.Success;
         var message = string.Empty;
 
+        Installs = null;
+        Scores = null;
+
         if (!localFixesOnly)
         {
             var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion, ClientProperties.CurrentVersion).ConfigureAwait(false);

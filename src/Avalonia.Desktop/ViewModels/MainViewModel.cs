@@ -314,6 +314,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
+    [NotifyCanExecuteChangedFor(nameof(UpvoteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(DownvoteCommand))]
     private BaseFixEntity? _selectedFix;
     partial void OnSelectedFixChanged(BaseFixEntity? oldValue, BaseFixEntity? newValue)
     {
@@ -739,7 +741,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Upvote fix
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = (nameof(UpvoteCanExecute)))]
     private async Task Upvote()
     {
         Guard.IsNotNull(SelectedFix);
@@ -749,12 +751,13 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
+    private bool UpvoteCanExecute() => _fixesProvider.Scores is not null;
 
 
     /// <summary>
     /// Downvote fix
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = (nameof(DownvoteCanExecute)))]
     private async Task Downvote()
     {
         Guard.IsNotNull(SelectedFix);
@@ -764,6 +767,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
+    private bool DownvoteCanExecute() => _fixesProvider.Scores is not null;
 
 
     /// <summary>
@@ -996,6 +1000,8 @@ Do you still want to install the fix?",
         }
 
         OnPropertyChanged(nameof(TagsComboboxList));
+        UpvoteCommand.NotifyCanExecuteChanged();
+        DownvoteCommand.NotifyCanExecuteChanged();
 
         IsInProgress = false;
         ProgressBarText = string.Empty;
