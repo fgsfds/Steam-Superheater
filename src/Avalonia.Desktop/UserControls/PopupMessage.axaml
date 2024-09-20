@@ -11,7 +11,7 @@
 
     <Grid RowDefinitions="auto,*,auto"
           ColumnDefinitions="*,*"
-          Width="600">
+          Width="700">
 
         <Border Grid.RowSpan="3"
                 Grid.ColumnSpan="2"

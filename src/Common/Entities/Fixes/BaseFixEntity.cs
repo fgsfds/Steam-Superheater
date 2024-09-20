@@ -145,13 +145,13 @@ public abstract class BaseFixEntity
     public int DependencyLevel { get; set; } = 0;
 
     [JsonIgnore]
-    public string SortedName
+    public string? SortedSymbol
     {
         get
         {
             if (DependencyLevel == 0)
             {
-                return Name;
+                return null;
             }
 
             StringBuilder sb = new(Name.Length + 5);
@@ -161,11 +161,14 @@ public abstract class BaseFixEntity
                 _ = sb.Append("     ");
             }
 
-            _ = sb.Append("⤷ ").Append(Name);
+            _ = sb.Append("⤷ ");
 
             return sb.ToString();
         }
     }
+
+    [JsonIgnore]
+    public string? InstalledVersionStr => InstalledFix?.VersionStr;
 
     public override string ToString() => Name;
 }

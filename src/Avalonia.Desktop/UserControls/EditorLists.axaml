@@ -88,6 +88,9 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Margin="0" Text="Version: " VerticalAlignment="Center"/>
                                 <TextBlock Margin="0" Text="{Binding Version, Mode=OneWay}" VerticalAlignment="Center"/>
+                                <TextBlock Margin="5,0" Text=" " VerticalAlignment="Center"/>
+                                <TextBlock Margin="0" Text="Version str: " VerticalAlignment="Center"/>
+                                <TextBlock Margin="0" Text="{Binding VersionStr, Mode=OneWay}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock Margin="0" IsVisible="{Binding IsDisabled}" FontStyle="Italic" FontWeight="Thin" Text="Disabled" VerticalAlignment="Center"/>
                         </StackPanel>

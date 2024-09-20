@@ -10,7 +10,9 @@
              x:Class="Avalonia.Desktop.UserControls.PopupEditor">
 
     <Grid ColumnDefinitions="100,*,100"
-          RowDefinitions="100,*,100">
+          RowDefinitions="100,*,100"
+          Width="700"
+          MinHeight="600">
 
         <Border Grid.ColumnSpan="3"
                 Grid.RowSpan="3"/>

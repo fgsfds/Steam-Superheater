@@ -123,26 +123,61 @@
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Vertical" Margin="10" Background="Transparent">
 
-                        <StackPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Margin="5" Header="Install" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallFixCommand}"/>
-                                <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
-                                <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
-                            </ContextMenu>
-                        </StackPanel.ContextMenu>
+                    <Grid RowDefinitions="auto,auto,auto,auto"
+                          ColumnDefinitions="auto,*"
+                          Margin="10">
 
-                        <TextBlock Text="{Binding SortedName}"
+                        <Border Grid.RowSpan="4"
+                                Grid.ColumnSpan="2"
+                                Background="Transparent"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+
+                            <Border.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Margin="5" Header="Install" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallFixCommand}"/>
+                                    <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
+                                    <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
+                                </ContextMenu>
+                            </Border.ContextMenu>
+
+                        </Border>
+
+                        <TextBlock Text="{Binding SortedSymbol}"
+                                   Grid.Row="0"
+                                   Grid.Column="0"
                                    VerticalAlignment="Center"/>
 
-                        <TextBlock Margin="0"
-                                   Text="Installed"
-                                   VerticalAlignment="Center"
-                                   FontWeight="Bold"
-                                   IsVisible="{Binding IsInstalled}"/>
+                        <TextBlock Text="{Binding Name}"
+                                   Grid.Row="0"
+                                   Grid.Column="1"
+                                   VerticalAlignment="Center"/>
+
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center">
+
+                            <TextBlock Margin="0"
+                                       Text="Installed"
+                                       FontWeight="Bold"
+                                       IsVisible="{Binding IsInstalled}"/>
+
+                            <TextBlock Margin="3,0,0,0"
+                                       Text="v"
+                                       FontWeight="Bold"
+                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                            <TextBlock Margin="0"
+                                       Text="{Binding VersionStr}"
+                                       FontWeight="Bold" IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+
+                        </StackPanel>
 
                         <TextBlock Margin="0"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
                                    Text="Update available"
                                    Foreground="{DynamicResource SystemAccentColor}"
                                    VerticalAlignment="Center"
@@ -150,13 +185,16 @@
                                    IsVisible="{Binding IsOutdated}"/>
 
                         <TextBlock Margin="0"
+                                   Grid.Row="3"
+                                   Grid.Column="1"
                                    Text="Deprecated, can only be uninstalled"
                                    VerticalAlignment="Center"
                                    IsVisible="{Binding IsDisabled}"
                                    FontWeight="Thin"
                                    FontStyle="Italic"/>
 
-                    </StackPanel>
+                    </Grid>
+
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
@@ -196,7 +234,7 @@
                     </Style>
                 </TabControl.Styles>
 
-                <TabItem Header="Description" IsVisible="{Binding SelectedFixDescription, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <TabItem Header="Description" IsSelected="{Binding IsDescriptionSelected}" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                     <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"/>
 

@@ -319,6 +319,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private BaseFixEntity? _selectedFix;
     partial void OnSelectedFixChanged(BaseFixEntity? oldValue, BaseFixEntity? newValue)
     {
+        IsDescriptionSelected = true;
         GetRequirementsString();
     }
 
@@ -354,6 +355,9 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
     private bool _isInProgress;
     partial void OnIsInProgressChanged(bool value) => LockButtons = value;
+
+    [ObservableProperty]
+    private bool _isDescriptionSelected;
 
     #endregion Binding Properties
 
