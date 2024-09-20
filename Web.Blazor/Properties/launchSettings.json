@@ -8,7 +8,7 @@
         "ApiPass": "123"
       },
       "dotnetRunMessages": true,
-      "applicationUrl": "https://localhost:7126;http://localhost:5231"
+      "applicationUrl": "https://localhost:7093;http://localhost:5231"
     },
     "IIS Express": {
       "commandName": "IISExpress",

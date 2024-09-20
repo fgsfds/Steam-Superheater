@@ -12,7 +12,7 @@ public sealed partial class ApiInterface
     private readonly HttpClient _httpClient;
     private readonly IConfigProvider _configProvider;
 
-    private string ApiUrl => _configProvider.UseLocalApiAndRepo ? "https://localhost:7126/api2" : "https://superheater.fgsfds.link/api2";
+    private string ApiUrl => _configProvider.UseLocalApiAndRepo ? "https://localhost:7093/api2" : "https://superheater.fgsfds.link/api2";
 
     public ApiInterface(
         HttpClient httpClient,
