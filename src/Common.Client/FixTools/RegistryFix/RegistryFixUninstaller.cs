@@ -23,9 +23,20 @@ public sealed class RegistryFixUninstaller
 
         if (installedFix is RegistryInstalledFixEntity installedRegFix)
         {
-            var newKey = installedRegFix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
+            var index = installedRegFix.Key.IndexOf("\\");
+            var baseKey = installedRegFix.Key.Substring(0, index);
+            var subKey = installedRegFix.Key.Substring(index + 1);
 
-            using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
+            var reg = baseKey switch
+            {
+                "HKEY_CLASSES_ROOT" => Registry.ClassesRoot,
+                "HKEY_CURRENT_USER" => Registry.CurrentUser,
+                "HKEY_LOCAL_MACHINE" => Registry.LocalMachine,
+                "HKEY_USERS" => Registry.Users,
+                _ => ThrowHelper.ThrowNotSupportedException<RegistryKey>(),
+            };
+
+            using (var key = reg.OpenSubKey(subKey, true))
             {
                 if (key is null)
                 {
@@ -60,9 +71,20 @@ public sealed class RegistryFixUninstaller
         {
             foreach (var fix in installedRegFixV2.Entries)
             {
-                var newKey = fix.Key.Replace("HKEY_CURRENT_USER\\", string.Empty);
+                var index = fix.Key.IndexOf("\\");
+                var baseKey = fix.Key.Substring(0, index);
+                var subKey = fix.Key.Substring(index + 1);
 
-                using (var key = Registry.CurrentUser.OpenSubKey(newKey, true))
+                var reg = baseKey switch
+                {
+                    "HKEY_CLASSES_ROOT" => Registry.ClassesRoot,
+                    "HKEY_CURRENT_USER" => Registry.CurrentUser,
+                    "HKEY_LOCAL_MACHINE" => Registry.LocalMachine,
+                    "HKEY_USERS" => Registry.Users,
+                    _ => ThrowHelper.ThrowNotSupportedException<RegistryKey>(),
+                };
+
+                using (var key = reg.OpenSubKey(subKey, true))
                 {
                     if (key is null)
                     {
