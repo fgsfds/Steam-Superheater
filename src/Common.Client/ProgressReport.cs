@@ -22,11 +22,8 @@ public sealed class ProgressReport
         get => _operationMessage;
         set
         {
-            if (_operationMessage != value)
-            {
-                _operationMessage = value;
-                NotifyOperationMessageChanged?.Invoke(value);
-            }
+            _operationMessage = value;
+            NotifyOperationMessageChanged?.Invoke(value);
         }
     }
 

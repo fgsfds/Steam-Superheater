@@ -42,6 +42,7 @@ public sealed class FilesDownloader : IFilesDownloader
         {
             File.Delete(tempFile);
         }
+
         _progressReport.OperationMessage = "Downloading...";
 
         using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);

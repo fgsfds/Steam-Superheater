@@ -856,6 +856,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(fixesList.Game);
 
+        LockButtons = true;
+
+        _progressReport.Progress.ProgressChanged += ProgressChanged;
+        _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
+
         var isUpdate = fix.IsInstalled;
 
         if (!isUpdate && !skipDependencies)
@@ -890,14 +895,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             }
         }
 
-        LockButtons = true;
-
-        _progressReport.Progress.ProgressChanged += ProgressChanged;
-        _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
-
         _cancellationTokenSource = new();
-
-        await _mainModel.IncreaseInstalls(fix).ConfigureAwait(true);
 
         Result result;
 
@@ -925,6 +923,8 @@ Do you still want to install the fix?",
                 result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
+
+        await _mainModel.IncreaseInstalls(fix).ConfigureAwait(true);
 
         LockButtons = false;
 
