@@ -392,9 +392,10 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// VM initialization
     /// </summary>
     [RelayCommand]
-    private Task InitializeAsync()
+    private async Task InitializeAsync()
     {        
-        return UpdateAsync(true);
+        await UpdateAsync(true, true, true).ConfigureAwait(true);
+        await UpdateAsync(false, true, false).ConfigureAwait(true);
     }
 
 
@@ -404,7 +405,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
     private async Task UpdateGamesAsync()
     {
-        await UpdateAsync(true).ConfigureAwait(true);
+        await UpdateAsync(false, true, true).ConfigureAwait(true);
 
         InstallFixCommand.NotifyCanExecuteChanged();
         UninstallFixCommand.NotifyCanExecuteChanged();
@@ -970,14 +971,16 @@ Do you still want to install the fix?",
     /// <summary>
     /// Update games list
     /// </summary>
-    /// <param name="dropCache">Drop current and create new cache</param>
-    private async Task UpdateAsync(bool dropCache)
+    /// <param name="localFixesOnly">Load only local cached fixes</param>
+    /// <param name="dropFixesCache">Drop current fixes cache and create new</param>
+    /// <param name="dropGamesCache">Drop current games cache and create new</param>
+    private async Task UpdateAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
         IsInProgress = true;
         ProgressBarText = "Updating...";
 
-        var result = await _mainModel.UpdateGamesListAsync(dropCache).ConfigureAwait(true);
+        var result = await _mainModel.UpdateGamesListAsync(localFixesOnly, dropFixesCache, dropGamesCache).ConfigureAwait(true);
 
         await FillGamesListAsync().ConfigureAwait(true);
 
@@ -1124,7 +1127,7 @@ Do you still want to install the fix?",
 
         if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
         {
-            await UpdateAsync(true).ConfigureAwait(true);
+            await UpdateAsync(false, true, false).ConfigureAwait(true);
         }
     }
 }

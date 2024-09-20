@@ -39,10 +39,12 @@ public sealed class MainModel
     /// <summary>
     /// Update list of games
     /// </summary>
-    /// <param name="dropCache">Drop current and create new cache</param>
-    public async Task<Result> UpdateGamesListAsync(bool dropCache)
+    /// <param name="localFixesOnly">Load only local cached fixes</param>
+    /// <param name="dropFixesCache">Drop current fixes cache and create new</param>
+    /// <param name="dropGamesCache">Drop current games cache and create new</param>
+    public async Task<Result> UpdateGamesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
-        var result = await _fixesProvider.GetPreparedFixesListAsync(dropCache).ConfigureAwait(false);
+        var result = await _fixesProvider.GetPreparedFixesListAsync(localFixesOnly, dropFixesCache, dropGamesCache).ConfigureAwait(false);
 
         if (result.ResultObject is null)
         {

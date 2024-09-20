@@ -11,12 +11,12 @@ public sealed class FixesProviderFake : IFixesProvider
         return new(() => new(ResultEnum.Success, ""));
     }
 
-    public Task<Result<List<FixesList>>> GetFixesListAsync(bool dropCache)
+    public Task<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
     {
         return new(new(() => new(ResultEnum.Success, [], "")));
     }
 
-    public Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool dropCache)
+    public Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
         return new(new(() => new(ResultEnum.Success, [], "")));
     }

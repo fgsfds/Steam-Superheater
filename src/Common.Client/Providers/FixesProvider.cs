@@ -40,7 +40,7 @@ public sealed class FixesProvider : IFixesProvider
 
 
     /// <inheritdoc/>
-    public async Task<Result<List<FixesList>>> GetFixesListAsync(bool dropCache)
+    public async Task<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
     {
         if (_cache is not null && !dropCache)
         {
@@ -51,7 +51,7 @@ public sealed class FixesProvider : IFixesProvider
         {
             await _semaphore.WaitAsync().ConfigureAwait(false);
 
-            var result = await UpdateCacheAsync().ConfigureAwait(false);
+            var result = await UpdateCacheAsync(localFixesOnly).ConfigureAwait(false);
 
             Guard.IsNotNull(_cache);
 
@@ -64,13 +64,13 @@ public sealed class FixesProvider : IFixesProvider
     }
 
     /// <inheritdoc/>
-    public async Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool dropCache)
+    public async Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
-        var fixesLists = await GetFixesListAsync(dropCache).ConfigureAwait(false);
+        var fixesLists = await GetFixesListAsync(localFixesOnly, dropFixesCache).ConfigureAwait(false);
 
         Guard.IsNotNull(fixesLists.ResultObject);
 
-        var games = await _gamesProvider.GetGamesListAsync(dropCache).ConfigureAwait(false);
+        var games = await _gamesProvider.GetGamesListAsync(dropGamesCache).ConfigureAwait(false);
         var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);
 
         foreach (var fixesList in fixesLists.ResultObject)
@@ -166,7 +166,8 @@ public sealed class FixesProvider : IFixesProvider
     /// <summary>
     /// Update fixes cache
     /// </summary>
-    private async Task<Result> UpdateCacheAsync()
+    /// <param name="localFixesOnly">Load only local cached fixes</param>
+    private async Task<Result> UpdateCacheAsync(bool localFixesOnly)
     {
         using var dbContext = _dbContextFactory.Get();
 
@@ -174,58 +175,67 @@ public sealed class FixesProvider : IFixesProvider
         var currentFixesVersion = fixesCacheDbEntity.Version!;
         var currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
 
-        var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion, ClientProperties.CurrentVersion).ConfigureAwait(false);
+        var result = ResultEnum.Success;
+        var message = string.Empty;
 
-        if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
+        if (!localFixesOnly)
         {
-            foreach (var newGame in newFixesList.ResultObject.Fixes)
+            var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion, ClientProperties.CurrentVersion).ConfigureAwait(false);
+
+            if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
             {
-                var existingGame = currentFixesList.FirstOrDefault(x => x.GameId == newGame.GameId);
+                foreach (var newGame in newFixesList.ResultObject.Fixes)
+                {
+                    var existingGame = currentFixesList.FirstOrDefault(x => x.GameId == newGame.GameId);
 
-                if (existingGame is null)
-                {
-                    currentFixesList.Add(newGame);
-                    currentFixesList = [.. currentFixesList.OrderBy(static x => x.GameName)];
-                }
-                else
-                {
-                    foreach (var newFix in newGame.Fixes)
+                    if (existingGame is null)
                     {
-                        var existingFix = existingGame.Fixes.FirstOrDefault(x => x.Guid == newFix.Guid);
+                        currentFixesList.Add(newGame);
+                        currentFixesList = [.. currentFixesList.OrderBy(static x => x.GameName)];
+                    }
+                    else
+                    {
+                        foreach (var newFix in newGame.Fixes)
+                        {
+                            var existingFix = existingGame.Fixes.FirstOrDefault(x => x.Guid == newFix.Guid);
 
-                        if (existingFix is null)
-                        {
-                            existingGame.Fixes.Add(newFix);
-                            existingGame.Fixes = [.. existingGame.Fixes.OrderBy(static x => x.Name).ThenBy(x => x.Tags?.Contains("#nointro"))];
-                        }
-                        else
-                        {
-                            var index = existingGame.Fixes.IndexOf(existingFix);
-                            existingGame.Fixes[index] = newFix;
+                            if (existingFix is null)
+                            {
+                                existingGame.Fixes.Add(newFix);
+                                existingGame.Fixes = [.. existingGame.Fixes.OrderBy(static x => x.Name).ThenBy(x => x.Tags?.Contains("#nointro"))];
+                            }
+                            else
+                            {
+                                var index = existingGame.Fixes.IndexOf(existingFix);
+                                existingGame.Fixes[index] = newFix;
+                            }
                         }
                     }
                 }
+
+                fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
+                fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
+
+                _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
 
-            fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
-            fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
+            var fixesStats = await _apiInterface.GetFixesStats().ConfigureAwait(false);
 
-            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
-        }
+            if (fixesStats.IsSuccess)
+            {
+                Installs = fixesStats.ResultObject.Installs;
+                Scores = fixesStats.ResultObject.Scores;
+            }
 
-        var fixesStats = await _apiInterface.GetFixesStats().ConfigureAwait(false);
-
-        if (fixesStats.IsSuccess)
-        {
-            Installs = fixesStats.ResultObject.Installs;
-            Scores = fixesStats.ResultObject.Scores;
+            result = newFixesList.ResultEnum;
+            message = newFixesList.Message;
         }
 
         SharedFixes = currentFixesList.First(static x => x.GameId == 0).Fixes.Select(static x => x as FileFixEntity)!;
 
         _cache = currentFixesList;
 
-        return new(newFixesList.ResultEnum, newFixesList.Message);
+        return new(result, message);
     }
 
     private Result PrepareFixes(BaseFixEntity fix)

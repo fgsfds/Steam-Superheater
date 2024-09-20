@@ -52,7 +52,7 @@ public sealed class EditorModel
     /// <param name="dropCache">Drop current and create new cache</param>
     public async Task<Result> UpdateListsAsync(bool dropCache)
     {
-        var result = await _fixesProvider.GetFixesListAsync(dropCache).ConfigureAwait(false);
+        var result = await _fixesProvider.GetFixesListAsync(false, dropCache).ConfigureAwait(false);
 
         if (result.ResultObject is null)
         {

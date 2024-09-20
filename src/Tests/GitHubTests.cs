@@ -24,7 +24,7 @@ public sealed class GitHubTests
 
         FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, new());
 
-        var fixes = await fixesProvider.GetFixesListAsync(false).ConfigureAwait(true);
+        var fixes = await fixesProvider.GetFixesListAsync(false, false).ConfigureAwait(true);
 
         Assert.NotNull(fixes.ResultObject);
 
