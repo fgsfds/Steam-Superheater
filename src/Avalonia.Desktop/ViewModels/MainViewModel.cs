@@ -165,7 +165,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             if (SelectedFix is null ||
                 _fixesProvider.Installs is null)
             {
-                return "-";
+                return null;
             }
 
             var result = _fixesProvider.Installs.TryGetValue(SelectedFix.Guid, out var installs);
@@ -180,7 +180,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 return $"{installs} installs";
             }
 
-            return string.Empty;
+            return null;
         }
     }
 
