@@ -19,7 +19,7 @@ public sealed class FileFixEntity : BaseFixEntity
     {
         Name = string.Empty;
         Version = 1;
-        VersionStr = null;
+        VersionStr = "1.0";
         Guid = Guid.NewGuid();
         Description = null;
         Changelog = null;
@@ -48,7 +48,7 @@ public sealed class FileFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
-        VersionStr = null;
+        VersionStr = fix.VersionStr;
         Guid = fix.Guid;
         Description = fix.Description;
         Changelog = fix.Changelog;

@@ -5,12 +5,16 @@ namespace Common.Entities.Fixes.HostsFix;
 
 public sealed class HostsFixEntity : BaseFixEntity
 {
-    //[SetsRequiredMembers]
     public HostsFixEntity()
+    {
+    }
+
+    [SetsRequiredMembers]
+    public HostsFixEntity(bool _)
     {
         Name = string.Empty;
         Version = 1;
-        VersionStr = null;
+        VersionStr = "1.0";
         Guid = Guid.NewGuid();
         Description = null;
         Changelog = null;
@@ -27,7 +31,7 @@ public sealed class HostsFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
-        VersionStr = null;
+        VersionStr = fix.VersionStr;
         Guid = fix.Guid;
         Description = fix.Description;
         Changelog = fix.Changelog;

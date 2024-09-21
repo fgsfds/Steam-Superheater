@@ -243,6 +243,13 @@ public sealed class FixesProvider : IFixesProvider
 
     private Result PrepareFixes(BaseFixEntity fix)
     {
+        if (string.IsNullOrEmpty(fix.Name) ||
+            fix.Version < 1 ||
+            string.IsNullOrEmpty(fix.VersionStr))
+        {
+            return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
+        }
+
         if (fix is FileFixEntity fileFix)
         {
             var result = PrepareFileFixes(fileFix);
