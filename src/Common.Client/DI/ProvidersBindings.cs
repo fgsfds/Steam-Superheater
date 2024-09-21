@@ -18,6 +18,7 @@ public static class ProvidersBindings
             _ = container.AddSingleton<INewsProvider, NewsProviderFake>();
             _ = container.AddSingleton<IGamesProvider, GamesProviderFake>();
             _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProviderFake>();
+            _ = container.AddSingleton<DatabaseContextFactory>();
 
             return;
         }

@@ -470,6 +470,12 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private string _selectedTagFilter;
     partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SelectedRegistryFixIndexStr))]
+    private int _selectedRegistryFixIndex;
+
+    public string SelectedRegistryFixIndexStr => (SelectedRegistryFixIndex + 1).ToString();
+
     #endregion Binding Properties
 
 
@@ -1073,7 +1079,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
 
     /// <summary>
-    /// Test newly added fix
+    /// Preview resulting json
     /// </summary>
     [RelayCommand]
     private void PreviewJson()
@@ -1094,7 +1100,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
 
     /// <summary>
-    /// Test newly added fix
+    /// Add entry to registry fix
     /// </summary>
     [RelayCommand]
     private void AddRegFixEntry()
@@ -1106,14 +1112,41 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         OnPropertyChanged(nameof(SelectedRegistryFixEntries));
     }
 
-    #endregion Relay Commands
-
 
     /// <summary>
-    /// Update games list
+    /// Remove entry from registry fix
     /// </summary>
-    /// <param name="dropCache">Drop current and create new cache</param>
-    private async Task UpdateAsync(bool dropCache)
+    [RelayCommand]
+    private void DeleteRegFixEntry()
+    {
+        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
+
+        if (regFix.Entries.Count < 2)
+        {
+            return;
+        }
+
+        var currentIndex = SelectedRegistryFixIndex;
+
+        if (currentIndex > 0)
+        {
+            SelectedRegistryFixIndex = currentIndex - 1;
+        }
+
+        regFix.Entries.RemoveAt(currentIndex);
+        regFix.Entries = [.. regFix.Entries];
+
+        OnPropertyChanged(nameof(SelectedRegistryFixEntries));
+    }
+
+#endregion Relay Commands
+
+
+/// <summary>
+/// Update games list
+/// </summary>
+/// <param name="dropCache">Drop current and create new cache</param>
+private async Task UpdateAsync(bool dropCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
         IsInProgress = true;

@@ -57,7 +57,7 @@
                 VerticalContentAlignment="Center"
                 Background="{DynamicResource SystemAccentColor}"
                 ToolTip.Tip="Clear search bar">
-            <i:Icon Value="fa-x" />
+            <i:Icon Value="fa-xmark" />
         </Button>
 
     </Grid>

@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1000"
              xmlns:ff="clr-namespace:Common.Entities.Fixes.FileFix;assembly=Superheater.Common"
              xmlns:rf="clr-namespace:Common.Entities.Fixes.RegistryFix;assembly=Superheater.Common"
@@ -417,11 +418,82 @@
                 </Button>
             </Grid>
 
-            <Grid ColumnDefinitions="auto,*,auto,auto" IsVisible="{Binding IsRegistryFixType}">
+            <Grid ColumnDefinitions="auto,*,auto,auto"
+                  IsVisible="{Binding IsRegistryFixType}"
+                  Margin="5,3,0,3">
 
-                <Button Grid.Column="0" Background="White" Click="Carousel_Next">&lt;</Button>
+                <Border Grid.Column="1"
+                        BorderThickness="1"
+                        BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                        CornerRadius="3"/>
 
-                <Carousel Grid.Column="1" Name="slides" ItemsSource="{Binding SelectedRegistryFixEntries}" HorizontalAlignment="Stretch">
+
+                <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">
+
+                    <Button Grid.Column="2"
+                            Click="Carousel_Prev"
+                            Margin="0,0,0,3"
+                            HorizontalAlignment="Left"
+                            HorizontalContentAlignment="Center">
+                        <i:Icon Value="fa-angle-right" />
+                    </Button>
+
+                    <Button Grid.Column="0"
+                            Click="Carousel_Next"
+                            Margin="0,0,0,3"
+                            HorizontalAlignment="Left"
+                            HorizontalContentAlignment="Center">
+                        <i:Icon Value="fa-angle-left" />
+                    </Button>
+
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Left">
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding SelectedRegistryFixIndexStr}"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,3"/>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="/"
+                                   Margin="0,0,0,3"/>
+
+                        <TextBlock HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding #Slides.ItemCount}"
+                                   Margin="0,0,0,3"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="3"
+                            Command="{Binding AddRegFixEntryCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,3"
+                            Background="{DynamicResource SystemAccentColor}"
+                            HorizontalContentAlignment="Center">
+                        <i:Icon Value="fa-plus" />
+                    </Button>
+
+                    <Button Grid.Column="3"
+                            Command="{Binding DeleteRegFixEntryCommand}"
+                            HorizontalAlignment="Left"
+                            Margin="0"
+                            Background="Red"
+                            HorizontalContentAlignment="Center">
+                        <i:Icon Value="fa-xmark" />
+                    </Button>
+
+                </StackPanel>
+
+
+                <Carousel Grid.Column="1"
+                          Name="Slides"
+                          ItemsSource="{Binding SelectedRegistryFixEntries}"
+                          HorizontalAlignment="Stretch"
+                          SelectedIndex="{Binding SelectedRegistryFixIndex}"
+                          Padding="3"
+                          Margin="3">
                     <Carousel.PageTransition >
                         <CompositePageTransition>
                             <PageSlide Duration="0:00:00.200" Orientation="Horizontal" />
@@ -508,10 +580,6 @@
                     </Carousel.ItemTemplate>
 
                 </Carousel>
-
-                <Button Grid.Column="2" Background="White" Click="Carousel_Prev" HorizontalAlignment="Right">&gt;</Button>
-
-                <Button Grid.Column="3" Background="White" Command="{Binding AddRegFixEntryCommand}" HorizontalAlignment="Right">+</Button>
 
             </Grid>
 

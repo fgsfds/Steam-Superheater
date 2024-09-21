@@ -26,12 +26,12 @@ public sealed partial class EditorFields : UserControl
 
     private void Carousel_Next(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        slides.Previous();
+        Slides.Previous();
     }
 
     private void Carousel_Prev(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        slides.Next();
+        Slides.Next();
     }
 }
 
