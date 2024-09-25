@@ -165,7 +165,7 @@ public sealed class FileFixInstaller
         BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
         await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
-
+        
         if (_configEntity.DeleteZipsAfterInstall &&
             !_configEntity.UseLocalApiAndRepo &&
             fileDownloadResult.ResultObject is not null &&
@@ -249,8 +249,9 @@ public sealed class FileFixInstaller
         if (File.Exists(pathToArchive))
         {
             _logger.Info($"Checking local file {pathToArchive}");
+            _progressReport.OperationMessage = "Checking hash...";
 
-            var fileCheckResult = CheckFileMD5(pathToArchive, fixMD5);
+            var fileCheckResult = await CheckFileMD5Async(pathToArchive, fixMD5).ConfigureAwait(false);
 
             if (!fileCheckResult)
             {
@@ -261,6 +262,8 @@ public sealed class FileFixInstaller
             {
                 return new(ResultEnum.Success, pathToArchive, "Using local file");
             }
+
+            _progressReport.OperationMessage = string.Empty;
         }
 
         _logger.Info($"Local file {pathToArchive} not found");
@@ -353,7 +356,7 @@ public sealed class FileFixInstaller
     /// <param name="filePath">Full path to the file</param>
     /// <param name="fixMD5">MD5 that the file's hash will be compared to</param>
     /// <returns>true if check is passed</returns>
-    private static bool CheckFileMD5(
+    private static async Task<bool> CheckFileMD5Async(
         string filePath,
         string? fixMD5
         )
@@ -363,16 +366,17 @@ public sealed class FileFixInstaller
             return true;
         }
 
-        string? hash;
+        string? hashStr;
 
         using (var md5 = MD5.Create())
         {
             using var stream = File.OpenRead(filePath);
 
-            hash = Convert.ToHexString(md5.ComputeHash(stream));
+            var hash = await md5.ComputeHashAsync(stream).ConfigureAwait(false);
+            hashStr = Convert.ToHexString(hash);
         }
 
-        return fixMD5.Equals(hash);
+        return fixMD5.Equals(hashStr);
     }
 
     /// <summary>
