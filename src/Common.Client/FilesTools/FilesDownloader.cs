@@ -2,6 +2,7 @@ using Common.Client.FilesTools.Interfaces;
 using Common.Client.Logger;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
 
@@ -220,7 +221,7 @@ public sealed class FilesDownloader : IFilesDownloader
     /// <param name="streamToTrack">Stream</param>
     /// <param name="progress">Progress</param>
     /// <param name="contentLength">File size</param>
-    private static void TrackProgress(
+    private void TrackProgress(
         FileStream streamToTrack,
         IProgress<float> progress,
         long? contentLength
@@ -231,10 +232,26 @@ public sealed class FilesDownloader : IFilesDownloader
             return;
         }
 
+        long prevPosition = default;
+        Stopwatch sw = Stopwatch.StartNew();
+
         while (streamToTrack.CanSeek)
         {
             var pos = streamToTrack.Position / (float)contentLength * 100;
             progress.Report(pos);
+
+            if (sw.ElapsedMilliseconds >= 2000)
+            {
+                var bytes = streamToTrack.Position - prevPosition;
+                var ms = sw.ElapsedMilliseconds;
+
+                var mBytesS = (float)(bytes / ms) / 1024 ;
+
+                _progressReport.OperationMessage = $"Downloading... ({mBytesS:0.0#}Mb/s)";
+
+                prevPosition = streamToTrack.Position;
+                sw.Restart();
+            }
 
             Thread.Sleep(50);
         }
