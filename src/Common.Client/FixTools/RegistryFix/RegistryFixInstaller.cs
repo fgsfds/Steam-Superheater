@@ -24,11 +24,11 @@ public sealed class RegistryFixInstaller
     /// Install registry fix
     /// </summary>
     /// <param name="game">Game entity</param>
-    /// <param name="fixes">Fix entity</param>
+    /// <param name="fix">Fix entity</param>
     /// <returns>Installed fix entity</returns>
     public Result<BaseInstalledFixEntity> InstallFix(
         GameEntity game,
-        BaseFixEntity fixes
+        BaseFixEntity fix
         )
     {
         if (!OperatingSystem.IsWindows())
@@ -36,9 +36,14 @@ public sealed class RegistryFixInstaller
             return ThrowHelper.ThrowPlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
         }
 
+        if (fix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
+        {
+            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install this fix");
+        }
+
         List<RegistryInstalledEntry> installedEntries = [];
 
-        if (fixes is RegistryFixEntity regFix)
+        if (fix is RegistryFixEntity regFix)
         {
             var valueName = regFix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
@@ -84,20 +89,20 @@ public sealed class RegistryFixInstaller
                 ValueType = regFix.ValueType
             });
         }
-        else if (fixes is RegistryFixV2Entity regFix2)
+        else if (fix is RegistryFixV2Entity regFix2)
         {
-            foreach (var fix in regFix2.Entries)
+            foreach (var entry in regFix2.Entries)
             {
-                var valueName = fix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
+                var valueName = entry.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
                 _logger.Info($"Value name is {valueName}");
 
                 string? oldValueStr = null;
 
-                var oldValue = Registry.GetValue(fix.Key, valueName, null);
+                var oldValue = Registry.GetValue(entry.Key, valueName, null);
                 if (oldValue is not null)
                 {
-                    switch (fix.ValueType)
+                    switch (entry.ValueType)
                     {
                         case RegistryValueTypeEnum.Dword:
                             oldValueStr = ((int)oldValue).ToString();
@@ -111,25 +116,25 @@ public sealed class RegistryFixInstaller
                     }
                 }
 
-                switch (fix.ValueType)
+                switch (entry.ValueType)
                 {
                     case RegistryValueTypeEnum.Dword:
-                        Registry.SetValue(fix.Key, valueName, int.Parse(fix.NewValueData));
+                        Registry.SetValue(entry.Key, valueName, int.Parse(entry.NewValueData));
                         break;
                     case RegistryValueTypeEnum.String:
-                        Registry.SetValue(fix.Key, valueName, fix.NewValueData);
+                        Registry.SetValue(entry.Key, valueName, entry.NewValueData);
                         break;
                     default:
-                        ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
+                        ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {entry.ValueType.GetType()}");
                         break;
                 }
 
                 installedEntries.Add(new()
                 {
-                    Key = fix.Key,
+                    Key = entry.Key,
                     ValueName = valueName,
                     OriginalValue = oldValueStr,
-                    ValueType = fix.ValueType
+                    ValueType = entry.ValueType
                 });
             }
         }
@@ -144,9 +149,9 @@ public sealed class RegistryFixInstaller
             ResultObject = new RegistryInstalledFixV2Entity()
             {
                 GameId = game.Id,
-                Guid = fixes.Guid,
-                Version = fixes.Version,
-                VersionStr = fixes.VersionStr,
+                Guid = fix.Guid,
+                Version = fix.Version,
+                VersionStr = fix.VersionStr,
                 Entries = installedEntries
             },
             Message = "Successfully installed fix"

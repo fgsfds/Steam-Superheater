@@ -2,7 +2,6 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
 using CommunityToolkit.Diagnostics;
-using System.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;
 
@@ -26,16 +25,7 @@ public sealed class HostsFixInstaller
             return ThrowHelper.ThrowPlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
         }
 
-        try
-        {
-            if (!ClientProperties.IsAdmin)
-            {
-                _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
-
-                Environment.Exit(0);
-            }
-        }
-        catch
+        if (!ClientProperties.IsAdmin)
         {
             ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install hosts fixes");
         }

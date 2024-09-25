@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Common.Entities.Fixes.HostsFix;
 
 public sealed class HostsInstalledFixEntity : BaseInstalledFixEntity
@@ -6,5 +8,8 @@ public sealed class HostsInstalledFixEntity : BaseInstalledFixEntity
     /// List of entries that were added to the hosts file
     /// </summary>
     public required List<string> Entries { get; init; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => true;
 }
 

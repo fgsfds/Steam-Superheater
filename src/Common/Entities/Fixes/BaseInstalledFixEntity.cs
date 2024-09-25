@@ -34,6 +34,9 @@ public abstract class BaseInstalledFixEntity
     /// </summary>
     [Obsolete("Make required later")]
     public string? VersionStr { get; init; }
+
+    [JsonIgnore]
+    public virtual bool DoesRequireAdminRights => false;
 }
 
 [JsonSourceGenerationOptions(

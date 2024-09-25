@@ -2,7 +2,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.HostsFix;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
-using System.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;
 
@@ -26,18 +25,9 @@ public sealed class HostsFixUninstaller
 
         Guard2.IsOfType<HostsInstalledFixEntity>(installedFix, out var installedHostsFix);
 
-        try
+        if (!ClientProperties.IsAdmin)
         {
-            if (!ClientProperties.IsAdmin)
-            {
-                _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
-
-                Environment.Exit(0);
-            }
-        }
-        catch
-        {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install hosts fixes");
+            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall hosts fixes");
         }
 
         List<string> hostsList = [];

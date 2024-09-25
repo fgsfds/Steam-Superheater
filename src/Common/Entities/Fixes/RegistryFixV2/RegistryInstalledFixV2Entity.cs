@@ -1,10 +1,14 @@
 using Common.Enums;
+using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.RegistryFixV2;
 
 public sealed class RegistryInstalledFixV2Entity : BaseInstalledFixEntity
 {
     public required List<RegistryInstalledEntry> Entries { get; set; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => Entries.Exists(x => x.Key.StartsWith("HKEY_LOCAL_MACHINE", StringComparison.OrdinalIgnoreCase));
 }
 
 public sealed class RegistryInstalledEntry

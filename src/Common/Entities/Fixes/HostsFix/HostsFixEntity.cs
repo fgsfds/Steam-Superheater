@@ -1,5 +1,6 @@
 using Common.Enums;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.HostsFix;
 
@@ -47,5 +48,8 @@ public sealed class HostsFixEntity : BaseFixEntity
     /// List of entries to be added to the hosts file
     /// </summary>
     public required List<string> Entries { get; set; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => true;
 }
 

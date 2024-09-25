@@ -170,6 +170,9 @@ public abstract class BaseFixEntity
     [JsonIgnore]
     public string? InstalledVersionStr => InstalledFix?.VersionStr;
 
+    [JsonIgnore]
+    public virtual bool DoesRequireAdminRights => false;
+
     public override string ToString() => Name;
 }
 

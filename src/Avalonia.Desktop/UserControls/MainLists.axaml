@@ -339,16 +339,6 @@
                 </ListBox>
             </Grid>
 
-            <!--Message-->
-            <TextBlock Grid.Row="4"
-                       Margin="3,6,3,0"
-                       IsVisible="{Binding IsAdminMessageVisible, FallbackValue=False}"
-                       Foreground="{DynamicResource SystemAccentColor}"
-                       TextWrapping ="Wrap"
-                       HorizontalAlignment="Center">
-                Superheater needs to be run as admin in order to install hosts fixes
-            </TextBlock>
-
             <!--Stats-->
             <Grid Grid.Row="6"
                   Margin="3,6,3,0">

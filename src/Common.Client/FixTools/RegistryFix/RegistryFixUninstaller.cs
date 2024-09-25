@@ -21,6 +21,11 @@ public sealed class RegistryFixUninstaller
             return;
         }
 
+        if (installedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
+        {
+            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall this fix");
+        }
+
         if (installedFix is RegistryInstalledFixEntity installedRegFix)
         {
             var index = installedRegFix.Key.IndexOf("\\");

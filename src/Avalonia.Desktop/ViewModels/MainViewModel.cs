@@ -11,7 +11,6 @@ using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
@@ -53,7 +52,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     public ImmutableList<string>? SelectedFixVariants => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null ? [.. fileFix.Variants] : null;
 
-    public bool IsAdminMessageVisible => SelectedFix is HostsFixEntity && !ClientProperties.IsAdmin;
+    public bool DoesFixRequireAdminRights => SelectedFix is not null && SelectedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin;
 
     public string ShowVariantsPopupButtonText => SelectedFixVariant is null ? "Select variant..." : SelectedFixVariant;
 
@@ -74,8 +73,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            if (SelectedFix is HostsFixEntity &&
-                !ClientProperties.IsAdmin)
+            if (DoesFixRequireAdminRights)
             {
                 return "Restart as admin...";
             }
@@ -301,7 +299,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
     [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
     [NotifyPropertyChangedFor(nameof(InstallButtonText))]
-    [NotifyPropertyChangedFor(nameof(IsAdminMessageVisible))]
+    [NotifyPropertyChangedFor(nameof(DoesFixRequireAdminRights))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
     [NotifyPropertyChangedFor(nameof(SelectedFixChangelog))]
     [NotifyPropertyChangedFor(nameof(SelectedFixNumberOfInstalls))]
@@ -429,6 +427,20 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         Guard.IsNotNull(SelectedGame);
         Guard.IsNotNull(SelectedFix);
 
+        try
+        {
+            if (DoesFixRequireAdminRights)
+            {
+                _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
+
+                Environment.Exit(0);
+            }
+        }
+        catch
+        {
+            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install this fix");
+        }
+
         var installResult = InstallUpdateFixAsync(
             SelectedGame,
             SelectedFix,
@@ -439,14 +451,18 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     }
     private bool InstallFixCanExecute()
     {
+        if (DoesFixRequireAdminRights)
+        {
+            return true;
+        }
+
         if (SelectedGame is null ||
             SelectedFix is null ||
             SelectedFix is TextFixEntity ||
             SelectedFix.IsInstalled ||
             !SelectedGame.IsGameInstalled ||
             (SelectedFixVariants is not null && SelectedFixVariant is null) ||
-            LockButtons
-            )
+            LockButtons)
         {
             return false;
         }
@@ -475,7 +491,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         var installResult = InstallUpdateFixAsync(SelectedGame, SelectedFix, SelectedFixVariant, false);
         return installResult;
     }
-    public bool UpdateFixCanExecute() => SelectedFix is not null && SelectedFix.IsOutdated && !LockButtons;
+    public bool UpdateFixCanExecute() => SelectedFix is not null && SelectedFix.IsOutdated && !LockButtons && !DoesFixRequireAdminRights;
 
 
     /// <summary>
@@ -545,14 +561,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         if (SelectedFix is null ||
             !SelectedFix.IsInstalled ||
             (SelectedGame is not null && !SelectedGame.IsGameInstalled) ||
-            LockButtons)
+            LockButtons ||
+            DoesFixRequireAdminRights)
         {
             return false;
         }
-
-        //var result = !_mainModel.DoesFixHaveInstalledDependentFixes(SelectedGameFixesList, SelectedFix.Guid);
-
-        //return result;
 
         return true;
     }

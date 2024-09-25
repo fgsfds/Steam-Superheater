@@ -62,6 +62,9 @@ public sealed class RegistryFixV2Entity : BaseFixEntity
     }
 
     public required List<RegistryEntry> Entries { get; set; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => Entries.Exists(x => x.Key.StartsWith("HKEY_LOCAL_MACHINE", StringComparison.OrdinalIgnoreCase));
 }
 
 public sealed class RegistryEntry

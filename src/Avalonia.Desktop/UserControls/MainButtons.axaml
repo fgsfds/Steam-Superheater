@@ -55,6 +55,17 @@
                     HorizontalAlignment="Right"
                     Grid.Column="2">
 
+            <!--Message-->
+            <TextBlock Grid.Row="4"
+                       Margin="0"
+                       IsVisible="{Binding DoesFixRequireAdminRights, FallbackValue=False}"
+                       Foreground="{DynamicResource SystemAccentColor}"
+                       TextWrapping ="Wrap"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
+                Superheater needs to be run as admin in order to (un)install this fix
+            </TextBlock>
+
             <StackPanel VerticalAlignment="Center" IsVisible="{Binding SelectedFixVariants, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                 <!--Variants-->
