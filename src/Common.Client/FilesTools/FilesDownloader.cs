@@ -53,17 +53,6 @@ public sealed class FilesDownloader : IFilesDownloader
             return new(ResultEnum.ConnectionError, "Error while downloading a file: " + response.StatusCode);
         }
 
-        //Hash check before download
-        if (hash is not null)
-        {
-            var result = CheckOnlineFileHash(response, hash);
-
-            if (!result.IsSuccess)
-            {
-                return result;
-            }
-        }
-
         //Downloading
         await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
         var contentLength = response.Content.Headers.ContentLength;
@@ -93,6 +82,7 @@ public sealed class FilesDownloader : IFilesDownloader
         }
         catch (Exception ex)
         {
+            _progressReport.OperationMessage = string.Empty;
             return new(ResultEnum.Error, ex.ToString());
         }
         finally
@@ -105,14 +95,35 @@ public sealed class FilesDownloader : IFilesDownloader
         //Hash check of downloaded file
         if (hash is not null)
         {
-            _progressReport.OperationMessage = "Checking hash...";
-
-            var result = await CheckLocalFileHashAsync(filePath, hash).ConfigureAwait(false);
-
-            if (!result.IsSuccess)
+            if (contentLength > 1e+9)
             {
-                return result;
+                _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
             }
+            else
+            {
+                _progressReport.OperationMessage = "Checking hash...";
+            }
+
+            try
+            {
+                var result = await CheckLocalFileHashAsync(filePath, hash, cancellationToken).ConfigureAwait(false);
+
+                if (!result.IsSuccess)
+                {
+                    return result;
+                }
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.Info("Hash checking cancelled");
+                //do nothing
+            }
+            catch (Exception ex)
+            {
+                _progressReport.OperationMessage = string.Empty;
+                return new(ResultEnum.Error, ex.ToString());
+            }
+
         }
 
         _progressReport.OperationMessage = string.Empty;
@@ -167,13 +178,14 @@ public sealed class FilesDownloader : IFilesDownloader
     /// </summary>
     /// <param name="filePath">Path to the file</param>
     /// <param name="hash">File md5</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns></returns>
-    private async Task<Result> CheckLocalFileHashAsync(string filePath, string hash)
+    private async Task<Result> CheckLocalFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
     {
         using var md5 = MD5.Create();
         using var stream = File.OpenRead(filePath);
 
-        var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream).ConfigureAwait(false));
+        var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
 
         if (!hash.Equals(fileHash))
         {
