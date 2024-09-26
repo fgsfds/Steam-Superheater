@@ -70,7 +70,10 @@ public sealed class AppReleasesProvider
             }
         }
 
-        WindowsRelease = windowsRelease!;
+        _logger.LogInformation($"Found Windows release {windowsRelease!.Version}");
+        WindowsRelease = windowsRelease;
+
+        _logger.LogInformation($"Found Linux release {linuxRelease!.Version}");
         LinuxRelease = linuxRelease!;
     }
 

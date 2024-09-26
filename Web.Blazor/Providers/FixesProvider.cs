@@ -267,7 +267,7 @@ public sealed class FixesProvider
         }
 
         sw.Stop();
-        _logger.LogInformation($"Got fixes in {sw.ElapsedMilliseconds} ms");
+        //_logger.LogInformation($"Got fixes in {sw.ElapsedMilliseconds} ms");
 
         return fixesLists;
     }
@@ -678,6 +678,7 @@ public sealed class FixesProvider
 
                 var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
 
+                //file availability
                 if (result is null || !result.IsSuccessStatusCode)
                 {
                     _logger.LogError($"Fix doesn't exist or unavailable: {fix.Url}");
@@ -698,6 +699,7 @@ public sealed class FixesProvider
                 }
 
 
+                //md5 for s3 files
                 if (fix.Url.StartsWith(Consts.FilesBucketUrl))
                 {
                     if (result.Headers.ETag?.Tag is null)
@@ -709,7 +711,11 @@ public sealed class FixesProvider
                     {
                         var md5 = result.Headers.ETag!.Tag.Replace("\"", "");
 
-                        if (md5.Contains('-'))
+                        if (fix.FixGuid == Guid.Parse("42d240dc-9778-4c3e-9bab-99b5c994655b"))
+                        {
+                            _logger.LogError($"Skipped: {fix.Url}");
+                        }
+                        else if (md5.Contains('-'))
                         {
                             _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
                             await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
@@ -721,6 +727,7 @@ public sealed class FixesProvider
                         }
                     }
                 }
+                //md5 of external files
                 else if (result.Content.Headers.ContentMD5 is null)
                 {
                     _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
@@ -733,6 +740,7 @@ public sealed class FixesProvider
                 }
 
 
+                //file size
                 if (result.Content.Headers.ContentLength is null)
                 {
                     _logger.LogError($"Fix doesn't have size in the header: {fix.Url}");
