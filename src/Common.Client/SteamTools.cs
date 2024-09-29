@@ -21,7 +21,6 @@ public sealed class SteamTools
     /// <summary>
     /// Get list of ACF files from all Steam libraries
     /// </summary>
-    /// <returns></returns>
     public List<string> GetAcfsList()
     {
         var libraries = GetSteamLibraries();
@@ -43,33 +42,51 @@ public sealed class SteamTools
     /// <summary>
     /// Get Steam install path
     /// </summary>
-    /// <returns></returns>
     private string? GetSteamInstallPath()
     {
         string? result;
 
         if (OperatingSystem.IsWindows())
         {
-            var path = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
-
-            if (path is not string strPath)
-            {
-                _logger.Error("Can't find Steam install folder");
-                return null;
-            }
-
-            result = strPath.Replace('/', Path.DirectorySeparatorChar);
+            result = GetWindowsInstallFolder();
         }
         else if (OperatingSystem.IsLinux())
         {
-            var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-
-            result = Path.Combine(home, ".local/share/Steam");
+            result = GetLinuxInstallFolder();
         }
         else
         {
             return ThrowHelper.ThrowPlatformNotSupportedException<string>("Can't identify platform");
         }
+
+        if (result is null)
+        {
+            _logger.Error("Can't find Steam install folder");
+            return null;
+        }
+
+        _logger.Info($"Using {result} as a Steam folder");
+        return result;
+    }
+
+    /// <summary>
+    /// Get Steam install folder on Windows
+    /// </summary>
+    private string? GetWindowsInstallFolder()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return ThrowHelper.ThrowPlatformNotSupportedException<string>();
+        }
+
+        var path = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);
+
+        if (path is not string strPath)
+        {
+            return null;
+        }
+
+        var result = strPath.Replace('/', Path.DirectorySeparatorChar);
 
         if (!Directory.Exists(result))
         {
@@ -77,7 +94,71 @@ public sealed class SteamTools
             return null;
         }
 
-        _logger.Info($"Steam install folder is {result}");
+        _logger.Info($"Found Steam install folder at {result}");
+        return result;
+    }
+
+    /// <summary>
+    /// Get Steam install folder on Linux
+    /// </summary>
+    private string? GetLinuxInstallFolder()
+    {
+        var home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        string? result = null;
+
+        //installer
+        var result2 = Path.Combine(home, ".steam/steam");
+        if (Directory.Exists(result2))
+        {
+            if (Directory.Exists(Path.Combine(result2, "steamapps")) &&
+                File.Exists(Path.Combine(result2, "steamapps", "libraryfolders.vdf")))
+            {
+                _logger.Info($"Found Steam install folder at {result2}");
+                result = result2;
+            }
+        }
+
+        //snap
+        var result3 = Path.Combine(home, "snap/steam/common/.local/share/Steam");
+        if (Directory.Exists(result3))
+        {
+            if (Directory.Exists(Path.Combine(result3, "steamapps")) &&
+                File.Exists(Path.Combine(result3, "steamapps", "libraryfolders.vdf")))
+            {
+                _logger.Info($"Found Steam install folder at {result3}");
+                result = result3;
+            }
+        }
+
+        //flatpak
+        var result4 = Path.Combine(home, ".var/app/com.valvesoftware.Steam/.local/share/Steam");
+        if (Directory.Exists(result4))
+        {
+            if (Directory.Exists(Path.Combine(result4, "steamapps")) &&
+                File.Exists(Path.Combine(result4, "steamapps", "libraryfolders.vdf")))
+            {
+                _logger.Info($"Found Steam install folder at {result4}");
+                result = result4;
+            }
+        }
+
+        //deck
+        var result1 = Path.Combine(home, ".local/share/Steam");
+        if (Directory.Exists(result1))
+        {
+            if (Directory.Exists(Path.Combine(result1, "steamapps")) &&
+                File.Exists(Path.Combine(result1, "steamapps", "libraryfolders.vdf")))
+            {
+                _logger.Info($"Found Steam install folder at {result1}");
+                result = result1;
+            }
+        }
+
+        if (result is null)
+        {
+            return null;
+        }
+
         return result;
     }
 
