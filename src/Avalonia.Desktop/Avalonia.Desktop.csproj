@@ -32,19 +32,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AddSealed">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="AddSealed" PrivateAssets="all" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Diagnostics" />
     <PackageReference Include="Avalonia.HtmlRenderer" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
-    <PackageReference Include="ConfigureAwaitAnalyzer">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
     <PackageReference Include="Markdown.Avalonia" />
     <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />

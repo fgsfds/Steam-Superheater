@@ -12,15 +12,9 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AddSealed">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="AddSealed" PrivateAssets="all" />
         <PackageReference Include="CommunityToolkit.Diagnostics" />
-        <PackageReference Include="ConfigureAwaitAnalyzer">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
         <PackageReference Include="Octopus.Octodiff" />
         <PackageReference Include="SharpCompress" />
   </ItemGroup>
