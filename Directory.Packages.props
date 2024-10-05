@@ -10,10 +10,10 @@
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.2.0-beta2" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.2.0-beta2" />
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.403" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.404.2" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.3.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
-    <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.0.3" />
+    <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.1.0" />
     <PackageVersion Include="Markdig" Version="0.37.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.3-a1" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
@@ -29,12 +29,12 @@
     <PackageVersion Include="System.Text.Json" Version="8.0.4" />
     <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.4" />
+    <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
     <PackageVersion Include="Octopus.Octodiff" Version="2.0.546" />
-    <PackageVersion Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.0" />
+    <PackageVersion Include="Projektanker.Icons.Avalonia.FontAwesome" Version="9.4.1" />
     <PackageVersion Include="SharpCompress" Version="0.38.0" />
     <PackageVersion Include="Telegram.Bot" Version="21.10.1" />
-    <PackageVersion Include="xunit" Version="2.9.0" />
+    <PackageVersion Include="xunit" Version="2.9.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.8.2" />
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageVersion Include="Microsoft.AspNetCore.SpaProxy" Version="8.0.6" />
