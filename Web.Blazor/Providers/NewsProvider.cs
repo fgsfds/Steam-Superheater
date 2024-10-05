@@ -58,6 +58,7 @@ public sealed class NewsProvider
         };
 
         _ = dbContext.News.Add(entity);
+
         _ = databaseVersions.Version = newTableVersion;
 
         _ = dbContext.SaveChanges();
@@ -75,6 +76,9 @@ public sealed class NewsProvider
     {
         using var dbContext = _databaseContextFactory.Get();
 
+        var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.News)!;
+        var newTableVersion = databaseVersions.Version + 1;
+
         var entity = dbContext.News.Find(date);
 
         if (entity is null)
@@ -83,6 +87,10 @@ public sealed class NewsProvider
         }
 
         entity.Content = text;
+        entity.TableVersion = newTableVersion;
+
+        _ = databaseVersions.Version = newTableVersion;
+
         _ = dbContext.SaveChanges();
 
         return true;
