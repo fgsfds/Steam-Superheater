@@ -1,11 +1,11 @@
 using Common.Client.FilesTools;
 using Common.Client.FilesTools.Interfaces;
-using Common.Client.Logger;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Octodiff.Core;
 using System.Diagnostics;
 using System.Security.Cryptography;
@@ -248,14 +248,14 @@ public sealed class FileFixInstaller
         //checking md5 of the existing file
         if (File.Exists(pathToArchive))
         {
-            _logger.Info($"Checking local file {pathToArchive}");
+            _logger.LogInformation($"Checking local file {pathToArchive}");
             _progressReport.OperationMessage = "Checking hash...";
 
             var fileCheckResult = await CheckFileMD5Async(pathToArchive, fixMD5).ConfigureAwait(false);
 
             if (!fileCheckResult)
             {
-                _logger.Info("MD5 of the local file doesn't match, removing it");
+                _logger.LogInformation("MD5 of the local file doesn't match, removing it");
                 File.Delete(pathToArchive);
             }
             else
@@ -266,7 +266,7 @@ public sealed class FileFixInstaller
             _progressReport.OperationMessage = string.Empty;
         }
 
-        _logger.Info($"Local file {pathToArchive} not found");
+        _logger.LogInformation($"Local file {pathToArchive} not found");
 
         var result = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixMD5).ConfigureAwait(false);
 

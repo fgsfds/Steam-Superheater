@@ -1,12 +1,12 @@
 using Common.Client.FixTools;
 using Common.Client.FixTools.HostsFix;
-using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.HostsFix;
 using Common.Enums;
 using Common.Helpers;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Tests;

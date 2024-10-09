@@ -1,7 +1,7 @@
-using Common.Client.Logger;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 
 namespace Common.Client.Providers;
@@ -56,7 +56,7 @@ public sealed class GamesProvider : IGamesProvider
     /// <returns></returns>
     private async Task UpdateCacheAsync()
     {
-        _logger.Info("Creating games cache list");
+        _logger.LogInformation("Creating games cache list");
 
         var list = await Task.Run(() =>
         {
@@ -81,7 +81,7 @@ public sealed class GamesProvider : IGamesProvider
             return cache;
         }).ConfigureAwait(false);
 
-        _logger.Info($"Added {list.Count} games to the cache");
+        _logger.LogInformation($"Added {list.Count} games to the cache");
 
         _cache = list;
     }

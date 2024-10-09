@@ -10,11 +10,11 @@ using Avalonia.Styling;
 using Common;
 using Common.Client;
 using Common.Client.DI;
-using Common.Client.Logger;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Avalonia.Desktop;
 
@@ -93,10 +93,10 @@ public sealed class App : Application
 
             if (ClientProperties.IsDeveloperMode)
             {
-                _logger.Info("Started in developer mode");
+                _logger.LogInformation("Started in developer mode");
             }
 
-            _logger.Info($"Working folder is {ClientProperties.WorkingFolder}");
+            _logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
 
             Cleanup();
 
@@ -131,7 +131,7 @@ public sealed class App : Application
             var messageBox = new MessageBox(ex.ToString());
             messageBox.Show();
 
-            _logger?.Error(ex.ToString());
+            _logger?.LogCritical(ex, "Error while starting app");
         }
     }
 
@@ -170,7 +170,7 @@ public sealed class App : Application
             return;
         }
 
-        _logger?.Info("Starting cleanup");
+        _logger?.LogInformation("Starting cleanup");
 
         var files = Directory.GetFiles(ClientProperties.WorkingFolder);
 

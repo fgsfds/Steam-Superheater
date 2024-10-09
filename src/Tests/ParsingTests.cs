@@ -1,7 +1,7 @@
 using Common.Client;
-using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Entities;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.Reflection;
 

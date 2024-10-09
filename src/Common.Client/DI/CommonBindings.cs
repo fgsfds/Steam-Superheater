@@ -5,8 +5,9 @@ using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
-using Common.Client.Logger;
+using Common.Helpers;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Client.DI;
 
@@ -14,13 +15,9 @@ public static class CommonBindings
 {
     public static void Load(ServiceCollection container, bool isDesigner)
     {
-        if (isDesigner)
+        if (!isDesigner)
         {
-            _ = container.AddSingleton<ILogger, LoggerToConsole>();
-        }
-        else
-        {
-            _ = container.AddSingleton<ILogger, LoggerToFile>();
+            _ = container.AddSingleton<ILogger>(CreateLogger);
         }
 
         _ = container.AddTransient<AppUpdateInstaller>();
@@ -54,6 +51,14 @@ public static class CommonBindings
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
         httpClient.Timeout = TimeSpan.FromSeconds(10);
         return httpClient;
+    }
+
+    private static ILogger CreateLogger(IServiceProvider service)
+    {
+        var logFilePath = Path.Combine(ClientProperties.WorkingFolder, "Superheater.log");
+        var logger = FileLoggerFactory.Create(logFilePath);
+
+        return logger;
     }
 }
 

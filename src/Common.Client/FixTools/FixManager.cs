@@ -1,7 +1,6 @@
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
-using Common.Client.Logger;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
@@ -11,6 +10,7 @@ using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.RegistryFixV2;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Client.FixTools;
 
@@ -74,7 +74,7 @@ public sealed class FixManager
         string hostsFile = Consts.Hosts
         )
     {
-        _logger.Info($"Installing {fix.Name} for {game.Name}");
+        _logger.LogInformation($"Installing {fix.Name} for {game.Name}");
 
         if (fix is FileFixEntity &&
             !Directory.Exists(game.InstallDir))
@@ -136,7 +136,7 @@ public sealed class FixManager
         string hostsFile = Consts.Hosts
         )
     {
-        _logger.Info($"Uninstalling {fix.Name} for {game.Name}");
+        _logger.LogInformation($"Uninstalling {fix.Name} for {game.Name}");
 
         if (fix is FileFixEntity &&
             !Directory.Exists(game.InstallDir))
@@ -171,12 +171,12 @@ public sealed class FixManager
         }
         catch (IOException ex)
         {
-            _logger.Error(ex.ToString());
+            _logger.LogCritical(ex, "IO error while uninstalling fix");
             return new(ResultEnum.FileAccessError, ex.Message);
         }
         catch (Exception ex)
         {
-            _logger.Error(ex.ToString());
+            _logger.LogCritical(ex, "Error while uninstalling fix");
             return new(ResultEnum.Error, ex.Message);
         }
 
@@ -203,7 +203,7 @@ public sealed class FixManager
         string hostsFile = Consts.Hosts
         )
     {
-        _logger.Info($"Updating {fix.Name} for {game.Name}");
+        _logger.LogInformation($"Updating {fix.Name} for {game.Name}");
 
         if (fix is FileFixEntity &&
             !Directory.Exists(game.InstallDir))

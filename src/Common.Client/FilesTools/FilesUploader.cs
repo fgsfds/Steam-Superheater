@@ -1,5 +1,5 @@
 using Api.Common.Interface;
-using Common.Client.Logger;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Client.FilesTools;
 
@@ -54,7 +54,7 @@ public sealed class FilesUploader
         string? remoteFileName = null
         )
     {
-        _logger.Info($"Uploading {files.Count} file(s)");
+        _logger.LogInformation($"Uploading {files.Count} file(s)");
 
         _progressReport.OperationMessage = "Uploading...";
         IProgress<float> progress = _progressReport.Progress;
@@ -89,12 +89,12 @@ public sealed class FilesUploader
         }
         catch (TaskCanceledException)
         {
-            _logger.Info("Uploading cancelled");
+            _logger.LogInformation("Uploading cancelled");
             return new(ResultEnum.Error, "Uploading cancelled");
         }
         catch (Exception ex)
         {
-            _logger.Error(ex.ToString());
+            _logger.LogCritical(ex, "Error while uploading fix");
             return new(ResultEnum.Error, ex.Message);
         }
         finally

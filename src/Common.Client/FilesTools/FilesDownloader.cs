@@ -1,7 +1,7 @@
 using Common.Client.FilesTools.Interfaces;
-using Common.Client.Logger;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Security.Cryptography;
@@ -34,7 +34,7 @@ public sealed class FilesDownloader : IFilesDownloader
         string? hash = null
         )
     {
-        _logger.Info($"Started downloading file {url}");
+        _logger.LogInformation($"Started downloading file {url}");
 
         IProgress<float> progress = _progressReport.Progress;
         var tempFile = filePath + ".temp";
@@ -115,7 +115,7 @@ public sealed class FilesDownloader : IFilesDownloader
             }
             catch (TaskCanceledException)
             {
-                _logger.Info("Hash checking cancelled");
+                _logger.LogInformation("Hash checking cancelled");
                 //do nothing
             }
             catch (Exception ex)
@@ -245,7 +245,7 @@ public sealed class FilesDownloader : IFilesDownloader
         }
 
         long prevPosition = default;
-        Stopwatch sw = Stopwatch.StartNew();
+        var sw = Stopwatch.StartNew();
 
         while (streamToTrack.CanSeek)
         {

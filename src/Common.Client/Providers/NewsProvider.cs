@@ -1,9 +1,9 @@
 using Api.Common.Interface;
-using Common.Client.Logger;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Enums;
 using Database.Client;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
 namespace Common.Client.Providers;
@@ -53,7 +53,7 @@ public sealed class NewsProvider : INewsProvider
 
         if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
         {
-            _logger.Info("Getting online news");
+            _logger.LogInformation("Getting online news");
 
             currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
             newsCacheDbEntity.Version = newNewsList.ResultObject.Version;

@@ -1,10 +1,10 @@
-using Common.Client.Logger;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.RegistryFixV2;
 using Common.Enums;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace Common.Client.FixTools.RegistryFix;
@@ -47,7 +47,7 @@ public sealed class RegistryFixInstaller
         {
             var valueName = regFix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
-            _logger.Info($"Value name is {valueName}");
+            _logger.LogInformation($"Value name is {valueName}");
 
             string? oldValueStr = null;
 
@@ -95,7 +95,7 @@ public sealed class RegistryFixInstaller
             {
                 var valueName = entry.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
-                _logger.Info($"Value name is {valueName}");
+                _logger.LogInformation($"Value name is {valueName}");
 
                 string? oldValueStr = null;
 

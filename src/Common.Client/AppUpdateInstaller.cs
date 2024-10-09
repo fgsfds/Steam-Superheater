@@ -1,10 +1,10 @@
 using Api.Common.Interface;
 using Common.Client.FilesTools.Interfaces;
-using Common.Client.Logger;
 using Common.Entities;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.IO.Compression;
 
 namespace Common.Client;
@@ -28,7 +28,7 @@ public sealed class AppUpdateInstaller(
     /// <returns>Has newer version</returns>
     public async Task<Result> CheckForUpdates(Version currentVersion)
     {
-        _logger.Info("Checking for updates");
+        _logger.LogInformation("Checking for updates");
 
         var result = await _apiInterface.GetLatestAppReleaseAsync(OSEnumHelper.CurrentOSEnum).ConfigureAwait(false);
 
@@ -39,7 +39,7 @@ public sealed class AppUpdateInstaller(
 
         if (result.ResultObject is not null && result.ResultObject.Version > currentVersion)
         {
-            _logger.Info($"Found new version {result.ResultObject.Version}");
+            _logger.LogInformation($"Found new version {result.ResultObject.Version}");
 
             _update = result.ResultObject;
 
@@ -56,7 +56,7 @@ public sealed class AppUpdateInstaller(
     {
         Guard.IsNotNull(_update);
 
-        _logger.Info($"Downloading app update version {_update.Version}");
+        _logger.LogInformation($"Downloading app update version {_update.Version}");
 
         var updateUrl = _update.DownloadUrl;
 

@@ -1,12 +1,12 @@
 using Common.Client.FixTools;
 using Common.Client.FixTools.RegistryFix;
-using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Enums;
 using Common.Helpers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Moq;
 

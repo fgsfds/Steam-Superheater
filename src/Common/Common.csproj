@@ -10,6 +10,9 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
     <PackageReference Include="Markdig" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
   </ItemGroup>
 
 </Project>

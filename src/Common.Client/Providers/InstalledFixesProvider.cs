@@ -1,12 +1,11 @@
-using Common.Client.Logger;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Text.Json;
-using System.Threading;
 
 namespace Common.Client.Providers;
 
@@ -111,7 +110,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
     /// </summary>
     private async Task UpdateCacheAsync()
     {
-        _logger.Info("Requesting installed fixes");
+        _logger.LogInformation("Requesting installed fixes");
 
         _cache = [];
 

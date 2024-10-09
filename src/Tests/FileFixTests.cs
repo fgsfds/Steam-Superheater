@@ -2,13 +2,13 @@ using Common;
 using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
-using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.Helpers;
+using Microsoft.Extensions.Logging;
 using Moq;
 using System.IO.Compression;
 

@@ -1,8 +1,8 @@
 using Common;
 using Common.Client;
-using Common.Client.Logger;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 
 namespace Avalonia.Desktop.ViewModels;
 
@@ -80,7 +80,7 @@ public sealed partial class AboutViewModel : ObservableObject
         }
         else if (!result.IsSuccess)
         {
-            _logger.Error(result.Message);
+            _logger.LogError(result.Message);
 
             CheckForUpdatesButtonText = result.Message;
         }

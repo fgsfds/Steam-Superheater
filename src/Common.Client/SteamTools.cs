@@ -1,5 +1,5 @@
-using Common.Client.Logger;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
 namespace Common.Client;
@@ -61,11 +61,11 @@ public sealed class SteamTools
 
         if (result is null)
         {
-            _logger.Error("Can't find Steam install folder");
+            _logger.LogError("Can't find Steam install folder");
             return null;
         }
 
-        _logger.Info($"Using {result} as a Steam folder");
+        _logger.LogInformation($"Using {result} as a Steam folder");
         return result;
     }
 
@@ -90,11 +90,11 @@ public sealed class SteamTools
 
         if (!Directory.Exists(result))
         {
-            _logger.Error($"Steam install folder {result} doesn't exist");
+            _logger.LogError($"Steam install folder {result} doesn't exist");
             return null;
         }
 
-        _logger.Info($"Found Steam install folder at {result}");
+        _logger.LogInformation($"Found Steam install folder at {result}");
         return result;
     }
 
@@ -113,7 +113,7 @@ public sealed class SteamTools
             if (Directory.Exists(Path.Combine(result2, "steamapps")) &&
                 File.Exists(Path.Combine(result2, "steamapps", "libraryfolders.vdf")))
             {
-                _logger.Info($"Found Steam install folder at {result2}");
+                _logger.LogInformation($"Found Steam install folder at {result2}");
                 result = result2;
             }
         }
@@ -125,7 +125,7 @@ public sealed class SteamTools
             if (Directory.Exists(Path.Combine(result3, "steamapps")) &&
                 File.Exists(Path.Combine(result3, "steamapps", "libraryfolders.vdf")))
             {
-                _logger.Info($"Found Steam install folder at {result3}");
+                _logger.LogInformation($"Found Steam install folder at {result3}");
                 result = result3;
             }
         }
@@ -137,7 +137,7 @@ public sealed class SteamTools
             if (Directory.Exists(Path.Combine(result4, "steamapps")) &&
                 File.Exists(Path.Combine(result4, "steamapps", "libraryfolders.vdf")))
             {
-                _logger.Info($"Found Steam install folder at {result4}");
+                _logger.LogInformation($"Found Steam install folder at {result4}");
                 result = result4;
             }
         }
@@ -149,7 +149,7 @@ public sealed class SteamTools
             if (Directory.Exists(Path.Combine(result1, "steamapps")) &&
                 File.Exists(Path.Combine(result1, "steamapps", "libraryfolders.vdf")))
             {
-                _logger.Info($"Found Steam install folder at {result1}");
+                _logger.LogInformation($"Found Steam install folder at {result1}");
                 result = result1;
             }
         }

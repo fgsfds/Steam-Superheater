@@ -2,9 +2,9 @@ using Api.Common.Interface;
 using Common;
 using Common.Client;
 using Common.Client.FilesTools.Interfaces;
-using Common.Client.Logger;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Tests;
