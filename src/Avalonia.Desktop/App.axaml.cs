@@ -71,6 +71,8 @@ public sealed class App : Application
 
         try
         {
+            RenameConfig();
+
             var container = BindingsManager.Instance;
 
             ModelsBindings.Load(container);
@@ -96,6 +98,8 @@ public sealed class App : Application
                 _logger.LogInformation("Started in developer mode");
             }
 
+            _logger.LogInformation($"Superheater version: {ClientProperties.CurrentVersion}");
+            _logger.LogInformation($"Operating system: {Environment.OSVersion}");
             _logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
 
             Cleanup();
@@ -187,6 +191,18 @@ public sealed class App : Application
         if (Directory.Exists(updateDir))
         {
             Directory.Delete(updateDir, true);
+        }
+    }
+
+    [Obsolete]
+    private static void RenameConfig()
+    {
+        var oldConfigPath = Path.Combine(ClientProperties.WorkingFolder, "config.db");
+        var newConfigPath = Path.Combine(ClientProperties.WorkingFolder, "Superheater.db");
+
+        if (File.Exists(oldConfigPath))
+        {
+            File.Move(oldConfigPath, newConfigPath, true);
         }
     }
 }

@@ -41,6 +41,6 @@ public sealed class DatabaseContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        _ = optionsBuilder.UseSqlite("Data Source=config.db");
+        _ = optionsBuilder.UseSqlite("Data Source=Superheater.db");
     }
 }
