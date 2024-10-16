@@ -2,46 +2,22 @@ using Web.Blazor.Providers;
 
 namespace Web.Blazor.Tasks;
 
-public sealed class FileCheckerTask : IHostedService, IDisposable
+public sealed class FileCheckerTask : BackgroundService
 {
     private readonly FixesProvider _fixesProvider;
 
-    private Timer? _timer;
-
-    public FileCheckerTask(
-        FixesProvider fixesProvider
-        )
+    public FileCheckerTask(FixesProvider fixesProvider)
     {
         _fixesProvider = fixesProvider;
     }
 
-    public Task StartAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _timer = new Timer(
-            DoWork,
-            null,
-            TimeSpan.Zero,
-            TimeSpan.FromHours(6)
-            );
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            _ = _fixesProvider.CheckFixesAsync();
 
-        return Task.CompletedTask;
-    }
-
-    private void DoWork(object? state)
-    {
-        _ = _fixesProvider.CheckFixesAsync();
-    }
-
-    public Task StopAsync(CancellationToken stoppingToken)
-    {
-        _ = _timer?.Change(Timeout.Infinite, 0);
-
-        return Task.CompletedTask;
-    }
-
-    public void Dispose()
-    {
-        _timer?.Dispose();
+            await Task.Delay(TimeSpan.FromHours(6), stoppingToken);
+        }
     }
 }
-

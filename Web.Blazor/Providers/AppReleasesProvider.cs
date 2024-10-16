@@ -14,7 +14,8 @@ public sealed class AppReleasesProvider
 
     public AppReleasesProvider(
         ILogger<AppReleasesProvider> logger,
-        HttpClient httpClient)
+        HttpClient httpClient
+        )
     {
         _logger = logger;
         _httpClient = httpClient;

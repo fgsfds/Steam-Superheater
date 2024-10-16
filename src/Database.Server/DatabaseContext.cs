@@ -32,6 +32,7 @@ public sealed class DatabaseContext : DbContext
         Database.Migrate();
     }
 
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         if (_isDevMode)
@@ -45,6 +46,7 @@ public sealed class DatabaseContext : DbContext
             var user = Environment.GetEnvironmentVariable("DbUser")!;
             var password = Environment.GetEnvironmentVariable("DbPass")!;
             var dbName = Environment.GetEnvironmentVariable("DbName")!;
+
             _ = optionsBuilder.UseNpgsql($"Host={dbip};Port={dbport};Database={dbName};Username={user};Password={password}");
         }
     }

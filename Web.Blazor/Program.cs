@@ -10,7 +10,7 @@ using Web.Blazor.Telegram;
 
 namespace Web.Blazor;
 
-public class Program
+public sealed class Program
 {
     public static void Main(string[] args)
     {
@@ -23,7 +23,8 @@ public class Program
         _ = builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
         {
             jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
+            jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;  
+
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(FixesListContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);

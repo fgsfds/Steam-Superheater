@@ -47,7 +47,7 @@ public static class CommonBindings
 
     private static HttpClient CreateHttpClient(IServiceProvider provider)
     {
-        var httpClient = new HttpClient();
+        HttpClient httpClient = new();
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
         httpClient.Timeout = TimeSpan.FromSeconds(10);
         return httpClient;

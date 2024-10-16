@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AddSealed" PrivateAssets="all" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="AWSSDK.S3" />
