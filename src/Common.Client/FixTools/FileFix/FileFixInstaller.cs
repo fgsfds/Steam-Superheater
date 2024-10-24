@@ -249,21 +249,41 @@ public sealed class FileFixInstaller
         if (File.Exists(pathToArchive))
         {
             _logger.LogInformation($"Checking local file {pathToArchive}");
-            _progressReport.OperationMessage = "Checking hash...";
 
-            var fileCheckResult = await CheckFileMD5Async(pathToArchive, fixMD5).ConfigureAwait(false);
-
-            if (!fileCheckResult)
+            if (new FileInfo(pathToArchive).Length > 1e+9)
             {
-                _logger.LogInformation("MD5 of the local file doesn't match, removing it");
-                File.Delete(pathToArchive);
+                _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
             }
             else
             {
-                return new(ResultEnum.Success, pathToArchive, "Using local file");
+                _progressReport.OperationMessage = "Checking hash...";
             }
 
-            _progressReport.OperationMessage = string.Empty;
+            try
+            {
+                var fileCheckResult = await CheckFileMD5Async(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
+
+                if (!fileCheckResult)
+                {
+                    _logger.LogInformation("MD5 of the local file doesn't match, removing it");
+                    File.Delete(pathToArchive);
+                }
+                else
+                {
+                    _progressReport.OperationMessage = string.Empty;
+                    return new(ResultEnum.Success, pathToArchive, "Using local file");
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogInformation("Hash checking cancelled");
+                _progressReport.OperationMessage = string.Empty;
+                return new(ResultEnum.Success, pathToArchive, "Using local file");
+            }
+            finally
+            {
+                _progressReport.OperationMessage = string.Empty;
+            }
         }
 
         _logger.LogInformation($"Local file {pathToArchive} not found");
@@ -355,10 +375,12 @@ public sealed class FileFixInstaller
     /// </summary>
     /// <param name="filePath">Full path to the file</param>
     /// <param name="fixMD5">MD5 that the file's hash will be compared to</param>
+    /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>true if check is passed</returns>
     private static async Task<bool> CheckFileMD5Async(
         string filePath,
-        string? fixMD5
+        string? fixMD5,
+        CancellationToken cancellationToken
         )
     {
         if (fixMD5 is null)
@@ -372,7 +394,7 @@ public sealed class FileFixInstaller
         {
             using var stream = File.OpenRead(filePath);
 
-            var hash = await md5.ComputeHashAsync(stream).ConfigureAwait(false);
+            var hash = await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false);
             hashStr = Convert.ToHexString(hash);
         }
 

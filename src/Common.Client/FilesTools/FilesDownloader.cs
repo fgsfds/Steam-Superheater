@@ -101,6 +101,7 @@ public sealed class FilesDownloader : IFilesDownloader
             }
             else
             {
+
                 _progressReport.OperationMessage = "Checking hash...";
             }
 
@@ -113,7 +114,7 @@ public sealed class FilesDownloader : IFilesDownloader
                     return result;
                 }
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 _logger.LogInformation("Hash checking cancelled");
                 //do nothing
