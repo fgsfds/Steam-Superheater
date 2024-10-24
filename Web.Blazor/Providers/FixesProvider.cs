@@ -654,18 +654,22 @@ public sealed class FixesProvider
     {
         if (_isCheckFixesRunning)
         {
-            _logger.LogInformation("Fixes check already running");
-            await _bot.SendMessageAsync($"Fixes check already running");
+            const string AlreadyRunning = "Fixes check already running";
+            _logger.LogInformation(AlreadyRunning);
+            _ = _bot.SendMessageAsync(AlreadyRunning);
 
             return;
         }
         _isCheckFixesRunning = true;
 
-        _logger.LogInformation("Fixes check started");
-        await _bot.SendMessageAsync($"Fixes check started");
+        const string Started = "Fixes check started";
+        _logger.LogInformation(Started);
+        _ = _bot.SendMessageAsync(Started);
 
         using var dbContext = _dbContextFactory.Get();
         var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+
+        List<string> md5Errors = [];
 
         foreach (var fix in fixes)
         {
@@ -681,21 +685,24 @@ public sealed class FixesProvider
                 //file availability
                 if (result is null || !result.IsSuccessStatusCode)
                 {
-                    _logger.LogError($"Fix doesn't exist or unavailable: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't exist or unavailable: {fix.Url}");
+                    var message = $"File doesn't exist or unavailable: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                     continue;
                 }
 
 
                 if (fix.MD5 is null)
                 {
-                    _logger.LogError($"Fix doesn't have MD5 in the database: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have MD5 in the database: {fix.Url}");
+                    var message = $"File doesn't have MD5 in the database: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                 }
                 if (fix.FileSize is null)
                 {
-                    _logger.LogError($"Fix doesn't have file size in the database: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have file size in the database: {fix.Url}");
+                    var message = $"File doesn't have size in the database: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                 }
 
 
@@ -704,8 +711,9 @@ public sealed class FixesProvider
                 {
                     if (result.Headers.ETag?.Tag is null)
                     {
-                        _logger.LogError($"Fix doesn't have ETag: {fix.Url}");
-                        await _bot.SendMessageAsync($"Fix doesn't have ETag: {fix.Url}");
+                        var message = $"File doesn't have ETag: {fix.Url}";
+                        _logger.LogError(message);
+                        _ = _bot.SendMessageAsync(message);
                     }
                     else
                     {
@@ -713,54 +721,72 @@ public sealed class FixesProvider
 
                         if (fix.FixGuid == Guid.Parse("42d240dc-9778-4c3e-9bab-99b5c994655b"))
                         {
-                            _logger.LogError($"Skipped: {fix.Url}");
+                            //_logger.LogError($"Skipped: {fix.Url}");
                         }
                         else if (md5.Contains('-'))
                         {
-                            _logger.LogError($"Fix has incorrect ETag: {fix.Url}");
-                            await _bot.SendMessageAsync($"Fix has incorrect ETag: {fix.Url}");
+                            var message = $"File has incorrect ETag: {fix.Url}";
+                            _logger.LogError(message);
+                            _ = _bot.SendMessageAsync(message);
                         }
                         else if (!md5.Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                         {
-                            _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
-                            await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                            var message = $"File's MD5 doesn't match: {fix.Url}";
+                            _logger.LogError(message);
+                            _ = _bot.SendMessageAsync(message);
                         }
                     }
                 }
                 //md5 of external files
                 else if (result.Content.Headers.ContentMD5 is null)
                 {
-                    _logger.LogError($"Fix doesn't have MD5 in the header: {fix.Url}");
-                    //await _bot.SendMessageAsync($"Fix doesn't have MD5 in the header: {fix.Url}");
+                    md5Errors.Add(fix.Url);
+                    //var message = $"Fix doesn't have MD5 in the header: {fix.Url}";
+                    //_logger.LogError(message);
+                    //_ = _bot.SendMessageAsync(message);
                 }
                 else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                 {
-                    _logger.LogError($"Fix MD5 doesn't match: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix MD5 doesn't match: {fix.Url}");
+                    var message = $"File's MD5 doesn't match: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                 }
 
 
                 //file size
                 if (result.Content.Headers.ContentLength is null)
                 {
-                    _logger.LogError($"Fix doesn't have size in the header: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix doesn't have size in the header: {fix.Url}");
+                    var message = $"File doesn't have size in the header: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                 }
                 else if (result.Content.Headers.ContentLength != fix.FileSize)
                 {
-                    _logger.LogError($"Fix size doesn't match: {fix.Url}");
-                    await _bot.SendMessageAsync($"Fix size doesn't match: {fix.Url}");
+                    var message = $"File size doesn't match: {fix.Url}";
+                    _logger.LogError(message);
+                    _ = _bot.SendMessageAsync(message);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogCritical(ex, $"Fix check error: {fix.Url}");
-                await _bot.SendMessageAsync($"Fixes check error: {fix.Url}{Environment.NewLine}{ex}");
+                string? message = $"Fix check error: {fix.Url}";
+                _logger.LogCritical(ex, message);
+                _ = _bot.SendMessageAsync($"{message}{Environment.NewLine}{ex}");
             }
         }
 
-        _logger.LogInformation("Fixes check ended");
-        await _bot.SendMessageAsync($"Fixes check ended");
+        if (md5Errors.Count > 0)
+        {
+            _logger.LogError($"""
+            Following fixes don't have MD5 in the header:
+
+            {string.Join(Environment.NewLine, md5Errors)}
+            """);
+        }
+
+        const string Message = "Fixes check ended";
+        _logger.LogInformation(Message);
+        _ = _bot.SendMessageAsync(Message);
 
         _isCheckFixesRunning = false;
     }
