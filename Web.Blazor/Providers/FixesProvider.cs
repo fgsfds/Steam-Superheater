@@ -267,7 +267,7 @@ public sealed class FixesProvider
         }
 
         sw.Stop();
-        //_logger.LogInformation($"Got fixes in {sw.ElapsedMilliseconds} ms");
+        _logger.LogInformation($"Got fixes in {sw.ElapsedMilliseconds} ms");
 
         return fixesLists;
     }
