@@ -90,7 +90,7 @@ public sealed class FixesProvider : IFixesProvider
                     var guid = dep.Dependencies![0];
                     var existing = woDependencies.FirstOrDefault(x => x.Guid == guid);
 
-                    dep.DependencyLevel += dep.Dependencies.Count;
+                    dep.DependencyLevel += 1;
 
                     if (existing is null)
                     {
