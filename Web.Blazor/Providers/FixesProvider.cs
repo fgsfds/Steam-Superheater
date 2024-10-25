@@ -456,11 +456,11 @@ public sealed class FixesProvider
             var existingEntity = dbContext.Fixes.Find(fix.Guid);
 
             var fixType = fix is FileFixEntity ? FixTypeEnum.FileFix :
-                            fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
-                            fix is RegistryFixV2Entity ? FixTypeEnum.RegistryFixV2 :
-                            fix is HostsFixEntity ? FixTypeEnum.HostsFix :
-                            fix is TextFixEntity ? FixTypeEnum.TextFix :
-                            ThrowHelper.ThrowNotSupportedException<FixTypeEnum>();
+                fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
+                fix is RegistryFixV2Entity ? FixTypeEnum.RegistryFixV2 :
+                fix is HostsFixEntity ? FixTypeEnum.HostsFix :
+                fix is TextFixEntity ? FixTypeEnum.TextFix :
+                ThrowHelper.ThrowNotSupportedException<FixTypeEnum>();
 
             if (existingEntity is null)
             {
@@ -620,7 +620,8 @@ public sealed class FixesProvider
 
 
             //removing existing and adding new dependencies
-            _ = dbContext.Dependencies.Where(x => x.FixGuid == fix.Guid);
+            _ = dbContext.Dependencies.Where(x => x.FixGuid == fix.Guid).ExecuteDelete();
+
             if (fix.Dependencies is not null)
             {
                 foreach (var tag in fix.Dependencies.ToList())
