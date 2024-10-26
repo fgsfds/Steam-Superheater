@@ -424,7 +424,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// Install selected fix
     /// </summary>
     [RelayCommand(CanExecute = (nameof(InstallUpdateFixCanExecute)))]
-    private Task<Result> InstallUpdateFixAsync()
+    private void InstallUpdateFix()
     {
         Guard.IsNotNull(SelectedGame);
         Guard.IsNotNull(SelectedFix);
@@ -438,18 +438,26 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 Environment.Exit(0);
             }
         }
-        catch
+        catch (Exception)
         {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install this fix");
+            var length2 = App.Random.Next(1, 100);
+            var repeatedString2 = new string('\u200B', length2);
+
+            App.NotificationManager.Show(
+                "Superheater needs to be run as admin in order to install this fix." + repeatedString2,
+                NotificationType.Error
+                );
+
+            return;
         }
 
-        var installResult = InstallUpdateFixAsync(
+        _ = InstallUpdateFixAsync(
             SelectedGame,
             SelectedFix,
             SelectedFixVariant,
             false);
 
-        return installResult;
+        return;
     }
     private bool InstallUpdateFixCanExecute()
     {
