@@ -148,6 +148,7 @@
                                    VerticalAlignment="Center"/>
 
                         <TextBlock Text="{Binding Name}"
+                                   FontWeight="Bold"
                                    Grid.Row="0"
                                    Grid.Column="1"
                                    VerticalAlignment="Center"/>
@@ -159,17 +160,18 @@
 
                             <TextBlock Margin="0"
                                        Text="Installed"
-                                       FontWeight="Bold"
+                                       Opacity="80"
                                        IsVisible="{Binding IsInstalled}"/>
 
                             <TextBlock Margin="3,0,0,0"
                                        Text="v"
-                                       FontWeight="Bold"
+                                       Opacity="80"
                                        IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                             <TextBlock Margin="0"
                                        Text="{Binding InstalledVersionStr}"
-                                       FontWeight="Bold" IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                       Opacity="80"
+                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                         </StackPanel>
 
