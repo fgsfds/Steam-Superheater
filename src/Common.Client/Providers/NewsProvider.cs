@@ -55,6 +55,16 @@ public sealed class NewsProvider : INewsProvider
         {
             _logger.LogInformation("Getting online news");
 
+            var newNewsDates = newNewsList.ResultObject.News.Select(x => x.Date);
+
+            foreach (var item in currentNewsList.ToList())
+            {
+                if (newNewsDates.Contains(item.Date))
+                {
+                    _ = currentNewsList.Remove(item);
+                }
+            }
+
             currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
             newsCacheDbEntity.Version = newNewsList.ResultObject.Version;
             newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsEntityContext.Default.ListNewsEntity);
