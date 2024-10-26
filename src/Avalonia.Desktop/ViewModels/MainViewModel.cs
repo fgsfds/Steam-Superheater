@@ -73,19 +73,14 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
+            if (SelectedFix is null)
+            {
+                return string.Empty;
+            }
+
             if (DoesFixRequireAdminRights)
             {
                 return "Restart as admin...";
-            }
-
-            if (SelectedFix is not FileFixEntity fileFix)
-            {
-                return "Install";
-            }
-
-            if (fileFix.Url is null)
-            {
-                return "Install";
             }
 
             if (SelectedFixVariants is not null && SelectedFixVariant is null)
@@ -93,29 +88,39 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 return "<- Select fix variant";
             }
 
-            var pathToArchive = _config.UseLocalApiAndRepo
-            ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
-            : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
-
-            if (File.Exists(pathToArchive))
+            if (SelectedFix is FileFixEntity fileFix)
             {
-                return "Install";
+                if (fileFix.Url is null)
+                {
+                    return SelectedFix.IsOutdated ? "Update" : "Install";
+                }
+
+                var pathToArchive = _config.UseLocalApiAndRepo
+                    ? Path.Combine(_config.LocalRepoPath, "fixes", Path.GetFileName(fileFix.Url))
+                    : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fileFix.Url));
+
+                if (File.Exists(pathToArchive))
+                {
+                    return SelectedFix.IsOutdated ? "Update" : "Install";
+                }
+
+                if (fileFix.Url is null ||
+                    fileFix.FileSize is null)
+                {
+                    return SelectedFix.IsOutdated ? "Download and update" : "Download and install";
+                }
+
+                var size = fileFix.FileSize;
+
+                if (fileFix.SharedFix?.FileSize is not null)
+                {
+                    size += fileFix.SharedFix.FileSize;
+                }
+
+                return SelectedFix.IsOutdated ? $"Download ({size.ToSizeString()}) and update" : $"Download ({size.ToSizeString()}) and install";
             }
 
-            if (fileFix.Url is null ||
-                fileFix.FileSize is null)
-            {
-                return $"Download and install";
-            }
-
-            var size = fileFix.FileSize;
-
-            if (fileFix.SharedFix?.FileSize is not null)
-            {
-                size += fileFix.SharedFix.FileSize;
-            }
-
-            return $"Download ({size.ToSizeString()}) and install";
+            return SelectedFix.IsOutdated ? "Update" : "Install";
         }
     }
 
@@ -270,8 +275,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
-    [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
-    [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
+    [NotifyCanExecuteChangedFor(nameof(InstallUpdateFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
@@ -307,10 +311,9 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyPropertyChangedFor(nameof(IsSelectedFixUpvoted))]
     [NotifyPropertyChangedFor(nameof(IsSelectedFixDownvoted))]
     [NotifyPropertyChangedFor(nameof(IsStatsVisible))]
-    [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+    [NotifyCanExecuteChangedFor(nameof(InstallUpdateFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
-    [NotifyCanExecuteChangedFor(nameof(UpdateFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(DownvoteCommand))]
@@ -324,7 +327,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowVariantsPopupButtonText))]
     [NotifyPropertyChangedFor(nameof(InstallButtonText))]
-    [NotifyCanExecuteChangedFor(nameof(InstallFixCommand))]
+    [NotifyCanExecuteChangedFor(nameof(InstallUpdateFixCommand))]
     private string? _selectedFixVariant;
 
     [ObservableProperty]
@@ -411,9 +414,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         await UpdateAsync(false, true, true).ConfigureAwait(true);
 
-        InstallFixCommand.NotifyCanExecuteChanged();
+        InstallUpdateFixCommand.NotifyCanExecuteChanged();
         UninstallFixCommand.NotifyCanExecuteChanged();
-        UpdateFixCommand.NotifyCanExecuteChanged();
     }
     private bool UpdateGamesCanExecute() => !LockButtons;
 
@@ -421,8 +423,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Install selected fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(InstallFixCanExecute)))]
-    private Task<Result> InstallFixAsync()
+    [RelayCommand(CanExecute = (nameof(InstallUpdateFixCanExecute)))]
+    private Task<Result> InstallUpdateFixAsync()
     {
         Guard.IsNotNull(SelectedGame);
         Guard.IsNotNull(SelectedFix);
@@ -449,17 +451,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         return installResult;
     }
-    private bool InstallFixCanExecute()
+    private bool InstallUpdateFixCanExecute()
     {
-        if (DoesFixRequireAdminRights)
-        {
-            return true;
-        }
-
         if (SelectedGame is null ||
             SelectedFix is null ||
             SelectedFix is TextFixEntity ||
-            SelectedFix.IsInstalled ||
             !SelectedGame.IsGameInstalled ||
             (SelectedFixVariants is not null && SelectedFixVariant is null) ||
             LockButtons)
@@ -477,21 +473,6 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
     private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
-
-
-    /// <summary>
-    /// Update selected fix
-    /// </summary>
-    [RelayCommand(CanExecute = (nameof(UpdateFixCanExecute)))]
-    private Task<Result> UpdateFixAsync()
-    {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
-
-        var installResult = InstallUpdateFixAsync(SelectedGame, SelectedFix, SelectedFixVariant, false);
-        return installResult;
-    }
-    public bool UpdateFixCanExecute() => SelectedFix is not null && SelectedFix.IsOutdated && !LockButtons && !DoesFixRequireAdminRights;
 
 
     /// <summary>

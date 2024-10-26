@@ -128,21 +128,19 @@
                           ColumnDefinitions="auto,*"
                           Margin="10">
 
+                        <Grid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Margin="5" Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallButtonText}" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallUpdateFixCommand}"/>
+                                <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
+                                <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
+                            </ContextMenu>
+                        </Grid.ContextMenu>
+
                         <Border Grid.RowSpan="4"
                                 Grid.ColumnSpan="2"
                                 Background="Transparent"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch">
-
-                            <Border.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Margin="5" Header="Install" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallFixCommand}"/>
-                                    <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
-                                    <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
-                                </ContextMenu>
-                            </Border.ContextMenu>
-
-                        </Border>
+                                VerticalAlignment="Stretch"/>
 
                         <TextBlock Text="{Binding SortedSymbol}"
                                    Grid.Row="0"

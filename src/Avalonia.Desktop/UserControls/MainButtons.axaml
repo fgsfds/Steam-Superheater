@@ -96,21 +96,11 @@
             <StackPanel Orientation="Horizontal" IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                 <Button Name="InstallButton"
-                        Command="{Binding InstallFixCommand}"
+                        Command="{Binding InstallUpdateFixCommand}"
                         Margin="3,0"
                         Background="{DynamicResource SystemAccentColor}"
-                        IsVisible="{Binding !SelectedFix.IsOutdated}"
                         Content="{Binding InstallButtonText, FallbackValue='Install'}"
                         Padding="8"/>
-
-                <Button Name="UpdateButton"
-                        Command="{Binding UpdateFixCommand}"
-                        Margin="3,0"
-                        Background="{DynamicResource SystemAccentColor}"
-                        IsVisible="{Binding SelectedFix.IsOutdated}"
-                        Padding="8">
-                    Update
-                </Button>
 
                 <Button Name="UninstallButton"
                         Command="{Binding UninstallFixCommand}"
