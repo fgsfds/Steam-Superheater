@@ -170,7 +170,7 @@
                                        IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                             <TextBlock Margin="0"
-                                       Text="{Binding VersionStr}"
+                                       Text="{Binding InstalledVersionStr}"
                                        FontWeight="Bold" IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
 
                         </StackPanel>
