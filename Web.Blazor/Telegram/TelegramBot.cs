@@ -28,36 +28,36 @@ public sealed class TelegramBot
 
     public async Task StartAsync()
     {
-        var me = await _bot.GetMeAsync().ConfigureAwait(false);
+        var me = await _bot.GetMeAsync();
 
         _bot.OnError += OnError;
         _bot.OnMessage += OnMessage;
 
-        await SendMessageAsync("Server started").ConfigureAwait(false);
+        await SendMessageAsync("Server started");
     }
 
     private async Task OnMessage(Message message, UpdateType type)
     {
-        _logger.LogInformation("Got message");
+        _logger.LogInformation($"Got message {message.Text}");
 
         if (message.From!.Id.ToString() != _chatId)
         {
             await SendMessageAsync(
                 "You are not supposed to be here",
                 message!.From!.Id.ToString()
-                ).ConfigureAwait(false);
+                );
         }
 
         if (message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
         {
             _logger.LogInformation("Pong");
-            await SendMessageAsync("Pong").ConfigureAwait(false);
+            await SendMessageAsync("Pong");
         }
-        //else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
-        //{
-        //    _logger.LogInformation("Check message received");
-        //    _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword).ConfigureAwait(false);
-        //}
+        else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
+        {
+            _logger.LogInformation("Check message received");
+            _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword);
+        }
     }
 
     private async Task OnError(Exception exception, HandleErrorSource source)
@@ -75,7 +75,7 @@ public sealed class TelegramBot
         };
 
         _logger.LogError(message);
-        await SendMessageAsync(message).ConfigureAwait(false);
+        await SendMessageAsync(message);
     }
 
     public async Task SendMessageAsync(string text, string? id = null)
@@ -85,7 +85,7 @@ public sealed class TelegramBot
         _ = await _bot.SendTextMessageAsync(
             id,
             text
-            ).ConfigureAwait(false);
+            );
     }
 }
 
