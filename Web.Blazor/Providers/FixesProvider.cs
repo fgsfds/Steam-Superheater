@@ -668,15 +668,21 @@ public sealed class FixesProvider
         _ = _bot.SendMessageAsync(Started);
 
         using var dbContext = _dbContextFactory.Get();
-        var fixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+        var fileFixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
+        var fixes = dbContext.Fixes.AsNoTracking().ToDictionary(static x => x.Guid, static t => t.IsDisabled);
 
         List<string> md5Errors = [];
 
-        foreach (var fix in fixes)
+        foreach (var fix in fileFixes)
         {
             try
             {
                 if (fix.Url is null)
+                {
+                    continue;
+                }
+
+                if (fixes[fix.FixGuid])
                 {
                     continue;
                 }
