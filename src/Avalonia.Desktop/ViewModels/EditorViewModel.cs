@@ -47,7 +47,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public ImmutableList<GameEntity> AvailableGamesList => _editorModel.AvailableGames;
 
-    public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? null : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden)];
+    public ImmutableList<BaseFixEntity>? SelectedGameFixesList => SelectedGame is null ? null : [.. SelectedGame.Fixes.Where(static x => !x.IsHidden).OrderBy(static x => x.IsDisabled)];
 
     public ImmutableList<BaseFixEntity>? AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 

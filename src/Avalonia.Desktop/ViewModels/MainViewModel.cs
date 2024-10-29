@@ -823,7 +823,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             return;
         }
 
-        var fixes = SelectedGame.Fixes.Where(static x => !x.IsHidden);
+        var fixes = SelectedGame.Fixes.Where(static x => !x.IsHidden).OrderBy(static x => x.IsDisabled);
 
         SelectedGameFixesList = [.. fixes];
     }
