@@ -1,8 +1,6 @@
-using Telegram.Bot;
-using Telegram.Bot.Exceptions;
-using Telegram.Bot.Polling;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.Enums;
+using Telegram.BotAPI;
+using Telegram.BotAPI.AvailableMethods;
+using Telegram.BotAPI.GettingUpdates;
 
 namespace Web.Blazor.Telegram;
 
@@ -23,66 +21,70 @@ public sealed class TelegramBot
     {
         _httpClient = httpClient;
         _logger = logger;
-        _bot = new TelegramBotClient(_token, httpClient);
+        _bot = new TelegramBotClient(_token);
     }
 
     public async Task StartAsync()
     {
-        var me = await _bot.GetMeAsync();
+        _ = await _bot.GetMeAsync();
 
-        _bot.OnError += OnError;
-        _bot.OnMessage += OnMessage;
-
-        await SendMessageAsync("Server started");
-    }
-
-    private async Task OnMessage(Message message, UpdateType type)
-    {
-        _logger.LogInformation($"Got message {message.Text}");
-
-        if (message.From!.Id.ToString() != _chatId)
+        var task = new Task(async () =>
         {
-            await SendMessageAsync(
-                "You are not supposed to be here",
-                message!.From!.Id.ToString()
-                );
-        }
+            var updates = await _bot.GetUpdatesAsync();
 
-        if (message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogInformation("Pong");
-            await SendMessageAsync("Pong");
-        }
-        else if (message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
-        {
-            _logger.LogInformation("Check message received");
-            _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword);
-        }
-    }
+            while (true)
+            {
+                var count = updates.Count();
 
-    private async Task OnError(Exception exception, HandleErrorSource source)
-    {
-        var message = exception switch
-        {
-            ApiRequestException apiRequestException => $"""
-                Telegram API Error:
+                if (count > 0)
+                {
+                    _logger.LogInformation($"Got {count} telegram updates");
 
-                {apiRequestException.ErrorCode}
+                    foreach (var update in updates)
+                    {
+                        if (update.Message is not null)
+                        {
+                            _logger.LogInformation($"Got message {update.Message.Text}");
 
-                {apiRequestException.Message}
-                """,
-            _ => exception.ToString()
-        };
+                            if (!update.Message?.From?.Id.ToString().Equals(_chatId) ?? false)
+                            {
+                                await SendMessageAsync(
+                                    "You are not supposed to be here",
+                                    update.Message?.From?.Id.ToString()
+                                    );
 
-        _logger.LogError(message);
-        await SendMessageAsync(message);
+                                continue;
+                            }
+
+                            if (update.Message!.Text!.Equals("Ping", StringComparison.OrdinalIgnoreCase))
+                            {
+                                _logger.LogInformation("Pong");
+                                await SendMessageAsync("Pong");
+                            }
+                            else if (update.Message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
+                            {
+                                _logger.LogInformation("Check message received");
+                                _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword);
+                            }
+                        }
+                    }
+                }
+
+                await Task.Delay(1000);
+
+                var offset = updates.LastOrDefault() is null ? 0 : updates.Last().UpdateId + 1;
+                updates = _bot.GetUpdates(offset);
+            }
+        });
+
+        task.Start();
     }
 
     public async Task SendMessageAsync(string text, string? id = null)
     {
         id ??= _chatId;
 
-        _ = await _bot.SendTextMessageAsync(
+        _ = await _bot.SendMessageAsync(
             id,
             text
             );

@@ -105,8 +105,7 @@ public sealed class Program
         // Don't start bot in dev mode
         if (!app.Environment.IsDevelopment())
         {
-            var bot = app.Services.GetService<TelegramBot>();
-            _ = bot!.StartAsync();
+            _ = app.Services.GetService<TelegramBot>()!.StartAsync();
         }
 
         app.Run();
