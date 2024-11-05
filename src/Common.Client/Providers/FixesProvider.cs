@@ -183,7 +183,11 @@ public sealed class FixesProvider : IFixesProvider
 
         if (!localFixesOnly)
         {
-            var newFixesList = await _apiInterface.GetFixesListAsync(currentFixesVersion, ClientProperties.CurrentVersion).ConfigureAwait(false);
+            var newFixesList = await _apiInterface.GetFixesListAsync(
+                currentFixesVersion, 
+                ClientProperties.CurrentVersion,
+                ClientProperties.IsDeveloperMode
+                ).ConfigureAwait(false);
 
             if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
             {

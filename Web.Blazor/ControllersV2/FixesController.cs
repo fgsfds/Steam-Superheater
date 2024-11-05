@@ -32,7 +32,10 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult<GetFixesOutMessageContext> GetFixesList([FromBody] GetFixesInMessage message)
     {
-        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, message.AppVersion, null);
+        if (!message.DontLog)
+        {
+            _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, message.AppVersion, null);
+        }
 
         var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.Fixes];
 
@@ -105,7 +108,10 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(typeof(IncreaseInstallsCountOutMessage), StatusCodes.Status200OK)]
     public ActionResult<IncreaseInstallsCountOutMessage> AddNumberOfInstalls([FromBody] IncreaseInstallsCountInMessage message)
     {
-        _ = _eventsProvider.LogEventAsync(EventTypeEnum.Install, message.AppVersion, message.FixGuid);
+        if (!message.DontLog)
+        {
+            _ = _eventsProvider.LogEventAsync(EventTypeEnum.Install, message.AppVersion ??  new(2, 0, 0, 0), message.FixGuid);
+        }
 
         var installsCount = _fixesProvider.IncreaseFixInstallsCount(message.FixGuid);
 

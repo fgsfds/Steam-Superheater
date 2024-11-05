@@ -8,14 +8,15 @@ namespace Api.Common.Interface;
 
 public sealed partial class ApiInterface
 {
-    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion)
+    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion, bool dontLog)
     {
         try
         {
             GetFixesInMessage message = new()
             {
                 TableVersion = tableVersion,
-                AppVersion = appVersion
+                AppVersion = appVersion,
+                DontLog = dontLog
             };
 
             using HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{ApiUrl}/fixes");
@@ -88,14 +89,15 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion)
+    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion, bool dontLog)
     {
         try
         {
             IncreaseInstallsCountInMessage message = new()
             {
                 FixGuid = guid,
-                AppVersion = appVersion
+                AppVersion = appVersion,
+                DontLog = dontLog
             };
 
             var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);

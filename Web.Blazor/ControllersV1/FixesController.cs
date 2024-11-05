@@ -28,7 +28,7 @@ public sealed class FixesController : ControllerBase
     [HttpGet]
     public IEnumerable<FixesList> GetFixesList()
     {
-        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1,0,0), null);
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1, 2, 0), null);
 
         return _fixesProvider.GetFixesList(0, new Version(1, 2, 0));
     }
@@ -42,7 +42,7 @@ public sealed class FixesController : ControllerBase
     [HttpPut("installs/add")]
     public int AddNumberOfInstalls([FromBody] Guid guid)
     {
-        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1, 0, 0), guid);
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1, 2, 0), guid);
 
         return _fixesProvider.IncreaseFixInstallsCount(guid);
     }
