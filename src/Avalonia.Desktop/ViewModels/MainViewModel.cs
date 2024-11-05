@@ -16,6 +16,7 @@ using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -32,6 +33,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private readonly PopupEditorViewModel _popupEditor;
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
+    private readonly ILogger _logger;
     private readonly SemaphoreSlim _locker = new(1);
 
     private CancellationTokenSource? _cancellationTokenSource;
@@ -372,7 +374,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         PopupMessageViewModel popupMessage,
         PopupEditorViewModel popupEditor,
         ProgressReport progressReport,
-        PopupStackViewModel popupStack
+        PopupStackViewModel popupStack,
+        ILogger logger
         )
     {
         _mainModel = mainModel;
@@ -384,6 +387,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         _popupEditor = popupEditor;
         _progressReport = progressReport;
         _popupStack = popupStack;
+        _logger = logger;
 
         _searchBarText = string.Empty;
 
@@ -431,33 +435,46 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         try
         {
-            if (DoesFixRequireAdminRights)
+            try
             {
-                _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
+                if (DoesFixRequireAdminRights)
+                {
+                    _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
 
-                Environment.Exit(0);
+                    Environment.Exit(0);
+                }
             }
+            catch (Exception)
+            {
+                var length2 = App.Random.Next(1, 100);
+                var repeatedString2 = new string('\u200B', length2);
+
+                App.NotificationManager.Show(
+                    "Superheater needs to be run as admin in order to install this fix" + repeatedString2,
+                    NotificationType.Error
+                    );
+
+                return;
+            }
+
+            _ = InstallUpdateFixAsync(
+                SelectedGame,
+                SelectedFix,
+                SelectedFixVariant,
+                false);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
+            _logger.LogCritical(ex, $"Error while installing fix {SelectedFix.Name} for {SelectedGame.GameName}");
+
             var length2 = App.Random.Next(1, 100);
             var repeatedString2 = new string('\u200B', length2);
 
             App.NotificationManager.Show(
-                "Superheater needs to be run as admin in order to install this fix." + repeatedString2,
+                "Critical error while installing fix" + repeatedString2,
                 NotificationType.Error
                 );
-
-            return;
         }
-
-        _ = InstallUpdateFixAsync(
-            SelectedGame,
-            SelectedFix,
-            SelectedFixVariant,
-            false);
-
-        return;
     }
     private bool InstallUpdateFixCanExecute()
     {
@@ -466,6 +483,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             SelectedFix is TextFixEntity ||
             !SelectedGame.IsGameInstalled ||
             (SelectedFixVariants is not null && SelectedFixVariant is null) ||
+            (SelectedFix.IsInstalled && !SelectedFix.IsOutdated) ||
             LockButtons)
         {
             return false;
@@ -492,58 +510,73 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         Guard.IsNotNull(SelectedFix);
         Guard.IsNotNull(SelectedGame?.Game);
 
-        var dependantFixes = _mainModel.GetInstalledDependentFixes(SelectedGame.Fixes, SelectedFix.Guid);
-
-        if (dependantFixes is not null)
+        try
         {
-            var res = await _popupMessage.ShowAndGetResultAsync("Required fixes",
-                $"""
+            var dependantFixes = _mainModel.GetInstalledDependentFixes(SelectedGame.Fixes, SelectedFix.Guid);
+
+            if (dependantFixes is not null)
+            {
+                var res = await _popupMessage.ShowAndGetResultAsync("Required fixes",
+                    $"""
                             The following fixes require this fix to work.
                             Do you want to uninstall them?
 
                             {string.Join(Environment.NewLine, dependantFixes)}
                             """,
-                PopupMessageType.YesNo).ConfigureAwait(true);
+                    PopupMessageType.YesNo).ConfigureAwait(true);
 
-            if (!res)
-            {
-                return;
-            }
-
-            foreach (var dep in dependantFixes)
-            {
-                var result = _fixManager.UninstallFix(SelectedGame.Game, dep);
-
-                if (!result.IsSuccess)
+                if (!res)
                 {
-                    var length2 = App.Random.Next(1, 100);
-                    var repeatedString2 = new string('\u200B', length2);
-
-                    App.NotificationManager.Show(
-                        result.Message + repeatedString2,
-                        NotificationType.Error
-                        );
-
                     return;
                 }
+
+                foreach (var dep in dependantFixes)
+                {
+                    var result = _fixManager.UninstallFix(SelectedGame.Game, dep);
+
+                    if (!result.IsSuccess)
+                    {
+                        var length2 = App.Random.Next(1, 100);
+                        var repeatedString2 = new string('\u200B', length2);
+
+                        App.NotificationManager.Show(
+                            result.Message + repeatedString2,
+                            NotificationType.Error
+                            );
+
+                        return;
+                    }
+                }
             }
+
+            IsInProgress = true;
+
+            var fixUninstallResult = _fixManager.UninstallFix(SelectedGame.Game, SelectedFix);
+
+            await FillGamesListAsync().ConfigureAwait(true);
+
+            IsInProgress = false;
+
+            var length = App.Random.Next(1, 100);
+            var repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                fixUninstallResult.Message + repeatedString,
+                fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
+                );
         }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, $"Error while uninstalling fix {SelectedFix.Name} for {SelectedGame.GameName}");
 
-        IsInProgress = true;
+            var length2 = App.Random.Next(1, 100);
+            var repeatedString2 = new string('\u200B', length2);
 
-        var fixUninstallResult = _fixManager.UninstallFix(SelectedGame.Game, SelectedFix);
-
-        await FillGamesListAsync().ConfigureAwait(true);
-
-        IsInProgress = false;
-
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-            fixUninstallResult.Message + repeatedString,
-            fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
-            );
+            App.NotificationManager.Show(
+                "Critical error while uninstalling fix" + repeatedString2,
+                NotificationType.Error
+                );
+        }
     }
     private bool UninstallFixCanExecute()
     {
@@ -574,7 +607,10 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
     private void OpenConfig()
     {
-        OpenConfigFileAsync(SelectedGame?.Game, SelectedFix);
+        Guard.IsNotNull(SelectedGame?.Game);
+        Guard.IsNotNull(SelectedFix);
+
+        OpenConfigFileAsync(SelectedGame.Game, SelectedFix);
     }
 
     private bool OpenConfigCanExecute() => SelectedFix is FileFixEntity fileFix && fileFix.ConfigFile is not null && fileFix.IsInstalled && SelectedGame is not null && SelectedGame.IsGameInstalled;
@@ -1041,40 +1077,55 @@ Do you still want to install the fix?",
     /// <summary>
     /// Open config file for selected fix
     /// </summary>
-    private async void OpenConfigFileAsync(GameEntity? game, BaseFixEntity? fix)
+    private async void OpenConfigFileAsync(GameEntity game, BaseFixEntity fix)
     {
-        Guard2.IsOfType<FileFixEntity>(fix, out var fileFix);
-        Guard.IsNotNull(fileFix?.ConfigFile);
-        Guard.IsNotNull(game);
-
-        if (!fix.IsInstalled)
+        try
         {
-            return;
-        }
+            Guard2.IsOfType<FileFixEntity>(fix, out var fileFix);
+            Guard.IsNotNull(fileFix.ConfigFile);
+            Guard.IsNotNull(game);
 
-        var pathToConfig = Path.Combine(game.InstallDir, fileFix.ConfigFile);
-
-        if (fileFix.ConfigFile.EndsWith(".exe"))
-        {
-            _ = Process.Start(new ProcessStartInfo
-            {
-                FileName = Path.Combine(pathToConfig),
-                UseShellExecute = true,
-                WorkingDirectory = Path.GetDirectoryName(pathToConfig)
-            });
-        }
-        else
-        {
-            var config = await File.ReadAllTextAsync(pathToConfig).ConfigureAwait(true);
-
-            var result = await _popupEditor.ShowAndGetResultAsync("Config", config).ConfigureAwait(true);
-
-            if (result is null)
+            if (!fix.IsInstalled)
             {
                 return;
             }
 
-            await File.WriteAllTextAsync(pathToConfig, result).ConfigureAwait(true);
+            var pathToConfig = Path.Combine(game.InstallDir, fileFix.ConfigFile);
+
+            if (fileFix.ConfigFile.EndsWith(".exe"))
+            {
+                _ = Process.Start(new ProcessStartInfo
+                {
+                    FileName = Path.Combine(pathToConfig),
+                    UseShellExecute = true,
+                    WorkingDirectory = Path.GetDirectoryName(pathToConfig)
+                });
+            }
+            else
+            {
+                var config = await File.ReadAllTextAsync(pathToConfig).ConfigureAwait(true);
+
+                var result = await _popupEditor.ShowAndGetResultAsync("Config", config).ConfigureAwait(true);
+
+                if (result is null)
+                {
+                    return;
+                }
+
+                await File.WriteAllTextAsync(pathToConfig, result).ConfigureAwait(true);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, $"Error while opening config for {fix.Name} for {game.Name}");
+
+            var length2 = App.Random.Next(1, 100);
+            var repeatedString2 = new string('\u200B', length2);
+
+            App.NotificationManager.Show(
+                "Critical error while installing fix" + repeatedString2,
+                NotificationType.Error
+                );
         }
     }
 
