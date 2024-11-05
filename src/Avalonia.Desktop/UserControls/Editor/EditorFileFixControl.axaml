@@ -1,0 +1,270 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:ff="clr-namespace:Common.Entities.Fixes.FileFix;assembly=Superheater.Common"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
+             x:DataType="vme:FileFixViewModel"
+             x:Class="Avalonia.Desktop.UserControls.Editor.EditorFileFixControl">
+
+    <StackPanel Orientation="Vertical">
+
+        <!--Link to file-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Link to file
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
+                     Grid.Column="1"
+                     Margin="0,3" />
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilePickerCommand}">
+                ...
+            </Button>
+
+            <!--Install folder-->
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="3"
+                       Margin="10,5"
+                       HorizontalAlignment="Right">
+                Install folder
+            </TextBlock>
+
+            <TextBox Grid.Column="4"
+                     Text="{Binding ((ff:FileFixEntity)SelectedFix).InstallFolder, Mode=TwoWay, FallbackValue=''}"
+                     Margin="0,3" />
+        </Grid>
+
+        <!--Variants-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Variants
+            </TextBlock>
+
+            <TextBox Grid.Column="1"
+                     Text="{Binding SelectedFixVariants, Mode=TwoWay}"
+                     Margin="0,3" />
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenVariantsEditorCommand}">
+                ...
+            </Button>
+        </Grid>
+
+        <!--Config-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Config
+            </TextBlock>
+
+            <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).ConfigFile, Mode=TwoWay, FallbackValue=''}"
+                     Grid.Column="1"
+                     Margin="0,3" />
+        </Grid>
+
+        <!--Files to delete-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Files to delete
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixFilesToDelete, Mode=TwoWay}"
+                     Margin="0,3"
+                     Grid.Column="1" />
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToDeleteEditorCommand}">
+                ...
+            </Button>
+        </Grid>
+
+        <!--Files to backup-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Files to backup
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixFilesToBackup, Mode=TwoWay}"
+                     Grid.Column="1"
+                     Margin="0,3"
+                     Grid.Row="0"/>
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToBackupEditorCommand}">
+                ...
+            </Button>
+        </Grid>
+
+        <!--Files to patch-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Files to patch
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixFilesToPatch, Mode=TwoWay}"
+                     Grid.Column="1"
+                     Margin="0,3"/>
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenFilesToPatchEditorCommand}">
+                ...
+            </Button>
+        </Grid>
+
+        <!--Run after install-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Run after install
+            </TextBlock>
+
+            <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).RunAfterInstall, Mode=TwoWay, FallbackValue=''}"
+                     Grid.Column="1"
+                     Margin="0,3"/>
+        </Grid>
+
+        <!--Shared fix-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                Shared fix
+            </TextBlock>
+
+            <ComboBox HorizontalAlignment="Stretch"
+                      Grid.Column="1"
+                      ItemsSource="{Binding SharedFixesList}"
+                      SelectedItem="{Binding SelectedSharedFix}"
+                      VerticalAlignment="Center"
+                      Margin="0,3"/>
+
+            <Button Grid.Column="2"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding ResetSelectedSharedFixCommand}"
+                    Margin="5,0,0,0">x</Button>
+
+            <!--Shared fix install folder-->
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="3"
+                       Margin="10,5">
+                Install folder
+            </TextBlock>
+
+            <TextBox Grid.Column="4"
+                     HorizontalAlignment="Stretch"
+                     Text="{Binding ((ff:FileFixEntity)SelectedFix).SharedFixInstallFolder, FallbackValue=''}"
+                     Margin="0,3"/>
+        </Grid>
+
+        <!--DLL overrides-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                DLL overrides
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixWineDllsOverrides, Mode=TwoWay}"
+                     Margin="0,3"
+                     Grid.Column="1"/>
+
+            <Button Grid.Column="2"
+                    Margin="5,0,0,0"
+                    Width="{Binding $self.Bounds.Height}"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding OpenWineDllsOverridesEditorCommand}">
+                ...
+            </Button>
+        </Grid>
+    </StackPanel>
+
+</UserControl>

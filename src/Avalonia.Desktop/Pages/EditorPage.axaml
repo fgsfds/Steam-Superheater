@@ -4,7 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:usc="clr-namespace:Avalonia.Desktop.UserControls"
-             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:usce="clr-namespace:Avalonia.Desktop.UserControls.Editor"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
              x:DataType="vm:EditorViewModel"
              x:Class="Avalonia.Desktop.Pages.EditorPage">
 
@@ -12,9 +13,9 @@
 
         <usc:SearchBar Grid.Row="0" Margin="5"/>
 
-        <usc:EditorLists Grid.Row="1" Margin="5"/>
+        <usce:EditorLists Grid.Row="1" Margin="5"/>
 
-        <usc:EditorButtons Grid.Row="2" Margin="5"/>
+        <usce:EditorButtons Grid.Row="2" Margin="5"/>
 
         <usc:ProgressBar Grid.Row="3" Margin="5"/>
 

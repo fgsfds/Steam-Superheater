@@ -1,0 +1,176 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:ff="clr-namespace:Common.Entities.Fixes.FileFix;assembly=Superheater.Common"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
+             x:DataType="vme:RegFixViewModel"
+             x:Class="Avalonia.Desktop.UserControls.Editor.EditorRegFixControl">
+
+    <Grid ColumnDefinitions="auto,*,auto,auto"
+          Margin="5,3,0,3">
+
+        <Border Grid.Column="1"
+                BorderThickness="1"
+                BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                CornerRadius="3"/>
+
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Grid.Column="0" Margin="0,0,5,0">
+
+            <Button Grid.Column="2"
+                    Click="Carousel_Prev"
+                    Margin="0,0,0,3"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Center">
+                <i:Icon Value="fa-angle-right" />
+            </Button>
+
+            <Button Grid.Column="0"
+                    Click="Carousel_Next"
+                    Margin="0,0,0,3"
+                    HorizontalAlignment="Left"
+                    HorizontalContentAlignment="Center">
+                <i:Icon Value="fa-angle-left" />
+            </Button>
+
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Left">
+
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Text="{Binding SelectedRegistryFixIndexStr}"
+                           FontWeight="Bold"
+                           Margin="0,0,0,3"/>
+
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Text="/"
+                           Margin="0,0,0,3"/>
+
+                <TextBlock HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Text="{Binding #Slides.ItemCount}"
+                           Margin="0,0,0,3"/>
+            </StackPanel>
+
+            <Button Grid.Column="3"
+                    Command="{Binding AddRegFixEntryCommand}"
+                    HorizontalAlignment="Left"
+                    Margin="0,0,0,3"
+                    Background="{DynamicResource SystemAccentColor}"
+                    HorizontalContentAlignment="Center">
+                <i:Icon Value="fa-plus" />
+            </Button>
+
+            <Button Grid.Column="3"
+                    Command="{Binding DeleteRegFixEntryCommand}"
+                    HorizontalAlignment="Left"
+                    Margin="0"
+                    Background="Red"
+                    HorizontalContentAlignment="Center">
+                <i:Icon Value="fa-xmark" />
+            </Button>
+
+        </StackPanel>
+
+
+        <Carousel Grid.Column="1"
+                  Name="Slides"
+                  ItemsSource="{Binding SelectedRegistryFixEntries}"
+                  HorizontalAlignment="Stretch"
+                  SelectedIndex="{Binding SelectedRegistryFixIndex}"
+                  Padding="3"
+                  Margin="3">
+            <Carousel.PageTransition >
+                <CompositePageTransition>
+                    <PageSlide Duration="0:00:00.200" Orientation="Horizontal" />
+                </CompositePageTransition>
+            </Carousel.PageTransition>
+
+            <Carousel.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup2" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!--Reg key-->
+                        <TextBlock VerticalAlignment="Center"
+                                   Grid.Column="0"
+                                   Grid.Row="0"
+                                   FontWeight="Bold"
+                                   Margin="5">
+                            Reg key
+                        </TextBlock>
+
+                        <TextBox Text="{Binding Key, Mode=TwoWay, FallbackValue=''}"
+                                 Grid.Column="1"
+                                 Grid.Row="0"
+                                 Margin="0,3"/>
+
+                        <!--Value name-->
+                        <TextBlock VerticalAlignment="Center"
+                                   Grid.Column="0"
+                                   Grid.Row="1"
+                                   FontWeight="Bold"
+                                   Margin="5">
+                            Value name
+                        </TextBlock>
+
+                        <TextBox Text="{Binding ValueName, Mode=TwoWay, FallbackValue=''}"
+                                 Grid.Column="1"
+                                 Grid.Row="1"
+                                 Margin="0,3"/>
+
+                        <!--New value-->
+                        <TextBlock VerticalAlignment="Center"
+                                   Grid.Column="0"
+                                   Grid.Row="2"
+                                   FontWeight="Bold"
+                                   Margin="5">
+                            New value
+                        </TextBlock>
+
+                        <TextBox Text="{Binding NewValueData, Mode=TwoWay, FallbackValue=''}"
+                                 Grid.Column="1"
+                                 Grid.Row="2"
+                                 Margin="0,3"/>
+
+                        <RadioButton GroupName="ValueType"
+                                     IsChecked="{Binding IsString, Mode=TwoWay}"
+                                     Grid.Column="0"
+                                     Grid.Row="3"
+                                     Margin="5">
+                            String
+                        </RadioButton>
+
+                        <RadioButton GroupName="ValueType"
+                                     IsChecked="{Binding IsDword, Mode=TwoWay}"
+                                     Grid.Column="1"
+                                     Grid.Row="3"
+                                     Margin="5">
+                            Dword
+                        </RadioButton>
+                    </Grid>
+
+                </DataTemplate>
+
+            </Carousel.ItemTemplate>
+
+        </Carousel>
+
+    </Grid>
+
+</UserControl>

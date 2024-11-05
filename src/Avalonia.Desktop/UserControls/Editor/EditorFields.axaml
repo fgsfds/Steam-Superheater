@@ -1,0 +1,344 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="1000"
+             xmlns:ff="clr-namespace:Common.Entities.Fixes.FileFix;assembly=Superheater.Common"
+             xmlns:rf="clr-namespace:Common.Entities.Fixes.RegistryFix;assembly=Superheater.Common"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
+             x:DataType="vme:EditorViewModel"
+             x:Class="Avalonia.Desktop.UserControls.Editor.EditorFields">
+
+    <UserControl.DataTemplates>
+        <vme:EditorViewLocator />
+    </UserControl.DataTemplates>
+
+    <Grid RowDefinitions="Auto,*"
+          IsSharedSizeScope="True"
+          IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+        <StackPanel Grid.Row="0"
+                    Orientation="Vertical">
+
+            <!--Fix Type-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center"
+                           Margin="5"
+                           Grid.Column="0"
+                           FontWeight="Bold">
+                    Fix Type
+                </TextBlock>
+
+                <StackPanel Orientation="Horizontal"
+                            Grid.Column="1">
+
+                    <RadioButton GroupName="Type1"
+                                 IsChecked="{Binding IsFileFixType}"
+                                 Margin="0">
+                        File
+                    </RadioButton>
+
+                    <RadioButton GroupName="Type2"
+                                 IsChecked="{Binding IsRegistryFixType}"
+                                 Margin="10,0">
+                        Registry
+                    </RadioButton>
+
+                    <RadioButton GroupName="Type3"
+                                 IsChecked="{Binding IsHostsFixType}"
+                                 Margin="10,0">
+                        Hosts
+                    </RadioButton>
+
+                    <RadioButton GroupName="Type4"
+                                 IsChecked="{Binding IsTextFixType}"
+                                 Margin="10,0">
+                        Text
+                    </RadioButton>
+                </StackPanel>
+
+            </Grid>
+
+            <!--Supported OSes-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center" Grid.Column="0"
+                           Margin="5"
+                           FontWeight="Bold">
+                    OSes
+                </TextBlock>
+
+                <StackPanel Grid.Column="1"
+                            Orientation="Horizontal">
+
+                    <CheckBox IsChecked="{Binding IsWindowsChecked}"
+                              Margin="0">
+                        Windows
+                    </CheckBox>
+
+                    <CheckBox IsChecked="{Binding IsLinuxChecked}"
+                              Margin="10,0,0,0">
+                        Linux
+                    </CheckBox>
+
+                </StackPanel>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <!--Name-->
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="0"
+                           Margin="5"
+                           FontWeight="Bold">
+                    Name
+                </TextBlock>
+
+                <TextBox Grid.Column="1"
+                         Text="{Binding SelectedFixName, Mode=TwoWay}"
+                         Name="NameTextBox"
+                         Margin="0,3" />
+
+                <!--Version-->
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="2"
+                           Margin="20,5"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Right">
+                    Version
+                </TextBlock>
+
+                <TextBox Grid.Column="3"
+                         Text="{Binding SelectedFixVersion, Mode=TwoWay}"
+                         Name="VersionTextBox"
+                         TextChanging="VersionTextBoxChanging"
+                         TextChanged="VersionTextBoxChanged"
+                         Width="100"
+                         Margin="0,3" />
+
+                <TextBox Grid.Column="4"
+                         Text="{Binding SelectedFixVersionStr, Mode=TwoWay}"
+                         Width="100"
+                         Margin="3,3,0,3" />
+            </Grid>
+
+            <!--Tags-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="0"
+                           Margin="5">
+                    Tags
+                </TextBlock>
+
+                <TextBox Text="{Binding SelectedFixTags, Mode=TwoWay}"
+                         Grid.Column="1"
+                         Margin="0,3" />
+
+                <Button Grid.Column="2"
+                        Margin="5,0,0,0"
+                        Width="{Binding $self.Bounds.Height}"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding OpenTagsEditorCommand}">
+                    ...
+                </Button>
+            </Grid>
+
+            <!--Hosts entries-->
+            <Grid IsVisible="{Binding IsHostsFixType}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="auto" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="0"
+                           FontWeight="Bold"
+                           Margin="5">
+                    Hosts entries
+                </TextBlock>
+
+                <TextBox Text="{Binding SelectedFixEntries, Mode=TwoWay}"
+                         Margin="0,3"
+                         Grid.Column="1"/>
+
+                <Button Grid.Column="2"
+                        Margin="5,0,0,0"
+                        Width="{Binding $self.Bounds.Height}"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding OpenHostsEditorCommand}">
+                    ...
+                </Button>
+            </Grid>
+
+            <UserControl Content="{Binding FixDataContext}"/>
+
+            <!--Notes-->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock VerticalAlignment="Center"
+                           Grid.Column="0"
+                           Margin="5">
+                    Notes
+                </TextBlock>
+
+                <TextBox Text="{Binding SelectedFix.Notes}"
+                         Grid.Column="1"
+                         Margin="0,3"/>
+            </Grid>
+
+            <!--Dependencies-->
+            <Grid ColumnDefinitions="*,auto,*" RowDefinitions="*,*,*" Margin="5">
+
+                <TextBlock Text="Available fixes"
+                           Grid.Row="0" Grid.Column="0"
+                           HorizontalAlignment="Center"/>
+
+                <TextBlock Text="Dependencies"
+                           HorizontalAlignment="Center"
+                           Grid.Row="0" Grid.Column="2"/>
+
+                <ListBox SelectionMode="Single"
+                         ItemsSource="{Binding AvailableDependenciesList}"
+                         SelectedItem="{Binding SelectedAvailableDependency}"
+                         Grid.Column="0" Grid.Row="1" Grid.RowSpan="2"
+                         Padding="5"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
+
+                <Button Grid.Column="1" Grid.Row="1"
+                        Margin="1"
+                        ToolTip.Tip="Add dependency"
+                        Width="{Binding $self.Bounds.Height}"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding AddDependencyCommand}">
+                    &gt;
+                </Button>
+
+                <Button Grid.Column="1" Grid.Row="2"
+                        Margin="1"
+                        ToolTip.Tip="Remove dependency"
+                        Width="{Binding $self.Bounds.Height}"
+                        HorizontalContentAlignment="Center"
+                        Command="{Binding RemoveDependencyCommand}">
+                    &lt;
+                </Button>
+
+                <ListBox SelectionMode="Single"
+                         ItemsSource="{Binding SelectedFixDependenciesList}"
+                         SelectedItem="{Binding SelectedDependency}"
+                         Grid.Column="2" Grid.Row="1" Grid.RowSpan="2"
+                         Padding="5"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"></ListBox>
+
+            </Grid>
+
+            <!--Preview JSON-->
+            <Grid Margin="5">
+                <Button Command="{Binding PreviewJsonCommand}">Preview JSON...</Button>
+            </Grid>
+
+        </StackPanel>
+
+        <!--Description-->
+        <Grid ColumnDefinitions="*" Grid.Row="1" Margin="0">
+
+            <TabControl>
+
+                <TabControl.Styles>
+
+                    <Style Selector="TabControl">
+                        <Setter Property="Background"/>
+                        <Setter Property="Padding" Value="3"/>
+                    </Style>
+
+                    <Style Selector="TabItem">
+                        <Setter Property="FontSize" Value="16"/>
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Padding" Value="0"/>
+                        <Setter Property="Margin" Value="10 3"/>
+                        <Setter Property="BorderThickness" Value="0"/>
+
+                        <Style Selector="^:selected">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="10 3"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+
+                        <Style Selector="^:selected /template/ Border#PART_SelectedPipe">
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="10 3"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                        </Style>
+
+                    </Style>
+                </TabControl.Styles>
+
+                <TabItem Header="Description">
+                    <Panel>
+                        <TextBox Text="{Binding SelectedFixDescription, Mode=TwoWay}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
+
+                        <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"
+                                                 IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
+
+                    </Panel>
+                </TabItem>
+                <TabItem Header="Changelog">
+                    <Panel>
+                        <TextBox Text="{Binding SelectedFixChangelog, Mode=TwoWay}"
+                                 TextWrapping="Wrap"
+                                 AcceptsReturn="True"
+                                 IsVisible="{Binding !IsChecked, ElementName=MdToggle}"/>
+
+                        <md:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}"
+                                                 IsVisible="{Binding IsChecked, ElementName=MdToggle}"/>
+
+                    </Panel>
+                </TabItem>
+            </TabControl>
+
+
+
+            <ToggleButton Name="MdToggle"
+                          HorizontalAlignment="Right"
+                          VerticalAlignment="Top"
+                          IsChecked="False">
+                preview markdown
+            </ToggleButton>
+        </Grid>
+
+    </Grid>
+
+
+</UserControl>

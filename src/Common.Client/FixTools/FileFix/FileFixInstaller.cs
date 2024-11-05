@@ -165,7 +165,7 @@ public sealed class FileFixInstaller
         BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
 
         await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
-        
+
         if (_configEntity.DeleteZipsAfterInstall &&
             !_configEntity.UseLocalApiAndRepo &&
             fileDownloadResult.ResultObject is not null &&

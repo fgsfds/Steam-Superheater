@@ -57,7 +57,7 @@ public sealed class FixesProvider
         {
             return [];
         }
-        
+
         var games = dbContext.Games.AsNoTracking().OrderBy(static x => x.Name).ToList();
         var fileFixesDb = dbContext.FileFixes.AsNoTracking().ToDictionary(static x => x.FixGuid);
         var regFixesDb = dbContext.RegistryFixes.AsNoTracking().ToLookup(static x => x.FixGuid);
@@ -85,7 +85,7 @@ public sealed class FixesProvider
 
             foreach (var fix in fixes)
             {
-                if (appVersion <= new Version(1,2,0))
+                if (appVersion <= new Version(1, 2, 0))
                 {
                     if (fix.FixType is FixTypeEnum.RegistryFixV2)
                     {
@@ -279,7 +279,7 @@ public sealed class FixesProvider
     /// <param name="increment">Increment</param>
     /// <returns>New score</returns>
     public async Task<int> ChangeFixScoreAsync(Guid fixGuid, sbyte increment)
-    { 
+    {
         using var dbContext = _dbContextFactory.Get();
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
@@ -836,7 +836,7 @@ public sealed class FixesProvider
         var b = dbContext.RegistryFixes.Where(x => x.FixGuid == existingEntity.Guid);
         if (b is not null && b.Any())
         {
-           dbContext.RegistryFixes.RemoveRange(b);
+            dbContext.RegistryFixes.RemoveRange(b);
         }
 
         var c = dbContext.HostsFixes.Find(existingEntity.Guid);

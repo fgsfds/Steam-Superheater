@@ -23,7 +23,7 @@ public sealed partial class FileFixTests
     private readonly string _testFixZip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix.zip");
     private readonly string _testFixV2Zip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix_v2.zip");
     private readonly string _testFixVariantZip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix_variant.zip");
-    
+
     private readonly GameEntity _gameEntity;
     private readonly FileFixEntity _fileFixEntity;
     private readonly FileFixEntity _fileFixVariantEntity;

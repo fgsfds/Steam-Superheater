@@ -94,7 +94,7 @@ public sealed class NewsProvider : INewsProvider
 
     /// <inheritdoc/>
     public List<NewsEntity> GetNewsPage(int page) => _newsEntitiesPages.TryGetValue(page, out var result) ? result : [];
-    
+
     /// <inheritdoc/>
     public async Task<Result> ChangeNewsContentAsync(
         DateTime date,

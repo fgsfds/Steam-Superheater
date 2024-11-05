@@ -258,7 +258,7 @@ public sealed class FilesDownloader : IFilesDownloader
                 var bytes = streamToTrack.Position - prevPosition;
                 var ms = sw.ElapsedMilliseconds;
 
-                var mBytesS = (float)(bytes / ms) / 1024 ;
+                var mBytesS = (float)(bytes / ms) / 1024;
 
                 _progressReport.OperationMessage = $"Downloading... ({mBytesS:0.0#}Mb/s)";
 

@@ -8,7 +8,7 @@ namespace Common.Entities.Fixes.RegistryFixV2;
 public sealed class RegistryFixV2Entity : BaseFixEntity
 {
     public RegistryFixV2Entity()
-    {        
+    {
     }
 
     [SetsRequiredMembers]
@@ -58,7 +58,7 @@ public sealed class RegistryFixV2Entity : BaseFixEntity
         SupportedOSes = OSEnum.Windows;
         IsDisabled = fix.IsDisabled;
 
-        Entries = [new() { Key = fix.Key, NewValueData = fix.NewValueData, ValueName = fix.ValueName, ValueType = fix.ValueType}];
+        Entries = [new() { Key = fix.Key, NewValueData = fix.NewValueData, ValueName = fix.ValueName, ValueType = fix.ValueType }];
     }
 
     public required List<RegistryEntry> Entries { get; set; }

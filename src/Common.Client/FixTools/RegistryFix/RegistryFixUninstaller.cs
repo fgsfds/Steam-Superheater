@@ -125,7 +125,7 @@ public sealed class RegistryFixUninstaller
         {
             ThrowHelper.ThrowNotSupportedException();
         }
-        
+
     }
 }
 

@@ -1,4 +1,5 @@
 using Avalonia.Desktop.ViewModels;
+using Avalonia.Desktop.ViewModels.Editor;
 using Avalonia.Desktop.ViewModels.Popups;
 using Microsoft.Extensions.DependencyInjection;
 

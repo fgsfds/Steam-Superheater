@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace Avalonia.Desktop.UserControls;
+namespace Avalonia.Desktop.UserControls.Editor;
 
 public sealed partial class EditorFields : UserControl
 {
@@ -22,16 +22,6 @@ public sealed partial class EditorFields : UserControl
         {
             VersionTextBox.SelectAll();
         }
-    }
-
-    private void Carousel_Next(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Slides.Previous();
-    }
-
-    private void Carousel_Prev(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        Slides.Next();
     }
 }
 

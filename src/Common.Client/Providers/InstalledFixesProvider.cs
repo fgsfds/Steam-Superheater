@@ -83,7 +83,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
     /// <inheritdoc/>
     public Result RemoveInstalledJson(
-        GameEntity game, 
+        GameEntity game,
         Guid fixGuid
         )
     {

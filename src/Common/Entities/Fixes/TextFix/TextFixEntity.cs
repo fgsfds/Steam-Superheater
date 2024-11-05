@@ -6,7 +6,7 @@ namespace Common.Entities.Fixes.TextFix;
 public sealed class TextFixEntity : BaseFixEntity
 {
     public TextFixEntity()
-    {        
+    {
     }
 
     [SetsRequiredMembers]

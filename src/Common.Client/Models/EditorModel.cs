@@ -270,7 +270,7 @@ public sealed class EditorModel
         CancellationToken cancellationToken
         )
     {
-        var fixFilePath = CreateFixJson(fixesList, fix, false, out _ , out _);
+        var fixFilePath = CreateFixJson(fixesList, fix, false, out _, out _);
 
         List<string> filesToUpload = [fixFilePath];
 

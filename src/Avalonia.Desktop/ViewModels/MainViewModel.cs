@@ -400,7 +400,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// </summary>
     [RelayCommand]
     private async Task InitializeAsync()
-    {        
+    {
         await UpdateAsync(true, true, true).ConfigureAwait(true);
         await UpdateAsync(false, true, false).ConfigureAwait(true);
     }
@@ -959,8 +959,8 @@ Do you still want to install the fix?",
             var repeatedString = new string('\u200B', length);
 
             App.NotificationManager.Show(
-                result.Message + Environment.NewLine + "Open config file?" + repeatedString, 
-                NotificationType.Information, 
+                result.Message + Environment.NewLine + "Open config file?" + repeatedString,
+                NotificationType.Information,
                 onClick: () => OpenConfigFileAsync(fixesList.Game, fileFix)
                 );
         }

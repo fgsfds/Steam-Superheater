@@ -3,12 +3,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ucs="clr-namespace:Avalonia.Desktop.UserControls"
+             xmlns:ucse="clr-namespace:Avalonia.Desktop.UserControls.Editor"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
-             x:DataType="vm:EditorViewModel"
-             x:Class="Avalonia.Desktop.UserControls.EditorLists">
+             x:DataType="vme:EditorViewModel"
+             x:Class="Avalonia.Desktop.UserControls.Editor.EditorLists">
 
     <UserControl.Resources>
         <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
@@ -42,13 +44,13 @@
 
             <ListBox.ContextMenu>
                 <ContextMenu>
-                    <MenuItem Margin="5" Header="Open game folder..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenGameFolderCommand}"/>
-                    <MenuItem Margin="5" Header="Open on Steam client..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenSteamClientCommand}"/>
-                    <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenSteamStoreCommand}"/>
-                    <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenPCGamingWikiCommand}"/>
-                    <MenuItem Margin="5" Header="Open SteamDB page..." Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).OpenSteamDBCommand}"/>
+                    <MenuItem Margin="5" Header="Open game folder..." Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).OpenGameFolderCommand}"/>
+                    <MenuItem Margin="5" Header="Open on Steam client..." Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).OpenSteamClientCommand}"/>
+                    <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).OpenSteamStoreCommand}"/>
+                    <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).OpenPCGamingWikiCommand}"/>
+                    <MenuItem Margin="5" Header="Open SteamDB page..." Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).OpenSteamDBCommand}"/>
                     <Separator/>
-                    <MenuItem Margin="5" Header="Copy game name" Command="{Binding $parent[UserControl].((vm:EditorViewModel)DataContext).CopyGameNameCommand}"/>
+                    <MenuItem Margin="5" Header="Copy game name" Command="{Binding $parent[UserControl].((vme:EditorViewModel)DataContext).CopyGameNameCommand}"/>
 
                 </ContextMenu>
             </ListBox.ContextMenu>
@@ -168,7 +170,7 @@
 
         </Grid>
 
-        <ucs:EditorFields Grid.Column="2"/>
+        <ucse:EditorFields Grid.Column="2"/>
 
     </Grid>
 </UserControl>

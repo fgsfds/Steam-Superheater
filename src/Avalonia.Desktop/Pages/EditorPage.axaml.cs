@@ -1,5 +1,5 @@
 using Avalonia.Controls;
-using Avalonia.Desktop.ViewModels;
+using Avalonia.Desktop.ViewModels.Editor;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
 

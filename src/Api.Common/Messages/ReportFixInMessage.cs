@@ -4,7 +4,7 @@ namespace Api.Common.Messages;
 
 public sealed class ReportFixInMessage
 {
-    public required Guid FixGuid{ get; init; }
+    public required Guid FixGuid { get; init; }
     public required string Text { get; init; }
 }
 

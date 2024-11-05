@@ -43,9 +43,9 @@ public sealed class GamesProvider : IGamesProvider
 
             return _cache;
         }
-        finally 
-        { 
-            _ = _semaphore.Release(); 
+        finally
+        {
+            _ = _semaphore.Release();
         }
     }
 

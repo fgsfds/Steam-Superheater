@@ -3,7 +3,7 @@ using Avalonia.Controls.Templates;
 using Avalonia.Interactivity;
 using System.Diagnostics;
 
-namespace Avalonia.Desktop.UserControls;
+namespace Avalonia.Desktop.UserControls.Editor;
 
 public sealed partial class EditorButtons : UserControl
 {

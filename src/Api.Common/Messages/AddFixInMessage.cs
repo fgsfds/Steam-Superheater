@@ -7,7 +7,7 @@ public sealed class AddFixInMessage
 {
     public required int GameId { get; init; }
     public required string GameName { get; init; }
-    public required BaseFixEntity Fix {  get; init; }
+    public required BaseFixEntity Fix { get; init; }
 }
 
 

@@ -111,7 +111,7 @@ public sealed class HostsFixTests : IDisposable
         if (!OperatingSystem.IsWindows())
         {
             return;
-        }        
+        }
 
         //Install Fix
         var installResult = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, new(), _hostsFilePath).ConfigureAwait(true);

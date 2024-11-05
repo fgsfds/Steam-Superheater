@@ -30,14 +30,14 @@ public sealed partial class AddCacheTable : Migration
             });
 
         _ = migrationBuilder.InsertData(
-            table: "cache", 
+            table: "cache",
             schema: "main",
             columns: ["type", "data", "version"],
             values: [(byte)DatabaseTableEnum.Fixes, "[]", 0]
             );
 
         _ = migrationBuilder.InsertData(
-            table: "cache", 
+            table: "cache",
             schema: "main",
             columns: ["type", "data", "version"],
             values: [(byte)DatabaseTableEnum.News, "[]", 0]

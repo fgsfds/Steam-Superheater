@@ -13,6 +13,7 @@ using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
@@ -23,9 +24,9 @@ using CommunityToolkit.Mvvm.Input;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
-namespace Avalonia.Desktop.ViewModels;
+namespace Avalonia.Desktop.ViewModels.Editor;
 
-internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
+internal partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
 {
     private readonly EditorModel _editorModel;
     private readonly MainViewModel _mainViewModel;
@@ -43,6 +44,9 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     #region Binding Properties
 
+    [ObservableProperty]
+    private ObservableObject? _fixDataContext;
+
     public ImmutableList<FixesList> FilteredGamesList => _editorModel.GetFilteredGamesList(SearchBarText, SelectedTagFilter);
 
     public ImmutableList<GameEntity> AvailableGamesList => _editorModel.AvailableGames;
@@ -52,21 +56,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     public ImmutableList<BaseFixEntity>? AvailableDependenciesList => _editorModel.GetListOfAvailableDependencies(SelectedGame, SelectedFix);
 
     public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
-
-    public ImmutableList<FileFixEntity>? SharedFixesList => _fixesProvider.SharedFixes is null ? null :[.. _fixesProvider.SharedFixes];
-
-    public List<RegistryEntry>? SelectedRegistryFixEntries
-    {
-        get
-        {
-            if (SelectedFix is not RegistryFixV2Entity regFix)
-            {
-                return null;
-            }
-
-            return regFix.Entries;
-        }
-    }
 
     public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
 
@@ -143,86 +132,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
-    public string SelectedFixVariants
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null
-            ? string.Join(';', fileFix.Variants)
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.Variants = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixFilesToDelete
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null
-            ? string.Join(';', fileFix.FilesToDelete)
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.FilesToDelete = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixFilesToBackup
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null
-            ? string.Join(';', fileFix.FilesToBackup)
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.FilesToBackup = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixFilesToPatch
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null
-            ? string.Join(';', fileFix.FilesToPatch)
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.FilesToPatch = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixWineDllsOverrides
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.WineDllOverrides is not null
-            ? string.Join(';', fileFix.WineDllOverrides)
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.WineDllOverrides = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixUrl
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null
-            ? fileFix.Url
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.Url = string.IsNullOrWhiteSpace(value)
-                ? null
-                : value;
-        }
-    }
-
     public string SelectedFixEntries
     {
         get => SelectedFix is HostsFixEntity hostsFix
@@ -257,21 +166,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             SelectedFix.Changelog = value;
             OnPropertyChanged();
-        }
-    }
-
-    public BaseFixEntity? SelectedSharedFix
-    {
-        get => SelectedFix is not FileFixEntity fileFix || fileFix.SharedFixGuid is null ? null : SharedFixesList?.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.SharedFixGuid = value?.Guid;
-
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IsSharedFixSelected));
-            ResetSelectedSharedFixCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -334,7 +228,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
                 var index = SelectedFixIndex;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
-                OnPropertyChanged(nameof(SelectedRegistryFixEntries));
                 SelectedFixIndex = index;
             }
         }
@@ -378,8 +271,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
-    public bool IsSharedFixSelected => SelectedSharedFix is not null;
-
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(AddNewGameCommand))]
@@ -398,42 +289,69 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [NotifyPropertyChangedFor(nameof(SelectedAvailableDependency))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
     [NotifyPropertyChangedFor(nameof(SelectedDependency))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixVariants))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixFilesToDelete))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixFilesToBackup))]
     [NotifyPropertyChangedFor(nameof(IsWindowsChecked))]
     [NotifyPropertyChangedFor(nameof(IsLinuxChecked))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixUrl))]
     [NotifyPropertyChangedFor(nameof(SelectedFixTags))]
     [NotifyPropertyChangedFor(nameof(SelectedFixEntries))]
-    [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
-    [NotifyPropertyChangedFor(nameof(IsFileFixType))]
-    [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
-    [NotifyPropertyChangedFor(nameof(IsTextFixType))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixFilesToPatch))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixWineDllsOverrides))]
-    [NotifyPropertyChangedFor(nameof(SelectedSharedFix))]
-    [NotifyPropertyChangedFor(nameof(IsSharedFixSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDescription))]
     [NotifyPropertyChangedFor(nameof(SelectedFixChangelog))]
     [NotifyPropertyChangedFor(nameof(DisableFixButtonText))]
-    [NotifyPropertyChangedFor(nameof(SelectedRegistryFixEntries))]
-    [NotifyCanExecuteChangedFor(nameof(OpenFilePickerCommand))]
+    [NotifyPropertyChangedFor(nameof(IsTextFixType))]
+    [NotifyPropertyChangedFor(nameof(IsHostsFixType))]
+    [NotifyPropertyChangedFor(nameof(IsRegistryFixType))]
+    [NotifyPropertyChangedFor(nameof(IsFileFixType))]
     [NotifyCanExecuteChangedFor(nameof(DisableFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UploadFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenTagsEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenFilesToBackupEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenFilesToDeleteEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenFilesToPatchEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenWineDllsOverridesEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(OpenVariantsEditorCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenHostsEditorCommand))]
-    [NotifyCanExecuteChangedFor(nameof(ResetSelectedSharedFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(AddFixToDbCommand))]
     [NotifyCanExecuteChangedFor(nameof(TestFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(AddDependencyCommand))]
     [NotifyCanExecuteChangedFor(nameof(RemoveDependencyCommand))]
     private BaseFixEntity? _selectedFix;
+    partial void OnSelectedFixChanged(BaseFixEntity? value)
+    {
+        if (value is FileFixEntity fileFix)
+        {
+            FixDataContext = new FileFixViewModel(
+                fileFix,
+                _fixesProvider,
+                _popupEditor
+                );
+        }
+        else if (value is RegistryFixEntity regFix)
+        {
+            FixDataContext = new RegFixViewModel(
+                new()
+                {
+                    Name = regFix.Name,
+                    Guid = regFix.Guid,
+                    SupportedOSes = regFix.SupportedOSes,
+                    Entries = [new()
+                    {
+                        Key = regFix.Key,
+                        NewValueData = regFix.NewValueData,
+                        ValueName = regFix.ValueName,
+                        ValueType = regFix.ValueType
+                    }]
+                },
+                _fixesProvider,
+                _popupEditor
+                );
+        }
+        else if (value is RegistryFixV2Entity regFix2)
+        {
+            FixDataContext = new RegFixViewModel(
+                regFix2,
+                _fixesProvider,
+                _popupEditor
+                );
+        }
+        else
+        {
+            FixDataContext = null;
+        }
+    }
 
     [ObservableProperty]
     private int _selectedFixIndex;
@@ -469,12 +387,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [ObservableProperty]
     private string _selectedTagFilter;
     partial void OnSelectedTagFilterChanged(string value) => FillGamesList();
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(SelectedRegistryFixIndexStr))]
-    private int _selectedRegistryFixIndex;
-
-    public string SelectedRegistryFixIndexStr => (SelectedRegistryFixIndex + 1).ToString();
 
     #endregion Binding Properties
 
@@ -727,40 +639,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
 
     /// <summary>
-    /// Open fix file picker
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenFilePickerCanExecute))]
-    private async Task OpenFilePickerAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var topLevel = AvaloniaProperties.TopLevel;
-
-        FilePickerFileType zipType = new("Zip")
-        {
-            Patterns = new[] { "*.zip" },
-            MimeTypes = new[] { "application/zip" }
-        };
-
-        var files = await topLevel.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
-        {
-            Title = "Choose fix file",
-            AllowMultiple = false,
-            FileTypeFilter = new List<FilePickerFileType>() { zipType }
-        }).ConfigureAwait(true);
-
-        if (files.Count == 0)
-        {
-            return;
-        }
-
-        fileFix.Url = files[0].Path.LocalPath;
-        OnPropertyChanged(nameof(SelectedFixUrl));
-    }
-    private bool OpenFilePickerCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
     /// Open tags editor
     /// </summary>
     [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
@@ -780,101 +658,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
 
     /// <summary>
-    /// Open files to delete editor
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenFilesToDeleteEditorCanExecute))]
-    private async Task OpenFilesToDeleteEditorAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete).ConfigureAwait(true);
-
-        if (result is not null)
-        {
-            fileFix.FilesToDelete = result.ToListOfString();
-            OnPropertyChanged(nameof(SelectedFixFilesToDelete));
-        }
-    }
-    private bool OpenFilesToDeleteEditorCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
-    /// Open files to backup editor
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenFilesToBackupEditorCanExecute))]
-    private async Task OpenFilesToBackupEditorAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup).ConfigureAwait(true);
-
-        if (result is not null)
-        {
-            fileFix.FilesToBackup = result.ToListOfString();
-            OnPropertyChanged(nameof(SelectedFixFilesToBackup));
-        }
-    }
-    private bool OpenFilesToBackupEditorCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
-    /// Open files to patch editor
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenFilesToPatchEditorCanExecute))]
-    private async Task OpenFilesToPatchEditorAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch).ConfigureAwait(true);
-
-        if (result is not null)
-        {
-            fileFix.FilesToPatch = result.ToListOfString();
-            OnPropertyChanged(nameof(SelectedFixFilesToPatch));
-        }
-    }
-    private bool OpenFilesToPatchEditorCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
-    /// Open wine dll overrides editor
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenWineDllsOverridesEditorCanExecute))]
-    private async Task OpenWineDllsOverridesEditorAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var result = await _popupEditor.ShowAndGetResultAsync("Wine DLL overrides", fileFix.WineDllOverrides).ConfigureAwait(true);
-
-        if (result is not null)
-        {
-            fileFix.WineDllOverrides = result.ToListOfString();
-            OnPropertyChanged(nameof(SelectedFixWineDllsOverrides));
-        }
-    }
-    private bool OpenWineDllsOverridesEditorCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
-    /// Open variants editor
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
-    private async Task OpenVariantsEditorAsync()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants).ConfigureAwait(true);
-
-        if (result is not null)
-        {
-            fileFix.Variants = result.ToListOfString();
-            OnPropertyChanged(nameof(SelectedFixVariants));
-        }
-    }
-    private bool OpenVariantsEditorCanExecute() => SelectedFix is FileFixEntity;
-
-
-    /// <summary>
     /// Open hosts editor
     /// </summary>
     [RelayCommand(CanExecute = nameof(OpenHostsEditorCanExecute))]
@@ -891,23 +674,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
     private bool OpenHostsEditorCanExecute() => SelectedFix is HostsFixEntity;
-
-
-    /// <summary>
-    /// Reset shared fix
-    /// </summary>
-    [RelayCommand(CanExecute = nameof(ResetSelectedSharedFixCanExecute))]
-    private void ResetSelectedSharedFix()
-    {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-        SelectedSharedFix = null;
-        fileFix.SharedFixInstallFolder = null;
-
-        OnPropertyChanged(nameof(SelectedSharedFix));
-        OnPropertyChanged(nameof(IsSharedFixSelected));
-    }
-    private bool ResetSelectedSharedFixCanExecute() => SelectedSharedFix is not null;
 
 
     /// <summary>
@@ -1090,63 +856,22 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var newFixJson, out _);
 
         _popupMessage.Show(
-            "JSON Preview", 
-            newFixJson, 
+            "JSON Preview",
+            newFixJson,
             PopupMessageType.OkOnly,
             null,
             HorizontalAlignment.Left
             );
     }
 
-
-    /// <summary>
-    /// Add entry to registry fix
-    /// </summary>
-    [RelayCommand]
-    private void AddRegFixEntry()
-    {
-        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
-
-        regFix.Entries = [.. regFix.Entries.Append(new())];
-
-        OnPropertyChanged(nameof(SelectedRegistryFixEntries));
-    }
+    #endregion Relay Commands
 
 
     /// <summary>
-    /// Remove entry from registry fix
+    /// Update games list
     /// </summary>
-    [RelayCommand]
-    private void DeleteRegFixEntry()
-    {
-        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
-
-        if (regFix.Entries.Count < 2)
-        {
-            return;
-        }
-
-        var currentIndex = SelectedRegistryFixIndex;
-
-        if (currentIndex > 0)
-        {
-            SelectedRegistryFixIndex = currentIndex - 1;
-        }
-
-        regFix.Entries.RemoveAt(currentIndex);
-        regFix.Entries = [.. regFix.Entries];
-
-        OnPropertyChanged(nameof(SelectedRegistryFixEntries));
-    }
-
-#endregion Relay Commands
-
-
-/// <summary>
-/// Update games list
-/// </summary>
-/// <param name="dropCache">Drop current and create new cache</param>
-private async Task UpdateAsync(bool dropCache)
+    /// <param name="dropCache">Drop current and create new cache</param>
+    private async Task UpdateAsync(bool dropCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
         IsInProgress = true;
@@ -1181,7 +906,6 @@ private async Task UpdateAsync(bool dropCache)
 
         OnPropertyChanged(nameof(FilteredGamesList));
         OnPropertyChanged(nameof(AvailableGamesList));
-        OnPropertyChanged(nameof(SharedFixesList));
 
         if (selectedGameId is not null && FilteredGamesList.Exists(x => x.GameId == selectedGameId))
         {
@@ -1217,4 +941,3 @@ private async Task UpdateAsync(bool dropCache)
         ProgressBarText = message;
     }
 }
-

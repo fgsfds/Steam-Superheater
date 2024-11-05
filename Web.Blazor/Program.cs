@@ -23,7 +23,7 @@ public sealed class Program
         _ = builder.Services.AddControllers().AddJsonOptions(jsonOptions =>
         {
             jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-            jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;  
+            jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
 
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(FixesListContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
