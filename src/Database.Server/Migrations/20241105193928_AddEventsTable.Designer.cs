@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Database.Server;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Server.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20241105193928_AddEventsTable")]
+    partial class AddEventsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,10 +101,6 @@ namespace Database.Server.Migrations
                         .HasColumnType("smallint")
                         .HasColumnName("id_event_type");
 
-                    b.Property<Guid?>("FixGuid")
-                        .HasColumnType("uuid")
-                        .HasColumnName("fix_guid");
-
                     b.Property<DateTime>("Time")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("time");
@@ -114,8 +113,6 @@ namespace Database.Server.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventType");
-
-                    b.HasIndex("FixGuid");
 
                     b.ToTable("events", "main");
                 });
@@ -489,13 +486,7 @@ namespace Database.Server.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Database.Server.DbEntities.FixesDbEntity", "FixesTable")
-                        .WithMany()
-                        .HasForeignKey("FixGuid");
-
                     b.Navigation("EventTypesTable");
-
-                    b.Navigation("FixesTable");
                 });
 
             modelBuilder.Entity("Database.Server.DbEntities.FileFixesDbEntity", b =>

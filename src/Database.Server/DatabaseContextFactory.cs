@@ -11,4 +11,3 @@ public sealed class DatabaseContextFactory
 
     public DatabaseContext Get() => new(_isDevMode);
 }
-

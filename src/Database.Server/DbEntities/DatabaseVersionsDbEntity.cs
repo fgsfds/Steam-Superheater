@@ -18,4 +18,3 @@ public sealed class DatabaseVersionsDbEntity
     [Column("version")]
     public required int Version { get; set; }
 }
-

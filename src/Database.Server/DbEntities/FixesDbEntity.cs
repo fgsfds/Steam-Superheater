@@ -64,4 +64,3 @@ public sealed class FixesDbEntity
     public GamesDbEntity GameTable { get; set; }
     public FixTypesDbEntity FixTypesTable { get; set; }
 }
-

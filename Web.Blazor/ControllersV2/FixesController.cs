@@ -12,15 +12,18 @@ public sealed class FixesController : ControllerBase
 {
     private readonly FixesProvider _fixesProvider;
     private readonly DatabaseVersionsProvider _databaseVersionsProvider;
+    private readonly EventsProvider _eventsProvider;
 
 
     public FixesController(
         FixesProvider fixesProvider,
-        DatabaseVersionsProvider databaseVersionsProvider
+        DatabaseVersionsProvider databaseVersionsProvider,
+        EventsProvider eventsProvider
         )
     {
         _fixesProvider = fixesProvider;
         _databaseVersionsProvider = databaseVersionsProvider;
+        _eventsProvider = eventsProvider;
     }
 
 
@@ -29,6 +32,8 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public ActionResult<GetFixesOutMessageContext> GetFixesList([FromBody] GetFixesInMessage message)
     {
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, message.AppVersion, null);
+
         var version = _databaseVersionsProvider.GetDatabaseVersions()[DatabaseTableEnum.Fixes];
 
         if (message.TableVersion >= version)
@@ -100,6 +105,8 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(typeof(IncreaseInstallsCountOutMessage), StatusCodes.Status200OK)]
     public ActionResult<IncreaseInstallsCountOutMessage> AddNumberOfInstalls([FromBody] IncreaseInstallsCountInMessage message)
     {
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.Install, message.AppVersion, message.FixGuid);
+
         var installsCount = _fixesProvider.IncreaseFixInstallsCount(message.FixGuid);
 
         IncreaseInstallsCountOutMessage result = new() { InstallsCount = installsCount };

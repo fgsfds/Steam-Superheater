@@ -88,13 +88,14 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid)
+    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion)
     {
         try
         {
             IncreaseInstallsCountInMessage message = new()
             {
-                FixGuid = guid
+                FixGuid = guid,
+                AppVersion = appVersion
             };
 
             var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);

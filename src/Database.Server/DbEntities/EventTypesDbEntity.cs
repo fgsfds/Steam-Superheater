@@ -4,13 +4,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Database.Server.DbEntities;
 
-[Table(name: "registry_value_types", Schema = "main")]
-public sealed class RegistryValueTypesDbEntity
+[Table(name: "event_types", Schema = "main")]
+public sealed class EventTypesDbEntity
 {
     [Key]
     [Column("id")]
     [DatabaseGenerated(DatabaseGeneratedOption.None)]
-    public required RegistryValueTypeEnum Id { get; set; }
+    public required EventTypeEnum Id { get; set; }
 
     [Column("name")]
     public required string Name { get; set; }

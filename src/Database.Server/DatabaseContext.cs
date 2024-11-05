@@ -18,6 +18,7 @@ public sealed class DatabaseContext : DbContext
     public DbSet<ReportsDbEntity> Reports { get; set; }
     public DbSet<TagsDbEntity> Tags { get; set; }
     public DbSet<TagsListsDbEntity> TagsLists { get; set; }
+    public DbSet<EventsDbEntity> Events { get; set; }
 
 
     public DatabaseContext()
@@ -51,4 +52,3 @@ public sealed class DatabaseContext : DbContext
         }
     }
 }
-

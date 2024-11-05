@@ -9,4 +9,3 @@ public enum RegistryValueTypeEnum : byte
     [Description("Dword")]
     Dword = 2
 }
-

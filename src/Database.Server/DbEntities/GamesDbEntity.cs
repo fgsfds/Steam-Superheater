@@ -14,4 +14,3 @@ public sealed class GamesDbEntity
     [Column("name")]
     public required string Name { get; set; }
 }
-

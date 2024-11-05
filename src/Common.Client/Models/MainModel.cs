@@ -398,7 +398,7 @@ public sealed class MainModel
             return;
         }
 
-        var result = await _apiInterface.AddNumberOfInstallsAsync(fix.Guid).ConfigureAwait(false);
+        var result = await _apiInterface.AddNumberOfInstallsAsync(fix.Guid, ClientProperties.CurrentVersion).ConfigureAwait(false);
 
         if (!result.IsSuccess)
         {

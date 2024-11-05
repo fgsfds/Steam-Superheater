@@ -1,4 +1,5 @@
 using Common.Entities.Fixes;
+using Common.Enums;
 using Microsoft.AspNetCore.Mvc;
 using Web.Blazor.Providers;
 
@@ -10,18 +11,27 @@ namespace Web.Blazor.ControllersV1;
 public sealed class FixesController : ControllerBase
 {
     private readonly FixesProvider _fixesProvider;
+    private readonly EventsProvider _eventsProvider;
 
 
-    public FixesController(FixesProvider fixesProvider)
+    public FixesController(
+        FixesProvider fixesProvider,
+        EventsProvider eventsProvider
+        )
     {
         _fixesProvider = fixesProvider;
+        _eventsProvider = eventsProvider;
     }
 
 
     [Obsolete("Use V2 instead")]
     [HttpGet]
-    public IEnumerable<FixesList> GetFixesList() => _fixesProvider.GetFixesList(0, new Version(1, 2, 0));
+    public IEnumerable<FixesList> GetFixesList()
+    {
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1,0,0), null);
 
+        return _fixesProvider.GetFixesList(0, new Version(1, 2, 0));
+    }
 
     [Obsolete("Use V2 instead")]
     [HttpGet("{guid:Guid}")]
@@ -30,8 +40,12 @@ public sealed class FixesController : ControllerBase
 
     [Obsolete("Use V2 instead")]
     [HttpPut("installs/add")]
-    public int AddNumberOfInstalls([FromBody] Guid guid) => _fixesProvider.IncreaseFixInstallsCount(guid);
+    public int AddNumberOfInstalls([FromBody] Guid guid)
+    {
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.GetFixes, new(1, 0, 0), guid);
 
+        return _fixesProvider.IncreaseFixInstallsCount(guid);
+    }
 
     [Obsolete("Use V2 instead")]
     [HttpPut("score/change")]

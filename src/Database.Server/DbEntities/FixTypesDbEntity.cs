@@ -15,4 +15,3 @@ public sealed class FixTypesDbEntity
     [Column("name")]
     public required string Name { get; set; }
 }
-

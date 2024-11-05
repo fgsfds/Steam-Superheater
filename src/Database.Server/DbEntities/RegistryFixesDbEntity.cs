@@ -36,4 +36,3 @@ public sealed class RegistryFixesDbEntity
     public FixesDbEntity FixesTable { get; set; }
     public RegistryValueTypesDbEntity RegistryValueTypesTable { get; set; }
 }
-

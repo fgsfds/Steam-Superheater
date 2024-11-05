@@ -61,6 +61,7 @@ public sealed class Program
         _ = builder.Services.AddSingleton<AppReleasesProvider>();
         _ = builder.Services.AddSingleton<StatsProvider>();
         _ = builder.Services.AddSingleton<DatabaseVersionsProvider>();
+        _ = builder.Services.AddSingleton<EventsProvider>();
 
         _ = builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
         _ = builder.Services.AddSingleton<S3Client>();

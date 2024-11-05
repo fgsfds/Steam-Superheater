@@ -26,4 +26,3 @@ public sealed class TagsListsDbEntity
     public FixesDbEntity FixesTable { get; set; }
     public TagsDbEntity TagsTable { get; set; }
 }
-

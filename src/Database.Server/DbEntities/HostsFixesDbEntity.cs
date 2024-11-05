@@ -18,4 +18,3 @@ public sealed class HostsFixesDbEntity
 
     public FixesDbEntity FixesTable { get; set; }
 }
-

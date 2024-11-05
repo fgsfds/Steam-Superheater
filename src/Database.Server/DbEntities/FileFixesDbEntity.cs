@@ -56,4 +56,3 @@ public sealed class FileFixesDbEntity
     public FixesDbEntity FixesTable { get; set; }
     public FixesDbEntity FixesTable2 { get; set; }
 }
-

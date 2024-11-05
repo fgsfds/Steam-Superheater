@@ -18,4 +18,3 @@ public sealed class NewsDbEntity
     [Column("table_version")]
     public int TableVersion { get; set; }
 }
-

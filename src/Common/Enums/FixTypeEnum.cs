@@ -15,4 +15,3 @@ public enum FixTypeEnum : byte
     [Description("Registry fix V2")]
     RegistryFixV2 = 5
 }
-

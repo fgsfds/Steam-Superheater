@@ -6,4 +6,3 @@ public enum ThemeEnum : byte
     Light,
     Dark
 }
-

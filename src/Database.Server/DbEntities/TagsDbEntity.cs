@@ -16,4 +16,3 @@ public sealed class TagsDbEntity
     [Column("tag")]
     public required string Tag { get; set; }
 }
-
