@@ -148,10 +148,20 @@
                                    VerticalAlignment="Center"/>
 
                         <TextBlock Text="{Binding Name}"
-                                   FontWeight="Bold"
                                    Grid.Row="0"
                                    Grid.Column="1"
-                                   VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center"
+                                   Classes.IsInstalled="{Binding IsInstalled}">
+
+                            <TextBlock.Styles>
+                                <Style Selector="TextBlock.IsInstalled">
+                                    <Style.Setters>
+                                        <Setter Property="FontWeight" Value="Bold"/>
+                                    </Style.Setters>
+                                </Style>
+                            </TextBlock.Styles>
+
+                        </TextBlock>
 
                         <StackPanel Orientation="Horizontal"
                                     Grid.Row="1"
