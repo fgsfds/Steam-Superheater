@@ -1,7 +1,4 @@
-using Api.Common.Interface;
 using Common.Client.FilesTools.Interfaces;
-using Common.Client.Providers.Interfaces;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -15,32 +12,24 @@ public sealed class FilesDownloader : IFilesDownloader
     private readonly ProgressReport _progressReport;
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
-    private readonly ApiInterface _apiInterface;
-    private readonly IFixesProvider _fixesProvider;
 
 
     public FilesDownloader(
         ProgressReport progressReport,
         HttpClient httpClient,
-        ILogger logger,
-        ApiInterface apiInterface,
-        IFixesProvider fixesProvider
+        ILogger logger
         )
     {
         _progressReport = progressReport;
         _httpClient = httpClient;
         _logger = logger;
-        _apiInterface = apiInterface;
-        _fixesProvider = fixesProvider;
     }
 
     /// <inheritdoc/>
     public async Task<Result> CheckAndDownloadFileAsync(
         Uri url,
         string filePath,
-        CancellationToken cancellationToken,
-        Guid? fixGuid = null,
-        string? hash = null
+        CancellationToken cancellationToken
         )
     {
         _logger.LogInformation($"Started downloading file {url}");
@@ -101,56 +90,45 @@ public sealed class FilesDownloader : IFilesDownloader
 
         File.Move(tempFile, filePath);
 
+        _progressReport.OperationMessage = string.Empty;
+        return new(ResultEnum.Success, string.Empty);
+    }
 
-        //Increasing downloads count
-        if (!ClientProperties.IsDeveloperMode && fixGuid.HasValue)
+    public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
+    {
+        FileInfo fileInfo = new(filePath);
+        var contentLength = fileInfo.Length;
+
+        if (contentLength > 1e+9)
         {
-            var result = await _apiInterface.AddNumberOfInstallsAsync(
-                fixGuid.Value,
-                ClientProperties.CurrentVersion,
-                ClientProperties.IsDeveloperMode
-                ).ConfigureAwait(false);
-
-            if (result.IsSuccess && _fixesProvider.Installs is not null)
-            {
-                _fixesProvider.Installs[fixGuid.Value] = result.ResultObject.Value;
-            }
+            _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
+        }
+        else
+        {
+            _progressReport.OperationMessage = "Checking hash...";
         }
 
-
-        //Hash check of downloaded file
-        if (hash is not null)
+        try
         {
-            if (contentLength > 1e+9)
-            {
-                _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
-            }
-            else
-            {
+            using var md5 = MD5.Create();
+            using var stream = File.OpenRead(filePath);
 
-                _progressReport.OperationMessage = "Checking hash...";
-            }
+            var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
 
-            try
+            if (!hash.Equals(fileHash))
             {
-                var result = await CheckLocalFileHashAsync(filePath, hash, cancellationToken).ConfigureAwait(false);
-
-                if (!result.IsSuccess)
-                {
-                    return result;
-                }
+                return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
             }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("Hash checking cancelled");
-                //do nothing
-            }
-            catch (Exception ex)
-            {
-                _progressReport.OperationMessage = string.Empty;
-                return new(ResultEnum.Error, ex.ToString());
-            }
-
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Hash checking cancelled");
+            //do nothing
+        }
+        catch (Exception ex)
+        {
+            _progressReport.OperationMessage = string.Empty;
+            return new(ResultEnum.Error, ex.ToString());
         }
 
         _progressReport.OperationMessage = string.Empty;
@@ -197,61 +175,6 @@ public sealed class FilesDownloader : IFilesDownloader
         {
             await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
         }
-    }
-
-
-    /// <summary>
-    /// Check md5 of the local file
-    /// </summary>
-    /// <param name="filePath">Path to the file</param>
-    /// <param name="hash">File md5</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns></returns>
-    private async Task<Result> CheckLocalFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
-    {
-        using var md5 = MD5.Create();
-        using var stream = File.OpenRead(filePath);
-
-        var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
-
-        if (!hash.Equals(fileHash))
-        {
-            return new(ResultEnum.MD5Error, "Downloaded file's hash doesn't match the database");
-        }
-
-        return new(ResultEnum.Success, string.Empty);
-    }
-
-    /// <summary>
-    /// Check md5 of the online file
-    /// </summary>
-    /// <param name="response">Http response</param>
-    /// <param name="hash">File md5</param>
-    /// <returns></returns>
-    private Result CheckOnlineFileHash(HttpResponseMessage response, string hash)
-    {
-        var url = response.RequestMessage!.RequestUri!.ToString();
-
-        if (url.StartsWith(Consts.FilesBucketUrl))
-        {
-            if (response.Headers.ETag?.Tag is not null)
-            {
-                var md5 = response.Headers.ETag!.Tag.Replace("\"", "");
-
-                if (!md5.Contains('-') &&
-                    !md5.Equals(hash, StringComparison.OrdinalIgnoreCase))
-                {
-                    return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
-                }
-            }
-        }
-        else if (response.Content.Headers.ContentMD5 is not null &&
-                 !hash.Equals(Convert.ToHexString(response.Content.Headers.ContentMD5)))
-        {
-            return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
-        }
-
-        return new(ResultEnum.Success, string.Empty);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 using Common;
+using Common.Client;
 using Common.Client.FilesTools;
 using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
@@ -36,6 +37,8 @@ public sealed partial class FileFixTests
     public FileFixTests()
     {
         ClearTempFolders();
+
+        ClientProperties.IsDeveloperMode = true;
 
         _ = Directory.CreateDirectory(Helpers.TestFolder);
         Directory.SetCurrentDirectory(Helpers.TestFolder);
@@ -80,13 +83,20 @@ public sealed partial class FileFixTests
         _ = installedFixesProvider.GetInstalledFixesListAsync();
 
         _httpClient = new();
+        var configMock = new Mock<IConfigProvider>().Object;
 
         FileFixInstaller fileFixInstaller = new(
-            new Mock<IConfigProvider>().Object,
+            configMock,
             new(new()),
-            new FilesDownloader(new(), _httpClient, new Mock<ILogger>().Object, new(_httpClient), new Mock<IFixesProvider>().Object),
+            new FilesDownloader(
+                new(),
+                _httpClient,
+                new Mock<ILogger>().Object
+                ),
             new(),
-            new Mock<ILogger>().Object
+            new Mock<ILogger>().Object,
+                new(_httpClient, configMock),
+                new Mock<IFixesProvider>().Object
             );
 
         FileFixUninstaller fileFixUninstaller = new();

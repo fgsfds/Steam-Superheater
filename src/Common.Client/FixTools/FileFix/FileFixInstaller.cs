@@ -1,5 +1,7 @@
+using Api.Common.Interface;
 using Common.Client.FilesTools;
 using Common.Client.FilesTools.Interfaces;
+using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
@@ -19,6 +21,8 @@ public sealed class FileFixInstaller
     private readonly IFilesDownloader _filesDownloader;
     private readonly ProgressReport _progressReport;
     private readonly ILogger _logger;
+    private readonly ApiInterface _apiInterface;
+    private readonly IFixesProvider _fixesProvider;
 
 
     public FileFixInstaller(
@@ -26,7 +30,9 @@ public sealed class FileFixInstaller
         ArchiveTools archiveTools,
         IFilesDownloader filesDownloader,
         ProgressReport progressReport,
-        ILogger logger
+        ILogger logger,
+        ApiInterface apiInterface,
+        IFixesProvider fixesProvider
         )
     {
         _configEntity = config;
@@ -34,6 +40,8 @@ public sealed class FileFixInstaller
         _filesDownloader = filesDownloader;
         _progressReport = progressReport;
         _logger = logger;
+        _apiInterface = apiInterface;
+        _fixesProvider = fixesProvider;
     }
 
 
@@ -290,11 +298,36 @@ public sealed class FileFixInstaller
 
         _logger.LogInformation($"Local file {pathToArchive} not found");
 
-        var result = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixGuid, fixMD5).ConfigureAwait(false);
+        var fileDownloadResult = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
 
-        if (!result.IsSuccess)
+        if (!fileDownloadResult.IsSuccess)
         {
-            return new(result.ResultEnum, null, result.Message);
+            return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
+        }
+
+        if (fixMD5 is not null)
+        {
+            var hashCheckResult = await _filesDownloader.CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
+
+            if (!hashCheckResult.IsSuccess)
+            {
+                return new(hashCheckResult.ResultEnum, null, fileDownloadResult.Message);
+            }
+        }
+
+        //Increasing downloads count
+        if (!ClientProperties.IsDeveloperMode)
+        {
+            var result = await _apiInterface.AddNumberOfInstallsAsync(
+                fixGuid,
+                ClientProperties.CurrentVersion,
+                ClientProperties.IsDeveloperMode
+                ).ConfigureAwait(false);
+
+            if (result.IsSuccess && _fixesProvider.Installs is not null)
+            {
+                _fixesProvider.Installs[fixGuid] = result.ResultObject.Value;
+            }
         }
 
         return new(ResultEnum.Success, pathToArchive, "File downloaded successfully");
