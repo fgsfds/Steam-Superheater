@@ -6,7 +6,7 @@ public sealed class IncreaseInstallsCountInMessage
 {
     public required Guid FixGuid { get; init; }
 
-    [Obsolete("Make required when 2.2.0 is out of order")]
+    [Obsolete("Make required when there's no versions <2.2.0")]
     public Version? AppVersion { get; set; }
 
     public bool DontLog { get; init; }

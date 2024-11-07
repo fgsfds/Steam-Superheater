@@ -4,7 +4,7 @@ using Web.Blazor.Helpers;
 
 namespace Web.Blazor.ControllersV1;
 
-[Obsolete("Use V2 instead")]
+[Obsolete("Remove when there's no versions <2.0.0")]
 [ApiController]
 [Route("api/storage")]
 public sealed class StorageController : ControllerBase
@@ -18,7 +18,7 @@ public sealed class StorageController : ControllerBase
     }
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet("url/{path}")]
     public string GetSignedUrl(string path)
     {

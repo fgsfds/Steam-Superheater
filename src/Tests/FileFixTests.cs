@@ -84,7 +84,7 @@ public sealed partial class FileFixTests
         FileFixInstaller fileFixInstaller = new(
             new Mock<IConfigProvider>().Object,
             new(new()),
-            new FilesDownloader(new(), _httpClient, new Mock<ILogger>().Object),
+            new FilesDownloader(new(), _httpClient, new Mock<ILogger>().Object, new(_httpClient), new Mock<IFixesProvider>().Object),
             new(),
             new Mock<ILogger>().Object
             );

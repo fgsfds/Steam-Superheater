@@ -33,13 +33,13 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Fix version
     /// </summary>
-    [Obsolete("Remove later")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     public int Version { get; set; }
 
     /// <summary>
     /// Fix version
     /// </summary>
-    [Obsolete("Make required later")]
+    [Obsolete("Make required when there's no versions <2.0.0")]
     public string? VersionStr { get; set; }
 
     /// <summary>
@@ -58,7 +58,7 @@ public abstract class BaseFixEntity
     public string? Description { get; set; }
 
     /// <summary>
-    /// Fix chagelog
+    /// Fix changelog
     /// </summary>
     public string? Changelog { get; set; }
 
@@ -75,13 +75,13 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Number of installs
     /// </summary>
-    [Obsolete]
+    [Obsolete("Remove when there's no versions <1.3.5")]
     public int Installs { get; set; }
 
     /// <summary>
     /// Fix's score
     /// </summary>
-    [Obsolete]
+    [Obsolete("Remove when there's no versions <1.3.5")]
     public int Score { get; set; }
 
     /// <summary>

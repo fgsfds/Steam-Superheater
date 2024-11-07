@@ -194,7 +194,7 @@ public sealed class App : Application
         }
     }
 
-    [Obsolete]
+    [Obsolete("Remove when there's no versions <2.2.0")]
     private static void RenameConfig()
     {
         var oldConfigPath = Path.Combine(ClientProperties.WorkingFolder, "config.db");

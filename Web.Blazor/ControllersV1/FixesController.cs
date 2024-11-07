@@ -5,7 +5,7 @@ using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV1;
 
-[Obsolete("Use V2 instead")]
+[Obsolete("Remove when there's no versions <2.0.0")]
 [ApiController]
 [Route("api/fixes")]
 public sealed class FixesController : ControllerBase
@@ -24,7 +24,7 @@ public sealed class FixesController : ControllerBase
     }
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet]
     public IEnumerable<FixesList> GetFixesList()
     {
@@ -33,12 +33,12 @@ public sealed class FixesController : ControllerBase
         return _fixesProvider.GetFixesList(0, new Version(1, 2, 0));
     }
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet("{guid:Guid}")]
     public bool CheckIfFixEsists(Guid guid) => _fixesProvider.CheckIfFixExists(guid) is not null;
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpPut("installs/add")]
     public int AddNumberOfInstalls([FromBody] Guid guid)
     {
@@ -47,12 +47,12 @@ public sealed class FixesController : ControllerBase
         return _fixesProvider.IncreaseFixInstallsCount(guid);
     }
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpPut("score/change")]
     public async Task<int> ChangeScoreAsync([FromBody] Tuple<Guid, sbyte> message) => await _fixesProvider.ChangeFixScoreAsync(message.Item1, message.Item2);
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpPost("report")]
     public async Task ReportFixAsync([FromBody] Tuple<Guid, string> message) => await _fixesProvider.AddReportAsync(message.Item1, message.Item2);
 }

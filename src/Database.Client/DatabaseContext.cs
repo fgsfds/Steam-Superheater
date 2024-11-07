@@ -22,7 +22,7 @@ public sealed class DatabaseContext : DbContext
         }
     }
 
-    [Obsolete]
+    [Obsolete("Remove when there's no versions <0.18.1")]
     private void ConvertOldConfig()
     {
         var settings = Settings.ToList();

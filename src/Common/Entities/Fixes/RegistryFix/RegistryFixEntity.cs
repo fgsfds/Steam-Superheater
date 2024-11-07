@@ -3,11 +3,10 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Entities.Fixes.RegistryFix;
 
-[Obsolete]
+[Obsolete("Remove when there's no versions <2.0.0")]
 public sealed class RegistryFixEntity : BaseFixEntity
 {
-    [Obsolete]
-    //[SetsRequiredMembers]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     public RegistryFixEntity()
     {
         Name = string.Empty;
@@ -27,7 +26,7 @@ public sealed class RegistryFixEntity : BaseFixEntity
         ValueType = RegistryValueTypeEnum.String;
     }
 
-    [Obsolete]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [SetsRequiredMembers]
     public RegistryFixEntity(BaseFixEntity fix)
     {

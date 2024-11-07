@@ -2,7 +2,7 @@ using Common.Enums;
 
 namespace Common.Entities.Fixes.RegistryFix;
 
-[Obsolete]
+[Obsolete("Remove when there's no versions <2.0.0")]
 public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
 {
     /// <summary>

@@ -26,13 +26,13 @@ public abstract class BaseInstalledFixEntity
     /// <summary>
     /// Installed version
     /// </summary>
-    [Obsolete("Remove later")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     public int Version { get; init; }
 
     /// <summary>
     /// Installed version
     /// </summary>
-    [Obsolete("Make required later")]
+    [Obsolete("Make required when there's no versions <2.0.0")]
     public string? VersionStr { get; init; }
 
     [JsonIgnore]

@@ -4,7 +4,7 @@ using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV1;
 
-[Obsolete("Use V2 instead")]
+[Obsolete("Remove when there's no versions <2.0.0")]
 [ApiController]
 [Route("api/release")]
 public sealed class ReleaseController : ControllerBase
@@ -18,12 +18,12 @@ public sealed class ReleaseController : ControllerBase
     }
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet("windows")]
     public AppReleaseEntity? GetWindowsRelease() => _appReleasesProvider.WindowsRelease;
 
 
-    [Obsolete("Use V2 instead")]
+    [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet("linux")]
     public AppReleaseEntity? GetLinuxRelease() => _appReleasesProvider.LinuxRelease;
 }
