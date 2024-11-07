@@ -391,7 +391,7 @@ public sealed class MainModel
         return response;
     }
 
-    public async Task IncreaseInstalls(BaseFixEntity fix)
+    public async Task IncreaseInstallsAsync(BaseFixEntity fix)
     {
         if (ClientProperties.IsDeveloperMode)
         {

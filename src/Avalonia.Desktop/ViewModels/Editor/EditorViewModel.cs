@@ -839,7 +839,7 @@ internal partial class EditorViewModel : ObservableObject, ISearchBarViewModel, 
         _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out _, out var fixJson);
         await _mainViewModel.TestFixAsync(fixJson).ConfigureAwait(true);
 
-        ((MainWindow)AvaloniaProperties.MainWindow).SwitchTab(MainWindowTabsEnum.MainTab);
+        (AvaloniaProperties.MainWindow).SwitchTab(MainWindowTabsEnum.MainTab);
     }
     private bool TestFixCanExecute() => SelectedFix is not null;
 

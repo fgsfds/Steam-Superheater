@@ -962,7 +962,7 @@ Do you still want to install the fix?",
             }
         }
 
-        await _mainModel.IncreaseInstalls(fix).ConfigureAwait(true);
+        _ = _mainModel.IncreaseInstallsAsync(fix).ConfigureAwait(true);
 
         LockButtons = false;
 

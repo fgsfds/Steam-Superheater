@@ -11,7 +11,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/news?v={version}").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiUrl}/news?v={version}").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -56,7 +56,7 @@ public sealed partial class ApiInterface
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, AddChangeNewsInMessageContext.Default.AddChangeNewsInMessage);
 
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            using var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -89,7 +89,7 @@ public sealed partial class ApiInterface
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, AddChangeNewsInMessageContext.Default.AddChangeNewsInMessage);
 
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            using var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {

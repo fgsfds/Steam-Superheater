@@ -29,7 +29,7 @@ public sealed partial class ApiInterface
         {
             var encodedPath = HttpUtility.UrlEncode("superheater_uploads/" + path);
 
-            var response = await _httpClient.GetAsync($"{ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiUrl}/storage/url/{encodedPath}").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -54,7 +54,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/releases").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiUrl}/releases").ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {

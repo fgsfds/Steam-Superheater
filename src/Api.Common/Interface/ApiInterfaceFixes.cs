@@ -22,7 +22,7 @@ public sealed partial class ApiInterface
             using HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{ApiUrl}/fixes");
             requestMessage.Content = JsonContent.Create(message, GetFixesInMessageContext.Default.GetFixesInMessage);
 
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            using var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -63,7 +63,7 @@ public sealed partial class ApiInterface
                 Increment = increment
             };
 
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score", message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/score", message, ChangeScoreInMessageContext.Default.ChangeScoreInMessage).ConfigureAwait(false);
 
             if (response is null || !response.IsSuccessStatusCode)
             {
@@ -100,7 +100,7 @@ public sealed partial class ApiInterface
                 DontLog = dontLog
             };
 
-            var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);
+            using var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -159,7 +159,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/exists?guid={guid}").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/exists?guid={guid}").ConfigureAwait(false);
 
             if (response is null)
             {
@@ -199,7 +199,7 @@ public sealed partial class ApiInterface
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, ChangeFixStateInMessageContext.Default.ChangeFixStateInMessage);
 
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            using var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -233,7 +233,7 @@ public sealed partial class ApiInterface
             requestMessage.Headers.Authorization = new(AuthenticationSchemes.Basic.ToString(), _configProvider.ApiPassword);
             requestMessage.Content = JsonContent.Create(message, AddFixInMessageContext.Default.AddFixInMessage);
 
-            var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
+            using var response = await _httpClient.SendAsync(requestMessage).ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -256,7 +256,7 @@ public sealed partial class ApiInterface
     {
         try
         {
-            var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/stats").ConfigureAwait(false);
+            using var response = await _httpClient.GetAsync($"{ApiUrl}/fixes/stats").ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
             {

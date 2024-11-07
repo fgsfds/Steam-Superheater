@@ -1,18 +1,20 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Desktop.Windows;
+using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 
 namespace Avalonia.Desktop.Helpers;
 
 public static class AvaloniaProperties
 {
-    public static Window MainWindow
+    public static MainWindow MainWindow
     {
         get
         {
-            var mainWindow = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
+            var window = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-            Guard.IsNotNull(mainWindow);
+            Guard2.IsOfType<MainWindow>(window, out var mainWindow);
 
             return mainWindow;
         }
