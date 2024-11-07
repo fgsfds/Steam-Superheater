@@ -1,4 +1,6 @@
+using Api.Common.Interface;
 using Common.Client.FilesTools.Interfaces;
+using Common.Client.Providers.Interfaces;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -13,17 +15,23 @@ public sealed class FilesDownloader : IFilesDownloader
     private readonly ProgressReport _progressReport;
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
+    private readonly ApiInterface _apiInterface;
+    private readonly IFixesProvider _fixesProvider;
 
 
     public FilesDownloader(
         ProgressReport progressReport,
         HttpClient httpClient,
-        ILogger logger
+        ILogger logger,
+        ApiInterface apiInterface,
+        IFixesProvider fixesProvider
         )
     {
         _progressReport = progressReport;
         _httpClient = httpClient;
         _logger = logger;
+        _apiInterface = apiInterface;
+        _fixesProvider = fixesProvider;
     }
 
     /// <inheritdoc/>
@@ -31,6 +39,7 @@ public sealed class FilesDownloader : IFilesDownloader
         Uri url,
         string filePath,
         CancellationToken cancellationToken,
+        Guid? fixGuid = null,
         string? hash = null
         )
     {
@@ -91,6 +100,23 @@ public sealed class FilesDownloader : IFilesDownloader
         }
 
         File.Move(tempFile, filePath);
+
+
+        //Increasing downloads count
+        if (!ClientProperties.IsDeveloperMode && fixGuid.HasValue)
+        {
+            var result = await _apiInterface.AddNumberOfInstallsAsync(
+                fixGuid.Value,
+                ClientProperties.CurrentVersion,
+                ClientProperties.IsDeveloperMode
+                ).ConfigureAwait(false);
+
+            if (result.IsSuccess && _fixesProvider.Installs is not null)
+            {
+                _fixesProvider.Installs[fixGuid.Value] = result.ResultObject.Value;
+            }
+        }
+
 
         //Hash check of downloaded file
         if (hash is not null)

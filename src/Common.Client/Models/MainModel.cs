@@ -390,29 +390,5 @@ public sealed class MainModel
 
         return response;
     }
-
-    public async Task IncreaseInstallsAsync(BaseFixEntity fix)
-    {
-        if (ClientProperties.IsDeveloperMode)
-        {
-            return;
-        }
-
-        var result = await _apiInterface.AddNumberOfInstallsAsync(
-            fix.Guid, 
-            ClientProperties.CurrentVersion,
-            ClientProperties.IsDeveloperMode
-            ).ConfigureAwait(false);
-
-        if (!result.IsSuccess)
-        {
-            return;
-        }
-
-        if (_fixesProvider.Installs is not null)
-        {
-            _fixesProvider.Installs[fix.Guid] = result.ResultObject.Value;
-        }
-    }
 }
 

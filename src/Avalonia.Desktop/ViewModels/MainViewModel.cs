@@ -168,7 +168,9 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         get
         {
             if (SelectedFix is null ||
-                _fixesProvider.Installs is null)
+                _fixesProvider.Installs is null ||
+                SelectedFix is not FileFixEntity ||
+                (SelectedFix is FileFixEntity fileFix && fileFix.Url is null))
             {
                 return null;
             }
@@ -179,10 +181,10 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             {
                 if (installs == 1)
                 {
-                    return "1 install";
+                    return "1 download";
                 }
 
-                return $"{installs} installs";
+                return $"{installs} downloads";
             }
 
             return null;
@@ -961,8 +963,6 @@ Do you still want to install the fix?",
                 result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
-
-        _ = _mainModel.IncreaseInstallsAsync(fix).ConfigureAwait(true);
 
         LockButtons = false;
 

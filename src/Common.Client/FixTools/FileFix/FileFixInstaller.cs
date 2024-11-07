@@ -153,7 +153,7 @@ public sealed class FileFixInstaller
 
         var fileUri = new Uri(fix.Url);
 
-        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
+        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, fix.Guid, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
 
         if (!fileDownloadResult.IsSuccess)
         {
@@ -218,11 +218,13 @@ public sealed class FileFixInstaller
     /// Check file's MD5 and download if MD5 is correct
     /// </summary>
     /// <param name="fixUrl">Url to the file</param>
+    /// <param name="fixGuid">Fix GUID</param>
     /// <param name="fixMD5">MD5 of the file</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="Exception">Error while downloading file</exception>
     private async Task<Result<string>> CheckAndDownloadFileAsync(
         Uri fixUrl,
+        Guid fixGuid,
         string? fixMD5,
         CancellationToken cancellationToken
         )
@@ -288,7 +290,7 @@ public sealed class FileFixInstaller
 
         _logger.LogInformation($"Local file {pathToArchive} not found");
 
-        var result = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixMD5).ConfigureAwait(false);
+        var result = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken, fixGuid, fixMD5).ConfigureAwait(false);
 
         if (!result.IsSuccess)
         {
