@@ -63,7 +63,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, "Error while adding news");
             }
 
-            return new(ResultEnum.Success, "Succesfully added news");
+            return new(ResultEnum.Success, "Successfully added news");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -96,7 +96,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, "Error while changing news");
             }
 
-            return new(ResultEnum.Success, "Succesfully changed news");
+            return new(ResultEnum.Success, "Successfully changed news");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {

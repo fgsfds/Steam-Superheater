@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Server.Migrations;
 
 /// <inheritdoc />
-public partial class AddEventsTable : Migration
+public sealed partial class AddEventsTable : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

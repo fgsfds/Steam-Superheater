@@ -6,7 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Avalonia.Desktop.ViewModels.Editor;
 
-public class EditorViewLocator : IDataTemplate
+public sealed class EditorViewLocator : IDataTemplate
 {
     public Control Build(object? data)
     {

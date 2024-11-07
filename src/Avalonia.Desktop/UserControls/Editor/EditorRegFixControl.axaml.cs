@@ -2,7 +2,7 @@ using Avalonia.Controls;
 
 namespace Avalonia.Desktop.UserControls.Editor;
 
-public partial class EditorRegFixControl : UserControl
+public sealed partial class EditorRegFixControl : UserControl
 {
     public EditorRegFixControl()
     {

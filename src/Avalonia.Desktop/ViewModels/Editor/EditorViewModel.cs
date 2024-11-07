@@ -26,7 +26,7 @@ using System.Diagnostics;
 
 namespace Avalonia.Desktop.ViewModels.Editor;
 
-internal partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
+internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
 {
     private readonly EditorModel _editorModel;
     private readonly MainViewModel _mainViewModel;

@@ -5,7 +5,7 @@
 namespace Database.Server.Migrations;
 
 /// <inheritdoc />
-public partial class AddEventsTableGuidColumn : Migration
+public sealed partial class AddEventsTableGuidColumn : Migration
 {
     /// <inheritdoc />
     protected override void Up(MigrationBuilder migrationBuilder)

@@ -35,7 +35,7 @@ public sealed class FixesController : ControllerBase
 
     [Obsolete("Remove when there's no versions <2.0.0")]
     [HttpGet("{guid:Guid}")]
-    public bool CheckIfFixEsists(Guid guid) => _fixesProvider.CheckIfFixExists(guid) is not null;
+    public bool CheckIfFixExists(Guid guid) => _fixesProvider.CheckIfFixExists(guid) is not null;
 
 
     [Obsolete("Remove when there's no versions <2.0.0")]

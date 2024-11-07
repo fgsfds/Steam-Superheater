@@ -67,7 +67,7 @@ public sealed partial class ApiInterface
 
             if (response is null || !response.IsSuccessStatusCode)
             {
-                return new(ResultEnum.Error, null, "Error while chaging fix score");
+                return new(ResultEnum.Error, null, "Error while changing fix score");
             }
 
             var result = await response.Content.ReadFromJsonAsync(ChangeScoreOutMessageContext.Default.ChangeScoreOutMessage).ConfigureAwait(false);
@@ -85,7 +85,7 @@ public sealed partial class ApiInterface
         }
         catch
         {
-            return new(ResultEnum.Error, null, "Error while chaging fix score");
+            return new(ResultEnum.Error, null, "Error while changing fix score");
         }
     }
 
@@ -104,7 +104,7 @@ public sealed partial class ApiInterface
 
             if (!response.IsSuccessStatusCode)
             {
-                return new(ResultEnum.Error, null, "Error while chaging fix score");
+                return new(ResultEnum.Error, null, "Error while changing fix score");
             }
 
             var result = await response.Content.ReadFromJsonAsync(IncreaseInstallsCountOutMessageContext.Default.IncreaseInstallsCountOutMessage).ConfigureAwait(false);
@@ -122,7 +122,7 @@ public sealed partial class ApiInterface
         }
         catch
         {
-            return new(ResultEnum.Error, null, "Error while chaging fix score");
+            return new(ResultEnum.Error, null, "Error while changing fix score");
         }
     }
 
@@ -143,7 +143,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, "Error while sending report");
             }
 
-            return new(ResultEnum.Success, "Succesfully sent report");
+            return new(ResultEnum.Success, "Successfully sent report");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -206,7 +206,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, "Error while changing fix state");
             }
 
-            return new(ResultEnum.Success, $"Succesfully {(isDisabled ? "disabled" : "enbaled")} fix");
+            return new(ResultEnum.Success, $"Successfully {(isDisabled ? "disabled" : "enabled")} fix");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -240,7 +240,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, "Error while adding fix");
             }
 
-            return new(ResultEnum.Success, "Succesfully added fix to the database");
+            return new(ResultEnum.Success, "Successfully added fix to the database");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
@@ -270,7 +270,7 @@ public sealed partial class ApiInterface
                 return new(ResultEnum.Error, null, "Error while deserializing result");
             }
 
-            return new(ResultEnum.Success, result, "Succesfully got fixes stats");
+            return new(ResultEnum.Success, result, "Successfully got fixes stats");
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
