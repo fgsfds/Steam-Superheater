@@ -6,7 +6,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -21,7 +20,7 @@ public sealed class EditorModel
     private readonly IFixesProvider _fixesProvider;
     private readonly IGamesProvider _gamesProvider;
     private readonly FilesUploader _filesUploader;
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
 
     private List<FixesList> _fixesList = [];
     private List<GameEntity> _availableGamesList = [];
@@ -36,7 +35,7 @@ public sealed class EditorModel
         IFixesProvider fixesProvider,
         IGamesProvider gamesProvider,
         FilesUploader filesUploader,
-        ApiInterface apiInterface
+        IApiInterface apiInterface
         )
     {
         _fixesProvider = fixesProvider;
@@ -106,7 +105,7 @@ public sealed class EditorModel
                         {
                             fix.IsHidden = true;
                         }
-                        else if (tag.Equals(Consts.AllSuppoted) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
+                        else if (tag.Equals(Consts.AllSupported) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
                         {
                             fix.IsHidden = true;
                         }
@@ -285,7 +284,7 @@ public sealed class EditorModel
             }
         }
 
-        var result = await _filesUploader.UploadFilesToFtpAsync(fix.Guid.ToString(), filesToUpload, cancellationToken).ConfigureAwait(false);
+        var result = await _filesUploader.UploadFilesAsync(fix.Guid.ToString(), filesToUpload, cancellationToken).ConfigureAwait(false);
 
         File.Delete(fixFilePath);
 
@@ -329,7 +328,7 @@ public sealed class EditorModel
     {
         var doesFixExists = await _apiInterface.CheckIfFixExistsAsync(fix.Guid).ConfigureAwait(false);
 
-        if (doesFixExists.IsSuccess && doesFixExists.ResultObject.HasValue)
+        if (doesFixExists.IsSuccess && doesFixExists.ResultObject is not null)
         {
             return new(
                 ResultEnum.Error,
@@ -341,8 +340,7 @@ public sealed class EditorModel
         }
 
         if (string.IsNullOrEmpty(fix.Name) ||
-            fix.Version < 1 ||
-            string.IsNullOrEmpty(fix.VersionStr))
+            string.IsNullOrEmpty(fix.Version))
         {
             return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
         }
@@ -408,19 +406,9 @@ public sealed class EditorModel
     {
         var fixIndex = fixesList.IndexOf(fix);
 
-        if (typeof(T) == typeof(RegistryFixV2Entity))
+        if (typeof(T) == typeof(RegistryFixEntity))
         {
-            RegistryFixV2Entity newFix;
-
-            if (fix is RegistryFixEntity regFix)
-            {
-                newFix = new RegistryFixV2Entity(regFix);
-            }
-            else
-            {
-                newFix = new RegistryFixV2Entity(fix);
-            }
-
+            RegistryFixEntity newFix = new(fix);
             fixesList[fixIndex] = newFix;
         }
         else if (typeof(T) == typeof(FileFixEntity))
@@ -495,6 +483,12 @@ public sealed class EditorModel
         {
             return new(ResultEnum.Error, null, ex.Message);
         }
+    }
+
+    public void SaveFixesJson(string file)
+    {
+        var jsonString = JsonSerializer.Serialize(_fixesList, FixesListContext.Default.ListFixesList);
+        File.WriteAllText(file, jsonString);
     }
 }
 

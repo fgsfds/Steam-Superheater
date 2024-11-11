@@ -32,8 +32,7 @@ public sealed class HostsFixTests : IDisposable
     private readonly HostsFixEntity _fixEntity = new()
     {
         Name = "test fix",
-        Version = 1,
-        VersionStr = "1.0",
+        Version = "1.0",
         Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
         Entries = ["123 added entry "],
         SupportedOSes = OSEnum.Windows
@@ -152,8 +151,7 @@ public sealed class HostsFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(hostsActual1, hostsExpected1);

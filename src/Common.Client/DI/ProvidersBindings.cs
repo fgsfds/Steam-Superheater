@@ -2,6 +2,7 @@ using Common.Client.Config;
 using Common.Client.Providers;
 using Common.Client.Providers.Fakes;
 using Common.Client.Providers.Interfaces;
+using Common.Providers;
 using Database.Client;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -29,6 +30,7 @@ public static class ProvidersBindings
         _ = container.AddSingleton<IGamesProvider, GamesProvider>();
         _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProvider>();
         _ = container.AddSingleton<DatabaseContextFactory>();
+        _ = container.AddSingleton<AppReleasesProvider>();
     }
 }
 

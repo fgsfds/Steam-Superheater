@@ -6,14 +6,15 @@ namespace Common.Client.FilesTools;
 public sealed class FilesUploader
 {
     private readonly ILogger _logger;
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
     private readonly ProgressReport _progressReport;
 
 
     public FilesUploader(
         ILogger logger,
-        ApiInterface apiInterface,
-        ProgressReport progressReport)
+        IApiInterface apiInterface,
+        ProgressReport progressReport
+        )
     {
         _logger = logger;
         _apiInterface = apiInterface;
@@ -36,7 +37,7 @@ public sealed class FilesUploader
         CancellationToken cancellationToken
         )
     {
-        return await UploadFilesToFtpAsync(folder, [filePath], cancellationToken, remoteFileName).ConfigureAwait(false);
+        return await UploadFilesAsync(folder, [filePath], cancellationToken, remoteFileName).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -47,7 +48,7 @@ public sealed class FilesUploader
     /// <param name="cancellationToken">Cancellation token</param>
     /// <param name="remoteFileName">File name on the s3 server</param>
     /// <returns>True if successfully uploaded</returns>
-    public async Task<Result> UploadFilesToFtpAsync(
+    public async Task<Result> UploadFilesAsync(
         string folder,
         List<string> files,
         CancellationToken cancellationToken,

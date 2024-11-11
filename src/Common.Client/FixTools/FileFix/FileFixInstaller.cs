@@ -21,7 +21,7 @@ public sealed class FileFixInstaller
     private readonly IFilesDownloader _filesDownloader;
     private readonly ProgressReport _progressReport;
     private readonly ILogger _logger;
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
     private readonly IFixesProvider _fixesProvider;
 
 
@@ -31,7 +31,7 @@ public sealed class FileFixInstaller
         IFilesDownloader filesDownloader,
         ProgressReport progressReport,
         ILogger logger,
-        ApiInterface apiInterface,
+        IApiInterface apiInterface,
         IFixesProvider fixesProvider
         )
     {
@@ -113,7 +113,6 @@ public sealed class FileFixInstaller
             GameId = game.Id,
             Guid = fix.Guid,
             Version = fix.Version,
-            VersionStr = fix.VersionStr,
             BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
             FilesList = filesUnpackResult.ResultObject,
             InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
@@ -320,9 +319,7 @@ public sealed class FileFixInstaller
         {
             var result = await _apiInterface.AddNumberOfInstallsAsync(
                 fixGuid,
-                ClientProperties.CurrentVersion,
-                ClientProperties.IsDeveloperMode
-                ).ConfigureAwait(false);
+                ClientProperties.CurrentVersion).ConfigureAwait(false);
 
             if (result.IsSuccess && _fixesProvider.Installs is not null)
             {

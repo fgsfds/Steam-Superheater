@@ -4,19 +4,18 @@ using Common.Entities.Fixes;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace Api.Common.Interface;
+namespace Api.Common.Interface.ServerApiInterface;
 
-public sealed partial class ApiInterface
+public sealed partial class ServerApiInterface
 {
-    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion, bool dontLog)
+    public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion)
     {
         try
         {
             GetFixesInMessage message = new()
             {
                 TableVersion = tableVersion,
-                AppVersion = appVersion,
-                DontLog = dontLog
+                AppVersion = appVersion
             };
 
             using HttpRequestMessage requestMessage = new(HttpMethod.Get, $"{ApiUrl}/fixes");
@@ -89,15 +88,14 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion, bool dontLog)
+    public async Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion)
     {
         try
         {
             IncreaseInstallsCountInMessage message = new()
             {
                 FixGuid = guid,
-                AppVersion = appVersion,
-                DontLog = dontLog
+                AppVersion = appVersion
             };
 
             using var response = await _httpClient.PutAsJsonAsync($"{ApiUrl}/fixes/installs", message, IncreaseInstallsCountInMessageContext.Default.IncreaseInstallsCountInMessage).ConfigureAwait(false);
@@ -155,7 +153,7 @@ public sealed partial class ApiInterface
         }
     }
 
-    public async Task<Result<int?>> CheckIfFixExistsAsync(Guid guid)
+    public async Task<Result<string?>> CheckIfFixExistsAsync(Guid guid)
     {
         try
         {

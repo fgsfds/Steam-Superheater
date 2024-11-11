@@ -1,17 +1,20 @@
 using Common.Enums;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.RegistryFix;
 
-[Obsolete("Remove when there's no versions <2.0.0")]
 public sealed class RegistryFixEntity : BaseFixEntity
 {
-    [Obsolete("Remove when there's no versions <2.0.0")]
     public RegistryFixEntity()
     {
+    }
+
+    [SetsRequiredMembers]
+    public RegistryFixEntity(bool _)
+    {
         Name = string.Empty;
-        Version = 1;
-        VersionStr = "1.0";
+        Version = "1.0";
         Guid = Guid.NewGuid();
         Description = null;
         Changelog = null;
@@ -20,19 +23,14 @@ public sealed class RegistryFixEntity : BaseFixEntity
         SupportedOSes = OSEnum.Windows;
         IsDisabled = false;
 
-        Key = string.Empty;
-        ValueName = string.Empty;
-        NewValueData = string.Empty;
-        ValueType = RegistryValueTypeEnum.String;
+        Entries = [new()];
     }
 
-    [Obsolete("Remove when there's no versions <2.0.0")]
     [SetsRequiredMembers]
     public RegistryFixEntity(BaseFixEntity fix)
     {
         Name = fix.Name;
         Version = fix.Version;
-        VersionStr = fix.VersionStr;
         Guid = fix.Guid;
         Description = fix.Description;
         Changelog = fix.Changelog;
@@ -41,12 +39,17 @@ public sealed class RegistryFixEntity : BaseFixEntity
         SupportedOSes = OSEnum.Windows;
         IsDisabled = fix.IsDisabled;
 
-        Key = string.Empty;
-        ValueName = string.Empty;
-        NewValueData = string.Empty;
-        ValueType = RegistryValueTypeEnum.String;
+        Entries = [new()];
     }
 
+    public required List<RegistryEntry> Entries { get; set; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => Entries.Exists(x => x.Key.StartsWith("HKEY_LOCAL_MACHINE", StringComparison.OrdinalIgnoreCase));
+}
+
+public sealed class RegistryEntry
+{
     /// <summary>
     /// Registry key
     /// </summary>
@@ -66,5 +69,53 @@ public sealed class RegistryFixEntity : BaseFixEntity
     /// Value type
     /// </summary>
     public required RegistryValueTypeEnum ValueType { get; set; }
-}
 
+    [JsonIgnore]
+    public bool IsString
+    {
+        get
+        {
+            return ValueType is RegistryValueTypeEnum.String;
+        }
+        set
+        {
+            if (value)
+            {
+                ValueType = RegistryValueTypeEnum.String;
+            }
+            else
+            {
+                ValueType = RegistryValueTypeEnum.Dword;
+            }
+        }
+    }
+
+    [JsonIgnore]
+    public bool IsDword
+    {
+        get
+        {
+            return ValueType is RegistryValueTypeEnum.Dword;
+        }
+        set
+        {
+            if (value)
+            {
+                ValueType = RegistryValueTypeEnum.Dword;
+            }
+            else
+            {
+                ValueType = RegistryValueTypeEnum.String;
+            }
+        }
+    }
+
+    [SetsRequiredMembers]
+    public RegistryEntry()
+    {
+        Key = string.Empty;
+        ValueName = string.Empty;
+        NewValueData = string.Empty;
+        ValueType = RegistryValueTypeEnum.String;
+    }
+}

@@ -1,6 +1,7 @@
 using Api.Common.Messages;
 using Common.Entities;
 using Common.Entities.Fixes;
+using Common.Providers;
 using Database.Server;
 using Microsoft.AspNetCore.Authorization;
 using Web.Blazor.Helpers;
@@ -28,7 +29,7 @@ public sealed class Program
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(FixesListContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);
-            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsEntityContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsListEntityContext.Default);
 
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddChangeNewsInMessageContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AddFixInMessageContext.Default);

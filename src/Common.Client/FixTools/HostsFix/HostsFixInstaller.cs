@@ -46,7 +46,6 @@ public sealed class HostsFixInstaller
                 GameId = game.Id,
                 Guid = fix.Guid,
                 Version = fix.Version,
-                VersionStr = fix.VersionStr,
                 Entries = [.. fix.Entries]
             },
             "Successfully installed fix");

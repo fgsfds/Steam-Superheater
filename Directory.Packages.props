@@ -10,7 +10,7 @@
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.2.0" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.2.0" />
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.0.0" />
-    <PackageVersion Include="AWSSDK.S3" Version="3.7.405.9" />
+    <PackageVersion Include="AWSSDK.S3" Version="3.7.405.11" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.3.2" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.3.2" />
     <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.1.0" />

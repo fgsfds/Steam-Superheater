@@ -3,9 +3,9 @@ using Common;
 using System.Net;
 using System.Net.Http.Json;
 
-namespace Api.Common.Interface;
+namespace Api.Common.Interface.ServerApiInterface;
 
-public sealed partial class ApiInterface
+public sealed partial class ServerApiInterface
 {
     public async Task<Result<GetNewsOutMessage>> GetNewsListAsync(int version)
     {

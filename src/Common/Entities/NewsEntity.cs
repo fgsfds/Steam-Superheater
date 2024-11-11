@@ -27,6 +27,8 @@ public sealed class NewsEntity
     public string ContentHtml => Markdig.Markdown.ToHtml(Content);
 }
 
+
+[JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(List<NewsEntity>))]
-public sealed partial class NewsEntityContext : JsonSerializerContext;
+public sealed partial class NewsListEntityContext : JsonSerializerContext;
 

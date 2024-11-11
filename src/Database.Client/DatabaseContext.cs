@@ -12,31 +12,7 @@ public sealed class DatabaseContext : DbContext
 
     public DatabaseContext()
     {
-        try
-        {
-            Database.Migrate();
-        }
-        catch (Exception)
-        {
-            ConvertOldConfig();
-        }
-    }
-
-    [Obsolete("Remove when there's no versions <0.18.1")]
-    private void ConvertOldConfig()
-    {
-        var settings = Settings.ToList();
-        var hiddenTags = HiddenTags.ToList();
-        var upvotes = Upvotes.ToList();
-
-        _ = Database.EnsureDeleted();
         Database.Migrate();
-
-        Settings.AddRange(settings);
-        HiddenTags.AddRange(hiddenTags);
-        Upvotes.AddRange(upvotes);
-
-        _ = SaveChanges();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

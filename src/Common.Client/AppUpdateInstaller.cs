@@ -11,12 +11,12 @@ namespace Common.Client;
 
 public sealed class AppUpdateInstaller(
     IFilesDownloader filesDownloader,
-    ApiInterface apiInterface,
+    IApiInterface apiInterface,
     ILogger logger
     )
 {
     private readonly IFilesDownloader _filesDownloader = filesDownloader;
-    private readonly ApiInterface _apiInterface = apiInterface;
+    private readonly IApiInterface _apiInterface = apiInterface;
     private readonly ILogger _logger = logger;
 
     private AppReleaseEntity? _update;

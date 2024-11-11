@@ -1,6 +1,6 @@
 ﻿using Avalonia.Desktop.ViewModels.Popups;
 using Common.Client.Providers.Interfaces;
-using Common.Entities.Fixes.RegistryFixV2;
+using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -9,7 +9,7 @@ namespace Avalonia.Desktop.ViewModels.Editor;
 
 internal sealed partial class RegFixViewModel : ObservableObject
 {
-    private RegistryFixV2Entity SelectedFix { get; set; }
+    private RegistryFixEntity SelectedFix { get; set; }
 
     private IFixesProvider _fixesProvider;
 
@@ -25,7 +25,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
 
 
     public RegFixViewModel(
-        RegistryFixV2Entity fix,
+        RegistryFixEntity fix,
         IFixesProvider fixesProvider,
         PopupEditorViewModel popupEditor
         )
@@ -42,7 +42,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     [RelayCommand]
     private void AddRegFixEntry()
     {
-        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
+        Guard2.IsOfType<RegistryFixEntity>(SelectedFix, out var regFix);
 
         regFix.Entries = [.. regFix.Entries.Append(new())];
 
@@ -56,7 +56,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     [RelayCommand]
     private void DeleteRegFixEntry()
     {
-        Guard2.IsOfType<RegistryFixV2Entity>(SelectedFix, out var regFix);
+        Guard2.IsOfType<RegistryFixEntity>(SelectedFix, out var regFix);
 
         if (regFix.Entries.Count < 2)
         {

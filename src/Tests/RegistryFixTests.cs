@@ -31,13 +31,18 @@ public sealed class RegistryFixTests : IDisposable
     private readonly RegistryFixEntity _fixEntity = new()
     {
         Name = "test fix",
-        Version = 1,
-        VersionStr = "1.0",
+        Version = "1.0",
         Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-        Key = "HKEY_CURRENT_USER\\" + Helpers.RegKey,
-        ValueName = "{gamefolder}\\" + Helpers.GameExe,
-        NewValueData = "~ RUNASADMIN",
-        ValueType = RegistryValueTypeEnum.String,
+        Entries =
+        [
+            new()
+            {
+                Key = "HKEY_CURRENT_USER\\" + Helpers.RegKey,
+                ValueName = "{gamefolder}\\" + Helpers.GameExe,
+                NewValueData = "~ RUNASADMIN",
+                ValueType = RegistryValueTypeEnum.String,
+            }
+        ],
         SupportedOSes = OSEnum.Windows
     };
 
@@ -128,13 +133,13 @@ public sealed class RegistryFixTests : IDisposable
                 Assert.Fail();
             }
 
-            Assert.Equal(_fixEntity.NewValueData, value);
+            Assert.Equal(_fixEntity.Entries.First().NewValueData, value);
         }
 
         //Check created json
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
-  ""$type"": ""RegistryFixV2"",
+  ""$type"": ""RegistryFix"",
   ""Entries"": [
     {{
       ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
@@ -145,8 +150,7 @@ public sealed class RegistryFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -187,7 +191,7 @@ public sealed class RegistryFixTests : IDisposable
         //Check created json
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
-  ""$type"": ""RegistryFixV2"",
+  ""$type"": ""RegistryFix"",
   ""Entries"": [
     {{
       ""Key"": ""HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test"",
@@ -198,8 +202,7 @@ public sealed class RegistryFixTests : IDisposable
   ],
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -217,7 +220,7 @@ public sealed class RegistryFixTests : IDisposable
                 Assert.Fail();
             }
 
-            Assert.Equal(_fixEntity.NewValueData, value);
+            Assert.Equal(_fixEntity.Entries.First().NewValueData, value);
         }
 
         //Uninstall fix

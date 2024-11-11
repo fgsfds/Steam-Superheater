@@ -2,7 +2,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -85,14 +84,6 @@ public sealed class FixesProvider
 
             foreach (var fix in fixes)
             {
-                if (appVersion <= new Version(1, 2, 0))
-                {
-                    if (fix.FixType is FixTypeEnum.RegistryFixV2)
-                    {
-                        continue;
-                    }
-                }
-
                 var deps = dependencies[fix.Guid];
                 var tags = tagsIdsDb[fix.Guid].Select(x => tagsDict[x]);
 
@@ -114,16 +105,13 @@ public sealed class FixesProvider
                     FileFixEntity fileFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.VersionOld,
-                        VersionStr = fix.Version,
+                        Version = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = fix.Installs,
-                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
@@ -146,34 +134,6 @@ public sealed class FixesProvider
                 }
                 else if (fix.FixType is FixTypeEnum.RegistryFix)
                 {
-                    var regFix = regFixesDb[fix.Guid].First();
-
-                    RegistryFixEntity regFixEntity = new()
-                    {
-                        Name = fix.Name,
-                        Version = fix.VersionOld,
-                        VersionStr = fix.Version,
-                        Guid = fix.Guid,
-                        Description = fix.Description,
-                        Changelog = fix.Changelog,
-                        Dependencies = !deps.Any() ? null : [.. deps],
-                        Tags = !tags.Any() ? null : [.. tags],
-                        SupportedOSes = supportedOSes,
-                        Installs = fix.Installs,
-                        Score = fix.Score,
-                        Notes = fix.Notes,
-                        IsDisabled = fix.IsDisabled,
-
-                        Key = regFix.Key,
-                        ValueName = regFix.ValueName,
-                        NewValueData = regFix.NewValueData,
-                        ValueType = regFix.ValueType
-                    };
-
-                    baseFixEntities.Add(regFixEntity);
-                }
-                else if (fix.FixType is FixTypeEnum.RegistryFixV2)
-                {
                     List<RegistryEntry> entries = [];
 
                     foreach (var entry in regFixesDb[fix.Guid])
@@ -187,19 +147,16 @@ public sealed class FixesProvider
                         });
                     }
 
-                    RegistryFixV2Entity regFixEntity = new()
+                    RegistryFixEntity regFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.VersionOld,
-                        VersionStr = fix.Version,
+                        Version = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = fix.Installs,
-                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
@@ -215,16 +172,13 @@ public sealed class FixesProvider
                     HostsFixEntity hostsFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.VersionOld,
-                        VersionStr = fix.Version,
+                        Version = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = fix.Installs,
-                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled,
 
@@ -238,16 +192,13 @@ public sealed class FixesProvider
                     TextFixEntity textFixEntity = new()
                     {
                         Name = fix.Name,
-                        Version = fix.VersionOld,
-                        VersionStr = fix.Version,
+                        Version = fix.Version,
                         Guid = fix.Guid,
                         Description = fix.Description,
                         Changelog = fix.Changelog,
                         Dependencies = !deps.Any() ? null : [.. deps],
                         Tags = !tags.Any() ? null : [.. tags],
                         SupportedOSes = supportedOSes,
-                        Installs = fix.Installs,
-                        Score = fix.Score,
                         Notes = fix.Notes,
                         IsDisabled = fix.IsDisabled
                     };
@@ -356,9 +307,9 @@ public sealed class FixesProvider
     /// <summary>
     /// Check if fix exists in the database
     /// </summary>
-    /// <param name="fixGuid">FIx guid</param>
+    /// <param name="fixGuid">Fix guid</param>
     /// <returns>Does fix exist</returns>
-    public int? CheckIfFixExists(Guid fixGuid)
+    public string? CheckIfFixExists(Guid fixGuid)
     {
         using var dbContext = _dbContextFactory.Get();
 
@@ -369,7 +320,7 @@ public sealed class FixesProvider
             return null;
         }
 
-        return fix.VersionOld;
+        return fix.Version;
     }
 
     /// <summary>
@@ -457,7 +408,6 @@ public sealed class FixesProvider
 
             var fixType = fix is FileFixEntity ? FixTypeEnum.FileFix :
                 fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
-                fix is RegistryFixV2Entity ? FixTypeEnum.RegistryFixV2 :
                 fix is HostsFixEntity ? FixTypeEnum.HostsFix :
                 fix is TextFixEntity ? FixTypeEnum.TextFix :
                 ThrowHelper.ThrowNotSupportedException<FixTypeEnum>();
@@ -475,8 +425,7 @@ public sealed class FixesProvider
                     IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows),
                     Name = fix.Name,
                     Notes = fix.Notes,
-                    VersionOld = fix.Version,
-                    Version = fix.VersionStr,
+                    Version = fix.Version,
                     IsDisabled = false,
                     TableVersion = newTableVersion,
                     Score = 0,
@@ -502,8 +451,7 @@ public sealed class FixesProvider
                 existingEntity.IsWindowsSupported = fix.SupportedOSes.HasFlag(OSEnum.Windows);
                 existingEntity.Name = fix.Name;
                 existingEntity.Notes = fix.Notes;
-                existingEntity.VersionOld = fix.Version;
-                existingEntity.Version = fix.VersionStr;
+                existingEntity.Version = fix.Version;
                 existingEntity.TableVersion = newTableVersion;
             }
 
@@ -538,20 +486,7 @@ public sealed class FixesProvider
 
                 _ = dbContext.FileFixes.Add(newFixEntity);
             }
-            else if (fix is RegistryFixEntity regFix)
-            {
-                RegistryFixesDbEntity newFixEntity = new()
-                {
-                    FixGuid = regFix.Guid,
-                    Key = regFix.Key,
-                    ValueName = regFix.ValueName,
-                    ValueType = regFix.ValueType,
-                    NewValueData = regFix.NewValueData
-                };
-
-                _ = dbContext.RegistryFixes.Add(newFixEntity);
-            }
-            else if (fix is RegistryFixV2Entity regFix2)
+            else if (fix is RegistryFixEntity regFix2)
             {
                 foreach (var entry in regFix2.Entries)
                 {

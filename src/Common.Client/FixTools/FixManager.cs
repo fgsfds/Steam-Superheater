@@ -7,7 +7,6 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -98,9 +97,6 @@ public sealed class FixManager
             case RegistryFixEntity registryFix:
                 installedFix = _registryFixInstaller.InstallFix(game, registryFix);
                 break;
-            case RegistryFixV2Entity registryFix2:
-                installedFix = _registryFixInstaller.InstallFix(game, registryFix2);
-                break;
             case HostsFixEntity hostsFix:
                 installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
                 break;
@@ -155,10 +151,6 @@ public sealed class FixManager
                 case RegistryFixEntity regFix:
                     Guard.IsNotNull(regFix.InstalledFix);
                     _registryFixUninstaller.UninstallFix(regFix.InstalledFix);
-                    break;
-                case RegistryFixV2Entity regFix2:
-                    Guard.IsNotNull(regFix2.InstalledFix);
-                    _registryFixUninstaller.UninstallFix(regFix2.InstalledFix);
                     break;
                 case HostsFixEntity hostsFix:
                     Guard.IsNotNull(hostsFix.InstalledFix);
@@ -218,7 +210,7 @@ public sealed class FixManager
             case FileFixEntity fileFix:
                 installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
                 break;
-            case RegistryFixV2Entity registryFix:
+            case RegistryFixEntity registryFix:
                 installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
                 break;
             case HostsFixEntity hostsFix:

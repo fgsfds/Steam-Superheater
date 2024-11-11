@@ -14,13 +14,13 @@ using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using System.Collections.Immutable;
 using System.Diagnostics;
 
@@ -37,6 +37,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly PopupStackViewModel _popupStack;
     private readonly ProgressReport _progressReport;
     private readonly IGamesProvider _gamesProvider;
+    private readonly ILogger _logger;
     private readonly SemaphoreSlim _locker = new(1);
 
     private CancellationTokenSource? _cancellationTokenSource;
@@ -57,7 +58,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-    public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSuppoted];
+    public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSupported];
 
     public bool IsEmpty => FilteredGamesList.Count == 0;
 
@@ -95,26 +96,14 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
     }
 
-    public int SelectedFixVersion
+    public string SelectedFixVersion
     {
-        get => SelectedFix?.Version ?? 0;
+        get => SelectedFix?.Version ?? string.Empty;
         set
         {
             Guard.IsNotNull(SelectedFix);
 
             SelectedFix.Version = value;
-            OnPropertyChanged(nameof(SelectedGameFixesList));
-        }
-    }
-
-    public string? SelectedFixVersionStr
-    {
-        get => SelectedFix?.VersionStr;
-        set
-        {
-            Guard.IsNotNull(SelectedFix);
-
-            SelectedFix.VersionStr = value;
             OnPropertyChanged(nameof(SelectedGameFixesList));
         }
     }
@@ -216,7 +205,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public bool IsRegistryFixType
     {
-        get => SelectedFix is RegistryFixV2Entity;
+        get => SelectedFix is RegistryFixEntity;
         set
         {
             Guard.IsNotNull(SelectedGame);
@@ -224,7 +213,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
             if (value)
             {
-                _editorModel.ChangeFixType<RegistryFixV2Entity>(SelectedGame.Fixes, SelectedFix);
+                _editorModel.ChangeFixType<RegistryFixEntity>(SelectedGame.Fixes, SelectedFix);
 
                 var index = SelectedFixIndex;
                 OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -284,7 +273,6 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedFixName))]
     [NotifyPropertyChangedFor(nameof(SelectedFixVersion))]
-    [NotifyPropertyChangedFor(nameof(SelectedFixVersionStr))]
     [NotifyPropertyChangedFor(nameof(AvailableDependenciesList))]
     [NotifyPropertyChangedFor(nameof(SelectedAvailableDependency))]
     [NotifyPropertyChangedFor(nameof(SelectedFixDependenciesList))]
@@ -327,22 +315,9 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                     Name = regFix.Name,
                     Guid = regFix.Guid,
                     SupportedOSes = regFix.SupportedOSes,
-                    Entries = [new()
-                    {
-                        Key = regFix.Key,
-                        NewValueData = regFix.NewValueData,
-                        ValueName = regFix.ValueName,
-                        ValueType = regFix.ValueType
-                    }]
+                    Entries = regFix.Entries,
+                    Version = regFix.Version
                 },
-                _fixesProvider,
-                _popupEditor
-                );
-        }
-        else if (value is RegistryFixV2Entity regFix2)
-        {
-            FixDataContext = new RegFixViewModel(
-                regFix2,
                 _fixesProvider,
                 _popupEditor
                 );
@@ -400,7 +375,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         PopupEditorViewModel popupEditor,
         PopupStackViewModel popupStack,
         IGamesProvider gamesProvider,
-        ProgressReport progressReport
+        ProgressReport progressReport,
+        ILogger logger
         )
     {
         _editorModel = editorModel;
@@ -412,6 +388,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         _popupStack = popupStack;
         _gamesProvider = gamesProvider;
         _progressReport = progressReport;
+        _logger = logger;
 
         _searchBarText = string.Empty;
 
@@ -862,6 +839,47 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             null,
             HorizontalAlignment.Left
             );
+    }
+
+
+    /// <summary>
+    /// Preview resulting json
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveFixesJsonAsync()
+    {
+        try
+        {
+            var topLevel = AvaloniaProperties.TopLevel;
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+                new FilePickerSaveOptions
+                {
+                    Title = "Open Text File",
+                    DefaultExtension = "json",
+                    ShowOverwritePrompt = true,
+                    SuggestedFileName = "fixes.json"
+                }).ConfigureAwait(true);
+
+            if (file is null)
+            {
+                return;
+            }
+
+            _editorModel.SaveFixesJson(file.Path.AbsolutePath);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error while saving json");
+
+            var length = App.Random.Next(1, 100);
+            var repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                "Error while saving json",
+                NotificationType.Error
+                );
+        }
     }
 
     #endregion Relay Commands

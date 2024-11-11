@@ -12,7 +12,7 @@ public sealed class NewsProvider : INewsProvider
 {
     private const byte NewsPerPage = 5;
 
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
     private readonly DatabaseContextFactory _dbContextFactory;
     private readonly IConfigProvider _config;
     private readonly ILogger _logger;
@@ -27,7 +27,7 @@ public sealed class NewsProvider : INewsProvider
 
 
     public NewsProvider(
-        ApiInterface apiInterface,
+        IApiInterface apiInterface,
         DatabaseContextFactory dbContextFactory,
         IConfigProvider configProvider,
         ILogger logger
@@ -47,7 +47,7 @@ public sealed class NewsProvider : INewsProvider
 
         var newsCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.News)!;
         var currentNewsVersion = newsCacheDbEntity.Version!;
-        var currentNewsList = JsonSerializer.Deserialize(newsCacheDbEntity.Data, NewsEntityContext.Default.ListNewsEntity)!;
+        var currentNewsList = JsonSerializer.Deserialize(newsCacheDbEntity.Data, NewsListEntityContext.Default.ListNewsEntity)!;
 
         var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
 
@@ -67,7 +67,7 @@ public sealed class NewsProvider : INewsProvider
 
             currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
             newsCacheDbEntity.Version = newNewsList.ResultObject.Version;
-            newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsEntityContext.Default.ListNewsEntity);
+            newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsListEntityContext.Default.ListNewsEntity);
 
             _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
         }

@@ -1,9 +1,17 @@
 using Common.Enums;
+using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes.RegistryFix;
 
-[Obsolete("Remove when there's no versions <2.0.0")]
 public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
+{
+    public required List<RegistryInstalledEntry> Entries { get; set; }
+
+    [JsonIgnore]
+    public override bool DoesRequireAdminRights => Entries.Exists(x => x.Key.StartsWith("HKEY_LOCAL_MACHINE", StringComparison.OrdinalIgnoreCase));
+}
+
+public sealed class RegistryInstalledEntry
 {
     /// <summary>
     /// Registry key
@@ -25,4 +33,3 @@ public sealed class RegistryInstalledFixEntity : BaseInstalledFixEntity
     /// </summary>
     public string? OriginalValue { get; init; }
 }
-

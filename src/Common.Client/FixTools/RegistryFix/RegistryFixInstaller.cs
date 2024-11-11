@@ -1,7 +1,6 @@
 using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Enums;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -28,7 +27,7 @@ public sealed class RegistryFixInstaller
     /// <returns>Installed fix entity</returns>
     public Result<BaseInstalledFixEntity> InstallFix(
         GameEntity game,
-        BaseFixEntity fix
+        RegistryFixEntity fix
         )
     {
         if (!OperatingSystem.IsWindows())
@@ -43,18 +42,18 @@ public sealed class RegistryFixInstaller
 
         List<RegistryInstalledEntry> installedEntries = [];
 
-        if (fix is RegistryFixEntity regFix)
+        foreach (var entry in fix.Entries)
         {
-            var valueName = regFix.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
+            var valueName = entry.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
 
             _logger.LogInformation($"Value name is {valueName}");
 
             string? oldValueStr = null;
 
-            var oldValue = Registry.GetValue(regFix.Key, valueName, null);
+            var oldValue = Registry.GetValue(entry.Key, valueName, null);
             if (oldValue is not null)
             {
-                switch (regFix.ValueType)
+                switch (entry.ValueType)
                 {
                     case RegistryValueTypeEnum.Dword:
                         oldValueStr = ((int)oldValue).ToString();
@@ -68,90 +67,36 @@ public sealed class RegistryFixInstaller
                 }
             }
 
-            switch (regFix.ValueType)
+            switch (entry.ValueType)
             {
                 case RegistryValueTypeEnum.Dword:
-                    Registry.SetValue(regFix.Key, valueName, int.Parse(regFix.NewValueData));
+                    Registry.SetValue(entry.Key, valueName, int.Parse(entry.NewValueData));
                     break;
                 case RegistryValueTypeEnum.String:
-                    Registry.SetValue(regFix.Key, valueName, regFix.NewValueData);
+                    Registry.SetValue(entry.Key, valueName, entry.NewValueData);
                     break;
                 default:
-                    ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {regFix.ValueType.GetType()}");
+                    ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {entry.ValueType.GetType()}");
                     break;
             }
 
             installedEntries.Add(new()
             {
-                Key = regFix.Key,
+                Key = entry.Key,
                 ValueName = valueName,
                 OriginalValue = oldValueStr,
-                ValueType = regFix.ValueType
+                ValueType = entry.ValueType
             });
-        }
-        else if (fix is RegistryFixV2Entity regFix2)
-        {
-            foreach (var entry in regFix2.Entries)
-            {
-                var valueName = entry.ValueName.Replace("{gamefolder}", game.InstallDir).Replace("\\\\", "\\");
-
-                _logger.LogInformation($"Value name is {valueName}");
-
-                string? oldValueStr = null;
-
-                var oldValue = Registry.GetValue(entry.Key, valueName, null);
-                if (oldValue is not null)
-                {
-                    switch (entry.ValueType)
-                    {
-                        case RegistryValueTypeEnum.Dword:
-                            oldValueStr = ((int)oldValue).ToString();
-                            break;
-                        case RegistryValueTypeEnum.String:
-                            oldValueStr = (string)oldValue;
-                            break;
-                        default:
-                            ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {oldValue.GetType()}");
-                            break;
-                    }
-                }
-
-                switch (entry.ValueType)
-                {
-                    case RegistryValueTypeEnum.Dword:
-                        Registry.SetValue(entry.Key, valueName, int.Parse(entry.NewValueData));
-                        break;
-                    case RegistryValueTypeEnum.String:
-                        Registry.SetValue(entry.Key, valueName, entry.NewValueData);
-                        break;
-                    default:
-                        ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {entry.ValueType.GetType()}");
-                        break;
-                }
-
-                installedEntries.Add(new()
-                {
-                    Key = entry.Key,
-                    ValueName = valueName,
-                    OriginalValue = oldValueStr,
-                    ValueType = entry.ValueType
-                });
-            }
-        }
-        else
-        {
-            ThrowHelper.ThrowNotSupportedException();
         }
 
         return new()
         {
             ResultEnum = ResultEnum.Success,
-            ResultObject = new RegistryInstalledFixV2Entity()
+            ResultObject = new RegistryInstalledFixEntity()
             {
                 GameId = game.Id,
                 Guid = fix.Guid,
                 Version = fix.Version,
-                VersionStr = fix.VersionStr,
                 Entries = installedEntries
             },
             Message = "Successfully installed fix"

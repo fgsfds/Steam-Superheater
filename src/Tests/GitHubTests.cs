@@ -1,4 +1,5 @@
 using Api.Common.Interface;
+using Api.Common.Interface.ServerApiInterface;
 using Common;
 using Common.Client;
 using Common.Client.FilesTools.Interfaces;
@@ -18,10 +19,12 @@ public sealed class GitHubTests
         Mock<IGamesProvider> gamesProviderMock = new();
         Mock<IInstalledFixesProvider> installedMock = new();
         Mock<IConfigProvider> configMock = new();
+        Mock<ILogger> logger = new();
         using HttpClient httpClient = new();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
 
-        ApiInterface apiInterface = new(httpClient, configMock.Object);
-
+        //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
+        IApiInterface apiInterface = new FileApiInterface(new(logger.Object, httpClient), httpClient);
         FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, new());
 
         var fixes = await fixesProvider.GetFixesListAsync(false, false).ConfigureAwait(true);
@@ -39,9 +42,12 @@ public sealed class GitHubTests
         Mock<IFilesDownloader> filesDownloaderMock = new();
         Mock<ILogger> loggerMock = new();
         Mock<IConfigProvider> configMock = new();
+        Mock<ILogger> logger = new();
         using HttpClient httpClient = new();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
 
-        ApiInterface apiInterface = new(httpClient, configMock.Object);
+        //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
+        IApiInterface apiInterface = new FileApiInterface(new(logger.Object, httpClient), httpClient);
         AppUpdateInstaller appUpdateInstaller = new(filesDownloaderMock.Object, apiInterface, loggerMock.Object);
 
         var release = await appUpdateInstaller.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);

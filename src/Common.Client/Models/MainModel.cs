@@ -13,7 +13,7 @@ public sealed class MainModel
     private readonly IConfigProvider _config;
     private readonly IFixesProvider _fixesProvider;
     private readonly IGamesProvider _gamesProvider;
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
 
     private List<FixesList> _combinedEntitiesList = [];
 
@@ -26,7 +26,7 @@ public sealed class MainModel
         IConfigProvider configProvider,
         IFixesProvider fixesProvider,
         IGamesProvider gamesProvider,
-        ApiInterface apiInterface
+        IApiInterface apiInterface
         )
     {
         _config = configProvider;

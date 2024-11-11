@@ -23,8 +23,7 @@ public sealed partial class FileFixTests : IDisposable
         FileFixEntity sharedFixEntity = new()
         {
             Name = "shared test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
             Url = _testFixSharedZip,
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
@@ -33,8 +32,7 @@ public sealed partial class FileFixTests : IDisposable
         FileFixEntity fixEntity = new()
         {
             Name = "test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
@@ -60,8 +58,7 @@ public sealed partial class FileFixTests : IDisposable
         FileFixEntity sharedFixEntity = new()
         {
             Name = "shared test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
             Url = _testFixSharedZip,
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
@@ -70,8 +67,7 @@ public sealed partial class FileFixTests : IDisposable
         FileFixEntity fixEntity = new()
         {
             Name = "test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
@@ -114,14 +110,12 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 1,
-    ""VersionStr"": ""1.0""
+    ""Version"": ""1.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -129,8 +123,7 @@ public sealed partial class FileFixTests : IDisposable
 
     private async Task UpdateMainFixAsync(FileFixEntity fixEntity)
     {
-        fixEntity.Version = 2;
-        fixEntity.VersionStr = "2.0";
+        fixEntity.Version = "2.0";
         fixEntity.Url = _testFixV2Zip;
 
         _ = await _fixManager.UpdateFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
@@ -157,14 +150,12 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 1,
-    ""VersionStr"": ""1.0""
+    ""Version"": ""1.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 2,
-  ""VersionStr"": ""2.0""
+  ""Version"": ""2.0""
 }}";
 
         Assert.Equal(newFileExpected, newFileActual);
@@ -176,8 +167,7 @@ public sealed partial class FileFixTests : IDisposable
         FileFixEntity sharedFixEntity2 = new()
         {
             Name = "shared test fix",
-            Version = 2,
-            VersionStr = "2.0",
+            Version = "2.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA6"),
             Url = _testFixShared2Zip,
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
@@ -208,14 +198,12 @@ public sealed partial class FileFixTests : IDisposable
     ""WineDllOverrides"": null,
     ""GameId"": 1,
     ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": 2,
-    ""VersionStr"": ""2.0""
+    ""Version"": ""2.0""
   }},
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);

@@ -1,3 +1,4 @@
+using Api.Common.Interface.ServerApiInterface;
 using Common;
 using Common.Client;
 using Common.Client.FilesTools;
@@ -54,8 +55,7 @@ public sealed partial class FileFixTests
         _fileFixEntity = new()
         {
             Name = "test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "install folder",
@@ -68,8 +68,7 @@ public sealed partial class FileFixTests
         _fileFixVariantEntity = new()
         {
             Name = "test fix",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixVariantZip,
             InstallFolder = "install folder",
@@ -95,7 +94,7 @@ public sealed partial class FileFixTests
                 ),
             new(),
             new Mock<ILogger>().Object,
-                new(_httpClient, configMock),
+                new ServerApiInterface(_httpClient, configMock),
                 new Mock<IFixesProvider>().Object
             );
 
@@ -202,8 +201,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix compromised",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = $"{Consts.FilesBucketUrl}nointro/bsp_nointro.zip",
             MD5 = "badMD5",
@@ -225,8 +223,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix new folder",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "new folder",
@@ -251,8 +248,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -271,8 +267,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix new folder",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = "new folder",
@@ -297,8 +292,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -326,8 +320,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix absolute pack",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = Path.Combine("C:", "Windows", "temp", "test_fix"),
@@ -352,8 +345,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -377,8 +369,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix absolute pack",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixZip,
             InstallFolder = Path.Combine("{documents}", "test_fix"),
@@ -405,8 +396,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(installedExpected, installedActual);
@@ -435,8 +425,7 @@ public sealed partial class FileFixTests
         FileFixEntity newFileFix = new()
         {
             Name = "test fix",
-            Version = 2,
-            VersionStr = "2.0",
+            Version = "2.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixV2Zip,
             InstallFolder = "install folder",
@@ -538,8 +527,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         Assert.Equal(textExpected, textActual);
@@ -589,8 +577,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 2,
-  ""VersionStr"": ""2.0""
+  ""Version"": ""2.0""
 }}";
 
         Assert.Equal(textExpected, textActual);

@@ -1,19 +1,20 @@
 using Common.Entities;
 using CommunityToolkit.Diagnostics;
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 
-namespace Web.Blazor.Providers;
+namespace Common.Providers;
 
 public sealed class AppReleasesProvider
 {
-    private readonly ILogger<AppReleasesProvider> _logger;
+    private readonly ILogger _logger;
     private readonly HttpClient _httpClient;
 
     public AppReleaseEntity WindowsRelease { get; private set; }
     public AppReleaseEntity LinuxRelease { get; private set; }
 
     public AppReleasesProvider(
-        ILogger<AppReleasesProvider> logger,
+        ILogger logger,
         HttpClient httpClient
         )
     {
@@ -32,7 +33,7 @@ public sealed class AppReleasesProvider
     {
         _logger.LogInformation("Looking for new releases");
 
-        using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead);
+        using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -40,7 +41,7 @@ public sealed class AppReleasesProvider
             return;
         }
 
-        var releasesJson = await response.Content.ReadAsStringAsync();
+        var releasesJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
         var releases =
             JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)

@@ -131,7 +131,76 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
             {
                 var jsonText = File.ReadAllText(json);
 
-                var installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+                BaseInstalledFixEntity? installedFixes;
+
+                try
+                {
+                    installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+                }
+                catch
+                {
+                    var jsonLines = File.ReadAllLines(json);
+
+                    if (jsonText.Contains("VersionStr"))
+                    {
+                        for (var i = 0; i < jsonLines.Length; i++)
+                        {
+                            var line = jsonLines[i];
+                            if (line.Contains(@"""Version"":"))
+                            {
+                                jsonLines[i] = string.Empty;
+                            }
+                        }
+
+                        for (var i = 0; i < jsonLines.Length; i++)
+                        {
+                            if (jsonLines[i].Contains(@"""VersionStr"":"))
+                            {
+                                if (jsonLines[i].Contains("null"))
+                                {
+                                    jsonLines[i] = jsonLines[i].Replace(@"""VersionStr"": null", @"""Version"": ""1.0""");
+                                }
+                                else
+                                {
+                                    jsonLines[i] = jsonLines[i].Replace("VersionStr", "Version");
+                                }
+                            }
+                        }
+
+                        jsonText = string.Join(Environment.NewLine, jsonLines);
+                    }
+                    else
+                    {
+                        for (var i = 0; i < jsonLines.Length; i++)
+                        {
+                            var line = jsonLines[i];
+                            if (line.Contains(@"""Version"":"))
+                            {
+                                jsonLines[i] = @"""Version"": ""1.0""";
+                            }
+                        }
+
+                        jsonText = string.Join(Environment.NewLine, jsonLines);
+                    }
+
+                    if (jsonText.Contains("RegistryFixV2"))
+                    {
+                        jsonText = jsonText.Replace("RegistryFixV2", "RegistryFix");
+                    }
+
+                    try
+                    {
+                        installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+
+                        var instStr = JsonSerializer.Serialize(installedFixes!, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+                        File.WriteAllText(json, instStr);
+                    }
+                    catch
+                    {
+                        File.Delete(json);
+                        installedFixes = null;
+                    }
+                }
 
                 if (installedFixes is null)
                 {

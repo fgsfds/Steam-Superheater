@@ -25,7 +25,7 @@ namespace Avalonia.Desktop.ViewModels;
 internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
 {
     private readonly MainModel _mainModel;
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
     private readonly FixManager _fixManager;
     private readonly IFixesProvider _fixesProvider;
     private readonly IConfigProvider _config;
@@ -369,7 +369,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     public MainViewModel(
         MainModel mainModel,
-        ApiInterface apiInterface,
+        IApiInterface apiInterface,
         FixManager fixManager,
         IFixesProvider fixesProvider,
         IConfigProvider config,

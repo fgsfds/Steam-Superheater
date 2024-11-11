@@ -108,11 +108,8 @@ public sealed class FixesController : ControllerBase
     [ProducesResponseType(typeof(IncreaseInstallsCountOutMessage), StatusCodes.Status200OK)]
     public ActionResult<IncreaseInstallsCountOutMessage> AddNumberOfInstalls([FromBody] IncreaseInstallsCountInMessage message)
     {
-        if (!message.DontLog)
-        {
-            _ = _eventsProvider.LogEventAsync(EventTypeEnum.Install, message.AppVersion ??  new(2, 0, 0, 0), message.FixGuid);
-        }
-
+        _ = _eventsProvider.LogEventAsync(EventTypeEnum.Install, message.AppVersion ?? new(2, 0, 0, 0), message.FixGuid);
+        
         var installsCount = _fixesProvider.IncreaseFixInstallsCount(message.FixGuid);
 
         IncreaseInstallsCountOutMessage result = new() { InstallsCount = installsCount };

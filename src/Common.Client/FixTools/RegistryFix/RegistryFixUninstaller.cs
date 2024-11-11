@@ -1,7 +1,7 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Enums;
+using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Win32;
 
@@ -21,16 +21,18 @@ public sealed class RegistryFixUninstaller
             return;
         }
 
+        Guard2.IsOfType<RegistryInstalledFixEntity>(installedFix, out var installedRegFix);
+
         if (installedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
         {
             ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall this fix");
         }
 
-        if (installedFix is RegistryInstalledFixEntity installedRegFix)
+        foreach (var fix in installedRegFix.Entries)
         {
-            var index = installedRegFix.Key.IndexOf("\\");
-            var baseKey = installedRegFix.Key.Substring(0, index);
-            var subKey = installedRegFix.Key.Substring(index + 1);
+            var index = fix.Key.IndexOf('\\');
+            var baseKey = fix.Key.Substring(0, index);
+            var subKey = fix.Key.Substring(index + 1);
 
             var reg = baseKey switch
             {
@@ -48,84 +50,30 @@ public sealed class RegistryFixUninstaller
                     return;
                 }
 
-                if (installedRegFix.OriginalValue is null)
+                if (fix.OriginalValue is null)
                 {
-                    key.DeleteValue(installedRegFix.ValueName);
+                    key.DeleteValue(fix.ValueName);
                 }
                 else
                 {
-                    switch (installedRegFix.ValueType)
+                    switch (fix.ValueType)
                     {
                         case RegistryValueTypeEnum.String:
-                            key.SetValue(installedRegFix.ValueName, installedRegFix.OriginalValue);
+                            key.SetValue(fix.ValueName, fix.OriginalValue);
                             break;
                         case RegistryValueTypeEnum.Dword:
                             {
-                                var intValue = int.Parse(installedRegFix.OriginalValue);
-                                key.SetValue(installedRegFix.ValueName, intValue);
+                                var intValue = int.Parse(fix.OriginalValue);
+                                key.SetValue(fix.ValueName, intValue);
                                 break;
                             }
                         default:
-                            ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {installedRegFix.ValueType.GetType()}");
+                            ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
                             break;
                     }
                 }
             }
         }
-        else if (installedFix is RegistryInstalledFixV2Entity installedRegFixV2)
-        {
-            foreach (var fix in installedRegFixV2.Entries)
-            {
-                var index = fix.Key.IndexOf("\\");
-                var baseKey = fix.Key.Substring(0, index);
-                var subKey = fix.Key.Substring(index + 1);
-
-                var reg = baseKey switch
-                {
-                    "HKEY_CLASSES_ROOT" => Registry.ClassesRoot,
-                    "HKEY_CURRENT_USER" => Registry.CurrentUser,
-                    "HKEY_LOCAL_MACHINE" => Registry.LocalMachine,
-                    "HKEY_USERS" => Registry.Users,
-                    _ => ThrowHelper.ThrowNotSupportedException<RegistryKey>(),
-                };
-
-                using (var key = reg.OpenSubKey(subKey, true))
-                {
-                    if (key is null)
-                    {
-                        return;
-                    }
-
-                    if (fix.OriginalValue is null)
-                    {
-                        key.DeleteValue(fix.ValueName);
-                    }
-                    else
-                    {
-                        switch (fix.ValueType)
-                        {
-                            case RegistryValueTypeEnum.String:
-                                key.SetValue(fix.ValueName, fix.OriginalValue);
-                                break;
-                            case RegistryValueTypeEnum.Dword:
-                                {
-                                    var intValue = int.Parse(fix.OriginalValue);
-                                    key.SetValue(fix.ValueName, intValue);
-                                    break;
-                                }
-                            default:
-                                ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-        else
-        {
-            ThrowHelper.ThrowNotSupportedException();
-        }
-
     }
 }
 

@@ -4,7 +4,7 @@ namespace Api.Common.Messages;
 
 public sealed class CheckIfFixExistsOutMessage
 {
-    public required int? CurrentVersion { get; init; }
+    public required string CurrentVersion { get; init; }
 }
 
 

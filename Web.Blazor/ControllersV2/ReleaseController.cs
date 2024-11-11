@@ -1,8 +1,8 @@
 using Api.Common.Messages;
 using Common.Entities;
 using Common.Enums;
+using Common.Providers;
 using Microsoft.AspNetCore.Mvc;
-using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV2;
 

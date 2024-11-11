@@ -5,16 +5,16 @@ using Common.Enums;
 using System.Net.Http.Json;
 using System.Web;
 
-namespace Api.Common.Interface;
+namespace Api.Common.Interface.ServerApiInterface;
 
-public sealed partial class ApiInterface
+public sealed partial class ServerApiInterface : IApiInterface
 {
     private readonly HttpClient _httpClient;
     private readonly IConfigProvider _configProvider;
 
     private string ApiUrl => _configProvider.UseLocalApiAndRepo ? "https://localhost:7093/api2" : "https://superheater.fgsfds.link/api2";
 
-    public ApiInterface(
+    public ServerApiInterface(
         HttpClient httpClient,
         IConfigProvider configProvider
         )

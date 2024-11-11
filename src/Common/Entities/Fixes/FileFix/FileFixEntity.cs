@@ -18,8 +18,7 @@ public sealed class FileFixEntity : BaseFixEntity
     public FileFixEntity(bool _)
     {
         Name = string.Empty;
-        Version = 1;
-        VersionStr = "1.0";
+        Version = "1.0";
         Guid = Guid.NewGuid();
         Description = null;
         Changelog = null;
@@ -48,7 +47,6 @@ public sealed class FileFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
-        VersionStr = fix.VersionStr;
         Guid = fix.Guid;
         Description = fix.Description;
         Changelog = fix.Changelog;
@@ -197,13 +195,8 @@ public sealed class FileFixEntity : BaseFixEntity
                 return true;
             }
 
-            if (InstalledFix.VersionStr is not null &&
-                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr!, "<"))
-            {
-                return true;
-            }
-
-            if (InstalledFix.Version < Version)
+            if (InstalledFix.Version is not null &&
+                VersionComparer.Compare(InstalledFix.Version, Version!, "<"))
             {
                 return true;
             }
@@ -218,7 +211,6 @@ public sealed class FileFixEntity : BaseFixEntity
         {
             Name = this.Name,
             Version = this.Version,
-            VersionStr = this.VersionStr,
             Guid = this.Guid,
             Description = this.Description,
             Dependencies = this.Dependencies,

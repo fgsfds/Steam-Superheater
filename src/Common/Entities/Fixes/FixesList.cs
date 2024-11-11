@@ -54,6 +54,7 @@ public sealed class FixesList
     public bool HasUpdates => Fixes.Any(static x => x.IsOutdated);
 }
 
+
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,

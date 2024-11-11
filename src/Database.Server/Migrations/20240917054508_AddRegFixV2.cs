@@ -1,5 +1,4 @@
-﻿using Common.Enums;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
@@ -42,13 +41,6 @@ namespace Database.Server.Migrations
                 schema: "main",
                 table: "registry_fixes",
                 column: "fix_guid");
-
-
-            _ = migrationBuilder.InsertData(
-                table: "fix_types",
-                schema: "main",
-                columns: ["id", "name"],
-                values: [(byte)FixTypeEnum.RegistryFixV2, "Registry fix V2"]);
         }
 
         /// <inheritdoc />
@@ -80,13 +72,6 @@ namespace Database.Server.Migrations
                 schema: "main",
                 table: "games",
                 column: "name");
-
-
-            _ = migrationBuilder.DeleteData(
-                table: "fix_types",
-                schema: "main",
-                keyColumn: "id",
-                keyValue: (byte)FixTypeEnum.RegistryFixV2);
         }
     }
 }

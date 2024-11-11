@@ -14,7 +14,7 @@ public static class Consts
 
     public const string UpdateFolder = "update";
 
-    public const string FilesBucketUrl = "http://files.fgsfds.link/superheater/fixes/";
+    public const string FilesBucketUrl = "https://global.s3.cloud.ru/superheater/";
 
     public const string Bucket = "b70f50a9-files";
 
@@ -28,8 +28,12 @@ public static class Consts
 
     public const string LinuxOnly = "Linux Only";
 
-    public const string AllSuppoted = "All supported OSes";
+    public const string AllSupported = "All supported OSes";
 
     public const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
+
+    public const string FixesJsonUrl = "https://raw.githubusercontent.com/fgsfds/Steam-Superheater/refs/heads/master/db/fixes.json";
+
+    public const string NewsJsonUrl = "https://raw.githubusercontent.com/fgsfds/Steam-Superheater/refs/heads/master/db/news.json";
 }
 

@@ -65,6 +65,7 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
@@ -90,9 +91,6 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Margin="0" Text="Version: " VerticalAlignment="Center"/>
                                 <TextBlock Margin="0" Text="{Binding Version, Mode=OneWay}" VerticalAlignment="Center"/>
-                                <TextBlock Margin="5,0" Text=" " VerticalAlignment="Center"/>
-                                <TextBlock Margin="0" Text="Version str: " VerticalAlignment="Center"/>
-                                <TextBlock Margin="0" Text="{Binding VersionStr, Mode=OneWay}" VerticalAlignment="Center"/>
                             </StackPanel>
                             <TextBlock Margin="0" IsVisible="{Binding IsDisabled}" FontStyle="Italic" FontWeight="Thin" Text="Disabled" VerticalAlignment="Center"/>
                         </StackPanel>
@@ -166,6 +164,18 @@
                     HorizontalContentAlignment="Center"
                     Command="{Binding TestFixCommand}">
                 Test fix...
+            </Button>
+
+            <Button Grid.Column="0"
+                    Grid.ColumnSpan="2"
+                    Grid.Row="5"
+                    Margin="3,3,3,0"
+                    Padding="4"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding SaveFixesJsonCommand}"
+                    IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
+                Save fixes.json...
             </Button>
 
         </Grid>

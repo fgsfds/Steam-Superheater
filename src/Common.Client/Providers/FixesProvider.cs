@@ -12,7 +12,7 @@ namespace Common.Client.Providers;
 
 public sealed class FixesProvider : IFixesProvider
 {
-    private readonly ApiInterface _apiInterface;
+    private readonly IApiInterface _apiInterface;
     private readonly IGamesProvider _gamesProvider;
     private readonly IInstalledFixesProvider _installedFixesProvider;
     private readonly DatabaseContextFactory _dbContextFactory;
@@ -26,7 +26,7 @@ public sealed class FixesProvider : IFixesProvider
 
 
     public FixesProvider(
-        ApiInterface apiInterface,
+        IApiInterface apiInterface,
         IGamesProvider gamesProvider,
         IInstalledFixesProvider installedFixesProvider,
         DatabaseContextFactory dbContextFactory
@@ -172,8 +172,23 @@ public sealed class FixesProvider : IFixesProvider
         using var dbContext = _dbContextFactory.Get();
 
         var fixesCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.Fixes)!;
+
+        List<FixesList> currentFixesList;
+
+        try
+        {
+            currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
+        }
+        catch
+        {
+            fixesCacheDbEntity.Version = 0;
+            fixesCacheDbEntity.Data = "[]";
+            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            currentFixesList = [];
+        }
+
         var currentFixesVersion = fixesCacheDbEntity.Version!;
-        var currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
 
         var result = ResultEnum.Success;
         var message = string.Empty;
@@ -184,10 +199,14 @@ public sealed class FixesProvider : IFixesProvider
         if (!localFixesOnly)
         {
             var newFixesList = await _apiInterface.GetFixesListAsync(
-                currentFixesVersion, 
-                ClientProperties.CurrentVersion,
-                ClientProperties.IsDeveloperMode
-                ).ConfigureAwait(false);
+                currentFixesVersion,
+                ClientProperties.CurrentVersion).ConfigureAwait(false);
+
+            if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version == 0)
+            {
+                currentFixesList = [];
+                currentFixesVersion = -1;
+            }
 
             if (newFixesList.IsSuccess && newFixesList.ResultObject?.Version > currentFixesVersion)
             {
@@ -248,8 +267,7 @@ public sealed class FixesProvider : IFixesProvider
     private Result PrepareFixes(BaseFixEntity fix)
     {
         if (string.IsNullOrEmpty(fix.Name) ||
-            fix.Version < 1 ||
-            string.IsNullOrEmpty(fix.VersionStr))
+            string.IsNullOrEmpty(fix.Version))
         {
             return new(ResultEnum.Error, "Name and Version are required to upload a fix.");
         }

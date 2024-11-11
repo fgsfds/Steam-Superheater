@@ -9,7 +9,7 @@
              x:DataType="vm:NewsViewModel"
              x:Class="Avalonia.Desktop.Pages.NewsPage">
 
-    <Grid RowDefinitions="*,auto,auto,auto,auto" Margin="5">
+    <Grid RowDefinitions="*,auto,auto,auto,auto,auto" Margin="5">
 
         <ScrollViewer Grid.Row="0" Margin="5"
                       Name="NewsScroll"
@@ -128,6 +128,16 @@
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">
             Add...
+        </Button>
+
+        <Button Grid.Row="5"
+                Margin="5"
+                Padding="8"
+                Command="{Binding SaveNewsJsonCommand}"
+                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center">
+            Save news.json...
         </Button>
 
     </Grid>

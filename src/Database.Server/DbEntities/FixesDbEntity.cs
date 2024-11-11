@@ -27,11 +27,8 @@ public sealed class FixesDbEntity
     [Column("name")]
     public required string Name { get; set; }
 
-    [Column("version_old")]
-    public required int VersionOld { get; set; }
-
     [Column("version")]
-    public required string? Version { get; set; }
+    public required string Version { get; set; }
 
     [Column("is_windows_supported")]
     public required bool IsWindowsSupported { get; set; }

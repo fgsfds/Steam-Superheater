@@ -20,8 +20,7 @@ public sealed partial class FileFixTests
         FileFixEntity fixEntity = new()
         {
             Name = "test fix with patch",
-            Version = 1,
-            VersionStr = "1.0",
+            Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
             Url = _testFixPatchZip,
             InstallFolder = "install folder",
@@ -42,8 +41,7 @@ public sealed partial class FileFixTests
   ""WineDllOverrides"": null,
   ""GameId"": 1,
   ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": 1,
-  ""VersionStr"": ""1.0""
+  ""Version"": ""1.0""
 }}";
 
         var exeActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));

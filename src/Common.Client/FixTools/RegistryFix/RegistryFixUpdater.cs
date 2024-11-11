@@ -1,6 +1,6 @@
 using Common.Entities;
 using Common.Entities.Fixes;
-using Common.Entities.Fixes.RegistryFixV2;
+using Common.Entities.Fixes.RegistryFix;
 using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.RegistryFix;
@@ -23,7 +23,7 @@ public sealed class RegistryFixUpdater
 
     public Result<BaseInstalledFixEntity> UpdateFix(
         GameEntity game,
-        RegistryFixV2Entity regFix
+        RegistryFixEntity regFix
         )
     {
         Guard.IsNotNull(regFix.InstalledFix);

@@ -1,5 +1,7 @@
 using Avalonia.Controls.Notifications;
+using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
+using Avalonia.Platform.Storage;
 using Common;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
@@ -7,6 +9,7 @@ using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Text.Json;
 
 namespace Avalonia.Desktop.ViewModels;
 
@@ -151,6 +154,48 @@ internal sealed partial class NewsViewModel : ObservableObject
         var news = _newsProvider.GetNewsPage(_loadedPage);
 
         _ = NewsList.AddRange(news);
+    }
+
+
+    /// <summary>
+    /// Preview resulting json
+    /// </summary>
+    [RelayCommand]
+    private async Task SaveNewsJsonAsync()
+    {
+        try
+        {
+            var topLevel = AvaloniaProperties.TopLevel;
+
+            var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+                new FilePickerSaveOptions
+                {
+                    Title = "Open Text File",
+                    DefaultExtension = "json",
+                    ShowOverwritePrompt = true,
+                    SuggestedFileName = "news.json"
+                }).ConfigureAwait(true);
+
+            if (file is null)
+            {
+                return;
+            }
+
+            var jsonString = JsonSerializer.Serialize([.. NewsList.OrderByDescending(x => x.Date)], NewsListEntityContext.Default.ListNewsEntity);
+            File.WriteAllText(file.Path.AbsolutePath, jsonString);
+        }
+        catch (Exception)
+        {
+            //_logger.LogCritical(ex, "Error while saving json");
+
+            var length = App.Random.Next(1, 100);
+            var repeatedString = new string('\u200B', length);
+
+            App.NotificationManager.Show(
+                "Error while saving json",
+                NotificationType.Error
+                );
+        }
     }
 
     #endregion Relay Commands

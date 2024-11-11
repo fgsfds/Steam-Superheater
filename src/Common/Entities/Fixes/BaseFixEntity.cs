@@ -1,7 +1,6 @@
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.RegistryFixV2;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
@@ -16,7 +15,6 @@ namespace Common.Entities.Fixes;
 [JsonDerivedType(typeof(FileFixEntity), typeDiscriminator: "FileFix")]
 [JsonDerivedType(typeof(HostsFixEntity), typeDiscriminator: "HostsFix")]
 [JsonDerivedType(typeof(RegistryFixEntity), typeDiscriminator: "RegistryFix")]
-[JsonDerivedType(typeof(RegistryFixV2Entity), typeDiscriminator: "RegistryFixV2")]
 [JsonDerivedType(typeof(TextFixEntity), typeDiscriminator: "TextFix")]
 public abstract class BaseFixEntity
 {
@@ -33,14 +31,7 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Fix version
     /// </summary>
-    [Obsolete("Remove when there's no versions <2.0.0")]
-    public int Version { get; set; }
-
-    /// <summary>
-    /// Fix version
-    /// </summary>
-    [Obsolete("Make required when there's no versions <2.0.0")]
-    public string? VersionStr { get; set; }
+    public required string Version { get; set; }
 
     /// <summary>
     /// Supported OSes
@@ -71,18 +62,6 @@ public abstract class BaseFixEntity
     /// Notes for the fix that are only visible in the editor
     /// </summary>
     public string? Notes { get; set; }
-
-    /// <summary>
-    /// Number of installs
-    /// </summary>
-    [Obsolete("Remove when there's no versions <1.3.5")]
-    public int Installs { get; set; }
-
-    /// <summary>
-    /// Fix's score
-    /// </summary>
-    [Obsolete("Remove when there's no versions <1.3.5")]
-    public int Score { get; set; }
 
     /// <summary>
     /// Is fix disabled in the database
@@ -126,13 +105,8 @@ public abstract class BaseFixEntity
                 return false;
             }
 
-            if (InstalledFix.VersionStr is not null &&
-                VersionComparer.Compare(InstalledFix.VersionStr, VersionStr!, "<"))
-            {
-                return true;
-            }
-
-            if (InstalledFix.Version < Version)
+            if (InstalledFix.Version is not null &&
+                VersionComparer.Compare(InstalledFix.Version, Version!, "<"))
             {
                 return true;
             }
@@ -168,7 +142,7 @@ public abstract class BaseFixEntity
     }
 
     [JsonIgnore]
-    public string? InstalledVersionStr => InstalledFix?.VersionStr;
+    public string? InstalledVersionStr => InstalledFix?.Version;
 
     [JsonIgnore]
     public virtual bool DoesRequireAdminRights => false;

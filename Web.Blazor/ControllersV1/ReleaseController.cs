@@ -1,6 +1,6 @@
 using Common.Entities;
+using Common.Providers;
 using Microsoft.AspNetCore.Mvc;
-using Web.Blazor.Providers;
 
 namespace Web.Blazor.ControllersV1;
 

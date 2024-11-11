@@ -14,8 +14,7 @@ public sealed class HostsFixEntity : BaseFixEntity
     public HostsFixEntity(bool _)
     {
         Name = string.Empty;
-        Version = 1;
-        VersionStr = "1.0";
+        Version = "1.0";
         Guid = Guid.NewGuid();
         Description = null;
         Changelog = null;
@@ -32,7 +31,6 @@ public sealed class HostsFixEntity : BaseFixEntity
     {
         Name = fix.Name;
         Version = fix.Version;
-        VersionStr = fix.VersionStr;
         Guid = fix.Guid;
         Description = fix.Description;
         Changelog = fix.Changelog;
