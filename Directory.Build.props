@@ -13,5 +13,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <MvvmToolkitEnableINotifyPropertyChangingSupport>false</MvvmToolkitEnableINotifyPropertyChangingSupport>
     <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
   </PropertyGroup>
 </Project>
