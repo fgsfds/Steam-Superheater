@@ -56,6 +56,12 @@ public sealed class NewsProvider : INewsProvider
         {
             var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
 
+            if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version == 0)
+            {
+                currentNewsList = [];
+                currentNewsVersion = -1;
+            }
+
             if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
             {
                 _logger.LogInformation("Getting online news");
