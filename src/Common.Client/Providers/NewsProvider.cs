@@ -49,30 +49,39 @@ public sealed class NewsProvider : INewsProvider
         var currentNewsVersion = newsCacheDbEntity.Version!;
         var currentNewsList = JsonSerializer.Deserialize(newsCacheDbEntity.Data, NewsListEntityContext.Default.ListNewsEntity)!;
 
-        var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
+        ResultEnum result = ResultEnum.Success;
+        string resultMessage = string.Empty;
 
-        if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
+        if (!ClientProperties.IsOfflineMode)
         {
-            _logger.LogInformation("Getting online news");
+            var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
 
-            var newNewsDates = newNewsList.ResultObject.News.Select(x => x.Date);
-
-            foreach (var item in currentNewsList.ToList())
+            if (newNewsList.IsSuccess && newNewsList.ResultObject?.Version > currentNewsVersion)
             {
-                if (newNewsDates.Contains(item.Date))
+                _logger.LogInformation("Getting online news");
+
+                var newNewsDates = newNewsList.ResultObject.News.Select(x => x.Date);
+
+                foreach (var item in currentNewsList.ToList())
                 {
-                    _ = currentNewsList.Remove(item);
+                    if (newNewsDates.Contains(item.Date))
+                    {
+                        _ = currentNewsList.Remove(item);
+                    }
                 }
+
+                currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
+                newsCacheDbEntity.Version = newNewsList.ResultObject.Version;
+                newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsListEntityContext.Default.ListNewsEntity);
+
+                _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
 
-            currentNewsList = [.. newNewsList.ResultObject.News.Concat(currentNewsList)];
-            newsCacheDbEntity.Version = newNewsList.ResultObject.Version;
-            newsCacheDbEntity.Data = JsonSerializer.Serialize(currentNewsList, NewsListEntityContext.Default.ListNewsEntity);
+            _newsEntitiesPages = [];
 
-            _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
+            result = newNewsList.ResultEnum;
+            resultMessage = newNewsList.Message;
         }
-
-        _newsEntitiesPages = [];
 
         byte page = 1;
 
@@ -89,7 +98,7 @@ public sealed class NewsProvider : INewsProvider
 
         UpdateReadStatusOfExistingNews();
 
-        return new(newNewsList.ResultEnum, newNewsList.Message);
+        return new(result, resultMessage);
     }
 
     /// <inheritdoc/>

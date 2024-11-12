@@ -28,6 +28,11 @@ public sealed class AppUpdateInstaller(
     /// <returns>Has newer version</returns>
     public async Task<Result> CheckForUpdates(Version currentVersion)
     {
+        if (ClientProperties.IsOfflineMode)
+        {
+            return new(ResultEnum.NotFound, string.Empty);
+        }
+
         _logger.LogInformation("Checking for updates");
 
         var result = await _apiInterface.GetLatestAppReleaseAsync(OSEnumHelper.CurrentOSEnum).ConfigureAwait(false);

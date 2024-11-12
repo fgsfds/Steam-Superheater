@@ -29,6 +29,11 @@ public static class Program
             ClientProperties.IsInSteamDeckGameMode = true;
         }
 
+        if (args.Contains("--offline"))
+        {
+            ClientProperties.IsOfflineMode = true;
+        }
+
         if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();

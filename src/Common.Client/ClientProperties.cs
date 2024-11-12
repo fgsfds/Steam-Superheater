@@ -67,6 +67,11 @@ public static class ClientProperties
     public static bool IsInSteamDeckGameMode { get; set; }
 
     /// <summary>
+    /// Is started in offline mode
+    /// </summary>
+    public static bool IsOfflineMode { get; set; }
+
+    /// <summary>
     /// Did the app crash on previous launch
     /// </summary>
     public static Tuple<bool, string>? HasCrashed { get; set; }

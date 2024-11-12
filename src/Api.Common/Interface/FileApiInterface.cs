@@ -106,6 +106,13 @@ public sealed class FileApiInterface : IApiInterface
         }
     }
 
+    public Task<Result<string?>> GetSignedUrlAsync(string path)
+    {
+        var url = Consts.FilesBucketUrl + "uploads/" + path;
+
+        return Task.FromResult(new Result<string?>(ResultEnum.Success, url, string.Empty));
+    }
+
 
     public Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
 
@@ -122,8 +129,6 @@ public sealed class FileApiInterface : IApiInterface
     public Task<Result<string?>> CheckIfFixExistsAsync(Guid guid) => Task.FromResult(new Result<string?>(ResultEnum.Error, null, string.Empty));
 
     public Task<Result<GetFixesStatsOutMessage>> GetFixesStats() => Task.FromResult(new Result<GetFixesStatsOutMessage>(ResultEnum.Error, null, string.Empty));
-
-    public Task<Result<string?>> GetSignedUrlAsync(string path) => Task.FromResult(new Result<string?>(ResultEnum.Error, null, "Fixes uploading is currently unavailable"));
 
     public Task<Result> ReportFixAsync(Guid guid, string text) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
 }

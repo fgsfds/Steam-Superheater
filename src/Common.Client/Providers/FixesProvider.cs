@@ -196,7 +196,7 @@ public sealed class FixesProvider : IFixesProvider
         Installs = null;
         Scores = null;
 
-        if (!localFixesOnly)
+        if (!localFixesOnly && !ClientProperties.IsOfflineMode)
         {
             var newFixesList = await _apiInterface.GetFixesListAsync(
                 currentFixesVersion,

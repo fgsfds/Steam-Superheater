@@ -1,3 +1,5 @@
+using CommunityToolkit.Diagnostics;
+
 namespace Common.Helpers;
 
 public static class Consts
@@ -16,7 +18,7 @@ public static class Consts
 
     public const string FilesBucketUrl = "https://global.s3.cloud.ru/superheater/";
 
-    public const string Bucket = "b70f50a9-files";
+    public const string Bucket = "";
 
     public const string Hosts = @"C:\Windows\System32\drivers\etc\hosts";
 
