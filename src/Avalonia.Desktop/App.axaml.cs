@@ -136,6 +136,7 @@ public sealed class App : Application
             messageBox.Show();
 
             _logger?.LogCritical(ex, "Error while starting app");
+            _mutex.Dispose();
         }
     }
 
@@ -143,6 +144,7 @@ public sealed class App : Application
     {
         var httpClient = BindingsManager.Provider.GetRequiredService<HttpClient>();
         httpClient?.Dispose();
+        _mutex.Dispose();
     }
 
     /// <summary>
