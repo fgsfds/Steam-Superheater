@@ -6,7 +6,7 @@ public static class BindingsManager
 {
     private static ServiceCollection? _instance;
     private static ServiceProvider? _provider;
-    private static readonly object _syncRoot = new();
+    private static readonly Lock _syncRoot = new();
 
     public static ServiceCollection Instance
     {
