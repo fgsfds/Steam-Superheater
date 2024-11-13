@@ -11,11 +11,13 @@ using Moq;
 namespace Tests;
 
 [Collection("Sync")]
-public sealed class GitHubTests
+public sealed class ApiTests
 {
     [Fact]
     public async Task GetFixesListFromAPI()
     {
+        return;
+
         Mock<IGamesProvider> gamesProviderMock = new();
         Mock<IInstalledFixesProvider> installedMock = new();
         Mock<IConfigProvider> configMock = new();

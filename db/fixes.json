@@ -3824,12 +3824,12 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gta3/III.Project2DFX.zip",
-        "FileSize": 352196,
+        "FileSize": 359581,
         "InstallFolder": "scripts",
-        "MD5": "F64E9940AFB5D944CAC6A1049CFCD3AA",
+        "MD5": "D6D1E3656EF914C71F6A3C2293CFA33B",
         "Name": "Project2DFX",
         "Guid": "24250f74-7113-4356-a8e0-7a52fc3e8498",
-        "Version": "1.0",
+        "Version": "24.11",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "19368ff4-62aa-4c48-8216-c551f463a176"
@@ -4108,12 +4108,12 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gtasa/SA.Project2DFX.zip",
-        "FileSize": 341336,
+        "FileSize": 337769,
         "InstallFolder": "scripts",
-        "MD5": "029756874A8393227785729B81F09D65",
+        "MD5": "AEA893E26AE4DB3F41E8CF150C8A0495",
         "Name": "Project2DFX",
         "Guid": "fc0104dc-ce35-43ac-a457-ddbabc8308db",
-        "Version": "1.0",
+        "Version": "24.11",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "7a9c50d0-f82a-4b3a-8cd3-e15d5810a245"
@@ -4291,12 +4291,12 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gtavc/VC.Project2DFX.zip",
-        "FileSize": 357904,
+        "FileSize": 365559,
         "InstallFolder": "scripts",
-        "MD5": "9CC59A845BC6BF5FC38C67FC3E03746B",
+        "MD5": "09893F0AEE21681B2BE55DD807BA0F76",
         "Name": "Project2DFX",
         "Guid": "1728749b-a7fb-4a21-9961-b525d0a4161e",
-        "Version": "1.0",
+        "Version": "24.11",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "7764507d-277e-418d-bde8-dd29c9300995"
