@@ -1,4 +1,5 @@
-﻿using Common.Entities.Fixes;
+﻿using Common.Entities;
+using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using System.Text;
@@ -129,5 +130,39 @@ public sealed class DatabaseTests
 
         _output.WriteLine(sb.ToString());
         Assert.True(sb.Length < 1);
+    }
+
+
+    [Fact]
+    public void DatabaseNewsIntegrityTest()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        using HttpClient httpClient = new();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "BuildLauncher");
+        httpClient.Timeout = TimeSpan.FromSeconds(30);
+
+        string newsJsonString;
+
+        if (File.Exists("../../../../db/news.json"))
+        {
+            newsJsonString = File.ReadAllText("../../../../db/news.json");
+        }
+        else if (File.Exists("../../../../../db/news.json"))
+        {
+            newsJsonString = File.ReadAllText("../../../../../db/news.json");
+        }
+        else
+        {
+            Assert.Fail();
+            return;
+        }
+
+        var fixesJson = JsonSerializer.Deserialize(newsJsonString, NewsListEntityContext.Default.ListNewsEntity);
+
+        Assert.NotNull(fixesJson);
     }
 }
