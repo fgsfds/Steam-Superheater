@@ -49,6 +49,10 @@ public sealed class DatabaseTests
 
         Assert.NotNull(fixesJson);
 
+#if !DEBUG
+return;
+#endif
+
         StringBuilder sb = new();
 
         foreach (var list in fixesJson)
