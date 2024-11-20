@@ -196,7 +196,12 @@ public sealed class FixesProvider : IFixesProvider
         Installs = null;
         Scores = null;
 
-        if (!localFixesOnly && !ClientProperties.IsOfflineMode)
+        if (ClientProperties.IsOfflineMode)
+        {
+            var newFixesList = File.ReadAllText(@"..\..\..\..\db\fixes.json");
+            currentFixesList = JsonSerializer.Deserialize(newFixesList, FixesListContext.Default.ListFixesList)!;
+        }
+        else if (!localFixesOnly)
         {
             var newFixesList = await _apiInterface.GetFixesListAsync(
                 currentFixesVersion,

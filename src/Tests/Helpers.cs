@@ -4,7 +4,6 @@ namespace Tests;
 
 public static class Helpers
 {
-
     private const string TestTempFolder = "test_temp";
     public const string GameExe = "game exe.exe";
     public const string RegKey = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\AppCompatFlags\\Layers_test";

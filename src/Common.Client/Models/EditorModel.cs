@@ -487,7 +487,19 @@ public sealed class EditorModel
 
     public void SaveFixesJson(string file)
     {
-        var jsonString = JsonSerializer.Serialize(_fixesList, FixesListContext.Default.ListFixesList);
+        var sortedFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
+
+        foreach (var list in sortedFixesList)
+        {
+            list.Fixes = [.. list.Fixes
+                .OrderByDescending(x => !x.IsDisabled)
+                .ThenByDescending(x => !x.Name.StartsWith("No Intro"))
+                .ThenBy(x => x.Name)
+                ];
+        }
+
+        var jsonString = JsonSerializer.Serialize(sortedFixesList, FixesListContext.Default.ListFixesList);
+
         File.WriteAllText(file, jsonString);
     }
 }

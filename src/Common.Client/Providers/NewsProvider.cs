@@ -52,7 +52,12 @@ public sealed class NewsProvider : INewsProvider
         ResultEnum result = ResultEnum.Success;
         string resultMessage = string.Empty;
 
-        if (!ClientProperties.IsOfflineMode)
+        if (ClientProperties.IsOfflineMode)
+        {
+            var newNewsList = File.ReadAllText(@"..\..\..\..\db\news.json"); 
+            currentNewsList = JsonSerializer.Deserialize(newNewsList, NewsListEntityContext.Default.ListNewsEntity)!;
+        }
+        else
         {
             var newNewsList = await _apiInterface.GetNewsListAsync(currentNewsVersion).ConfigureAwait(false);
 
