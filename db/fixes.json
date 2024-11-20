@@ -1890,25 +1890,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/id/doom1_crispy_v1.zip",
-        "FileSize": 8762094,
-        "InstallFolder": "base",
-        "MD5": "75D001F5BA186AD3391791D40FA44A47",
-        "Name": "Crispy Doom",
-        "Guid": "2568a112-e7cc-4c35-b984-7fd98ea22fac",
-        "Version": "6.0",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "## Crispy Doom v6.0\n*by fabiangreffrath*\n\n\u003Cimg src=\u0022https://raw.githubusercontent.com/fabiangreffrath/crispy-doom/master/data/doom.png\u0022 /\u003E\n\n[https://github.com/fabiangreffrath/crispy-doom](https://github.com/fabiangreffrath/crispy-doom)\n\n**This fix doesn\u0027t override Unity port. Select \u0022Launch DOS version\u0022 to launch Crispy Doom.**\n\nCrispy Doom is a friendly fork of Chocolate Doom that provides a higher display resolution, removes the static limits of the Doom engine and offers further optional visual, tactical and physical enhancements while remaining entirely config file, savegame, netplay and demo compatible with the original.\n\n## Doom 2 Minor Sprite Fixing Project - v2.0\n*by Revenant100*\n\n[https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/](https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/)\n\n## Widescreen Assets\n*by OpenRift*\n\n[https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/](https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/)\n\n## Ultrawide Statusbar\n*by Ragu*\n\n[https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/](https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/)",
-        "Tags": [
-          "#enhancements",
-          "#source_port",
-          "#ultrawide",
-          "#widescreen"
-        ],
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/id/doom_nugget_v3_2_0.zip",
         "FileSize": 24065469,
         "MD5": "32FEE0A69A336E1FE40E8F49AF820809",
@@ -1942,6 +1923,25 @@
           "#additional_content"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/id/doom1_crispy_v1.zip",
+        "FileSize": 8762094,
+        "InstallFolder": "base",
+        "MD5": "75D001F5BA186AD3391791D40FA44A47",
+        "Name": "Crispy Doom",
+        "Guid": "2568a112-e7cc-4c35-b984-7fd98ea22fac",
+        "Version": "6.0",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## Crispy Doom v6.0\n*by fabiangreffrath*\n\n\u003Cimg src=\u0022https://raw.githubusercontent.com/fabiangreffrath/crispy-doom/master/data/doom.png\u0022 /\u003E\n\n[https://github.com/fabiangreffrath/crispy-doom](https://github.com/fabiangreffrath/crispy-doom)\n\n**This fix doesn\u0027t override Unity port. Select \u0022Launch DOS version\u0022 to launch Crispy Doom.**\n\nCrispy Doom is a friendly fork of Chocolate Doom that provides a higher display resolution, removes the static limits of the Doom engine and offers further optional visual, tactical and physical enhancements while remaining entirely config file, savegame, netplay and demo compatible with the original.\n\n## Doom 2 Minor Sprite Fixing Project - v2.0\n*by Revenant100*\n\n[https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/](https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/)\n\n## Widescreen Assets\n*by OpenRift*\n\n[https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/](https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/)\n\n## Ultrawide Statusbar\n*by Ragu*\n\n[https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/](https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/)",
+        "Tags": [
+          "#enhancements",
+          "#source_port",
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": true
       }
     ]
   },
@@ -1949,6 +1949,25 @@
     "GameId": 9050,
     "GameName": "DOOM 3",
     "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/id/doom3_le_v14.zip",
+        "FileSize": 283387571,
+        "ConfigFile": "d3le\\autoexec.cfg",
+        "MD5": "7EDDA36AE149D7179BB3CDD58DE315D1",
+        "Name": "The Lost Mission",
+        "Guid": "ebbcf676-2401-4a8f-9058-b50a67252292",
+        "Version": "1.4",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "bc919ea0-c25f-4c98-bda4-a8ed6444c934"
+        ],
+        "Description": "## The Lost Mission v1.4\n*by Arl.*\n\n\u003Cimg src=\u0022https://media.moddb.com/images/members/1/211/210342/profile/lm.png\u0022 /\u003E\n\n[https://www.moddb.com/mods/the-lost-mission](https://www.moddb.com/mods/the-lost-mission)\n\nThis is a port of the BFG Edition campaing \u0027The Lost Mission\u0027 for 2004\u0027s Doom 3 release.\n\nResurrection of Evil expansion pack is also required.\n\n**Select from Mods menu in the base game or add LostMission.exe as a non-steam game.**",
+        "Tags": [
+          "#additional_content"
+        ],
+        "IsDisabled": false
+      },
       {
         "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/id/doom3_dhewm_v154.zip",
@@ -1967,25 +1986,6 @@
           "#widescreen"
         ],
         "Notes": "port doesn\u0027t work on deck",
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/id/doom3_le_v14.zip",
-        "FileSize": 283387571,
-        "ConfigFile": "d3le\\autoexec.cfg",
-        "MD5": "7EDDA36AE149D7179BB3CDD58DE315D1",
-        "Name": "The Lost Mission",
-        "Guid": "ebbcf676-2401-4a8f-9058-b50a67252292",
-        "Version": "1.4",
-        "SupportedOSes": "Windows",
-        "Dependencies": [
-          "bc919ea0-c25f-4c98-bda4-a8ed6444c934"
-        ],
-        "Description": "## The Lost Mission v1.4\n*by Arl.*\n\n\u003Cimg src=\u0022https://media.moddb.com/images/members/1/211/210342/profile/lm.png\u0022 /\u003E\n\n[https://www.moddb.com/mods/the-lost-mission](https://www.moddb.com/mods/the-lost-mission)\n\nThis is a port of the BFG Edition campaing \u0027The Lost Mission\u0027 for 2004\u0027s Doom 3 release.\n\nResurrection of Evil expansion pack is also required.\n\n**Select from Mods menu in the base game or add LostMission.exe as a non-steam game.**",
-        "Tags": [
-          "#additional_content"
-        ],
         "IsDisabled": false
       }
     ]
@@ -2357,6 +2357,24 @@
     "Fixes": [
       {
         "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/deadly_premonition_ultrawide.zip",
+        "FileSize": 439,
+        "MD5": "C27D0C4EA503ED3BF678BAA6351FAC81",
+        "Name": "Ultrawide Fix",
+        "Guid": "402a5bd2-a4dd-41ba-b438-d2ee9a205a74",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "a9fa9377-54b7-4de0-bf4e-0001c988c885"
+        ],
+        "Description": "## Ultrawide Fix\n*by fgsfds*\n\nFixes stretching in ultrawide and wider resolutions\n\nMade using **SUWSF** by *PhantomGamers*\n\n[https://github.com/PhantomGamers/SUWSF](https://github.com/PhantomGamers/SUWSF)",
+        "Tags": [
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/deadly_premonotion_dpfix095.zip",
         "FileSize": 1608545,
         "ConfigFile": "DPfix.ini",
@@ -2377,24 +2395,6 @@
           "#nointro"
         ],
         "Notes": "The game doesn\u0027t work on linux at all",
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/deadly_premonition_ultrawide.zip",
-        "FileSize": 439,
-        "MD5": "C27D0C4EA503ED3BF678BAA6351FAC81",
-        "Name": "Ultrawide Fix",
-        "Guid": "402a5bd2-a4dd-41ba-b438-d2ee9a205a74",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Dependencies": [
-          "a9fa9377-54b7-4de0-bf4e-0001c988c885"
-        ],
-        "Description": "## Ultrawide Fix\n*by fgsfds*\n\nFixes stretching in ultrawide and wider resolutions\n\nMade using **SUWSF** by *PhantomGamers*\n\n[https://github.com/PhantomGamers/SUWSF](https://github.com/PhantomGamers/SUWSF)",
-        "Tags": [
-          "#ultrawide"
-        ],
         "IsDisabled": false
       }
     ]
@@ -3723,26 +3723,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gta3/GTA3.WidescreenFix.zip",
-        "FileSize": 1095886,
-        "ConfigFile": "scripts\\GTA3.WidescreenFix.ini",
-        "MD5": "BE00DCA5F8A7D50711335C470572AE6B",
-        "WineDllOverrides": [
-          "d3d8"
-        ],
-        "Name": "ASI Loader \u002B Widescreen Fix",
-        "Guid": "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6",
-        "Version": "1.1",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "## Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config",
-        "Tags": [
-          "#ultrawide",
-          "#widescreen"
-        ],
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gta3-essential_v1_2.zip",
         "FileSize": 5201457,
         "ConfigFile": "scripts\\GTA3.WidescreenFix.ini",
@@ -3766,41 +3746,6 @@
           "#drm_free"
         ],
         "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gta3-vigilante_v22_08.zip",
-        "FileSize": 133560,
-        "InstallFolder": "scripts",
-        "MD5": "141AF4CA5FDD608AE39703092BB964B0",
-        "Name": "Framerate Vigilante",
-        "Guid": "348acbb1-4a8b-434b-83a1-c700143230fe",
-        "Version": "22.8",
-        "SupportedOSes": "Windows",
-        "Dependencies": [
-          "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6"
-        ],
-        "Description": "## Framerate Vigilante\r\n*by Junior_Djjr*\r\n\r\n[https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/](https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/)\r\n\r\nThe game is designed to run at 30 FPS, so you will notice bugs when playing with higher or lower FPS.\r\n\r\nThis mod is intended to fix these problems.",
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gta3_ginput_v1.zip",
-        "FileSize": 154506,
-        "ConfigFile": "scripts\\GInputIII.ini",
-        "MD5": "EBFB086988D95AA52C26F7B2ECCC5F02",
-        "Name": "GInput",
-        "Guid": "cb9380c0-2c61-4f3d-b100-832304b0d694",
-        "Version": "1.11",
-        "SupportedOSes": "Windows, Linux",
-        "Dependencies": [
-          "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6"
-        ],
-        "Description": "## GInputIII 1.11\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
-        "Tags": [
-          "#controller_support"
-        ],
-        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -3842,6 +3787,77 @@
       },
       {
         "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/nointro/gta3vssa_nointro.zip",
+        "FileSize": 1630,
+        "InstallFolder": "movies",
+        "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
+        "Name": "No Intro Fix",
+        "Guid": "002bf5eb-7b99-4519-895c-4592f4512228",
+        "Version": "1.0",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "Blank replacements for intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gta3/GTA3.WidescreenFix.zip",
+        "FileSize": 1095886,
+        "ConfigFile": "scripts\\GTA3.WidescreenFix.ini",
+        "MD5": "BE00DCA5F8A7D50711335C470572AE6B",
+        "WineDllOverrides": [
+          "d3d8"
+        ],
+        "Name": "ASI Loader \u002B Widescreen Fix",
+        "Guid": "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6",
+        "Version": "1.1",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config",
+        "Tags": [
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gta3-vigilante_v22_08.zip",
+        "FileSize": 133560,
+        "InstallFolder": "scripts",
+        "MD5": "141AF4CA5FDD608AE39703092BB964B0",
+        "Name": "Framerate Vigilante",
+        "Guid": "348acbb1-4a8b-434b-83a1-c700143230fe",
+        "Version": "22.8",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6"
+        ],
+        "Description": "## Framerate Vigilante\r\n*by Junior_Djjr*\r\n\r\n[https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/](https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/)\r\n\r\nThe game is designed to run at 30 FPS, so you will notice bugs when playing with higher or lower FPS.\r\n\r\nThis mod is intended to fix these problems.",
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gta3_ginput_v1.zip",
+        "FileSize": 154506,
+        "ConfigFile": "scripts\\GInputIII.ini",
+        "MD5": "EBFB086988D95AA52C26F7B2ECCC5F02",
+        "Name": "GInput",
+        "Guid": "cb9380c0-2c61-4f3d-b100-832304b0d694",
+        "Version": "1.11",
+        "SupportedOSes": "Windows, Linux",
+        "Dependencies": [
+          "d8f77b17-7fbb-48dc-9cd8-a56298df6dc6"
+        ],
+        "Description": "## GInputIII 1.11\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
+        "Tags": [
+          "#controller_support"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gta3-silent_v1_1_b9.zip",
         "FileSize": 161172,
         "ConfigFile": "scripts\\SilentPatchIII.ini",
@@ -3862,22 +3878,6 @@
           "#crashfix"
         ],
         "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/nointro/gta3vssa_nointro.zip",
-        "FileSize": 1630,
-        "InstallFolder": "movies",
-        "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
-        "Name": "No Intro Fix",
-        "Guid": "002bf5eb-7b99-4519-895c-4592f4512228",
-        "Version": "1.0",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "Blank replacements for intro videos",
-        "Tags": [
-          "#nointro"
-        ],
-        "IsDisabled": false
       }
     ]
   },
@@ -3899,28 +3899,6 @@
           "f46efd2c-9bb5-430e-9e38-b5fce605860f"
         ],
         "Description": "## ColAccel v1.5\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/IV.EFLC.ColAccel](https://github.com/ThirteenAG/IV.EFLC.ColAccel)\n\nColAccel is a .asi plugin for GTA IV and EFLC which creates a \u0027colCache.dat\u0027 file on the first load, containing all the data actually used by the game from the collision meshes and accelerating your game load time by 50% or more.",
-        "Tags": [
-          "#performance_improvement"
-        ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/common/dxvk_x32.zip",
-        "FileSize": 4173602,
-        "InstallFolder": "GTAIV",
-        "MD5": "D98254EF3D3910C818449F5C6A483998",
-        "WineDllOverrides": [
-          "d3d9",
-          "d3d10core",
-          "d3d11",
-          "dxgi"
-        ],
-        "Name": "dxvk",
-        "Guid": "e8329022-256a-493d-8b08-785e85e74370",
-        "Version": "2.3",
-        "SupportedOSes": "Windows",
-        "Description": "## dxvk v2.3\n\n[https://github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk)\n\nA Vulkan-based translation layer for Direct3D 9/10/11 which increases performance in some cases.\r\n\r\nWhile increasing performance, dxvk may cause heavy graphics glitches.",
         "Tags": [
           "#performance_improvement"
         ],
@@ -4018,6 +3996,28 @@
         ],
         "Description": "## GTA IV Various Fixes Mod v2.0.1\r\n*by valentyn-l*\r\n\r\n[https://github.com/valentyn-l/GTAIV.EFLC.Various.Fixes](https://github.com/valentyn-l/GTAIV.EFLC.Various.Fixes)\r\n\r\nVarious Fixes is a modification for Grand Theft Auto IV and EFLC, purpose of which is fix various kinds of bugs in game. Mod is not limited only on fixes, it also includes restoration of some things, console content, various texture improvements, etc.",
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/common/dxvk_x32.zip",
+        "FileSize": 4173602,
+        "InstallFolder": "GTAIV",
+        "MD5": "D98254EF3D3910C818449F5C6A483998",
+        "WineDllOverrides": [
+          "d3d9",
+          "d3d10core",
+          "d3d11",
+          "dxgi"
+        ],
+        "Name": "dxvk",
+        "Guid": "e8329022-256a-493d-8b08-785e85e74370",
+        "Version": "2.3",
+        "SupportedOSes": "Windows",
+        "Description": "## dxvk v2.3\n\n[https://github.com/doitsujin/dxvk](https://github.com/doitsujin/dxvk)\n\nA Vulkan-based translation layer for Direct3D 9/10/11 which increases performance in some cases.\r\n\r\nWhile increasing performance, dxvk may cause heavy graphics glitches.",
+        "Tags": [
+          "#performance_improvement"
+        ],
+        "IsDisabled": false
       }
     ]
   },
@@ -4025,26 +4025,6 @@
     "GameId": 12120,
     "GameName": "Grand Theft Auto: San Andreas",
     "Fixes": [
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-essential_v1.zip",
-        "FileSize": 9396693,
-        "ConfigFile": "scripts\\GTASA.WidescreenFix.ini",
-        "MD5": "1F4BA4D4544FCEE1668714AD51858DD0",
-        "WineDllOverrides": [
-          "vorbisFile"
-        ],
-        "Name": "ASI Loader \u002B Widescreen Fix",
-        "Guid": "0c283cd8-d599-41e7-8adf-6c20f3baad04",
-        "Version": "20.05",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "## ASI Loader \u002B Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gtasa](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gtasa)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config.\r\n\r\n## Mod Loader v0.3.7\r\n*by Link2012*\r\n\r\n[https://www.gtagarage.com/mods/show.php?id=25377](https://www.gtagarage.com/mods/show.php?id=25377)\r\n\r\n#### This fix also downgrades *gta-sa.exe* to version 1.0 because mods aren\u0027t compatible with the later version.",
-        "Tags": [
-          "#ultrawide",
-          "#widescreen"
-        ],
-        "IsDisabled": true
-      },
       {
         "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-essential_v1_1.zip",
@@ -4069,41 +4049,6 @@
           "#drm_free"
         ],
         "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-vigilante_v22_8.zip",
-        "FileSize": 133301,
-        "InstallFolder": "scripts",
-        "MD5": "B33DB6CD8A8A36039441E6F92B5362A3",
-        "Name": "Framerate Vigilante",
-        "Guid": "25135180-2fce-429e-bd8c-885071f6a351",
-        "Version": "22.8",
-        "SupportedOSes": "Windows, Linux",
-        "Dependencies": [
-          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
-        ],
-        "Description": "## Framerate Vigilante\r\n*by Junior_Djjr*\r\n\r\n[https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/](https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/)\r\n\r\nThe game is designed to run at 30 FPS, so you will notice bugs when playing with higher or lower FPS.\r\n\r\nThis mod is intended to fix these problems.",
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa_ginput_v1.zip",
-        "FileSize": 166987,
-        "ConfigFile": "scripts\\GInputSA.ini",
-        "MD5": "416176AB85C77D1C84A2B57C200ACCAB",
-        "Name": "GInput",
-        "Guid": "5af511ba-373b-4a76-ac56-26404c143242",
-        "Version": "1.11",
-        "SupportedOSes": "Windows, Linux",
-        "Dependencies": [
-          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
-        ],
-        "Description": "## GInputIII 1.11\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
-        "Tags": [
-          "#controller_support"
-        ],
-        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -4145,27 +4090,6 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-silent_v1_1_b33.zip",
-        "FileSize": 212746,
-        "InstallFolder": "scripts",
-        "ConfigFile": "scripts\\SilentPatchSA.ini",
-        "MD5": "B9040BBF0890F27A41B18E57FB61793E",
-        "Name": "Silent Patch",
-        "Guid": "3bcf4b1a-8471-4ba7-8117-8745e7885152",
-        "Version": "1.1b33",
-        "SupportedOSes": "Windows, Linux",
-        "Dependencies": [
-          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
-        ],
-        "Description": "## Silent Patch 1.1 Build 33\n*by Silent*\n\n[https://github.com/CookiePLMonster/SilentPatch](https://github.com/CookiePLMonster/SilentPatch)\n\nPatch that fixes a lot of problems with the game. Check the link above for a full changelog.",
-        "Tags": [
-          "#bugfixes",
-          "#crashfix"
-        ],
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-skygfx_v1_7.zip",
         "FileSize": 644131,
         "MD5": "0B85C221EFB99DAA25B9D1D285169CBD",
@@ -4197,6 +4121,82 @@
           "#nointro"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-essential_v1.zip",
+        "FileSize": 9396693,
+        "ConfigFile": "scripts\\GTASA.WidescreenFix.ini",
+        "MD5": "1F4BA4D4544FCEE1668714AD51858DD0",
+        "WineDllOverrides": [
+          "vorbisFile"
+        ],
+        "Name": "ASI Loader \u002B Widescreen Fix",
+        "Guid": "0c283cd8-d599-41e7-8adf-6c20f3baad04",
+        "Version": "20.05",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## ASI Loader \u002B Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gtasa](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gtasa)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config.\r\n\r\n## Mod Loader v0.3.7\r\n*by Link2012*\r\n\r\n[https://www.gtagarage.com/mods/show.php?id=25377](https://www.gtagarage.com/mods/show.php?id=25377)\r\n\r\n#### This fix also downgrades *gta-sa.exe* to version 1.0 because mods aren\u0027t compatible with the later version.",
+        "Tags": [
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-vigilante_v22_8.zip",
+        "FileSize": 133301,
+        "InstallFolder": "scripts",
+        "MD5": "B33DB6CD8A8A36039441E6F92B5362A3",
+        "Name": "Framerate Vigilante",
+        "Guid": "25135180-2fce-429e-bd8c-885071f6a351",
+        "Version": "22.8",
+        "SupportedOSes": "Windows, Linux",
+        "Dependencies": [
+          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
+        ],
+        "Description": "## Framerate Vigilante\r\n*by Junior_Djjr*\r\n\r\n[https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/](https://www.mixmods.com.br/2022/08/iii-vc-sa-framerate-vigilante/)\r\n\r\nThe game is designed to run at 30 FPS, so you will notice bugs when playing with higher or lower FPS.\r\n\r\nThis mod is intended to fix these problems.",
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa_ginput_v1.zip",
+        "FileSize": 166987,
+        "ConfigFile": "scripts\\GInputSA.ini",
+        "MD5": "416176AB85C77D1C84A2B57C200ACCAB",
+        "Name": "GInput",
+        "Guid": "5af511ba-373b-4a76-ac56-26404c143242",
+        "Version": "1.11",
+        "SupportedOSes": "Windows, Linux",
+        "Dependencies": [
+          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
+        ],
+        "Description": "## GInputIII 1.11\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
+        "Tags": [
+          "#controller_support"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gtasa-silent_v1_1_b33.zip",
+        "FileSize": 212746,
+        "InstallFolder": "scripts",
+        "ConfigFile": "scripts\\SilentPatchSA.ini",
+        "MD5": "B9040BBF0890F27A41B18E57FB61793E",
+        "Name": "Silent Patch",
+        "Guid": "3bcf4b1a-8471-4ba7-8117-8745e7885152",
+        "Version": "1.1b33",
+        "SupportedOSes": "Windows, Linux",
+        "Dependencies": [
+          "0c283cd8-d599-41e7-8adf-6c20f3baad04"
+        ],
+        "Description": "## Silent Patch 1.1 Build 33\n*by Silent*\n\n[https://github.com/CookiePLMonster/SilentPatch](https://github.com/CookiePLMonster/SilentPatch)\n\nPatch that fixes a lot of problems with the game. Check the link above for a full changelog.",
+        "Tags": [
+          "#bugfixes",
+          "#crashfix"
+        ],
+        "IsDisabled": true
       }
     ]
   },
@@ -4204,26 +4204,6 @@
     "GameId": 12110,
     "GameName": "Grand Theft Auto: Vice City",
     "Fixes": [
-      {
-        "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gtavc/GTAVC.WidescreenFix.zip",
-        "FileSize": 1099077,
-        "ConfigFile": "scripts\\GTAVC.WidescreenFix.ini",
-        "MD5": "879AB5425120A878EC48CCB975C78750",
-        "WineDllOverrides": [
-          "d3d8"
-        ],
-        "Name": "ASI Loader \u002B Widescreen Fix",
-        "Guid": "8c16cb5f-e2cd-4535-ae49-92394a26a44d",
-        "Version": "1.1",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "## Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config",
-        "Tags": [
-          "#ultrawide",
-          "#widescreen"
-        ],
-        "IsDisabled": true
-      },
       {
         "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gtavc-essential_v1_2.zip",
@@ -4249,25 +4229,6 @@
           "#drm_free"
         ],
         "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta/gtavc_ginput_v1.zip",
-        "FileSize": 163957,
-        "ConfigFile": "scripts\\GInputVC.ini",
-        "MD5": "C87CCF56D520F3F6A4FDE20EC6173E47",
-        "Name": "GInput",
-        "Guid": "0bc6acef-d261-49a7-af02-88265125467b",
-        "Version": "1.11a",
-        "SupportedOSes": "Windows, Linux",
-        "Dependencies": [
-          "8c16cb5f-e2cd-4535-ae49-92394a26a44d"
-        ],
-        "Description": "## GInputIII 1.11a\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
-        "Tags": [
-          "#controller_support"
-        ],
-        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -4309,6 +4270,61 @@
       },
       {
         "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/nointro/gta3vssa_nointro.zip",
+        "FileSize": 1630,
+        "InstallFolder": "movies",
+        "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
+        "Name": "No Intro Fix",
+        "Guid": "1af29817-a7cb-439a-8989-fad6b54f1696",
+        "Version": "1.0",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "Blank replacements for intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gtavc/GTAVC.WidescreenFix.zip",
+        "FileSize": 1099077,
+        "ConfigFile": "scripts\\GTAVC.WidescreenFix.ini",
+        "MD5": "879AB5425120A878EC48CCB975C78750",
+        "WineDllOverrides": [
+          "d3d8"
+        ],
+        "Name": "ASI Loader \u002B Widescreen Fix",
+        "Guid": "8c16cb5f-e2cd-4535-ae49-92394a26a44d",
+        "Version": "1.1",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## Widescreen Fix \n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/gta3)\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n\nMany different options available in the config",
+        "Tags": [
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gtavc_ginput_v1.zip",
+        "FileSize": 163957,
+        "ConfigFile": "scripts\\GInputVC.ini",
+        "MD5": "C87CCF56D520F3F6A4FDE20EC6173E47",
+        "Name": "GInput",
+        "Guid": "0bc6acef-d261-49a7-af02-88265125467b",
+        "Version": "1.11a",
+        "SupportedOSes": "Windows, Linux",
+        "Dependencies": [
+          "8c16cb5f-e2cd-4535-ae49-92394a26a44d"
+        ],
+        "Description": "## GInputIII 1.11a\n*by Silent*\n\n[https://gtaforums.com/topic/562765-ginput/](https://gtaforums.com/topic/562765-ginput/)\n\nThis modification completely rewrites GTA controls handling and ditches DirectInput in favour of XInput. This way, your PlayStation 3 and XBOX 360 pads will be handled by the game just perfectly, taking advantage of all their features, including analog triggers.",
+        "Tags": [
+          "#controller_support"
+        ],
+        "IsDisabled": true
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/gta/gtavc_quicksave_v1_0.zip",
         "FileSize": 103411,
         "MD5": "09D8F92A73480095DF0D5A4408FB9827",
@@ -4347,22 +4363,6 @@
           "#crashfix"
         ],
         "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/nointro/gta3vssa_nointro.zip",
-        "FileSize": 1630,
-        "InstallFolder": "movies",
-        "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
-        "Name": "No Intro Fix",
-        "Guid": "1af29817-a7cb-439a-8989-fad6b54f1696",
-        "Version": "1.0",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "Blank replacements for intro videos",
-        "Tags": [
-          "#nointro"
-        ],
-        "IsDisabled": false
       }
     ]
   },
@@ -5518,22 +5518,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/common/asi_loader_640.zip",
-        "FileSize": 1083519,
-        "InstallFolder": "Max Payne 3",
-        "MD5": "70DC92A460350E4D5E74138E3D39736F",
-        "WineDllOverrides": [
-          "dinput8"
-        ],
-        "Name": "ASI Loader",
-        "Guid": "d6a9eb21-4b37-40aa-9598-e91488e3c38e",
-        "Version": "6.4.0",
-        "SupportedOSes": "Windows",
-        "Description": "## Ultimate ASI Loader v6.4.0\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/Ultimate-ASI-Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader)\n\nThis is a DLL file which adds ASI plugin loading functionality to any game.",
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/MaxPayne3.FusionFix/releases/download/v2.1.1/MaxPayne3.FusionFix.zip",
         "FileSize": 2164400,
         "InstallFolder": "Max Payne 3",
@@ -5572,6 +5556,22 @@
           "#ultrawide"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/common/asi_loader_640.zip",
+        "FileSize": 1083519,
+        "InstallFolder": "Max Payne 3",
+        "MD5": "70DC92A460350E4D5E74138E3D39736F",
+        "WineDllOverrides": [
+          "dinput8"
+        ],
+        "Name": "ASI Loader",
+        "Guid": "d6a9eb21-4b37-40aa-9598-e91488e3c38e",
+        "Version": "6.4.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Ultimate ASI Loader v6.4.0\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/Ultimate-ASI-Loader](https://github.com/ThirteenAG/Ultimate-ASI-Loader)\n\nThis is a DLL file which adds ASI plugin loading functionality to any game.",
+        "IsDisabled": true
       }
     ]
   },
@@ -5590,6 +5590,27 @@
         "Version": "1.0",
         "SupportedOSes": "Windows",
         "Description": "##MegaTagmension Blanc \u002B Neptune VS Zombies - No Intro Fix\r\n*by \u3010\u30CD\u30C3\u30D7\u3011\u2014 Excal \u2014*\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=2979729763](https://steamcommunity.com/sharedfiles/filedetails/?id=2979729763)\r\n\r\nSkips the annoying company intro logos that takes 3 seconds before you could skip them.\r\n\r\n\r\n",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 412020,
+    "GameName": "Metro Exodus",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "credits.webm"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "6c89a3e4-cec2-4677-9ebb-da2379bac452",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos.",
         "Tags": [
           "#nointro"
         ],
@@ -7228,24 +7249,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Lyall/RERevFix/releases/download/v1.0.0/RERevFix.v1.0.0.zip",
-        "FileSize": 16372,
-        "ConfigFile": "RERevFix.ini",
-        "MD5": "411C16D2FE725CA34E335DC078232074",
-        "Name": "[Deprecated] RERevFix",
-        "Guid": "60728c70-6503-49f3-8d7f-8c9d07f7e8c9",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Description": "# Use Fusion Fix instead\r\n\r\n## RERevFix v1.0\n*by Lyall* \n\n[https://github.com/Lyall/RERevFix](https://github.com/Lyall/RERevFix)\n\nThis is a DLL hook that fixes various issues with Resident Evil Revelations relating to ultrawide support and more.\n\n- Support for ultrawide/custom resolutions.\n- FOV adjustment.\n- Uncap 120 FPS limit.\n- Adjust shadow quality.\n\n**Warning**\n\nThis game uses Valve Anti Cheat for raid mode in multiplayer.\n\nIt is recommended NOT to play this mode with this fix installed.",
-        "Tags": [
-          "#enhancements",
-          "#fps_unlock",
-          "#ultrawide"
-        ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rerev/ResidentEvilRevelations.FusionFix.zip",
         "FileSize": 1450614,
         "ConfigFile": "scripts\\ResidentEvilRevelations.FusionFix.ini",
@@ -7258,6 +7261,24 @@
         "Version": "24.02",
         "SupportedOSes": "Windows",
         "Description": "## Resident Evil Revelations Fusion Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev)\n\n- Unlocks all available display resolutions\n- Unlocks FPS when FRAME RATE option is set to VARIABLE\n- Added UltraWide support\n- (X) FMVs are stretched in UltraWide\n- Added an option to disable damage overlay\n- Added an option to enable borderless windowed mode\n- Added an option to increase FOV\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting\n\n**Warning**\n\nThis game uses Valve Anti Cheat for raid mode in multiplayer.\n\nIt is recommended NOT to play this mode with this fix installed.",
+        "Tags": [
+          "#enhancements",
+          "#fps_unlock",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/Lyall/RERevFix/releases/download/v1.0.0/RERevFix.v1.0.0.zip",
+        "FileSize": 16372,
+        "ConfigFile": "RERevFix.ini",
+        "MD5": "411C16D2FE725CA34E335DC078232074",
+        "Name": "[Deprecated] RERevFix",
+        "Guid": "60728c70-6503-49f3-8d7f-8c9d07f7e8c9",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "# Use Fusion Fix instead\r\n\r\n## RERevFix v1.0\n*by Lyall* \n\n[https://github.com/Lyall/RERevFix](https://github.com/Lyall/RERevFix)\n\nThis is a DLL hook that fixes various issues with Resident Evil Revelations relating to ultrawide support and more.\n\n- Support for ultrawide/custom resolutions.\n- FOV adjustment.\n- Uncap 120 FPS limit.\n- Adjust shadow quality.\n\n**Warning**\n\nThis game uses Valve Anti Cheat for raid mode in multiplayer.\n\nIt is recommended NOT to play this mode with this fix installed.",
         "Tags": [
           "#enhancements",
           "#fps_unlock",
@@ -8269,22 +8290,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/spec_ops_tl_remove_update_check.zip",
-        "FileSize": 86798,
-        "InstallFolder": "{documents}\\My Games\\SpecOps-TheLine\\SRGame\\Config",
-        "MD5": "A12EE3636560BE1A7313FC90AB4CE465",
-        "Name": "Remove Update Check",
-        "Guid": "7146680d-4dc1-449e-ab03-b17aaf3ebcf9",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Description": "## Spec Ops: The Line - Remove Update Check\n*by LuKeStorm*\n\n[https://community.pcgamingwiki.com/files/file/2962-spec-ops-the-line-ini-decryptencrypt-tool-rewritten/](https://community.pcgamingwiki.com/files/file/2962-spec-ops-the-line-ini-decryptencrypt-tool-rewritten/)\n\nThis fix will replace SREngine.ini in your Documents folder with an edited version with the update check timeout set to 1 sec (instead of 60 secs) effectly bypassing the sometimes lengthy update check.\n\nThe line edited is;\n\u0060\u0060\u0060\n[IpDrv.OnlineTitleFileDownloadMcp]\nTimeOut=60\n\u0060\u0060\u0060\n\nThe \u0022TimeOut=60\u0022 was changed to \u0022TimeOut=1\u0022 then the SREngine.ini file was re-encrypted. This file was edited using the decrypt tool Spec Ops: The Line - INI Decrypt/Encrypt Tool (rewritten) by LuKeStorm based on the tool by Rick Gibbed from 2012.",
-        "Tags": [
-          "#enhancements"
-        ],
-        "IsDisabled": true
-      },
-      {
-        "$type": "FileFix",
         "FilesToDelete": [
           "SRGame\\Movies\\2KLogo.bik",
           "SRGame\\Movies\\Legal.bik",
@@ -8303,6 +8308,22 @@
           "#nointro"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/spec_ops_tl_remove_update_check.zip",
+        "FileSize": 86798,
+        "InstallFolder": "{documents}\\My Games\\SpecOps-TheLine\\SRGame\\Config",
+        "MD5": "A12EE3636560BE1A7313FC90AB4CE465",
+        "Name": "Remove Update Check",
+        "Guid": "7146680d-4dc1-449e-ab03-b17aaf3ebcf9",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Spec Ops: The Line - Remove Update Check\n*by LuKeStorm*\n\n[https://community.pcgamingwiki.com/files/file/2962-spec-ops-the-line-ini-decryptencrypt-tool-rewritten/](https://community.pcgamingwiki.com/files/file/2962-spec-ops-the-line-ini-decryptencrypt-tool-rewritten/)\n\nThis fix will replace SREngine.ini in your Documents folder with an edited version with the update check timeout set to 1 sec (instead of 60 secs) effectly bypassing the sometimes lengthy update check.\n\nThe line edited is;\n\u0060\u0060\u0060\n[IpDrv.OnlineTitleFileDownloadMcp]\nTimeOut=60\n\u0060\u0060\u0060\n\nThe \u0022TimeOut=60\u0022 was changed to \u0022TimeOut=1\u0022 then the SREngine.ini file was re-encrypted. This file was edited using the decrypt tool Spec Ops: The Line - INI Decrypt/Encrypt Tool (rewritten) by LuKeStorm based on the tool by Rick Gibbed from 2012.",
+        "Tags": [
+          "#enhancements"
+        ],
+        "IsDisabled": true
       }
     ]
   },
@@ -9812,21 +9833,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/dawn_of_war_config.zip",
-        "FileSize": 1266284,
-        "MD5": "1731C477AEA1DE8A42C286669387EFCF",
-        "Name": "Config Utility",
-        "Guid": "3a2d0917-ba1a-4a16-a307-8021c60cfa4f",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Description": "Configuration utility taken from Dark Crusade that supports more resolutions compared to the original one",
-        "Tags": [
-          "#enhancements"
-        ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://global.s3.cloud.ru/superheater/dawn_of_war_widescreen.zip",
         "FileSize": 21500386,
         "Variants": [
@@ -9843,6 +9849,21 @@
         "Tags": [
           "#ultrawide",
           "#widescreen"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/dawn_of_war_config.zip",
+        "FileSize": 1266284,
+        "MD5": "1731C477AEA1DE8A42C286669387EFCF",
+        "Name": "Config Utility",
+        "Guid": "3a2d0917-ba1a-4a16-a307-8021c60cfa4f",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Configuration utility taken from Dark Crusade that supports more resolutions compared to the original one",
+        "Tags": [
+          "#enhancements"
         ],
         "IsDisabled": false
       }
