@@ -7076,15 +7076,15 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/re1/ResidentEvil.FusionFix.zip",
-        "FileSize": 1245557,
+        "FileSize": 1141521,
         "ConfigFile": "scripts\\ResidentEvil.FusionFix.ini",
-        "MD5": "0F943E7829173CA7A4F66636E4963BBC",
+        "MD5": "8071E5F34D0775CB8E3E115161FC4CDC",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "0fc9f86a-c3af-4e0e-b90b-45da91d7f676",
-        "Version": "23.11",
+        "Version": "24.11.19",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Resident Evil Fusion Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re1](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re1)\n\n- Added an option to make all resolutions available in main menu, previously the game was hardcoded to use a predefined list up to 2560x1600\n- Added an option to hide the mouse cursor after a set interval\n- Added an option to enable door skip\n- Added an option to enable borderless windowed mode\n- Added an option to disable color correction\n- Added an option to disable noise filter\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting",
         "Tags": [
