@@ -1495,6 +1495,29 @@
     ]
   },
   {
+    "GameId": 356430,
+    "GameName": "Chris Sawyer\u0027s Locomotion",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/openloco_v24_11.zip",
+        "FileSize": 3448508,
+        "MD5": "1ba100a06d1962729ed1ce7fe4b711d7",
+        "Name": "OpenLoco",
+        "Guid": "e0252fda-c9ac-4c64-9d15-b2c7146d60b9",
+        "Version": "21.11",
+        "SupportedOSes": "Windows",
+        "Description": "## OpenLoco v21.11\r\n\r\n[https://github.com/OpenLoco/OpenLoco](https://github.com/OpenLoco/OpenLoco)\r\n\r\nOpenLoco is an open-source re-implementation of Chris Sawyer\u0027s Locomotion (CSL), the spiritual successor to Transport Tycoon. OpenLoco aims to improve the game similar to how OpenTTD improved Transport Tycoon, and OpenRCT2 improved RollerCoaster Tycoon.",
+        "Tags": [
+          "#source_port",
+          "#widescreen",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 15270,
     "GameName": "Cold Fear",
     "Fixes": [
@@ -2906,6 +2929,29 @@
     ]
   },
   {
+    "GameId": 1996630,
+    "GameName": "Dungeon Keeper Gold\u2122",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://global.s3.cloud.ru/superheater/dungeon-keeper-keeperfx_v1_2_0.zip",
+        "FileSize": 428095907,
+        "MD5": "278cdef0d01c0ffce1294f04acede825",
+        "Name": "KeeperFX",
+        "Guid": "c0079c87-84c4-4e9f-8839-f8232d4fa8f7",
+        "Version": "1.2.0",
+        "SupportedOSes": "Windows",
+        "Description": "## KeeperFX v1.2.0\r\n\r\n[https://keeperfx.net/](https://keeperfx.net/)\r\n\r\nKeeperFX is an open-source remake and fan expansion of Dungeon Keeper .\r\n\r\nThe main goal of KeeperFX is to preserve and expand upon the original Dungeon Keeper experience, offering many new features, improvements, and much more while staying true to the original feeling of the game.\r\n\r\nYou can delve into the original campaign, or enjoy custom content created by the community and shared on the Workshop.\r\n\r\n**Features**\r\n- Windows 7/10/11 support\r\n- Higher screen resolutions\r\n- Modernized controls\r\n- Many bugfixes\r\n- Additional campaigns and maps\r\n- New level script commands\r\n- New creatures, textures and sprites\r\n- Multiplayer\r\n- And much more!",
+        "Tags": [
+          "#source_port",
+          "#widescreen",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 411300,
     "GameName": "ELEX",
     "Fixes": [
@@ -3983,7 +4029,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/gta\\gta4-various-fixes_v2_0_1.zip",
+        "Url": "https://global.s3.cloud.ru/superheater/gta/gta4-various-fixes_v2_0_1.zip",
         "FileSize": 1563737041,
         "InstallFolder": "GTAIV",
         "MD5": "05E1E49BF1A1A46AF10E84B31B336334",
@@ -9189,15 +9235,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://global.s3.cloud.ru/superheater/tomb_raider/tomb-raider-1-tr1x_v4_5_1.zip",
-        "FileSize": 309267220,
+        "Url": "https://global.s3.cloud.ru/superheater/tomb_raider/tomb-raider-1-tr1x_v4_6_1.zip",
+        "FileSize": 309324998,
         "ConfigFile": "TR1X_ConfigTool.exe",
-        "MD5": "9345B6FE6055762C234EC105C754A307",
+        "MD5": "19b699525fd2913557b08092259b2c61",
         "Name": "TR1X \u002B Unfinished Business",
         "Guid": "174629fa-0e1c-4d6a-9184-5c16923a202c",
-        "Version": "4.5.1",
+        "Version": "4.6.1",
         "SupportedOSes": "Windows",
-        "Description": "## TR1X v4.5.1\n\n[https://github.com/LostArtefacts/TR1X](https://github.com/LostArtefacts/TR1X)\n\nThis is an open source implementation of the classic Tomb Raider I game (1996), made by reverse engineering the TombATI / GLRage variant of the original game and replacing proprietary audio/video libraries with open source variants.\n\nIt adds support for modern OSes, high resolution, bugfixes and gameplay improvements.\n\nAlso includes Unfinished Business addon.\n\n**Disable Steam Input for a proper controller support**",
+        "Description": "## TR1X v4.6.1\n\n[https://github.com/LostArtefacts/TR1X](https://github.com/LostArtefacts/TR1X)\n\nThis is an open source implementation of the classic Tomb Raider I game (1996), made by reverse engineering the TombATI / GLRage variant of the original game and replacing proprietary audio/video libraries with open source variants.\n\nIt adds support for modern OSes, high resolution, bugfixes and gameplay improvements.\n\nAlso includes Unfinished Business addon.\n\n**Disable Steam Input for a proper controller support**",
         "Tags": [
           "#additional_content",
           "#bugfixes",
