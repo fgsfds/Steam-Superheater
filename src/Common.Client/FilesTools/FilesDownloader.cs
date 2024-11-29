@@ -115,7 +115,7 @@ public sealed class FilesDownloader : IFilesDownloader
 
             var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
 
-            if (!hash.Equals(fileHash))
+            if (!hash.Equals(fileHash, StringComparison.OrdinalIgnoreCase))
             {
                 return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
             }

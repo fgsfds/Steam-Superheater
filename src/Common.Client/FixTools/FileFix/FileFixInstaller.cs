@@ -430,7 +430,7 @@ public sealed class FileFixInstaller
             hashStr = Convert.ToHexString(hash);
         }
 
-        return fixMD5.Equals(hashStr);
+        return fixMD5.Equals(hashStr, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
