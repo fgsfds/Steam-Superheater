@@ -21,6 +21,7 @@ public sealed class EditorModel
     private readonly IGamesProvider _gamesProvider;
     private readonly FilesUploader _filesUploader;
     private readonly IApiInterface _apiInterface;
+    private readonly HttpClient _httpClient;
 
     private List<FixesList> _fixesList = [];
     private List<GameEntity> _availableGamesList = [];
@@ -35,13 +36,15 @@ public sealed class EditorModel
         IFixesProvider fixesProvider,
         IGamesProvider gamesProvider,
         FilesUploader filesUploader,
-        IApiInterface apiInterface
+        IApiInterface apiInterface,
+        HttpClient httpClient
         )
     {
         _fixesProvider = fixesProvider;
         _gamesProvider = gamesProvider;
         _filesUploader = filesUploader;
         _apiInterface = apiInterface;
+        _httpClient = httpClient;
     }
 
 
@@ -496,6 +499,26 @@ public sealed class EditorModel
                 .ThenByDescending(x => !x.Name.StartsWith("No Intro"))
                 .ThenBy(x => x.Name)
                 ];
+        }
+
+        foreach (var list in sortedFixesList)
+        {
+            foreach (var fix in list.Fixes)
+            {
+                if (fix is FileFixEntity fixEntity &&
+                    fixEntity.Url is not null &&
+                    fixEntity.Url.StartsWith(Consts.FilesBucketUrl))
+                {
+                    if (fixEntity.MD5 is null ||
+                        fixEntity.FileSize is null)
+                    {
+                        var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
+
+                        fixEntity.FileSize = header.Content.Headers.ContentLength;
+                        fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");
+                    }
+                }
+            }
         }
 
         var jsonString = JsonSerializer.Serialize(sortedFixesList, FixesListContext.Default.ListFixesList);

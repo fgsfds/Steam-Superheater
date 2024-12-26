@@ -63,7 +63,7 @@ public sealed class FilesDownloader : IFilesDownloader
         {
             await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
         }
-        catch (TaskCanceledException)
+        catch (OperationCanceledException)
         {
             await fileStream.DisposeAsync().ConfigureAwait(false);
 
