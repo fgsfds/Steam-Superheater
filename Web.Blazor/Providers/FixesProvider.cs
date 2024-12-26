@@ -649,7 +649,7 @@ public sealed class FixesProvider
 
 
                 //md5 for s3 files
-                if (fix.Url.StartsWith(Consts.FilesBucketUrl))
+                if (fix.Url.StartsWith(Consts.FilesRepo))
                 {
                     if (result.Headers.ETag?.Tag is null)
                     {
@@ -823,7 +823,7 @@ public sealed class FixesProvider
         {
             return BitConverter.ToString(response.Content.Headers.ContentMD5).Replace("-", string.Empty);
         }
-        else if (fixUrl.StartsWith(Consts.FilesBucketUrl) && response.Headers.ETag?.Tag is not null)
+        else if (fixUrl.StartsWith(Consts.FilesRepo) && response.Headers.ETag?.Tag is not null)
         {
             var md5fromEtag = response.Headers.ETag.Tag.Replace("\"", "");
 

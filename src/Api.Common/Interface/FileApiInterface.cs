@@ -108,7 +108,7 @@ public sealed class FileApiInterface : IApiInterface
 
     public Task<Result<string?>> GetSignedUrlAsync(string path)
     {
-        var url = Consts.FilesBucketUrl + "uploads/" + path;
+        var url = Consts.UploadsFolder + path;
 
         return Task.FromResult(new Result<string?>(ResultEnum.Success, url, string.Empty));
     }

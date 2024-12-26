@@ -507,7 +507,7 @@ public sealed class EditorModel
             {
                 if (fix is FileFixEntity fixEntity &&
                     fixEntity.Url is not null &&
-                    fixEntity.Url.StartsWith(Consts.FilesBucketUrl))
+                    fixEntity.Url.StartsWith(Consts.FilesRepo))
                 {
                     if (fixEntity.MD5 is null ||
                         fixEntity.FileSize is null)

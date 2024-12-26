@@ -99,7 +99,7 @@ return;
                 }
 
                 //md5 of files from s3
-                if (url.StartsWith(Consts.FilesBucketUrl))
+                if (url.StartsWith(Consts.FilesRepo))
                 {
                     if (url.EndsWith("re4_re4hd_v1_1.zip"))
                     {

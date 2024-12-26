@@ -16,7 +16,13 @@ public static class Consts
 
     public const string UpdateFolder = "update";
 
-    public const string FilesBucketUrl = "https://global.s3.cloud.ru/superheater/";
+    public const string FilesRepo = "https://s3.fgsfds.link/superheater/";
+
+    /// <summary>
+    /// Path to the files repository
+    /// </summary>
+    public const string UploadsFolder = "https://s3.fgsfds.link/uploads/superheater/";
+
 
     public const string Bucket = "";
 
