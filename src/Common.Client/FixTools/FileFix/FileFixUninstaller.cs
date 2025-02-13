@@ -47,7 +47,7 @@ public sealed class FileFixUninstaller
             return;
         }
 
-        var file = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+        var file = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
         var linesList = File.ReadAllLines(file).ToList();
 

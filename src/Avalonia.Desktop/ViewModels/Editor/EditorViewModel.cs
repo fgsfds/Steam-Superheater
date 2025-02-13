@@ -317,9 +317,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                     SupportedOSes = regFix.SupportedOSes,
                     Entries = regFix.Entries,
                     Version = regFix.Version
-                },
-                _fixesProvider,
-                _popupEditor
+                }
                 );
         }
         else
@@ -418,7 +416,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
     private void AddNewFix()
     {
-        Guard.IsNotNull(SelectedGame); ;
+        Guard.IsNotNull(SelectedGame);
 
         var newFix = _editorModel.AddNewFix(SelectedGame);
 
@@ -610,7 +608,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     /// <summary>
     /// Cancel ongoing task
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
+    [RelayCommand(CanExecute = nameof(CancelCanExecute))]
     private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
 
@@ -749,7 +747,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         _ = Process.Start(new ProcessStartInfo
         {
-            FileName = @$"https://steamdb.info/app/{SelectedGame.GameId}/config/",
+            FileName = $"https://steamdb.info/app/{SelectedGame.GameId}/config/",
             UseShellExecute = true
         });
     }
@@ -807,7 +805,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     /// <summary>
     /// Test newly added fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(TestFixCanExecute)))]
+    [RelayCommand(CanExecute = nameof(TestFixCanExecute))]
     private async Task TestFixAsync()
     {
         Guard.IsNotNull(SelectedGame);

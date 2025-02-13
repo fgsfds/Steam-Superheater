@@ -226,7 +226,7 @@ public sealed class MainModel
                 }
             }
 
-            list = [.. list.OrderBy(static x => x)];
+            list = [.. list.Order()];
         }
 
         var updateAvailable = _combinedEntitiesList.Any(x => x.HasUpdates);

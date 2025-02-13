@@ -64,9 +64,9 @@ public sealed class Program
         _ = builder.Services.AddSingleton<DatabaseVersionsProvider>();
         _ = builder.Services.AddSingleton<EventsProvider>();
 
-        _ = builder.Services.AddSingleton<HttpClient>(CreateHttpClient);
+        _ = builder.Services.AddSingleton(CreateHttpClient);
         _ = builder.Services.AddSingleton<S3Client>();
-        _ = builder.Services.AddSingleton<DatabaseContextFactory>(x => new(builder.Environment.IsDevelopment()));
+        _ = builder.Services.AddSingleton((Func<IServiceProvider, DatabaseContextFactory>)(_ => new(builder.Environment.IsDevelopment())));
         _ = builder.Services.AddSingleton<TelegramBot>();
         _ = builder.Services.AddSingleton<ServerProperties>();
 

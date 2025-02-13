@@ -132,12 +132,14 @@ public sealed class GamesProvider : IGamesProvider
                 dir += Path.DirectorySeparatorChar;
             }
 
-            var icon = _steamTools.SteamInstallPath is null
-                ? string.Empty
-                : Path.Combine(
-                    _steamTools.SteamInstallPath,
-                    Path.Combine("appcache", "librarycache", $"{id}_icon.jpg")
-                    );
+            string icon = string.Empty;
+
+            if (_steamTools.SteamInstallPath is not null)
+            {
+                var images = Directory.GetFiles(Path.Combine(_steamTools.SteamInstallPath, "appcache", "librarycache", id.ToString())).OrderBy(x => x.Length);
+                
+                icon = images.Last();
+            }
 
             return new GameEntity()
             {

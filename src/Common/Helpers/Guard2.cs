@@ -32,4 +32,3 @@ public static class Guard2
         ThrowHelper.ThrowArgumentException();
     }
 }
-

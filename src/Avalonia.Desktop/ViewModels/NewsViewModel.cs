@@ -64,7 +64,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     /// <summary>
     /// Mark all news as read
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(MarkAllAsReadCanExecute)))]
+    [RelayCommand(CanExecute = nameof(MarkAllAsReadCanExecute))]
     private void MarkAllAsRead()
     {
         _newsProvider.MarkAllAsRead();

@@ -1,6 +1,4 @@
-﻿using Avalonia.Desktop.ViewModels.Popups;
-using Common.Client.Providers.Interfaces;
-using Common.Entities.Fixes.RegistryFix;
+﻿using Common.Entities.Fixes.RegistryFix;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -10,10 +8,6 @@ namespace Avalonia.Desktop.ViewModels.Editor;
 internal sealed partial class RegFixViewModel : ObservableObject
 {
     private RegistryFixEntity SelectedFix { get; set; }
-
-    private IFixesProvider _fixesProvider;
-
-    private readonly PopupEditorViewModel _popupEditor;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedRegistryFixIndexStr))]
@@ -25,14 +19,10 @@ internal sealed partial class RegFixViewModel : ObservableObject
 
 
     public RegFixViewModel(
-        RegistryFixEntity fix,
-        IFixesProvider fixesProvider,
-        PopupEditorViewModel popupEditor
+        RegistryFixEntity fix
         )
     {
         SelectedFix = fix;
-        _fixesProvider = fixesProvider;
-        _popupEditor = popupEditor;
     }
 
 

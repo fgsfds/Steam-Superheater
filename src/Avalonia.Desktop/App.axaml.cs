@@ -63,7 +63,7 @@ public sealed class App : Application
 
             if (!_mutex.WaitOne(1000, false))
             {
-                var messageBox = new MessageBox($"You can't launch multiple instances of Superheater");
+                var messageBox = new MessageBox("You can't launch multiple instances of Superheater");
                 messageBox.Show();
                 return;
             }

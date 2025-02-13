@@ -65,7 +65,7 @@ public sealed partial class AboutViewModel : ObservableObject
     /// <summary>
     /// Check for the app updates
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(CheckForUpdatesCanExecute)))]
+    [RelayCommand(CanExecute = nameof(CheckForUpdatesCanExecute))]
     private async Task CheckForUpdatesAsync()
     {
         IsInProgress = true;
@@ -98,7 +98,7 @@ public sealed partial class AboutViewModel : ObservableObject
     /// <summary>
     /// Download and install app update
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(DownloadAndInstallCanExecute)))]
+    [RelayCommand(CanExecute = nameof(DownloadAndInstallCanExecute))]
     private async Task DownloadAndInstallAsync()
     {
         IsInProgress = true;

@@ -44,7 +44,7 @@ public sealed class FilesDownloader : IFilesDownloader
 
         _progressReport.OperationMessage = "Downloading...";
 
-        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -52,7 +52,7 @@ public sealed class FilesDownloader : IFilesDownloader
         }
 
         //Downloading
-        await using var source = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         var contentLength = response.Content.Headers.ContentLength;
 
         FileStream fileStream = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
@@ -111,7 +111,7 @@ public sealed class FilesDownloader : IFilesDownloader
         try
         {
             using var md5 = MD5.Create();
-            using var stream = File.OpenRead(filePath);
+            await using var stream = File.OpenRead(filePath);
 
             var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
 
@@ -167,7 +167,7 @@ public sealed class FilesDownloader : IFilesDownloader
                 ThrowHelper.ThrowInvalidOperationException("Error while downloading a file: " + response.StatusCode);
             }
 
-            using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
             await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
         }

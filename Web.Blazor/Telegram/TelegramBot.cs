@@ -64,7 +64,7 @@ public sealed class TelegramBot
                             else if (update.Message!.Text!.Equals("Check", StringComparison.OrdinalIgnoreCase))
                             {
                                 _logger.LogInformation("Check message received");
-                                _ = await _httpClient.PostAsJsonAsync($"https://superheater.fgsfds.link/api/fixes/check", _apiPassword);
+                                _ = await _httpClient.PostAsJsonAsync("https://superheater.fgsfds.link/api/fixes/check", _apiPassword);
                             }
                         }
                     }

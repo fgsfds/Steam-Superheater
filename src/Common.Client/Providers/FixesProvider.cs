@@ -90,7 +90,7 @@ public sealed class FixesProvider : IFixesProvider
                     var guid = dep.Dependencies![0];
                     var existing = woDependencies.FirstOrDefault(x => x.Guid == guid);
 
-                    dep.DependencyLevel += 1;
+                    dep.DependencyLevel++;
 
                     if (existing is null)
                     {
@@ -169,7 +169,7 @@ public sealed class FixesProvider : IFixesProvider
     /// <param name="localFixesOnly">Load only local cached fixes</param>
     private async Task<Result> UpdateCacheAsync(bool localFixesOnly)
     {
-        using var dbContext = _dbContextFactory.Get();
+        await using var dbContext = _dbContextFactory.Get();
 
         var fixesCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.Fixes)!;
 
