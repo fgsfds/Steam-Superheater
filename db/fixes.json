@@ -7296,15 +7296,15 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rerev/ResidentEvilRevelations.FusionFix.zip",
-        "FileSize": 1450614,
+        "FileSize": 1149011,
         "ConfigFile": "scripts\\ResidentEvilRevelations.FusionFix.ini",
-        "MD5": "68C6D45F49042407DD3127199BEE5A4E",
+        "MD5": "3E792E69F5A429174D7C543E4FFDC651",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "bf59f76e-b8fa-48f6-97f4-2201c4d5f5c2",
-        "Version": "24.02",
+        "Version": "25.01",
         "SupportedOSes": "Windows",
         "Description": "## Resident Evil Revelations Fusion Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev)\n\n- Unlocks all available display resolutions\n- Unlocks FPS when FRAME RATE option is set to VARIABLE\n- Added UltraWide support\n- (X) FMVs are stretched in UltraWide\n- Added an option to disable damage overlay\n- Added an option to enable borderless windowed mode\n- Added an option to increase FOV\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting\n\n**Warning**\n\nThis game uses Valve Anti Cheat for raid mode in multiplayer.\n\nIt is recommended NOT to play this mode with this fix installed.",
         "Tags": [
@@ -7341,15 +7341,15 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rerev2/ResidentEvilRevelations2.FusionFix.zip",
-        "FileSize": 1237454,
+        "FileSize": 1127346,
         "ConfigFile": "scripts\\ResidentEvilRevelations2.FusionFix.ini",
-        "MD5": "D0FF02A7F03359CCCC38BE4F2F4EDAA8",
+        "MD5": "C08140D60DE13C72211A3DC1D655FA09",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "5b112d57-c2b8-4170-9d14-4fc29e2b5125",
-        "Version": "23.11",
+        "Version": "25.01",
         "SupportedOSes": "Windows",
         "Description": "## Resident Evil Revelations 2 Fusion Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev2](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rerev2)\n\n- Makes local split-screen coop mode fullscreen\n- Unlocks all available display resolutions\n- Unlocks FPS when FRAME RATE option is set to VARIABLE\n- Added UltraWide support\n- Some on-screen effects will be disabled in coop and UltraWide (damage, blood etc)\n- (X) FMVs are stretched in UltraWide\n- Fixes a game breaking bug in episode 4, where player\u0027s controls get stuck before the final boss battle\n- Added an option to skip intro\n- Added an option to disable damage overlay\n- Added an option to disable film grain\n- Added an option to enable borderless windowed mode\n- Added an option to increase FOV\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting",
         "Tags": [
@@ -9052,12 +9052,12 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/sc/SplinterCell.WidescreenFix.zip",
-        "FileSize": 2888230,
+        "FileSize": 2286200,
         "ConfigFile": "system\\scripts\\SplinterCell.WidescreenFix.ini",
-        "MD5": "E9E280C147CE121E4A1C4A96BD86010C",
+        "MD5": "8DE045A75CE816B14081A4FBAFC9BAF3",
         "Name": "Widescreen Fix",
         "Guid": "9da1a9db-2049-46ac-a6ce-b956999e7806",
-        "Version": "24.03",
+        "Version": "25.01",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Widescreen Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/sc](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/sc)\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs",
         "Tags": [
