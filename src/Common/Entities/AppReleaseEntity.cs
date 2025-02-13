@@ -22,4 +22,3 @@ public sealed class AppReleaseEntity
 
 [JsonSerializable(typeof(List<AppReleaseEntity>))]
 public sealed partial class AppReleaseEntityContext : JsonSerializerContext;
-

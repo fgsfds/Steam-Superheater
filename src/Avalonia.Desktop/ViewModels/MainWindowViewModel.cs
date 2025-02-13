@@ -13,8 +13,8 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     public string RepositoryMessage =>
         _config.UseLocalApiAndRepo
-            ? $"Local API"
-            : $"Online API";
+            ? "Local API"
+            : "Online API";
 
     [ObservableProperty]
     private PopupMessageViewModel? _popupDataContext;

@@ -15,7 +15,7 @@ public sealed class EventsProvider
 
     public async Task LogEventAsync(EventTypeEnum eventTypeEnum, Version version, Guid? fixGuid)
     {
-        using var dbContext = _databaseContextFactory.Get();
+        await using var dbContext = _databaseContextFactory.Get();
 
         EventsDbEntity entity = new()
         {

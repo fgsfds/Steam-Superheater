@@ -6,18 +6,12 @@ namespace Web.Blazor.Providers;
 public sealed class DatabaseVersionsProvider
 {
     private readonly DatabaseContextFactory _dbContextFactory;
-    private readonly HttpClient _httpClient;
-    private readonly ILogger<FixesProvider> _logger;
 
 
     public DatabaseVersionsProvider(
-        ILogger<FixesProvider> logger,
-        HttpClient httpClient,
         DatabaseContextFactory dbContextFactory
         )
     {
-        _httpClient = httpClient;
-        _logger = logger;
         _dbContextFactory = dbContextFactory;
     }
 
@@ -35,4 +29,3 @@ public sealed class DatabaseVersionsProvider
         return result;
     }
 }
-

@@ -41,7 +41,6 @@ public sealed class ApiTests
     {
         Mock<IFilesDownloader> filesDownloaderMock = new();
         Mock<ILogger> loggerMock = new();
-        Mock<IConfigProvider> configMock = new();
         Mock<ILogger> logger = new();
         using HttpClient httpClient = new();
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");

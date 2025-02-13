@@ -87,8 +87,8 @@ public sealed class ArchiveTools
     /// Get list of files and new folders in the archive
     /// </summary>
     /// <param name="pathToArchive">Path to ZIP</param>
-    /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
     /// <param name="unpackToPath">Full path</param>
+    /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
     /// <param name="variant">Fix variant</param>
     /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
     public List<string> GetListOfFilesInArchive(

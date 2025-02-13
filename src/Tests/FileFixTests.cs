@@ -383,7 +383,7 @@ public sealed partial class FileFixTests
         Assert.True(File.Exists(Path.Combine(documents, "test_fix", "start game.exe")));
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $@"{{
+        var installedExpected = @"{{
   ""$type"": ""FileFix"",
   ""BackupFolder"": null,
   ""FilesList"": [

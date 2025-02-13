@@ -167,7 +167,7 @@ internal sealed partial class SettingsViewModel : ObservableObject
 
     #region Relay Commands
 
-    [RelayCommand(CanExecute = (nameof(SaveLocalRepoPathCanExecute)))]
+    [RelayCommand(CanExecute = nameof(SaveLocalRepoPathCanExecute))]
     private void SaveLocalRepoPath()
     {
         _config.LocalRepoPath = PathToLocalRepoTextBox;
@@ -176,7 +176,7 @@ internal sealed partial class SettingsViewModel : ObservableObject
     }
     private bool SaveLocalRepoPathCanExecute() => IsLocalPathTextboxChanged;
 
-    [RelayCommand(CanExecute = (nameof(SaveApiPasswordCanExecute)))]
+    [RelayCommand(CanExecute = nameof(SaveApiPasswordCanExecute))]
     private void SaveApiPassword()
     {
         _config.ApiPassword = ApiPasswordTextBox;

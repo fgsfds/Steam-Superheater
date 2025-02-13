@@ -72,7 +72,7 @@ public sealed class FilesUploader
                     return new(result.ResultEnum, result.Message);
                 }
 
-                using var fileStream = File.OpenRead(file);
+                await using var fileStream = File.OpenRead(file);
                 using StreamContent content = new(fileStream);
 
                 new Task(() => { TrackProgress(fileStream, progress); }).Start();

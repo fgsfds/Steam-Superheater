@@ -134,7 +134,7 @@ public sealed class HostsFixTests : IDisposable
     private void CheckInstalled(string fixGuid)
     {
         var hostsActual1 = File.ReadAllText(_hostsFilePath);
-        var hostsExpected1 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
+        var hostsExpected1 = @"# Copyright (c) 1993-2009 Microsoft Corp.
 
 0.0.0.0 google.com
 
@@ -144,7 +144,7 @@ public sealed class HostsFixTests : IDisposable
 123 added entry  #c0650f19-f670-4f8a-8545-70f6c5171fa5";
 
         var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json"));
-        var instExpected1 = $@"{{
+        var instExpected1 = @"{{
   ""$type"": ""HostsFix"",
   ""Entries"": [
     ""123 added entry ""
@@ -161,7 +161,7 @@ public sealed class HostsFixTests : IDisposable
     private void CheckUninstalled(string fixGuid)
     {
         var hostsActual2 = File.ReadAllText(_hostsFilePath);
-        var hostsExpected2 = $@"# Copyright (c) 1993-2009 Microsoft Corp.
+        var hostsExpected2 = @"# Copyright (c) 1993-2009 Microsoft Corp.
 
 0.0.0.0 google.com
 

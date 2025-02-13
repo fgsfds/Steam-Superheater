@@ -74,7 +74,7 @@ public sealed class StatsProvider
 
         fixesStats.GamesCount = gamesCount;
         fixesStats.FixesCount = fixesCount;
-        fixesStats.NoIntroFixes = [.. noIntro.OrderBy(x => x)];
+        fixesStats.NoIntroFixes = [.. noIntro.Order()];
 
         Stats = fixesStats;
 

@@ -43,7 +43,7 @@ public sealed class NewsProvider : INewsProvider
     /// <inheritdoc/>
     public async Task<Result> UpdateNewsListAsync()
     {
-        using var dbContext = _dbContextFactory.Get();
+        await using var dbContext = _dbContextFactory.Get();
 
         var newsCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.News)!;
         var currentNewsVersion = newsCacheDbEntity.Version!;
@@ -54,7 +54,7 @@ public sealed class NewsProvider : INewsProvider
 
         if (ClientProperties.IsOfflineMode)
         {
-            var newNewsList = File.ReadAllText(@"..\..\..\..\db\news.json"); 
+            var newNewsList = File.ReadAllText(@"..\..\..\..\db\news.json");
             currentNewsList = JsonSerializer.Deserialize(newNewsList, NewsListEntityContext.Default.ListNewsEntity)!;
         }
         else

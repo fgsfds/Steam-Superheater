@@ -3,75 +3,74 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace Database.Server.Migrations
+namespace Database.Server.Migrations;
+
+/// <inheritdoc />
+public sealed partial class AddRegFixV2 : Migration
 {
     /// <inheritdoc />
-    public sealed partial class AddRegFixV2 : Migration
+    protected override void Up(MigrationBuilder migrationBuilder)
     {
-        /// <inheritdoc />
-        protected override void Up(MigrationBuilder migrationBuilder)
-        {
-            _ = migrationBuilder.DropPrimaryKey(
-                name: "PK_registry_fixes",
-                schema: "main",
-                table: "registry_fixes");
+        _ = migrationBuilder.DropPrimaryKey(
+            name: "PK_registry_fixes",
+            schema: "main",
+            table: "registry_fixes");
 
-            _ = migrationBuilder.DropIndex(
-                name: "IX_games_name",
-                schema: "main",
-                table: "games");
+        _ = migrationBuilder.DropIndex(
+            name: "IX_games_name",
+            schema: "main",
+            table: "games");
 
-            _ = migrationBuilder.AddColumn<int>(
-                name: "id",
-                schema: "main",
-                table: "registry_fixes",
-                type: "integer",
-                nullable: false,
-                defaultValue: 0)
-                .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+        _ = migrationBuilder.AddColumn<int>(
+            name: "id",
+            schema: "main",
+            table: "registry_fixes",
+            type: "integer",
+            nullable: false,
+            defaultValue: 0)
+            .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-            _ = migrationBuilder.AddPrimaryKey(
-                name: "PK_registry_fixes",
-                schema: "main",
-                table: "registry_fixes",
-                column: "id");
+        _ = migrationBuilder.AddPrimaryKey(
+            name: "PK_registry_fixes",
+            schema: "main",
+            table: "registry_fixes",
+            column: "id");
 
-            _ = migrationBuilder.CreateIndex(
-                name: "IX_registry_fixes_fix_guid",
-                schema: "main",
-                table: "registry_fixes",
-                column: "fix_guid");
-        }
+        _ = migrationBuilder.CreateIndex(
+            name: "IX_registry_fixes_fix_guid",
+            schema: "main",
+            table: "registry_fixes",
+            column: "fix_guid");
+    }
 
-        /// <inheritdoc />
-        protected override void Down(MigrationBuilder migrationBuilder)
-        {
-            _ = migrationBuilder.DropPrimaryKey(
-                name: "PK_registry_fixes",
-                schema: "main",
-                table: "registry_fixes");
+    /// <inheritdoc />
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        _ = migrationBuilder.DropPrimaryKey(
+            name: "PK_registry_fixes",
+            schema: "main",
+            table: "registry_fixes");
 
-            _ = migrationBuilder.DropIndex(
-                name: "IX_registry_fixes_fix_guid",
-                schema: "main",
-                table: "registry_fixes");
+        _ = migrationBuilder.DropIndex(
+            name: "IX_registry_fixes_fix_guid",
+            schema: "main",
+            table: "registry_fixes");
 
-            _ = migrationBuilder.DropColumn(
-                name: "id",
-                schema: "main",
-                table: "registry_fixes");
+        _ = migrationBuilder.DropColumn(
+            name: "id",
+            schema: "main",
+            table: "registry_fixes");
 
-            _ = migrationBuilder.AddPrimaryKey(
-                name: "PK_registry_fixes",
-                schema: "main",
-                table: "registry_fixes",
-                column: "fix_guid");
+        _ = migrationBuilder.AddPrimaryKey(
+            name: "PK_registry_fixes",
+            schema: "main",
+            table: "registry_fixes",
+            column: "fix_guid");
 
-            _ = migrationBuilder.CreateIndex(
-                name: "IX_games_name",
-                schema: "main",
-                table: "games",
-                column: "name");
-        }
+        _ = migrationBuilder.CreateIndex(
+            name: "IX_games_name",
+            schema: "main",
+            table: "games",
+            column: "name");
     }
 }

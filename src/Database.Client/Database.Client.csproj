@@ -6,6 +6,10 @@
         <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+        <PackageReference Include="Roslynator.Analyzers">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>

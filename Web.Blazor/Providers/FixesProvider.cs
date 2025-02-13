@@ -231,7 +231,7 @@ public sealed class FixesProvider
     /// <returns>New score</returns>
     public async Task<int> ChangeFixScoreAsync(Guid fixGuid, sbyte increment)
     {
-        using var dbContext = _dbContextFactory.Get();
+        await using var dbContext = _dbContextFactory.Get();
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
@@ -264,7 +264,7 @@ public sealed class FixesProvider
 
         var fix = dbContext.Fixes.Find(fixGuid)!;
 
-        fix.Installs += 1;
+        fix.Installs++;
 
         var newInstalls = fix.Installs;
 
@@ -280,7 +280,7 @@ public sealed class FixesProvider
     /// <param name="text">Report text</param>
     public async Task<bool> AddReportAsync(Guid fixGuid, string text)
     {
-        using var dbContext = _dbContextFactory.Get();
+        await using var dbContext = _dbContextFactory.Get();
 
         ReportsDbEntity entity = new()
         {
@@ -369,8 +369,8 @@ public sealed class FixesProvider
             }
         }
 
-        using var dbContext = _dbContextFactory.Get();
-        using (var transaction = dbContext.Database.BeginTransaction())
+        await using var dbContext = _dbContextFactory.Get();
+        await using (var transaction = dbContext.Database.BeginTransaction())
         {
             var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
             var newTableVersion = databaseVersions.Version + 1;
@@ -602,7 +602,7 @@ public sealed class FixesProvider
         _logger.LogInformation(Started);
         _ = _bot.SendMessageAsync(Started);
 
-        using var dbContext = _dbContextFactory.Get();
+        await using var dbContext = _dbContextFactory.Get();
         var fileFixes = dbContext.FileFixes.AsNoTracking().Where(static x => x.Url != null);
         var fixes = dbContext.Fixes.AsNoTracking().ToDictionary(static x => x.Guid, static t => t.IsDisabled);
 
@@ -687,7 +687,7 @@ public sealed class FixesProvider
                     //_logger.LogError(message);
                     //_ = _bot.SendMessageAsync(message);
                 }
-                else if (!BitConverter.ToString(result.Content.Headers.ContentMD5).Replace("-", string.Empty).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
+                else if (!Convert.ToHexString(result.Content.Headers.ContentMD5).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
                 {
                     var message = $"File's MD5 doesn't match: {fix.Url}";
                     _logger.LogError(message);
@@ -821,7 +821,7 @@ public sealed class FixesProvider
         }
         else if (response.Content.Headers.ContentMD5 is not null)
         {
-            return BitConverter.ToString(response.Content.Headers.ContentMD5).Replace("-", string.Empty);
+            return Convert.ToHexString(response.Content.Headers.ContentMD5);
         }
         else if (fixUrl.StartsWith(Consts.FilesRepo) && response.Headers.ETag?.Tag is not null)
         {

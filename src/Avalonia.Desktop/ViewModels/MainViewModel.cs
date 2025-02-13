@@ -56,7 +56,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     public bool DoesFixRequireAdminRights => SelectedFix is not null && SelectedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin;
 
-    public string ShowVariantsPopupButtonText => SelectedFixVariant is null ? "Select variant..." : SelectedFixVariant;
+    public string ShowVariantsPopupButtonText => SelectedFixVariant ?? "Select variant...";
 
     public string SelectedFixUrl => _mainModel.GetFileFixUrl(SelectedFix) ?? string.Empty;
 
@@ -415,7 +415,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Update games list
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(UpdateGamesCanExecute)))]
+    [RelayCommand(CanExecute = nameof(UpdateGamesCanExecute))]
     private async Task UpdateGamesAsync()
     {
         await UpdateAsync(false, true, true).ConfigureAwait(true);
@@ -429,7 +429,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Install selected fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(InstallUpdateFixCanExecute)))]
+    [RelayCommand(CanExecute = nameof(InstallUpdateFixCanExecute))]
     private void InstallUpdateFix()
     {
         Guard.IsNotNull(SelectedGame);
@@ -498,7 +498,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Cancel ongoing task
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(CancelCanExecute)))]
+    [RelayCommand(CanExecute = nameof(CancelCanExecute))]
     private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
 
@@ -506,7 +506,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Uninstall selected fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(UninstallFixCanExecute)))]
+    [RelayCommand(CanExecute = nameof(UninstallFixCanExecute))]
     private async Task UninstallFixAsync()
     {
         Guard.IsNotNull(SelectedFix);
@@ -598,7 +598,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Clear search bar
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(ClearSearchCanExecute)))]
+    [RelayCommand(CanExecute = nameof(ClearSearchCanExecute))]
     private void ClearSearch() => SearchBarText = string.Empty;
     private bool ClearSearchCanExecute() => !string.IsNullOrEmpty(SearchBarText);
 
@@ -606,7 +606,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Open config file for selected fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(OpenConfigCanExecute)))]
+    [RelayCommand(CanExecute = nameof(OpenConfigCanExecute))]
     private void OpenConfig()
     {
         Guard.IsNotNull(SelectedGame?.Game);
@@ -621,7 +621,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Open selected game install folder
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(OpenGameFolderCanExecute)))]
+    [RelayCommand(CanExecute = nameof(OpenGameFolderCanExecute))]
     private void OpenGameFolder()
     {
         Guard.IsNotNull(SelectedGame?.Game);
@@ -693,7 +693,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         _ = Process.Start(new ProcessStartInfo
         {
-            FileName = @$"https://steamdb.info/app/{SelectedGame.GameId}/config/",
+            FileName = $"https://steamdb.info/app/{SelectedGame.GameId}/config/",
             UseShellExecute = true
         });
     }
@@ -713,7 +713,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Launch/install game
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(LaunchGameCanExecute)))]
+    [RelayCommand(CanExecute = nameof(LaunchGameCanExecute))]
     private void LaunchGame()
     {
         Guard.IsNotNull(SelectedGame);
@@ -785,7 +785,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Upvote fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(UpvoteCanExecute)))]
+    [RelayCommand(CanExecute = nameof(UpvoteCanExecute))]
     private async Task Upvote()
     {
         Guard.IsNotNull(SelectedFix);
@@ -801,7 +801,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <summary>
     /// Downvote fix
     /// </summary>
-    [RelayCommand(CanExecute = (nameof(DownvoteCanExecute)))]
+    [RelayCommand(CanExecute = nameof(DownvoteCanExecute))]
     private async Task Downvote()
     {
         Guard.IsNotNull(SelectedFix);
@@ -891,7 +891,6 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <param name="fix">Fix to install</param>
     /// <param name="fixVariant">Fix variant</param>
     /// <param name="skipDependencies">Don't install or update dependencies</param>
-    /// 
     private async Task<Result> InstallUpdateFixAsync(FixesList fixesList, BaseFixEntity fix, string? fixVariant, bool skipDependencies)
     {
         Guard.IsNotNull(fixesList.Game);

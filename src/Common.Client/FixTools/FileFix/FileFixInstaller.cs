@@ -66,7 +66,7 @@ public sealed class FileFixInstaller
         //compdata contains proton settings that's required for wine dll overrides
         if (fix.WineDllOverrides is not null && OperatingSystem.IsLinux())
         {
-            if (!File.Exists(@$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
+            if (!File.Exists($"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
             {
                 return new(
                     ResultEnum.Error,
@@ -200,7 +200,7 @@ public sealed class FileFixInstaller
             return null;
         }
 
-        var userRegFile = @$"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+        var userRegFile = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
         var userRegLines = (await File.ReadAllLinesAsync(userRegFile).ConfigureAwait(false)).ToList();
 
@@ -342,7 +342,7 @@ public sealed class FileFixInstaller
         )
     {
         var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Replace(' ', '_'));
-        backupFolderPath = string.Join(string.Empty, backupFolderPath.Split(Path.GetInvalidPathChars()));
+        backupFolderPath = string.Concat(backupFolderPath.Split(Path.GetInvalidPathChars()));
 
         if (Directory.Exists(backupFolderPath))
         {
@@ -424,7 +424,7 @@ public sealed class FileFixInstaller
 
         using (var md5 = MD5.Create())
         {
-            using var stream = File.OpenRead(filePath);
+            await using var stream = File.OpenRead(filePath);
 
             var hash = await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false);
             hashStr = Convert.ToHexString(hash);

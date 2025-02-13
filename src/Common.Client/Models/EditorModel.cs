@@ -27,7 +27,7 @@ public sealed class EditorModel
     private List<GameEntity> _availableGamesList = [];
 
     /// <summary>
-    /// List of games that that can be added
+    /// List of games that can be added
     /// </summary>
     public ImmutableList<GameEntity> AvailableGames => [.. _availableGamesList];
 

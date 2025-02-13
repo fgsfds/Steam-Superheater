@@ -37,7 +37,7 @@ public sealed class FileLogger : ILogger
 
             if (exception is not null)
             {
-                _logFileWriter.Write(Encoding.ASCII.GetBytes(exception.ToString() + Environment.NewLine));
+                _logFileWriter.Write(Encoding.ASCII.GetBytes(exception + Environment.NewLine));
             }
             _logFileWriter.Flush();
         }

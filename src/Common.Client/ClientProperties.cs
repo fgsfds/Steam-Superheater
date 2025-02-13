@@ -13,14 +13,14 @@ public static class ClientProperties
 
     static ClientProperties()
     {
-        WorkingFolder = Path.GetDirectoryName(Environment.ProcessPath!)!;
+        WorkingFolder = Path.GetDirectoryName(Environment.ProcessPath)!;
         IsInSteamDeckGameMode = CheckDeckGameMode();
     }
 
     /// <summary>
     /// Current working folder of the app
     /// </summary>
-    public static string WorkingFolder { get; private set; }
+    public static string WorkingFolder { get; }
 
     /// <summary>
     /// Is app started in developer mode
@@ -110,14 +110,7 @@ public static class ClientProperties
 
         proc.WaitForExit();
 
-        if (result.StartsWith("gamescope-wayland"))
-        {
-            _isSteamDeckGameMode = true;
-        }
-        else
-        {
-            _isSteamDeckGameMode = false;
-        }
+        _isSteamDeckGameMode = result.StartsWith("gamescope-wayland");
 
         _ = _semaphore.Release();
 
