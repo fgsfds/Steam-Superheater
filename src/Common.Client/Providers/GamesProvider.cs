@@ -136,9 +136,21 @@ public sealed class GamesProvider : IGamesProvider
 
             if (_steamTools.SteamInstallPath is not null)
             {
-                var images = Directory.GetFiles(Path.Combine(_steamTools.SteamInstallPath, "appcache", "librarycache", id.ToString())).OrderBy(x => x.Length);
-                
-                icon = images.Last();
+                var ico = Path.Combine(_steamTools.SteamInstallPath, "appcache", "librarycache", $"{id}_icon.jpg");
+                var lib = Path.Combine(_steamTools.SteamInstallPath, "appcache", "librarycache", id.ToString());
+                if (File.Exists(ico))
+                {
+                    icon = ico;
+                }
+                else if (Directory.Exists(lib))
+                {
+                    var images = Directory.GetFiles(Path.Combine(_steamTools.SteamInstallPath, "appcache", "librarycache", id.ToString())).OrderBy(x => x.Length);
+
+                    if (images.Any())
+                    {
+                        icon = images.Last();
+                    }
+                }
             }
 
             return new GameEntity()
