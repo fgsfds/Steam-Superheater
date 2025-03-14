@@ -10,10 +10,7 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Markdig" />
     <PackageReference Include="AWSSDK.S3" />
-    <PackageReference Include="Roslynator.Analyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     <PackageReference Include="Telegram.BotAPI" />
   </ItemGroup>
 
