@@ -1678,7 +1678,7 @@
           "#nointro",
           "#ultrawide"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -1740,6 +1740,24 @@
     "GameId": 71230,
     "GameName": "Crazy Taxi",
     "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/crazy_taxi_megapack.zip",
+        "FileSize": 78528307,
+        "MD5": "91325c51d9e7971897ecf52c5fd14b42",
+        "Name": "All-In-One MEGAPACK",
+        "Guid": "04007339-f58f-44e0-b250-a541580353e9",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "29122dcf-0b7b-426f-ba36-ba513c700806"
+        ],
+        "Description": "## All-In-One MEGAPACK\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=964260789](https://steamcommunity.com/sharedfiles/filedetails/?id=964260789)\r\n\r\nThis All-In-One MEGAPACK includes the following custom content / mods for Crazy Taxi\u0027s Steam port...\r\n\r\n- [DC Restoration 2.0]\r\n\r\nRestores the original licensed destination locations and more, via code instead of .exe edits.\r\n\r\n- [Original Music ALL]\r\n\r\nRestores the soundtrack to its original glory and then some, complete with The Offspring and Bad Religion all across the board.\r\n\r\n- [Original Sound Effects]\r\n\r\nRestores the bulk of the original sound effects by using the Dreamcast (DC) version\u0027s AFS files. \r\nThis results in higher-quality audio in many instances.\r\n\r\n- [Original Voices]\r\n\r\nBy default, this game uses the later versions of voice acting for the cabbies as they are in Crazy Taxi 2 onward.\r\nThis mod restores the original arcade voice acting, at the expense of some volume level quality.\r\n\r\n- [Quieter ADX SFX]\r\n\r\nThe ADX Sound Effects that shipped with the game are very loud. This package aims to fix that.\r\n",
+        "Tags": [
+          "#additional_content"
+        ],
+        "IsDisabled": false
+      },
       {
         "$type": "FileFix",
         "Url": "https://github.com/CookiePLMonster/SilentPatchCT/releases/download/BUILD-1/SilentPatchCT.zip",
@@ -1805,6 +1823,29 @@
           "#nointro",
           "#source_port"
         ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 302210,
+    "GameName": "Curse: The Eye of Isis",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "asy.avi",
+          "wan.avi"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "021d2734-e247-4929-99b8-889ffaf6daf2",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "PCGW is wrong, only these 2 files are present on fresh install.",
         "IsDisabled": false
       }
     ]
@@ -3720,6 +3761,31 @@
     ]
   },
   {
+    "GameId": 208730,
+    "GameName": "Game of Thrones",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "AGOTGame\\Movies\\Cyanide.mpg",
+          "AGOTGame\\Movies\\Focus.mpg",
+          "AGOTGame\\Movies\\hbo.mpg",
+          "AGOTGame\\Movies\\Legal_Focus.mpg"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "95ee4490-f2d1-40f0-b00a-ac1ca0ca6367",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "Not mentioned on PCGW. Working and tested.",
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 2322010,
     "GameName": "God of War Ragnar\u00F6k",
     "Fixes": [
@@ -5174,6 +5240,28 @@
     ]
   },
   {
+    "GameId": 2658450,
+    "GameName": "LOLLIPOP CHAINSAW RePOP",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/lollipop_chainsaw_music_v1_3.zip",
+        "FileSize": 241962872,
+        "InstallFolder": "lollipop\\Content\\Paks",
+        "MD5": "87a30be275d6b25241f51c40384f42c5",
+        "Name": "Music Restoration Mod",
+        "Guid": "1174ed36-5739-4de9-81a3-379b6e79536e",
+        "Version": "1.3",
+        "SupportedOSes": "Windows",
+        "Description": "## Music Restoration Mod v1.3\r\n*by Plastic Tangerine*\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=3330806935](https://steamcommunity.com/sharedfiles/filedetails/?id=3330806935)\r\n\r\nMod to restore the music from the original release of the game.",
+        "Tags": [
+          "#additional_content"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 224300,
     "GameName": "Legacy of Kain: Defiance",
     "Fixes": [
@@ -5478,6 +5566,73 @@
         "Version": "1.0",
         "SupportedOSes": "Windows, Linux",
         "Description": "Blank replacements for intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 17460,
+    "GameName": "Mass Effect (2007)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\CookedPC\\Movies\\BWLogo.bik",
+          "BioGame\\CookedPC\\Movies\\db_standard.bik",
+          "BioGame\\CookedPC\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "f51eb8a9-5838-49d3-87f2-ae659138fea4",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 24980,
+    "GameName": "Mass Effect 2 (2010)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\Movies\\BWLogo.bik",
+          "BioGame\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "6a36d898-d7df-4570-a6d5-fbf731f36eef",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 2362420,
+    "GameName": "Mass Effect 2 (2010) Edition",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\Movies\\BWLogo.bik",
+          "BioGame\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "5449035e-50b7-49f9-b6bf-2f543de1993c",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
         "Tags": [
           "#nointro"
         ],
@@ -8204,6 +8359,32 @@
         "Version": "1.0",
         "SupportedOSes": "Windows, Linux",
         "Description": "#### Includes **Wanton Destruction** and **Twin Dragon** addons\n\n#### Select **Launch Shadow Warrior source port** to start **Raze**",
+        "Tags": [
+          "#controller_support",
+          "#enhancements",
+          "#source_port",
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 238070,
+    "GameName": "Shadow Warrior Classic (1997)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/build/sw_classic_97_raze.zip",
+        "FileSize": 25471198,
+        "MD5": "230e10ca4fd4d5840cd0f4cb44ddedc3",
+        "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
+        "Name": "Raze \u002B Addons",
+        "Guid": "d102388a-5b9d-4e64-9485-34e82189fcb1",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "#### Includes **Wanton Destruction** and **Twin Dragon** addons\r\n\r\n#### Select **Launch Shadow Warrior source port** to start **Raze**\r\n\r\n### This will make old betas inaccessible",
         "Tags": [
           "#controller_support",
           "#enhancements",
