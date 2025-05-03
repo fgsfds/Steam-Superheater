@@ -1663,25 +1663,6 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/control-patch_v1_5_1.7z",
-        "FileSize": 70622451,
-        "MD5": "65F061CBA1D6615647407B80D4C137E4",
-        "Name": "HDR Ultrawide DLSS RT Patch",
-        "Guid": "9b1ad1ba-2a82-46e1-9704-d813b46b66af",
-        "Version": "1.5.1",
-        "SupportedOSes": "Windows, Linux",
-        "Description": "## CONTROL - HDR Ultrawide DLSS RT Patch v1.5.1\n*by filoppi*\n\n[https://www.nexusmods.com/control/mods/90](https://www.nexusmods.com/control/mods/90)\n\n- Native HDR (gets rid of color banding, greater contrast and brighter highlights, more natural colors).\n- Improved quality of SDR output (10bit-\u003Eno more color banding, slightly better dynamic range).\n- Upgraded DLSS to 3.1.30 and improved its implementation (it\u0027s also now compatible with FSR 2.X injection).\n- Added DLAA support (DLSS at native resolution).\n- Added a new \u0022Max\u0022 texture setting to improve the slow texture streaming (min 8GB\u002B VRAM, 10GB\u002B are recommended).\n- Added a new setting to use 3x as samples for ray tracing and volumetrics, increasing the quality and reducing noise (this is VERY expensive).\n- Fixed broken ray tracing reflections.\n- Fixed low shadow quality when ray tracing was on.\n- Full UltraWide support: unlock any resolution and aspect ratio, including 32:9\u002B.\n- Some FOV and LOD fixes for UW. Fixed UI issues at non 16:9 aspect ratios (e.g. enemies health bars were displaced).\n- Added a FOV Multiplier config setting *m_fFOVMultiplier* (the game and UI are designed for the default FOV, so only use for accessibility reasons).\n- Add a config to skip the intro video *m_bSkipIntroVideos*.\n- Improved window\u002Bborderless\u002Bfullscreen management.\n- Fixed the game not launching correctly on non Nvidia non AMD GPUs (e.g. Intel Arc).\n- Restored film grain with DLSS. Tweaked the film grain implementation.\n- Minor crash fixes, bug fixes and features.",
-        "Changelog": "- v1.5.1: Fixes hiss (smoke) effect around enemies being too bright in HDR (it was broken in 1.3).",
-        "Tags": [
-          "#enhancements",
-          "#graphics_improvement",
-          "#nointro",
-          "#ultrawide"
-        ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
         "Url": "https://s3.fgsfds.link/superheater/nointro/control_nointro.zip",
         "FileSize": 24441,
         "MD5": "7B5BB2E61DE719E24015487EB914FB2A",
@@ -1697,6 +1678,25 @@
           "#nointro"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/control-patch_v1_5_1.7z",
+        "FileSize": 70622451,
+        "MD5": "65F061CBA1D6615647407B80D4C137E4",
+        "Name": "HDR Ultrawide DLSS RT Patch",
+        "Guid": "9b1ad1ba-2a82-46e1-9704-d813b46b66af",
+        "Version": "1.5.1",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## CONTROL - HDR Ultrawide DLSS RT Patch v1.5.1\n*by filoppi*\n\n[https://www.nexusmods.com/control/mods/90](https://www.nexusmods.com/control/mods/90)\n\n- Native HDR (gets rid of color banding, greater contrast and brighter highlights, more natural colors).\n- Improved quality of SDR output (10bit-\u003Eno more color banding, slightly better dynamic range).\n- Upgraded DLSS to 3.1.30 and improved its implementation (it\u0027s also now compatible with FSR 2.X injection).\n- Added DLAA support (DLSS at native resolution).\n- Added a new \u0022Max\u0022 texture setting to improve the slow texture streaming (min 8GB\u002B VRAM, 10GB\u002B are recommended).\n- Added a new setting to use 3x as samples for ray tracing and volumetrics, increasing the quality and reducing noise (this is VERY expensive).\n- Fixed broken ray tracing reflections.\n- Fixed low shadow quality when ray tracing was on.\n- Full UltraWide support: unlock any resolution and aspect ratio, including 32:9\u002B.\n- Some FOV and LOD fixes for UW. Fixed UI issues at non 16:9 aspect ratios (e.g. enemies health bars were displaced).\n- Added a FOV Multiplier config setting *m_fFOVMultiplier* (the game and UI are designed for the default FOV, so only use for accessibility reasons).\n- Add a config to skip the intro video *m_bSkipIntroVideos*.\n- Improved window\u002Bborderless\u002Bfullscreen management.\n- Fixed the game not launching correctly on non Nvidia non AMD GPUs (e.g. Intel Arc).\n- Restored film grain with DLSS. Tweaked the film grain implementation.\n- Minor crash fixes, bug fixes and features.",
+        "Changelog": "- v1.5.1: Fixes hiss (smoke) effect around enemies being too bright in HDR (it was broken in 1.3).",
+        "Tags": [
+          "#enhancements",
+          "#graphics_improvement",
+          "#nointro",
+          "#ultrawide"
+        ],
+        "IsDisabled": true
       }
     ]
   },
@@ -1740,6 +1740,24 @@
     "GameId": 71230,
     "GameName": "Crazy Taxi",
     "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/crazy_taxi_megapack.zip",
+        "FileSize": 78528307,
+        "MD5": "91325c51d9e7971897ecf52c5fd14b42",
+        "Name": "All-In-One MEGAPACK",
+        "Guid": "04007339-f58f-44e0-b250-a541580353e9",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "29122dcf-0b7b-426f-ba36-ba513c700806"
+        ],
+        "Description": "## All-In-One MEGAPACK\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=964260789](https://steamcommunity.com/sharedfiles/filedetails/?id=964260789)\r\n\r\nThis All-In-One MEGAPACK includes the following custom content / mods for Crazy Taxi\u0027s Steam port...\r\n\r\n- [DC Restoration 2.0]\r\n\r\nRestores the original licensed destination locations and more, via code instead of .exe edits.\r\n\r\n- [Original Music ALL]\r\n\r\nRestores the soundtrack to its original glory and then some, complete with The Offspring and Bad Religion all across the board.\r\n\r\n- [Original Sound Effects]\r\n\r\nRestores the bulk of the original sound effects by using the Dreamcast (DC) version\u0027s AFS files. \r\nThis results in higher-quality audio in many instances.\r\n\r\n- [Original Voices]\r\n\r\nBy default, this game uses the later versions of voice acting for the cabbies as they are in Crazy Taxi 2 onward.\r\nThis mod restores the original arcade voice acting, at the expense of some volume level quality.\r\n\r\n- [Quieter ADX SFX]\r\n\r\nThe ADX Sound Effects that shipped with the game are very loud. This package aims to fix that.\r\n",
+        "Tags": [
+          "#additional_content"
+        ],
+        "IsDisabled": false
+      },
       {
         "$type": "FileFix",
         "Url": "https://github.com/CookiePLMonster/SilentPatchCT/releases/download/BUILD-1/SilentPatchCT.zip",
@@ -1805,6 +1823,29 @@
           "#nointro",
           "#source_port"
         ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 302210,
+    "GameName": "Curse: The Eye of Isis",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "asy.avi",
+          "wan.avi"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "021d2734-e247-4929-99b8-889ffaf6daf2",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "PCGW is wrong, only these 2 files are present on fresh install.",
         "IsDisabled": false
       }
     ]
@@ -3720,6 +3761,31 @@
     ]
   },
   {
+    "GameId": 208730,
+    "GameName": "Game of Thrones",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "AGOTGame\\Movies\\Cyanide.mpg",
+          "AGOTGame\\Movies\\Focus.mpg",
+          "AGOTGame\\Movies\\hbo.mpg",
+          "AGOTGame\\Movies\\Legal_Focus.mpg"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "95ee4490-f2d1-40f0-b00a-ac1ca0ca6367",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "Not mentioned on PCGW. Working and tested.",
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 2322010,
     "GameName": "God of War Ragnar\u00F6k",
     "Fixes": [
@@ -5174,6 +5240,28 @@
     ]
   },
   {
+    "GameId": 2658450,
+    "GameName": "LOLLIPOP CHAINSAW RePOP",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/lollipop_chainsaw_music_v1_3.zip",
+        "FileSize": 241962872,
+        "InstallFolder": "lollipop\\Content\\Paks",
+        "MD5": "87a30be275d6b25241f51c40384f42c5",
+        "Name": "Music Restoration Mod",
+        "Guid": "1174ed36-5739-4de9-81a3-379b6e79536e",
+        "Version": "1.3",
+        "SupportedOSes": "Windows",
+        "Description": "## Music Restoration Mod v1.3\r\n*by Plastic Tangerine*\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=3330806935](https://steamcommunity.com/sharedfiles/filedetails/?id=3330806935)\r\n\r\nMod to restore the music from the original release of the game.",
+        "Tags": [
+          "#additional_content"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 224300,
     "GameName": "Legacy of Kain: Defiance",
     "Fixes": [
@@ -5478,6 +5566,73 @@
         "Version": "1.0",
         "SupportedOSes": "Windows, Linux",
         "Description": "Blank replacements for intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 17460,
+    "GameName": "Mass Effect (2007)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\CookedPC\\Movies\\BWLogo.bik",
+          "BioGame\\CookedPC\\Movies\\db_standard.bik",
+          "BioGame\\CookedPC\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "f51eb8a9-5838-49d3-87f2-ae659138fea4",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 24980,
+    "GameName": "Mass Effect 2 (2010)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\Movies\\BWLogo.bik",
+          "BioGame\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "6a36d898-d7df-4570-a6d5-fbf731f36eef",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 2362420,
+    "GameName": "Mass Effect 2 (2010) Edition",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "BioGame\\Movies\\BWLogo.bik",
+          "BioGame\\Movies\\ME_EAsig_720p_v2_raw.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "5449035e-50b7-49f9-b6bf-2f543de1993c",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
         "Tags": [
           "#nointro"
         ],
@@ -8216,6 +8371,32 @@
     ]
   },
   {
+    "GameId": 238070,
+    "GameName": "Shadow Warrior Classic (1997)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/build/sw_classic_97_raze.zip",
+        "FileSize": 25471198,
+        "MD5": "230e10ca4fd4d5840cd0f4cb44ddedc3",
+        "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
+        "Name": "Raze \u002B Addons",
+        "Guid": "d102388a-5b9d-4e64-9485-34e82189fcb1",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "#### Includes **Wanton Destruction** and **Twin Dragon** addons\r\n\r\n#### Select **Launch Shadow Warrior source port** to start **Raze**\r\n\r\n### This will make old betas inaccessible",
+        "Tags": [
+          "#controller_support",
+          "#enhancements",
+          "#source_port",
+          "#ultrawide",
+          "#widescreen"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 1313,
     "GameName": "SiN Gold",
     "Fixes": [
@@ -8334,6 +8515,22 @@
     "GameId": 50300,
     "GameName": "Spec Ops: The Line",
     "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/spec_ops_the_line_custom_v2.zip",
+        "FileSize": 2144941,
+        "MD5": "a91b7918f8a000678f304bf33a75c851",
+        "Name": "Custom Patch",
+        "Guid": "84971bf0-0c39-471a-9d3d-788f63ae650b",
+        "Version": "2.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Custom Patch v2 \r\n*by LuKeStorm*\r\n\r\n[https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/](https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/)\r\n\r\n- Steam CEG DRM patch: Avoids issues at startup\r\n- No Update Check: Disables annoying update check in main menu\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- Redist components for the game will be loaded from game folder",
+        "Tags": [
+          "#nointro",
+          "#crashfix"
+        ],
+        "IsDisabled": false
+      },
       {
         "$type": "FileFix",
         "FilesToDelete": [
@@ -10250,17 +10447,18 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/CookiePLMonster/SilentPatchYK2/releases/download/BUILD-1/SilentPatchYK2.zip",
-        "FileSize": 173292,
-        "MD5": "668FF03212693F32549494FCBF3B624E",
+        "Url": "https://github.com/CookiePLMonster/SilentPatchYK2/releases/download/BUILD-2/SilentPatchYK2.zip",
+        "FileSize": 296866,
+        "MD5": "5A31794C31A9ECEFF40F13C0DB66C21D",
         "WineDllOverrides": [
           "dinput8.dll"
         ],
         "Name": "SilentPatch",
         "Guid": "1ab1b704-ab11-4af7-9201-0976b8f75e68",
-        "Version": "1.0",
+        "Version": "1.2",
         "SupportedOSes": "Windows",
         "Description": "## SilentPatch for Yakuza Kiwami 2\r\n*by Silent*\r\n\r\n[https://github.com/CookiePLMonster/SilentPatchYK2](https://github.com/CookiePLMonster/SilentPatchYK2)\r\n\r\n- Frame pacing has been drastically improved when \u0022Framelimit\u0022 option is not set to \u0022Unlimited\u0022\r\n- Toylets minigame has been capped to 30 FPS, essentially making it playable without having to change game settings\r\n- Arcade games are now forcibly capped to 60 FPS, even if \u0022Framelimit\u0022 option is set to 30 FPS in options\r\n- Minigames have been capped by the official patch for no reason and have been uncapped again now",
+        "Changelog": "**v1.2**\r\n- Cap Karaoke to 60 FPS to resolve a softlock when starting the minigame together with Haruka",
         "Tags": [
           "#bugfixes",
           "#performance_improvement"
