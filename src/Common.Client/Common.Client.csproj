@@ -15,6 +15,10 @@
         <PackageReference Include="AddSealed" PrivateAssets="all" />
         <PackageReference Include="CommunityToolkit.Diagnostics" />
         <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
+        <PackageReference Include="IDisposableAnalyzers">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="Octopus.Octodiff" />
         <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
         <PackageReference Include="SharpCompress" />

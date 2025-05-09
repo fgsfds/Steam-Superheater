@@ -18,6 +18,7 @@ public sealed class FixManager
     private readonly FileFixInstaller _fileFixInstaller;
     private readonly FileFixUninstaller _fileFixUninstaller;
     private readonly FileFixUpdater _fileFixUpdater;
+    private readonly FileFixChecker _fileFixChecker;
 
     private readonly RegistryFixInstaller _registryFixInstaller;
     private readonly RegistryFixUninstaller _registryFixUninstaller;
@@ -36,6 +37,7 @@ public sealed class FixManager
         FileFixInstaller fileFixInstaller,
         FileFixUninstaller fileFixUninstaller,
         FileFixUpdater fileFixUpdater,
+        FileFixChecker fileFixChecker,
 
         RegistryFixInstaller registryFixInstaller,
         RegistryFixUninstaller registryFixUninstaller,
@@ -53,12 +55,16 @@ public sealed class FixManager
         _fileFixInstaller = fileFixInstaller;
         _fileFixUninstaller = fileFixUninstaller;
         _fileFixUpdater = fileFixUpdater;
+        _fileFixChecker = fileFixChecker;
+
         _registryFixInstaller = registryFixInstaller;
         _registryFixUninstaller = registryFixUninstaller;
         _registryFixUpdater = registryFixUpdater;
+
         _hostsFixInstaller = hostsFixInstaller;
         _hostsFixUninstaller = hostsFixUninstaller;
         _hostsFixUpdater = hostsFixUpdater;
+
         _installedFixesProvider = installedFixesProvider;
         _logger = logger;
     }
@@ -124,6 +130,28 @@ public sealed class FixManager
         }
 
         return new(ResultEnum.Success, "Fix installed successfully!");
+    }
+
+    public async Task<Result> CheckFixAsync(GameEntity game, BaseFixEntity fix)
+    {
+        if (fix is not FileFixEntity fileFix)
+        {
+            return ThrowHelper.ThrowNotSupportedException<Result>();
+        }
+
+        if (!Directory.Exists(game.InstallDir))
+        {
+            return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
+        }
+
+        Guard.IsNotNull(fileFix.InstalledFix);
+
+        if (await _fileFixChecker.CheckFixHashAsync(game, fileFix.InstalledFix).ConfigureAwait(false))
+        {
+            return new(ResultEnum.Success, "Files integrity check is successful");
+        }
+
+        return new(ResultEnum.Error, "Files integrity check has failed");
     }
 
     public Result UninstallFix(
@@ -268,4 +296,3 @@ public sealed class FixManager
         }
     }
 }
-

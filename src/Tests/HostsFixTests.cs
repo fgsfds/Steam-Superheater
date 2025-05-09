@@ -77,6 +77,7 @@ public sealed class HostsFixTests : IDisposable
             null!,
             null!,
             null!,
+            null!,
             hostsFixInstaller,
             hostsFixUninstaller,
             null!,

@@ -25,6 +25,7 @@ public static class CommonBindings
         _ = container.AddTransient<FileFixInstaller>();
         _ = container.AddTransient<FileFixUpdater>();
         _ = container.AddTransient<FileFixUninstaller>();
+        _ = container.AddTransient<FileFixChecker>();
 
         _ = container.AddTransient<RegistryFixInstaller>();
         _ = container.AddTransient<RegistryFixUpdater>();

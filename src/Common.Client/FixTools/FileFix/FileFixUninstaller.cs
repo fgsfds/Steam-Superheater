@@ -181,4 +181,3 @@ public sealed class FileFixUninstaller
         Directory.Delete(backupFolder, true);
     }
 }
-

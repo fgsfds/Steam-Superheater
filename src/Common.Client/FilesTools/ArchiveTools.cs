@@ -91,7 +91,7 @@ public sealed class ArchiveTools
     /// <param name="fixInstallFolder">Folder to unpack the ZIP</param>
     /// <param name="variant">Fix variant</param>
     /// <returns>List of files and folders (if aren't already exist) in the archive</returns>
-    public List<string> GetListOfFilesInArchive(
+    public Dictionary<string, long?> GetListOfFilesInArchive(
         string pathToArchive,
         string unpackToPath,
         string? fixInstallFolder,
@@ -101,13 +101,13 @@ public sealed class ArchiveTools
         using var archive = ArchiveFactory.Open(pathToArchive);
         using var reader = archive.ExtractAllEntries();
 
-        List<string> files = new(archive.Entries.Count() + 1);
+        Dictionary<string, long?> files = new(archive.Entries.Count() + 1);
 
         //if directory that the archive will be extracted to doesn't exist, add it to the list too
         if (!Directory.Exists(unpackToPath) &&
             fixInstallFolder is not null)
         {
-            files.Add(fixInstallFolder + Path.DirectorySeparatorChar);
+            files.Add(fixInstallFolder + Path.DirectorySeparatorChar, null);
         }
 
         while (reader.MoveToNextEntry())
@@ -139,12 +139,12 @@ public sealed class ArchiveTools
             //if it's a file, add it to the list
             if (!entry.IsDirectory)
             {
-                files.Add(fullName);
+                files.Add(fullName, entry.Crc);
             }
             //if it's a directory and it doesn't already exist, add it to the list
             else if (!Directory.Exists(Path.Combine(unpackToPath, path!)))
             {
-                files.Add(fullName);
+                files.Add(fullName, null);
             }
         }
 

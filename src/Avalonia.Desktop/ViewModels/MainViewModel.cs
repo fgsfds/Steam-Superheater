@@ -321,6 +321,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(DownvoteCommand))]
+    [NotifyCanExecuteChangedFor(nameof(CheckHashCommand))]
     private BaseFixEntity? _selectedFix;
     partial void OnSelectedFixChanged(BaseFixEntity? oldValue, BaseFixEntity? newValue)
     {
@@ -501,6 +502,24 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(CancelCanExecute))]
     private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
     private bool CancelCanExecute() => LockButtons;
+
+    /// <summary>
+    /// Cancel ongoing task
+    /// </summary>
+    [RelayCommand(CanExecute = nameof(CheckHashCanExecute))]
+    private async Task CheckHashAsync()
+    {
+        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        Guard.IsNotNull(SelectedGame?.Game);
+
+        var fixUninstallResult = await _fixManager.CheckFixAsync(SelectedGame.Game, fileFix).ConfigureAwait(true);
+
+        NotificationsHelper.Show(
+            fixUninstallResult.Message,
+            fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
+            );
+    }
+    private bool CheckHashCanExecute() => (SelectedFix?.InstalledFix as FileInstalledFixEntity)?.Hashes is not null;
 
 
     /// <summary>

@@ -69,6 +69,7 @@ public sealed class RegistryFixTests : IDisposable
             null!,
             null!,
             null!,
+            null!,
             registryFixInstaller,
             registryFixUninstaller,
             null!,

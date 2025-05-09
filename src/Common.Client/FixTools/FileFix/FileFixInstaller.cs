@@ -63,7 +63,7 @@ public sealed class FileFixInstaller
         )
     {
         //checking if compdata folder exists
-        //compdata contains proton settings that's required for wine dll overrides
+        //compdata contains proton settings required for wine dll overrides
         if (fix.WineDllOverrides is not null && OperatingSystem.IsLinux())
         {
             if (!File.Exists($"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
@@ -114,9 +114,10 @@ public sealed class FileFixInstaller
             Guid = fix.Guid,
             Version = fix.Version,
             BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
-            FilesList = filesUnpackResult.ResultObject,
+            FilesList = [.. filesUnpackResult.ResultObject.Keys],
             InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
-            WineDllOverrides = dllOverrides
+            WineDllOverrides = dllOverrides,
+            Hashes = filesUnpackResult.ResultObject
         };
 
         return new(ResultEnum.Success, installedFix, "Successfully installed fix");
@@ -142,7 +143,7 @@ public sealed class FileFixInstaller
         return installedSharedFix;
     }
 
-    private async Task<Result<List<string>?>> DownloadAndUnpackArchiveAsync(
+    private async Task<Result<Dictionary<string, long?>?>> DownloadAndUnpackArchiveAsync(
         GameEntity game,
         FileFixEntity fix,
         string? variant,
@@ -169,14 +170,13 @@ public sealed class FileFixInstaller
 
         var filesInArchive = _archiveTools.GetListOfFilesInArchive(fileDownloadResult.ResultObject, unpackToPath, fix.InstallFolder, variant);
 
-        BackupFiles(filesInArchive, game.InstallDir, backupFolderPath, true);
+        BackupFiles([.. filesInArchive.Keys], game.InstallDir, backupFolderPath, true);
 
         await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
 
         if (_configEntity.DeleteZipsAfterInstall &&
             !_configEntity.UseLocalApiAndRepo &&
-            fileDownloadResult.ResultObject is not null &&
-            fileDownloadResult.ResultObject.StartsWith(ClientProperties.WorkingFolder))
+            fileDownloadResult.ResultObject?.StartsWith(ClientProperties.WorkingFolder) == true)
         {
             File.Delete(fileDownloadResult.ResultObject);
         }

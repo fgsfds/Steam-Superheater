@@ -96,6 +96,7 @@
             <StackPanel Orientation="Horizontal" IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                 <Button Name="InstallButton"
+                        IsVisible="{Binding !SelectedFix.IsInstalled}"
                         Command="{Binding InstallUpdateFixCommand}"
                         Margin="3,0"
                         Background="{DynamicResource SystemAccentColor}"
@@ -103,11 +104,21 @@
                         Padding="8"/>
 
                 <Button Name="UninstallButton"
+                        IsVisible="{Binding SelectedFix.IsInstalled}"
                         Command="{Binding UninstallFixCommand}"
                         Margin="3,0"
                         Background="{DynamicResource SystemAccentColor}"
                         Padding="8">
                     Uninstall
+                </Button>
+
+                <Button Name="CheckHashButton"
+                        IsVisible="{Binding SelectedFix.IsInstalled}"
+                        Command="{Binding CheckHashCommand}"
+                        Margin="3,0"
+                        Background="{DynamicResource SystemAccentColor}"
+                        Padding="8">
+                    Check integrity
                 </Button>
 
                 <Button Name="OpenConfig"

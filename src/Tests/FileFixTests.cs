@@ -100,11 +100,13 @@ public sealed partial class FileFixTests
 
         FileFixUninstaller fileFixUninstaller = new();
         FileFixUpdater fileFixUpdater = new(fileFixInstaller, fileFixUninstaller);
+        FileFixChecker fileFixChecker = new();
 
         _fixManager = new(
             fileFixInstaller,
             fileFixUninstaller,
             fileFixUpdater,
+            fileFixChecker,
             null!,
             null!,
             null!,
