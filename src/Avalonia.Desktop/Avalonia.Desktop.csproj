@@ -9,6 +9,7 @@
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <StartupObject>Avalonia.Desktop.Program</StartupObject>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Debug-Linux' ">

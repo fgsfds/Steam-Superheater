@@ -439,11 +439,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-            result.Message + repeatedString,
+        NotificationsHelper.Show(
+            result.Message,
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
@@ -463,11 +460,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         OnPropertyChanged(nameof(DisableFixButtonText));
         OnPropertyChanged(nameof(SelectedGameFixesList));
 
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-            result.Message + repeatedString,
+        NotificationsHelper.Show(
+            result.Message,
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
@@ -552,11 +546,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (!canUpload.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                canUpload.Message + repeatedString,
+            NotificationsHelper.Show(
+                canUpload.Message,
                 NotificationType.Error
                 );
 
@@ -577,26 +568,20 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (result.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
+            NotificationsHelper.Show(
                 $"""
                     Fix successfully uploaded.
                     It will be added to the database after developer's review.
 
-                    Thank you.{repeatedString}
+                    Thank you.
                     """,
                 NotificationType.Success
                 );
         }
         else
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + repeatedString,
+            NotificationsHelper.Show(
+                result.Message,
                 NotificationType.Error
                 );
         }
@@ -870,10 +855,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         {
             _logger.LogCritical(ex, "Error while saving json");
 
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
+            NotificationsHelper.Show(
                 "Error while saving json",
                 NotificationType.Error
                 );
@@ -898,11 +880,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         if (!result.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + repeatedString,
+            NotificationsHelper.Show(
+                result.Message,
                 NotificationType.Error
                 );
         }

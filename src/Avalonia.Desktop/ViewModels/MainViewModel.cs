@@ -444,11 +444,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             }
             catch (Exception)
             {
-                var length2 = App.Random.Next(1, 100);
-                var repeatedString2 = new string('\u200B', length2);
-
-                App.NotificationManager.Show(
-                    "Superheater needs to be run as admin in order to install this fix" + repeatedString2,
+                NotificationsHelper.Show(
+                    "Superheater needs to be run as admin in order to install this fix",
                     NotificationType.Error
                     );
 
@@ -465,11 +462,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         {
             _logger.LogCritical(ex, $"Error while installing fix {SelectedFix.Name} for {SelectedGame.GameName}");
 
-            var length2 = App.Random.Next(1, 100);
-            var repeatedString2 = new string('\u200B', length2);
-
-            App.NotificationManager.Show(
-                "Critical error while installing fix" + repeatedString2,
+            NotificationsHelper.Show(
+                "Critical error while installing fix",
                 NotificationType.Error
                 );
         }
@@ -552,11 +546,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
                     if (!result.IsSuccess)
                     {
-                        var length2 = App.Random.Next(1, 100);
-                        var repeatedString2 = new string('\u200B', length2);
-
-                        App.NotificationManager.Show(
-                            result.Message + repeatedString2,
+                        NotificationsHelper.Show(
+                            result.Message,
                             NotificationType.Error
                             );
 
@@ -573,11 +564,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
             IsInProgress = false;
 
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                fixUninstallResult.Message + repeatedString,
+            NotificationsHelper.Show(
+                fixUninstallResult.Message,
                 fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
                 );
         }
@@ -585,11 +573,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         {
             _logger.LogCritical(ex, $"Error while uninstalling fix {SelectedFix.Name} for {SelectedGame.GameName}");
 
-            var length2 = App.Random.Next(1, 100);
-            var repeatedString2 = new string('\u200B', length2);
-
-            App.NotificationManager.Show(
-                "Critical error while uninstalling fix" + repeatedString2,
+            NotificationsHelper.Show(
+                "Critical error while uninstalling fix",
                 NotificationType.Error
                 );
         }
@@ -848,11 +833,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         var result = await _apiInterface.ReportFixAsync(SelectedFix.Guid, reportText).ConfigureAwait(true);
 
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-            result.Message + repeatedString,
+        NotificationsHelper.Show(
+            result.Message,
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
@@ -987,11 +969,8 @@ Do you still want to install the fix?",
 
         if (!result.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + repeatedString,
+            NotificationsHelper.Show(
+                result.Message,
                 NotificationType.Error
                 );
 
@@ -1004,22 +983,16 @@ Do you still want to install the fix?",
             fileFix.ConfigFile is not null &&
             _config.OpenConfigAfterInstall)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + Environment.NewLine + "Open config file?" + repeatedString,
+            NotificationsHelper.Show(
+                result.Message + Environment.NewLine + "Open config file?",
                 NotificationType.Information,
                 onClick: () => OpenConfigFileAsync(fixesList.Game, fileFix)
                 );
         }
         else
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + repeatedString,
+            NotificationsHelper.Show(
+                result.Message,
                 NotificationType.Success
                 );
         }
@@ -1045,11 +1018,8 @@ Do you still want to install the fix?",
 
         if (!result.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-                result.Message + repeatedString,
+            NotificationsHelper.Show(
+                result.Message,
                 NotificationType.Error
                 );
         }
@@ -1132,11 +1102,8 @@ Do you still want to install the fix?",
         {
             _logger.LogCritical(ex, $"Error while opening config for {fix.Name} for {game.Name}");
 
-            var length2 = App.Random.Next(1, 100);
-            var repeatedString2 = new string('\u200B', length2);
-
-            App.NotificationManager.Show(
-                "Critical error while installing fix" + repeatedString2,
+            NotificationsHelper.Show(
+                "Critical error while installing fix",
                 NotificationType.Error
                 );
         }

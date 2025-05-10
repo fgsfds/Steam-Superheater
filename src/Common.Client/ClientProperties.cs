@@ -9,7 +9,7 @@ public static class ClientProperties
 {
     private static readonly SemaphoreSlim _semaphore = new(1);
 
-    private static bool? _isSteamDeckGameMode = null;
+    private static bool? _isSteamDeckGameMode;
 
     static ClientProperties()
     {
@@ -72,11 +72,6 @@ public static class ClientProperties
     public static bool IsOfflineMode { get; set; }
 
     /// <summary>
-    /// Did the app crash on previous launch
-    /// </summary>
-    public static Tuple<bool, string>? HasCrashed { get; set; }
-
-    /// <summary>
     /// Check if Game Mode is active on Steam Deck
     /// </summary>
     private static bool CheckDeckGameMode()
@@ -116,4 +111,6 @@ public static class ClientProperties
 
         return _isSteamDeckGameMode.Value;
     }
+
+    public static string PathToLogFile => Path.Combine(WorkingFolder, "Superheater.log");
 }

@@ -8,6 +8,7 @@ using Common.Entities;
 using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 
@@ -19,6 +20,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     private readonly IConfigProvider _config;
     private readonly PopupEditorViewModel _popupEditor;
     private readonly SemaphoreSlim _locker = new(1);
+    private readonly ILogger _logger;
     private int _loadedPage = 1;
 
 
@@ -38,14 +40,16 @@ internal sealed partial class NewsViewModel : ObservableObject
 
 
     public NewsViewModel(
-    INewsProvider newsProvider,
-    IConfigProvider configProvider,
-    PopupEditorViewModel popupEditor
-    )
+        INewsProvider newsProvider,
+        IConfigProvider configProvider,
+        PopupEditorViewModel popupEditor,
+        ILogger logger
+        )
     {
         _newsProvider = newsProvider;
         _config = configProvider;
         _popupEditor = popupEditor;
+        _logger = logger;
 
         _config.ParameterChangedEvent += OnParameterChangedEvent;
 
@@ -87,11 +91,8 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         var result = await _newsProvider.AddNewsAsync(newContent).ConfigureAwait(true);
 
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-        result.Message + repeatedString,
+        NotificationsHelper.Show(
+        result.Message,
         result.IsSuccess ? NotificationType.Success : NotificationType.Error
         );
 
@@ -123,13 +124,10 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         var result = await _newsProvider.ChangeNewsContentAsync(date, newContent).ConfigureAwait(true);
 
-        var length = App.Random.Next(1, 100);
-        var repeatedString = new string('\u200B', length);
-
-        App.NotificationManager.Show(
-        result.Message + repeatedString,
-        result.IsSuccess ? NotificationType.Success : NotificationType.Error
-        );
+        NotificationsHelper.Show(
+            result.Message,
+            result.IsSuccess ? NotificationType.Success : NotificationType.Error
+            );
 
         if (result.IsSuccess)
         {
@@ -184,14 +182,11 @@ internal sealed partial class NewsViewModel : ObservableObject
             var jsonString = JsonSerializer.Serialize([.. NewsList.OrderByDescending(x => x.Date)], NewsListEntityContext.Default.ListNewsEntity);
             File.WriteAllText(file.Path.AbsolutePath, jsonString);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            //_logger.LogCritical(ex, "Error while saving json");
+            _logger.LogCritical(ex, "Error while saving json");
 
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
+            NotificationsHelper.Show(
                 "Error while saving json",
                 NotificationType.Error
                 );
@@ -211,12 +206,9 @@ internal sealed partial class NewsViewModel : ObservableObject
 
         if (!result.IsSuccess)
         {
-            var length = App.Random.Next(1, 100);
-            var repeatedString = new string('\u200B', length);
-
-            App.NotificationManager.Show(
-            result.Message + repeatedString,
-            NotificationType.Error
+            NotificationsHelper.Show(
+                result.Message,
+                NotificationType.Error
             );
         }
 

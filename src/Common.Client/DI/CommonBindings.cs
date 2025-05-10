@@ -55,12 +55,6 @@ public static class CommonBindings
         return httpClient;
     }
 
-    private static ILogger CreateLogger(IServiceProvider service)
-    {
-        var logFilePath = Path.Combine(ClientProperties.WorkingFolder, "Superheater.log");
-        var logger = FileLoggerFactory.Create(logFilePath);
-
-        return logger;
-    }
+    private static ILogger CreateLogger(IServiceProvider service) => FileLoggerFactory.Create(ClientProperties.PathToLogFile);
 }
 

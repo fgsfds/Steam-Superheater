@@ -1,9 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Controls.Notifications;
-using Avalonia.Data.Core.Plugins;
 using Avalonia.Desktop.DI;
-using Avalonia.Desktop.Helpers;
+using Avalonia.Desktop.ViewModels;
 using Avalonia.Desktop.Windows;
 using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
@@ -20,32 +18,57 @@ namespace Avalonia.Desktop;
 
 public sealed class App : Application
 {
-    public static WindowNotificationManager NotificationManager { get; private set; }
-    public static Random Random { get; private set; }
-
     private static readonly Mutex _mutex = new(false, "Superheater");
-    private static ILogger? _logger = null;
-
-    static App()
-    {
-        //initialized later
-        NotificationManager = null!;
-        Random = null!;
-    }
+    private static ILogger _logger = null!;
+    private static App _app = null!;
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        _app = this;
     }
 
-    public override void OnFrameworkInitializationCompleted()
+    public static int Run(AppBuilder builder)
     {
-        if (ClientProperties.HasCrashed is not null && ClientProperties.HasCrashed.Item1 && !Design.IsDesignMode)
+        int code;
+
+        using ClassicDesktopStyleApplicationLifetime lifetime = new()
         {
-            var messageBox = new MessageBox(ClientProperties.HasCrashed.Item2);
-            messageBox.Show();
-            return;
+            ShutdownMode = ShutdownMode.OnMainWindowClose
+        };
+
+        _ = builder.SetupWithLifetime(lifetime);
+
+        LoadBindings();
+
+        var config = BindingsManager.Provider.GetRequiredService<IConfigProvider>();
+        var mainViewModel = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
+        var logger = BindingsManager.Provider.GetRequiredService<ILogger>();
+        _logger = logger;
+
+        SetTheme(config.Theme);
+
+        lifetime.MainWindow = new MainWindow();
+        lifetime.MainWindow.DataContext = mainViewModel;
+
+        if (ClientProperties.IsDeveloperMode)
+        {
+            logger.LogInformation("Started in developer mode");
         }
+
+        if (ClientProperties.IsOfflineMode)
+        {
+            logger.LogInformation("Starting in offline mode");
+        }
+
+        if (ClientProperties.IsInSteamDeckGameMode)
+        {
+            logger.LogInformation("Starting in Steam Deck mode");
+        }
+
+        logger.LogInformation($"Superheater version: {ClientProperties.CurrentVersion}");
+        logger.LogInformation($"Operating system: {Environment.OSVersion}");
+        logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
 
         if (!Design.IsDesignMode)
         {
@@ -58,93 +81,70 @@ public sealed class App : Application
                 Move it to the folder where you have write access.
                 """);
                 messageBox.Show();
-                return;
+                return -1;
             }
 
             if (!_mutex.WaitOne(1000, false))
             {
                 var messageBox = new MessageBox("You can't launch multiple instances of Superheater");
                 messageBox.Show();
-                return;
+                return -1;
             }
         }
+
 
         try
         {
-            RenameConfig();
-
-            var container = BindingsManager.Instance;
-
-            ModelsBindings.Load(container);
-            ViewModelsBindings.Load(container);
-            CommonBindings.Load(container, Design.IsDesignMode);
-            ProvidersBindings.Load(container, Design.IsDesignMode);
-
-            var theme = BindingsManager.Provider.GetRequiredService<IConfigProvider>().Theme;
-            _logger = BindingsManager.Provider.GetRequiredService<ILogger>();
-
-            var themeEnum = theme switch
-            {
-                ThemeEnum.System => ThemeVariant.Default,
-                ThemeEnum.Light => ThemeVariant.Light,
-                ThemeEnum.Dark => ThemeVariant.Dark,
-                _ => ThrowHelper.ThrowArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
-            };
-
-            RequestedThemeVariant = themeEnum;
-
-            if (ClientProperties.IsDeveloperMode)
-            {
-                _logger.LogInformation("Started in developer mode");
-            }
-
-            _logger.LogInformation($"Superheater version: {ClientProperties.CurrentVersion}");
-            _logger.LogInformation($"Operating system: {Environment.OSVersion}");
-            _logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
-
             Cleanup();
 
-            // Line below is needed to remove Avalonia data validation.
-            // Without this line you will get duplicate validations from both Avalonia and CT
-            BindingPlugins.DataValidators.RemoveAt(0);
-
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                desktop.MainWindow = new MainWindow();
-                desktop.Exit += OnAppExit;
-            }
-
-            NotificationManager = new(AvaloniaProperties.TopLevel)
-            {
-                MaxItems = 3,
-                Position = NotificationPosition.TopRight,
-                Margin = new(0, 50, 10, 0)
-            };
-
-            Random = new();
-
-            base.OnFrameworkInitializationCompleted();
+            code = lifetime.Start();
         }
         catch (Exception ex)
         {
-            if (Design.IsDesignMode)
+            logger?.LogCritical(ex, "== Critical error while running app ==");
+
+            try
             {
-                return;
+                lifetime.Shutdown();
+            }
+            catch (Exception ex2)
+            {
+                logger?.LogCritical(ex2, "== Critical error while shutting down app ==");
             }
 
-            var messageBox = new MessageBox(ex.ToString());
-            messageBox.Show();
-
-            _logger?.LogCritical(ex, "Error while starting app");
-            _mutex.Dispose();
+            throw;
         }
+
+        return code;
     }
 
-    private void OnAppExit(object? sender, ControlledApplicationLifetimeExitEventArgs e)
+    /// <summary>
+    /// Load DI bindings
+    /// </summary>
+    private static void LoadBindings()
     {
-        var httpClient = BindingsManager.Provider.GetRequiredService<HttpClient>();
-        httpClient?.Dispose();
-        _mutex.Dispose();
+        var container = BindingsManager.Instance;
+
+        ModelsBindings.Load(container);
+        ViewModelsBindings.Load(container);
+        CommonBindings.Load(container, Design.IsDesignMode);
+        ProvidersBindings.Load(container, Design.IsDesignMode);
+    }
+
+    /// <summary>
+    /// Set theme from the config
+    /// </summary>
+    private static void SetTheme(ThemeEnum theme)
+    {
+        var themeEnum = theme switch
+        {
+            ThemeEnum.System => ThemeVariant.Default,
+            ThemeEnum.Light => ThemeVariant.Light,
+            ThemeEnum.Dark => ThemeVariant.Dark,
+            _ => ThrowHelper.ThrowArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+        };
+
+        _app.RequestedThemeVariant = themeEnum;
     }
 
     /// <summary>
@@ -193,18 +193,6 @@ public sealed class App : Application
         if (Directory.Exists(updateDir))
         {
             Directory.Delete(updateDir, true);
-        }
-    }
-
-    [Obsolete("Remove when there's no versions <2.2.0")]
-    private static void RenameConfig()
-    {
-        var oldConfigPath = Path.Combine(ClientProperties.WorkingFolder, "config.db");
-        var newConfigPath = Path.Combine(ClientProperties.WorkingFolder, "Superheater.db");
-
-        if (File.Exists(oldConfigPath))
-        {
-            File.Move(oldConfigPath, newConfigPath, true);
         }
     }
 }

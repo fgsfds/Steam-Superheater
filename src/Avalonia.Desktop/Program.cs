@@ -2,21 +2,22 @@ using Common.Client;
 using Common.Helpers;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
-using System.Runtime.ExceptionServices;
+using System.Runtime.InteropServices;
 
 namespace Avalonia.Desktop;
 
-public static class Program
+public sealed partial class Program
 {
     // Initialization code. Don't use any Avalonia, third-party APIs or any
     // SynchronizationContext-reliant code before AppMain is called: things aren't initialized
     // yet and stuff might break.
     [STAThread]
-    public static void Main(string[] args)
+    public static int Main(string[] args)
     {
-        if (args.Contains("--crash"))
+        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
         {
-            ClientProperties.HasCrashed = new(true, args[1]);
+            AppUpdateInstaller.InstallUpdate();
+            return 0;
         }
 
         if (args.Contains("--dev"))
@@ -34,45 +35,52 @@ public static class Program
             ClientProperties.IsOfflineMode = true;
         }
 
-        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
+        try
         {
-            AppUpdateInstaller.InstallUpdate();
+            var builder = BuildAvaloniaApp();
+
+            return App.Run(builder);
         }
-        else
+        catch (Exception ex)
         {
-            try
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-                _ = BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+                WinMsgBox.Show(
+                    "Critical error",
+                    ex.ToString()
+                    );
             }
-            catch (Exception ex)
+
+            if (File.Exists(ClientProperties.PathToLogFile))
             {
-                ExceptionDispatchInfo.Capture(ex).Throw();
+                File.Copy(ClientProperties.PathToLogFile, Path.Combine(ClientProperties.WorkingFolder, $"{DateTime.Now:dd_MM_yy_HH_mm}.crashlog"));
             }
+
+            return -1;
         }
-    }
-
-    private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-    {
-        if (!ClientProperties.IsDeveloperMode)
-        {
-            var exe = Path.Combine(ClientProperties.WorkingFolder, ClientProperties.ExecutableName);
-            var args = "--crash " + $@"""{e.ExceptionObject}""";
-
-            _ = System.Diagnostics.Process.Start(exe, args);
-        }
-
-        Environment.FailFast(string.Empty);
     }
 
     // Avalonia configuration, don't remove; also used by visual designer.
     private static AppBuilder BuildAvaloniaApp()
     {
-        _ = IconProvider.Current.Register<FontAwesomeIconProvider>();
+        _ = IconProvider.Current
+            .Register<FontAwesomeIconProvider>()
+            ;
 
         return AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .WithInterFont()
                 .LogToTrace();
+    }
+
+    private static partial class WinMsgBox
+    {
+        [LibraryImport("user32.dll", EntryPoint = "MessageBoxW", StringMarshalling = StringMarshalling.Utf16)]
+        private static partial int MessageBox(IntPtr hWnd, string? text, string? caption, int type);
+
+        public static void Show(string? title, string? text)
+        {
+            _ = MessageBox(IntPtr.Zero, text, title, 0);
+        }
     }
 }
