@@ -512,7 +512,7 @@ public sealed class EditorModel
                     if (fixEntity.MD5 is null ||
                         fixEntity.FileSize is null)
                     {
-                        var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
+                        using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
 
                         fixEntity.FileSize = header.Content.Headers.ContentLength;
                         fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");

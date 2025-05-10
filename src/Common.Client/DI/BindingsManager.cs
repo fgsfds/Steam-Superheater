@@ -37,6 +37,7 @@ public static class BindingsManager
     public static void Reset()
     {
         _instance = null;
+        _provider?.Dispose();
         _provider = null;
     }
 }

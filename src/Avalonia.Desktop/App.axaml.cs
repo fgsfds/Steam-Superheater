@@ -154,7 +154,7 @@ public sealed class App : Application
     {
         try
         {
-            var fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
+            using var fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
             fs.Close();
             File.Delete(fs.Name);
 

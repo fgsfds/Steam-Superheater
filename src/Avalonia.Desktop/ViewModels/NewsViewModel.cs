@@ -167,7 +167,7 @@ internal sealed partial class NewsViewModel : ObservableObject
         {
             var topLevel = AvaloniaProperties.TopLevel;
 
-            var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+            using var file = await topLevel.StorageProvider.SaveFilePickerAsync(
                 new FilePickerSaveOptions
                 {
                     Title = "Open Text File",

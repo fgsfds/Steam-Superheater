@@ -243,12 +243,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
             var hasUpvote = _config.Upvotes.TryGetValue(SelectedFix.Guid, out var isUpvote);
 
-            if (hasUpvote && !isUpvote)
-            {
-                return true;
-            }
-
-            return false;
+            return hasUpvote && !isUpvote;
         }
     }
 
@@ -442,7 +437,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             {
                 if (DoesFixRequireAdminRights)
                 {
-                    _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
+                    using var _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
 
                     Environment.Exit(0);
                 }
@@ -645,7 +640,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(SelectedGame?.Game);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = SelectedGame.Game.InstallDir,
             UseShellExecute = true
@@ -662,7 +657,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
             UseShellExecute = true
@@ -678,7 +673,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = "https://store.steampowered.com/app/" + SelectedGame.GameId,
             UseShellExecute = true
@@ -694,7 +689,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = "steam://nav/games/details/" + SelectedGame.GameId,
             UseShellExecute = true
@@ -710,7 +705,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = $"https://steamdb.info/app/{SelectedGame.GameId}/config/",
             UseShellExecute = true
@@ -739,7 +734,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         if (SelectedGame.IsGameInstalled)
         {
-            _ = Process.Start(new ProcessStartInfo
+            using var _ = Process.Start(new ProcessStartInfo
             {
                 FileName = $"steam://rungameid/{SelectedGame.GameId}",
                 UseShellExecute = true
@@ -747,7 +742,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         }
         else
         {
-            _ = Process.Start(new ProcessStartInfo
+            using var _ = Process.Start(new ProcessStartInfo
             {
                 FileName = $"steam://install/{SelectedGame.GameId}",
                 UseShellExecute = true
@@ -1112,7 +1107,7 @@ Do you still want to install the fix?",
 
             if (fileFix.ConfigFile.EndsWith(".exe"))
             {
-                _ = Process.Start(new ProcessStartInfo
+                using var _ = Process.Start(new ProcessStartInfo
                 {
                     FileName = Path.Combine(pathToConfig),
                     UseShellExecute = true,

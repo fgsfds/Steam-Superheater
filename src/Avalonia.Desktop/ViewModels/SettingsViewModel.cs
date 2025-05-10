@@ -1,3 +1,4 @@
+using System;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
@@ -14,12 +15,15 @@ using System.Diagnostics;
 
 namespace Avalonia.Desktop.ViewModels;
 
-internal sealed partial class SettingsViewModel : ObservableObject
+internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 {
     private readonly IConfigProvider _config;
     private readonly FileSystemWatcher _watcher;
     private readonly List<string> _archivesExtensions = [".zip", ".7z"];
     private readonly DatabaseContextFactory _dbContextFactory;
+
+    private bool _disposed;
+
 
     #region Binding Properties
 
@@ -66,6 +70,7 @@ internal sealed partial class SettingsViewModel : ObservableObject
 
     [ObservableProperty]
     private bool _deleteArchivesCheckbox;
+
     partial void OnDeleteArchivesCheckboxChanged(bool value)
     {
         _config.DeleteZipsAfterInstall = value;
@@ -215,7 +220,7 @@ internal sealed partial class SettingsViewModel : ObservableObject
     [RelayCommand]
     private void OpenConfigXML()
     {
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = Consts.ConfigFile,
             UseShellExecute = true
@@ -300,6 +305,17 @@ internal sealed partial class SettingsViewModel : ObservableObject
 
         OnPropertyChanged(nameof(ZipFilesCount));
         OnPropertyChanged(nameof(DeleteButtonText));
+    }
+
+    public void Dispose()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _watcher.Dispose();
+        _disposed = true;
     }
 }
 

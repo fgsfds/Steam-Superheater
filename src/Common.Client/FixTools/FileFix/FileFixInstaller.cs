@@ -450,7 +450,7 @@ public sealed class FileFixInstaller
 
         var path = Path.Combine(gameInstallPath, runAfterInstall);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = path,
             UseShellExecute = true,

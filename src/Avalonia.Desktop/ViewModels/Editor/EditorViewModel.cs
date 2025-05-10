@@ -681,7 +681,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             return;
         }
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = game.InstallDir,
             UseShellExecute = true
@@ -697,7 +697,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
             UseShellExecute = true
@@ -713,7 +713,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = "https://store.steampowered.com/app/" + SelectedGame.GameId,
             UseShellExecute = true
@@ -729,7 +729,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = "steam://nav/games/details/" + SelectedGame.GameId,
             UseShellExecute = true
@@ -745,7 +745,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedGame);
 
-        _ = Process.Start(new ProcessStartInfo
+        using var _ = Process.Start(new ProcessStartInfo
         {
             FileName = $"https://steamdb.info/app/{SelectedGame.GameId}/config/",
             UseShellExecute = true
@@ -850,7 +850,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         {
             var topLevel = AvaloniaProperties.TopLevel;
 
-            var file = await topLevel.StorageProvider.SaveFilePickerAsync(
+            using var file = await topLevel.StorageProvider.SaveFilePickerAsync(
                 new FilePickerSaveOptions
                 {
                     Title = "Open Text File",
