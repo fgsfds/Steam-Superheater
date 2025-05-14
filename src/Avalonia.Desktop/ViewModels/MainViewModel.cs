@@ -508,7 +508,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             fixUninstallResult.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
-    private bool CheckHashCanExecute() => (SelectedFix?.InstalledFix as FileInstalledFixEntity)?.Hashes is not null;
+    private bool CheckHashCanExecute() => (SelectedFix?.InstalledFix as FileInstalledFixEntity)?.FilesList?.Any(x => x.Value is not null) ?? false;
 
 
     /// <summary>

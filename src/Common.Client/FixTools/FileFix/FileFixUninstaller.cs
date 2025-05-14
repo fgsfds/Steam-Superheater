@@ -85,7 +85,7 @@ public sealed class FileFixUninstaller
     /// <param name="fixFiles">Files to delete</param>
     private static void DeleteFiles(
         string gameInstallDir,
-        List<string>? fixFiles
+        Dictionary<string, long?>? fixFiles
         )
     {
         if (fixFiles is null)
@@ -94,7 +94,7 @@ public sealed class FileFixUninstaller
         }
 
         //checking if files can be opened before deleting them
-        foreach (var file in fixFiles)
+        foreach (var file in fixFiles.Keys)
         {
             var fullPath = ClientHelpers.GetFullPath(gameInstallDir, file);
 
@@ -102,8 +102,7 @@ public sealed class FileFixUninstaller
                 !file.EndsWith('\\') &&
                 File.Exists(fullPath))
             {
-                var stream = File.Open(fullPath, FileMode.Open);
-                stream.Dispose();
+                using var stream = File.Open(fullPath, FileMode.Open);
             }
         }
 
@@ -111,10 +110,10 @@ public sealed class FileFixUninstaller
         List<string> directories = [];
         foreach (var file in fixFiles)
         {
-            var fullPath = ClientHelpers.GetFullPath(gameInstallDir, file);
+            var fullPath = ClientHelpers.GetFullPath(gameInstallDir, file.Key);
 
-            if (!file.EndsWith('/') &&
-                !file.EndsWith('\\') &&
+            if (!file.Key.EndsWith('/') &&
+                !file.Key.EndsWith('\\') &&
                 File.Exists(fullPath))
             {
                 File.Delete(fullPath);
