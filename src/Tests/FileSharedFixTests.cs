@@ -93,30 +93,32 @@ public sealed partial class FileFixTests : IDisposable
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $@"{{
-  ""$type"": ""FileFix"",
-  ""BackupFolder"": ""test_fix"",
-  ""FilesList"": [
-    ""install folder{Helpers.SeparatorForJson}start game.exe"",
-    ""install folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
-  ],
-  ""InstalledSharedFix"": {{
-    ""BackupFolder"": null,
-    ""FilesList"": [
-      ""shared install folder{Helpers.SeparatorForJson}"",
-      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
-    ],
-    ""InstalledSharedFix"": null,
-    ""WineDllOverrides"": null,
-    ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": ""1.0""
-  }},
-  ""WineDllOverrides"": null,
-  ""GameId"": 1,
-  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": ""1.0""
-}}";
+        var installedExpected = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix",
+  "FilesList": {
+    "install folder{{Helpers.SeparatorForJson}}start game.exe": 446523244,
+    "install folder{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
+  },
+  "InstalledSharedFix": {
+    "BackupFolder": null,
+    "FilesList": {
+      "shared install folder{{Helpers.SeparatorForJson}}": null,
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file.txt": 2631781344
+    },
+    "InstalledSharedFix": null,
+    "WineDllOverrides": null,
+    "GameId": 1,
+    "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
+    "Version": "1.0"
+  },
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "1.0"
+}
+""";
 
         Assert.Equal(installedExpected, installedActual);
     }
@@ -134,29 +136,31 @@ public sealed partial class FileFixTests : IDisposable
         var newFileExpected = "fix_v2";
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $@"{{
-  ""$type"": ""FileFix"",
-  ""BackupFolder"": ""test_fix"",
-  ""FilesList"": [
-    ""install folder{Helpers.SeparatorForJson}start game.exe""
-  ],
-  ""InstalledSharedFix"": {{
-    ""BackupFolder"": null,
-    ""FilesList"": [
-      ""shared install folder{Helpers.SeparatorForJson}"",
-      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
-    ],
-    ""InstalledSharedFix"": null,
-    ""WineDllOverrides"": null,
-    ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": ""1.0""
-  }},
-  ""WineDllOverrides"": null,
-  ""GameId"": 1,
-  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": ""2.0""
-}}";
+        var installedExpected = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix",
+  "FilesList": {
+    "install folder{{Helpers.SeparatorForJson}}start game.exe": 2207528662
+  },
+  "InstalledSharedFix": {
+    "BackupFolder": null,
+    "FilesList": {
+      "shared install folder{{Helpers.SeparatorForJson}}": null,
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file.txt": 2631781344
+    },
+    "InstalledSharedFix": null,
+    "WineDllOverrides": null,
+    "GameId": 1,
+    "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
+    "Version": "1.0"
+  },
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "2.0"
+}
+""";
 
         Assert.Equal(newFileExpected, newFileActual);
         Assert.Equal(installedExpected, installedActual);
@@ -180,31 +184,33 @@ public sealed partial class FileFixTests : IDisposable
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $@"{{
-  ""$type"": ""FileFix"",
-  ""BackupFolder"": ""test_fix"",
-  ""FilesList"": [
-    ""install folder{Helpers.SeparatorForJson}start game.exe"",
-    ""install folder{Helpers.SeparatorForJson}subfolder{Helpers.SeparatorForJson}file.txt""
-  ],
-  ""InstalledSharedFix"": {{
-    ""BackupFolder"": null,
-    ""FilesList"": [
-      ""shared install folder{Helpers.SeparatorForJson}"",
-      ""shared install folder{Helpers.SeparatorForJson}shared fix file 2.txt"",
-      ""shared install folder{Helpers.SeparatorForJson}shared fix file.txt""
-    ],
-    ""InstalledSharedFix"": null,
-    ""WineDllOverrides"": null,
-    ""GameId"": 1,
-    ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa6"",
-    ""Version"": ""2.0""
-  }},
-  ""WineDllOverrides"": null,
-  ""GameId"": 1,
-  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": ""1.0""
-}}";
+        var installedExpected = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix",
+  "FilesList": {
+    "install folder{{Helpers.SeparatorForJson}}start game.exe": 446523244,
+    "install folder{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
+  },
+  "InstalledSharedFix": {
+    "BackupFolder": null,
+    "FilesList": {
+      "shared install folder{{Helpers.SeparatorForJson}}": null,
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file 2.txt": 254828754,
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file.txt": 254828754
+    },
+    "InstalledSharedFix": null,
+    "WineDllOverrides": null,
+    "GameId": 1,
+    "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
+    "Version": "2.0"
+  },
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "1.0"
+}
+""";
 
         Assert.Equal(installedExpected, installedActual);
     }

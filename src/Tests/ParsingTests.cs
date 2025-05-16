@@ -1,9 +1,13 @@
 using Common.Client;
 using Common.Client.Providers;
 using Common.Entities;
+using Common.Entities.Fixes;
+using Common.Entities.Fixes.FileFix;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System.Reflection;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Tests;
 
@@ -36,3 +40,70 @@ public sealed class ParsingTests
     }
 }
 
+/// <summary>
+/// Tests that can be run in parallel
+/// </summary>
+[Collection("Sync")]
+public sealed class InstalledFileFixBackwardsCompatibilityTest
+{
+    [Fact]
+    public void GetGameEntityFromAcfTest()
+    {
+        var installedFixJson = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix",
+  "FilesList": [
+    "install folder{{Helpers.SeparatorForJson}}start game.exe"
+  ],
+  "InstalledSharedFix": {
+    "BackupFolder": null,
+    "FilesList": [
+      "shared install folder{{Helpers.SeparatorForJson}}",
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file.txt"
+    ],
+    "InstalledSharedFix": null,
+    "WineDllOverrides": null,
+    "GameId": 1,
+    "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
+    "Version": "1.0"
+  },
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "2.0"
+}
+""";
+
+        var addonsJson = JsonSerializer.Deserialize(installedFixJson, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+
+        var jsonActual = JsonSerializer.Serialize(addonsJson, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+        var jsonExpected = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix",
+  "FilesList": {
+    "install folder{{Helpers.SeparatorForJson}}start game.exe": null
+  },
+  "InstalledSharedFix": {
+    "BackupFolder": null,
+    "FilesList": {
+      "shared install folder{{Helpers.SeparatorForJson}}": null,
+      "shared install folder{{Helpers.SeparatorForJson}}shared fix file.txt": null
+    },
+    "InstalledSharedFix": null,
+    "WineDllOverrides": null,
+    "GameId": 1,
+    "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
+    "Version": "1.0"
+  },
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "2.0"
+}
+""";
+
+        Assert.Equal(jsonExpected, jsonActual);
+    }
+}

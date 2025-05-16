@@ -2,6 +2,10 @@
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
+using Minio;
+using Minio.DataModel.Args;
+using System.IO;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Xunit.Abstractions;
@@ -49,18 +53,16 @@ public sealed class DatabaseTests
 
         Assert.NotNull(fixesJson);
 
-#if !DEBUG
-return;
-#endif
-
-        StringBuilder sb = new();
+        StringBuilder sbFails = new();
+        StringBuilder sbSuccesses = new();
 
         foreach (var list in fixesJson)
         {
             foreach (var fix in list.Fixes)
             {
                 if (fix is not FileFixEntity fileFix ||
-                    fix.IsDisabled)
+                    fix.IsDisabled ||
+                    fileFix.Url is null)
                 {
                     continue;
                 }
@@ -69,33 +71,36 @@ return;
                 var size = fileFix.FileSize;
                 var md5 = fileFix.MD5;
 
-                if (url is null)
-                {
-                    continue;
-                }
-
                 if (md5 is null)
                 {
-                    _ = sb.AppendLine($"File {url} doesn't have MD5 in the database");
+                    _ = sbFails.AppendLine($"File {url} doesn't have MD5 in the database.");
                 }
+
                 if (size is null)
                 {
-                    _ = sb.AppendLine($"File {url} doesn't have size in the database");
+                    _ = sbFails.AppendLine($"File {url} doesn't have size in the database.");
+                }
+
+                if (md5 is null || size is null)
+                {
+                    continue;
                 }
 
                 using var header = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 
                 if (!header.IsSuccessStatusCode)
                 {
-                    _ = sb.AppendLine($"File {url} doesn't exist.");
+                    _ = sbFails.AppendLine($"File {url} doesn't exist.");
                     continue;
                 }
 
-                if (size is not null &&
-                    header.Content.Headers.ContentLength is not null &&
-                    size != header.Content.Headers.ContentLength)
+                if (header.Content.Headers.ContentLength is null)
                 {
-                    _ = sb.AppendLine($"File {url} size doesn't match. Expected {size} got {header.Content.Headers.ContentLength}");
+                    _ = sbFails.AppendLine($"File {url} doesn't have size in the header.");
+                }
+                else if (size != header.Content.Headers.ContentLength)
+                {
+                    _ = sbFails.AppendLine($"File {url} size doesn't match. Expected {size} got {header.Content.Headers.ContentLength}.");
                 }
 
                 //md5 of files from s3
@@ -104,10 +109,11 @@ return;
                     if (url.EndsWith("re4_re4hd_v1_1.zip"))
                     {
                         //nothing to do
+                        continue;
                     }
                     else if (header.Headers.ETag?.Tag is null)
                     {
-                        _ = sb.AppendLine($"File {url} doesn't have ETag");
+                        _ = sbFails.AppendLine($"File {url} doesn't have ETag.");
                     }
                     else
                     {
@@ -115,25 +121,53 @@ return;
 
                         if (md5e.Contains('-'))
                         {
-                            _ = sb.AppendLine($"File {url} has incorrect ETag");
+                            _ = sbFails.AppendLine($"File {url} has incorrect ETag.");
                         }
                         else if (!md5e.Equals(md5, StringComparison.OrdinalIgnoreCase))
                         {
-                            _ = sb.AppendLine($"File {url} has wrong MD5");
+                            _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                        }
+                        else
+                        {
+                            _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
                         }
                     }
                 }
                 //md5 of external files
-                else if (header.Content.Headers.ContentMD5 is not null &&
-                        !Convert.ToHexString(header.Content.Headers.ContentMD5).Equals(md5, StringComparison.OrdinalIgnoreCase))
+                else if (header.Content.Headers.ContentMD5 is not null)
                 {
-                    _ = sb.AppendLine($"File {url} has wrong MD5");
+                    if (!Convert.ToHexString(header.Content.Headers.ContentMD5).Equals(md5, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                    }
+                    else
+                    {
+                        _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
+                    }
+                }
+                else
+                {
+                    await using var stream = await httpClient.GetStreamAsync(url);
+                    using var md5remote = MD5.Create();
+
+                    byte[] hash = md5remote.ComputeHash(stream);
+
+                    var filemd5 = Convert.ToHexString(hash);
+
+                    if (!filemd5.Equals(md5, StringComparison.OrdinalIgnoreCase))
+                    {
+                        _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                    }
+                    else
+                    {
+                        _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
+                    }
                 }
             }
         }
 
-        _output.WriteLine(sb.ToString());
-        Assert.True(sb.Length < 1);
+        _output.WriteLine(sbSuccesses.ToString());
+        Assert.True(sbFails.Length < 1, sbFails.ToString());
     }
 
 
@@ -168,5 +202,73 @@ return;
         var fixesJson = JsonSerializer.Deserialize(newsJsonString, NewsListEntityContext.Default.ListNewsEntity);
 
         Assert.NotNull(fixesJson);
+    }
+
+
+
+    [Fact]
+    public async Task LooseFilesTest()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        var fixesJsonString = File.ReadAllText("../../../../db/fixes.json");
+        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, FixesListContext.Default.ListFixesList);
+
+        Assert.NotNull(fixesJson);
+
+        List<string>? fixesUrls = [];
+
+        foreach (var a in fixesJson)
+        {
+            foreach (var b in a.Fixes.OfType<FileFixEntity>())
+            {
+                if (b.Url?.StartsWith("https://s3.fgsfds.link") == true)
+                {
+                    fixesUrls.Add(b.Url);
+                }
+            }
+        }
+
+        var access = Environment.GetEnvironmentVariable("MINIO_ACCESS_KEY");
+        var secret = Environment.GetEnvironmentVariable("MINIO_SECRET_KEY");
+
+        Assert.NotNull(access);
+        Assert.NotNull(secret);
+
+        using var minioClient = new MinioClient();
+        using var iMinioClient = minioClient
+            .WithEndpoint("s3.fgsfds.link:9000")
+            .WithCredentials(access, secretKey: secret)
+            .Build();
+
+        var args = new ListObjectsArgs()
+            .WithBucket("superheater")
+            .WithRecursive(true);
+
+        var filesInBucket = new List<string>();
+
+        await foreach (var item in iMinioClient.ListObjectsEnumAsync(args))
+        {
+            if (item.Key.EndsWith('/'))
+            {
+                continue;
+            }
+
+            filesInBucket.Add("https://s3.fgsfds.link/superheater/" + item.Key);
+        }
+
+        var loose = filesInBucket.Except(fixesUrls);
+
+        StringBuilder sb = new();
+
+        foreach (var item in loose)
+        {
+            _ = sb.AppendLine($"File {item} is loose.");
+        }
+
+        Assert.True(sb.Length < 1, sb.ToString());
     }
 }

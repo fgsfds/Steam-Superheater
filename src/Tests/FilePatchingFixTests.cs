@@ -31,18 +31,20 @@ public sealed partial class FileFixTests
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
         var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $@"{{
-  ""$type"": ""FileFix"",
-  ""BackupFolder"": ""test_fix_with_patch"",
-  ""FilesList"": [
-    ""install folder{Helpers.SeparatorForJson}start game.exe.octodiff""
-  ],
-  ""InstalledSharedFix"": null,
-  ""WineDllOverrides"": null,
-  ""GameId"": 1,
-  ""Guid"": ""c0650f19-f670-4f8a-8545-70f6c5171fa5"",
-  ""Version"": ""1.0""
-}}";
+        var installedExpected = $$"""
+{
+  "$type": "FileFix",
+  "BackupFolder": "test_fix_with_patch",
+  "FilesList": {
+    "install folder{{Helpers.SeparatorForJson}}start game.exe.octodiff": 2690676073
+  },
+  "InstalledSharedFix": null,
+  "WineDllOverrides": null,
+  "GameId": 1,
+  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
+  "Version": "1.0"
+}
+""";
 
         var exeActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
         var exeExpected = "original_patched";
