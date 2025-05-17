@@ -73,12 +73,12 @@ public sealed class DatabaseTests
 
                 if (md5 is null)
                 {
-                    _ = sbFails.AppendLine($"File {url} doesn't have MD5 in the database.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have MD5 in the database.");
                 }
 
                 if (size is null)
                 {
-                    _ = sbFails.AppendLine($"File {url} doesn't have size in the database.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have size in the database.");
                 }
 
                 if (md5 is null || size is null)
@@ -90,17 +90,17 @@ public sealed class DatabaseTests
 
                 if (!header.IsSuccessStatusCode)
                 {
-                    _ = sbFails.AppendLine($"File {url} doesn't exist.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't exist.");
                     continue;
                 }
 
                 if (header.Content.Headers.ContentLength is null)
                 {
-                    _ = sbFails.AppendLine($"File {url} doesn't have size in the header.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have size in the header.");
                 }
                 else if (size != header.Content.Headers.ContentLength)
                 {
-                    _ = sbFails.AppendLine($"File {url} size doesn't match. Expected {size} got {header.Content.Headers.ContentLength}.");
+                    _ = sbFails.AppendLine($"[Error] File {url} size doesn't match. Expected {size} got {header.Content.Headers.ContentLength}.");
                 }
 
                 //md5 of files from s3
@@ -113,7 +113,7 @@ public sealed class DatabaseTests
                     }
                     else if (header.Headers.ETag?.Tag is null)
                     {
-                        _ = sbFails.AppendLine($"File {url} doesn't have ETag.");
+                        _ = sbFails.AppendLine($"[Error] File {url} doesn't have ETag.");
                     }
                     else
                     {
@@ -121,15 +121,15 @@ public sealed class DatabaseTests
 
                         if (md5e.Contains('-'))
                         {
-                            _ = sbFails.AppendLine($"File {url} has incorrect ETag.");
+                            _ = sbFails.AppendLine($"[Error] File {url} has incorrect ETag.");
                         }
                         else if (!md5e.Equals(md5, StringComparison.OrdinalIgnoreCase))
                         {
-                            _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                            _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
                         }
                         else
                         {
-                            _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
+                            _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
                         }
                     }
                 }
@@ -138,11 +138,11 @@ public sealed class DatabaseTests
                 {
                     if (!Convert.ToHexString(header.Content.Headers.ContentMD5).Equals(md5, StringComparison.OrdinalIgnoreCase))
                     {
-                        _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                        _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
                     }
                     else
                     {
-                        _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
+                        _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
                     }
                 }
                 else
@@ -156,11 +156,11 @@ public sealed class DatabaseTests
 
                     if (!filemd5.Equals(md5, StringComparison.OrdinalIgnoreCase))
                     {
-                        _ = sbFails.AppendLine($"File {url} has wrong MD5.");
+                        _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
                     }
                     else
                     {
-                        _ = sbSuccesses.AppendLine($"File's {url} MD5 matches: {md5}.");
+                        _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
                     }
                 }
             }
@@ -266,7 +266,7 @@ public sealed class DatabaseTests
 
         foreach (var item in loose)
         {
-            _ = sb.AppendLine($"File {item} is loose.");
+            _ = sb.AppendLine($"[Error] File {item} is loose.");
         }
 
         Assert.True(sb.Length < 1, sb.ToString());
