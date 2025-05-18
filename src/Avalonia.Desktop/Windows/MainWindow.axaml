@@ -49,6 +49,10 @@
                 <TabItem Name="MainTab" Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>
+                <TabItem Header="Sources"
+                         Margin="0,0,10,10">
+                    <pages:SourcesPage Margin="0" x:Name="SourcesPageTab" />
+                </TabItem>
                 <TabItem Header="Editor"
                          IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}"
                          Margin="0,0,10,10">

@@ -34,7 +34,7 @@ public sealed class FileApiInterface : IApiInterface
                 return new(ResultEnum.ConnectionError, null, "Error while getting fixes");
             }
 
-            var addonsJson = JsonSerializer.Deserialize(addons, FixesListContext.Default.ListFixesList);
+            var addonsJson = JsonSerializer.Deserialize(addons, SourceEntityContext.Default.ListFixesList);
 
             if (addonsJson is null)
             {

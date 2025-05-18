@@ -15,6 +15,7 @@ public static class ViewModelsBindings
         _ = container.AddSingleton<NewsViewModel>();
         _ = container.AddSingleton<SettingsViewModel>();
         _ = container.AddSingleton<AboutViewModel>();
+        _ = container.AddSingleton<SourcesViewModel>();
 
         _ = container.AddSingleton<PopupEditorViewModel>();
         _ = container.AddSingleton<PopupMessageViewModel>();

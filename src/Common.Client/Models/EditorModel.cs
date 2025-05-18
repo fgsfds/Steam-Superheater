@@ -315,7 +315,7 @@ public sealed class EditorModel
             Fixes = [fix]
         };
 
-        newFixJsonString = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
+        newFixJsonString = JsonSerializer.Serialize(newFixesList, SourceEntityContext.Default.FixesList);
 
         var fixFilePath = Path.Combine(ClientProperties.WorkingFolder, "fix.json");
 
@@ -464,7 +464,7 @@ public sealed class EditorModel
         {
             var json = File.ReadAllText(pathToFile);
 
-            var newFix = JsonSerializer.Deserialize(json, FixesListContext.Default.FixesList)!;
+            var newFix = JsonSerializer.Deserialize(json, SourceEntityContext.Default.FixesList)!;
 
             var existingGame = _fixesList.FirstOrDefault(x => x.GameId == newFix.GameId);
 
@@ -521,7 +521,7 @@ public sealed class EditorModel
             }
         }
 
-        var jsonString = JsonSerializer.Serialize(sortedFixesList, FixesListContext.Default.ListFixesList);
+        var jsonString = JsonSerializer.Serialize(sortedFixesList, SourceEntityContext.Default.ListFixesList);
 
         File.WriteAllText(file, jsonString);
     }

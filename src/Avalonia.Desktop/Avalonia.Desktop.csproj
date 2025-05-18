@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <PackageReference Include="AddSealed" PrivateAssets="all" />
+    <PackageReference Include="Avalonia.Controls.DataGrid" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Diagnostics" />
     <PackageReference Include="Avalonia.HtmlRenderer" />
@@ -56,6 +57,12 @@
     <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
     <ProjectReference Include="..\Common\Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Pages\SourcesPage.axaml.cs">
+      <DependentUpon>SourcesPage.axaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   
 </Project>

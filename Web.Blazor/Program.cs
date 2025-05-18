@@ -26,7 +26,7 @@ public sealed class Program
             jsonOptions.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
             jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;
 
-            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(FixesListContext.Default);
+            jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(SourceEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(AppReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(GitHubReleaseEntityContext.Default);
             jsonOptions.JsonSerializerOptions.TypeInfoResolverChain.Add(NewsListEntityContext.Default);

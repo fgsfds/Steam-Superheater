@@ -1,5 +1,3 @@
-using CommunityToolkit.Diagnostics;
-
 namespace Common.Helpers;
 
 public static class Consts
@@ -37,8 +35,6 @@ public static class Consts
     public const string LinuxOnly = "Linux Only";
 
     public const string AllSupported = "All supported OSes";
-
-    public const string DateTimeFormat = "yyyy-MM-ddTHH:mm:ss.fffffffzzz";
 
     public const string FixesJsonUrl = "https://raw.githubusercontent.com/fgsfds/Steam-Superheater/refs/heads/master/db/fixes.json";
 

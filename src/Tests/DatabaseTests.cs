@@ -49,7 +49,7 @@ public sealed class DatabaseTests
             return;
         }
 
-        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, FixesListContext.Default.ListFixesList);
+        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, SourceEntityContext.Default.ListFixesList);
 
         Assert.NotNull(fixesJson);
 
@@ -215,7 +215,7 @@ public sealed class DatabaseTests
         }
 
         var fixesJsonString = File.ReadAllText("../../../../db/fixes.json");
-        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, FixesListContext.Default.ListFixesList);
+        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, SourceEntityContext.Default.ListFixesList);
 
         Assert.NotNull(fixesJson);
 

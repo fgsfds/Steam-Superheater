@@ -1,3 +1,4 @@
+using Common.Entities;
 using Common.Enums;
 using static Common.IConfigProvider;
 
@@ -16,10 +17,11 @@ public sealed class ConfigProviderFake : IConfigProvider
     public DateTime LastReadNewsDate { get; set; } = DateTime.MinValue;
     public ThemeEnum Theme { get; set; } = ThemeEnum.System;
     public Dictionary<Guid, bool> Upvotes { get; set; } = [];
+    public List<SourceEntity> Sources =>[];
     public bool AllowEventsInvoking { get; set; } = false;
-
     public event ParameterChanged? ParameterChangedEvent;
-
+    public void AddSource(Uri url) { }
+    public void RemoveSource(Uri url) { }
     public void ChangeFixUpvoteState(Guid fixGuid, bool needToUpvote) { }
     public void ChangeTagState(string tag, bool needToHide) { }
 }

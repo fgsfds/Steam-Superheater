@@ -48,4 +48,37 @@ public sealed class VersionCompareTests
 
         Assert.True(result);
     }
+
+    [Theory]
+    [InlineData("https://example.com", true, "https", "example.com", 443)]
+    [InlineData("http://example.com:8080", true, "http", "example.com", 8080)]
+    [InlineData("example.com:1234", true, "https", "example.com", 1234)]
+    [InlineData("localhost:5000", true, "https", "localhost", 5000)]
+    [InlineData("invalid_uri", false, null, null, 0)]
+    [InlineData("", false, null, null, 0)]
+    [InlineData(null, false, null, null, 0)]
+    [InlineData("file:///C:/path/to/file.txt", false, null, null, 0)]
+    public void TryParseUri_ShouldParseCorrectly(
+        string? input,
+        bool expectedResult,
+        string? expectedScheme,
+        string? expectedHost,
+        int expectedPort)
+    {
+        var result = UriHelper.TryParseUri(input!, out var uri);
+
+        Assert.Equal(expectedResult, result);
+
+        if (expectedResult)
+        {
+            Assert.NotNull(uri);
+            Assert.Equal(expectedScheme, uri.Scheme);
+            Assert.Equal(expectedHost, uri.Host);
+            Assert.Equal(expectedPort, uri.Port);
+        }
+        else
+        {
+            Assert.Null(uri);
+        }
+    }
 }

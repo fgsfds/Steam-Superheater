@@ -177,7 +177,7 @@ public sealed class FixesProvider : IFixesProvider
 
         try
         {
-            currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
+            currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, SourceEntityContext.Default.ListFixesList)!;
         }
         catch
         {
@@ -199,7 +199,7 @@ public sealed class FixesProvider : IFixesProvider
         if (ClientProperties.IsOfflineMode)
         {
             var newFixesList = File.ReadAllText(@"..\..\..\..\db\fixes.json");
-            currentFixesList = JsonSerializer.Deserialize(newFixesList, FixesListContext.Default.ListFixesList)!;
+            currentFixesList = JsonSerializer.Deserialize(newFixesList, SourceEntityContext.Default.ListFixesList)!;
         }
         else if (!localFixesOnly)
         {
@@ -245,7 +245,7 @@ public sealed class FixesProvider : IFixesProvider
                 }
 
                 fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
-                fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
+                fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, SourceEntityContext.Default.ListFixesList);
 
                 _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }

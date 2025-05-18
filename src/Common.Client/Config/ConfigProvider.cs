@@ -1,5 +1,9 @@
+using Common.Entities;
 using Common.Enums;
+using Common.Helpers;
+using CommunityToolkit.Diagnostics;
 using Database.Client;
+using Database.Client.DbEntities;
 using System.Runtime.CompilerServices;
 using static Common.IConfigProvider;
 
@@ -27,8 +31,20 @@ public sealed class ConfigProvider : IConfigProvider
         _localRepoPath = dbContext.Settings.Find([nameof(LocalRepoPath)])?.Value ?? string.Empty;
         _apiPassword = dbContext.Settings.Find([nameof(ApiPassword)])?.Value ?? string.Empty;
         _lastReadNewsDate = DateTime.TryParse(dbContext.Settings.Find([nameof(LastReadNewsDate)])?.Value, out var time) ? time : DateTime.MinValue;
-        _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
         _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
+        Upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
+        Sources = [.. dbContext.Sources
+            .ToList()
+            .Select(x =>
+            {
+                if (!UriHelper.TryParseUri(x.Url, out var uri))
+                {
+                    return null;
+                }
+
+                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+            })
+            .Where(x => x is not null)];
     }
 
 
@@ -161,14 +177,9 @@ public sealed class ConfigProvider : IConfigProvider
         }
     }
 
-    private Dictionary<Guid, bool> _upvotes;
-    public Dictionary<Guid, bool> Upvotes
-    {
-        get
-        {
-            return _upvotes;
-        }
-    }
+    public Dictionary<Guid, bool> Upvotes { get; private set; }
+
+    public List<SourceEntity> Sources { get; private set; }
 
     public void ChangeFixUpvoteState(Guid fixGuid, bool needToUpvote)
     {
@@ -201,7 +212,7 @@ public sealed class ConfigProvider : IConfigProvider
         }
 
         _ = dbContext.SaveChanges();
-        _upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
+        Upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
 
         if (AllowEventsInvoking)
         {
@@ -253,6 +264,73 @@ public sealed class ConfigProvider : IConfigProvider
         if (AllowEventsInvoking)
         {
             ParameterChangedEvent?.Invoke(nameof(HiddenTags));
+        }
+    }
+
+    public void AddSource(Uri url)
+    {
+        using var dbContext = _dbContextFactory.Get();
+
+        SourcesDbEntity newSource = new()
+        {
+            Url = url.ToString(),
+            IsEnabled = true
+        };
+
+        var existing = dbContext.Sources.Add(newSource);
+
+        _ = dbContext.SaveChanges();
+
+        Sources = [.. dbContext.Sources
+            .ToList()
+            .Select(x =>
+            {
+                if (!UriHelper.TryParseUri(x.Url, out var uri))
+                {
+                    return null;
+                }
+
+                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+            })
+            .Where(x => x is not null)];
+
+        if (AllowEventsInvoking)
+        {
+            ParameterChangedEvent?.Invoke(nameof(Sources));
+        }
+    }
+
+    public void RemoveSource(Uri url)
+    {
+        using var dbContext = _dbContextFactory.Get();
+
+        var existing = dbContext.Sources.Find(url.ToString());
+
+        if (existing is null)
+        {
+            ThrowHelper.ThrowInvalidOperationException($"Can't find source {url} in the database.");
+        }
+
+        _ = dbContext.Sources.Remove(existing);
+
+        _ = dbContext.SaveChanges();
+
+        Sources = [.. dbContext.Sources
+            .ToList()
+            .Select(x =>
+            {
+                if (!UriHelper.TryParseUri(x.Url, out var uri))
+                {
+                    return null;
+                }
+
+                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+            })
+            .Where(x => x is not null)];
+
+        if (AllowEventsInvoking)
+        {
+            ParameterChangedEvent?.Invoke(nameof(Sources));
         }
     }
 

@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:usc="clr-namespace:Avalonia.Desktop.UserControls"
+             xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             x:DataType="vm:SourcesViewModel"
+             x:Class="Avalonia.Desktop.Pages.SourcesPage">
+
+    <Grid RowDefinitions="*, auto">
+
+        <DataGrid Grid.Row="0"
+                  ItemsSource="{Binding SourcesList}"
+                  SelectedItem="{Binding SelectedItem}"
+                  HorizontalAlignment="Stretch"
+                  Margin="5"
+                  IsReadOnly="True"
+                  GridLinesVisibility="All">
+
+            <DataGrid.Columns>
+
+                <DataGridCheckBoxColumn Binding="{Binding IsEnabled}"></DataGridCheckBoxColumn>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                <DataGridTextColumn Header="URL" Binding="{Binding Url}" Width="2*"/>
+
+            </DataGrid.Columns>
+
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1">
+            <Button Margin="5" Command="{Binding AddSourceCommand}" Content="Add"/>
+            <Button Margin="5" Command="{Binding RemoveSourceCommand}" Content="Delete"/>
+        </StackPanel>
+
+    </Grid>
+
+</UserControl>

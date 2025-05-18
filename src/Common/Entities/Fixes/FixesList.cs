@@ -4,8 +4,20 @@ using System.Text.Json.Serialization;
 namespace Common.Entities.Fixes;
 
 /// <summary>
-/// Entity containing game information and a list of fixes for it
+/// Represents a source entity containing metadata and a list of fixes.
 /// </summary>
+public sealed class SourceEntity
+{
+    public string Name { get; set; } = string.Empty;
+
+    public DateTime UpdatedTime { get; set; }
+
+    public required List<FixesList> FixesList { get; set; }
+}
+
+/// <summary>
+/// Represents a collection of fixes associated with a specific game, including metadata about the game and utility
+/// properties for determining the state of the fixes.
 public sealed class FixesList
 {
     /// <summary>
@@ -60,6 +72,6 @@ public sealed class FixesList
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     Converters = [typeof(JsonStringEnumConverter<OSEnum>), typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)]
 )]
-[JsonSerializable(typeof(List<FixesList>))]
-public sealed partial class FixesListContext : JsonSerializerContext;
+[JsonSerializable(typeof(SourceEntity))]
+public sealed partial class SourceEntityContext : JsonSerializerContext;
 

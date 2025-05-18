@@ -59,7 +59,7 @@ internal sealed partial class PopupEditorViewModel : ObservableObject, IPopup
     /// <param name="title">Popup title</param>
     /// <param name="text">Popup text</param>
     /// <returns>Text</returns>
-    public async Task<string?> ShowAndGetResultAsync(string title, IEnumerable<string>? text)
+    public async Task<string?> ShowAndGetResultAsync(string title, IEnumerable<string> text)
     {
         var textString = string.Empty;
 
