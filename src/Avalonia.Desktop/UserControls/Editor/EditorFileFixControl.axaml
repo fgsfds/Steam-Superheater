@@ -48,7 +48,7 @@
             </TextBlock>
 
             <TextBox Grid.Column="4"
-                     Text="{Binding ((ff:FileFixEntity)SelectedFix).InstallFolder, Mode=TwoWay, FallbackValue=''}"
+                     Text="{Binding SelectedFixInstallFolder, Mode=TwoWay}"
                      Margin="0,3" />
         </Grid>
 
@@ -92,7 +92,7 @@
                 Config
             </TextBlock>
 
-            <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).ConfigFile, Mode=TwoWay, FallbackValue=''}"
+            <TextBox Text="{Binding SelectedFixConfigFile, Mode=TwoWay}"
                      Grid.Column="1"
                      Margin="0,3" />
         </Grid>
@@ -192,7 +192,7 @@
                 Run after install
             </TextBlock>
 
-            <TextBox Text="{Binding ((ff:FileFixEntity)SelectedFix).RunAfterInstall, Mode=TwoWay, FallbackValue=''}"
+            <TextBox Text="{Binding SelectedFixRunAfterInstall, Mode=TwoWay}"
                      Grid.Column="1"
                      Margin="0,3"/>
         </Grid>
@@ -235,7 +235,7 @@
 
             <TextBox Grid.Column="4"
                      HorizontalAlignment="Stretch"
-                     Text="{Binding ((ff:FileFixEntity)SelectedFix).SharedFixInstallFolder, FallbackValue=''}"
+                     Text="{Binding SelectedSharedFixInstallFolder, Mode=TwoWay}"
                      Margin="0,3"/>
         </Grid>
 

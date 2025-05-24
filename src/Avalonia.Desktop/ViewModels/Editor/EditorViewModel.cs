@@ -309,16 +309,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
         else if (value is RegistryFixEntity regFix)
         {
-            FixDataContext = new RegFixViewModel(
-                new()
-                {
-                    Name = regFix.Name,
-                    Guid = regFix.Guid,
-                    SupportedOSes = regFix.SupportedOSes,
-                    Entries = regFix.Entries,
-                    Version = regFix.Version
-                }
-                );
+            FixDataContext = new RegFixViewModel(regFix);
         }
         else
         {

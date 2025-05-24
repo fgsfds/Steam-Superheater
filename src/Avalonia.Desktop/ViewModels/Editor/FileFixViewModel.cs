@@ -21,94 +21,115 @@ internal sealed partial class FileFixViewModel : ObservableObject
 
     public ImmutableList<FileFixEntity>? SharedFixesList { get; set; }
 
-    public string SelectedFixVariants
+    public string SelectedFixUrl
     {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.Variants is not null
-            ? string.Join(';', fileFix.Variants)
-            : string.Empty;
+        get => SelectedFix.Url ?? string.Empty;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+            SelectedFix.Url = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+        }
+    }
 
-            fileFix.Variants = value.SplitSemicolonSeparatedString();
+    public string SelectedFixInstallFolder
+    {
+        get => SelectedFix.InstallFolder ?? string.Empty;
+        set
+        {
+            SelectedFix.InstallFolder = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedFixVariants
+    {
+        get => SelectedFix.Variants is not null ? string.Join(';', SelectedFix.Variants) : string.Empty;
+        set
+        {
+            SelectedFix.Variants = value.SplitSemicolonSeparatedString();
+            OnPropertyChanged();
+        }
+    }
+
+    public string SelectedFixConfigFile
+    {
+        get => SelectedFix.ConfigFile ?? string.Empty;
+        set
+        {
+            SelectedFix.ConfigFile = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
         }
     }
 
     public string SelectedFixFilesToDelete
     {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToDelete is not null
-            ? string.Join(';', fileFix.FilesToDelete)
-            : string.Empty;
+        get => SelectedFix.FilesToDelete is not null ? string.Join(';', SelectedFix.FilesToDelete) : string.Empty;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.FilesToDelete = value.SplitSemicolonSeparatedString();
+            SelectedFix.FilesToDelete = value.SplitSemicolonSeparatedString();
+            OnPropertyChanged();
         }
     }
 
     public string SelectedFixFilesToBackup
     {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToBackup is not null
-            ? string.Join(';', fileFix.FilesToBackup)
-            : string.Empty;
+        get => SelectedFix.FilesToBackup is not null ? string.Join(';', SelectedFix.FilesToBackup) : string.Empty;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.FilesToBackup = value.SplitSemicolonSeparatedString();
+            SelectedFix.FilesToBackup = value.SplitSemicolonSeparatedString();
+            OnPropertyChanged();
         }
     }
 
     public string SelectedFixFilesToPatch
     {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.FilesToPatch is not null
-            ? string.Join(';', fileFix.FilesToPatch)
-            : string.Empty;
+        get => SelectedFix.FilesToPatch is not null ? string.Join(';', SelectedFix.FilesToPatch) : string.Empty;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+            SelectedFix.FilesToPatch = value.SplitSemicolonSeparatedString();
+            OnPropertyChanged();
+        }
+    }
 
-            fileFix.FilesToPatch = value.SplitSemicolonSeparatedString();
+    public string SelectedFixRunAfterInstall
+    {
+        get => SelectedFix.RunAfterInstall ?? string.Empty;
+        set
+        {
+            SelectedFix.RunAfterInstall = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
         }
     }
 
     public string SelectedFixWineDllsOverrides
     {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.WineDllOverrides is not null
-            ? string.Join(';', fileFix.WineDllOverrides)
-            : string.Empty;
+        get => SelectedFix.WineDllOverrides is not null ? string.Join(';', SelectedFix.WineDllOverrides) : string.Empty;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.WineDllOverrides = value.SplitSemicolonSeparatedString();
-        }
-    }
-
-    public string SelectedFixUrl
-    {
-        get => SelectedFix is FileFixEntity fileFix && fileFix.Url is not null
-            ? fileFix.Url
-            : string.Empty;
-        set
-        {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.Url = string.IsNullOrWhiteSpace(value)
-                ? null
-                : value;
+            SelectedFix.WineDllOverrides = value.SplitSemicolonSeparatedString();
+            OnPropertyChanged();
         }
     }
 
     public BaseFixEntity? SelectedSharedFix
     {
-        get => SelectedFix is not FileFixEntity fileFix || fileFix.SharedFixGuid is null ? null : SharedFixesList?.FirstOrDefault(x => x.Guid == fileFix.SharedFixGuid);
+        get
+        {
+            var sharedFixGuid = SelectedFix.SharedFixGuid is null ? null : SelectedFix.SharedFixGuid;
+
+            if (sharedFixGuid is null)
+            {
+                return null;
+            }
+
+            var sharedFix = SharedFixesList?.FirstOrDefault(x => x.Guid == sharedFixGuid);
+
+            return sharedFix;
+        }
+
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-
-            fileFix.SharedFixGuid = value?.Guid;
+            SelectedFix.SharedFixGuid = value?.Guid;
 
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsSharedFixSelected));
@@ -118,24 +139,32 @@ internal sealed partial class FileFixViewModel : ObservableObject
 
     public bool IsSharedFixSelected => SelectedSharedFix is not null;
 
-    public long? SelectedFixFileSize
+    public string? SelectedSharedFixInstallFolder
     {
-        get => SelectedFix is FileFixEntity fileFix ? fileFix.FileSize : null;
+        get => SelectedFix.SharedFixInstallFolder is null ? null : SelectedFix.SharedFixInstallFolder;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-            fileFix.FileSize = value;
+            SelectedFix.SharedFixInstallFolder = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+        }
+    }
+
+    public long? SelectedFixFileSize
+    {
+        get => SelectedFix.FileSize;
+        set
+        {
+            SelectedFix.FileSize = value;
             OnPropertyChanged();
         }
     }
 
     public string? SelectedFixMD5
     {
-        get => SelectedFix is FileFixEntity fileFix ? fileFix.MD5 : null;
+        get => SelectedFix.MD5;
         set
         {
-            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-            fileFix.MD5 = string.IsNullOrWhiteSpace(value) ? null : value;
+            SelectedFix.MD5 = string.IsNullOrWhiteSpace(value) ? null : value;
             OnPropertyChanged();
         }
     }
@@ -150,6 +179,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
         SelectedFix = fix;
         _fixesProvider = fixesProvider;
         _popupEditor = popupEditor;
+        SharedFixesList = _fixesProvider.SharedFixes is null ? null : [.. _fixesProvider.SharedFixes];
     }
 
 

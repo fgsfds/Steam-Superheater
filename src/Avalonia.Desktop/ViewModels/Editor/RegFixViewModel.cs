@@ -18,9 +18,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     public List<RegistryEntry>? SelectedRegistryFixEntries => SelectedFix.Entries;
 
 
-    public RegFixViewModel(
-        RegistryFixEntity fix
-        )
+    public RegFixViewModel(RegistryFixEntity fix)
     {
         SelectedFix = fix;
     }
@@ -32,9 +30,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     [RelayCommand]
     private void AddRegFixEntry()
     {
-        Guard2.IsOfType<RegistryFixEntity>(SelectedFix, out var regFix);
-
-        regFix.Entries = [.. regFix.Entries.Append(new())];
+        SelectedFix.Entries = [..SelectedFix.Entries.Append(new())];
 
         OnPropertyChanged(nameof(SelectedRegistryFixEntries));
     }
@@ -46,9 +42,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     [RelayCommand]
     private void DeleteRegFixEntry()
     {
-        Guard2.IsOfType<RegistryFixEntity>(SelectedFix, out var regFix);
-
-        if (regFix.Entries.Count < 2)
+        if (SelectedFix.Entries.Count < 2)
         {
             return;
         }
@@ -60,8 +54,8 @@ internal sealed partial class RegFixViewModel : ObservableObject
             SelectedRegistryFixIndex = currentIndex - 1;
         }
 
-        regFix.Entries.RemoveAt(currentIndex);
-        regFix.Entries = [.. regFix.Entries];
+        SelectedFix.Entries.RemoveAt(currentIndex);
+        SelectedFix.Entries = [.. SelectedFix.Entries];
 
         OnPropertyChanged(nameof(SelectedRegistryFixEntries));
     }
