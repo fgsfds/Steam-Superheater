@@ -792,6 +792,25 @@
     "Fixes": [
       {
         "$type": "FileFix",
+        "Url": "https://github.com/JoeTomkinson/Biped.UI.Fixes.Plugin/releases/download/v1.0.1/BipedWideScreenFix-1.0.1-x64.zip",
+        "FileSize": 651683,
+        "MD5": "27758A670E2813620BD52D31D9A0CF8D",
+        "WineDllOverrides": [
+          "winhttp"
+        ],
+        "Name": "Biped UI Fixes",
+        "Guid": "3d39328b-9d03-4bb0-bc33-ff4cef0aa181",
+        "Version": "1.0.1",
+        "SupportedOSes": "Windows",
+        "Description": "## BipedFix - Biped.UI.Fixes.Plugin.Mono v1.0.1\n*by JoeTomkinson*\n\nhttps://github.com/JoeTomkinson/Biped.UI.Fixes.Plugin/\n\n**Updated Biped UI Fix Plugin - Inspiration and updated based on the original Lyall BipedFix plugin**\n\nBipedWideScreenFix is a plugin designed to enhance the visual experience of the game Biped on ultra-wide monitors. This updated version improves upon the original Lyall BipedFix plugin by incorporating more modern .NET Standard 2.1 practices, dynamic configuration binding, and enhanced UI adjustments.\r\n\r\nThe plugin ensures that screen resolution, aspect ratios, and UI elements are properly scaled and positioned, providing a seamless ultra-wide display experience.",
+        "Tags": [
+          "#fps_unlock",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://github.com/Lyall/BipedFix/releases/download/v1.0.2/BipedFix_v1.0.2.zip",
         "FileSize": 638061,
         "MD5": "583A87FC9F5F0EFA13D3542994AE4675",
@@ -807,7 +826,7 @@
           "#fps_unlock",
           "#ultrawide"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -7374,7 +7393,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Lyall/RE5Fix/releases/download/v1.0.4/RE5Fix_v1.0.4.zip",
+        "Url": "https://s3.fgsfds.link/superheater/re5_fix_v1_0_4.zip",
         "FileSize": 17656,
         "ConfigFile": "RE5Fix.ini",
         "MD5": "AA3EEF19CB9DC0AE169AD0C88FA302F0",
