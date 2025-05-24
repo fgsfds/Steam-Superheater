@@ -20,9 +20,18 @@ public sealed partial class AboutPage : UserControl
         vm.InitializeCommand.Execute(null);
     }
 
+    private void PatreonClick(object sender, RoutedEventArgs e)
+    {
+        using var process = Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://www.patreon.com/fgsfds",
+            UseShellExecute = true
+        });
+    }
+
     private void DiscordClick(object sender, RoutedEventArgs e)
     {
-        using var _ = Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "https://discord.gg/mWvKyxR4et",
             UseShellExecute = true
@@ -31,7 +40,7 @@ public sealed partial class AboutPage : UserControl
 
     private void GitHubClick(object sender, RoutedEventArgs e)
     {
-        using var _ = Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "https://github.com/fgsfds/Steam-Superheater",
             UseShellExecute = true
@@ -40,7 +49,7 @@ public sealed partial class AboutPage : UserControl
 
     private void GitHubIssuesClick(object sender, RoutedEventArgs e)
     {
-        using var _ = Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "https://github.com/fgsfds/Steam-Superheater/issues/new",
             UseShellExecute = true
@@ -49,7 +58,7 @@ public sealed partial class AboutPage : UserControl
 
     private void ShowChangelogClick(object sender, RoutedEventArgs e)
     {
-        using var _ = Process.Start(new ProcessStartInfo
+        using var process = Process.Start(new ProcessStartInfo
         {
             FileName = "https://github.com/fgsfds/Steam-Superheater/releases",
             UseShellExecute = true
