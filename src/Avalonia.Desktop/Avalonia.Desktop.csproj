@@ -21,10 +21,7 @@
     </ItemGroup>
 
   <ItemGroup>
-    <AvaloniaResource Include="Assets\discord.png" />
-    <AvaloniaResource Include="Assets\github.png" />
     <AvaloniaResource Include="Assets\icon.ico" />
-    <AvaloniaResource Include="Assets\issues.png" />
     <AvaloniaResource Include="Assets\logo.png" />
   </ItemGroup>
 	
