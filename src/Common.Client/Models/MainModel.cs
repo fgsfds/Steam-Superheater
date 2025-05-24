@@ -1,10 +1,11 @@
+using System.Collections.Immutable;
 using Api.Common.Interface;
 using Common.Client.Providers.Interfaces;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Enums;
 using Common.Helpers;
-using System.Collections.Immutable;
+using SharpCompress.Common;
 
 namespace Common.Client.Models;
 
@@ -70,10 +71,16 @@ public sealed class MainModel
         FixesList? additionalFix = null
         )
     {
-        var fixesList = _combinedEntitiesList;
+        List<FixesList> resultingFixesList = new(_combinedEntitiesList.Count);
 
-        foreach (var entity in fixesList)
+        foreach (var entity in _combinedEntitiesList)
         {
+            if (entity.GameId == 0)
+            {
+                //skipping shared fixes
+                continue;
+            }
+
             foreach (var fix in entity.Fixes)
             {
                 //remove fixes with hidden tags
@@ -109,11 +116,25 @@ public sealed class MainModel
                     fix.IsHidden = fix.IsDisabled;
                 }
             }
+
+            if (entity.IsEmpty)
+            {
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                resultingFixesList.Add(entity);
+            }
+            else if (entity.GameName.Contains(search, StringComparison.OrdinalIgnoreCase))
+            {
+                resultingFixesList.Add(entity);
+            }
         }
 
         if (additionalFix is not null)
         {
-            var existingGame = fixesList.FirstOrDefault(x => x.GameId == additionalFix.GameId);
+            var existingGame = resultingFixesList.FirstOrDefault(x => x.GameId == additionalFix.GameId);
 
             if (existingGame is not null)
             {
@@ -135,7 +156,7 @@ public sealed class MainModel
                 var game = games.FirstOrDefault(x => x.Id == additionalFix.GameId);
 
                 additionalFix.Game = game;
-                fixesList.Add(additionalFix);
+                resultingFixesList.Add(additionalFix);
             }
         }
 
@@ -146,7 +167,7 @@ public sealed class MainModel
             }
             else if (tag.Equals(Consts.UpdateAvailable))
             {
-                foreach (var entity in fixesList)
+                foreach (var entity in resultingFixesList)
                 {
                     foreach (var fix in entity.Fixes)
                     {
@@ -159,7 +180,7 @@ public sealed class MainModel
             }
             else
             {
-                foreach (var entity in fixesList)
+                foreach (var entity in resultingFixesList)
                 {
                     foreach (var fix in entity.Fixes)
                     {
@@ -174,12 +195,7 @@ public sealed class MainModel
             }
         }
 
-        if (string.IsNullOrWhiteSpace(search))
-        {
-            return [.. fixesList.Where(static x => !x.IsEmpty)];
-        }
-
-        return [.. fixesList.Where(x => x.GameName.Contains(search, StringComparison.OrdinalIgnoreCase) && !x.IsEmpty)];
+        return [.. resultingFixesList];
     }
 
     /// <summary>
