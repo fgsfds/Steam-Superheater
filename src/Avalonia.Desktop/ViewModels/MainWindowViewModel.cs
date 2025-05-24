@@ -1,5 +1,6 @@
 using Avalonia.Desktop.ViewModels.Popups;
 using Common;
+using Common.Client;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Avalonia.Desktop.ViewModels;
@@ -11,10 +12,23 @@ internal sealed partial class MainWindowViewModel : ObservableObject
 
     #region Binding Properties
 
-    public string RepositoryMessage =>
-        _config.UseLocalApiAndRepo
-            ? "Local API"
-            : "Online API";
+    public string RepositoryMessage
+    {
+        get
+        {
+            if (ClientProperties.IsOfflineMode)
+            {
+                return "Local file";
+            }
+
+            if (_config.UseLocalApiAndRepo)
+            {
+                return "Local API";
+            }
+
+            return "Online API";
+        }
+    }
 
     [ObservableProperty]
     private PopupMessageViewModel? _popupDataContext;

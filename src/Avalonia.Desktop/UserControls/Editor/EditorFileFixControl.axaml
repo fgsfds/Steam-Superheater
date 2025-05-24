@@ -23,13 +23,13 @@
 
             <TextBlock VerticalAlignment="Center"
                        Grid.Column="0"
-                       Margin="5">
-                Link to file
-            </TextBlock>
+                       Margin="5"
+                       Text="Link to file"/>
 
             <TextBox Text="{Binding SelectedFixUrl, Mode=TwoWay}"
                      Grid.Column="1"
-                     Margin="0,3" />
+                     Margin="0,3"
+                     x:Name="LinkToFile" />
 
             <Button Grid.Column="2"
                     Margin="5,0,0,0"
@@ -264,6 +264,46 @@
                     Command="{Binding OpenWineDllsOverridesEditorCommand}">
                 ...
             </Button>
+        </Grid>
+
+        <!--File size-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                File size
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixFileSize, Mode=TwoWay}"
+                     Margin="0,3"
+                     Grid.Column="1"
+                     IsEnabled="{Binding #LinkToFile.Text,
+                     Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        </Grid>
+
+        <!--File MD5-->
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock VerticalAlignment="Center"
+                       Grid.Column="0"
+                       Margin="5">
+                MD5
+            </TextBlock>
+
+            <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+                     Margin="0,3"
+                     Grid.Column="1"
+                     IsEnabled="{Binding #LinkToFile.Text,
+                     Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
         </Grid>
     </StackPanel>
 

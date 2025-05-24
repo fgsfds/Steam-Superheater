@@ -1,3 +1,7 @@
+using System.Collections.Immutable;
+using System.Net.Http;
+using System.Security.Cryptography;
+using System.Text.Json;
 using Api.Common.Interface;
 using Common.Client.FilesTools;
 using Common.Client.Providers.Interfaces;
@@ -10,8 +14,6 @@ using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
-using System.Collections.Immutable;
-using System.Text.Json;
 
 namespace Common.Client.Models;
 
@@ -507,15 +509,30 @@ public sealed class EditorModel
             {
                 if (fix is FileFixEntity fixEntity &&
                     fixEntity.Url is not null &&
-                    fixEntity.Url.StartsWith(Consts.FilesRepo))
+                    (string.IsNullOrWhiteSpace(fixEntity.MD5) || fixEntity.FileSize < 1))
                 {
-                    if (fixEntity.MD5 is null ||
-                        fixEntity.FileSize is null)
-                    {
-                        using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
+                    using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
 
-                        fixEntity.FileSize = header.Content.Headers.ContentLength;
+                    Guard.IsNotNull(header.Content.Headers.ContentLength);
+
+                    fixEntity.FileSize = header.Content.Headers.ContentLength;
+
+                    if (fixEntity.Url.StartsWith(Consts.FilesRepo))
+                    {
                         fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");
+                    }
+                    else if (header.Content.Headers.ContentMD5 is not null)
+                    {
+                        fixEntity.MD5 = Convert.ToHexString(header.Content.Headers.ContentMD5);
+                    }
+                    else
+                    {
+                        using var stream = _httpClient.GetStreamAsync(fixEntity.Url).Result;
+                        using var md5 = MD5.Create();
+
+                        byte[] hash = md5.ComputeHash(stream);
+
+                        fixEntity.MD5 = Convert.ToHexString(hash);
                     }
                 }
             }

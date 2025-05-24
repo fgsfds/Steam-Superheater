@@ -118,6 +118,28 @@ internal sealed partial class FileFixViewModel : ObservableObject
 
     public bool IsSharedFixSelected => SelectedSharedFix is not null;
 
+    public long? SelectedFixFileSize
+    {
+        get => SelectedFix is FileFixEntity fileFix ? fileFix.FileSize : null;
+        set
+        {
+            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+            fileFix.FileSize = value;
+            OnPropertyChanged();
+        }
+    }
+
+    public string? SelectedFixMD5
+    {
+        get => SelectedFix is FileFixEntity fileFix ? fileFix.MD5 : null;
+        set
+        {
+            Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+            fileFix.MD5 = string.IsNullOrWhiteSpace(value) ? null : value;
+            OnPropertyChanged();
+        }
+    }
+
 
     public FileFixViewModel(
         FileFixEntity fix,
