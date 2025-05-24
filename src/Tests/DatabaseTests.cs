@@ -67,6 +67,12 @@ public sealed class DatabaseTests
                     continue;
                 }
 
+                if (fileFix.IsDisabled)
+                {
+                    _ = sbSuccesses.AppendLine($"[Info] File {fileFix.Url} is disabled.");
+                    continue;
+                }
+
                 var url = fileFix.Url;
                 var size = fileFix.FileSize;
                 var md5 = fileFix.MD5;
