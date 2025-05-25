@@ -7265,7 +7265,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re1_elevator_fix.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re1_elevator_fix.zip",
         "FileSize": 15559561,
         "MD5": "49692F3609CDA921B5E32B468C119724",
         "Name": "Elevator animations fix",
@@ -7280,7 +7280,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re1_bgm_fix.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re1_bgm_fix.zip",
         "FileSize": 93906271,
         "MD5": "BAA5E94A1EE7DB1BC32A79D1C58376F0",
         "Name": "Fixed background music",
@@ -7393,7 +7393,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re5_fix_v1_0_4.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re5_fix_v1_0_4.zip",
         "FileSize": 17656,
         "ConfigFile": "RE5Fix.ini",
         "MD5": "AA3EEF19CB9DC0AE169AD0C88FA302F0",
@@ -7448,7 +7448,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re7_ultrawide.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re7_ultrawide.zip",
         "FileSize": 4052582,
         "MD5": "217833B8E1B043767AF10F8F683DA12E",
         "Name": "Ultrawide Fix",
@@ -7490,10 +7490,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Lyall/RERevFix/releases/download/v1.0.0/RERevFix.v1.0.0.zip",
-        "FileSize": 16372,
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/rer_fix_v1_0_0.zip",
+        "FileSize": 16812,
         "ConfigFile": "RERevFix.ini",
-        "MD5": "411C16D2FE725CA34E335DC078232074",
+        "MD5": "18f81473223b83ba35c315fae83eb780",
         "Name": "[Deprecated] RERevFix",
         "Guid": "60728c70-6503-49f3-8d7f-8c9d07f7e8c9",
         "Version": "1.0",
@@ -7533,6 +7533,24 @@
           "#ultrawide"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/rer2_raw_mouse_v1_0.zip",
+        "FileSize": 9869,
+        "MD5": "6d9265637112b2991ad65a9b32b68db3",
+        "Name": "Raw Mouse Input Fix",
+        "Guid": "1b7c5a9d-8831-42e5-b826-aaf13e2796ec",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "5b112d57-c2b8-4170-9d14-4fc29e2b5125"
+        ],
+        "Description": "## Raw Mouse Input Fix\r\n*by DawidFreeman*\r\n\r\nhttps://www.nexusmods.com/residentevilrevelations2/mods/102\r\n\r\nThis mod replaces analog stick emulated in-game camera with a proper raw mouse input with no acceleration.",
+        "Tags": [
+          "#enhancements"
+        ],
+        "IsDisabled": false
       }
     ]
   },
@@ -7542,7 +7560,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re8_ultrawide.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re8_ultrawide.zip",
         "FileSize": 4066149,
         "MD5": "7E7D7529FE86E9BF977CBCE29638E131",
         "Name": "Ultrawide Fix",

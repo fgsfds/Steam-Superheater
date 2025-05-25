@@ -263,6 +263,11 @@ public sealed class DatabaseTests
                 continue;
             }
 
+            if (item.Key.Contains("metadata"))
+            {
+                continue;
+            }
+
             filesInBucket.Add("https://s3.fgsfds.link/superheater/" + item.Key);
         }
 
