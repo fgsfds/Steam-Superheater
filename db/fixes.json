@@ -2122,6 +2122,27 @@
     ]
   },
   {
+    "GameId": 3017860,
+    "GameName": "DOOM: The Dark Ages",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/nointro/doom_dark_ages_nointro.zip",
+        "FileSize": 84676,
+        "MD5": "2e461c003f057ce8c02b1a5d4800deaa",
+        "Name": "No Intro Fix",
+        "Guid": "b993e93b-827a-41bd-b0a9-86d46227c293",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Intro Skip\r\n*by Kaibz*\r\n\r\nhttps://www.nexusmods.com/doomthedarkages/mods/16\r\n\r\nSkips launcher window and removes intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 242980,
     "GameName": "Daikatana",
     "Fixes": [
@@ -7083,6 +7104,27 @@
         "Description": "## Recettear: An Item Shop\u0027s Tale - Official DRM-Free Patch\n\n[https://web.archive.org/web/20211106063628/http://www.carpefulgur.com/recettear/downloads.htm](https://web.archive.org/web/20211106063628/http://www.carpefulgur.com/recettear/downloads.htm)\n\nThis official patch makes the game DRM-Free. The game version number is unchanged. \n\nAfter installing the patch, the game can be run directly from the recettear.exe executable without having to run Steam.",
         "Tags": [
           "#drm_free"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 2668510,
+    "GameName": "Red Dead Redemption",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rdr/RedDeadRedemption.FusionMod.zip",
+        "FileSize": 677881,
+        "MD5": "E6572C38FE4E7810C3540B67BE50C6E0",
+        "Name": "Fusion Mod",
+        "Guid": "7f90b809-191c-4ddb-802a-1ca2dc9fe2d3",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Red Dead Redemption Fusion Mod\r\n*by ThirteenAG*\r\n\r\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rdr\r\n\r\n- Skips intro and legal screens",
+        "Tags": [
+          "#nointro"
         ],
         "IsDisabled": false
       }
