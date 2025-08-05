@@ -225,7 +225,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {
@@ -244,7 +244,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {
@@ -263,7 +263,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {
@@ -282,7 +282,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Wine DLL overrides", fileFix.WineDllOverrides).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Wine DLL overrides", fileFix.WineDllOverrides ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {
@@ -301,7 +301,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {

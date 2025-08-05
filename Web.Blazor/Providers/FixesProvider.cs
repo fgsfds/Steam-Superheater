@@ -361,7 +361,7 @@ public sealed class FixesProvider
         if (fix is FileFixEntity fileFix1 &&
             fileFix1.Url is not null)
         {
-            var result = await _httpClient.GetAsync(fileFix1.Url, HttpCompletionOption.ResponseHeadersRead);
+            using var result = await _httpClient.GetAsync(fileFix1.Url, HttpCompletionOption.ResponseHeadersRead);
             if (!result.IsSuccessStatusCode)
             {
                 _logger.LogError($"File {fileFix1.Url} doesn't exist");
@@ -622,7 +622,7 @@ public sealed class FixesProvider
                     continue;
                 }
 
-                var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
+                using var result = await _httpClient.GetAsync(fix.Url, HttpCompletionOption.ResponseHeadersRead);
 
                 //file availability
                 if (result is null || !result.IsSuccessStatusCode)

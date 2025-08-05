@@ -597,7 +597,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     {
         Guard.IsNotNull(SelectedFix);
 
-        var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags).ConfigureAwait(true);
+        var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags ?? []).ConfigureAwait(true);
 
         if (result is not null)
         {
