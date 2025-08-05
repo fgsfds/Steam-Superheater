@@ -4841,6 +4841,41 @@
     "Fixes": [
       {
         "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/homefront_custom_patch_v1.zip",
+        "FileSize": 3989919,
+        "FilesToDelete": [
+          "redist\\PhysX_9.09.1112.exe"
+        ],
+        "MD5": "e97b72fd09182e237c4ed2badcc008a8",
+        "Name": "Custom Patch",
+        "Guid": "20cf78a1-af6d-465f-9117-84d804bdf804",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Homefront - Custom Patch\r\n*by LuKeStorm*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3432-homefront-custom-patch/\r\n\r\n- Steam CEG DRM patch: Defuses legacy steam drm\r\n- No Intro: Skips logos and game intro at startup\r\n- Multiple Instances: Allows to start the game more than once at the same time\r\n- Legacy PhysX and Redist components will be loaded from game folder (PhysX fix included)",
+        "Tags": [
+          "#bugfixes",
+          "#nointro"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/nointro/homefront_nointro.zip",
+        "FileSize": 3694,
+        "MD5": "C262B0823673EF964AFF52F14DC63CD8",
+        "Name": "No Intro Fix",
+        "Guid": "4b094679-e66f-45de-9447-79e348832f57",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Homefront - No Intro Fix\n\n*by Gametism*\n\n[https://www.nexusmods.com/homefront/mods/1](https://www.nexusmods.com/homefront/mods/1)\n\nBlank replacements for intro videos\r\n\r\n*Included in the Custom Patch*",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "Repackaged .rar as .zip with game folder layout.",
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://s3.fgsfds.link/superheater/homefront_physx_fix.zip",
         "FileSize": 1962649,
         "FilesToDelete": [
@@ -4855,23 +4890,7 @@
         "Tags": [
           "#bugfixes"
         ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/nointro/homefront_nointro.zip",
-        "FileSize": 3694,
-        "MD5": "C262B0823673EF964AFF52F14DC63CD8",
-        "Name": "No Intro Fix",
-        "Guid": "4b094679-e66f-45de-9447-79e348832f57",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Description": "## Homefront - No Intro Fix\n\n*by Gametism*\n\n[https://www.nexusmods.com/homefront/mods/1](https://www.nexusmods.com/homefront/mods/1)\n\nBlank replacements for intro videos",
-        "Tags": [
-          "#nointro"
-        ],
-        "Notes": "Repackaged .rar as .zip with game folder layout.",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -7490,6 +7509,21 @@
     "Fixes": [
       {
         "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re7_ethan_v1.zip",
+        "FileSize": 438275,
+        "MD5": "b1b7e365c6651bcf7efb3c28f6e710a7",
+        "Name": "Project Ethan (Ultrawide mod)",
+        "Guid": "c19657e0-4b7c-4b79-ba2e-0c81a50554a2",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Project Ethan (A ultrawide mod) v1.0\r\n*by kamiccolo*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3533-resident-evil-7-project-ethan/\r\n\r\n- All Ultrawide Aspect Ratios Supported.\r\n- Render Resolution affixed to Fullscreen.\r\n- Main menu and in game mouse pointers affixed to 16x9.\r\n- All UI affixed to 16x9.\r\n- Black overlays, Transition overlays and in game Tape Vignette affixed to Fullscreen.\r\n- 2d backgrounds affixed to 16x9.\r\n- Movies affixed to 16x9. (starting and intro videos do not have black bars)\r\n- Custom Blood Effects Overlay for ultrawide.\r\n- Custom Visor Overlay for ultrawide.",
+        "Tags": [
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://s3.fgsfds.link/superheater/resident_evil/re7_ultrawide.zip",
         "FileSize": 4052582,
         "MD5": "217833B8E1B043767AF10F8F683DA12E",
@@ -7501,7 +7535,7 @@
         "Tags": [
           "#ultrawide"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -7610,7 +7644,7 @@
         "Version": "1.5.2",
         "SupportedOSes": "Windows",
         "Description": "## REFramework v1.5.2\n*by praydog*\n\n[https://github.com/praydog/REFramework](https://github.com/praydog/REFramework)\n\nExtends FOV in ultrawide resolutions",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -8601,9 +8635,9 @@
         "MD5": "a91b7918f8a000678f304bf33a75c851",
         "Name": "Custom Patch",
         "Guid": "84971bf0-0c39-471a-9d3d-788f63ae650b",
-        "Version": "2.0",
+        "Version": "1.0",
         "SupportedOSes": "Windows",
-        "Description": "## Custom Patch v2 \r\n*by LuKeStorm*\r\n\r\n[https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/](https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/)\r\n\r\n- Steam CEG DRM patch: Avoids issues at startup\r\n- No Update Check: Disables annoying update check in main menu\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- Redist components for the game will be loaded from game folder",
+        "Description": "## Custom Patch\r\n*by LuKeStorm*\r\n\r\n[https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/](https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/)\r\n\r\n- Steam CEG DRM patch: Avoids issues at startup\r\n- No Update Check: Disables annoying update check in main menu\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- Redist components for the game will be loaded from game folder",
         "Tags": [
           "#nointro",
           "#crashfix"
