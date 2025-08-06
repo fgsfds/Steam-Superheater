@@ -881,15 +881,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1.zip",
-        "FileSize": 2036290,
+        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1_2_16.zip",
+        "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Aliens of Gold",
-        "MD5": "C53DA3F74BCF5EC8AD60D37C3E7EFFCB",
+        "MD5": "987e3711de1b482380117e6598d80ffd",
         "Name": "bstone",
         "Guid": "bc8649ea-8ec2-4abe-9c61-3317c80e0c39",
-        "Version": "1.2.12-2",
+        "Version": "1.2.1",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## bstone v1.2.12-2\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
+        "Description": "## bstone v1.2.16\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -906,15 +906,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1.zip",
-        "FileSize": 2036290,
+        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1_2_16.zip",
+        "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Planet Strike",
-        "MD5": "C53DA3F74BCF5EC8AD60D37C3E7EFFCB",
+        "MD5": "987e3711de1b482380117e6598d80ffd",
         "Name": "bstone",
         "Guid": "5e1c6726-0263-40bd-a084-f908ed1295ae",
-        "Version": "1.2.12-2",
+        "Version": "1.2.16",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## bstone v1.2.12-2\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
+        "Description": "## bstone v1.2.1\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -1046,7 +1046,7 @@
           "#ultrawide",
           "#widescreen"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -1068,7 +1068,7 @@
           "#ultrawide",
           "#widescreen"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -1088,7 +1088,7 @@
           "#graphics_improvement"
         ],
         "Notes": "bat file won\u0027t work on linux",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -1345,14 +1345,14 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/caesar3_julius_v170.zip",
-        "FileSize": 1563968,
-        "MD5": "51FAB99E94729B0B254307D53F22FF9F",
+        "Url": "https://s3.fgsfds.link/superheater/caesar3_julius_v1_8_0.zip",
+        "FileSize": 1741768,
+        "MD5": "857b59452f99c957f3507a2bad9c9a4e",
         "Name": "Julius",
         "Guid": "28375a9d-a7a6-465c-b841-556a96608d14",
-        "Version": "1.7.0",
+        "Version": "1.8.0",
         "SupportedOSes": "Windows",
-        "Description": "## Julius v1.7.0\n*by bvschaik*\n\n[https://github.com/bvschaik/julius](https://github.com/bvschaik/julius)\n\nJulius is a fully working open-source version of Caesar 3, with the same logic as the original, but with some UI enhancements, that can be played on multiple platforms.\n\nThe goal of the project is to have exactly the same game logic as Caesar 3, with the same look and feel. This means that the saved games are 100% compatible with Caesar 3, and any gameplay bugs present in the original Caesar 3 game will also be present in Julius.\n\n**Enhancements for Julius include:**\n- Support for widescreen resolutions\n- Windowed mode support for 32-bit desktops\n- A lot of small in-game quality of life improvements",
+        "Description": "## Julius\n*by bvschaik*\n\n[https://github.com/bvschaik/julius](https://github.com/bvschaik/julius)\n\nJulius is a fully working open-source version of Caesar 3, with the same logic as the original, but with some UI enhancements, that can be played on multiple platforms.\n\nThe goal of the project is to have exactly the same game logic as Caesar 3, with the same look and feel. This means that the saved games are 100% compatible with Caesar 3, and any gameplay bugs present in the original Caesar 3 game will also be present in Julius.\n\n**Enhancements for Julius include:**\n- Support for widescreen resolutions\n- Windowed mode support for 32-bit desktops\n- A lot of small in-game quality of life improvements",
         "Tags": [
           "#bugfixes",
           "#enhancements",
@@ -1519,14 +1519,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/openloco_v24_11.zip",
-        "FileSize": 3448508,
-        "MD5": "1ba100a06d1962729ed1ce7fe4b711d7",
+        "Url": "https://s3.fgsfds.link/superheater/openloco_v25_07.zip",
+        "FileSize": 3762975,
+        "MD5": "993a622c97c43636dec96e108908cfd3",
         "Name": "OpenLoco",
         "Guid": "e0252fda-c9ac-4c64-9d15-b2c7146d60b9",
-        "Version": "21.11",
+        "Version": "25.07",
         "SupportedOSes": "Windows",
-        "Description": "## OpenLoco v21.11\r\n\r\n[https://github.com/OpenLoco/OpenLoco](https://github.com/OpenLoco/OpenLoco)\r\n\r\nOpenLoco is an open-source re-implementation of Chris Sawyer\u0027s Locomotion (CSL), the spiritual successor to Transport Tycoon. OpenLoco aims to improve the game similar to how OpenTTD improved Transport Tycoon, and OpenRCT2 improved RollerCoaster Tycoon.",
+        "Description": "## OpenLoco\r\n\r\n[https://github.com/OpenLoco/OpenLoco](https://github.com/OpenLoco/OpenLoco)\r\n\r\nOpenLoco is an open-source re-implementation of Chris Sawyer\u0027s Locomotion (CSL), the spiritual successor to Transport Tycoon. OpenLoco aims to improve the game similar to how OpenTTD improved Transport Tycoon, and OpenRCT2 improved RollerCoaster Tycoon.",
         "Tags": [
           "#source_port",
           "#widescreen",
