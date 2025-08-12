@@ -43,6 +43,8 @@ public sealed class NewsProvider : INewsProvider
     /// <inheritdoc/>
     public async Task<Result> UpdateNewsListAsync()
     {
+        _newsEntitiesPages.Clear();
+
         await using var dbContext = _dbContextFactory.Get();
 
         var newsCacheDbEntity = dbContext.Cache.Find(DatabaseTableEnum.News)!;
