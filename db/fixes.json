@@ -881,15 +881,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1.zip",
-        "FileSize": 2036290,
+        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1_2_16.zip",
+        "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Aliens of Gold",
-        "MD5": "C53DA3F74BCF5EC8AD60D37C3E7EFFCB",
+        "MD5": "987e3711de1b482380117e6598d80ffd",
         "Name": "bstone",
         "Guid": "bc8649ea-8ec2-4abe-9c61-3317c80e0c39",
-        "Version": "1.2.12-2",
+        "Version": "1.2.1",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## bstone v1.2.12-2\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
+        "Description": "## bstone v1.2.16\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -906,15 +906,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1.zip",
-        "FileSize": 2036290,
+        "Url": "https://s3.fgsfds.link/superheater/blake_stone_bstone_v1_2_16.zip",
+        "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Planet Strike",
-        "MD5": "C53DA3F74BCF5EC8AD60D37C3E7EFFCB",
+        "MD5": "987e3711de1b482380117e6598d80ffd",
         "Name": "bstone",
         "Guid": "5e1c6726-0263-40bd-a084-f908ed1295ae",
-        "Version": "1.2.12-2",
+        "Version": "1.2.16",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## bstone v1.2.12-2\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
+        "Description": "## bstone v1.2.1\n*by bibendovsky*\n\n[https://github.com/bibendovsky/bstone](https://github.com/bibendovsky/bstone)\n\nBStone is unofficial source port for \u0022Blake Stone\u0022 game series: \u0022Aliens Of Gold\u0022 and \u0022Planet Strike\u0022.\n\n**Features:**\n- High resolution vanilla rendering\n- 3D-rendering\n- Upscale texture filter\n- Support for external textures\n- Allows to customize control bindings\n- 3D-audio\n- Separate volume control of sound effects and music\r\n\r\n**bstone doesn\u0027t support controllers, use keyboard and mouse layout**",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -1046,7 +1046,7 @@
           "#ultrawide",
           "#widescreen"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -1068,7 +1068,7 @@
           "#ultrawide",
           "#widescreen"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       },
       {
         "$type": "FileFix",
@@ -1088,7 +1088,7 @@
           "#graphics_improvement"
         ],
         "Notes": "bat file won\u0027t work on linux",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -1345,14 +1345,14 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/caesar3_julius_v170.zip",
-        "FileSize": 1563968,
-        "MD5": "51FAB99E94729B0B254307D53F22FF9F",
+        "Url": "https://s3.fgsfds.link/superheater/caesar3_julius_v1_8_0.zip",
+        "FileSize": 1741768,
+        "MD5": "857b59452f99c957f3507a2bad9c9a4e",
         "Name": "Julius",
         "Guid": "28375a9d-a7a6-465c-b841-556a96608d14",
-        "Version": "1.7.0",
+        "Version": "1.8.0",
         "SupportedOSes": "Windows",
-        "Description": "## Julius v1.7.0\n*by bvschaik*\n\n[https://github.com/bvschaik/julius](https://github.com/bvschaik/julius)\n\nJulius is a fully working open-source version of Caesar 3, with the same logic as the original, but with some UI enhancements, that can be played on multiple platforms.\n\nThe goal of the project is to have exactly the same game logic as Caesar 3, with the same look and feel. This means that the saved games are 100% compatible with Caesar 3, and any gameplay bugs present in the original Caesar 3 game will also be present in Julius.\n\n**Enhancements for Julius include:**\n- Support for widescreen resolutions\n- Windowed mode support for 32-bit desktops\n- A lot of small in-game quality of life improvements",
+        "Description": "## Julius\n*by bvschaik*\n\n[https://github.com/bvschaik/julius](https://github.com/bvschaik/julius)\n\nJulius is a fully working open-source version of Caesar 3, with the same logic as the original, but with some UI enhancements, that can be played on multiple platforms.\n\nThe goal of the project is to have exactly the same game logic as Caesar 3, with the same look and feel. This means that the saved games are 100% compatible with Caesar 3, and any gameplay bugs present in the original Caesar 3 game will also be present in Julius.\n\n**Enhancements for Julius include:**\n- Support for widescreen resolutions\n- Windowed mode support for 32-bit desktops\n- A lot of small in-game quality of life improvements",
         "Tags": [
           "#bugfixes",
           "#enhancements",
@@ -1519,14 +1519,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/openloco_v24_11.zip",
-        "FileSize": 3448508,
-        "MD5": "1ba100a06d1962729ed1ce7fe4b711d7",
+        "Url": "https://s3.fgsfds.link/superheater/openloco_v25_07.zip",
+        "FileSize": 3762975,
+        "MD5": "993a622c97c43636dec96e108908cfd3",
         "Name": "OpenLoco",
         "Guid": "e0252fda-c9ac-4c64-9d15-b2c7146d60b9",
-        "Version": "21.11",
+        "Version": "25.07",
         "SupportedOSes": "Windows",
-        "Description": "## OpenLoco v21.11\r\n\r\n[https://github.com/OpenLoco/OpenLoco](https://github.com/OpenLoco/OpenLoco)\r\n\r\nOpenLoco is an open-source re-implementation of Chris Sawyer\u0027s Locomotion (CSL), the spiritual successor to Transport Tycoon. OpenLoco aims to improve the game similar to how OpenTTD improved Transport Tycoon, and OpenRCT2 improved RollerCoaster Tycoon.",
+        "Description": "## OpenLoco\r\n\r\n[https://github.com/OpenLoco/OpenLoco](https://github.com/OpenLoco/OpenLoco)\r\n\r\nOpenLoco is an open-source re-implementation of Chris Sawyer\u0027s Locomotion (CSL), the spiritual successor to Transport Tycoon. OpenLoco aims to improve the game similar to how OpenTTD improved Transport Tycoon, and OpenRCT2 improved RollerCoaster Tycoon.",
         "Tags": [
           "#source_port",
           "#widescreen",
@@ -1973,14 +1973,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/id/doom_nugget_v3_2_0.zip",
-        "FileSize": 24065469,
-        "MD5": "32FEE0A69A336E1FE40E8F49AF820809",
+        "Url": "https://s3.fgsfds.link/superheater/id/doom_nugget_v4_4_0.zip",
+        "FileSize": 24602109,
+        "MD5": "4acba362de8c53c52d79cabe71f66a13",
         "Name": "Nugget Doom",
         "Guid": "a8dd50ff-7502-47c4-a514-b325eb401410",
-        "Version": "3.2.0",
+        "Version": "4.4.0",
         "SupportedOSes": "Windows",
-        "Description": "## Nugget Doom v3.2.0\n*by MrAlaux*\n\n\u003Cimg src=\u0022https://doomwiki.org/w/images/1/12/NuggetLogo.png\u0022 /\u003E\n\n[https://github.com/MrAlaux/Nugget-Doom](https://github.com/MrAlaux/Nugget-Doom)\n\n**This fix doesn\u0027t override Kex port. Select \u0022Launch DOS version\u0022 to launch Nugget Doom.**\n\nNugget Doom is a fork of Woof!, simply intended to implement additional features.\n\n## Doom 2 Minor Sprite Fixing Project - v2.0\n*by Revenant100*\n\n[https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/](https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/)\n\n## The Master Levels: Upgrade/QoL Pack\n*by Devalaous*\n\n[https://www.doomworld.com/forum/topic/119465-the-master-levels-upgradeqol-pack-relaunched-and-complete/](https://www.doomworld.com/forum/topic/119465-the-master-levels-upgradeqol-pack-relaunched-and-complete/)\n\n## Widescreen Assets\n*by OpenRift*\n\n[https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/](https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/)\n\n## Ultrawide Statusbar\n*by Ragu*\n\n[https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/](https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/)",
+        "Description": "## Nugget Doom\n*by MrAlaux*\n\n\u003Cimg src=\u0022https://doomwiki.org/w/images/1/12/NuggetLogo.png\u0022 /\u003E\n\n[https://github.com/MrAlaux/Nugget-Doom](https://github.com/MrAlaux/Nugget-Doom)\n\n**This fix doesn\u0027t override Kex port. Select \u0022Launch DOS version\u0022 to launch Nugget Doom.**\n\nNugget Doom is a fork of Woof!, simply intended to implement additional features.\n\n## Doom 2 Minor Sprite Fixing Project - v2.0\n*by Revenant100*\n\n[https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/](https://www.doomworld.com/forum/topic/62403-doom-2-minor-sprite-fixing-project-v20-release-updated-112822/)\n\n## The Master Levels: Upgrade/QoL Pack\n*by Devalaous*\n\n[https://www.doomworld.com/forum/topic/119465-the-master-levels-upgradeqol-pack-relaunched-and-complete/](https://www.doomworld.com/forum/topic/119465-the-master-levels-upgradeqol-pack-relaunched-and-complete/)\n\n## Widescreen Assets\n*by OpenRift*\n\n[https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/](https://www.doomworld.com/forum/topic/121385-widescreen-assets-pack-and-appreciation-thread/)\n\n## Ultrawide Statusbar\n*by Ragu*\n\n[https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/](https://www.doomworld.com/forum/topic/124018-ultrawide-statusbars/)",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -2034,18 +2034,18 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/id/doom3_le_v14.zip",
-        "FileSize": 283387571,
+        "Url": "https://s3.fgsfds.link/superheater/id/doom3_le_v1_5_7.zip",
+        "FileSize": 284173167,
         "ConfigFile": "d3le\\autoexec.cfg",
-        "MD5": "7EDDA36AE149D7179BB3CDD58DE315D1",
+        "MD5": "2ca98b84e9a583e7090b70bbeae01f17",
         "Name": "The Lost Mission",
         "Guid": "ebbcf676-2401-4a8f-9058-b50a67252292",
-        "Version": "1.4",
+        "Version": "1.5.7",
         "SupportedOSes": "Windows",
         "Dependencies": [
           "bc919ea0-c25f-4c98-bda4-a8ed6444c934"
         ],
-        "Description": "## The Lost Mission v1.4\n*by Arl.*\n\n\u003Cimg src=\u0022https://media.moddb.com/images/members/1/211/210342/profile/lm.png\u0022 /\u003E\n\n[https://www.moddb.com/mods/the-lost-mission](https://www.moddb.com/mods/the-lost-mission)\n\nThis is a port of the BFG Edition campaing \u0027The Lost Mission\u0027 for 2004\u0027s Doom 3 release.\n\nResurrection of Evil expansion pack is also required.\n\n**Select from Mods menu in the base game or add LostMission.exe as a non-steam game.**",
+        "Description": "## The Lost Mission\n*by Arl.*\n\n\u003Cimg src=\u0022https://media.moddb.com/images/members/1/211/210342/profile/lm.png\u0022 /\u003E\n\n[https://www.moddb.com/mods/the-lost-mission](https://www.moddb.com/mods/the-lost-mission)\n\nThis is a port of the BFG Edition campaing \u0027The Lost Mission\u0027 for 2004\u0027s Doom 3 release.\n\nResurrection of Evil expansion pack is also required.\n\n**Select from Mods menu in the base game or add LostMission.exe as a non-steam game.**",
         "Tags": [
           "#additional_content"
         ],
@@ -2118,6 +2118,27 @@
           "#widescreen"
         ],
         "IsDisabled": true
+      }
+    ]
+  },
+  {
+    "GameId": 3017860,
+    "GameName": "DOOM: The Dark Ages",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/nointro/doom_dark_ages_nointro.zip",
+        "FileSize": 84676,
+        "MD5": "2e461c003f057ce8c02b1a5d4800deaa",
+        "Name": "No Intro Fix",
+        "Guid": "b993e93b-827a-41bd-b0a9-86d46227c293",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Intro Skip\r\n*by Kaibz*\r\n\r\nhttps://www.nexusmods.com/doomthedarkages/mods/16\r\n\r\nSkips launcher window and removes intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
       }
     ]
   },
@@ -3070,14 +3091,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/earth_2140_patch_v1_2_1.zip",
-        "FileSize": 390968,
-        "MD5": "9B22287834B21D82C6FBC0A8E34837F5",
+        "Url": "https://s3.fgsfds.link/superheater/earth_2140_patch_v1_3_0.zip",
+        "FileSize": 396900,
+        "MD5": "ce579cfd539fe2e42beafd35f5f82f08",
         "Name": "Unofficial Patch",
         "Guid": "dc232085-a112-4a9f-9b7a-236479f81c92",
-        "Version": "1.2.1",
+        "Version": "1.3.0",
         "SupportedOSes": "Windows",
-        "Description": "## E2140 Unofficial Patch v1.2.1\r\n*by notsure8x*\r\n\r\n[https://github.com/notsure8x/e2140-unofficial-patch](https://github.com/notsure8x/e2140-unofficial-patch)\r\n\r\nThe goal of this patch is to address the issues found in the Windows version of both Earth 2140 Trilogy (GOG) and Earth 2140 HD (Steam), which are not present in the original DOS version of the game. Both mentioned releases have many issues including an almost completely passive enemy AI player, non-working \u0022virtual generals\u0022 feature and many others.",
+        "Description": "## E2140 Unofficial Patch\r\n*by notsure8x*\r\n\r\n[https://github.com/notsure8x/e2140-unofficial-patch](https://github.com/notsure8x/e2140-unofficial-patch)\r\n\r\nThe goal of this patch is to address the issues found in the Windows version of both Earth 2140 Trilogy (GOG) and Earth 2140 HD (Steam), which are not present in the original DOS version of the game. Both mentioned releases have many issues including an almost completely passive enemy AI player, non-working \u0022virtual generals\u0022 feature and many others.",
         "Tags": [
           "#crashfix",
           "#bugfixes"
@@ -3433,15 +3454,15 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/fallout1_ettu.zip",
-        "FileSize": 1121061159,
+        "Url": "https://s3.fgsfds.link/superheater/fallout1-ettu-v1_13_3643.zip",
+        "FileSize": 1084912024,
         "ConfigFile": "config\\fo1_settings.ini",
-        "MD5": "6383B35184736F4DBF59EB1FC11728CF",
+        "MD5": "fed67e188678a583c7fa83cb3f2d539c",
         "Name": "Fallout Et Tu",
         "Guid": "c59d1026-191a-4763-aea8-634ef1b68ee1",
-        "Version": "1.9.3324",
+        "Version": "1.13.3643",
         "SupportedOSes": "Windows",
-        "Description": "## Fallout1in2 v1.9.3324\n*by rotators*\n\n[https://github.com/rotators/Fo1in2](https://github.com/rotators/Fo1in2)\n\nThis project brings FALLOUT 1 into the engine of FALLOUT 2.\n\n- Replicates FALLOUT 1 in 2 almost 1:1.\n- Comes with the Hero Appearance mod integrated (Bald Dude, Long Hair Dude, Black Dude, Punk Girl).\n- FALLOUT 2 styled merchant inventory restocking.\n- Party members and generic NPCs can be pushed out of the way.\n- Party members level up and change their appearance based on worn armor.\n- Party members can be controlled in combat.\n- Automatic door opening and closing.\n- Traverse the wastes on your very own motorcycle!\n- Selected FALLOUT 2 weapons have been added (sparingly!) to the game world in ways that don\u0027t break the game balance.\n- Weapons can be upgraded in FALLOUT 2 style.\n- Explore classic FALLOUT 2 style cavern and new mining site encounter maps.\n- Stumble over FALLOUT 2 critters such as Geckos in encounter maps.\n- The original endgame is too easy? Try the new tougher mutants setting!\n- Continue playing after the main story has been completed.\n- Lots of bugfixes, making the game run more stable than even the original with patches.",
+        "Description": "## Fallout1in2 v1.13.3643\n*by rotators*\n\n[https://github.com/rotators/Fo1in2](https://github.com/rotators/Fo1in2)\n\nThis project brings FALLOUT 1 into the engine of FALLOUT 2.\n\n- Replicates FALLOUT 1 in 2 almost 1:1.\n- Comes with the Hero Appearance mod integrated (Bald Dude, Long Hair Dude, Black Dude, Punk Girl).\n- FALLOUT 2 styled merchant inventory restocking.\n- Party members and generic NPCs can be pushed out of the way.\n- Party members level up and change their appearance based on worn armor.\n- Party members can be controlled in combat.\n- Automatic door opening and closing.\n- Traverse the wastes on your very own motorcycle!\n- Selected FALLOUT 2 weapons have been added (sparingly!) to the game world in ways that don\u0027t break the game balance.\n- Weapons can be upgraded in FALLOUT 2 style.\n- Explore classic FALLOUT 2 style cavern and new mining site encounter maps.\n- Stumble over FALLOUT 2 critters such as Geckos in encounter maps.\n- The original endgame is too easy? Try the new tougher mutants setting!\n- Continue playing after the main story has been completed.\n- Lots of bugfixes, making the game run more stable than even the original with patches.",
         "Tags": [
           "#additional_content",
           "#enhancements",
@@ -3490,20 +3511,21 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/fallout2_rpu_v28.zip",
-        "FileSize": 884634619,
+        "Url": "https://s3.fgsfds.link/superheater/fallout2-rp-v2_4_33.zip",
+        "FileSize": 866938748,
         "FilesToDelete": [
           "data\\art\\tiles\\grid000.FRM",
+          "data\\maps\\AUTOMAP.DB",
           "data\\worldmap.dat",
           "f2_res.dat",
           "patch000.dat"
         ],
-        "MD5": "DC377C3B6062A337F83ACA635A0A65AA",
+        "MD5": "c5a3f9d2e940fd89f8447f0366d88f7a",
         "Name": "Restoration Project ",
         "Guid": "18c827ca-9d30-4f6f-acf0-d50fe588a8ce",
-        "Version": "28",
+        "Version": "2.4.33",
         "SupportedOSes": "Windows",
-        "Description": "## Fallout2 Restoration Project v28\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Restoration_Project](https://github.com/BGforgeNet/Fallout2_Restoration_Project)\n\nThe purpose of this project is to add back into Fallout 2 all the missing content (locations, NPCs, quests, items, etc) that were pulled or left unfinished in the original game.\nThis expansion attempts to stay true to what made Fallout great and thus the new content you find is not something I felt that would be cool to see, but rather a reality of what the original devs wanted. I admit that I had to make some judgment calls here and there, but the core of what you will see is something originally thought up by the Fallout 2 devs.",
+        "Description": "## Fallout2 Restoration Project v2.4.33\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Restoration_Project](https://github.com/BGforgeNet/Fallout2_Restoration_Project)\n\nThe purpose of this project is to add back into Fallout 2 all the missing content (locations, NPCs, quests, items, etc) that were pulled or left unfinished in the original game.\nThis expansion attempts to stay true to what made Fallout great and thus the new content you find is not something I felt that would be cool to see, but rather a reality of what the original devs wanted. I admit that I had to make some judgment calls here and there, but the core of what you will see is something originally thought up by the Fallout 2 devs.",
         "Tags": [
           "#additional_content",
           "#bugfixes",
@@ -3514,20 +3536,21 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/fallout2_upu_v28.zip",
-        "FileSize": 55659730,
+        "Url": "https://s3.fgsfds.link/superheater/fallout2-up-v1_02_33.zip",
+        "FileSize": 56815304,
         "FilesToDelete": [
           "data\\art\\tiles\\grid000.FRM",
+          "data\\maps\\AUTOMAP.DB",
           "data\\worldmap.dat",
           "f2_res.dat",
           "patch000.dat"
         ],
-        "MD5": "9B41FC03E1F7D6EB88991DFC8C79183B",
+        "MD5": "1fbebac703e0571678736077f4641a38",
         "Name": "Unofficial Patch",
         "Guid": "fdd24add-a7c0-4730-a29c-21cf71e07bb0",
-        "Version": "28",
+        "Version": "1.02.33",
         "SupportedOSes": "Windows",
-        "Description": "## Fallout 2 Unofficial Patch, updated v28\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Unofficial_Patch](https://github.com/BGforgeNet/Fallout2_Unofficial_Patch)\n\nThe Unofficial Fallout 2 Patch is the ultimate patch available for Fallout 2. It fixes practically all outstanding bugs in the game, including script changes to properly implement characters, such as the infamously buggy T-Ray.\n\n**Already included in the Restoration Project**",
+        "Description": "## Fallout 2 Unofficial Patch, v1.02.33\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Unofficial_Patch](https://github.com/BGforgeNet/Fallout2_Unofficial_Patch)\n\nThe Unofficial Fallout 2 Patch is the ultimate patch available for Fallout 2. It fixes practically all outstanding bugs in the game, including script changes to properly implement characters, such as the infamously buggy T-Ray.\n\n**Already included in the Restoration Project**",
         "Tags": [
           "#bugfixes",
           "#enhancements"
@@ -4037,20 +4060,20 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix/releases/download/v3.4.0/GTAIV.EFLC.FusionFix.zip",
-        "FileSize": 91514847,
+        "Url": "https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix/releases/download/v3.5.1/GTAIV.EFLC.FusionFix.zip",
+        "FileSize": 96223880,
         "InstallFolder": "GTAIV",
         "ConfigFile": "GTAIV\\plugins\\GTAIV.EFLC.FusionFix.ini",
-        "MD5": "89E72B5576BCEC4973D73B3746A59F57",
+        "MD5": "49360EFB47DF9EF2D3CE3E5EB9578558",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "f46efd2c-9bb5-430e-9e38-b5fce605860f",
-        "Version": "3.4.0",
+        "Version": "3.5.1",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## GTAIV EFLC FusionFix v3.4.0\n*by ThirteenAG*\n\n\u003Cimg src=\u0022https://user-images.githubusercontent.com/4904157/63623173-921aaf00-c601-11e9-8b84-fc5803269323.png\u0022 /\u003E\n\n[https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix](https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix)\n\nThis projects aims to fix some issues in Grand Theft Auto IV: Complete Edition",
-        "Changelog": "- v3.3: water foam fix\r\n- v3.2.1: minor shader tweak and fixed plugin sdk compatibility\r\nImproved PCSS/CHSS: better visuals, performance and added customizable settings\r\nFixed minimap blip animations at high framerates\r\nAdded a setting to display ped health with free aim\r\nAdded a setting to toggle between PC and console car reflection intensity\r\nEnabled first person reticle for helicopters on gamepads\r\nThe mouse cursor is now hidden when using a gamepad\r\nFixed visualSettings.dat rain.ambient, rain.wrapscale and rain.diffuse not doing anything\r\nFixed flickering outlines around shores\r\nImproved water transparency\r\nFixed radio reset after cutscene\r\n- v3.1.1: Fixed dark phone screen issue when some of the post-fx options were enabled.\r\n- v3.1.0: Fixed an issue with \u0022Cutscene Only\u0022 DoF setting\r\n- v3.0.9: Added ForceNoMemRestrict parameter, this commandline option is enabled by default when using Fusion Fix now\r\n- v3.0.9: Removed black void under the skydome\r\n- v3.0.9: Fixed camera stutter when swimming with a controller\r\n- v3.0.8: fixed CLEO Redux compatibility",
+        "Description": "## GTAIV EFLC FusionFix\n*by ThirteenAG*\n\n\u003Cimg src=\u0022https://user-images.githubusercontent.com/4904157/63623173-921aaf00-c601-11e9-8b84-fc5803269323.png\u0022 /\u003E\n\n[https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix](https://github.com/ThirteenAG/GTAIV.EFLC.FusionFix)\n\nThis projects aims to fix some issues in Grand Theft Auto IV: Complete Edition",
+        "Changelog": "",
         "Tags": [
           "#bugfixes",
           "#crashfix",
@@ -4202,17 +4225,17 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/gta/gtasa-proper_v1_3.zip",
-        "FileSize": 608899823,
-        "MD5": "F0AADF6FFC8C93CDD37ECEE620A2DA7D",
+        "Url": "https://s3.fgsfds.link/superheater/gta/gtasa-proper_v1_5.zip",
+        "FileSize": 808995467,
+        "MD5": "a3d6e3be0bed37fa3c913133a724669a",
         "Name": "Proper Fixes",
         "Guid": "8ef81959-f22c-43e3-bc40-ce4446c41da1",
-        "Version": "1.3.1",
+        "Version": "1.5.0",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "d2022c57-edbc-4c22-8fad-56838e1340ab"
         ],
-        "Description": "## Proper Fixes v1.3.1\r\n*by Junior_Djjr, J\u00E9ssica Nat\u00E1lia, Hysen, Aal*\r\n\r\n[https://www.mixmods.com.br/2024/02/sa-proper-fixes/](https://www.mixmods.com.br/2024/02/sa-proper-fixes/)\r\n\r\nThe biggest bug fix pack for GTA San Andreas.\r\n\r\nThis pack mixes all the major patch mods for the game\u0027s map, and adds thousands of new patches created by the community.",
+        "Description": "## Proper Fixes\r\n*by Junior_Djjr, J\u00E9ssica Nat\u00E1lia, Hysen, Aal*\r\n\r\n[https://www.mixmods.com.br/2024/02/sa-proper-fixes/](https://www.mixmods.com.br/2024/02/sa-proper-fixes/)\r\n\r\nThe biggest bug fix pack for GTA San Andreas.\r\n\r\nThis pack mixes all the major patch mods for the game\u0027s map, and adds thousands of new patches created by the community.",
         "Tags": [
           "#graphics_improvement",
           "#bugfixes"
@@ -4554,14 +4577,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/homm3_hota_v1_7_1.zip",
-        "FileSize": 1261137728,
-        "MD5": "76BB518B42F00E7DDC8FF80741FDAD18",
+        "Url": "https://s3.fgsfds.link/superheater/homm3-hota_v1_7_3.zip",
+        "FileSize": 1300862141,
+        "MD5": "3f360a85d566f955d0a7d494aae7cb0a",
         "Name": "Complete Edition \u002B Horn of the Abyss",
         "Guid": "a3c21d0d-30e7-4f35-b416-338390ec5d2b",
-        "Version": "1.7.1",
+        "Version": "1.7.3",
         "SupportedOSes": "Windows",
-        "Description": "## Heroes III Complete Edition \u002B Horn of the Abyss v1.7.1\r\n\r\n[https://h3hota.com/en/documentation](https://h3hota.com/en/documentation)\r\n\r\nThis fix replaces Ubisoft\u0027s HD Edition with **Heroes of Might and Magic 3: Complete** edition and **Horn of the Abyss** addon.\r\n\r\n**HoMM3 HD** mod and custom launcher that allows you to select between Complete edition and HoTA are included.",
+        "Description": "## Heroes III Complete Edition \u002B Horn of the Abyss\r\n\r\n[https://h3hota.com/en/documentation](https://h3hota.com/en/documentation)\r\n\r\nThis fix replaces Ubisoft\u0027s HD Edition with **Heroes of Might and Magic 3: Complete** edition and **Horn of the Abyss** addon.\r\n\r\n**HoMM3 HD** mod and custom launcher that allows you to select between Complete edition and HoTA are included.",
         "Tags": [
           "#additional_content"
         ],
@@ -4820,6 +4843,41 @@
     "Fixes": [
       {
         "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/homefront_custom_patch_v1.zip",
+        "FileSize": 3989919,
+        "FilesToDelete": [
+          "redist\\PhysX_9.09.1112.exe"
+        ],
+        "MD5": "e97b72fd09182e237c4ed2badcc008a8",
+        "Name": "Custom Patch",
+        "Guid": "20cf78a1-af6d-465f-9117-84d804bdf804",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Homefront - Custom Patch\r\n*by LuKeStorm*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3432-homefront-custom-patch/\r\n\r\n- Steam CEG DRM patch: Defuses legacy steam drm\r\n- No Intro: Skips logos and game intro at startup\r\n- Multiple Instances: Allows to start the game more than once at the same time\r\n- Legacy PhysX and Redist components will be loaded from game folder (PhysX fix included)",
+        "Tags": [
+          "#bugfixes",
+          "#nointro"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/nointro/homefront_nointro.zip",
+        "FileSize": 3694,
+        "MD5": "C262B0823673EF964AFF52F14DC63CD8",
+        "Name": "No Intro Fix",
+        "Guid": "4b094679-e66f-45de-9447-79e348832f57",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Homefront - No Intro Fix\n\n*by Gametism*\n\n[https://www.nexusmods.com/homefront/mods/1](https://www.nexusmods.com/homefront/mods/1)\n\nBlank replacements for intro videos\r\n\r\n*Included in the Custom Patch*",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "Repackaged .rar as .zip with game folder layout.",
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
         "Url": "https://s3.fgsfds.link/superheater/homefront_physx_fix.zip",
         "FileSize": 1962649,
         "FilesToDelete": [
@@ -4834,23 +4892,7 @@
         "Tags": [
           "#bugfixes"
         ],
-        "IsDisabled": false
-      },
-      {
-        "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/nointro/homefront_nointro.zip",
-        "FileSize": 3694,
-        "MD5": "C262B0823673EF964AFF52F14DC63CD8",
-        "Name": "No Intro Fix",
-        "Guid": "4b094679-e66f-45de-9447-79e348832f57",
-        "Version": "1.0",
-        "SupportedOSes": "Windows",
-        "Description": "## Homefront - No Intro Fix\n\n*by Gametism*\n\n[https://www.nexusmods.com/homefront/mods/1](https://www.nexusmods.com/homefront/mods/1)\n\nBlank replacements for intro videos",
-        "Tags": [
-          "#nointro"
-        ],
-        "Notes": "Repackaged .rar as .zip with game folder layout.",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -4914,15 +4956,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.7/Neptastic_Mod_v1.1.7.zip",
-        "FileSize": 47673,
+        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.9/Neptastic_Mod_v1.1.9.zip",
+        "FileSize": 56976,
         "ConfigFile": "nep.ini",
-        "MD5": "7328A9B6DAC468B69E61246956350C69",
+        "MD5": "57744D02F7A0F28D0834F586A7ED6380",
         "Name": "Neptastic Mod",
         "Guid": "7fc5eefe-7436-42f3-af33-b7747817c333",
-        "Version": "1.1.7",
+        "Version": "1.1.9",
         "SupportedOSes": "Windows",
-        "Description": "## Neptastic Mod v1.1.7\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
+        "Description": "## Neptastic Mod\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
         "Tags": [
           "#enhancements",
           "#fps_unlock",
@@ -4939,15 +4981,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.7/Neptastic_Mod_v1.1.7.zip",
-        "FileSize": 47673,
+        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.9/Neptastic_Mod_v1.1.9.zip",
+        "FileSize": 56976,
         "ConfigFile": "nep.ini",
-        "MD5": "7328A9B6DAC468B69E61246956350C69",
+        "MD5": "57744D02F7A0F28D0834F586A7ED6380",
         "Name": "Neptastic Mod",
         "Guid": "9c338265-1f5c-4618-a6df-36601eca069e",
-        "Version": "1.1.7",
+        "Version": "1.1.9",
         "SupportedOSes": "Windows",
-        "Description": "## Neptastic Mod v1.1.7\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
+        "Description": "## Neptastic Mod\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
         "Tags": [
           "#enhancements",
           "#fps_unlock",
@@ -4964,16 +5006,16 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.7/Neptastic_Mod_v1.1.7.zip",
-        "FileSize": 47673,
+        "Url": "https://github.com/tlaik/neptastic/releases/download/v1.1.9/Neptastic_Mod_v1.1.9.zip",
+        "FileSize": 56976,
         "InstallFolder": "Birth3",
         "ConfigFile": "Birth3\\nep.ini",
-        "MD5": "7328A9B6DAC468B69E61246956350C69",
+        "MD5": "57744D02F7A0F28D0834F586A7ED6380",
         "Name": "Neptastic Mod",
         "Guid": "a8544f69-d32a-4912-b8d1-e72883a2d0c3",
-        "Version": "1.1.7",
+        "Version": "1.1.9",
         "SupportedOSes": "Windows",
-        "Description": "## Neptastic Mod v1.1.7\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
+        "Description": "## Neptastic Mod\n*by tlaik*\n\n[https://github.com/tlaik/neptastic](https://github.com/tlaik/neptastic)\n\nGraphical improvements mod for Hyperdimension Neptunia Re;Birth1, Re;Birth2 and Re;Birth3 games.\n\n- Resolution upscaling and downscaling\n- Fitting resolution to window size (Base game always renders at 1088p)\n- Disabled FXAA that degraded visuals inside dungeons\n- Tutorials don\u0027t break in Re;Birth3\n- Anisotropic texture filtering\n- FPS unlock for Re;Birth1 and Re;Birth2\n- Improved Bloom shader\n- Bloom intensity \u0026 contrast settings\n- Increased shadow quality - to 8192x8192 and beyond\n- Outlines intensity control, as well as optional simple outlines shader\n- VSync options: On, Off, Adaptive\n- Nep: Nep",
         "Tags": [
           "#enhancements",
           "#ultrawide",
@@ -5738,19 +5780,19 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/MaxPayne3.FusionFix/releases/download/v2.1.1/MaxPayne3.FusionFix.zip",
-        "FileSize": 2164400,
+        "Url": "https://github.com/ThirteenAG/MaxPayne3.FusionFix/releases/download/v2.1.3/MaxPayne3.FusionFix.zip",
+        "FileSize": 2409960,
         "InstallFolder": "Max Payne 3",
         "ConfigFile": "Max Payne 3\\plugins\\MaxPayne3.FusionFix.ini",
-        "MD5": "96AF40CC75A907EC20662FDB451BA4C0",
+        "MD5": "0CB42EA0F0BF2D8642673040F79F6C8F",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "d9641d60-6883-4fde-8dac-1d627b66afd9",
-        "Version": "2.1.1",
+        "Version": "2.1.3",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## FusionFix v2.1.1\n*by ThirteenAG*\n\n\u003Cimg src=\u0022https://user-images.githubusercontent.com/4904157/63623173-921aaf00-c601-11e9-8b84-fc5803269323.png\u0022 /\u003E\n\n[https://github.com/ThirteenAG/MaxPayne3.FusionFix](https://github.com/ThirteenAG/MaxPayne3.FusionFix)\n\r\nNew menu options\r\n\n- Borderless Windowed\r\n- Gamepad Icons\r\n- SkipIntro, added an option to skip intro\r\n\r\nNew options, can be edited in **MaxPayne3.FusionFix.ini**\r\n\r\n- HideSkipButton, added an option to hide skip in cutscenes\r\n- DisableGlobalLeaderboards, prevents Hoboken Alleys coop map from crashing the game\r\n- OutlinesSizeMultiplier, added an option to increase the size of subtitle text outlines\r\n- LightSyncRGB, only Logitech hardware is supported, requires Logitech G HUB app",
+        "Description": "## FusionFix\n*by ThirteenAG*\n\n\u003Cimg src=\u0022https://user-images.githubusercontent.com/4904157/63623173-921aaf00-c601-11e9-8b84-fc5803269323.png\u0022 /\u003E\n\n[https://github.com/ThirteenAG/MaxPayne3.FusionFix](https://github.com/ThirteenAG/MaxPayne3.FusionFix)\n\r\nNew menu options\r\n\n- Borderless Windowed\r\n- Gamepad Icons\r\n- SkipIntro, added an option to skip intro\r\n\r\nNew options, can be edited in **MaxPayne3.FusionFix.ini**\r\n\r\n- HideSkipButton, added an option to hide skip in cutscenes\r\n- DisableGlobalLeaderboards, prevents Hoboken Alleys coop map from crashing the game\r\n- OutlinesSizeMultiplier, added an option to increase the size of subtitle text outlines\r\n- LightSyncRGB, only Logitech hardware is supported, requires Logitech G HUB app",
         "Tags": [
           "#crashfix",
           "#nointro",
@@ -6062,14 +6104,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/oddworld_2_relive_dec_2023.zip",
-        "FileSize": 3433321,
-        "MD5": "3C7F30CFC4E48DDE3A02C669CE7A5902",
+        "Url": "https://s3.fgsfds.link/superheater/oddworld-2-relive_v25_01.zip",
+        "FileSize": 3306805,
+        "MD5": "5a85102ddbcababee3cb2368e3165908",
         "Name": "R.E.L.I.V.E.",
         "Guid": "b284183a-abf1-44f3-ba2e-ebbbbcee4547",
-        "Version": "23.12",
+        "Version": "25.01",
         "SupportedOSes": "Windows",
-        "Description": "## Oddworld: Abe\u0027s Oddysee - R.E.L.I.V.E. Source Port (Dec 2023)\n\n[https://aliveteam.github.io/index.html](https://aliveteam.github.io/index.html)\n\nR.E.L.I.V.E. is a open source drop-in engine replacement for \u0022Oddworld: Abe\u0027s Oddysee\u0022 and \u0022Oddworld: Abe\u0027s Exoddus\u0022 that provides native resolution support, windowed mode, controller support and bugfixes.\n\nVideo Settings Keyboard Shortcuts:\n- F5 - Quiksave\n- F6 - Quikload\n- F12 - Toggle Fullscreen\n- F11 - Toggle Stretching\n- F10 - Toggle Smoothing\n\nR.E.L.I.V.E. features:\n- fixes over a hundred bugs in the original games\n- fixes the stuttering cutscenes\n- allows the games to run on Linux and MacOS\n- allows you to play in windowed mode\n- allows you to play with a controller out of the box\n- lets you run the game in arbitrarily large resolutions\n\nThe engine remains faithful to the original games and there should be no noticeable gameplay difference between playing the original versions and R.E.L.I.V.E.",
+        "Description": "## Oddworld: Abe\u0027s Oddysee - R.E.L.I.V.E. Source Port (15 Jan 2025)\n\n[https://aliveteam.github.io/index.html](https://aliveteam.github.io/index.html)\n\nR.E.L.I.V.E. is a open source drop-in engine replacement for \u0022Oddworld: Abe\u0027s Oddysee\u0022 and \u0022Oddworld: Abe\u0027s Exoddus\u0022 that provides native resolution support, windowed mode, controller support and bugfixes.\n\nVideo Settings Keyboard Shortcuts:\n- F5 - Quiksave\n- F6 - Quikload\n- F12 - Toggle Fullscreen\n- F11 - Toggle Stretching\n- F10 - Toggle Smoothing\n\nR.E.L.I.V.E. features:\n- fixes over a hundred bugs in the original games\n- fixes the stuttering cutscenes\n- allows the games to run on Linux and MacOS\n- allows you to play in windowed mode\n- allows you to play with a controller out of the box\n- lets you run the game in arbitrarily large resolutions\n\nThe engine remains faithful to the original games and there should be no noticeable gameplay difference between playing the original versions and R.E.L.I.V.E.",
         "Tags": [
           "#source_port",
           "#controller_support",
@@ -6104,14 +6146,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/oddworld_1_relive_dec_2023.zip",
-        "FileSize": 3433319,
-        "MD5": "C73E751A48362339D6786D719138D93D",
+        "Url": "https://s3.fgsfds.link/superheater/oddworld-1-relive_v25_01.zip",
+        "FileSize": 3306803,
+        "MD5": "85a0612031ed2d7df76dc83f41300fa4",
         "Name": "R.E.L.I.V.E.",
         "Guid": "4e9aeae8-14dd-4a6c-bcbe-88d87c18d96b",
-        "Version": "23.12",
+        "Version": "25.01",
         "SupportedOSes": "Windows",
-        "Description": "##Oddworld: Abe\u0027s Oddysee - R.E.L.I.V.E. Source Port (Dec 2023)\r\n\r\n[https://aliveteam.github.io/index.html](https://aliveteam.github.io/index.html)\r\n\r\nR.E.L.I.V.E. is a open source drop-in engine replacement for \u0022Oddworld: Abe\u0027s Oddysee\u0022 and \u0022Oddworld: Abe\u0027s Exoddus\u0022 that provides native resolution support, windowed mode, controller support and bugfixes.\r\n\r\nVideo Settings Keyboard Shortcuts:\r\n- F12 - Toggle Fullscreen\r\n- F11 - Toggle Stretching\r\n- F10 - Toggle Smoothing\r\n\r\nR.E.L.I.V.E. features:\r\n- fixes over a hundred bugs in the original games\r\n- fixes the stuttering cutscenes\r\n- allows the games to run on Linux and MacOS\r\n- allows you to play in windowed mode\r\n- allows you to play with a controller out of the box\r\n- lets you run the game in arbitrarily large resolutions\r\n\r\nThe engine remains faithful to the original games and there should be no noticeable gameplay difference between playing the original versions and R.E.L.I.V.E.",
+        "Description": "##Oddworld: Abe\u0027s Oddysee - R.E.L.I.V.E. Source Port (15 Jan 2025)\r\n\r\n[https://aliveteam.github.io/index.html](https://aliveteam.github.io/index.html)\r\n\r\nR.E.L.I.V.E. is a open source drop-in engine replacement for \u0022Oddworld: Abe\u0027s Oddysee\u0022 and \u0022Oddworld: Abe\u0027s Exoddus\u0022 that provides native resolution support, windowed mode, controller support and bugfixes.\r\n\r\nVideo Settings Keyboard Shortcuts:\r\n- F12 - Toggle Fullscreen\r\n- F11 - Toggle Stretching\r\n- F10 - Toggle Smoothing\r\n\r\nR.E.L.I.V.E. features:\r\n- fixes over a hundred bugs in the original games\r\n- fixes the stuttering cutscenes\r\n- allows the games to run on Linux and MacOS\r\n- allows you to play in windowed mode\r\n- allows you to play with a controller out of the box\r\n- lets you run the game in arbitrarily large resolutions\r\n\r\nThe engine remains faithful to the original games and there should be no noticeable gameplay difference between playing the original versions and R.E.L.I.V.E.",
         "Tags": [
           "#source_port",
           "#controller_support",
@@ -7089,6 +7131,27 @@
     ]
   },
   {
+    "GameId": 2668510,
+    "GameName": "Red Dead Redemption",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rdr/RedDeadRedemption.FusionMod.zip",
+        "FileSize": 677881,
+        "MD5": "E6572C38FE4E7810C3540B67BE50C6E0",
+        "Name": "Fusion Mod",
+        "Guid": "7f90b809-191c-4ddb-802a-1ca2dc9fe2d3",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Red Dead Redemption Fusion Mod\r\n*by ThirteenAG*\r\n\r\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rdr\r\n\r\n- Skips intro and legal screens",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 1174180,
     "GameName": "Red Dead Redemption 2",
     "Fixes": [
@@ -7265,7 +7328,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re1_elevator_fix.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re1_elevator_fix.zip",
         "FileSize": 15559561,
         "MD5": "49692F3609CDA921B5E32B468C119724",
         "Name": "Elevator animations fix",
@@ -7280,7 +7343,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re1_bgm_fix.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re1_bgm_fix.zip",
         "FileSize": 93906271,
         "MD5": "BAA5E94A1EE7DB1BC32A79D1C58376F0",
         "Name": "Fixed background music",
@@ -7393,7 +7456,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re5_fix_v1_0_4.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re5_fix_v1_0_4.zip",
         "FileSize": 17656,
         "ConfigFile": "RE5Fix.ini",
         "MD5": "AA3EEF19CB9DC0AE169AD0C88FA302F0",
@@ -7448,7 +7511,22 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re7_ultrawide.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re7_ethan_v1.zip",
+        "FileSize": 438275,
+        "MD5": "b1b7e365c6651bcf7efb3c28f6e710a7",
+        "Name": "Project Ethan (Ultrawide mod)",
+        "Guid": "c19657e0-4b7c-4b79-ba2e-0c81a50554a2",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Project Ethan (A ultrawide mod) v1.0\r\n*by kamiccolo*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3533-resident-evil-7-project-ethan/\r\n\r\n- All Ultrawide Aspect Ratios Supported.\r\n- Render Resolution affixed to Fullscreen.\r\n- Main menu and in game mouse pointers affixed to 16x9.\r\n- All UI affixed to 16x9.\r\n- Black overlays, Transition overlays and in game Tape Vignette affixed to Fullscreen.\r\n- 2d backgrounds affixed to 16x9.\r\n- Movies affixed to 16x9. (starting and intro videos do not have black bars)\r\n- Custom Blood Effects Overlay for ultrawide.\r\n- Custom Visor Overlay for ultrawide.",
+        "Tags": [
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re7_ultrawide.zip",
         "FileSize": 4052582,
         "MD5": "217833B8E1B043767AF10F8F683DA12E",
         "Name": "Ultrawide Fix",
@@ -7459,7 +7537,7 @@
         "Tags": [
           "#ultrawide"
         ],
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -7490,11 +7568,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Lyall/RERevFix/releases/download/v1.0.0/RERevFix.v1.0.0.zip",
-        "FileSize": 16372,
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/rer_fix_v1_0_0.zip",
+        "FileSize": 16812,
         "ConfigFile": "RERevFix.ini",
-        "MD5": "411C16D2FE725CA34E335DC078232074",
-        "Name": "[Deprecated] RERevFix",
+        "MD5": "18f81473223b83ba35c315fae83eb780",
+        "Name": "RERevFix",
         "Guid": "60728c70-6503-49f3-8d7f-8c9d07f7e8c9",
         "Version": "1.0",
         "SupportedOSes": "Windows",
@@ -7533,6 +7611,24 @@
           "#ultrawide"
         ],
         "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/rer2_raw_mouse_v1_0.zip",
+        "FileSize": 9869,
+        "MD5": "6d9265637112b2991ad65a9b32b68db3",
+        "Name": "Raw Mouse Input Fix",
+        "Guid": "1b7c5a9d-8831-42e5-b826-aaf13e2796ec",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "5b112d57-c2b8-4170-9d14-4fc29e2b5125"
+        ],
+        "Description": "## Raw Mouse Input Fix\r\n*by DawidFreeman*\r\n\r\nhttps://www.nexusmods.com/residentevilrevelations2/mods/102\r\n\r\nThis mod replaces analog stick emulated in-game camera with a proper raw mouse input with no acceleration.",
+        "Tags": [
+          "#enhancements"
+        ],
+        "IsDisabled": false
       }
     ]
   },
@@ -7542,7 +7638,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/re8_ultrawide.zip",
+        "Url": "https://s3.fgsfds.link/superheater/resident_evil/re8_ultrawide.zip",
         "FileSize": 4066149,
         "MD5": "7E7D7529FE86E9BF977CBCE29638E131",
         "Name": "Ultrawide Fix",
@@ -7550,7 +7646,7 @@
         "Version": "1.5.2",
         "SupportedOSes": "Windows",
         "Description": "## REFramework v1.5.2\n*by praydog*\n\n[https://github.com/praydog/REFramework](https://github.com/praydog/REFramework)\n\nExtends FOV in ultrawide resolutions",
-        "IsDisabled": false
+        "IsDisabled": true
       }
     ]
   },
@@ -7729,13 +7825,13 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/RoseTheFlower/UltrawideIndex/releases/download/robocoprc/Robocop.ultrawide.v1.0.zip",
-        "FileSize": 236230,
+        "Url": "https://github.com/RoseTheFlower/UltrawideIndex/releases/download/robocoprc/Robocop.ultrawide.v1.3.zip",
+        "FileSize": 239873,
         "InstallFolder": "Game\\Binaries\\Win64",
-        "MD5": "46B7CDC03A3099C0C5A4DF2D5BCE3F52",
+        "MD5": "FB92C517BB6C3063835EFFF96F65286A",
         "Name": "Ultrawide Fix",
         "Guid": "09e2a990-7c80-429b-a6e4-066ccb2e53e8",
-        "Version": "1.0",
+        "Version": "1.3",
         "SupportedOSes": "Windows",
         "Description": "## RoboCop: Rogue City ultrawide and wider\n*by RoseTheFlower*\n\n[https://github.com/RoseTheFlower/UltrawideIndex/releases/tag/robocoprc](https://github.com/RoseTheFlower/UltrawideIndex/releases/tag/robocoprc)\n\nThe solution aims to correct all field of view reduction issues and removes black bars from dialogue.",
         "Tags": [
@@ -8145,14 +8241,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/star_wars/dark-forces-fengine_v1_10.zip",
-        "FileSize": 8120011,
-        "MD5": "84B2FD94FB03527495A8EA1DA908EB5D",
+        "Url": "https://s3.fgsfds.link/superheater/star_wars/dark-forces-fengine_v1_22_3.zip",
+        "FileSize": 10277393,
+        "MD5": "b6b8618af59a5c616b6322602908c4c1",
         "Name": "The Force Engine",
         "Guid": "65572422-e300-4e54-b960-423c900d1028",
-        "Version": "1.10",
+        "Version": "1.22.3",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## The Force Engine v1.10\n*by luciusDXL*\n\n[https://theforceengine.github.io/](https://theforceengine.github.io/)\n\nThe Force Engine is a project with the goal to reverse engineer and rebuild the Jedi Engine for modern systems and the games that used that engine - Dark Forces and Outlaws. The project will include modern, built-in tools, such as a level editor and will make it easy to play Dark Forces and Outlaws on modern systems as well as the many community mods designed to work with the original games.",
+        "Description": "## The Force Engine\n*by luciusDXL*\n\n[https://theforceengine.github.io/](https://theforceengine.github.io/)\n\nThe Force Engine is a project with the goal to reverse engineer and rebuild the Jedi Engine for modern systems and the games that used that engine - Dark Forces and Outlaws. The project will include modern, built-in tools, such as a level editor and will make it easy to play Dark Forces and Outlaws on modern systems as well as the many community mods designed to work with the original games.",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -8421,14 +8517,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/rohit-n/dominatrix/releases/download/v1/dominatrix-mingw-v1-x86_64.zip",
-        "FileSize": 4884847,
-        "MD5": "614ED4A7DB5FEEFD8625DDB95FE93381",
+        "Url": "https://s3.fgsfds.link/superheater/sin-dominatrix_v1_2.zip",
+        "FileSize": 8824931,
+        "MD5": "eea7e16c0093669521d4b1a243b3bdbd",
         "Name": "Dominatrix",
         "Guid": "1e571587-253f-42a4-b9b1-7a988e7f4a75",
-        "Version": "1.0",
+        "Version": "1.2",
         "SupportedOSes": "Windows",
-        "Description": "## Dominatrix v1\n*by rohit-n*\n\n[https://github.com/rohit-n/dominatrix](https://github.com/rohit-n/dominatrix)\n\n- No more hardcoded resolutions\n- Controller support\n- Weapon radial menu\n- Gamepad friendly virtual keyboard\n- Better menu/interface scaling",
+        "Description": "## Dominatrix\n*by rohit-n*\n\n[https://github.com/rohit-n/dominatrix](https://github.com/rohit-n/dominatrix)\n\n- No more hardcoded resolutions\n- Controller support\n- Weapon radial menu\n- Gamepad friendly virtual keyboard\n- Better menu/interface scaling",
         "Tags": [
           "#controller_support",
           "#source_port",
@@ -8541,9 +8637,9 @@
         "MD5": "a91b7918f8a000678f304bf33a75c851",
         "Name": "Custom Patch",
         "Guid": "84971bf0-0c39-471a-9d3d-788f63ae650b",
-        "Version": "2.0",
+        "Version": "1.0",
         "SupportedOSes": "Windows",
-        "Description": "## Custom Patch v2 \r\n*by LuKeStorm*\r\n\r\n[https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/](https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/)\r\n\r\n- Steam CEG DRM patch: Avoids issues at startup\r\n- No Update Check: Disables annoying update check in main menu\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- Redist components for the game will be loaded from game folder",
+        "Description": "## Custom Patch\r\n*by LuKeStorm*\r\n\r\n[https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/](https://community.pcgamingwiki.com/files/file/3416-spec-ops-the-line-custom-patch/)\r\n\r\n- Steam CEG DRM patch: Avoids issues at startup\r\n- No Update Check: Disables annoying update check in main menu\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- Redist components for the game will be loaded from game folder",
         "Tags": [
           "#nointro",
           "#crashfix"
@@ -8942,14 +9038,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/daggerfall_unity_100.zip",
-        "FileSize": 50292992,
-        "MD5": "B069334DA152EDE2D0D2BAD538F510C0",
+        "Url": "https://s3.fgsfds.link/superheater/daggerfall-unity_v1_1_1.zip",
+        "FileSize": 50255661,
+        "MD5": "5af120ec4cc544c01b13c4956a23756e",
         "Name": "Daggerfall Unity",
         "Guid": "deeed117-4849-421b-81e2-41d07e9f9a1a",
-        "Version": "1.0",
+        "Version": "1.1.1",
         "SupportedOSes": "Windows",
-        "Description": "## Daggerfall Unity v1.0.0\r\n\r\n[https://github.com/Interkarma/daggerfall-unity](https://github.com/Interkarma/daggerfall-unity)\r\n\r\nDaggerfall Unity is an open source recreation of Daggerfall in the Unity engine created by Daggerfall Workshop.\r\n\r\nExperience the adventure and intrigue of Daggerfall with all of its original charm along with hundreds of fixes, quality of life enhancements, and extensive mod support.\r\n\r\n- Cross-platform without emulation (Windows/Linux/Mac)\r\n- Retro graphics are boosted by modern engine and lighting\r\n- High resolution widescreen with classic style\r\n- Optionally play in retro mode 320x200 or 640x400 with VGA palettes\r\n- Optionally overhaul the graphics and gameplay with mods\r\n- Huge draw distances even without mods\r\n- Smooth first-person controls\r\n- Quality of life enhancements\r\n- Extensive mod support with an active creator community\r\n- Translation support via community mods",
+        "Description": "## Daggerfall Unity\r\n\r\n[https://github.com/Interkarma/daggerfall-unity](https://github.com/Interkarma/daggerfall-unity)\r\n\r\nDaggerfall Unity is an open source recreation of Daggerfall in the Unity engine created by Daggerfall Workshop.\r\n\r\nExperience the adventure and intrigue of Daggerfall with all of its original charm along with hundreds of fixes, quality of life enhancements, and extensive mod support.\r\n\r\n- Cross-platform without emulation (Windows/Linux/Mac)\r\n- Retro graphics are boosted by modern engine and lighting\r\n- High resolution widescreen with classic style\r\n- Optionally play in retro mode 320x200 or 640x400 with VGA palettes\r\n- Optionally overhaul the graphics and gameplay with mods\r\n- Huge draw distances even without mods\r\n- Smooth first-person controls\r\n- Quality of life enhancements\r\n- Extensive mod support with an active creator community\r\n- Translation support via community mods",
         "Tags": [
           "#enhancements",
           "#source_port",
@@ -9311,7 +9407,7 @@
         "MD5": "06D4F064C05A43BB6C89C114C5C13913",
         "Name": "Fusion Mod",
         "Guid": "0717a8a0-2900-4248-9b2c-d0c0f5fe32b7",
-        "Version": "24.03",
+        "Version": "24.10",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Blacklist Fusion Mod\r\n*by ThirteenAG*\r\n\r\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/sc](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scb)\r\n\r\n- Added an option to skip intro\r\n- Added an option to skip press any key screen\r\n- Added an option to switch the game to fullscreen mode on startup\r\n- Added an option to disable negative mouse acceleration\r\n- Added an option to enable ultrawide support\r\n- Added an option to change FOV\r\n- Added an option to change Screen Cull Bias, for better draw distance\r\n- Added an option to unlock DLC content that\u0027s unavailable after servers shut down\r\n- Added an option to unlock all missions from the start\r\n- Added an option to load packed files from disk\r\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting\r\n- Difficulty tweaks: Mark and Execute enabled on Perfectionist, unlimited ammo disabled on Rookie. To go back to original behavior, delete update/difficultyconfiguration.ini\r\n- Added an option to be able to run during forced walking sections",
         "Tags": [
@@ -9950,12 +10046,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/vtmb_common.zip",
-        "FileSize": 9816610,
-        "MD5": "C15CB4A49DDF22B13A93C69E1F0FC8A0",
+        "Url": "https://s3.fgsfds.link/superheater/vtmb-essential_v11_5_20.zip",
+        "FileSize": 8301435,
+        "MD5": "88968bfe1ece1f57f4d1b1106250d237",
         "Name": "Essential Fixes",
         "Guid": "5b94fa25-0954-4dbc-94de-f9232cba1ea8",
-        "Version": "11.5",
+        "Version": "11.5.20",
         "SupportedOSes": "Windows",
         "Description": "Modified files taken from the **Unofficial Patch 11.5** that fix common crashes and add support for more resolution.",
         "Tags": [
@@ -9967,17 +10063,17 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/vtmb_up_v115.zip",
-        "FileSize": 541641335,
-        "MD5": "A7ABAD01FEAA88EC49D93F1DD60A4D88",
+        "Url": "https://s3.fgsfds.link/superheater/vtmb-up_v11_5_20.zip",
+        "FileSize": 525721263,
+        "MD5": "61254c0c32920b295414b12bfe4d7573",
         "Name": "Unofficial Patch Basic",
         "Guid": "9cb964f2-66e5-4c1e-9a21-b53171092684",
-        "Version": "11.5",
+        "Version": "11.5.20",
         "SupportedOSes": "Windows",
         "Dependencies": [
           "5b94fa25-0954-4dbc-94de-f9232cba1ea8"
         ],
-        "Description": "## Unofficial Patch v11.5\n\n[https://www.moddb.com/mods/vtmb-unofficial-patch](https://www.moddb.com/mods/vtmb-unofficial-patch)\n\n## ADD THIS TO THE  LAUNCH OPTIONS IN THE GAME PROPERTIES\r\n\n**-game Unofficial_Patch**\n\nThis is an unofficial patch for Vampire: The Masquerade - Bloodlines by Troika Games. It\u0027s a cumulative patch containing all the previous releases and works with retail and downloadable versions of any kind as the Troika Games official patch 1.2 is included.\n\nThe default Basic Patch fixes bugs mostly and restores only a bit of content to be close to the original.",
+        "Description": "## Unofficial Patch\n\n[https://www.moddb.com/mods/vtmb-unofficial-patch](https://www.moddb.com/mods/vtmb-unofficial-patch)\n\n## ADD THIS TO THE  LAUNCH OPTIONS IN THE GAME PROPERTIES\r\n\n**-game Unofficial_Patch**\n\nThis is an unofficial patch for Vampire: The Masquerade - Bloodlines by Troika Games. It\u0027s a cumulative patch containing all the previous releases and works with retail and downloadable versions of any kind as the Troika Games official patch 1.2 is included.\n\nThe default Basic Patch fixes bugs mostly and restores only a bit of content to be close to the original.",
         "Tags": [
           "#bugfixes"
         ],
@@ -9985,18 +10081,18 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.fgsfds.link/superheater/vtmb_upp_v115.zip",
-        "FileSize": 126845784,
-        "MD5": "CAEE603640276F46F4EAF4D3969AC5F2",
+        "Url": "https://s3.fgsfds.link/superheater/vtmb-upp_v11_5_20.zip",
+        "FileSize": 199246077,
+        "MD5": "05ff778a3834758cd7534d2bdaee0b45",
         "Name": "Unofficial Patch Plus",
         "Guid": "81715538-a4b8-4a04-a92e-e2e11b7b9e98",
-        "Version": "11.5",
+        "Version": "11.5.20",
         "SupportedOSes": "Windows",
         "Dependencies": [
           "9cb964f2-66e5-4c1e-9a21-b53171092684",
           "5b94fa25-0954-4dbc-94de-f9232cba1ea8"
         ],
-        "Description": "## Unofficial Patch v11.5\n\n[https://www.moddb.com/mods/vtmb-unofficial-patch](https://www.moddb.com/mods/vtmb-unofficial-patch)\n\nThe Plus Patch adds various tweaks and lots of content",
+        "Description": "## Unofficial Patch\n\n[https://www.moddb.com/mods/vtmb-unofficial-patch](https://www.moddb.com/mods/vtmb-unofficial-patch)\n\nThe Plus Patch adds various tweaks and lots of content",
         "Tags": [
           "#additional_content",
           "#bugfixes",
