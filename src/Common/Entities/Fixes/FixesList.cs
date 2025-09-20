@@ -18,6 +18,7 @@ public sealed class SourceEntity
 /// <summary>
 /// Represents a collection of fixes associated with a specific game, including metadata about the game and utility
 /// properties for determining the state of the fixes.
+/// </summary>
 public sealed class FixesList
 {
     /// <summary>

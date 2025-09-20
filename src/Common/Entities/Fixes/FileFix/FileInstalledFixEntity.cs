@@ -22,7 +22,7 @@ public sealed class FileInstalledFixEntity : BaseInstalledFixEntity
 }
 
 
-public class FilesListJsonConverter : JsonConverter<Dictionary<string, long?>?>
+public sealed class FilesListJsonConverter : JsonConverter<Dictionary<string, long?>?>
 {
     public override Dictionary<string, long?>? Read(
         ref Utf8JsonReader reader,
