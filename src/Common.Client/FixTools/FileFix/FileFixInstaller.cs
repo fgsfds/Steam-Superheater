@@ -88,6 +88,10 @@ public sealed class FileFixInstaller
 
         var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
 
+        BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
+        BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
+        BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
+
         var filesUnpackResult = await DownloadAndUnpackArchiveAsync(game, fix, variant, skipMD5Check, backupFolderPath, cancellationToken).ConfigureAwait(false);
 
         if (!filesUnpackResult.IsSuccess)
@@ -97,10 +101,6 @@ public sealed class FileFixInstaller
                 null,
                 filesUnpackResult.Message);
         }
-
-        BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-        BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
-        BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
 
         await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath).ConfigureAwait(false);
 
@@ -340,7 +340,7 @@ public sealed class FileFixInstaller
         string fixName
         )
     {
-        var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Replace(' ', '_'));
+        var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Trim().Replace(' ', '_'));
         backupFolderPath = string.Concat(backupFolderPath.Split(Path.GetInvalidPathChars()));
 
         if (Directory.Exists(backupFolderPath))
@@ -358,7 +358,7 @@ public sealed class FileFixInstaller
     /// <param name="gameDir">Game install folder</param>
     /// <param name="backupFolderPath">Absolute path to the backup folder</param>
     /// <param name="deleteOriginal">Will original file be deleted</param>
-    private static void BackupFiles(
+    private void BackupFiles(
         List<string>? files,
         string gameDir,
         string backupFolderPath,
@@ -370,16 +370,20 @@ public sealed class FileFixInstaller
             return;
         }
 
-        foreach (var file in files)
+        _logger.LogInformation($"Backing up {files.Count} files.");
+
+        for (var i = 0; i < files.Count; i++)
         {
-            var fullFilePath = ClientHelpers.GetFullPath(gameDir, file);
+            _progressReport.OperationMessage = $"Backing up file {i+1} of {files.Count}.";
+
+            var fullFilePath = ClientHelpers.GetFullPath(gameDir, files[i]);
 
             if (!File.Exists(fullFilePath))
             {
                 continue;
             }
 
-            var to = Path.Combine(backupFolderPath, file);
+            var to = Path.Combine(backupFolderPath, files[i]);
 
             var dir = Path.GetDirectoryName(to);
 
@@ -399,6 +403,8 @@ public sealed class FileFixInstaller
                 File.Copy(fullFilePath, to);
             }
         }
+
+        _progressReport.OperationMessage = string.Empty;
     }
 
     /// <summary>
