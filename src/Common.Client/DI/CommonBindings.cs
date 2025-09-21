@@ -6,6 +6,7 @@ using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Common.Helpers;
+using Downloader;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -42,9 +43,11 @@ public static class CommonBindings
         _ = container.AddSingleton<FilesUploader>();
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<HttpClient>(CreateHttpClient);
+        _ = container.AddSingleton<DownloadService>(CreateDownloadService);
         _ = container.AddSingleton<SteamTools>();
         //_ = container.AddSingleton<IApiInterface, ServerApiInterface>();
         _ = container.AddSingleton<IApiInterface, FileApiInterface>();
+
     }
 
     private static HttpClient CreateHttpClient(IServiceProvider provider)
@@ -53,6 +56,31 @@ public static class CommonBindings
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
         httpClient.Timeout = TimeSpan.FromSeconds(10);
         return httpClient;
+    }
+
+    private static DownloadService CreateDownloadService(IServiceProvider provider)
+    {
+        var conf = new DownloadConfiguration()
+        {
+            //MaximumMemoryBufferBytes = 1024 * 1024 * 512,
+            ParallelDownload = true,
+            ChunkCount = 4,
+            ParallelCount = 4,
+            MaximumBytesPerSecond = 0,
+            MaxTryAgainOnFailure = 5,
+            Timeout = 1000,
+            RangeDownload = false,
+            ClearPackageOnCompletionWithFailure = true,
+            CheckDiskSizeBeforeDownload = true,
+            EnableLiveStreaming = false,
+            RequestConfiguration =
+            {
+                KeepAlive = true,
+                UserAgent = "Superheater"
+            }
+        };
+
+        return new DownloadService(conf);
     }
 
     private static ILogger CreateLogger(IServiceProvider service) => FileLoggerFactory.Create(ClientProperties.PathToLogFile);

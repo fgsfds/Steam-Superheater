@@ -1,27 +1,26 @@
-using Common.Client.FilesTools.Interfaces;
-using CommunityToolkit.Diagnostics;
-using Microsoft.Extensions.Logging;
-using System.Diagnostics;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
+using Common.Client.FilesTools.Interfaces;
+using Downloader;
+using Microsoft.Extensions.Logging;
+using DownloadProgressChangedEventArgs = Downloader.DownloadProgressChangedEventArgs;
 
 namespace Common.Client.FilesTools;
 
 public sealed class FilesDownloader : IFilesDownloader
 {
     private readonly ProgressReport _progressReport;
-    private readonly HttpClient _httpClient;
+    private readonly DownloadService _downloadService;
     private readonly ILogger _logger;
 
 
     public FilesDownloader(
         ProgressReport progressReport,
-        HttpClient httpClient,
+        DownloadService downloadService,
         ILogger logger
         )
     {
         _progressReport = progressReport;
-        _httpClient = httpClient;
+        _downloadService = downloadService;
         _logger = logger;
     }
 
@@ -44,54 +43,43 @@ public sealed class FilesDownloader : IFilesDownloader
 
         _progressReport.OperationMessage = "Downloading...";
 
-        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-        if (!response.IsSuccessStatusCode)
-        {
-            return new(ResultEnum.ConnectionError, "Error while downloading a file: " + response.StatusCode);
-        }
-
-        //Downloading
-        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-        var contentLength = response.Content.Headers.ContentLength;
-
-        FileStream fileStream = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
-
-        new Task(() => { TrackProgress(fileStream, progress, contentLength); }).Start();
 
         try
         {
-            await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
-        }
-        catch (OperationCanceledException)
-        {
-            await fileStream.DisposeAsync().ConfigureAwait(false);
+            _downloadService.DownloadProgressChanged += OnDownloadProgressChangedEvent;
+            await _downloadService.DownloadFileTaskAsync(url.ToString(), tempFile, cancellationToken).ConfigureAwait(false);
 
-            if (File.Exists(tempFile))
+            if (_downloadService.Status is DownloadStatus.Stopped or DownloadStatus.Failed)
             {
-                File.Delete(tempFile);
-            }
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
 
-            return new(ResultEnum.Cancelled, "Downloading cancelled");
-        }
-        catch (HttpIOException)
-        {
-            await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
+                return new(ResultEnum.Cancelled, "Downloading cancelled");
+            }
         }
         catch (Exception ex)
         {
-            _progressReport.OperationMessage = string.Empty;
             return new(ResultEnum.Error, ex.ToString());
         }
         finally
         {
-            await fileStream.DisposeAsync().ConfigureAwait(false);
+            ((IProgress<float>)_progressReport.Progress).Report(0);
+            _progressReport.OperationMessage = string.Empty;
+            _downloadService.DownloadProgressChanged -= OnDownloadProgressChangedEvent;
         }
 
         File.Move(tempFile, filePath);
 
-        _progressReport.OperationMessage = string.Empty;
         return new(ResultEnum.Success, string.Empty);
+    }
+
+    private void OnDownloadProgressChangedEvent(object? sender, DownloadProgressChangedEventArgs e)
+    {
+        _progressReport.OperationMessage = $"Downloading... ({e.BytesPerSecondSpeed / 1000000:0.0#}Mb/s, {e.AverageBytesPerSecondSpeed / 1000000:0.0#}Mb/s average)";
+        ((IProgress<float>)_progressReport.Progress).Report((float)e.ProgressPercentage);
     }
 
     public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
@@ -133,89 +121,5 @@ public sealed class FilesDownloader : IFilesDownloader
 
         _progressReport.OperationMessage = string.Empty;
         return new(ResultEnum.Success, string.Empty);
-    }
-
-
-    /// <summary>
-    /// Continue download after network error
-    /// </summary>
-    /// <param name="url">Url to the file</param>
-    /// <param name="contentLength">Total content length</param>
-    /// <param name="fileStream">File stream to write to</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    private async Task ContinueDownload(
-        Uri url,
-        long? contentLength,
-        FileStream fileStream,
-        CancellationToken cancellationToken
-        )
-    {
-        try
-        {
-            using HttpRequestMessage request = new()
-            {
-                RequestUri = url,
-                Method = HttpMethod.Get
-            };
-
-            request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
-
-            using var response = await _httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-            if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
-            {
-                ThrowHelper.ThrowInvalidOperationException("Error while downloading a file: " + response.StatusCode);
-            }
-
-            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-            await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
-        }
-        catch (HttpIOException)
-        {
-            await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
-        }
-    }
-
-    /// <summary>
-    /// Report operation progress
-    /// </summary>
-    /// <param name="streamToTrack">Stream</param>
-    /// <param name="progress">Progress</param>
-    /// <param name="contentLength">File size</param>
-    private void TrackProgress(
-        FileStream streamToTrack,
-        IProgress<float> progress,
-        long? contentLength
-        )
-    {
-        if (contentLength is null)
-        {
-            return;
-        }
-
-        long prevPosition = default;
-        var sw = Stopwatch.StartNew();
-
-        while (streamToTrack.CanSeek)
-        {
-            var pos = streamToTrack.Position / (float)contentLength * 100;
-            progress.Report(pos);
-
-            if (sw.ElapsedMilliseconds >= 2000)
-            {
-                var bytes = streamToTrack.Position - prevPosition;
-                var ms = sw.ElapsedMilliseconds;
-
-                var mBytesS = (float)(bytes / ms) / 1024;
-
-                _progressReport.OperationMessage = $"Downloading... ({mBytesS:0.0#}Mb/s)";
-
-                prevPosition = streamToTrack.Position;
-                sw.Restart();
-            }
-
-            Thread.Sleep(50);
-        }
     }
 }

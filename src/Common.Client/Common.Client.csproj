@@ -15,6 +15,7 @@
         <PackageReference Include="AddSealed" PrivateAssets="all" />
         <PackageReference Include="CommunityToolkit.Diagnostics" />
         <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
+        <PackageReference Include="Downloader" />
         <PackageReference Include="IDisposableAnalyzers">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
