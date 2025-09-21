@@ -354,53 +354,75 @@ public sealed class FileFixInstaller
     /// <summary>
     /// Copy or move files to the backup folder
     /// </summary>
-    /// <param name="files">List of files to backup</param>
+    /// <param name="paths">List of files or paths to backup</param>
     /// <param name="gameDir">Game install folder</param>
     /// <param name="backupFolderPath">Absolute path to the backup folder</param>
     /// <param name="deleteOriginal">Will original file be deleted</param>
     private void BackupFiles(
-        List<string>? files,
+        List<string>? paths,
         string gameDir,
         string backupFolderPath,
         bool deleteOriginal
         )
     {
-        if (files is null or [])
+        if (paths is null or [])
         {
             return;
         }
 
-        _logger.LogInformation($"Backing up {files.Count} files.");
+        _logger.LogInformation($"Backing up {paths.Count} paths.");
 
-        for (var i = 0; i < files.Count; i++)
+        for (var i = 0; i < paths.Count; i++)
         {
-            _progressReport.OperationMessage = $"Backing up file {i+1} of {files.Count}.";
+            _progressReport.OperationMessage = $"Backing up file {i+1} of {paths.Count}.";
 
-            var fullFilePath = ClientHelpers.GetFullPath(gameDir, files[i]);
+            var fullFilePath = ClientHelpers.GetFullPath(gameDir, paths[i]);
 
-            if (!File.Exists(fullFilePath))
+            if (fullFilePath.EndsWith('\\'))
             {
-                continue;
-            }
+                if (!Directory.Exists(fullFilePath))
+                {
+                    continue;
+                }
 
-            var to = Path.Combine(backupFolderPath, files[i]);
+                var to = Path.Combine(backupFolderPath, paths[i]);
 
-            var dir = Path.GetDirectoryName(to);
-
-            Guard.IsNotNull(dir);
-
-            if (!Directory.Exists(dir))
-            {
-                _ = Directory.CreateDirectory(dir);
-            }
-
-            if (deleteOriginal)
-            {
-                File.Move(fullFilePath, to);
+                if (deleteOriginal)
+                {
+                    DirectoryHelper.CopyDirectory(fullFilePath, to, true);
+                    Directory.Delete(fullFilePath, true);
+                }
+                else
+                {
+                    DirectoryHelper.CopyDirectory(fullFilePath, to, true);
+                }
             }
             else
             {
-                File.Copy(fullFilePath, to);
+                if (!File.Exists(fullFilePath))
+                {
+                    continue;
+                }
+
+                var to = Path.Combine(backupFolderPath, paths[i]);
+
+                var dir = Path.GetDirectoryName(to);
+
+                Guard.IsNotNull(dir);
+
+                if (!Directory.Exists(dir))
+                {
+                    _ = Directory.CreateDirectory(dir);
+                }
+
+                if (deleteOriginal)
+                {
+                    File.Move(fullFilePath, to);
+                }
+                else
+                {
+                    File.Copy(fullFilePath, to);
+                }
             }
         }
 
