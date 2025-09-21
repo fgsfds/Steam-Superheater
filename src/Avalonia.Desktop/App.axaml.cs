@@ -11,6 +11,8 @@ using Common.Client.DI;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
+using Database.Client;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -41,10 +43,13 @@ public sealed class App : Application
 
         LoadBindings();
 
+        _logger = BindingsManager.Provider.GetRequiredService<ILogger>();
+
+        //run after setting _logger but before initializing anything else!
+        Cleanup();
+
         var config = BindingsManager.Provider.GetRequiredService<IConfigProvider>();
         var mainViewModel = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
-        var logger = BindingsManager.Provider.GetRequiredService<ILogger>();
-        _logger = logger;
 
         SetTheme(config.Theme);
 
@@ -53,22 +58,22 @@ public sealed class App : Application
 
         if (ClientProperties.IsDeveloperMode)
         {
-            logger.LogInformation("Started in developer mode");
+            _logger.LogInformation("Started in developer mode");
         }
 
         if (ClientProperties.IsOfflineMode)
         {
-            logger.LogInformation("Starting in offline mode");
+            _logger.LogInformation("Starting in offline mode");
         }
 
         if (ClientProperties.IsInSteamDeckGameMode)
         {
-            logger.LogInformation("Starting in Steam Deck mode");
+            _logger.LogInformation("Starting in Steam Deck mode");
         }
 
-        logger.LogInformation($"Superheater version: {ClientProperties.CurrentVersion}");
-        logger.LogInformation($"Operating system: {Environment.OSVersion}");
-        logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
+        _logger.LogInformation($"Superheater version: {ClientProperties.CurrentVersion}");
+        _logger.LogInformation($"Operating system: {Environment.OSVersion}");
+        _logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
 
         if (!Design.IsDesignMode)
         {
@@ -92,16 +97,13 @@ public sealed class App : Application
             }
         }
 
-
         try
         {
-            Cleanup();
-
             code = lifetime.Start();
         }
         catch (Exception ex)
         {
-            logger?.LogCritical(ex, "== Critical error while running app ==");
+            _logger?.LogCritical(ex, "== Critical error while running app ==");
 
             try
             {
@@ -109,7 +111,7 @@ public sealed class App : Application
             }
             catch (Exception ex2)
             {
-                logger?.LogCritical(ex2, "== Critical error while shutting down app ==");
+                _logger?.LogCritical(ex2, "== Critical error while shutting down app ==");
             }
 
             throw;
@@ -182,7 +184,11 @@ public sealed class App : Application
 
         foreach (var file in files)
         {
-            if (file.EndsWith(".old") || file.EndsWith(".temp") || file.Equals(Consts.UpdateFile))
+            if (file.EndsWith(".old", StringComparison.OrdinalIgnoreCase)
+                || file.EndsWith(".temp", StringComparison.OrdinalIgnoreCase)
+                || file.Equals(Consts.UpdateFile, StringComparison.OrdinalIgnoreCase)
+                || file.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase)
+                || file.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase))
             {
                 File.Delete(file);
             }

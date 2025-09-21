@@ -13,11 +13,6 @@ public sealed class DatabaseContext : DbContext
     public DbSet<UpvotesDbEntity> Upvotes { get; set; }
     public DbSet<SourcesDbEntity> Sources { get; set; }
 
-    public DatabaseContext()
-    {
-        Database.Migrate();
-    }
-
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         _ = optionsBuilder.ConfigureWarnings(x =>
