@@ -3458,7 +3458,11 @@
         "FileSize": 1084912024,
         "ConfigFile": "config\\fo1_settings.ini",
         "FilesToDelete": [
-          "DATA\\"
+          "DATA\\art",
+          "DATA\\MAPS",
+          "DATA\\SAVEGAME",
+          "DATA\\SCRIPTS",
+          "DATA\\TEXT"
         ],
         "MD5": "fed67e188678a583c7fa83cb3f2d539c",
         "Name": "Fallout Et Tu",
