@@ -149,12 +149,12 @@ internal sealed partial class FileFixViewModel : ObservableObject
         }
     }
 
-    public long? SelectedFixFileSize
+    public string? SelectedFixFileSize
     {
-        get => SelectedFix.FileSize;
+        get => SelectedFix.FileSize < 1 ? string.Empty : SelectedFix.FileSize.ToString();
         set
         {
-            SelectedFix.FileSize = value;
+            SelectedFix.FileSize =  long.TryParse(value, out var size) ? size : 0;
             OnPropertyChanged();
         }
     }
