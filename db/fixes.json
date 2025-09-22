@@ -7387,15 +7387,15 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/re0/ResidentEvil0.FusionFix.zip",
-        "FileSize": 1214863,
+        "FileSize": 1241502,
         "ConfigFile": "scripts\\ResidentEvil0.FusionFix.ini",
-        "MD5": "B1D406C634FBFBF4E71240388618D31F",
+        "MD5": "73B2B9286FE1E7E6A547F27E54AE3574",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "c6a7ce64-d334-4b39-a6f8-15f3081bbd93",
-        "Version": "23.11",
+        "Version": "25.09",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Resident Evil 0 Fusion Fix\n*by ThirteenAG*\n\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re0](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re0)\n\n- Added an option to hide the mouse cursor after a set interval\n- Added an option to enable door skip\n- Added an option to enable borderless windowed mode\n- Added an option to disable color correction\n- Added an option to disable noise filter\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting",
         "Tags": [
