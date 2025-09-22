@@ -3457,12 +3457,15 @@
         "Url": "https://s3.fgsfds.link/superheater/fallout1-ettu-v1_13_3643.zip",
         "FileSize": 1084912024,
         "ConfigFile": "config\\fo1_settings.ini",
+        "FilesToDelete": [
+          "DATA\\"
+        ],
         "MD5": "fed67e188678a583c7fa83cb3f2d539c",
         "Name": "Fallout Et Tu",
         "Guid": "c59d1026-191a-4763-aea8-634ef1b68ee1",
         "Version": "1.13.3643",
         "SupportedOSes": "Windows",
-        "Description": "## Fallout1in2 v1.13.3643\n*by rotators*\n\n[https://github.com/rotators/Fo1in2](https://github.com/rotators/Fo1in2)\n\nThis project brings FALLOUT 1 into the engine of FALLOUT 2.\n\n- Replicates FALLOUT 1 in 2 almost 1:1.\n- Comes with the Hero Appearance mod integrated (Bald Dude, Long Hair Dude, Black Dude, Punk Girl).\n- FALLOUT 2 styled merchant inventory restocking.\n- Party members and generic NPCs can be pushed out of the way.\n- Party members level up and change their appearance based on worn armor.\n- Party members can be controlled in combat.\n- Automatic door opening and closing.\n- Traverse the wastes on your very own motorcycle!\n- Selected FALLOUT 2 weapons have been added (sparingly!) to the game world in ways that don\u0027t break the game balance.\n- Weapons can be upgraded in FALLOUT 2 style.\n- Explore classic FALLOUT 2 style cavern and new mining site encounter maps.\n- Stumble over FALLOUT 2 critters such as Geckos in encounter maps.\n- The original endgame is too easy? Try the new tougher mutants setting!\n- Continue playing after the main story has been completed.\n- Lots of bugfixes, making the game run more stable than even the original with patches.",
+        "Description": "# Requires Superheater 3.3 or newer\r\n\r\n## Fallout1in2 v1.13.3643\n*by rotators*\n\n[https://github.com/rotators/Fo1in2](https://github.com/rotators/Fo1in2)\n\nThis project brings FALLOUT 1 into the engine of FALLOUT 2.\n\n- Replicates FALLOUT 1 in 2 almost 1:1.\n- Comes with the Hero Appearance mod integrated (Bald Dude, Long Hair Dude, Black Dude, Punk Girl).\n- FALLOUT 2 styled merchant inventory restocking.\n- Party members and generic NPCs can be pushed out of the way.\n- Party members level up and change their appearance based on worn armor.\n- Party members can be controlled in combat.\n- Automatic door opening and closing.\n- Traverse the wastes on your very own motorcycle!\n- Selected FALLOUT 2 weapons have been added (sparingly!) to the game world in ways that don\u0027t break the game balance.\n- Weapons can be upgraded in FALLOUT 2 style.\n- Explore classic FALLOUT 2 style cavern and new mining site encounter maps.\n- Stumble over FALLOUT 2 critters such as Geckos in encounter maps.\n- The original endgame is too easy? Try the new tougher mutants setting!\n- Continue playing after the main story has been completed.\n- Lots of bugfixes, making the game run more stable than even the original with patches.",
         "Tags": [
           "#additional_content",
           "#enhancements",
@@ -3521,7 +3524,7 @@
           "patch000.dat"
         ],
         "MD5": "c5a3f9d2e940fd89f8447f0366d88f7a",
-        "Name": "Restoration Project ",
+        "Name": "Restoration Project",
         "Guid": "18c827ca-9d30-4f6f-acf0-d50fe588a8ce",
         "Version": "2.4.33",
         "SupportedOSes": "Windows",
@@ -3540,7 +3543,6 @@
         "FileSize": 56815304,
         "FilesToDelete": [
           "data\\art\\tiles\\grid000.FRM",
-          "data\\maps\\AUTOMAP.DB",
           "data\\worldmap.dat",
           "f2_res.dat",
           "patch000.dat"
@@ -3550,7 +3552,7 @@
         "Guid": "fdd24add-a7c0-4730-a29c-21cf71e07bb0",
         "Version": "1.02.33",
         "SupportedOSes": "Windows",
-        "Description": "## Fallout 2 Unofficial Patch, v1.02.33\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Unofficial_Patch](https://github.com/BGforgeNet/Fallout2_Unofficial_Patch)\n\nThe Unofficial Fallout 2 Patch is the ultimate patch available for Fallout 2. It fixes practically all outstanding bugs in the game, including script changes to properly implement characters, such as the infamously buggy T-Ray.\n\n**Already included in the Restoration Project**",
+        "Description": "## Fallout 2 Unofficial Patch v1.02.33\n*by BGforgeNet*\n\n[https://github.com/BGforgeNet/Fallout2_Unofficial_Patch](https://github.com/BGforgeNet/Fallout2_Unofficial_Patch)\n\nThe Unofficial Fallout 2 Patch is the ultimate patch available for Fallout 2. It fixes practically all outstanding bugs in the game, including script changes to properly implement characters, such as the infamously buggy T-Ray.\n\n**Already included in the Restoration Project**",
         "Tags": [
           "#bugfixes",
           "#enhancements"
