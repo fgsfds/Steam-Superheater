@@ -2413,17 +2413,17 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Wemino/MarkerPatch/releases/download/1.0.1/MarkerPatch.zip",
-        "FileSize": 195542,
-        "MD5": "52C1B8D561CD554345566CDE422A3E1F",
+        "Url": "https://github.com/Wemino/MarkerPatch/releases/download/1.0.2/MarkerPatch.zip",
+        "FileSize": 195641,
+        "MD5": "4B0AF6921362676CA06886C29635300F",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "MarkerPatch",
         "Guid": "1527b7b8-7527-4106-ab79-95ca6aff4c03",
-        "Version": "1.0.1",
+        "Version": "1.0.2",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## MarkerPatch 1.0.1\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/MarkerPatch\r\n\r\nA patch that fixes various issues and limitations in the PC port of Dead Space 2.",
+        "Description": "## MarkerPatch 1.0.2\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/MarkerPatch\r\n\r\nA patch that fixes various issues and limitations in the PC port of Dead Space 2.",
         "Tags": [
           "#enhancements",
           "#performance_improvement",
