@@ -10,6 +10,7 @@ permissions:
   contents: write 
 
 jobs:
+
   build-windows:
     name: Build Windows
     runs-on: windows-latest
@@ -17,7 +18,9 @@ jobs:
       version_nodots: ${{ steps.get_version.outputs.version_nodots }}
       version_dotted: ${{ steps.get_version.outputs.version_dotted }}
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release]') }}
+
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -31,7 +34,7 @@ jobs:
         run: |
           dotnet publish ".\src\Avalonia.Desktop\Avalonia.Desktop.csproj" -p:PublishProfile=Windows -c Release -o ./publish
 
-      - name: Get version (PowerShell; follows your script)
+      - name: Get version
         id: get_version
         shell: pwsh
         run: |
@@ -43,27 +46,48 @@ jobs:
           echo "version_dotted=$withDots"   >> $env:GITHUB_OUTPUT
           echo "version_nodots=$withoutDots" >> $env:GITHUB_OUTPUT
 
+      - name: Upload unsigned Windows artifact
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          path: publish/Superheater.exe
+
+      - name: Signing
+        uses: signpath/github-action-submit-signing-request@v1
+        with:
+          api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
+          organization-id: 'ff1c1d90-ad84-4e5e-9b3e-41ea2f786aae'
+          project-slug: 'Steam-Superheater'
+          signing-policy-slug: 'release-signing'
+          github-artifact-id: '${{ steps.upload-unsigned-artifact.outputs.artifact-id }}'
+          wait-for-completion: true
+          output-artifact-directory: 'publish/signed/'
+          artifact-configuration-slug: 'zip'
+
       - name: Zip Windows build
         shell: pwsh
         run: |
+          ls .\publish\signed\
           $v = "${{ steps.get_version.outputs.version_nodots }}"
-          $dest = Join-Path $PWD "publish\superheater_${v}_win-x64.zip"
+          $dest = Join-Path $PWD "publish\signed\superheater_${v}_win-x64.zip"
           if (Test-Path $dest) { Remove-Item $dest }
-          Compress-Archive -Path ".\publish\Superheater.exe" -DestinationPath $dest
+          Compress-Archive -Path ".\publish\signed\Superheater.exe" -DestinationPath $dest
           Write-Host "Created $dest"
 
-      - name: Upload Windows artifact
+      - name: Upload signed Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: superheater-win
-          path: publish/superheater_${{ steps.get_version.outputs.version_nodots }}_win-x64.zip
+          path: publish/signed/superheater_${{ steps.get_version.outputs.version_nodots }}_win-x64.zip
 
   build-linux:
     name: Build Linux
     runs-on: ubuntu-latest
     needs: build-windows
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release]') }}
+
     steps:
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -112,16 +136,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: superheater-win
-          path: publish
+          path: publish/signed
 
       - name: Download Linux artifact
         uses: actions/download-artifact@v4
         with:
           name: superheater-linux
           path: publish
-
-      - name: List publish directory (debug)
-        run: ls -la publish || true
 
       - name: Create release (and upload assets)
         uses: ncipollo/release-action@v1
