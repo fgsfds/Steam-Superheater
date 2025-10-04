@@ -209,7 +209,7 @@ public sealed partial class FileFixTests
             Name = "test fix compromised",
             Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Url = $"{Consts.FilesRepo}nointro/bsp_nointro.zip",
+            Url = $"{Consts.BucketAddress}nointro/bsp_nointro.zip",
             MD5 = "badMD5",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };

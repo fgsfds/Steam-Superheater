@@ -14,7 +14,8 @@ public static class Consts
 
     public const string UpdateFolder = "update";
 
-    public const string FilesRepo = "https://s3.fgsfds.link/superheater/";
+    //public const string BucketAddress = "https://s3.fgsfds.link/superheater/";
+    public const string BucketAddress = "http://176.222.52.233:9000/superheater/";
 
     /// <summary>
     /// Path to the files repository

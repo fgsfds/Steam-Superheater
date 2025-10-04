@@ -517,7 +517,7 @@ public sealed class EditorModel
 
                     fixEntity.FileSize = header.Content.Headers.ContentLength;
 
-                    if (fixEntity.Url.StartsWith(Consts.FilesRepo))
+                    if (fixEntity.Url.StartsWith(Consts.BucketAddress))
                     {
                         fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");
                     }

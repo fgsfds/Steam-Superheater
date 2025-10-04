@@ -14,6 +14,9 @@ namespace Tests;
 
 public sealed class DatabaseTests
 {
+    private const string BucketAddress = "http://176.222.52.233:9000/superheater/";
+    //private const string BucketAddress = "https://s3.fgsfds.link/superheater/";
+
     private readonly ITestOutputHelper _output;
 
     public DatabaseTests(ITestOutputHelper output)
@@ -110,7 +113,7 @@ public sealed class DatabaseTests
                 }
 
                 //md5 of files from s3
-                if (url.StartsWith(Consts.FilesRepo))
+                if (url.StartsWith(BucketAddress))
                 {
                     if (url.EndsWith("re4_re4hd_v1_1.zip"))
                     {
@@ -231,7 +234,7 @@ public sealed class DatabaseTests
         {
             foreach (var b in a.Fixes.OfType<FileFixEntity>())
             {
-                if (b.Url?.StartsWith("https://s3.fgsfds.link") == true)
+                if (b.Url?.StartsWith(BucketAddress) == true)
                 {
                     fixesUrls.Add(b.Url);
                 }
@@ -268,7 +271,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            filesInBucket.Add("https://s3.fgsfds.link/superheater/" + item.Key);
+            filesInBucket.Add($"{BucketAddress}" + item.Key);
         }
 
         var loose = filesInBucket.Except(fixesUrls);
