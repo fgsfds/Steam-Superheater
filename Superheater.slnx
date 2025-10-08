@@ -1,0 +1,29 @@
+<Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Debug-Linux" />
+    <BuildType Name="Release" />
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+  </Configurations>
+  <Folder Name="/.start/">
+    <Project Path="src/Avalonia.Desktop/Avalonia.Desktop.csproj" />
+    <Project Path="Web.Blazor/Web.Blazor.csproj">
+      <BuildType Solution="Debug-Linux|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Folder Name="/Api/">
+    <Project Path="src/Api.Common/Api.Common.csproj" />
+  </Folder>
+  <Folder Name="/Database/">
+    <Project Path="src/Database.Client/Database.Client.csproj">
+      <BuildType Solution="Debug-Linux|*" Project="Debug" />
+    </Project>
+    <Project Path="src/Database.Server/Database.Server.csproj">
+      <BuildType Solution="Debug-Linux|*" Project="Debug" />
+    </Project>
+  </Folder>
+  <Project Path="src/Common.Client/Common.Client.csproj" />
+  <Project Path="src/Common/Common.csproj" />
+  <Project Path="src/Tests/Tests.csproj" />
+</Solution>
