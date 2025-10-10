@@ -1,22 +1,18 @@
-﻿using Common.Entities;
+﻿using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using Common.Entities;
 using Common.Entities.Fixes;
 using Common.Entities.Fixes.FileFix;
 using Common.Helpers;
 using Minio;
 using Minio.DataModel.Args;
-using System.IO;
-using System.Security.Cryptography;
-using System.Text;
-using System.Text.Json;
 using Xunit.Abstractions;
 
 namespace Tests;
 
 public sealed class DatabaseTests
 {
-    private const string BucketAddress = "http://176.222.52.233:9000/superheater/";
-    //private const string BucketAddress = "https://s3.fgsfds.link/superheater/";
-
     private readonly ITestOutputHelper _output;
 
     public DatabaseTests(ITestOutputHelper output)
@@ -113,7 +109,7 @@ public sealed class DatabaseTests
                 }
 
                 //md5 of files from s3
-                if (url.StartsWith(BucketAddress))
+                if (url.StartsWith(Consts.S3Endpoint))
                 {
                     if (url.EndsWith("re4_re4hd_v1_1.zip"))
                     {
@@ -234,7 +230,7 @@ public sealed class DatabaseTests
         {
             foreach (var b in a.Fixes.OfType<FileFixEntity>())
             {
-                if (b.Url?.StartsWith(BucketAddress) == true)
+                if (b.Url?.StartsWith(Consts.S3Endpoint) == true)
                 {
                     fixesUrls.Add(b.Url);
                 }
@@ -249,8 +245,9 @@ public sealed class DatabaseTests
 
         using var minioClient = new MinioClient();
         using var iMinioClient = minioClient
-            .WithEndpoint("s3.fgsfds.link:9000")
-            .WithCredentials(access, secretKey: secret)
+            .WithEndpoint(Consts.S3Endpoint.Split("//").Last())
+            .WithCredentials(access, secret)
+            .WithSSL(false)
             .Build();
 
         var args = new ListObjectsArgs()
@@ -271,7 +268,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            filesInBucket.Add($"{BucketAddress}" + item.Key);
+            filesInBucket.Add(Consts.BucketAddress + item.Key);
         }
 
         var loose = filesInBucket.Except(fixesUrls);
@@ -283,6 +280,7 @@ public sealed class DatabaseTests
             _ = sb.AppendLine($"[Error] File {item} is loose.");
         }
 
+        _output.WriteLine(sb.ToString());
         Assert.True(sb.Length < 1, sb.ToString());
     }
 }

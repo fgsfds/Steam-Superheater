@@ -14,16 +14,17 @@ public static class Consts
 
     public const string UpdateFolder = "update";
 
-    //public const string BucketAddress = "https://s3.fgsfds.link/superheater/";
-    public const string BucketAddress = "http://176.222.52.233:9000/superheater/";
+    public const string S3Endpoint = "http://176.222.52.233:9000/";
 
     /// <summary>
     /// Path to the files repository
     /// </summary>
-    public const string UploadsFolder = "https://s3.fgsfds.link/uploads/superheater/";
+    public const string BucketAddress = $"{S3Endpoint}superheater/";
 
-
-    public const string Bucket = "";
+    /// <summary>
+    /// Path to the uploads repository
+    /// </summary>
+    public const string UploadsFolder = $"{S3Endpoint}uploads/superheater/";
 
     public const string Hosts = @"C:\Windows\System32\drivers\etc\hosts";
 
