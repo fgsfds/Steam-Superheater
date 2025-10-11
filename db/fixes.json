@@ -7029,15 +7029,15 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "http://176.222.52.233:9000/superheater/prototype_fix_v1_6.zip",
-        "FileSize": 7566240,
+        "Url": "http://176.222.52.233:9000/superheater/prototype-fix-v1_8b.zip",
+        "FileSize": 8264108,
         "ConfigFile": "prototype_fix.ini",
-        "MD5": "ACC31C62D0C433ABF762445C8774AFA6",
+        "MD5": "3ac54191a5d7b0915dd7a3fd7e633c1c",
         "Name": "PrototypeFix",
         "Guid": "fddc65cd-8a1d-4d61-afaa-c42d108617b5",
-        "Version": "1.6",
+        "Version": "1.8b",
         "SupportedOSes": "Windows",
-        "Description": "## PrototypeFix v1.6\r\n*by emoose*\r\n\r\n[https://www.nexusmods.com/prototype/mods/52](https://www.nexusmods.com/prototype/mods/52)\r\n\r\n- Prevents crash during launch/load screen caused by too many CPU cores/threads\r\n- Fixed crashing a few seconds after loading into save, caused by game trying to download billboard adverts from no-longer-existent server\r\n- Fixed framerate drops caused by too many HID devices, by making game only see mouse/keyboard/gamepad.\r\n- Includes patch to hopefully solve shadowing issues on AMD cards (not fully tested as I don\u0027t own one, please let me know whether this helps or not!)\r\n- Allows changing the in-game resolution options to custom ones instead (uses desktop resolution by default)\r\n\r\nAnd much more",
+        "Description": "## PrototypeFix v1.8b\r\n*by emoose*\r\n\r\n[https://www.nexusmods.com/prototype/mods/52](https://www.nexusmods.com/prototype/mods/52)\r\n\r\n- Prevents crash during launch/load screen caused by too many CPU cores/threads\r\n- Fixed crashing a few seconds after loading into save, caused by game trying to download billboard adverts from no-longer-existent server\r\n- Fixed framerate drops caused by too many HID devices, by making game only see mouse/keyboard/gamepad.\r\n- Includes patch to hopefully solve shadowing issues on AMD cards (not fully tested as I don\u0027t own one, please let me know whether this helps or not!)\r\n- Allows changing the in-game resolution options to custom ones instead (uses desktop resolution by default)\r\n\r\nAnd much more",
         "Tags": [
           "#crashfix",
           "#fps_unlock",
