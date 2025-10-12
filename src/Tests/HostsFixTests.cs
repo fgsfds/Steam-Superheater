@@ -157,8 +157,8 @@ public sealed class HostsFixTests : IDisposable
   ""Version"": ""1.0""
 }}";
 
-        Assert.Equal(hostsActual1, hostsExpected1);
-        Assert.Equal(instActual1, instExpected1);
+        Assert.Equal(hostsExpected1, hostsActual1);
+        Assert.Equal(instExpected1, instActual1);
     }
 
     private void CheckUninstalled(string fixGuid)
@@ -172,7 +172,7 @@ public sealed class HostsFixTests : IDisposable
 0.0.0.0 testtesttest # comment
 ";
 
-        Assert.Equal(hostsActual2, hostsExpected2);
+        Assert.Equal(hostsExpected2, hostsActual2);
         Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json")));
     }
 

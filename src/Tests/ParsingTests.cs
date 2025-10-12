@@ -64,11 +64,13 @@ public sealed class InstalledFileFixBackwardsCompatibilityTest
     ],
     "InstalledSharedFix": null,
     "WineDllOverrides": null,
+    "BuildId": 1,
     "GameId": 1,
     "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
     "Version": "1.0"
   },
   "WineDllOverrides": null,
+  "BuildId": 1,
   "GameId": 1,
   "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
   "Version": "2.0"
@@ -93,11 +95,13 @@ public sealed class InstalledFileFixBackwardsCompatibilityTest
     },
     "InstalledSharedFix": null,
     "WineDllOverrides": null,
+    "BuildId": 1,
     "GameId": 1,
     "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa6",
     "Version": "1.0"
   },
   "WineDllOverrides": null,
+  "BuildId": 1,
   "GameId": 1,
   "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
   "Version": "2.0"
