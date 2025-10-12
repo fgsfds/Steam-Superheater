@@ -9,10 +9,16 @@ public sealed partial class PopupMessage : UserControl
 {
     public PopupMessage()
     {
-        var vm = BindingsManager.Provider.GetRequiredService<PopupMessageViewModel>();
+        if (Design.IsDesignMode)
+        {
+            DataContext = new PopupMessageViewModel();
+        }
+        else
+        {
 
-        DataContext = vm;
-
+            DataContext = BindingsManager.Provider.GetRequiredService<PopupMessageViewModel>();
+        }
+        
         InitializeComponent();
     }
 }

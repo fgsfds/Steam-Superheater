@@ -28,7 +28,7 @@
                    Foreground="{DynamicResource SystemAccentColor} "
                    FontWeight="Bold"
                    FontSize="25"
-                   Text="Error"/>
+                   Text="{Binding TitleText}"/>
 
         <ScrollViewer Grid.Row="1"
                       HorizontalAlignment="Center"

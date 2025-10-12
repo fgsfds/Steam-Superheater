@@ -9,10 +9,15 @@ public sealed partial class PopupStack : UserControl
 {
     public PopupStack()
     {
-        var vm = BindingsManager.Provider.GetRequiredService<PopupStackViewModel>();
-
-        DataContext = vm;
-
+        if (Design.IsDesignMode)
+        {
+            DataContext = new PopupStackViewModel();
+        }
+        else
+        {
+            DataContext = BindingsManager.Provider.GetRequiredService<PopupStackViewModel>();
+        }
+        
         InitializeComponent();
     }
 }

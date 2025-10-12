@@ -9,9 +9,14 @@ public sealed partial class PopupEditor : UserControl
 {
     public PopupEditor()
     {
-        var vm = BindingsManager.Provider.GetRequiredService<PopupEditorViewModel>();
-
-        DataContext = vm;
+        if (Design.IsDesignMode)
+        {
+            DataContext = new PopupEditorViewModel();
+        }
+        else
+        {
+            DataContext = BindingsManager.Provider.GetRequiredService<PopupEditorViewModel>();
+        }
 
         InitializeComponent();
     }
