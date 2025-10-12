@@ -7,9 +7,9 @@ namespace Common.Client.Providers.Fakes;
 
 public sealed class InstalledFixesProviderFake : IInstalledFixesProvider
 {
-    public Task<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
+    public ValueTask<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
     {
-        return new(() => []);
+        return ValueTask.FromResult<ImmutableList<BaseInstalledFixEntity>>([]);
     }
 
     public Result CreateInstalledJson(GameEntity game, BaseInstalledFixEntity installedFix)

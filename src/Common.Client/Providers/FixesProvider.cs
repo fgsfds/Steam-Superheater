@@ -40,7 +40,7 @@ public sealed class FixesProvider : IFixesProvider
 
 
     /// <inheritdoc/>
-    public async Task<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
+    public async ValueTask<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
     {
         if (_cache is not null && !dropCache)
         {
@@ -64,7 +64,7 @@ public sealed class FixesProvider : IFixesProvider
     }
 
     /// <inheritdoc/>
-    public async Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
+    public async ValueTask<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
         var fixesLists = await GetFixesListAsync(localFixesOnly, dropFixesCache).ConfigureAwait(false);
 

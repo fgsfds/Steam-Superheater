@@ -10,7 +10,7 @@ public interface IFixesProvider
     /// </summary>
     /// <param name="localFixesOnly"></param>
     /// <param name="dropCache">Drop current and create new cache</param>
-    Task<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache);
+    ValueTask<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache);
 
     /// <summary>
     /// Get list of fixes sorted by dependency, with added game entities, and installed fixes
@@ -18,7 +18,7 @@ public interface IFixesProvider
     /// <param name="localFixesOnly"></param>
     /// <param name="dropFixesCache">Drop current and create new cache</param>
     /// <param name="dropGamesCache"></param>
-    Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache);
+    ValueTask<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache);
 
     /// <summary>
     /// Add or modify fix int the database

@@ -13,7 +13,7 @@ public interface IInstalledFixesProvider
     /// <param name="installedFix">Installed fix entity</param>
     Result CreateInstalledJson(GameEntity game, BaseInstalledFixEntity installedFix);
 
-    Task<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync();
+    ValueTask<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync();
 
     /// <summary>
     /// Remove installed fix from cache and disk

@@ -29,7 +29,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
 
     /// <inheritdoc/>
-    public async Task<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
+    public async ValueTask<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
     {
         if (_cache is not null)
         {

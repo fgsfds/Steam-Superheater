@@ -11,14 +11,14 @@ public sealed class FixesProviderFake : IFixesProvider
         return new(() => new(ResultEnum.Success, ""));
     }
 
-    public Task<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
+    public ValueTask<Result<List<FixesList>>> GetFixesListAsync(bool localFixesOnly, bool dropCache)
     {
-        return new(new(() => new(ResultEnum.Success, [], "")));
+        return ValueTask.FromResult<Result<List<FixesList>>>(new(ResultEnum.Success, [], string.Empty));
     }
 
-    public Task<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
+    public ValueTask<Result<List<FixesList>?>> GetPreparedFixesListAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
-        return new(new(() => new(ResultEnum.Success, [], "")));
+        return ValueTask.FromResult<Result<List<FixesList>?>>(new(ResultEnum.Success, [], string.Empty));
     }
 
     public IEnumerable<FileFixEntity>? SharedFixes => [];

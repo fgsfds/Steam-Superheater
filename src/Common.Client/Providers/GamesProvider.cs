@@ -26,7 +26,7 @@ public sealed class GamesProvider : IGamesProvider
 
 
     /// <inheritdoc/>
-    public async Task<ImmutableList<GameEntity>> GetGamesListAsync(bool dropCache)
+    public async ValueTask<ImmutableList<GameEntity>> GetGamesListAsync(bool dropCache)
     {
         if (_cache is not null && !dropCache)
         {
