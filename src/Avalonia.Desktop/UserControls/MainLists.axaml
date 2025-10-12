@@ -98,7 +98,7 @@
                         </TextBlock>
 
                         <TextBlock Margin="5,2"
-                                   Text="Update available"
+                                   Text="Attention required"
                                    VerticalAlignment="Center"
                                    IsVisible="{Binding HasUpdates}"
                                    FontWeight="Bold"
@@ -124,7 +124,7 @@
             <ListBox.ItemTemplate>
                 <DataTemplate>
 
-                    <Grid RowDefinitions="auto,auto,auto,auto"
+                    <Grid RowDefinitions="auto,auto,auto,auto,auto"
                           ColumnDefinitions="auto,*"
                           Margin="10">
 
@@ -196,6 +196,16 @@
 
                         <TextBlock Margin="0"
                                    Grid.Row="3"
+                                   Grid.Column="1"
+                                   Text="Needs reinstall"
+                                   ToolTip.Tip="The game has been updated since the fix was installed. It's recommended to unintall the fix, check files integrity on Steam, and install it again."
+                                   Foreground="{DynamicResource SystemAccentColor}"
+                                   VerticalAlignment="Center"
+                                   IsVisible="{Binding MaybeOverwritten}"
+                                   FontWeight="Bold"/>
+
+                        <TextBlock Margin="0"
+                                   Grid.Row="4"
                                    Grid.Column="1"
                                    Text="Deprecated, can only be uninstalled"
                                    VerticalAlignment="Center"

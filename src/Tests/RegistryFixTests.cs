@@ -25,7 +25,9 @@ public sealed class RegistryFixTests : IDisposable
         Id = 1,
         Name = "test game",
         InstallDir = Helpers.GameDir,
-        Icon = string.Empty
+        Icon = string.Empty,
+        BuildId = 1,
+        TargetBuildId = 1,
     };
 
     private readonly RegistryFixEntity _fixEntity = new()

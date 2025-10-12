@@ -26,7 +26,9 @@ public sealed class HostsFixTests : IDisposable
         Id = 1,
         Name = "test game",
         InstallDir = "C:\\games\\test game\\",
-        Icon = string.Empty
+        Icon = string.Empty,
+        BuildId = 1,
+        TargetBuildId = 1,
     };
 
     private readonly HostsFixEntity _fixEntity = new()

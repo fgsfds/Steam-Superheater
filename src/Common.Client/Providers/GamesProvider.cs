@@ -1,8 +1,8 @@
+using System.Collections.Immutable;
 using Common.Client.Providers.Interfaces;
 using Common.Entities;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
-using System.Collections.Immutable;
 
 namespace Common.Client.Providers;
 
@@ -99,10 +99,12 @@ public sealed class GamesProvider : IGamesProvider
         var id = -1;
         string? name = null;
         string? dir = null;
+        uint buildId = 0;
+        uint targetBuildId = 0;
 
         foreach (var line in lines)
         {
-            if (line.Contains("\"appid\""))
+            if (line.Contains("\"appid\"", StringComparison.OrdinalIgnoreCase))
             {
                 var l = line.Split('"');
 
@@ -110,17 +112,29 @@ public sealed class GamesProvider : IGamesProvider
 
                 _ = int.TryParse(z, out id);
             }
-            else if (line.Contains("\"name\""))
+            else if (line.Contains("\"name\"", StringComparison.OrdinalIgnoreCase))
             {
                 var l = line.Split('"');
 
                 name = l.ElementAt(l.Length - 2).Trim();
             }
-            else if (line.Contains("\"installdir\""))
+            else if (line.Contains("\"installdir\"", StringComparison.OrdinalIgnoreCase))
             {
                 var l = line.Split('"');
 
                 dir = Path.Combine(libraryFolder, "common", l.ElementAt(l.Length - 2).Trim());
+            }
+            else if (line.Contains("\"buildid\"", StringComparison.OrdinalIgnoreCase))
+            {
+                var l = line.Split('"');
+
+                _ = uint.TryParse(l.ElementAt(l.Length - 2).Trim(), out buildId);
+            }
+            else if (line.Contains("\"TargetBuildID\"", StringComparison.OrdinalIgnoreCase))
+            {
+                var l = line.Split('"');
+
+                _ = uint.TryParse(l.ElementAt(l.Length - 2).Trim(), out targetBuildId);
             }
         }
 
@@ -158,7 +172,9 @@ public sealed class GamesProvider : IGamesProvider
                 Id = id,
                 Name = name,
                 InstallDir = dir,
-                Icon = icon
+                Icon = icon,
+                BuildId = buildId,
+                TargetBuildId = targetBuildId,
             };
         }
 

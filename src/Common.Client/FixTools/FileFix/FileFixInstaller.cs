@@ -116,7 +116,8 @@ public sealed class FileFixInstaller
             BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
             InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
             WineDllOverrides = dllOverrides,
-            FilesList = filesUnpackResult.ResultObject
+            FilesList = filesUnpackResult.ResultObject,
+            BuildId = game.BuildId,
         };
 
         return new(ResultEnum.Success, installedFix, "Successfully installed fix");

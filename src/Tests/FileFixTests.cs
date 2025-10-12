@@ -51,7 +51,9 @@ public sealed partial class FileFixTests
             Id = 1,
             Name = "test game",
             InstallDir = PrepareGameFolder(),
-            Icon = string.Empty
+            Icon = string.Empty,
+            BuildId = 1,
+            TargetBuildId = 1,
         };
 
         _fileFixEntity = new()

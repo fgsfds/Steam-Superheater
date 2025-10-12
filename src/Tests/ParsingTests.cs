@@ -1,13 +1,11 @@
+using System.Reflection;
+using System.Text.Json;
 using Common.Client;
 using Common.Client.Providers;
 using Common.Entities;
 using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace Tests;
 
@@ -37,6 +35,8 @@ public sealed class ParsingTests
         Assert.Equal("DOOM (1993)", gameEntity.Name);
         Assert.Equal(2280, gameEntity.Id);
         Assert.Equal($"Resources{Path.DirectorySeparatorChar}common{Path.DirectorySeparatorChar}Ultimate Doom{Path.DirectorySeparatorChar}", gameEntity.InstallDir);
+        Assert.Equal((uint)5619887, gameEntity.BuildId);
+        Assert.Equal((uint)7619887, gameEntity.TargetBuildId);
     }
 }
 

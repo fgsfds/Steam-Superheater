@@ -81,6 +81,9 @@ public sealed class MainModel
                 continue;
             }
 
+            var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
+            var game = games.FirstOrDefault(x => x.Id == entity.GameId);
+
             foreach (var fix in entity.Fixes)
             {
                 //remove fixes with hidden tags
@@ -114,6 +117,14 @@ public sealed class MainModel
                 else if (!fix.IsInstalled)
                 {
                     fix.IsHidden = fix.IsDisabled;
+                }
+
+                if (game is not null
+                    && fix.InstalledFix is FileInstalledFixEntity fileFix
+                    && fileFix.BuildId is not null
+                    && fileFix.BuildId != game.BuildId)
+                {
+                    fix.MaybeOverwritten = true;
                 }
             }
 

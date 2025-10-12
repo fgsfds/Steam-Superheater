@@ -890,6 +890,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private async Task<Result> InstallUpdateFixAsync(FixesList fixesList, BaseFixEntity fix, string? fixVariant, bool skipDependencies)
     {
         Guard.IsNotNull(fixesList.Game);
+        Guard.IsNotNull(SelectedGame?.Game);
 
         LockButtons = true;
 
@@ -898,19 +899,39 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         var isUpdate = fix.IsInstalled;
 
+        if (SelectedGame.Game.BuildId != SelectedGame.Game.TargetBuildId)
+        {
+            var res = await _popupMessage.ShowAndGetResultAsync(
+                "Game update pending",
+                $"""
+                There is a pending update for {SelectedGame.Game.Name} on Steam.
+                It's recommended to update the game before installing the fix.
+
+                Do you want to ignore this message and install the fix anyway?
+                """,
+                PopupMessageType.YesNo).ConfigureAwait(true);
+
+            if (!res)
+            {
+                return new(ResultEnum.Cancelled, string.Empty);
+            }
+        }
+
         if (!isUpdate && !skipDependencies)
         {
             var dependantFixes = _mainModel.GetNotInstalledDependencies(fixesList, fix);
 
             if (dependantFixes is not null)
             {
-                var res = await _popupMessage.ShowAndGetResultAsync("Required fixes",
+                var res = await _popupMessage.ShowAndGetResultAsync(
+                    "Required fixes",
                     $"""
-                            The following fixes are required for this fix to work.
-                            Do you want to install them?
+                    The following fixes are required for this fix to work.
 
-                            {string.Join(Environment.NewLine, dependantFixes)}
-                            """,
+                    {string.Join(Environment.NewLine, dependantFixes)}
+
+                    Do you want to install them?
+                    """,
                     PopupMessageType.YesNo).ConfigureAwait(true);
 
                 if (!res)
@@ -947,9 +968,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         {
             var popupResult = await _popupMessage.ShowAndGetResultAsync(
                 "Warning",
-                @"MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+                """
+                MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
 
-Do you still want to install the fix?",
+                Do you still want to install the fix?
+                """,
                 PopupMessageType.YesNo
                 ).ConfigureAwait(true);
 

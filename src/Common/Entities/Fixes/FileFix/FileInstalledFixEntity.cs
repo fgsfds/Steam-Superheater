@@ -19,6 +19,8 @@ public sealed class FileInstalledFixEntity : BaseInstalledFixEntity
     public FileInstalledFixEntity? InstalledSharedFix { get; init; }
 
     public List<string>? WineDllOverrides { get; init; }
+
+    public uint? BuildId { get; init; }
 }
 
 

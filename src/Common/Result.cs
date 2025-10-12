@@ -21,7 +21,7 @@ public readonly struct Result
     /// <summary>
     /// Is operation successful
     /// </summary>
-    public bool IsSuccess => ResultEnum is ResultEnum.Success or ResultEnum.Exists;
+    public bool IsSuccess => ResultEnum is ResultEnum.Success;
 
 
     public Result(
@@ -164,6 +164,6 @@ public enum ResultEnum : byte
     /// General error
     /// </summary>
     Error,
-    Exists
+    OutOfDate
 }
 

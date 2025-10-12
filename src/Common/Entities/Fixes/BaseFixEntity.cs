@@ -69,6 +69,11 @@ public abstract class BaseFixEntity
     public bool IsDisabled { get; set; }
 
     /// <summary>
+    /// Was the game updated after the fix was installed
+    /// </summary>
+    public bool MaybeOverwritten { get; set; }
+
+    /// <summary>
     /// Is this a test fix
     /// </summary>
     [JsonIgnore]

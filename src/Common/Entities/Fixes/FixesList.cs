@@ -64,7 +64,7 @@ public sealed class FixesList
     /// Does this game have newer version of fixes
     /// </summary>
     [JsonIgnore]
-    public bool HasUpdates => Fixes.Any(static x => x.IsOutdated);
+    public bool HasUpdates => Fixes.Any(static x => x.IsOutdated || x.MaybeOverwritten);
 }
 
 

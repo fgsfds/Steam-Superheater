@@ -22,6 +22,10 @@ public sealed class GameEntity
     /// </summary>
     public required string Icon { get; init; }
 
+    public required uint BuildId { get; init; }
+
+    public required uint TargetBuildId { get; init; }
+
     public override string ToString() => Name;
 }
 
