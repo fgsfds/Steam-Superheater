@@ -18,6 +18,7 @@ public interface IConfigProvider
     List<SourceEntity> Sources { get; }
     bool UseLocalApiAndRepo { get; set; }
     bool AllowEventsInvoking { get; set; }
+    bool IsConsented { get; set; }
 
     void ChangeFixUpvoteState(Guid fixGuid, bool needToUpvote);
     void ChangeTagState(string tag, bool needToHide);

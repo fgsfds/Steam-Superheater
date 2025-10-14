@@ -1,10 +1,7 @@
 using Avalonia.Controls;
-using Avalonia.Desktop.ViewModels;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Common.Client.DI;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Avalonia.Desktop.Windows;
 
@@ -13,10 +10,6 @@ public sealed partial class MainWindow : Window
     public MainWindow()
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.HighQuality);
-
-        var vm = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
-
-        DataContext = vm;
 
 #if DEBUG
         this.AttachDevTools();
@@ -42,10 +35,12 @@ public sealed partial class MainWindow : Window
         if (obj)
         {
             Tabs.Effect = new BlurEffect() { Radius = 5 };
+            Tabs.IsHitTestVisible = false;
         }
         else
         {
             Tabs.Effect = null;
+            Tabs.IsHitTestVisible = true;
         }
     }
 }

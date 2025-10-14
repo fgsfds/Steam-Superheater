@@ -45,7 +45,7 @@
                        IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                        Text="{Binding RepositoryMessage}"/>
 
-            <TabControl Grid.Row="1" Grid.RowSpan="2" Margin="5" Name="Tabs">
+            <TabControl x:Name="Tabs" Grid.Row="1" Grid.RowSpan="2" Margin="5">
                 <TabItem Name="MainTab" Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
                     <pages:MainPage Margin="0" x:Name="MainPageTab" />
                 </TabItem>

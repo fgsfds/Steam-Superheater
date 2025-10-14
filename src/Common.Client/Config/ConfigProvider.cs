@@ -31,6 +31,7 @@ public sealed class ConfigProvider : IConfigProvider
         _localRepoPath = dbContext.Settings.Find([nameof(LocalRepoPath)])?.Value ?? string.Empty;
         _apiPassword = dbContext.Settings.Find([nameof(ApiPassword)])?.Value ?? string.Empty;
         _lastReadNewsDate = DateTime.TryParse(dbContext.Settings.Find([nameof(LastReadNewsDate)])?.Value, out var time) ? time : DateTime.MinValue;
+        _isConsented = bool.TryParse(dbContext.Settings.Find([nameof(IsConsented)])?.Value, out var isConsented) ? isConsented : false;
         _hiddenTags = [.. dbContext.HiddenTags.Select(x => x.Tag)];
         Upvotes = dbContext.Upvotes.ToDictionary(x => x.FixGuid, x => x.IsUpvoted);
         Sources = [.. dbContext.Sources
@@ -174,6 +175,20 @@ public sealed class ConfigProvider : IConfigProvider
         {
             _lastReadNewsDate = value;
             SetSettingsDbValue(value.ToUniversalTime().ToString());
+        }
+    }
+
+    private bool _isConsented;
+    public bool IsConsented
+    {
+        get
+        {
+            return _isConsented;
+        }
+        set
+        {
+            _isConsented = value;
+            SetSettingsDbValue(value.ToString());
         }
     }
 

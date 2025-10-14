@@ -1,3 +1,6 @@
+using System.Collections.Immutable;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using Api.Common.Interface;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
@@ -17,8 +20,6 @@ using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using System.Collections.Immutable;
-using System.Diagnostics;
 
 namespace Avalonia.Desktop.ViewModels;
 
@@ -38,7 +39,6 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     private CancellationTokenSource? _cancellationTokenSource;
     private FixesList? _additionalFix;
-
 
     #region Binding Properties
 
@@ -405,6 +405,25 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         await UpdateAsync(true, true, true).ConfigureAwait(true);
         await UpdateAsync(false, true, false).ConfigureAwait(true);
+
+        if (!_config.IsConsented)
+        {
+            _popupMessage.Show(
+            "Disclaimer",
+            """
+            This application is a community-driven utility designed to help users install optional, third-party fixes and improvements for their licensed Steam games.
+
+            This Software is not affiliated with or endorsed by Valve Corporation or the respective game publishers.
+
+            Use this Software and the associated content at your own discretion. Please be aware that using third-party modifications may occasionally lead to game instability or technical conflicts.
+
+            While we aim for a seamless experience, we cannot guarantee the performance or compatibility of external content. The developers of this Software are not responsible for any technical issues or data loss that may arise from using community-made fixes.
+            """,
+            PopupMessageType.OkOnly
+            );
+
+            _config.IsConsented = true;
+        }
     }
 
 
@@ -969,7 +988,9 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             var popupResult = await _popupMessage.ShowAndGetResultAsync(
                 "Warning",
                 """
-                MD5 of the file doesn't match the database. This file wasn't verified by the maintainer.
+                MD5 hash of the downloaded file doesn't match the one from the database.
+                
+                This file may have been stealth-updated by the original author and wasn't yet verified by the maintainers.
 
                 Do you still want to install the fix?
                 """,

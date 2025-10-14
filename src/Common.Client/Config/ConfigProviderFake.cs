@@ -19,6 +19,7 @@ public sealed class ConfigProviderFake : IConfigProvider
     public Dictionary<Guid, bool> Upvotes { get; set; } = [];
     public List<SourceEntity> Sources =>[];
     public bool AllowEventsInvoking { get; set; } = false;
+    public bool IsConsented { get; set; } = true;
     public event ParameterChanged? ParameterChangedEvent;
     public void AddSource(Uri url) { }
     public void RemoveSource(Uri url) { }
