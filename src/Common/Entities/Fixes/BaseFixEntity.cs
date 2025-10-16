@@ -71,6 +71,7 @@ public abstract class BaseFixEntity
     /// <summary>
     /// Was the game updated after the fix was installed
     /// </summary>
+    [JsonIgnore]
     public bool MaybeOverwritten { get; set; }
 
     /// <summary>
