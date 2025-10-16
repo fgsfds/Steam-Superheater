@@ -9622,6 +9622,50 @@
     ]
   },
   {
+    "GameId": 3929740,
+    "GameName": "Tom Clancy\u0027s Splinter Cell: Pandora Tomorrow",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/sc-pandora-no-drm.zip",
+        "FileSize": 3611682,
+        "FilesToDelete": [
+          "UbisoftConnectInstaller.exe"
+        ],
+        "MD5": "be7ed9faa57b029bad55ba4f1e5eafb8",
+        "Name": "Ubisoft Connect Bypass",
+        "Guid": "b62d72d8-f631-48b9-a252-f04bd354dbb4",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Set of files allowing to bypass Ubisoft Connect requirement and make the game compatible with user-made fixes.",
+        "Tags": [
+          "#drm_free"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/sc-pandora-widescreen-v25_01_13.zip",
+        "FileSize": 2287449,
+        "ConfigFile": "system\\scripts\\SplinterCellPandoraTomorrow.WidescreenFix.ini",
+        "MD5": "a9a99fcf6fe9c791ba0c9bb11a1b70d3",
+        "Name": "Widescreen Fix",
+        "Guid": "ecef27bc-9d92-40f5-bdb8-f8b194d246a5",
+        "Version": "25.01.13",
+        "SupportedOSes": "Windows",
+        "Dependencies": [
+          "b62d72d8-f631-48b9-a252-f04bd354dbb4"
+        ],
+        "Description": "Splinter Cell Pandora Tomorrow Widescreen Fix\r\n*by ThirteenAG*\r\n\r\n[https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scpt](https://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scpt)\r\n\r\n- Fixed Resolution\r\n - Fixed Aspect Ratio\r\n- Fixed HUD\r\n- Fixed Field of View\r\n- Fixed FMVs\r\n- Added an option to increase night vision resolution\r\n- Added an option to change goggles\u0027 light color",
+        "Tags": [
+          "#widescreen",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 225020,
     "GameName": "Tomb Raider (VI): The Angel of Darkness",
     "Fixes": [
