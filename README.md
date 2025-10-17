@@ -80,9 +80,14 @@ Fixes are checked and verified for any malware or unwanted behavior before being
 </td>
 </tr>
 
-</table>
+<tr>
+<td align="center" valign="middle">
+<b>How to use</b>
+</td>
+</tr>
 
-## How to use
+<tr>
+<td valign="center">
 
 Download latest release for your platform from <a href="https://github.com/fgsfds/Steam-Superheater/releases">release page</a>
 
@@ -90,8 +95,41 @@ Unpack zip archive anywhere and run <b>Superheater.exe</b> or <b>Superheater</b>
 
 For **Steam Deck** see <a href="https://github.com/fgsfds/Steam-Superheater/wiki/Deck-install-guide">this guide</a>
 
-## Links
+</td>
+</tr>
 
-<a href="https://superheater.fgsfds.link">Superheater website</a>
+<tr>
+<td align="center" valign="middle">
+<b>Sponsors</b>
+</td>
+</tr>
 
-<a href="https://discord.gg/mWvKyxR4et">Discord server
+<tr>
+<td>
+
+<div style="display: flex; align-items: center;">
+	<img align="left" width="48" src="https://avatars.githubusercontent.com/u/34448643?s=200&v=4">Free code signing provided by <a href="https://about.signpath.io/"><b>SignPath.io</b></a>, certificate by <a href="https://signpath.org/"><b>SignPath Foundation</b></a>
+</div>
+
+</td>
+</tr>
+
+<tr>
+<td align="center" valign="middle">
+<b>Links</b>
+</td>
+</tr>
+
+<tr>
+<td>
+
+<div style="display: flex; align-items: center;">
+	<img align="left" width="48" src="https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png"> <a href="https://discord.gg/mWvKyxR4et"><b>Discord</b> server</a>
+</div>
+
+</td>
+</tr>
+
+</td>
+</tr>
+</table>
