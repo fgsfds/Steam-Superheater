@@ -137,7 +137,7 @@ public sealed class MainModel
             {
                 resultingFixesList.Add(entity);
             }
-            else if (entity.GameName.Contains(search, StringComparison.OrdinalIgnoreCase))
+            else if (entity.GameName.Contains(search.Trim(), StringComparison.OrdinalIgnoreCase))
             {
                 resultingFixesList.Add(entity);
             }

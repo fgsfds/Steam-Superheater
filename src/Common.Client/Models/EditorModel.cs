@@ -124,7 +124,7 @@ public sealed class EditorModel
             return [.. _fixesList.Where(static x => !x.IsEmpty)];
         }
 
-        return [.. _fixesList.Where(x => !x.IsEmpty && x.GameName.Contains(search, StringComparison.OrdinalIgnoreCase))];
+        return [.. _fixesList.Where(x => !x.IsEmpty && x.GameName.Contains(search.Trim(), StringComparison.OrdinalIgnoreCase))];
     }
 
     /// <summary>
