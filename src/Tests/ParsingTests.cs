@@ -19,13 +19,13 @@ public sealed class ParsingTests
     public void GetGameEntityFromAcfTest()
     {
         Mock<ILogger> loggerMock = new();
-        SteamTools steamTools = new(loggerMock.Object);
+        Mock<ISteamTools> steamTools = new();
 
         var method = typeof(GamesProvider).GetMethod("GetGameEntityFromAcf", BindingFlags.NonPublic | BindingFlags.Instance);
 
         Assert.NotNull(method);
 
-        var result = method.Invoke(new GamesProvider(steamTools, loggerMock.Object), [Path.Combine("Resources", "test_manifest.acf")]);
+        var result = method.Invoke(new GamesProvider(steamTools.Object, loggerMock.Object), [Path.Combine("Resources", "test_manifest.acf")]);
 
         Assert.NotNull(result);
         _ = Assert.IsType<GameEntity>(result);

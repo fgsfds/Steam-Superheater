@@ -20,7 +20,7 @@ public sealed class DatabaseTests
         _output = output;
     }
 
-    [Fact]
+    [Fact, Trait("Category", "Database")]
     public async Task DatabaseFilesIntegrityTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -176,7 +176,7 @@ public sealed class DatabaseTests
     }
 
 
-    [Fact]
+    [Fact, Trait("Category", "Database")]
     public void DatabaseNewsIntegrityTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -211,7 +211,7 @@ public sealed class DatabaseTests
 
 
 
-    [Fact]
+    [Fact, Trait("Category", "Database")]
     public async Task LooseFilesTest()
     {
         if (!OperatingSystem.IsWindows())

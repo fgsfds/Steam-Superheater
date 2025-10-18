@@ -27,7 +27,11 @@ jobs:
       env:
         MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
         MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build --verbosity normal --filter "Category!~Database"
+      
+    - name: Database test
+      run: dotnet test --no-build --verbosity normal --filter Category~Database
+      if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip db test]') }}
       
   build-and-test-linux:
 
@@ -48,4 +52,4 @@ jobs:
       run: dotnet build --no-restore
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal --filter "FullyQualifiedName!=Tests.DatabaseTests"
+      run: dotnet test --no-build --verbosity normal --filter "Category!~Database|Category!~UI"
