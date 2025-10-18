@@ -2413,17 +2413,18 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Wemino/MarkerPatch/releases/download/1.0.2/MarkerPatch.zip",
-        "FileSize": 195641,
-        "MD5": "4B0AF6921362676CA06886C29635300F",
+        "Url": "https://github.com/Wemino/MarkerPatch/releases/download/1.1.1/MarkerPatch-ASI.zip",
+        "FileSize": 1089782,
+        "ConfigFile": "MarkerPatch.ini",
+        "MD5": "58335AACCE1A00849257622B42C60933",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "MarkerPatch",
         "Guid": "1527b7b8-7527-4106-ab79-95ca6aff4c03",
-        "Version": "1.0.2",
+        "Version": "1.1.1",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## MarkerPatch 1.0.2\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/MarkerPatch\r\n\r\nA patch that fixes various issues and limitations in the PC port of Dead Space 2.",
+        "Description": "## MarkerPatch 1.1.1\r\n*by Wemino*\r\n\r\n[https://github.com/Wemino/MarkerPatch](https://github.com/Wemino/MarkerPatch)\r\n\r\nA patch that fixes various issues and limitations in the PC port of Dead Space 2.",
         "Tags": [
           "#enhancements",
           "#performance_improvement",
@@ -3276,17 +3277,18 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Wemino/EchoPatch/releases/download/2.2.3/EchoPatch.zip",
-        "FileSize": 200021,
-        "MD5": "A6D03A2DBFA2650011BC9E263981C2E0",
+        "Url": "https://github.com/Wemino/EchoPatch/releases/download/2.3.2/EchoPatch.zip",
+        "FileSize": 199918,
+        "ConfigFile": "EchoPatch.ini",
+        "MD5": "58481A924E96ACDE29F39341CC1CC00C",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "EchoPatch",
         "Guid": "4b7ab9c6-dfdc-4ddf-b9f3-a6f9e2fcb825",
-        "Version": "2.2.3",
+        "Version": "2.3.2",
         "SupportedOSes": "Windows, Linux",
-        "Description": "## EchoPatch v2.2.3\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/EchoPatch\r\n\r\nModernizes F.E.A.R. and its expansions with HUD scaling, high-framerate optimizations, XInput controller support, and other quality-of-life enhancements. It aims to be as non-intrusive as possible, with no file modifications and no gameplay changes by default, focusing solely on fixing issues and enhancing the overall experience.\r\n",
+        "Description": "## EchoPatch v2.3.2\r\n*by Wemino*\r\n\r\n[https://github.com/Wemino/EchoPatch](https://github.com/Wemino/EchoPatch)\r\n\r\nModernizes F.E.A.R. and its expansions with HUD scaling, high-framerate optimizations, XInput controller support, and other quality-of-life enhancements. It aims to be as non-intrusive as possible, with no file modifications and no gameplay changes by default, focusing solely on fixing issues and enhancing the overall experience.\r\n",
         "Tags": [
           "#enhancements",
           "#performance_improvement",
@@ -3851,6 +3853,48 @@
     ]
   },
   {
+    "GameId": 214150,
+    "GameName": "Galactic Civilizations I: Ultimate Edition",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "GalCiv\\movies\\Intro.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "6619aa1d-a46e-421a-bae9-0edf8088ab45",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 202200,
+    "GameName": "Galactic Civilizations II: Ultimate Edition",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "Movies\\GC2_intro.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "3a320ce7-533a-485d-bb59-b8d43188aa20",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 208730,
     "GameName": "Game of Thrones",
     "Fixes": [
@@ -3871,6 +3915,29 @@
           "#nointro"
         ],
         "Notes": "Not mentioned on PCGW. Working and tested.",
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 712190,
+    "GameName": "Genesis Alpha One Deluxe Edition",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "Genesis\\Content\\Movies\\Bootflow1.mp4",
+          "Genesis\\Content\\Movies\\Bootflow2.mp4",
+          "Genesis\\Content\\Movies\\Bootflow3.mp4"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "b716772b-d01a-4d38-9cd4-d282ca1ae5db",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
         "IsDisabled": false
       }
     ]
@@ -4565,6 +4632,29 @@
           "#crashfix"
         ],
         "IsDisabled": true
+      }
+    ]
+  },
+  {
+    "GameId": 260570,
+    "GameName": "Gray Matter",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "Data\\Video\\DTP.bik",
+          "Data\\Video\\Wizarbox.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "788e7393-3a04-44a2-a857-a10c39ade316",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "Notes": "Not mentioned on PCGW but tested as working.",
+        "IsDisabled": false
       }
     ]
   },
@@ -5371,6 +5461,48 @@
     ]
   },
   {
+    "GameId": 35130,
+    "GameName": "Lara Croft and the Guardian of Light",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "movies\\intro.bik"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "272fc428-39ab-4dce-97f8-2d4ecaa12221",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 391720,
+    "GameName": "Layers of Fear (2016)",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/layers-of-fear-2016-launcher-bypass.zip",
+        "FileSize": 332,
+        "MD5": "7beba1d15c141186db08b38d1a36d231",
+        "Name": "Launcher Bypass ",
+        "Guid": "44a9cb73-afa3-416e-8cd0-385a788602a7",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "##Layers of Fear (2016) - Bypass Launcher\r\n*by Volva*\r\n\r\n[https://steamcommunity.com/sharedfiles/filedetails/?id=1106553227](https://steamcommunity.com/sharedfiles/filedetails/?id=1106553227)\r\n\r\nThis fix will bypass the Launcher window and go directly to the game. It does this by simply replacing a file called \u0022exename.txt\u0022 in the GameGuide folder with one that points to the actual game executable.",
+        "Tags": [
+          "#enhancements"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 224300,
     "GameName": "Legacy of Kain: Defiance",
     "Fixes": [
@@ -5497,6 +5629,27 @@
           "#controller_support",
           "#ultrawide",
           "#widescreen"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 257970,
+    "GameName": "Loren The Amazon Princess",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "game\\censored.txt"
+        ],
+        "Name": "Remove Steam Censorship",
+        "Guid": "d0e51489-766d-4131-ae65-c792ebabdb25",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "##Remove Steam Censorship\r\n\r\nThe DRM-free version of the game has a toggle for \u0022Suggestive Content\u0022. The Steam version of the game disables this toggle which gives several characters less-revealing outfits and makes minor changes to images late in the game. However, the developer has provided a workaround to re-enable it.\r\n\r\nThis fix simply deletes the censored.txt file in the game folder which will re-enable the \u0022Suggestive Content\u0022 toggle option in the Preferences section, it defaults to \u0022Off\u0022.",
+        "Tags": [
+          "#censorship_fix"
         ],
         "IsDisabled": false
       }
@@ -5951,6 +6104,28 @@
           "#fps_unlock",
           "#graphics_improvement",
           "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 243200,
+    "GameName": "Memoria",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "videos\\video.vv000",
+          "videos\\video.vv003"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "9c77b1d0-d03a-4e13-a3d6-a4bac993d7be",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
         ],
         "IsDisabled": false
       }
@@ -10500,6 +10675,27 @@
           "#source_port",
           "#ultrawide",
           "#widescreen"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 612880,
+    "GameName": "Wolfenstein II: The New Colossus",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "FilesToDelete": [
+          "base\\bink\\boot\\boot_pc.bk2"
+        ],
+        "Name": "No Intro Fix",
+        "Guid": "13c67484-9733-4ebe-b59d-cd91ee4945aa",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "Removal of intro videos",
+        "Tags": [
+          "#nointro"
         ],
         "IsDisabled": false
       }
