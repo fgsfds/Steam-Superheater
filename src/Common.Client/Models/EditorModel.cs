@@ -511,6 +511,11 @@ public sealed class EditorModel
                     fixEntity.Url is not null &&
                     (string.IsNullOrWhiteSpace(fixEntity.MD5) || fixEntity.FileSize < 1))
                 {
+                    if (!fixEntity.Url.StartsWith("http"))
+                    {
+                        fixEntity.Url = Consts.BucketAddress + fixEntity.Url;
+                    }
+
                     using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
 
                     Guard.IsNotNull(header.Content.Headers.ContentLength);
