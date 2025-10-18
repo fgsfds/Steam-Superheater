@@ -25,5 +25,8 @@
   </Folder>
   <Project Path="src/Common.Client/Common.Client.csproj" />
   <Project Path="src/Common/Common.csproj" />
+  <Project Path="src/Tests.UI/Tests.UI.csproj" Id="fb63771b-865f-46f4-a50c-283960c5be2d">
+    <BuildType Solution="Debug-Linux|*" Project="Debug" />
+  </Project>
   <Project Path="src/Tests/Tests.csproj" />
 </Solution>

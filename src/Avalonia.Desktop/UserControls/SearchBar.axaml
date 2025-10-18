@@ -38,17 +38,18 @@
                 Grid.Column="0"/>
 
         <!--Search bar-->
-        <TextBox Text="{Binding SearchBarText, Mode=TwoWay}"
+        <TextBox x:Name="SearchBox"
+                 Text="{Binding SearchBarText, Mode=TwoWay}"
                  Grid.Column="1"
                  Margin="0"
                  Padding="5"
                  TextWrapping="NoWrap"
-                 Name="SearchBox"
                  VerticalAlignment="Center"
                  Watermark="Search by game name"/>
 
         <!--Clear search-->
-        <Button Grid.Column="2"
+        <Button x:Name="ClearSearchButton"
+                Grid.Column="2"
                 Margin="4,0,0,0"
                 Command="{Binding ClearSearchCommand}"
                 Height="{Binding Bounds.Height, ElementName=SearchBox}"

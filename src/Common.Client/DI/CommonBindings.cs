@@ -44,7 +44,7 @@ public static class CommonBindings
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<HttpClient>(CreateHttpClient);
         _ = container.AddSingleton<DownloadService>(CreateDownloadService);
-        _ = container.AddSingleton<SteamTools>();
+        _ = container.AddSingleton<ISteamTools, SteamTools>();
         //_ = container.AddSingleton<IApiInterface, ServerApiInterface>();
         _ = container.AddSingleton<IApiInterface, FileApiInterface>();
 

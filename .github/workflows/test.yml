@@ -23,13 +23,24 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       
-    - name: Test
+    - name: Tests
+      run: dotnet test --no-build --verbosity normal --filter "Category!~Database&Category!~UI"
+      
+    - name: UI tests
+      run: dotnet test --no-build --verbosity normal --filter "Category~UI"
+
+    - name: Upload failed screenshots
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-artifact
+        path: '**/ScreenshotsFails/*.png'
+        retention-days: 1
+      
+    - name: Database tests
       env:
         MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
         MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
-      run: dotnet test --no-build --verbosity normal --filter "Category!~Database"
-      
-    - name: Database test
       run: dotnet test --no-build --verbosity normal --filter Category~Database
       if: ${{ github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip db test]') }}
       
@@ -51,5 +62,5 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
       
-    - name: Test
-      run: dotnet test --no-build --verbosity normal --filter "Category!~Database|Category!~UI"
+    - name: Tests
+      run: dotnet test --no-build --verbosity normal --filter "Category!~Database&Category!~UI"

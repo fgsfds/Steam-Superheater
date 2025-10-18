@@ -11,8 +11,6 @@ using Common.Client.DI;
 using Common.Enums;
 using Common.Helpers;
 using CommunityToolkit.Diagnostics;
-using Database.Client;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -123,7 +121,7 @@ public sealed class App : Application
     /// <summary>
     /// Load DI bindings
     /// </summary>
-    private static void LoadBindings()
+    public static void LoadBindings()
     {
         var container = BindingsManager.Instance;
 

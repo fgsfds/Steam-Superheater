@@ -56,7 +56,7 @@ public sealed class NewsProvider : INewsProvider
 
         if (ClientProperties.IsOfflineMode)
         {
-            var newNewsList = File.ReadAllText(@"..\..\..\..\db\news.json");
+            var newNewsList = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "news.json"));
             currentNewsList = JsonSerializer.Deserialize(newNewsList, NewsListEntityContext.Default.ListNewsEntity)!;
         }
         else

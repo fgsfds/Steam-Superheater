@@ -1,0 +1,64 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+      <PackageReference Include="AddSealed" PrivateAssets="all" />
+      <PackageReference Include="Avalonia.Headless.XUnit" />
+      <PackageReference Include="Avalonia.Themes.Fluent" />
+      <PackageReference Include="Codeuctivity.ImageSharpCompare" />
+      <PackageReference Include="CommunityToolkit.Diagnostics" />
+      <PackageReference Include="IDisposableAnalyzers">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" />
+      <PackageReference Include="Minio" />
+      <PackageReference Include="Moq" />
+      <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
+      <PackageReference Include="xunit" />
+      <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Avalonia.Desktop\Avalonia.Desktop.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ACFs\appmanifest_3929740.acf">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\1_EditorTabTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\1_StartupTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\2_EditorTabTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\2_StartupTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\3_EditorTabTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\4_EditorTabTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\5_EditorTabTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\SearchForGameTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Screenshots\SelectDependantFixTest.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -7,13 +7,13 @@
              x:DataType="vm:IProgressBarViewModel"
              x:Class="Avalonia.Desktop.UserControls.ProgressBar">
 
-
     <Grid RowDefinitions="auto">
-        <ProgressBar Height="20"
+        <ProgressBar x:Name="GeneralProgressBar"
+                     Height="20"
                      IsIndeterminate="{Binding IsInProgress}"
                      Value="{Binding ProgressBarValue}"/>
 
-        <TextBlock Text="{Binding ProgressBarText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <TextBlock x:Name="GeneralProgressBarText" Text="{Binding ProgressBarText}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 
 </UserControl>

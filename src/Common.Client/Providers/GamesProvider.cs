@@ -8,7 +8,7 @@ namespace Common.Client.Providers;
 
 public sealed class GamesProvider : IGamesProvider
 {
-    private readonly SteamTools _steamTools;
+    private readonly ISteamTools _steamTools;
     private readonly ILogger _logger;
     private readonly SemaphoreSlim _semaphore = new(1);
 
@@ -16,7 +16,7 @@ public sealed class GamesProvider : IGamesProvider
 
 
     public GamesProvider(
-        SteamTools steamTools,
+        ISteamTools steamTools,
         ILogger logger
         )
     {

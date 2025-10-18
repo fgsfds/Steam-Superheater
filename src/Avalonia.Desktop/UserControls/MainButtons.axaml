@@ -85,15 +85,15 @@
 
             </StackPanel>
 
-            <Button Name="CancelButton"
-                    Command="{Binding CancelCommand}"
-                    Margin="3,0"
-                    Background="{DynamicResource SystemAccentColor}"
-                    Content="Cancel"
-                    IsVisible="{Binding LockButtons}"
-                    Padding="8"/>
-
             <StackPanel Orientation="Horizontal" IsVisible="{Binding SelectedFix, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+
+                <Button x:Name="CancelButton"
+                        Command="{Binding CancelCommand}"
+                        Margin="3,0"
+                        Background="{DynamicResource SystemAccentColor}"
+                        Content="Cancel"
+                        IsVisible="{Binding LockButtons}"
+                        Padding="8"/>
 
                 <Button Name="InstallButton"
                         IsVisible="{Binding !SelectedFix.IsInstalled}"

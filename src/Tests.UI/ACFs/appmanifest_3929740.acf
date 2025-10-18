@@ -1,0 +1,60 @@
+"AppState"
+{
+	"appid"		"3929740"
+	"universe"		"1"
+	"LauncherPath"		"D:\\Games\\[Steam]\\steam.exe"
+	"name"		"Tom Clancy's Splinter Cell: Pandora Tomorrow"
+	"StateFlags"		"4"
+	"installdir"		"Splinter Cell Pandora Tomorrow"
+	"LastUpdated"		"1760596049"
+	"LastPlayed"		"1760602071"
+	"SizeOnDisk"		"4972051454"
+	"StagingSize"		"0"
+	"buildid"		"20096160"
+	"LastOwner"		"76561197983524304"
+	"DownloadType"		"1"
+	"UpdateResult"		"0"
+	"BytesToDownload"		"0"
+	"BytesDownloaded"		"0"
+	"BytesToStage"		"0"
+	"BytesStaged"		"0"
+	"TargetBuildID"		"20096160"
+	"AutoUpdateBehavior"		"0"
+	"AllowOtherDownloadsWhileRunning"		"0"
+	"ScheduledAutoUpdate"		"0"
+	"FullValidateAfterNextUpdate"		"1"
+	"InstalledDepots"
+	{
+		"1716751"
+		{
+			"manifest"		"818295193716041715"
+			"size"		"632424"
+		}
+		"3929741"
+		{
+			"manifest"		"3127817338763076110"
+			"size"		"4971419030"
+		}
+		"3929742"
+		{
+			"manifest"		"6915546572832318699"
+			"size"		"3047"
+		}
+	}
+	"InstallScripts"
+	{
+		"3929741"		"install_script.vdf"
+	}
+	"SharedDepots"
+	{
+		"228989"		"228980"
+	}
+	"UserConfig"
+	{
+		"language"		"english"
+	}
+	"MountedConfig"
+	{
+		"language"		"english"
+	}
+}

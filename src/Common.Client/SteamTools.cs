@@ -4,12 +4,12 @@ using Microsoft.Win32;
 
 namespace Common.Client;
 
-public sealed class SteamTools
+public sealed class SteamTools : ISteamTools
 {
     public readonly ILogger _logger;
 
+    /// <inheritdoc/>
     public string? SteamInstallPath { get; }
-
 
     public SteamTools(ILogger logger)
     {
@@ -17,10 +17,7 @@ public sealed class SteamTools
         SteamInstallPath = GetSteamInstallPath();
     }
 
-
-    /// <summary>
-    /// Get list of ACF files from all Steam libraries
-    /// </summary>
+    /// <inheritdoc/>
     public List<string> GetAcfsList()
     {
         var libraries = GetSteamLibraries();
