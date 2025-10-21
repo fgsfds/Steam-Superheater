@@ -64,5 +64,14 @@ public sealed partial class AboutPage : UserControl
             UseShellExecute = true
         });
     }
+
+    private void SignPathClick(object sender, RoutedEventArgs e)
+    {
+        using var process = Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://about.signpath.io/",
+            UseShellExecute = true
+        });
+    }
 }
 

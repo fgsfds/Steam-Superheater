@@ -7,7 +7,7 @@
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
              x:DataType="vm:AboutViewModel"
              x:Class="Avalonia.Desktop.Pages.AboutPage"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450">
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600">
 
     <Grid ColumnDefinitions="*">
 
@@ -98,6 +98,23 @@
                     <StackPanel Orientation="Vertical" VerticalAlignment="Center">
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Report a problem</TextBlock>
                         <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Create issue on GitHub</TextBlock>
+                    </StackPanel>
+                </StackPanel>
+            </Button>
+
+            <!--Issues-->
+            <Button Padding="10"
+                    Margin="10"
+                    HorizontalAlignment="Stretch"
+                    Click="SignPathClick">
+
+                <StackPanel Orientation="Horizontal">
+
+                    <Image Height="48" Source="avares://Superheater/Assets/signpath.png"/>
+
+                    <StackPanel Orientation="Vertical" VerticalAlignment="Center">
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="18">Free code signing provided by SignPath.io</TextBlock>
+                        <TextBlock VerticalAlignment="Center" Margin="10,0" FontSize="14">Certificate by SignPath Foundation</TextBlock>
                     </StackPanel>
                 </StackPanel>
 
