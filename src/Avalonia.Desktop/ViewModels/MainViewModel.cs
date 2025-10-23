@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using Api.Common.Interface;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
@@ -130,22 +129,19 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         get
         {
-            string? result;
-
-            if (SelectedFix?.Description is null)
+            if (SelectedFix is null)
             {
-                return null;
-            }
-            else if (SelectedFix is FileFixEntity fileFix &&
-                fileFix.SharedFix is not null)
-            {
-                result = fileFix.SharedFix.Description + Environment.NewLine + Environment.NewLine + fileFix.Description;
-            }
-            else
-            {
-                result = SelectedFix.Description;
+                return string.Empty;
             }
 
+            string result = SelectedFix.GetMarkdownDescription();
+
+            if (SelectedFix is FileFixEntity fileFix && fileFix.SharedFix?.Description is not null)
+            {
+                result += Environment.NewLine + Environment.NewLine + fileFix.SharedFix.GetMarkdownDescription();
+            }
+
+            // Markdown.Avalonia rendering fix
             return result.Replace("`", string.Empty);
         }
     }
@@ -159,6 +155,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 return null;
             }
 
+            // Markdown.Avalonia rendering fix
             return SelectedFix.Changelog.Replace("`", string.Empty);
         }
     }

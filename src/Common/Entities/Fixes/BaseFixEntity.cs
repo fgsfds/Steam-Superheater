@@ -1,11 +1,11 @@
+using System.Text;
+using System.Text.Json.Serialization;
 using Common.Entities.Fixes.FileFix;
 using Common.Entities.Fixes.HostsFix;
 using Common.Entities.Fixes.RegistryFix;
 using Common.Entities.Fixes.TextFix;
 using Common.Enums;
 using Common.Helpers;
-using System.Text;
-using System.Text.Json.Serialization;
 
 namespace Common.Entities.Fixes;
 
@@ -154,5 +154,30 @@ public abstract class BaseFixEntity
     public virtual bool DoesRequireAdminRights => false;
 
     public override string ToString() => Name;
+
+    public string GetMarkdownDescription()
+    {
+        if (string.IsNullOrWhiteSpace(Description) || !Description.StartsWith("## "))
+        {
+            return $"## {Name} v{Version}" + Environment.NewLine + Environment.NewLine + Description;
+        }
+
+        var lines = Description.Split(["\r\n", "\n"], StringSplitOptions.None);
+
+        if (lines.Length > 0 && lines[0].StartsWith("## "))
+        {
+            lines[0] += $" v{Version}";
+        }
+
+        for (int i = 0; i < lines.Length; i++)
+        {
+            if (lines[i].StartsWith("http", StringComparison.OrdinalIgnoreCase))
+            {
+                lines[i] = $"[{lines[i]}]({lines[i]})";
+            }
+        }
+
+        return string.Join(Environment.NewLine, lines);
+    }
 }
 
