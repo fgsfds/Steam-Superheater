@@ -4,31 +4,28 @@ namespace Common.Entities;
 
 public sealed class NewsEntity
 {
-    /// <summary>
+/// <summary>
     /// Date of the news article
-    /// </summary>
-    public required DateTime Date { get; init; }
+/// </summary>
+public required DateTime Date { get; init; }
 
-    /// <summary>
+/// <summary>
     /// News article text
-    /// </summary>
-    public required string Content { get; set; }
+/// </summary>
+public required string Content { get; set; }
 
-    /// <summary>
+/// <summary>
     /// Is newer than the last read version
-    /// </summary>
-    [JsonIgnore]
-    public bool IsNewer { get; set; }
+/// </summary>
+[JsonIgnore]
+public bool IsNewer { get; set; }
 
-    [JsonIgnore]
-    public string DateFormatted => Date.ToString("dd.MM.yy");
-
-    [JsonIgnore]
-    public string ContentHtml => Markdig.Markdown.ToHtml(Content);
-}
+[JsonIgnore]
+public string DateFormatted => Date.ToString("dd.MM.yy");
+    }
 
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
-[JsonSerializable(typeof(List<NewsEntity>))]
-public sealed partial class NewsListEntityContext : JsonSerializerContext;
+    [JsonSourceGenerationOptions(WriteIndented = true)]
+    [JsonSerializable(typeof(List<NewsEntity>))]
+        public sealed partial class NewsListEntityContext : JsonSerializerContext;
 

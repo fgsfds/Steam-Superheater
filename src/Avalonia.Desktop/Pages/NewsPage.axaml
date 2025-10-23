@@ -73,7 +73,7 @@
                                                FontSize="15"
                                                Text="{Binding DateFormatted}"/>
 
-                                    <md:MarkdownScrollViewer Markdown="{Binding ContentHtml}"
+                                    <md:MarkdownScrollViewer Markdown="{Binding Content}"
                                                              Margin="20,10,20,10"
                                                              Grid.Row="1"/>
 
