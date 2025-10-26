@@ -9,12 +9,8 @@ public static class NotificationsHelper
 {
     public static WindowNotificationManager NotificationManager { get; }
 
-    private static Random Random { get; }
-
     static NotificationsHelper()
     {
-        Random = new();
-
         NotificationManager = new(AvaloniaProperties.TopLevel)
         {
             MaxItems = 3,
@@ -23,7 +19,6 @@ public static class NotificationsHelper
         };
     }
 
-    [Obsolete("Remove when https://github.com/AvaloniaUI/Avalonia/issues/15766 is fixed.")]
     public static void Show(
         object content,
         NotificationType type,
@@ -32,11 +27,8 @@ public static class NotificationsHelper
         Action? onClose = null,
         string[]? classes = null)
     {
-        var length = Random.Next(1, 200);
-        var repeatedString = new string('\u200B', length);
-
         NotificationManager.Show(
-            content + repeatedString,
+            content,
             type,
             expiration,
             onClick,

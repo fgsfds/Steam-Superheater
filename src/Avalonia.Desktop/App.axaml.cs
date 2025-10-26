@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Desktop.DI;
+using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels;
 using Avalonia.Desktop.Windows;
 using Avalonia.Markup.Xaml;
@@ -53,6 +54,9 @@ public sealed class App : Application
 
         lifetime.MainWindow = new MainWindow();
         lifetime.MainWindow.DataContext = mainViewModel;
+
+        //initialize
+        _ = NotificationsHelper.NotificationManager;
 
         if (ClientProperties.IsDeveloperMode)
         {

@@ -4,13 +4,13 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="AddSealed" Version="0.6.0" />
-    <PackageVersion Include="Avalonia" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Desktop" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Headless.XUnit" Version="11.3.7" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.7" />
+    <PackageVersion Include="Avalonia" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Desktop" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Headless.XUnit" Version="11.3.8" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="11.3.8" />
     <PackageVersion Include="Avalonia.HtmlRenderer" Version="11.2.0" />
     <PackageVersion Include="Codeuctivity.ImageSharpCompare" Version="4.1.368" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.4.0" />
@@ -18,7 +18,7 @@
     <PackageVersion Include="ConfigureAwaitAnalyzer" Version="1.1.0" />
     <PackageVersion Include="Downloader" Version="4.0.3" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
-    <PackageVersion Include="Markdig" Version="0.42.0" />
+    <PackageVersion Include="Markdig" Version="0.43.0" />
     <PackageVersion Include="Markdown.Avalonia" Version="11.0.3-a1" />
     <PackageVersion Include="Microsoft.AspNet.WebApi.Core" Version="5.3.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
