@@ -1,10 +1,10 @@
+using System.Collections.Immutable;
 using Avalonia.Desktop.ViewModels.Popups;
-using Common;
-using Common.Entities;
+using Common.Axiom;
+using Common.Axiom.Entities;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Immutable;
 
 namespace Avalonia.Desktop.ViewModels;
 

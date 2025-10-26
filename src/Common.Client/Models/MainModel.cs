@@ -1,11 +1,11 @@
 using System.Collections.Immutable;
-using Api.Common.Interface;
+using Api.Axiom.Interface;
+using Common.Axiom;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Enums;
-using Common.Helpers;
-using SharpCompress.Common;
 
 namespace Common.Client.Models;
 

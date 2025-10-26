@@ -1,13 +1,13 @@
-﻿using Avalonia.Desktop.Helpers;
+﻿using System.Collections.Immutable;
+using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Platform.Storage;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Collections.Immutable;
 
 namespace Avalonia.Desktop.ViewModels.Editor;
 
@@ -154,7 +154,7 @@ internal sealed partial class FileFixViewModel : ObservableObject
         get => SelectedFix.FileSize < 1 ? string.Empty : SelectedFix.FileSize.ToString();
         set
         {
-            SelectedFix.FileSize =  long.TryParse(value, out var size) ? size : 0;
+            SelectedFix.FileSize = long.TryParse(value, out var size) ? size : 0;
             OnPropertyChanged();
         }
     }

@@ -38,22 +38,16 @@
     <PackageReference Include="Avalonia.Themes.Fluent" />
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
-    <PackageReference Include="IDisposableAnalyzers">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="Markdown.Avalonia" />
     <PackageReference Include="Projektanker.Icons.Avalonia.FontAwesome" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
-    <PackageReference Include="System.Private.Uri" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Api.Common\Api.Common.csproj" />
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
-    <ProjectReference Include="..\Common\Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

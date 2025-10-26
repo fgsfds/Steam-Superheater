@@ -1,7 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
-using Common;
+using Common.Axiom;
 using Common.Client.DI;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,17 +1,16 @@
-using System;
+using System.Collections.Immutable;
+using System.Diagnostics;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
-using Common;
+using Common.Axiom;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client;
-using Common.Enums;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Database.Client;
-using System.Collections.Immutable;
-using System.Diagnostics;
 
 namespace Avalonia.Desktop.ViewModels;
 

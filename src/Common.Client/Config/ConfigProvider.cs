@@ -1,11 +1,12 @@
-using Common.Entities;
-using Common.Enums;
-using Common.Helpers;
+using System.Runtime.CompilerServices;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using CommunityToolkit.Diagnostics;
 using Database.Client;
 using Database.Client.DbEntities;
-using System.Runtime.CompilerServices;
-using static Common.IConfigProvider;
+using static Common.Axiom.IConfigProvider;
 
 namespace Common.Client.Config;
 

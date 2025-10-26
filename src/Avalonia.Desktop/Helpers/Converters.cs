@@ -1,8 +1,8 @@
+using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using CommunityToolkit.Diagnostics;
-using System.Globalization;
 
 namespace Avalonia.Desktop.Helpers;
 

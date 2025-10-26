@@ -4,17 +4,14 @@
         <PackageReference Include="AddSealed" PrivateAssets="all" />
         <PackageReference Include="CommunityToolkit.Diagnostics" />
         <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
-        <PackageReference Include="IDisposableAnalyzers">
-          <PrivateAssets>all</PrivateAssets>
-          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
+        <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
         <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Common\Common.csproj" />
+      <ProjectReference Include="..\Common.Axiom\Common.Axiom.csproj" />
     </ItemGroup>
 
 </Project>

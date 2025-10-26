@@ -1,7 +1,7 @@
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Enums;
-using Common.Helpers;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.RegistryFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Win32;
 

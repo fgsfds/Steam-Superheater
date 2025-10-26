@@ -18,7 +18,7 @@ public sealed partial class PopupMessage : UserControl
 
             DataContext = BindingsManager.Provider.GetRequiredService<PopupMessageViewModel>();
         }
-        
+
         InitializeComponent();
     }
 }

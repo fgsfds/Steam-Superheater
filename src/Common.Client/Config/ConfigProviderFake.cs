@@ -1,6 +1,7 @@
-using Common.Entities;
-using Common.Enums;
-using static Common.IConfigProvider;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Enums;
+using static Common.Axiom.IConfigProvider;
 
 namespace Common.Client.Config;
 
@@ -17,7 +18,7 @@ public sealed class ConfigProviderFake : IConfigProvider
     public DateTime LastReadNewsDate { get; set; } = DateTime.MinValue;
     public ThemeEnum Theme { get; set; } = ThemeEnum.System;
     public Dictionary<Guid, bool> Upvotes { get; set; } = [];
-    public List<SourceEntity> Sources =>[];
+    public List<SourceEntity> Sources => [];
     public bool AllowEventsInvoking { get; set; } = false;
     public bool IsConsented { get; set; } = true;
     public event ParameterChanged? ParameterChangedEvent;

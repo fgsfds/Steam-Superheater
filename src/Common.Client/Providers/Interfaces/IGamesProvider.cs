@@ -1,5 +1,5 @@
-﻿using Common.Entities;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
+using Common.Axiom.Entities;
 
 namespace Common.Client.Providers.Interfaces;
 

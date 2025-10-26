@@ -1,4 +1,4 @@
-﻿using Common.Enums;
+﻿using Common.Axiom.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable

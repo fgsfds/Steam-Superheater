@@ -1,5 +1,4 @@
 ﻿using Avalonia.Controls.Notifications;
-using Avalonia.Desktop.Helpers;
 
 namespace Avalonia.Desktop.Helpers;
 

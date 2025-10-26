@@ -1,9 +1,9 @@
 using System.Reflection;
 using System.Text.Json;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
 using Common.Client;
 using Common.Client.Providers;
-using Common.Entities;
-using Common.Entities.Fixes;
 using Microsoft.Extensions.Logging;
 using Moq;
 

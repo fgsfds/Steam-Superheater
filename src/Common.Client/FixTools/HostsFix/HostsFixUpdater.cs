@@ -1,6 +1,7 @@
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.HostsFix;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.HostsFix;
 using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;

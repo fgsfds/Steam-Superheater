@@ -1,6 +1,6 @@
 ﻿#pragma warning disable IDE0058 // Expression value is never used
 
-using Common.Enums;
+using Common.Axiom.Enums;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 

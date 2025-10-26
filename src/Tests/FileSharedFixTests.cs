@@ -1,6 +1,6 @@
-using Common.Entities.Fixes.FileFix;
-using Common.Enums;
-using Common.Helpers;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 
 namespace Tests;
 

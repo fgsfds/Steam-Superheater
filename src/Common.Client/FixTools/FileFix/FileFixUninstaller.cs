@@ -1,7 +1,7 @@
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Helpers;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Helpers;
 
 namespace Common.Client.FixTools.FileFix;
 

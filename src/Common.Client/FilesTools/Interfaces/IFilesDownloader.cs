@@ -1,4 +1,6 @@
-﻿namespace Common.Client.FilesTools.Interfaces;
+﻿using Common.Axiom;
+
+namespace Common.Client.FilesTools.Interfaces;
 
 public interface IFilesDownloader
 {

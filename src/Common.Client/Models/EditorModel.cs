@@ -1,18 +1,18 @@
 using System.Collections.Immutable;
-using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Api.Common.Interface;
+using Api.Axiom.Interface;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Entities.Fixes.HostsFix;
+using Common.Axiom.Entities.Fixes.RegistryFix;
+using Common.Axiom.Entities.Fixes.TextFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Entities.Fixes.TextFix;
-using Common.Enums;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.Models;
@@ -317,7 +317,7 @@ public sealed class EditorModel
             Fixes = [fix]
         };
 
-        newFixJsonString = JsonSerializer.Serialize(newFixesList, SourceEntityContext.Default.FixesList);
+        newFixJsonString = JsonSerializer.Serialize(newFixesList, FixesListContext.Default.FixesList);
 
         var fixFilePath = Path.Combine(ClientProperties.WorkingFolder, "fix.json");
 
@@ -466,7 +466,7 @@ public sealed class EditorModel
         {
             var json = File.ReadAllText(pathToFile);
 
-            var newFix = JsonSerializer.Deserialize(json, SourceEntityContext.Default.FixesList)!;
+            var newFix = JsonSerializer.Deserialize(json, FixesListContext.Default.FixesList)!;
 
             var existingGame = _fixesList.FirstOrDefault(x => x.GameId == newFix.GameId);
 
@@ -543,7 +543,7 @@ public sealed class EditorModel
             }
         }
 
-        var jsonString = JsonSerializer.Serialize(sortedFixesList, SourceEntityContext.Default.ListFixesList);
+        var jsonString = JsonSerializer.Serialize(sortedFixesList, FixesListContext.Default.ListFixesList);
 
         File.WriteAllText(file, jsonString);
     }

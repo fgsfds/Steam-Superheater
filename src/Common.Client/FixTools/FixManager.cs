@@ -1,13 +1,14 @@
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Entities.Fixes.HostsFix;
+using Common.Axiom.Entities.Fixes.RegistryFix;
+using Common.Axiom.Helpers;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Entities.Fixes.HostsFix;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 

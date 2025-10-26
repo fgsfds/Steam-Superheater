@@ -17,7 +17,7 @@ public sealed partial class PopupStack : UserControl
         {
             DataContext = BindingsManager.Provider.GetRequiredService<PopupStackViewModel>();
         }
-        
+
         InitializeComponent();
     }
 }

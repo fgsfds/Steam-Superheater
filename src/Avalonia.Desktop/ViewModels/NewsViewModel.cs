@@ -1,16 +1,16 @@
+using System.Collections.ObjectModel;
+using System.Text.Json;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Platform.Storage;
-using Common;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using System.Collections.ObjectModel;
-using System.Text.Json;
 
 namespace Avalonia.Desktop.ViewModels;
 

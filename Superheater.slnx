@@ -8,12 +8,17 @@
   </Configurations>
   <Folder Name="/.start/">
     <Project Path="src/Avalonia.Desktop/Avalonia.Desktop.csproj" />
-    <Project Path="Web.Blazor/Web.Blazor.csproj">
+    <Project Path="src/Web.Blazor/Web.Blazor.csproj">
       <BuildType Solution="Debug-Linux|*" Project="Debug" />
     </Project>
   </Folder>
   <Folder Name="/Api/">
-    <Project Path="src/Api.Common/Api.Common.csproj" />
+    <Project Path="src/Api.Axiom/Api.Axiom.csproj" />
+    <Project Path="src/Api.Client/Api.Client.csproj" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="src/Common.Axiom/Common.Axiom.csproj" />
+    <Project Path="src/Common.Client/Common.Client.csproj" />
   </Folder>
   <Folder Name="/Database/">
     <Project Path="src/Database.Client/Database.Client.csproj">
@@ -23,8 +28,6 @@
       <BuildType Solution="Debug-Linux|*" Project="Debug" />
     </Project>
   </Folder>
-  <Project Path="src/Common.Client/Common.Client.csproj" />
-  <Project Path="src/Common/Common.csproj" />
   <Project Path="src/Tests.UI/Tests.UI.csproj" Id="fb63771b-865f-46f4-a50c-283960c5be2d">
     <BuildType Solution="Debug-Linux|*" Project="Debug" />
   </Project>

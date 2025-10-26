@@ -1,11 +1,11 @@
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes.HostsFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client.FixTools;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Entities.Fixes.HostsFix;
-using Common.Enums;
-using Common.Helpers;
 using Microsoft.Extensions.Logging;
 using Moq;
 

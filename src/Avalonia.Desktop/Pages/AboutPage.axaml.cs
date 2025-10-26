@@ -1,9 +1,9 @@
+using System.Diagnostics;
 using Avalonia.Controls;
 using Avalonia.Desktop.ViewModels;
 using Avalonia.Interactivity;
 using Common.Client.DI;
 using Microsoft.Extensions.DependencyInjection;
-using System.Diagnostics;
 
 namespace Avalonia.Desktop.Pages;
 

@@ -1,11 +1,11 @@
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes.RegistryFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client.FixTools;
 using Common.Client.FixTools.RegistryFix;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Entities.Fixes.RegistryFix;
-using Common.Enums;
-using Common.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Moq;

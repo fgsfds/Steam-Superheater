@@ -1,5 +1,4 @@
-﻿using Common.Entities.Fixes.RegistryFix;
-using Common.Helpers;
+﻿using Common.Axiom.Entities.Fixes.RegistryFix;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -30,7 +29,7 @@ internal sealed partial class RegFixViewModel : ObservableObject
     [RelayCommand]
     private void AddRegFixEntry()
     {
-        SelectedFix.Entries = [..SelectedFix.Entries.Append(new())];
+        SelectedFix.Entries = [.. SelectedFix.Entries.Append(new())];
 
         OnPropertyChanged(nameof(SelectedRegistryFixEntries));
     }

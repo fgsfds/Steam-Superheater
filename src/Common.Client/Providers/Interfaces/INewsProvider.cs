@@ -1,6 +1,8 @@
-﻿using Common.Entities;
+﻿using Common.Axiom;
+using Common.Axiom.Entities;
 
 namespace Common.Client.Providers.Interfaces;
+
 public interface INewsProvider
 {
     bool HasUnreadNews { get; }

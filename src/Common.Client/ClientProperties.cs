@@ -1,7 +1,7 @@
-using CommunityToolkit.Diagnostics;
 using System.Diagnostics;
 using System.Reflection;
 using System.Security.Principal;
+using CommunityToolkit.Diagnostics;
 
 namespace Common.Client;
 

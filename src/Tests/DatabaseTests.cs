@@ -1,10 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Helpers;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Helpers;
 using Minio;
 using Minio.DataModel.Args;
 using Xunit.Abstractions;
@@ -48,7 +48,7 @@ public sealed class DatabaseTests
             return;
         }
 
-        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, SourceEntityContext.Default.ListFixesList);
+        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, FixesListContext.Default.ListFixesList);
 
         Assert.NotNull(fixesJson);
 
@@ -220,7 +220,7 @@ public sealed class DatabaseTests
         }
 
         var fixesJsonString = File.ReadAllText("../../../../db/fixes.json");
-        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, SourceEntityContext.Default.ListFixesList);
+        var fixesJson = JsonSerializer.Deserialize(fixesJsonString, FixesListContext.Default.ListFixesList);
 
         Assert.NotNull(fixesJson);
 

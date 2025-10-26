@@ -1,7 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Desktop.Windows;
-using Common.Helpers;
+using Common.Axiom.Helpers;
 using CommunityToolkit.Diagnostics;
 
 namespace Avalonia.Desktop.Helpers;

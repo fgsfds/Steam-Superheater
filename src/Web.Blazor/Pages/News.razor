@@ -1,0 +1,33 @@
+﻿@page "/news"
+
+<PageTitle>News</PageTitle>
+
+@using Common.Axiom.Entities
+@using Markdig
+@using Web.Blazor.Providers
+
+@inject NewsProvider NewsProvider
+
+@if (_newsList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var singleNews in _newsList)
+    {
+        <h3 style="margin-top:2px; color:#ab0000">@singleNews.Date.ToString("dd.MM.yy")</h3>
+            @((MarkupString)Markdown.ToHtml(singleNews.Content.Replace("# ", "## ")))
+
+            <br />
+    }
+}
+
+@code {
+    private List<NewsEntity>? _newsList;
+
+    protected override void OnInitialized()
+    {
+        _newsList = NewsProvider.GetNews(0);
+    }
+}

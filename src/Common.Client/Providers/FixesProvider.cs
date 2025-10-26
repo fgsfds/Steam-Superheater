@@ -1,12 +1,13 @@
-using Api.Common.Interface;
+using System.Text.Json;
+using Api.Axiom.Interface;
+using Common.Axiom;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Enums;
+using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Enums;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Database.Client;
-using System.Text.Json;
 
 namespace Common.Client.Providers;
 
@@ -177,7 +178,7 @@ public sealed class FixesProvider : IFixesProvider
 
         try
         {
-            currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, SourceEntityContext.Default.ListFixesList)!;
+            currentFixesList = JsonSerializer.Deserialize(fixesCacheDbEntity.Data, FixesListContext.Default.ListFixesList)!;
         }
         catch
         {
@@ -199,7 +200,7 @@ public sealed class FixesProvider : IFixesProvider
         if (ClientProperties.IsOfflineMode)
         {
             var newFixesList = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "fixes.json"));
-            currentFixesList = JsonSerializer.Deserialize(newFixesList, SourceEntityContext.Default.ListFixesList)!;
+            currentFixesList = JsonSerializer.Deserialize(newFixesList, FixesListContext.Default.ListFixesList)!;
         }
         else if (!localFixesOnly)
         {
@@ -245,7 +246,7 @@ public sealed class FixesProvider : IFixesProvider
                 }
 
                 fixesCacheDbEntity.Version = newFixesList.ResultObject.Version;
-                fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, SourceEntityContext.Default.ListFixesList);
+                fixesCacheDbEntity.Data = JsonSerializer.Serialize(currentFixesList, FixesListContext.Default.ListFixesList);
 
                 _ = await dbContext.SaveChangesAsync().ConfigureAwait(false);
             }

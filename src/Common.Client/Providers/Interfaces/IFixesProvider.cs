@@ -1,5 +1,6 @@
-﻿using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
+﻿using Common.Axiom;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
 
 namespace Common.Client.Providers.Interfaces;
 

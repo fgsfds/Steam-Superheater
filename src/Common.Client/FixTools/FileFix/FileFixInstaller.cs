@@ -1,16 +1,17 @@
-using Api.Common.Interface;
+using System.Diagnostics;
+using System.Security.Cryptography;
+using Api.Axiom.Interface;
+using Common.Axiom;
+using Common.Axiom.Entities;
+using Common.Axiom.Entities.Fixes;
+using Common.Axiom.Entities.Fixes.FileFix;
+using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.FilesTools.Interfaces;
 using Common.Client.Providers.Interfaces;
-using Common.Entities;
-using Common.Entities.Fixes;
-using Common.Entities.Fixes.FileFix;
-using Common.Helpers;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Octodiff.Core;
-using System.Diagnostics;
-using System.Security.Cryptography;
 
 namespace Common.Client.FixTools.FileFix;
 
@@ -375,7 +376,7 @@ public sealed class FileFixInstaller
 
         for (var i = 0; i < paths.Count; i++)
         {
-            _progressReport.OperationMessage = $"Backing up file {i+1} of {paths.Count}.";
+            _progressReport.OperationMessage = $"Backing up file {i + 1} of {paths.Count}.";
 
             var fullFilePath = ClientHelpers.GetFullPath(gameDir, paths[i]);
 

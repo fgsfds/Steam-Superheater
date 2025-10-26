@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Configurations>Debug;Release;Debug-Linux</Configurations>
+    <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AddSealed" PrivateAssets="all" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
+    <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common.Axiom\Common.Axiom.csproj" />
+  </ItemGroup>
+
+</Project>

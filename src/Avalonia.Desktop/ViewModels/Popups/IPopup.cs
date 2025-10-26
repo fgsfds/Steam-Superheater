@@ -5,12 +5,12 @@ public interface IPopup
     /// <summary>
     /// Is popup visible
     /// </summary>
-    public bool IsVisible { get; }
+    bool IsVisible { get; }
 
     /// <summary>
     /// Popup title text
     /// </summary>
-    public string TitleText { get; }
+    string TitleText { get; }
 
     /// <summary>
     /// Invoked when popup is shown
