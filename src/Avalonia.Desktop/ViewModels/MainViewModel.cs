@@ -141,24 +141,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
                 result += Environment.NewLine + Environment.NewLine + fileFix.SharedFix.GetMarkdownDescription();
             }
 
-            // Markdown.Avalonia rendering fix
-            return result.Replace("`", string.Empty);
+            return result;
         }
     }
 
-    public string? SelectedFixChangelog
-    {
-        get
-        {
-            if (SelectedFix?.Changelog is null)
-            {
-                return null;
-            }
-
-            // Markdown.Avalonia rendering fix
-            return SelectedFix.Changelog.Replace("`", string.Empty);
-        }
-    }
+    public string? SelectedFixChangelog => SelectedFix?.Changelog;
 
     public string? SelectedFixNumberOfInstalls
     {

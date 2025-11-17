@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
              xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
@@ -73,9 +73,9 @@
                                                FontSize="15"
                                                Text="{Binding DateFormatted}"/>
 
-                                    <md:MarkdownScrollViewer Markdown="{Binding Content}"
-                                                             Margin="20,10,20,10"
-                                                             Grid.Row="1"/>
+                                    <mdxaml:MarkdownScrollViewer Markdown="{Binding Content}"
+                                                                 Margin="20,10,20,10"
+                                                                 Grid.Row="1"/>
 
                                     <Button Grid.Row="0"
                                             Margin="15"

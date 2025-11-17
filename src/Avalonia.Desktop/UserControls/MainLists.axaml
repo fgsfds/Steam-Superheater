@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia"
+             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
@@ -256,13 +256,13 @@
 
                 <TabItem Header="Description" IsSelected="{Binding IsDescriptionSelected}" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"/>
+                    <mdxaml:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"/>
 
                 </TabItem>
 
                 <TabItem Header="Changelog" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}"/>
+                    <mdxaml:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}"/>
 
                 </TabItem>
 
