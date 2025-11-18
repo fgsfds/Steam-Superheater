@@ -122,6 +122,38 @@
     ]
   },
   {
+    "GameId": 19680,
+    "GameName": "Alice: Madness Returns",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "https://github.com/Wemino/MadnessPatch/releases/download/1.0.1/MadnessPatch-ASI.zip",
+        "FileSize": 1094696,
+        "InstallFolder": "Binaries\\Win32",
+        "ConfigFile": "Binaries\\Win32\\plugins\\MadnessPatch.ini",
+        "MD5": "A0399393C60BC3A7441AAD52BC12430F",
+        "WineDllOverrides": [
+          "dinput8"
+        ],
+        "Name": "Madness Patch",
+        "Guid": "c0fffea0-5b5b-42e7-85c8-af0e7cd30f88",
+        "Version": "1.0",
+        "SupportedOSes": "Windows, Linux",
+        "Description": "## Alice: Madness Returns - Madness Patch\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/MadnessPatch\r\n\r\nA patch that fixes various issues in the PC port of Alice: Madness Returns.\r\n\r\nFeatures:\r\n- Subtitle Font Scaling\t\r\n- High FPS Fixes\r\n- Input Binding Fix\r\n- Forces High Resolution Textures\r\n- Bink Video Color Space Fix\r\n- Input Improvements (Disables Mouse Acceleration) (Edit MadnessPatch.ini to disable Controller Acceleration)\r\n- Ultrawide FOV Fix\r\n- Skip Cutscenes with Enter (Default is \u0022Space\u0022 bar)\r\n- Complete Edition DLC Unlock\r\n- Improved Window Management\r\n- Windowed Mode (Enable with \u0022UseWindowed = 1\u0022 in MadnessPatch.ini)\r\n- Disable Legacy Driver Hacks\r\n- Skip Intro Videos (To skip EA Intro set \u0022SkipEAIntro = 1\u0022 in MadnessPatch.ini)",
+        "Tags": [
+          "#enhancements",
+          "#performance_improvement",
+          "#fps_unlock",
+          "#bugfixes",
+          "#graphics_improvement",
+          "#nointro",
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
     "GameId": 214490,
     "GameName": "Alien: Isolation",
     "Fixes": [
@@ -3277,16 +3309,16 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Wemino/EchoPatch/releases/download/2.3.2/EchoPatch.zip",
-        "FileSize": 199918,
+        "Url": "https://github.com/Wemino/EchoPatch/releases/download/2.3.3/EchoPatch.zip",
+        "FileSize": 206783,
         "ConfigFile": "EchoPatch.ini",
-        "MD5": "58481A924E96ACDE29F39341CC1CC00C",
+        "MD5": "BED7DD82BF2FC763AB98E080272CF9C0",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "EchoPatch",
         "Guid": "4b7ab9c6-dfdc-4ddf-b9f3-a6f9e2fcb825",
-        "Version": "2.3.2",
+        "Version": "2.3.3",
         "SupportedOSes": "Windows, Linux",
         "Description": "## EchoPatch\n*by Wemino*\n\nhttps://github.com/Wemino/EchoPatch\n\nModernizes F.E.A.R. and its expansions with HUD scaling, high-framerate optimizations, XInput controller support, and other quality-of-life enhancements. It aims to be as non-intrusive as possible, with no file modifications and no gameplay changes by default, focusing solely on fixing issues and enhancing the overall experience.\n",
         "Tags": [
