@@ -41,6 +41,9 @@ Installing fixes is done by pressing a single button: no third-party installers 
 
 Same for uninstalling and updating: original files are backed up and restored when the fix is uninstalled.
 
+<a href="db/fixes.md">Full list of available fixes can be seen here.</a>
+
+
 </td>
 </tr>
 

@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using Api.Axiom.Interface;
 using Common.Axiom;
@@ -545,7 +546,69 @@ public sealed class EditorModel
 
         var jsonString = JsonSerializer.Serialize(sortedFixesList, FixesListContext.Default.ListFixesList);
 
+        SaveFixesList(sortedFixesList, Path.GetDirectoryName(file));
+
         File.WriteAllText(file, jsonString);
+    }
+
+    private void SaveFixesList(List<FixesList> sortedFixesList, string folder)
+    {
+        const string NoIntro = "No Intro Fix";
+
+        var gamesCount = 0;
+        var fixesCount = 0;
+
+        StringBuilder sb = new();
+        HashSet<string> nointro = [];
+
+        foreach (var fixesList in sortedFixesList)
+        {
+            if (fixesList.GameName.Equals("!Shared"))
+            {
+                continue;
+            }
+
+            if (fixesList.Fixes.All(x => x.IsDisabled))
+            {
+                continue;
+            }
+
+            gamesCount++;
+
+            if (fixesList.Fixes.All(x => x.Name.StartsWith(NoIntro)))
+            {
+                _ = nointro.Add(fixesList.GameName);
+                continue;
+            }
+
+            _ = sb.AppendLine("### " + fixesList.GameName);
+            _ = sb.AppendLine(string.Empty);
+
+            foreach (var fix in fixesList.Fixes)
+            {
+                if (fix.IsDisabled)
+                {
+                    continue;
+                }
+
+                if (fix.Name.StartsWith(NoIntro))
+                {
+                    _ = nointro.Add(fixesList.GameName);
+                    continue;
+                }
+
+                fixesCount++;
+                _ = sb.AppendLine("- " + fix.Name);
+            }
+
+            _ = sb.AppendLine(string.Empty);
+        }
+
+        _ = sb.AppendLine("**No intro fixes for:** " + string.Join(", ", nointro));
+
+        var result = $"## {fixesCount} fixes for {gamesCount} games (not including no intro fixes)" + Environment.NewLine + Environment.NewLine + sb;
+
+        File.WriteAllText(Path.Combine(folder, "fixes.md"), result);
     }
 }
 
