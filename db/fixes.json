@@ -127,17 +127,17 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/Wemino/MadnessPatch/releases/download/1.0.1/MadnessPatch-ASI.zip",
-        "FileSize": 1094696,
+        "Url": "https://github.com/Wemino/MadnessPatch/releases/download/1.1.0/MadnessPatch-ASI.zip",
+        "FileSize": 1095720,
         "InstallFolder": "Binaries\\Win32",
         "ConfigFile": "Binaries\\Win32\\plugins\\MadnessPatch.ini",
-        "MD5": "A0399393C60BC3A7441AAD52BC12430F",
+        "MD5": "A0457900E2F694B36FDBB9F4D119671A",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Madness Patch",
         "Guid": "c0fffea0-5b5b-42e7-85c8-af0e7cd30f88",
-        "Version": "1.0",
+        "Version": "1.1",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Alice: Madness Returns - Madness Patch\r\n*by Wemino*\r\n\r\nhttps://github.com/Wemino/MadnessPatch\r\n\r\nA patch that fixes various issues in the PC port of Alice: Madness Returns.\r\n\r\nFeatures:\r\n- Subtitle Font Scaling\t\r\n- High FPS Fixes\r\n- Input Binding Fix\r\n- Forces High Resolution Textures\r\n- Bink Video Color Space Fix\r\n- Input Improvements (Disables Mouse Acceleration) (Edit MadnessPatch.ini to disable Controller Acceleration)\r\n- Ultrawide FOV Fix\r\n- Skip Cutscenes with Enter (Default is \u0022Space\u0022 bar)\r\n- Complete Edition DLC Unlock\r\n- Improved Window Management\r\n- Windowed Mode (Enable with \u0022UseWindowed = 1\u0022 in MadnessPatch.ini)\r\n- Disable Legacy Driver Hacks\r\n- Skip Intro Videos (To skip EA Intro set \u0022SkipEAIntro = 1\u0022 in MadnessPatch.ini)",
         "Tags": [
@@ -1391,6 +1391,69 @@
           "#source_port",
           "#ultrawide",
           "#widescreen"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 2630,
+    "GameName": "Call of Duty 2",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/cod/cod2-custom-patch-v20251117.zip",
+        "FileSize": 52438,
+        "ConfigFile": "cod2patch.ini",
+        "MD5": "084ce255a38fbea4b03e1ebe6b2a30f9",
+        "Name": "Custom Patch",
+        "Guid": "f92e134d-7a03-4456-b4a4-417b187a2ebd",
+        "Version": "20251117",
+        "SupportedOSes": "Windows",
+        "Description": "## Custom Patch v2\r\n*by LuKeStorm*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3158-call-of-duty-2-custom-patch-v2\r\n\r\n- No Black screen: Fixes issue at startup with multiplayer game exe\r\n- ForceMaxDetail: Fixes object popping by rendering all models at highest level of detail (LOD)\r\n- No Optimal settings: Disables legacy \u0022Optimal settings\u0022 function at startup\r\n- No Safemode: Disables legacy \u0022Safemode\u0022 function at startup\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips splash screen at startup\r\n- DisableGPUSync: Can boost FPS and improve performance on modern systems (sets r_gpuSync to 0)\r\n- Sets com_hunkMegs to 512MB by default\r\n- Disables pure server only filtering and voice chat option for new game config\r\n- Windowed mode: Enable via ini file (supports singleplayer and multiplayer)\r\n- No cheat protected dvars: Disables cheat/write protection\r\n- Play without key: Play without authorization and even key (only servers using the patch)\r\n- Steam version: Play without Steam using original steam files",
+        "Tags": [
+          "#bugfixes",
+          "#nointro",
+          "#crashfix"
+        ],
+        "IsDisabled": false
+      },
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/cod/cod2-ultrawide.zip",
+        "FileSize": 740030,
+        "MD5": "f7b067845fbdfbbe3df0436a4d8dc9d5",
+        "Name": "Ultrawide Fix",
+        "Guid": "1817a59c-4883-4f9e-bea4-14dda84d2099",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## FOV Fix for Ultrawide and Multi-Mon\r\n*by WSGF*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/1478-call-of-duty-2-fov-fix-for-ultrawide-and-multi-mon/",
+        "Tags": [
+          "#ultrawide"
+        ],
+        "IsDisabled": false
+      }
+    ]
+  },
+  {
+    "GameId": 10090,
+    "GameName": "Call of Duty: World at War",
+    "Fixes": [
+      {
+        "$type": "FileFix",
+        "Url": "http://176.222.52.233:9000/superheater/cod/codwaw-custom-patch-v1.zip",
+        "FileSize": 5516992,
+        "ConfigFile": "codwawpatch.ini",
+        "MD5": "8e19007d0c74304a7c8e7873aa18a1dd",
+        "Name": "Custom Patch",
+        "Guid": "8b7b59d5-76c0-48be-ae87-87adcfa7cf65",
+        "Version": "1.0",
+        "SupportedOSes": "Windows",
+        "Description": "## Custom Patch\r\n*by LuKeStorm*\r\n\r\nhttps://community.pcgamingwiki.com/files/file/3407-call-of-duty-world-at-war-custom-patch/\r\n\r\n- NoAuthPatch: Play without online profile, authorization and even key\r\n- Create profile using custom Profile Creator without starting extra tool\r\n- Joining via LAN or Favorites in original server browser works\r\n- No Optimal settings: Disables legacy \u0022Optimal settings\u0022 function at startup\r\n- No Safemode: Disables legacy \u0022Safemode\u0022 function at startup\r\n- No Intro: Skips logos and game intro at startup\r\n- No Splash: Skips the splashscreen at startup\r\n- No Blackscreen: Fixes issue at startup\r\n- No Punkbuster: Disables punkbuster anti-cheat\r\n- No cheat protected dvars: Disables cheat/write protection\r\n- Windowed mode: Enable via ini file",
+        "Tags": [
+          "#bugfixes",
+          "#nointro",
+          "#crashfix"
         ],
         "IsDisabled": false
       }

@@ -1,4 +1,4 @@
-## 310 fixes for 318 games (not including no intro fixes)
+## 313 fixes for 320 games (not including no intro fixes)
 
 ### Age of Wonders
 
@@ -119,6 +119,15 @@
 
 - Augustus
 - Julius
+
+### Call of Duty 2
+
+- Custom Patch
+- Ultrawide Fix
+
+### Call of Duty: World at War
+
+- Custom Patch
 
 ### Call of Juarez
 
