@@ -1,4 +1,4 @@
-## 313 fixes for 320 games (not including no intro fixes)
+## 314 fixes for 321 games (not including no intro fixes)
 
 ### Age of Wonders
 
@@ -942,6 +942,10 @@
 ### Viking: Battle for Asgard
 
 - FOV and Other Graphical Improvements
+
+### WRATH: Aeon of Ruin
+
+- Launcher Bypass
 
 ### Warhammer 40,000: Dawn of War - Dark Crusade
 
