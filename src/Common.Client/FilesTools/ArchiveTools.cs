@@ -33,7 +33,6 @@ public sealed class ArchiveTools
         _progressReport.OperationMessage = "Unpacking...";
 
         using var archive = ArchiveFactory.Open(pathToArchive);
-        using var reader = archive.ExtractAllEntries();
 
         var entriesCount = variant is null
         ? archive.Entries.Count()
@@ -43,10 +42,8 @@ public sealed class ArchiveTools
 
         await Task.Run(() =>
         {
-            while (reader.MoveToNextEntry())
+            foreach (var entry in archive.Entries)
             {
-                var entry = reader.Entry;
-
                 if (variant is not null &&
                     !entry.Key!.StartsWith(variant + "/"))
                 {
@@ -69,8 +66,7 @@ public sealed class ArchiveTools
                 }
                 else
                 {
-                    using var writableStream = File.OpenWrite(fullName);
-                    reader.WriteEntryTo(writableStream);
+                    entry.WriteToFile(fullName);
                 }
 
                 var value = entryNumber / entriesCount * 100;
@@ -99,7 +95,7 @@ public sealed class ArchiveTools
         )
     {
         using var archive = ArchiveFactory.Open(pathToArchive);
-        using var reader = archive.ExtractAllEntries();
+        var count = archive.Entries.Count();
 
         Dictionary<string, long?> files = new(archive.Entries.Count() + 1);
 
@@ -110,19 +106,17 @@ public sealed class ArchiveTools
             files.Add(fixInstallFolder + Path.DirectorySeparatorChar, null);
         }
 
-        while (reader.MoveToNextEntry())
+        foreach (var entry in archive.Entries)
         {
-            var entry = reader.Entry;
-
-            var path = entry.Key;
+            var fileName = entry.Key;
 
             if (variant is not null)
             {
                 if (entry.Key!.StartsWith(variant + '/'))
                 {
-                    path = entry.Key.Replace(variant + '/', string.Empty);
+                    fileName = entry.Key.Replace(variant + '/', string.Empty);
 
-                    if (string.IsNullOrEmpty(path))
+                    if (string.IsNullOrEmpty(fileName))
                     {
                         continue;
                     }
@@ -133,7 +127,7 @@ public sealed class ArchiveTools
                 }
             }
 
-            var fullName = Path.Combine(fixInstallFolder ?? string.Empty, path!)
+            var fullName = Path.Combine(fixInstallFolder ?? string.Empty, fileName!)
                 .Replace('/', Path.DirectorySeparatorChar);
 
             //if it's a file, add it to the list
@@ -142,7 +136,7 @@ public sealed class ArchiveTools
                 files.Add(fullName, entry.Crc);
             }
             //if it's a directory and it doesn't already exist, add it to the list
-            else if (!Directory.Exists(Path.Combine(unpackToPath, path!)))
+            else if (!Directory.Exists(Path.Combine(unpackToPath, fileName!)))
             {
                 files.Add(fullName, null);
             }
