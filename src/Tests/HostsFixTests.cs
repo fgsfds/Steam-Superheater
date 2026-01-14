@@ -1,7 +1,7 @@
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes.HostsFix;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
+using Common.Client;
 using Common.Client.FixTools;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.Providers;
@@ -146,7 +146,7 @@ public sealed class HostsFixTests : IDisposable
 
 123 added entry  #c0650f19-f670-4f8a-8545-70f6c5171fa5";
 
-        var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixGuid + ".json"));
+        var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixGuid + ".json"));
         var instExpected1 = $@"{{
   ""$type"": ""HostsFix"",
   ""Entries"": [
@@ -173,9 +173,8 @@ public sealed class HostsFixTests : IDisposable
 ";
 
         Assert.Equal(hostsExpected2, hostsActual2);
-        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixGuid + ".json")));
+        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixGuid + ".json")));
     }
 
     #endregion Private Methods
 }
-

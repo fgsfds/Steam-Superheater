@@ -1,6 +1,6 @@
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
+using Common.Client;
 
 namespace Tests;
 
@@ -92,7 +92,7 @@ public sealed partial class FileFixTests : IDisposable
 
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file.txt")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -137,7 +137,7 @@ public sealed partial class FileFixTests : IDisposable
         var newFileActual = File.ReadAllText(Path.Combine("game", "install folder", "start game.exe"));
         var newFileExpected = "fix_v2";
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -187,7 +187,7 @@ public sealed partial class FileFixTests : IDisposable
 
         Assert.True(File.Exists(Path.Combine("game", "shared install folder", "shared fix file 2.txt")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -230,7 +230,7 @@ public sealed partial class FileFixTests : IDisposable
 
         CheckOriginalFiles();
 
-        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixEntity.Guid.ToString() + ".json")));
+        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json")));
     }
 }
 

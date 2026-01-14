@@ -1,6 +1,6 @@
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
+using Common.Client;
 
 namespace Tests;
 
@@ -30,7 +30,7 @@ public sealed partial class FileFixTests
 
         _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
