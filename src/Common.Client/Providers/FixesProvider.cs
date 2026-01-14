@@ -318,7 +318,7 @@ public sealed class FixesProvider : IFixesProvider
         {
             if (!fileFix.Url.StartsWith("http"))
             {
-                fileFix.Url = Consts.BucketAddress + fileFix.Url;
+                fileFix.Url = CommonConstants.BucketAddress + fileFix.Url;
             }
         }
 

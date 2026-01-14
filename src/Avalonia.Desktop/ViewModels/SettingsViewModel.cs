@@ -1,11 +1,9 @@
 using System.Collections.Immutable;
-using System.Diagnostics;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Platform.Storage;
 using Avalonia.Styling;
 using Common.Axiom;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
 using Common.Client;
 using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -214,16 +212,6 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
         Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
         _config.Theme = ThemeEnum.Dark;
-    }
-
-    [RelayCommand]
-    private void OpenConfigXML()
-    {
-        using var _ = Process.Start(new ProcessStartInfo
-        {
-            FileName = Consts.ConfigFile,
-            UseShellExecute = true
-        });
     }
 
     [RelayCommand]

@@ -1,5 +1,4 @@
 using System.Runtime.InteropServices;
-using Common.Axiom.Helpers;
 using Common.Client;
 using Projektanker.Icons.Avalonia;
 using Projektanker.Icons.Avalonia.FontAwesome;
@@ -14,7 +13,7 @@ public sealed partial class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFile)))
+        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
         {
             AppUpdateInstaller.InstallUpdate();
             return 0;

@@ -58,7 +58,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
     public ImmutableList<BaseFixEntity>? SelectedFixDependenciesList => _editorModel.GetDependenciesForAFix(SelectedGame, SelectedFix);
 
-    public HashSet<string> TagsComboboxList => [Consts.All, Consts.WindowsOnly, Consts.LinuxOnly, Consts.AllSupported];
+    public HashSet<string> TagsComboboxList => [ClientConstants.All, ClientConstants.WindowsOnly, ClientConstants.LinuxOnly, ClientConstants.AllSupported];
 
     public bool IsEmpty => FilteredGamesList.Count == 0;
 
@@ -675,7 +675,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
 
         using var _ = Process.Start(new ProcessStartInfo
         {
-            FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
+            FileName = ClientConstants.PCGamingWikiUrl + SelectedGame.GameId,
             UseShellExecute = true
         });
     }

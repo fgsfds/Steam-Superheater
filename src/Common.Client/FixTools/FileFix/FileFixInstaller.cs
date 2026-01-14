@@ -342,7 +342,7 @@ public sealed class FileFixInstaller
         string fixName
         )
     {
-        var backupFolderPath = Path.Combine(gameDir, Consts.BackupFolder, fixName.Trim().Replace(' ', '_'));
+        var backupFolderPath = Path.Combine(gameDir, ClientConstants.BackupFolder, fixName.Trim().Replace(' ', '_'));
         backupFolderPath = string.Concat(backupFolderPath.Split(Path.GetInvalidPathChars()));
 
         if (Directory.Exists(backupFolderPath))

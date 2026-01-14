@@ -211,14 +211,13 @@ public sealed partial class FileFixTests
             Name = "test fix compromised",
             Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Url = $"{Consts.BucketAddress}nointro/bsp_nointro.zip",
+            Url = $"{CommonConstants.BucketAddress}nointro/bsp_nointro.zip",
             MD5 = "badMD5",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false, new()).ConfigureAwait(true);
 
-        Assert.False(File.Exists(Consts.InstalledFile));
         Assert.Equal(ResultEnum.MD5Error, installResult.ResultEnum);
     }
 
@@ -242,7 +241,7 @@ public sealed partial class FileFixTests
 
         Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -289,7 +288,7 @@ public sealed partial class FileFixTests
 
         Assert.True(File.Exists(Path.Combine("game", "new folder", "start game.exe")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -345,7 +344,7 @@ public sealed partial class FileFixTests
 
         Assert.True(File.Exists(Path.Combine("C:", "Windows", "temp", "test_fix", "start game.exe")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -399,7 +398,7 @@ public sealed partial class FileFixTests
 
         Assert.True(File.Exists(Path.Combine(documents, "test_fix", "start game.exe")));
 
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $$"""
 {
   "$type": "FileFix",
@@ -531,11 +530,11 @@ public sealed partial class FileFixTests
         var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(fileToBackupExists);
 
-        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{Consts.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
+        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(backedUpFileExists);
 
         //check installed.xml
-        var textActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json"));
+        var textActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixGuid + ".json"));
         var textExpected = $$"""
 {
   "$type": "FileFix",
@@ -585,11 +584,11 @@ public sealed partial class FileFixTests
         var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(fileToBackupExists);
 
-        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{Consts.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
+        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(backedUpFileExists);
 
         //check installed.xml
-        var textActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json"));
+        var textActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixGuid + ".json"));
         var textExpected = $$"""
 {
   "$type": "FileFix",

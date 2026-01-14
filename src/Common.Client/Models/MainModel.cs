@@ -4,7 +4,6 @@ using Common.Axiom;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
 
 namespace Common.Client.Models;
@@ -173,10 +172,10 @@ public sealed class MainModel
 
         if (!string.IsNullOrEmpty(tag))
         {
-            if (tag.Equals(Consts.All))
+            if (tag.Equals(ClientConstants.All))
             {
             }
-            else if (tag.Equals(Consts.UpdateAvailable))
+            else if (tag.Equals(ClientConstants.UpdateAvailable))
             {
                 foreach (var entity in resultingFixesList)
                 {
@@ -258,7 +257,7 @@ public sealed class MainModel
 
         var updateAvailable = _combinedEntitiesList.Any(x => x.HasUpdates);
 
-        return [Consts.All, updateAvailable ? Consts.UpdateAvailable : null, .. list];
+        return [ClientConstants.All, updateAvailable ? ClientConstants.UpdateAvailable : null, .. list];
     }
 
     /// <summary>

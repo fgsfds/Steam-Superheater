@@ -1,4 +1,4 @@
-using Common.Axiom.Helpers;
+using Common.Client;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -7,7 +7,7 @@ namespace Avalonia.Desktop.ViewModels.Popups;
 public sealed partial class PopupStackViewModel : ObservableObject, IPopup
 {
     private SemaphoreSlim? _semaphore;
-    private string _result = Consts.All;
+    private string _result = ClientConstants.All;
 
     public event Action<bool>? PopupShownEvent;
 

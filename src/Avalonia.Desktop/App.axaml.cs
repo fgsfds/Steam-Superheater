@@ -8,7 +8,6 @@ using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Common.Axiom;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
 using Common.Client;
 using Common.Client.DI;
 using CommunityToolkit.Diagnostics;
@@ -188,7 +187,7 @@ public sealed class App : Application
         {
             if (file.EndsWith(".old", StringComparison.OrdinalIgnoreCase)
                 || file.EndsWith(".temp", StringComparison.OrdinalIgnoreCase)
-                || file.Equals(Consts.UpdateFile, StringComparison.OrdinalIgnoreCase)
+                || file.Equals(ClientConstants.UpdateFile, StringComparison.OrdinalIgnoreCase)
                 || file.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase)
                 || file.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase))
             {
@@ -196,7 +195,7 @@ public sealed class App : Application
             }
         }
 
-        var updateDir = Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder);
+        var updateDir = Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder);
 
         if (Directory.Exists(updateDir))
         {

@@ -3,7 +3,6 @@ using Api.Axiom.Interface;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Enums;
-using Common.Axiom.Helpers;
 using Common.Client.FilesTools.Interfaces;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -75,11 +74,11 @@ public sealed class AppUpdateInstaller(
 
         _ = await _filesDownloader.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
-        ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, Consts.UpdateFolder), true);
+        ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder), true);
 
         File.Delete(fileName);
 
-        await File.Create(Consts.UpdateFile).DisposeAsync().ConfigureAwait(false);
+        await File.Create(ClientConstants.UpdateFile).DisposeAsync().ConfigureAwait(false);
     }
 
     /// <summary>
@@ -90,7 +89,7 @@ public sealed class AppUpdateInstaller(
         //_logger.Info("Starting app update");
 
         var dir = ClientProperties.WorkingFolder;
-        var updateDir = Path.Combine(dir, Consts.UpdateFolder);
+        var updateDir = Path.Combine(dir, ClientConstants.UpdateFolder);
         var oldExe = Path.Combine(dir, ClientProperties.ExecutableName);
         var newExe = Path.Combine(updateDir, ClientProperties.ExecutableName);
 
@@ -100,8 +99,8 @@ public sealed class AppUpdateInstaller(
         //moving new file
         File.Move(newExe, oldExe, true);
 
-        File.Delete(Path.Combine(dir, Consts.UpdateFile));
-        Directory.Delete(Path.Combine(dir, Consts.UpdateFolder), true);
+        File.Delete(Path.Combine(dir, ClientConstants.UpdateFile));
+        Directory.Delete(Path.Combine(dir, ClientConstants.UpdateFolder), true);
 
         if (OperatingSystem.IsWindows())
         {

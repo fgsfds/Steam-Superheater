@@ -3,7 +3,6 @@ using System.Text.Json;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
-using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
 using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
@@ -65,14 +64,14 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
         try
         {
-            if (!Directory.Exists(Path.Combine(game.InstallDir, Consts.BackupFolder)))
+            if (!Directory.Exists(Path.Combine(game.InstallDir, ClientConstants.BackupFolder)))
             {
-                _ = Directory.CreateDirectory(Path.Combine(game.InstallDir, Consts.BackupFolder));
+                _ = Directory.CreateDirectory(Path.Combine(game.InstallDir, ClientConstants.BackupFolder));
             }
 
             var jsonText = JsonSerializer.Serialize(installedFix, InstalledFixesListContext.Default.BaseInstalledFixEntity);
 
-            File.WriteAllText(Path.Combine(game.InstallDir, Consts.BackupFolder, installedFix.Guid.ToString() + ".json"), jsonText);
+            File.WriteAllText(Path.Combine(game.InstallDir, ClientConstants.BackupFolder, installedFix.Guid.ToString() + ".json"), jsonText);
         }
         catch (Exception ex)
         {
@@ -95,7 +94,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
         try
         {
-            File.Delete(Path.Combine(game.InstallDir, Consts.BackupFolder, fixGuid.ToString() + ".json"));
+            File.Delete(Path.Combine(game.InstallDir, ClientConstants.BackupFolder, fixGuid.ToString() + ".json"));
         }
         catch (Exception ex)
         {
@@ -119,7 +118,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
         foreach (var gameInstallDir in games.Select(static x => x.InstallDir).Distinct())
         {
-            var superheaterFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
+            var superheaterFolder = Path.Combine(gameInstallDir, ClientConstants.BackupFolder);
 
             if (!Directory.Exists(superheaterFolder))
             {

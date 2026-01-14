@@ -159,7 +159,7 @@ public sealed class FileFixUninstaller
             return;
         }
 
-        var backupFolder = Path.Combine(gameDir, Consts.BackupFolder, fix.BackupFolder);
+        var backupFolder = Path.Combine(gameDir, ClientConstants.BackupFolder, fix.BackupFolder);
 
         if (!Directory.Exists(backupFolder))
         {

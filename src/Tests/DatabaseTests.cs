@@ -109,7 +109,7 @@ public sealed class DatabaseTests
                 }
 
                 //md5 of files from s3
-                if (url.StartsWith(Consts.S3Endpoint))
+                if (url.StartsWith(CommonConstants.S3Endpoint))
                 {
                     if (url.EndsWith("re4_re4hd_v1_1.zip"))
                     {
@@ -230,7 +230,7 @@ public sealed class DatabaseTests
         {
             foreach (var b in a.Fixes.OfType<FileFixEntity>())
             {
-                if (b.Url?.StartsWith(Consts.S3Endpoint) == true)
+                if (b.Url?.StartsWith(CommonConstants.S3Endpoint) == true)
                 {
                     fixesUrls.Add(b.Url);
                 }
@@ -245,7 +245,7 @@ public sealed class DatabaseTests
 
         using var minioClient = new MinioClient();
         using var iMinioClient = minioClient
-            .WithEndpoint(Consts.S3Endpoint.Split("//").Last())
+            .WithEndpoint(CommonConstants.S3Endpoint.Split("//").Last())
             .WithCredentials(access, secret)
             .WithSSL(false)
             .Build();
@@ -268,7 +268,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            filesInBucket.Add(Consts.BucketAddress + item.Key);
+            filesInBucket.Add(CommonConstants.BucketAddress + item.Key);
         }
 
         var loose = filesInBucket.Except(fixesUrls);

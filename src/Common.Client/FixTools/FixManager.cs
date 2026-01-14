@@ -4,7 +4,6 @@ using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Entities.Fixes.HostsFix;
 using Common.Axiom.Entities.Fixes.RegistryFix;
-using Common.Axiom.Helpers;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
@@ -77,7 +76,7 @@ public sealed class FixManager
         string? variant,
         bool skipMD5Check,
         CancellationToken cancellationToken,
-        string hostsFile = Consts.Hosts
+        string hostsFile = ClientConstants.Hosts
         )
     {
         _logger.LogInformation($"Installing {fix.Name} for {game.Name}");
@@ -158,7 +157,7 @@ public sealed class FixManager
     public Result UninstallFix(
         GameEntity game,
         BaseFixEntity fix,
-        string hostsFile = Consts.Hosts
+        string hostsFile = ClientConstants.Hosts
         )
     {
         _logger.LogInformation($"Uninstalling {fix.Name} for {game.Name}");
@@ -221,7 +220,7 @@ public sealed class FixManager
         string? variant,
         bool skipMD5Check,
         CancellationToken cancellationToken,
-        string hostsFile = Consts.Hosts
+        string hostsFile = ClientConstants.Hosts
         )
     {
         _logger.LogInformation($"Updating {fix.Name} for {game.Name}");
@@ -287,7 +286,7 @@ public sealed class FixManager
     /// <param name="gameInstallDir">Game install folder</param>
     private static void DeleteBackupFolderIfEmpty(string gameInstallDir)
     {
-        var backupFolder = Path.Combine(gameInstallDir, Consts.BackupFolder);
+        var backupFolder = Path.Combine(gameInstallDir, ClientConstants.BackupFolder);
 
         if (Directory.Exists(backupFolder) &&
             Directory.GetFiles(backupFolder).Length == 0 &&

@@ -146,7 +146,7 @@ public sealed class HostsFixTests : IDisposable
 
 123 added entry  #c0650f19-f670-4f8a-8545-70f6c5171fa5";
 
-        var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json"));
+        var instActual1 = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixGuid + ".json"));
         var instExpected1 = $@"{{
   ""$type"": ""HostsFix"",
   ""Entries"": [
@@ -173,7 +173,7 @@ public sealed class HostsFixTests : IDisposable
 ";
 
         Assert.Equal(hostsExpected2, hostsActual2);
-        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, fixGuid + ".json")));
+        Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, fixGuid + ".json")));
     }
 
     #endregion Private Methods

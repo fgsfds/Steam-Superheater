@@ -140,7 +140,7 @@ public sealed class RegistryFixTests : IDisposable
         }
 
         //Check created json
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
   ""$type"": ""RegistryFix"",
   ""Entries"": [
@@ -192,7 +192,7 @@ public sealed class RegistryFixTests : IDisposable
         _ = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, CancellationToken.None).ConfigureAwait(true);
 
         //Check created json
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, Consts.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
+        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, CommonConstants.BackupFolder, _fixEntity.Guid.ToString() + ".json"));
         var installedExpected = $@"{{
   ""$type"": ""RegistryFix"",
   ""Entries"": [

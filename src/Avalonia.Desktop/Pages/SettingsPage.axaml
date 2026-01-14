@@ -257,14 +257,5 @@
 
         </StackPanel>
 
-        <Button Grid.Row="2"
-                Margin="5"
-                Padding="8"
-                HorizontalAlignment="Right"
-                Command="{Binding OpenConfigXMLCommand}"
-                IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
-            Open config XML...
-        </Button>
-
     </Grid>
 </UserControl>

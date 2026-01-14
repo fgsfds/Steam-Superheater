@@ -27,7 +27,7 @@ public sealed class FileApiInterface : IApiInterface
     {
         try
         {
-            var addons = await _httpClient.GetStringAsync(Consts.FixesJsonUrl).ConfigureAwait(false);
+            var addons = await _httpClient.GetStringAsync(CommonConstants.FixesJsonUrl).ConfigureAwait(false);
 
             if (addons is null)
             {
@@ -59,7 +59,7 @@ public sealed class FileApiInterface : IApiInterface
     {
         try
         {
-            var news = await _httpClient.GetStringAsync(Consts.NewsJsonUrl).ConfigureAwait(false);
+            var news = await _httpClient.GetStringAsync(CommonConstants.NewsJsonUrl).ConfigureAwait(false);
 
             if (news is null)
             {
@@ -108,7 +108,7 @@ public sealed class FileApiInterface : IApiInterface
 
     public Task<Result<string?>> GetSignedUrlAsync(string path)
     {
-        var url = Consts.UploadsFolder + path;
+        var url = CommonConstants.UploadsFolder + path;
 
         return Task.FromResult(new Result<string?>(ResultEnum.Success, url, string.Empty));
     }

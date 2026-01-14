@@ -647,7 +647,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
         using var _ = Process.Start(new ProcessStartInfo
         {
-            FileName = Consts.PCGamingWikiUrl + SelectedGame.GameId,
+            FileName = ClientConstants.PCGamingWikiUrl + SelectedGame.GameId,
             UseShellExecute = true
         });
     }
@@ -869,7 +869,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     public async Task TestFixAsync(FixesList newFix)
     {
         SearchBarText = string.Empty;
-        SelectedTagFilter = Consts.All;
+        SelectedTagFilter = ClientConstants.All;
 
         _additionalFix = newFix;
 

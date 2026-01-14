@@ -97,21 +97,21 @@ public sealed class EditorModel
 
         if (!string.IsNullOrEmpty(tag))
         {
-            if (!tag.Equals(Consts.All))
+            if (!tag.Equals(ClientConstants.All))
             {
                 foreach (var entity in _fixesList)
                 {
                     foreach (var fix in entity.Fixes)
                     {
-                        if (tag.Equals(Consts.WindowsOnly) && fix.SupportedOSes != OSEnum.Windows)
+                        if (tag.Equals(ClientConstants.WindowsOnly) && fix.SupportedOSes != OSEnum.Windows)
                         {
                             fix.IsHidden = true;
                         }
-                        else if (tag.Equals(Consts.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
+                        else if (tag.Equals(ClientConstants.LinuxOnly) && fix.SupportedOSes != OSEnum.Linux)
                         {
                             fix.IsHidden = true;
                         }
-                        else if (tag.Equals(Consts.AllSupported) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
+                        else if (tag.Equals(ClientConstants.AllSupported) && fix.SupportedOSes != (OSEnum.Linux | OSEnum.Windows))
                         {
                             fix.IsHidden = true;
                         }
@@ -514,7 +514,7 @@ public sealed class EditorModel
                 {
                     if (!fixEntity.Url.StartsWith("http"))
                     {
-                        fixEntity.Url = Consts.BucketAddress + fixEntity.Url;
+                        fixEntity.Url = CommonConstants.BucketAddress + fixEntity.Url;
                     }
 
                     using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
@@ -523,7 +523,7 @@ public sealed class EditorModel
 
                     fixEntity.FileSize = header.Content.Headers.ContentLength;
 
-                    if (fixEntity.Url.StartsWith(Consts.BucketAddress))
+                    if (fixEntity.Url.StartsWith(CommonConstants.BucketAddress))
                     {
                         fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");
                     }
