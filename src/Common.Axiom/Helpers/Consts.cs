@@ -14,7 +14,7 @@ public static class Consts
 
     public const string UpdateFolder = "update";
 
-    public const string S3Endpoint = "http://176.222.52.233:9000/";
+    public const string S3Endpoint = "https://s3.firstvds.ru/";
 
     /// <summary>
     /// Path to the files repository
