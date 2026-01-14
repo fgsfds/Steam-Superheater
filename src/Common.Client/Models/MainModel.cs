@@ -15,11 +15,11 @@ public sealed class MainModel
     private readonly IGamesProvider _gamesProvider;
     private readonly IApiInterface _apiInterface;
 
-    private List<FixesList> _combinedEntitiesList = [];
+    private List<FixesList> _unfilteredFixesList = [];
 
-    public int UpdateableGamesCount => _combinedEntitiesList.Count(static x => x.HasUpdates);
+    public int UpdateableGamesCount => _unfilteredFixesList.Count(static x => x.HasUpdates);
 
-    public bool HasUpdateableGames => UpdateableGamesCount > 0;
+    public bool HasUpdateableGames => _unfilteredFixesList.Any(static x => x.HasUpdates);
 
 
     public MainModel(
@@ -53,7 +53,7 @@ public sealed class MainModel
 
         var games = result.ResultObject;
 
-        _combinedEntitiesList = games;
+        _unfilteredFixesList = games;
 
         return new(result.ResultEnum, result.Message);
     }
@@ -70,9 +70,11 @@ public sealed class MainModel
         FixesList? additionalFix = null
         )
     {
-        List<FixesList> resultingFixesList = new(_combinedEntitiesList.Count);
+        List<FixesList> resultingFixesList = new(_unfilteredFixesList.Count);
+        var games = (await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false))
+            .ToDictionary(x => x.Id);
 
-        foreach (var entity in _combinedEntitiesList)
+        foreach (var entity in _unfilteredFixesList)
         {
             if (entity.GameId == 0)
             {
@@ -80,11 +82,20 @@ public sealed class MainModel
                 continue;
             }
 
-            var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
-            var game = games.FirstOrDefault(x => x.Id == entity.GameId);
+            _ = games.TryGetValue(entity.GameId, out var game);
+
+            //hide uninstalled games unless enabled
+            if (game is null && !_config.ShowUninstalledGames)
+            {
+                continue;
+            }
 
             foreach (var fix in entity.Fixes)
             {
+                //reset
+                fix.MaybeOverwritten = false;
+                fix.IsHidden = false;
+
                 //remove fixes with hidden tags
                 if (fix.Tags is not null &&
                     fix.Tags.Count != 0 &&
@@ -102,13 +113,7 @@ public sealed class MainModel
                     continue;
                 }
 
-                if (!entity.IsGameInstalled &&
-                    !_config.ShowUninstalledGames)
-                {
-                    fix.IsHidden = true;
-                    continue;
-                }
-
+                //remove disabled fixes unless in dev mode
                 if (ClientProperties.IsDeveloperMode)
                 {
                     fix.IsHidden = false;
@@ -118,6 +123,7 @@ public sealed class MainModel
                     fix.IsHidden = fix.IsDisabled;
                 }
 
+                //mark fix as possibly overwritten
                 if (game is not null
                     && fix.InstalledFix is FileInstalledFixEntity fileFix
                     && fileFix.BuildId is not null
@@ -125,13 +131,40 @@ public sealed class MainModel
                 {
                     fix.MaybeOverwritten = true;
                 }
+
+                //hide fixes filtered out by tag
+                if (!string.IsNullOrEmpty(tag))
+                {
+                    if (tag.Equals(ClientConstants.All))
+                    {
+                        //nothing to do
+                    }
+                    else if (tag.Equals(ClientConstants.UpdateAvailable))
+                    {
+                        if (!fix.IsOutdated)
+                        {
+                            fix.IsHidden = true;
+                        }
+                    }
+                    else
+                    {
+                        if (fix.Tags is null ||
+                            !fix.Tags.Exists(x => x.Equals(tag))
+                            )
+                        {
+                            fix.IsHidden = true;
+                        }
+                    }
+                }
             }
 
+            //skip games with no visible fixes
             if (entity.IsEmpty)
             {
                 continue;
             }
 
+            //skip games that don't contain search text in the name
             if (string.IsNullOrWhiteSpace(search))
             {
                 resultingFixesList.Add(entity);
@@ -142,6 +175,7 @@ public sealed class MainModel
             }
         }
 
+        //adding additional fix
         if (additionalFix is not null)
         {
             var existingGame = resultingFixesList.FirstOrDefault(x => x.GameId == additionalFix.GameId);
@@ -162,46 +196,8 @@ public sealed class MainModel
             }
             else
             {
-                var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
-                var game = games.FirstOrDefault(x => x.Id == additionalFix.GameId);
-
-                additionalFix.Game = game;
+                additionalFix.Game = games[additionalFix.GameId];
                 resultingFixesList.Add(additionalFix);
-            }
-        }
-
-        if (!string.IsNullOrEmpty(tag))
-        {
-            if (tag.Equals(ClientConstants.All))
-            {
-            }
-            else if (tag.Equals(ClientConstants.UpdateAvailable))
-            {
-                foreach (var entity in resultingFixesList)
-                {
-                    foreach (var fix in entity.Fixes)
-                    {
-                        if (!fix.IsOutdated)
-                        {
-                            fix.IsHidden = true;
-                        }
-                    }
-                }
-            }
-            else
-            {
-                foreach (var entity in resultingFixesList)
-                {
-                    foreach (var fix in entity.Fixes)
-                    {
-                        if (fix.Tags is null ||
-                            !fix.Tags.Exists(x => x.Equals(tag))
-                            )
-                        {
-                            fix.IsHidden = true;
-                        }
-                    }
-                }
             }
         }
 
@@ -234,7 +230,7 @@ public sealed class MainModel
     {
         HashSet<string> list = [];
 
-        foreach (var entity in _combinedEntitiesList)
+        foreach (var entity in _unfilteredFixesList)
         {
             foreach (var fix in entity.Fixes)
             {
@@ -255,7 +251,7 @@ public sealed class MainModel
             list = [.. list.Order()];
         }
 
-        var updateAvailable = _combinedEntitiesList.Any(x => x.HasUpdates);
+        var updateAvailable = _unfilteredFixesList.Any(x => x.HasUpdates);
 
         return [ClientConstants.All, updateAvailable ? ClientConstants.UpdateAvailable : null, .. list];
     }

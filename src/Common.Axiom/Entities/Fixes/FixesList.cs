@@ -34,7 +34,7 @@ public sealed class FixesList
     /// Does list have any not hidden fixes
     /// </summary>
     [JsonIgnore]
-    public bool IsEmpty => Fixes.Count == 0 || !Fixes.Exists(static x => !x.IsHidden);
+    public bool IsEmpty => Fixes.Count == 0 || Fixes.All(static x => x.IsHidden);
 
     /// <summary>
     /// Is game installed
