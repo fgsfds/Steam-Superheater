@@ -85,13 +85,15 @@ public sealed partial class FileFixTests
 
         _httpClient = new();
         var configMock = new Mock<IConfigProvider>().Object;
+        var httpFactoryMock = new Mock<IHttpClientFactory>();
+        httpFactoryMock.Setup(x => x.CreateClient("")).Returns(_httpClient);
 
         FileFixInstaller fileFixInstaller = new(
             configMock,
             new(new()),
             new FilesDownloader(
                 new(),
-                new Mock<IHttpClientFactory>().Object,
+                httpFactoryMock.Object,
                 new Mock<ILogger>().Object
                 ),
             new(),
