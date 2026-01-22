@@ -1,7 +1,6 @@
 using System.Collections.Immutable;
 using Common.Axiom.Entities;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Client.Providers;
@@ -39,7 +38,7 @@ public sealed class GamesProvider : IGamesProvider
 
             await UpdateCacheAsync().ConfigureAwait(false);
 
-            Guard.IsNotNull(_cache);
+            ArgumentNullException.ThrowIfNull(_cache);
 
             return _cache;
         }
@@ -92,7 +91,7 @@ public sealed class GamesProvider : IGamesProvider
     /// <param name="file">Path to ACF file</param>
     private GameEntity? GetGameEntityFromAcf(string file)
     {
-        var libraryFolder = Path.GetDirectoryName(file) ?? ThrowHelper.ThrowInvalidDataException<string>("Can't find install dir");
+        var libraryFolder = Path.GetDirectoryName(file) ?? throw new InvalidDataException("Can't find install dir");
 
         var lines = File.ReadAllLines(file);
 

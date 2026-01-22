@@ -2,7 +2,6 @@ using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.RegistryFix;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Win32;
 
 namespace Common.Client.FixTools.RegistryFix;
@@ -17,15 +16,14 @@ public sealed class RegistryFixUninstaller
     {
         if (!OperatingSystem.IsWindows())
         {
-            ThrowHelper.ThrowPlatformNotSupportedException(string.Empty);
-            return;
+            throw new PlatformNotSupportedException(string.Empty);
         }
 
         Guard2.IsOfType<RegistryInstalledFixEntity>(installedFix, out var installedRegFix);
 
         if (installedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
         {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall this fix");
+            throw new UnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall this fix");
         }
 
         foreach (var fix in installedRegFix.Entries)
@@ -40,7 +38,7 @@ public sealed class RegistryFixUninstaller
                 "HKEY_CURRENT_USER" => Registry.CurrentUser,
                 "HKEY_LOCAL_MACHINE" => Registry.LocalMachine,
                 "HKEY_USERS" => Registry.Users,
-                _ => ThrowHelper.ThrowNotSupportedException<RegistryKey>(),
+                _ => throw new NotSupportedException(),
             };
 
             using (var key = reg.OpenSubKey(subKey, true))
@@ -68,8 +66,7 @@ public sealed class RegistryFixUninstaller
                                 break;
                             }
                         default:
-                            ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
-                            break;
+                            throw new ArgumentOutOfRangeException($"Unknown type: {fix.ValueType.GetType()}");
                     }
                 }
             }

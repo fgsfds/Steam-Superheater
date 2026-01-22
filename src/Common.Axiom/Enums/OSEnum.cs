@@ -1,5 +1,3 @@
-using CommunityToolkit.Diagnostics;
-
 namespace Common.Axiom.Enums;
 
 [Flags]
@@ -27,7 +25,7 @@ public static class OSEnumHelper
                 return OSEnum.Linux;
             }
 
-            return ThrowHelper.ThrowPlatformNotSupportedException<OSEnum>("Error while identifying platform");
+            throw new PlatformNotSupportedException("Error while identifying platform");
         }
     }
 

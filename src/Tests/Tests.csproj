@@ -35,13 +35,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AddSealed" PrivateAssets="all" />
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Minio" />
     <PackageReference Include="Moq" />
-    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio" PrivateAssets="all" />
   </ItemGroup>

@@ -3,7 +3,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 using Database.Client;
 using Database.Client.DbEntities;
 using static Common.Axiom.IConfigProvider;
@@ -324,7 +323,7 @@ public sealed class ConfigProvider : IConfigProvider
 
         if (existing is null)
         {
-            ThrowHelper.ThrowInvalidOperationException($"Can't find source {url} in the database.");
+            throw new InvalidOperationException($"Can't find source {url} in the database.");
         }
 
         _ = dbContext.Sources.Remove(existing);

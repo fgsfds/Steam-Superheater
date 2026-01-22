@@ -4,7 +4,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Enums;
 using Common.Client.FilesTools.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Client;
@@ -59,7 +58,7 @@ public sealed class AppUpdateInstaller(
     /// </summary>
     public async Task DownloadAndUnpackLatestRelease(CancellationToken cancellationToken)
     {
-        Guard.IsNotNull(_update);
+        ArgumentNullException.ThrowIfNull(_update);
 
         _logger.LogInformation($"Downloading app update version {_update.Version}");
 

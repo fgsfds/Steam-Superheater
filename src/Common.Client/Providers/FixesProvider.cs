@@ -6,7 +6,6 @@ using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Database.Client;
 
 namespace Common.Client.Providers;
@@ -54,7 +53,7 @@ public sealed class FixesProvider : IFixesProvider
 
             var result = await UpdateCacheAsync(localFixesOnly).ConfigureAwait(false);
 
-            Guard.IsNotNull(_cache);
+            ArgumentNullException.ThrowIfNull(_cache);
 
             return new(result.ResultEnum, _cache, result.Message);
         }
@@ -69,7 +68,7 @@ public sealed class FixesProvider : IFixesProvider
     {
         var fixesLists = await GetFixesListAsync(localFixesOnly, dropFixesCache).ConfigureAwait(false);
 
-        Guard.IsNotNull(fixesLists.ResultObject);
+        ArgumentNullException.ThrowIfNull(fixesLists.ResultObject);
 
         var games = await _gamesProvider.GetGamesListAsync(dropGamesCache).ConfigureAwait(false);
         var installedFixes = await _installedFixesProvider.GetInstalledFixesListAsync().ConfigureAwait(false);

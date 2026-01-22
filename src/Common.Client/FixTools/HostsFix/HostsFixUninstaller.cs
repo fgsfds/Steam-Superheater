@@ -1,7 +1,6 @@
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.HostsFix;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;
 
@@ -19,15 +18,14 @@ public sealed class HostsFixUninstaller
     {
         if (!OperatingSystem.IsWindows())
         {
-            ThrowHelper.ThrowPlatformNotSupportedException(string.Empty);
-            return;
+            throw new PlatformNotSupportedException(string.Empty);
         }
 
         Guard2.IsOfType<HostsInstalledFixEntity>(installedFix, out var installedHostsFix);
 
         if (!ClientProperties.IsAdmin)
         {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall hosts fixes");
+            throw new UnauthorizedAccessException("Superheater needs to be run as admin in order to uninstall hosts fixes");
         }
 
         List<string> hostsList = [];

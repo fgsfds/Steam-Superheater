@@ -1,4 +1,3 @@
-using CommunityToolkit.Diagnostics;
 using SharpCompress.Archives;
 
 namespace Common.Client.FilesTools;
@@ -56,7 +55,7 @@ public sealed class ArchiveTools
 
                 if (!Directory.Exists(Path.GetDirectoryName(fullName)))
                 {
-                    var dirName = Path.GetDirectoryName(fullName) ?? ThrowHelper.ThrowArgumentNullException<string>(fullName);
+                    var dirName = Path.GetDirectoryName(fullName) ?? throw new ArgumentNullException(fullName);
                     _ = Directory.CreateDirectory(dirName);
                 }
 

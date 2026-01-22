@@ -11,7 +11,7 @@ using Tests.UI;
 
 [assembly: AvaloniaTestApplication(typeof(TestAppBuilder))]
 
-public class TestAppBuilder
+public sealed class TestAppBuilder
 {
     public static AppBuilder BuildAvaloniaApp()
     {

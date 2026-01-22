@@ -6,11 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AddSealed" PrivateAssets="all" />
-    <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="Markdig" />
-    <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     <PackageReference Include="Telegram.BotAPI" />
   </ItemGroup>
 

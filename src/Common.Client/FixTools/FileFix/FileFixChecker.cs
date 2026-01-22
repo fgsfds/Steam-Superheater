@@ -2,7 +2,6 @@ using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.FileFix;
 
@@ -11,7 +10,7 @@ public sealed class FileFixChecker
     public async Task<bool> CheckFixHashAsync(GameEntity game, BaseInstalledFixEntity installedFix)
     {
         Guard2.IsOfType<FileInstalledFixEntity>(installedFix, out var installedFileFix);
-        Guard.IsNotNull(installedFileFix.FilesList);
+        ArgumentNullException.ThrowIfNull(installedFileFix.FilesList);
 
         foreach (var file in installedFileFix.FilesList)
         {

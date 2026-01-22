@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using Avalonia.Desktop.ViewModels.Popups;
 using Common.Axiom;
 using Common.Axiom.Entities;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
@@ -51,7 +50,7 @@ internal sealed partial class SourcesViewModel : ObservableObject
     [RelayCommand]
     private void RemoveSource()
     {
-        Guard.IsNotNull(SelectedItem);
+        ArgumentNullException.ThrowIfNull(SelectedItem);
         _configProvider.RemoveSource(SelectedItem.Url);
         RefreshSources();
     }

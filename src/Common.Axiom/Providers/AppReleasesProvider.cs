@@ -1,6 +1,5 @@
 using System.Text.Json;
 using Common.Axiom.Entities;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Axiom.Providers;
@@ -41,7 +40,7 @@ public sealed class AppReleasesProvider
 
         var releases =
             JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
-            ?? ThrowHelper.ThrowInvalidDataException<List<GitHubReleaseEntity>>("Error while deserializing GitHub releases");
+            ?? throw new InvalidDataException("Error while deserializing GitHub releases");
 
         releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
 

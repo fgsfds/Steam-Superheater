@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Diagnostics;
-
-namespace Common.Axiom.Helpers;
+﻿namespace Common.Axiom.Helpers;
 
 public static class DirectoryHelper
 {
@@ -10,7 +8,7 @@ public static class DirectoryHelper
 
         if (!dir.Exists)
         {
-            ThrowHelper.ThrowInvalidOperationException($"Source directory not found: {dir.FullName}");
+            throw new InvalidOperationException($"Source directory not found: {dir.FullName}");
         }
 
         var dirs = dir.GetDirectories();

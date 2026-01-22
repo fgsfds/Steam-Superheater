@@ -10,7 +10,6 @@ using Common.Axiom;
 using Common.Axiom.Enums;
 using Common.Client;
 using Common.Client.DI;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -144,7 +143,7 @@ public sealed class App : Application
             ThemeEnum.System => ThemeVariant.Default,
             ThemeEnum.Light => ThemeVariant.Light,
             ThemeEnum.Dark => ThemeVariant.Dark,
-            _ => ThrowHelper.ThrowArgumentOutOfRangeException<ThemeVariant>(theme.ToString())
+            _ => throw new ArgumentOutOfRangeException(theme.ToString())
         };
 
         _app.RequestedThemeVariant = themeEnum;

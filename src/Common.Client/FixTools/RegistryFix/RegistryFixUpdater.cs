@@ -2,7 +2,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.RegistryFix;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.RegistryFix;
 
@@ -27,7 +26,7 @@ public sealed class RegistryFixUpdater
         RegistryFixEntity regFix
         )
     {
-        Guard.IsNotNull(regFix.InstalledFix);
+        ArgumentNullException.ThrowIfNull(regFix.InstalledFix);
 
         _fixUninstaller.UninstallFix(regFix.InstalledFix);
 

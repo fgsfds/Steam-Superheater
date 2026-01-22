@@ -2,7 +2,6 @@ using System.Globalization;
 using Avalonia.Data.Converters;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using CommunityToolkit.Diagnostics;
 
 namespace Avalonia.Desktop.Helpers;
 
@@ -21,7 +20,7 @@ internal sealed class BoolToStringConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return ThrowHelper.ThrowNotSupportedException<object>("ConvertBack method for BoolToStringConverter is not implemented.");
+        throw new NotSupportedException("ConvertBack method for BoolToStringConverter is not implemented.");
     }
 }
 
@@ -55,7 +54,7 @@ internal sealed class BoolToColorConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return ThrowHelper.ThrowNotSupportedException<object>("ConvertBack method for BoolToColorConverter is not implemented.");
+        throw new NotSupportedException("ConvertBack method for BoolToColorConverter is not implemented.");
     }
 }
 
@@ -76,7 +75,7 @@ internal sealed class ImagePathToBitmapConverter : IValueConverter
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        return ThrowHelper.ThrowNotSupportedException<object>("ConvertBack method for ImagePathToBitmapConverter is not implemented.");
+        throw new NotSupportedException("ConvertBack method for ImagePathToBitmapConverter is not implemented.");
     }
 }
 #pragma warning restore CS8767 // Nullability of reference types in type of parameter doesn't match implicitly implemented member (possibly because of nullability attributes).

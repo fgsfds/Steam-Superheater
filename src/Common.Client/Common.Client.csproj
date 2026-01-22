@@ -12,13 +12,9 @@
   </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="AddSealed" PrivateAssets="all" />
-        <PackageReference Include="CommunityToolkit.Diagnostics" />
-        <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
-        <PackageReference Include="Downloader" />
         <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.Http" />
         <PackageReference Include="Octopus.Octodiff" />
-        <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
         <PackageReference Include="SharpCompress" />
   </ItemGroup>
 

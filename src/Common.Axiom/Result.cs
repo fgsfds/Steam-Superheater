@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Axiom;
 
@@ -42,8 +41,7 @@ public readonly struct Result
             case ResultEnum resultE:
                 return ResultEnum == resultE;
             default:
-                ThrowHelper.ThrowArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
-                return false;
+                throw new ArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
         }
     }
 
@@ -59,7 +57,7 @@ public readonly struct Result
 
     public override int GetHashCode()
     {
-        return ThrowHelper.ThrowNotSupportedException<int>(string.Empty);
+        throw new NotSupportedException(string.Empty);
     }
 }
 
@@ -112,8 +110,7 @@ public readonly struct Result<T>
             case ResultEnum resultE:
                 return ResultEnum == resultE;
             default:
-                ThrowHelper.ThrowArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
-                return false;
+                throw new ArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
         }
     }
 
@@ -129,7 +126,7 @@ public readonly struct Result<T>
 
     public override int GetHashCode()
     {
-        return ThrowHelper.ThrowNotSupportedException<int>(string.Empty);
+        throw new NotSupportedException(string.Empty);
     }
 }
 

@@ -4,7 +4,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Client.Providers;
@@ -42,7 +41,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
 
             await UpdateCacheAsync().ConfigureAwait(false);
 
-            Guard.IsNotNull(_cache);
+            ArgumentNullException.ThrowIfNull(_cache);
 
             return [.. _cache];
         }
@@ -58,7 +57,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
         BaseInstalledFixEntity installedFix
         )
     {
-        Guard.IsNotNull(_cache);
+        ArgumentNullException.ThrowIfNull(_cache);
 
         _cache.Add(installedFix);
 
@@ -87,7 +86,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
         Guid fixGuid
         )
     {
-        Guard.IsNotNull(_cache);
+        ArgumentNullException.ThrowIfNull(_cache);
 
         var toRemove = _cache.First(x => x.GameId == game.Id && x.Guid == fixGuid);
         _ = _cache.Remove(toRemove);

@@ -5,7 +5,6 @@ using Avalonia.Styling;
 using Common.Axiom;
 using Common.Axiom.Enums;
 using Common.Client;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Database.Client;
@@ -190,7 +189,7 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetDefaultTheme()
     {
-        Guard.IsNotNull(Application.Current);
+        ArgumentNullException.ThrowIfNull(Application.Current);
 
         Application.Current.RequestedThemeVariant = ThemeVariant.Default;
         _config.Theme = ThemeEnum.System;
@@ -199,7 +198,7 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetLightTheme()
     {
-        Guard.IsNotNull(Application.Current);
+        ArgumentNullException.ThrowIfNull(Application.Current);
 
         Application.Current.RequestedThemeVariant = ThemeVariant.Light;
         _config.Theme = ThemeEnum.Light;
@@ -208,7 +207,7 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void SetDarkTheme()
     {
-        Guard.IsNotNull(Application.Current);
+        ArgumentNullException.ThrowIfNull(Application.Current);
 
         Application.Current.RequestedThemeVariant = ThemeVariant.Dark;
         _config.Theme = ThemeEnum.Dark;

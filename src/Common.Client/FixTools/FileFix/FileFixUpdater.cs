@@ -2,7 +2,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.FileFix;
 
@@ -30,7 +29,7 @@ public sealed class FileFixUpdater
         CancellationToken cancellationToken
         )
     {
-        Guard.IsNotNull(fileFix.InstalledFix);
+        ArgumentNullException.ThrowIfNull(fileFix.InstalledFix);
 
         _fixUninstaller.UninstallFix(game, fileFix.InstalledFix);
 

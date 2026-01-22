@@ -2,7 +2,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.HostsFix;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;
 
@@ -23,12 +22,12 @@ public sealed class HostsFixInstaller
     {
         if (!OperatingSystem.IsWindows())
         {
-            return ThrowHelper.ThrowPlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
+            throw new PlatformNotSupportedException(string.Empty);
         }
 
         if (!ClientProperties.IsAdmin)
         {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install hosts fixes");
+            throw new UnauthorizedAccessException("Superheater needs to be run as admin in order to install hosts fixes");
         }
 
         var stringToAdd = string.Empty;

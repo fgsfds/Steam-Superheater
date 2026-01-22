@@ -4,7 +4,6 @@ using Api.Axiom.Interface;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
-using Avalonia.Input.Platform;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
@@ -15,7 +14,6 @@ using Common.Client;
 using Common.Client.FixTools;
 using Common.Client.Models;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -431,8 +429,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(InstallUpdateFixCanExecute))]
     private void InstallUpdateFix()
     {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         try
         {
@@ -502,7 +500,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private async Task CheckHashAsync()
     {
         Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
-        Guard.IsNotNull(SelectedGame?.Game);
+        ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
         var fixUninstallResult = await _fixManager.CheckFixAsync(SelectedGame.Game, fileFix).ConfigureAwait(true);
 
@@ -520,8 +518,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(UninstallFixCanExecute))]
     private async Task UninstallFixAsync()
     {
-        Guard.IsNotNull(SelectedFix);
-        Guard.IsNotNull(SelectedGame?.Game);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
         try
         {
@@ -611,8 +609,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(OpenConfigCanExecute))]
     private void OpenConfig()
     {
-        Guard.IsNotNull(SelectedGame?.Game);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         OpenConfigFileAsync(SelectedGame.Game, SelectedFix);
     }
@@ -626,7 +624,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(OpenGameFolderCanExecute))]
     private void OpenGameFolder()
     {
-        Guard.IsNotNull(SelectedGame?.Game);
+        ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -643,7 +641,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private void OpenPCGamingWiki()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -659,7 +657,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private void OpenSteamStore()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -675,7 +673,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private void OpenSteamClient()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -691,7 +689,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private void OpenSteamDB()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -707,7 +705,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private Task UrlCopyToClipboardAsync()
     {
-        var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? ThrowHelper.ThrowArgumentNullException<IClipboard>("Error while getting clipboard implementation");
+        var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? throw new ArgumentNullException("Error while getting clipboard implementation");
         return clipboard.SetTextAsync(SelectedFixUrl);
     }
 
@@ -718,7 +716,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(LaunchGameCanExecute))]
     private void LaunchGame()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         if (SelectedGame.IsGameInstalled)
         {
@@ -774,7 +772,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private async Task ShowVariantsPopup()
     {
-        Guard.IsNotNull(SelectedFixVariants);
+        ArgumentNullException.ThrowIfNull(SelectedFixVariants);
 
         var selectedTag = await _popupStack.ShowAndGetResultAsync("Variants", SelectedFixVariants).ConfigureAwait(true);
 
@@ -790,7 +788,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(UpvoteCanExecute))]
     private async Task Upvote()
     {
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         _ = await _mainModel.ChangeVoteAsync(SelectedFix, true).ConfigureAwait(true);
         OnPropertyChanged(nameof(SelectedFixScore));
@@ -806,7 +804,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(DownvoteCanExecute))]
     private async Task Downvote()
     {
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         _ = await _mainModel.ChangeVoteAsync(SelectedFix, false).ConfigureAwait(true);
         OnPropertyChanged(nameof(SelectedFixScore));
@@ -822,7 +820,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand]
     private async Task ReportFix()
     {
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         var reportText = await _popupEditor.ShowAndGetResultAsync(
             "Report fix",
@@ -892,8 +890,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <param name="skipDependencies">Don't install or update dependencies</param>
     private async Task<Result> InstallUpdateFixAsync(FixesList fixesList, BaseFixEntity fix, string? fixVariant, bool skipDependencies)
     {
-        Guard.IsNotNull(fixesList.Game);
-        Guard.IsNotNull(SelectedGame?.Game);
+        ArgumentNullException.ThrowIfNull(fixesList.Game);
+        ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
         LockButtons = true;
 
@@ -1093,8 +1091,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         try
         {
             Guard2.IsOfType<FileFixEntity>(fix, out var fileFix);
-            Guard.IsNotNull(fileFix.ConfigFile);
-            Guard.IsNotNull(game);
+            ArgumentNullException.ThrowIfNull(fileFix.ConfigFile);
+            ArgumentNullException.ThrowIfNull(game);
 
             if (!fix.IsInstalled)
             {

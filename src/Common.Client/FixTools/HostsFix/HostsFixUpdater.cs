@@ -2,7 +2,6 @@ using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.HostsFix;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.FixTools.HostsFix;
 
@@ -28,7 +27,7 @@ public sealed class HostsFixUpdater
         string hostsFile
         )
     {
-        Guard.IsNotNull(hostsFix.InstalledFix);
+        ArgumentNullException.ThrowIfNull(hostsFix.InstalledFix);
 
         _fixUninstaller.UninstallFix(hostsFix.InstalledFix, hostsFile);
 

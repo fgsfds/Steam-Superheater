@@ -1,4 +1,3 @@
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
@@ -53,7 +52,7 @@ public sealed class SteamTools : ISteamTools
         }
         else
         {
-            return ThrowHelper.ThrowPlatformNotSupportedException<string>("Can't identify platform");
+            throw new PlatformNotSupportedException("Can't identify platform");
         }
 
         if (result is null)
@@ -73,7 +72,7 @@ public sealed class SteamTools : ISteamTools
     {
         if (!OperatingSystem.IsWindows())
         {
-            return ThrowHelper.ThrowPlatformNotSupportedException<string>();
+            throw new PlatformNotSupportedException();
         }
 
         var path = Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Valve\Steam", "SteamPath", null);

@@ -14,5 +14,6 @@
     <MvvmToolkitEnableINotifyPropertyChangingSupport>false</MvvmToolkitEnableINotifyPropertyChangingSupport>
     <IncludeOpenAPIAnalyzers>true</IncludeOpenAPIAnalyzers>
     <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <AnalysisMode>All</AnalysisMode>
   </PropertyGroup>
 </Project>

@@ -14,7 +14,6 @@ using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client.Models;
 
@@ -389,7 +388,7 @@ public sealed class EditorModel
         BaseFixEntity dependency
         )
     {
-        Guard.IsNotNull(addTo.Dependencies);
+        ArgumentNullException.ThrowIfNull(addTo.Dependencies);
 
         _ = addTo.Dependencies.Remove(dependency.Guid);
 
@@ -434,7 +433,7 @@ public sealed class EditorModel
         }
         else
         {
-            ThrowHelper.ThrowArgumentException(nameof(fix));
+            throw new ArgumentException(nameof(fix));
         }
     }
 
@@ -519,7 +518,7 @@ public sealed class EditorModel
 
                     using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
 
-                    Guard.IsNotNull(header.Content.Headers.ContentLength);
+                    ArgumentNullException.ThrowIfNull(header.Content.Headers.ContentLength);
 
                     fixEntity.FileSize = header.Content.Headers.ContentLength;
 

@@ -8,7 +8,6 @@ using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 
 namespace Common.Client.FixTools;
@@ -107,7 +106,7 @@ public sealed class FixManager
                 installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
                 break;
             default:
-                return ThrowHelper.ThrowNotSupportedException<Result>("Installer for this fix type is not implemented");
+                throw new NotSupportedException("Installer for this fix type is not implemented");
         }
 
         if (!installedFix.IsSuccess)
@@ -136,7 +135,7 @@ public sealed class FixManager
     {
         if (fix is not FileFixEntity fileFix)
         {
-            return ThrowHelper.ThrowNotSupportedException<Result>();
+            throw new NotSupportedException();
         }
 
         if (!Directory.Exists(game.InstallDir))
@@ -144,7 +143,7 @@ public sealed class FixManager
             return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
         }
 
-        Guard.IsNotNull(fileFix.InstalledFix);
+        ArgumentNullException.ThrowIfNull(fileFix.InstalledFix);
 
         if (await _fileFixChecker.CheckFixHashAsync(game, fileFix.InstalledFix).ConfigureAwait(false))
         {
@@ -173,20 +172,19 @@ public sealed class FixManager
             switch (fix)
             {
                 case FileFixEntity fileFix:
-                    Guard.IsNotNull(fileFix.InstalledFix);
+                    ArgumentNullException.ThrowIfNull(fileFix.InstalledFix);
                     _fileFixUninstaller.UninstallFix(game, fileFix.InstalledFix);
                     break;
                 case RegistryFixEntity regFix:
-                    Guard.IsNotNull(regFix.InstalledFix);
+                    ArgumentNullException.ThrowIfNull(regFix.InstalledFix);
                     _registryFixUninstaller.UninstallFix(regFix.InstalledFix);
                     break;
                 case HostsFixEntity hostsFix:
-                    Guard.IsNotNull(hostsFix.InstalledFix);
+                    ArgumentNullException.ThrowIfNull(hostsFix.InstalledFix);
                     _hostsFixUninstaller.UninstallFix(hostsFix.InstalledFix, hostsFile);
                     break;
                 default:
-                    ThrowHelper.ThrowNotSupportedException("Uninstaller for this fix type is not implemented");
-                    break;
+                    throw new NotSupportedException("Uninstaller for this fix type is not implemented");
             }
         }
         catch (IOException ex)
@@ -245,7 +243,7 @@ public sealed class FixManager
                 installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
                 break;
             default:
-                return ThrowHelper.ThrowNotSupportedException<Result>("Updater for this fix type is not implemented");
+                throw new NotSupportedException("Updater for this fix type is not implemented");
         }
 
         if (!installedFix.IsSuccess)

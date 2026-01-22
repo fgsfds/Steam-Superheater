@@ -1,6 +1,4 @@
-﻿using CommunityToolkit.Diagnostics;
-
-namespace Common.Axiom.Helpers;
+﻿namespace Common.Axiom.Helpers;
 
 public static class VersionComparer
 {
@@ -83,7 +81,7 @@ public static class VersionComparer
         }
         else
         {
-            return ThrowHelper.ThrowNotSupportedException<bool>();
+            throw new NotSupportedException();
         }
 
         var result = string.Compare(v1, v2);

@@ -57,7 +57,7 @@ public sealed class FileFixUninstaller
 
         for (var i = startIndex; i < linesList.Count; i++)
         {
-            if (linesList[i].Equals(""))
+            if (string.IsNullOrEmpty(linesList[i]))
             {
                 break;
             }

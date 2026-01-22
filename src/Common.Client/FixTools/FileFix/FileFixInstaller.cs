@@ -9,7 +9,6 @@ using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.FilesTools.Interfaces;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Octodiff.Core;
 
@@ -251,7 +250,7 @@ public sealed class FileFixInstaller
         }
         else
         {
-            return ThrowHelper.ThrowArgumentOutOfRangeException<Result<string>>(nameof(fixUrl));
+            throw new ArgumentOutOfRangeException(nameof(fixUrl));
         }
 
 
@@ -410,7 +409,7 @@ public sealed class FileFixInstaller
 
                 var dir = Path.GetDirectoryName(to);
 
-                Guard.IsNotNull(dir);
+                ArgumentNullException.ThrowIfNull(dir);
 
                 if (!Directory.Exists(dir))
                 {
@@ -505,7 +504,7 @@ public sealed class FileFixInstaller
             if (!File.Exists(originalFilePath) ||
                 !File.Exists(patchFilePath))
             {
-                ThrowHelper.ThrowInvalidDataException();
+                throw new InvalidDataException();
             }
 
             await using FileStream originalFile = new(originalFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);

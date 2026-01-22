@@ -3,13 +3,11 @@ using Avalonia.Controls;
 using Avalonia.Desktop.Windows;
 using Avalonia.Headless;
 using Avalonia.Input;
-using Avalonia.Media.Imaging;
 using Avalonia.VisualTree;
 using Codeuctivity.ImageSharpCompare;
 using Common.Axiom;
 using Common.Client;
 using Common.Client.DI;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.UI;
@@ -121,7 +119,7 @@ internal static class Extensions
         AvaloniaHeadlessPlatform.ForceRenderTimerTick();
         await Task.Delay(500);
 
-        using var frame = window.CaptureRenderedFrame() ?? ThrowHelper.ThrowArgumentNullException<WriteableBitmap>();
+        using var frame = window.CaptureRenderedFrame() ?? throw new ArgumentNullException();
         frame.Save(Path.Combine("ScreenshotsActual", screnshotName));
     }
 }

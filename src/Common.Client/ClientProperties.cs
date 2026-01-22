@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
 using System.Security.Principal;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Client;
 
@@ -49,8 +48,7 @@ public static class ClientProperties
             }
             else
             {
-                ThrowHelper.ThrowPlatformNotSupportedException();
-                return string.Empty;
+                throw new PlatformNotSupportedException();
             }
         }
     }
@@ -99,7 +97,7 @@ public static class ClientProperties
 
         using var proc = Process.Start(processInfo);
 
-        Guard.IsNotNull(proc);
+        ArgumentNullException.ThrowIfNull(proc);
 
         var result = proc.StandardOutput.ReadToEnd().Trim();
 

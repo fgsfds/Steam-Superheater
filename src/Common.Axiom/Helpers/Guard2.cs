@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using CommunityToolkit.Diagnostics;
 
 namespace Common.Axiom.Helpers;
 
@@ -17,10 +16,7 @@ public static class Guard2
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void IsOfType<T>([NotNull] object? value, [NotNull] out T? ret, [CallerArgumentExpression(nameof(value))] string name = "")
     {
-        if (value == null)
-        {
-            ThrowHelper.ThrowArgumentNullException();
-        }
+        ArgumentNullException.ThrowIfNull(value);
 
         if (value.GetType() == typeof(T))
         {
@@ -29,6 +25,6 @@ public static class Guard2
         }
 
         ret = default;
-        ThrowHelper.ThrowArgumentException();
+        throw new ArgumentException();
     }
 }

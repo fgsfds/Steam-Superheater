@@ -2,7 +2,6 @@ using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Desktop.Windows;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 
 namespace Avalonia.Desktop.Helpers;
 
@@ -26,7 +25,7 @@ public static class AvaloniaProperties
         {
             var topLevel = TopLevel.GetTopLevel(MainWindow);
 
-            Guard.IsNotNull(topLevel);
+            ArgumentNullException.ThrowIfNull(topLevel);
 
             return topLevel;
         }

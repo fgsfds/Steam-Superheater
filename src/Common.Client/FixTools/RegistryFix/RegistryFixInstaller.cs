@@ -3,7 +3,6 @@ using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.RegistryFix;
 using Common.Axiom.Enums;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 
@@ -33,12 +32,12 @@ public sealed class RegistryFixInstaller
     {
         if (!OperatingSystem.IsWindows())
         {
-            return ThrowHelper.ThrowPlatformNotSupportedException<Result<BaseInstalledFixEntity>>(string.Empty);
+            throw new PlatformNotSupportedException(string.Empty);
         }
 
         if (fix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
         {
-            ThrowHelper.ThrowUnauthorizedAccessException("Superheater needs to be run as admin in order to install this fix");
+            throw new UnauthorizedAccessException("Superheater needs to be run as admin in order to install this fix");
         }
 
         List<RegistryInstalledEntry> installedEntries = [];
@@ -63,8 +62,7 @@ public sealed class RegistryFixInstaller
                         oldValueStr = (string)oldValue;
                         break;
                     default:
-                        ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {oldValue.GetType()}");
-                        break;
+                        throw new ArgumentOutOfRangeException($"Unknown type: {oldValue.GetType()}");
                 }
             }
 
@@ -77,8 +75,7 @@ public sealed class RegistryFixInstaller
                     Registry.SetValue(entry.Key, valueName, entry.NewValueData);
                     break;
                 default:
-                    ThrowHelper.ThrowArgumentOutOfRangeException($"Unknown type: {entry.ValueType.GetType()}");
-                    break;
+                    throw new ArgumentOutOfRangeException($"Unknown type: {entry.ValueType.GetType()}");
             }
 
             installedEntries.Add(new()
@@ -105,4 +102,3 @@ public sealed class RegistryFixInstaller
 
     }
 }
-

@@ -11,7 +11,6 @@ using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
-using Downloader;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -32,7 +31,6 @@ public sealed partial class FileFixTests
     private readonly FileFixEntity _fileFixVariantEntity;
 
     private readonly HttpClient _httpClient;
-    private readonly DownloadService _downloadService;
     private readonly FixManager _fixManager;
 
     #region Test Preparations
@@ -86,7 +84,6 @@ public sealed partial class FileFixTests
         _ = installedFixesProvider.GetInstalledFixesListAsync();
 
         _httpClient = new();
-        _downloadService = new();
         var configMock = new Mock<IConfigProvider>().Object;
 
         FileFixInstaller fileFixInstaller = new(
@@ -94,7 +91,7 @@ public sealed partial class FileFixTests
             new(new()),
             new FilesDownloader(
                 new(),
-                _downloadService,
+                new Mock<IHttpClientFactory>().Object,
                 new Mock<ILogger>().Object
                 ),
             new(),
@@ -138,7 +135,6 @@ public sealed partial class FileFixTests
         }
 
         _httpClient.Dispose();
-        _downloadService.Dispose();
     }
 
     private static void ClearTempFolders()

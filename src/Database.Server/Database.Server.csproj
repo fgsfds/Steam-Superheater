@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <ItemGroup>
-        <PackageReference Include="AddSealed" PrivateAssets="all" />
-        <PackageReference Include="CommunityToolkit.Diagnostics" />
-        <PackageReference Include="ConfigureAwaitAnalyzer" PrivateAssets="all" />
         <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" PrivateAssets="all" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" PrivateAssets="all" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
-        <PackageReference Include="Roslynator.Analyzers" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>

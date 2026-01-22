@@ -4,7 +4,6 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
-using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Common.Axiom;
@@ -19,7 +18,6 @@ using Common.Axiom.Helpers;
 using Common.Client;
 using Common.Client.Models;
 using Common.Client.Providers.Interfaces;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -89,7 +87,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.Name ?? string.Empty;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.Name = value;
             OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -101,7 +99,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.Version ?? string.Empty;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.Version = value;
             OnPropertyChanged(nameof(SelectedGameFixesList));
@@ -115,7 +113,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             : string.Join(';', SelectedFix.Tags);
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.Tags = value.SplitSemicolonSeparatedString();
         }
@@ -139,7 +137,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.Description ?? string.Empty;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.Description = value;
             OnPropertyChanged();
@@ -151,7 +149,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.Changelog ?? string.Empty;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.Changelog = value;
             OnPropertyChanged();
@@ -163,7 +161,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Windows) ?? false;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.SupportedOSes = value
                 ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Windows)
@@ -176,7 +174,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix?.SupportedOSes.HasFlag(OSEnum.Linux) ?? false;
         set
         {
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             SelectedFix.SupportedOSes = value
                 ? SelectedFix.SupportedOSes.AddFlag(OSEnum.Linux)
@@ -189,8 +187,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix is FileFixEntity;
         set
         {
-            Guard.IsNotNull(SelectedGame);
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedGame);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             if (value)
             {
@@ -208,8 +206,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix is RegistryFixEntity;
         set
         {
-            Guard.IsNotNull(SelectedGame);
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedGame);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             if (value)
             {
@@ -227,8 +225,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix is HostsFixEntity;
         set
         {
-            Guard.IsNotNull(SelectedGame);
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedGame);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             if (value)
             {
@@ -246,8 +244,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         get => SelectedFix is TextFixEntity;
         set
         {
-            Guard.IsNotNull(SelectedGame);
-            Guard.IsNotNull(SelectedFix);
+            ArgumentNullException.ThrowIfNull(SelectedGame);
+            ArgumentNullException.ThrowIfNull(SelectedFix);
 
             if (value)
             {
@@ -407,7 +405,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(AddNewFixCanExecute))]
     private void AddNewFix()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         var newFix = _editorModel.AddNewFix(SelectedGame);
 
@@ -425,8 +423,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(AddFixToDbCanExecute))]
     private async Task AddFixToDbAsync()
     {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         var result = await _fixesProvider.AddFixToDbAsync(SelectedGame.GameId, SelectedGame.GameName, SelectedFix).ConfigureAwait(true);
 
@@ -444,7 +442,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(DisableFixCanExecute))]
     private async Task DisableFixAsync()
     {
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         var result = await _editorModel.ChangeFixDisabledState(SelectedFix, !SelectedFix.IsDisabled).ConfigureAwait(true);
 
@@ -473,8 +471,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(AddDependencyCanExecute))]
     private void AddDependency()
     {
-        Guard.IsNotNull(SelectedFix);
-        Guard.IsNotNull(SelectedAvailableDependency);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedAvailableDependency);
 
         _editorModel.AddDependencyForFix(SelectedFix, SelectedAvailableDependency);
 
@@ -490,8 +488,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(RemoveDependencyCanExecute))]
     private void RemoveDependency()
     {
-        Guard.IsNotNull(SelectedFix);
-        Guard.IsNotNull(SelectedDependency);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedDependency);
 
         _editorModel.RemoveDependencyForFix(SelectedFix, SelectedDependency);
 
@@ -507,7 +505,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(AddNewGameCanExecute))]
     private void AddNewGame()
     {
-        Guard.IsNotNull(SelectedAvailableGame);
+        ArgumentNullException.ThrowIfNull(SelectedAvailableGame);
 
         var newGame = _editorModel.AddNewGame(SelectedAvailableGame);
 
@@ -525,8 +523,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
     private async Task UploadFixAsync()
     {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         _progressReport.Progress.ProgressChanged += ProgressChanged;
         _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
@@ -595,7 +593,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(OpenTagsEditorCanExecute))]
     private async Task OpenTagsEditorAsync()
     {
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         var result = await _popupEditor.ShowAndGetResultAsync("Tags", SelectedFix.Tags ?? []).ConfigureAwait(true);
 
@@ -647,7 +645,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private async Task OpenGameFolderAsync()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
         var game = games.FirstOrDefault(x => x.Id == SelectedGame.GameId);
@@ -671,7 +669,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void OpenPCGamingWiki()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -687,7 +685,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void OpenSteamStore()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -703,7 +701,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void OpenSteamClient()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -719,7 +717,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void OpenSteamDB()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
         using var _ = Process.Start(new ProcessStartInfo
         {
@@ -735,9 +733,9 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private Task CopyGameNameAsync()
     {
-        Guard.IsNotNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
 
-        var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? ThrowHelper.ThrowArgumentNullException<IClipboard>("Error while getting clipboard implementation");
+        var clipboard = AvaloniaProperties.TopLevel.Clipboard ?? throw new ArgumentNullException("Error while getting clipboard implementation");
         return clipboard.SetTextAsync(SelectedGame.GameName);
     }
 
@@ -784,8 +782,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(TestFixCanExecute))]
     private async Task TestFixAsync()
     {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out _, out var fixJson);
         await _mainViewModel.TestFixAsync(fixJson).ConfigureAwait(true);
@@ -801,8 +799,8 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand]
     private void PreviewJson()
     {
-        Guard.IsNotNull(SelectedGame);
-        Guard.IsNotNull(SelectedFix);
+        ArgumentNullException.ThrowIfNull(SelectedGame);
+        ArgumentNullException.ThrowIfNull(SelectedFix);
 
         _ = _editorModel.CreateFixJson(SelectedGame, SelectedFix, true, out var newFixJson, out _);
 

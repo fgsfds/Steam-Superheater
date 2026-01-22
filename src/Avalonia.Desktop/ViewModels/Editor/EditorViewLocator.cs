@@ -1,7 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Controls.Templates;
 using Avalonia.Desktop.UserControls.Editor;
-using CommunityToolkit.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace Avalonia.Desktop.ViewModels.Editor;
@@ -20,7 +19,7 @@ public sealed class EditorViewLocator : IDataTemplate
             return new EditorRegFixControl();
         }
 
-        return ThrowHelper.ThrowNotSupportedException<Control>();
+        throw new NotSupportedException();
     }
 
     public bool Match(object? data)

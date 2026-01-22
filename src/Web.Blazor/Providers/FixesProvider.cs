@@ -7,7 +7,6 @@ using Common.Axiom.Entities.Fixes.RegistryFix;
 using Common.Axiom.Entities.Fixes.TextFix;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
-using CommunityToolkit.Diagnostics;
 using Database.Server;
 using Database.Server.DbEntities;
 using Microsoft.EntityFrameworkCore;
@@ -336,7 +335,7 @@ public sealed class FixesProvider
         var databaseVersions = dbContext.DatabaseVersions.Find(DatabaseTableEnum.Fixes)!;
         var newTableVersion = databaseVersions.Version + 1;
 
-        Guard.IsNotNull(fix);
+        ArgumentNullException.ThrowIfNull(fix);
 
         fix.IsDisabled = isDisabled;
         fix.TableVersion = newTableVersion;
@@ -356,7 +355,7 @@ public sealed class FixesProvider
     /// <returns>Is successfully added</returns>
     public async Task<bool> AddFixAsync(int gameId, string gameName, BaseFixEntity fix)
     {
-        Guard.IsNotNull(fix);
+        ArgumentNullException.ThrowIfNull(fix);
 
         if (fix is FileFixEntity fileFix1 &&
             fileFix1.Url is not null)
@@ -410,7 +409,7 @@ public sealed class FixesProvider
                 fix is RegistryFixEntity ? FixTypeEnum.RegistryFix :
                 fix is HostsFixEntity ? FixTypeEnum.HostsFix :
                 fix is TextFixEntity ? FixTypeEnum.TextFix :
-                ThrowHelper.ThrowNotSupportedException<FixTypeEnum>();
+                throw new NotSupportedException();
 
             if (existingEntity is null)
             {
@@ -518,7 +517,7 @@ public sealed class FixesProvider
             }
             else
             {
-                ThrowHelper.ThrowNotSupportedException();
+                throw new NotSupportedException();
             }
 
             _ = dbContext.SaveChanges();
@@ -793,7 +792,7 @@ public sealed class FixesProvider
 
         if (!response.IsSuccessStatusCode)
         {
-            return ThrowHelper.ThrowInvalidDataException<long>($"Error while getting response for {fixUrl}: {response.StatusCode}");
+            throw new InvalidDataException($"Error while getting response for {fixUrl}: {response.StatusCode}");
         }
         else if (response.Content.Headers.ContentLength is not null)
         {
@@ -817,7 +816,7 @@ public sealed class FixesProvider
 
         if (!response.IsSuccessStatusCode)
         {
-            return ThrowHelper.ThrowInvalidDataException<string>($"Error while getting response for {fixUrl}: {response.StatusCode}");
+            throw new InvalidDataException($"Error while getting response for {fixUrl}: {response.StatusCode}");
         }
         else if (response.Content.Headers.ContentMD5 is not null)
         {

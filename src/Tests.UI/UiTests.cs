@@ -3,7 +3,6 @@ using Avalonia.Headless;
 using Avalonia.Headless.XUnit;
 using Common.Axiom;
 using Common.Client.DI;
-using CommunityToolkit.Diagnostics;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Tests.UI;
@@ -34,9 +33,9 @@ public sealed class UiTests : IDisposable
     {
         var window = Helpers.CreateWindow();
 
-        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? ThrowHelper.ThrowArgumentNullException<ProgressBar>();
-        var progressText = window.GetDescendantWithName<TextBlock>("GeneralProgressBarText") ?? ThrowHelper.ThrowArgumentNullException<TextBlock>();
-        var cancelButton = window.GetDescendantWithName<Button>("CancelButton") ?? ThrowHelper.ThrowArgumentNullException<Button>();
+        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? throw new ArgumentNullException();
+        var progressText = window.GetDescendantWithName<TextBlock>("GeneralProgressBarText") ?? throw new ArgumentNullException();
+        var cancelButton = window.GetDescendantWithName<Button>("CancelButton") ?? throw new ArgumentNullException();
 
         while (progress.IsIndeterminate)
         {
@@ -68,10 +67,10 @@ public sealed class UiTests : IDisposable
     {
         var window = Helpers.CreateWindow();
 
-        var searchBox = window.GetDescendantWithName<TextBox>("SearchBox") ?? ThrowHelper.ThrowArgumentNullException<TextBox>();
-        var gamesList = window.GetDescendantWithName<ListBox>("GamesListBox") ?? ThrowHelper.ThrowArgumentNullException<ListBox>();
-        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? ThrowHelper.ThrowArgumentNullException<ProgressBar>();
-        var clearSearch = window.GetDescendantWithName<Button>("ClearSearchButton") ?? ThrowHelper.ThrowArgumentNullException<Button>();
+        var searchBox = window.GetDescendantWithName<TextBox>("SearchBox") ?? throw new ArgumentNullException();
+        var gamesList = window.GetDescendantWithName<ListBox>("GamesListBox") ?? throw new ArgumentNullException();
+        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? throw new ArgumentNullException();
+        var clearSearch = window.GetDescendantWithName<Button>("ClearSearchButton") ?? throw new ArgumentNullException();
 
         Assert.False(clearSearch.IsEffectivelyEnabled);
 
@@ -102,7 +101,7 @@ public sealed class UiTests : IDisposable
     {
         var window = Helpers.CreateWindow();
 
-        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? ThrowHelper.ThrowArgumentNullException<ProgressBar>();
+        var progress = window.GetDescendantWithName<ProgressBar>("GeneralProgressBar") ?? throw new ArgumentNullException();
 
         while (progress.IsIndeterminate)
         {
