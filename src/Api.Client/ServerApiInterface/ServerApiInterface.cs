@@ -1,11 +1,12 @@
 using System.Net.Http.Json;
 using System.Web;
+using Api.Axiom.Interfaces;
 using Api.Axiom.Messages;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Enums;
 
-namespace Api.Axiom.Interface.ServerApiInterface;
+namespace Api.Client.ServerApiInterface;
 
 public sealed partial class ServerApiInterface : IApiInterface
 {

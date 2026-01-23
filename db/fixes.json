@@ -9752,12 +9752,12 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/sc/SplinterCell.WidescreenFix.zip",
-        "FileSize": 3301123,
+        "FileSize": 3999298,
         "ConfigFile": "system\\scripts\\SplinterCell.WidescreenFix.ini",
-        "MD5": "8D6A42F53C3246D8123EC74590DEC504",
+        "MD5": "CE7F252051C9EBD2A5843080CA29C194",
         "Name": "Widescreen Fix",
         "Guid": "9da1a9db-2049-46ac-a6ce-b956999e7806",
-        "Version": "26.01.14",
+        "Version": "26.01.16",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/sc\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs",
         "Tags": [

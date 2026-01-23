@@ -1,5 +1,5 @@
 using System.Collections.Immutable;
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
 using Common.Axiom;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;

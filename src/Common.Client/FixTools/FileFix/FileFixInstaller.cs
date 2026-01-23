@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;

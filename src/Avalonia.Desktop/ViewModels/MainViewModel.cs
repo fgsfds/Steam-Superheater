@@ -1,6 +1,6 @@
 using System.Collections.Immutable;
 using System.Diagnostics;
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;

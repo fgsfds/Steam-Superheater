@@ -5,4 +5,9 @@
     <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Api.Axiom\Api.Axiom.csproj" />
+    <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
+  </ItemGroup>
+
 </Project>

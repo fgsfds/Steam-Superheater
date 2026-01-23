@@ -1,4 +1,5 @@
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
+using Api.Client;
 using Common.Axiom;
 using Common.Client;
 using Common.Client.FilesTools.Interfaces;
@@ -23,7 +24,7 @@ public sealed class ApiTests
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
 
         //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
-        IApiInterface apiInterface = new FileApiInterface(new(logger.Object, httpClient), httpClient);
+        IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
         FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, new());
 
         var fixes = await fixesProvider.GetFixesListAsync(false, false).ConfigureAwait(true);
@@ -46,7 +47,7 @@ public sealed class ApiTests
         httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
 
         //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
-        IApiInterface apiInterface = new FileApiInterface(new(logger.Object, httpClient), httpClient);
+        IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
         AppUpdateInstaller appUpdateInstaller = new(filesDownloaderMock.Object, apiInterface, loggerMock.Object);
 
         var release = await appUpdateInstaller.CheckForUpdates(new("0.0.0.0")).ConfigureAwait(true);

@@ -1,3 +1,4 @@
+using Api.Client.DI;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Desktop.DI;
@@ -131,6 +132,7 @@ public sealed class App : Application
         ViewModelsBindings.Load(container);
         CommonBindings.Load(container, Design.IsDesignMode);
         ProvidersBindings.Load(container, Design.IsDesignMode);
+        ApiBindings.Load(container);
     }
 
     /// <summary>

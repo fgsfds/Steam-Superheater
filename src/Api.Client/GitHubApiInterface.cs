@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Api.Axiom.Interfaces;
 using Api.Axiom.Messages;
 using Common.Axiom;
 using Common.Axiom.Entities;
@@ -6,21 +7,29 @@ using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
 using Common.Axiom.Providers;
+using Common.Client;
+using Microsoft.Extensions.Logging;
 
-namespace Api.Axiom.Interface;
+namespace Api.Client;
 
-public sealed class FileApiInterface : IApiInterface
+public sealed class GitHubApiInterface : IApiInterface
 {
     private readonly AppReleasesProvider _appReleasesProvider;
     private readonly HttpClient _httpClient;
+    private readonly SemaphoreSlim _semaphore = new(1);
+    private readonly ILogger _logger;
 
-    public FileApiInterface(
+    private Dictionary<string, string>? _data;
+
+    public GitHubApiInterface(
         AppReleasesProvider appReleasesProvider,
-        HttpClient httpClient
+        HttpClient httpClient,
+        ILogger logger
         )
     {
         _appReleasesProvider = appReleasesProvider;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
     public async Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion)
@@ -106,11 +115,32 @@ public sealed class FileApiInterface : IApiInterface
         }
     }
 
-    public Task<Result<string?>> GetSignedUrlAsync(string path)
+    public async Task<Result<string?>> GetSignedUrlAsync(string path)
     {
-        var url = CommonConstants.UploadsFolder + path;
+        await _semaphore.WaitAsync().ConfigureAwait(false);
 
-        return Task.FromResult(new Result<string?>(ResultEnum.Success, url, string.Empty));
+        try
+        {
+            if (_data is null)
+            {
+                await InitData().ConfigureAwait(false);
+            }
+
+            _ = _data!.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ? uploadFolder : null;
+
+            var url = uploadFolder + path;
+
+            return new Result<string?>(ResultEnum.Success, url, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "=== Error while getting upload folder from GitHub ===");
+            return new Result<string?>(ResultEnum.Error, null, "Error while getting upload folder from GitHub");
+        }
+        finally
+        {
+            _ = _semaphore.Release();
+        }
     }
 
 
@@ -131,4 +161,29 @@ public sealed class FileApiInterface : IApiInterface
     public Task<Result<GetFixesStatsOutMessage>> GetFixesStats() => Task.FromResult(new Result<GetFixesStatsOutMessage>(ResultEnum.Error, null, string.Empty));
 
     public Task<Result> ReportFixAsync(Guid guid, string text) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+
+    private async Task InitData()
+    {
+        string data;
+
+        if (ClientProperties.IsOfflineMode)
+        {
+            data = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "fixes.json"));
+        }
+        else
+        {
+            //using var httpClient = _httpClientFactory.CreateClient(HttpClientEnum.GitHub.GetDescription());
+            using var response = await _httpClient.GetAsync(CommonConstants.DataJsonUrl, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
+            _ = response.EnsureSuccessStatusCode();
+
+            data = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+        }
+
+        _data = JsonSerializer.Deserialize(data, DataJsonModelContext.Default.DictionaryStringString);
+
+        if (_data is null)
+        {
+            throw new ArgumentNullException();
+        }
+    }
 }

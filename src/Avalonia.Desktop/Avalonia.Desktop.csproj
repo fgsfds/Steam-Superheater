@@ -43,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Api.Client\Api.Client.csproj" />
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
   </ItemGroup>
 

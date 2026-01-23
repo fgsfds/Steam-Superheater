@@ -1,4 +1,4 @@
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
 using Common.Axiom;
 using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
@@ -43,8 +43,6 @@ public static class CommonBindings
         _ = container.AddSingleton<FilesUploader>();
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<ISteamTools, SteamTools>();
-        //_ = container.AddSingleton<IApiInterface, ServerApiInterface>();
-        _ = container.AddSingleton<IApiInterface, FileApiInterface>();
 
         _ = container.AddHttpClient(string.Empty)
             .ConfigureHttpClient((serviceProvider, client) =>

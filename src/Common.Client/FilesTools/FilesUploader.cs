@@ -1,4 +1,4 @@
-using Api.Axiom.Interface;
+using Api.Axiom.Interfaces;
 using Common.Axiom;
 using Microsoft.Extensions.Logging;
 
@@ -66,7 +66,7 @@ public sealed class FilesUploader
             foreach (var file in files)
             {
                 var fileName = remoteFileName ?? Path.GetFileName(file);
-                var result = await _apiInterface.GetSignedUrlAsync(folder + "/" + fileName).ConfigureAwait(false);
+                var result = await _apiInterface.GetSignedUrlAsync("/" + folder + "/" + fileName).ConfigureAwait(false);
 
                 if (!result.IsSuccess)
                 {

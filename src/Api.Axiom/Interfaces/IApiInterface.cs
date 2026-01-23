@@ -4,7 +4,7 @@ using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Enums;
 
-namespace Api.Axiom.Interface;
+namespace Api.Axiom.Interfaces;
 
 public interface IApiInterface
 {

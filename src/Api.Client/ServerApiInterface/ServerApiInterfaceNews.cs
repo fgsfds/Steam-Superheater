@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 using Api.Axiom.Messages;
 using Common.Axiom;
 
-namespace Api.Axiom.Interface.ServerApiInterface;
+namespace Api.Client.ServerApiInterface;
 
 public sealed partial class ServerApiInterface
 {

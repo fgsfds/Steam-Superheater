@@ -5,12 +5,6 @@
       <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Compile Remove="API\**" />
-    <EmbeddedResource Remove="API\**" />
-    <None Remove="API\**" />
-  </ItemGroup>
-
     <ItemGroup>
         <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
         <PackageReference Include="Microsoft.Extensions.Http" />
