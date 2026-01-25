@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using Api.Axiom.Interfaces;
 using Common.Axiom;
+using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
@@ -71,8 +72,14 @@ public sealed class MainModel
         )
     {
         List<FixesList> resultingFixesList = new(_unfilteredFixesList.Count);
-        var games = (await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false))
-            .ToDictionary(x => x.Id);
+
+        var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
+        var gamesDict = new Dictionary<int, GameEntity>(games.Count);
+
+        foreach (var game in games)
+        {
+            _ = gamesDict.TryAdd(game.Id, game);
+        }
 
         foreach (var entity in _unfilteredFixesList)
         {
@@ -82,7 +89,7 @@ public sealed class MainModel
                 continue;
             }
 
-            _ = games.TryGetValue(entity.GameId, out var game);
+            _ = gamesDict.TryGetValue(entity.GameId, out var game);
 
             //hide uninstalled games unless enabled
             if (game is null && !_config.ShowUninstalledGames)
@@ -196,7 +203,7 @@ public sealed class MainModel
             }
             else
             {
-                additionalFix.Game = games[additionalFix.GameId];
+                additionalFix.Game = gamesDict[additionalFix.GameId];
                 resultingFixesList.Add(additionalFix);
             }
         }
