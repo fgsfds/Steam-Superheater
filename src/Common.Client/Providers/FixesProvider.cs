@@ -317,7 +317,7 @@ public sealed class FixesProvider : IFixesProvider
         {
             if (!fileFix.Url.StartsWith("http"))
             {
-                fileFix.Url = CommonConstants.BucketAddress + fileFix.Url;
+                fileFix.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3Folder}/{fileFix.Url}";
             }
         }
 

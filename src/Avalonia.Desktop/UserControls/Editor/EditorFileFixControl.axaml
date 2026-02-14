@@ -286,7 +286,7 @@
                      Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
         </Grid>
 
-        <!--File MD5-->
+        <!--File hash-->
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" SharedSizeGroup="MySizeGroup" />
@@ -296,10 +296,10 @@
             <TextBlock VerticalAlignment="Center"
                        Grid.Column="0"
                        Margin="5">
-                MD5
+                Hash
             </TextBlock>
 
-            <TextBox Text="{Binding SelectedFixMD5, Mode=TwoWay}"
+            <TextBox Text="{Binding SelectedFixHash, Mode=TwoWay}"
                      Margin="0,3"
                      Grid.Column="1"
                      IsEnabled="{Binding #LinkToFile.Text,

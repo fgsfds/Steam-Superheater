@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Security.Cryptography;
 using Common.Axiom;
 using Common.Client.FilesTools.Interfaces;
 using Microsoft.Extensions.Logging;
@@ -24,7 +23,7 @@ public sealed class FilesDownloader : IFilesDownloader
     }
 
     /// <inheritdoc/>
-    public async Task<Result> CheckAndDownloadFileAsync(
+    public async Task<Result> DownloadFileAsync(
         Uri url,
         string filePath,
         CancellationToken cancellationToken
@@ -32,7 +31,6 @@ public sealed class FilesDownloader : IFilesDownloader
     {
         _logger.LogInformation($"Started downloading file {url}");
 
-        IProgress<float> progress = _progressReport.Progress;
         var tempFile = filePath + ".temp";
 
         if (File.Exists(tempFile))
@@ -110,47 +108,6 @@ public sealed class FilesDownloader : IFilesDownloader
             fileStream.Dispose();
         }
 
-        return new(ResultEnum.Success, string.Empty);
-    }
-
-    public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
-    {
-        FileInfo fileInfo = new(filePath);
-        var contentLength = fileInfo.Length;
-
-        if (contentLength > 1e+9)
-        {
-            _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
-        }
-        else
-        {
-            _progressReport.OperationMessage = "Checking hash...";
-        }
-
-        try
-        {
-            using var md5 = MD5.Create();
-            await using var stream = File.OpenRead(filePath);
-
-            var fileHash = Convert.ToHexString(await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false));
-
-            if (!hash.Equals(fileHash, StringComparison.OrdinalIgnoreCase))
-            {
-                return new(ResultEnum.MD5Error, "File's hash doesn't match the database");
-            }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Hash checking cancelled");
-            //do nothing
-        }
-        catch (Exception ex)
-        {
-            _progressReport.OperationMessage = string.Empty;
-            return new(ResultEnum.Error, ex.ToString());
-        }
-
-        _progressReport.OperationMessage = string.Empty;
         return new(ResultEnum.Success, string.Empty);
     }
 

@@ -14,6 +14,7 @@ using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.Providers.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace Common.Client.Models;
 
@@ -24,6 +25,7 @@ public sealed class EditorModel
     private readonly FilesUploader _filesUploader;
     private readonly IApiInterface _apiInterface;
     private readonly HttpClient _httpClient;
+    private readonly ILogger<EditorModel> _logger;
 
     private List<FixesList> _fixesList = [];
     private List<GameEntity> _availableGamesList = [];
@@ -39,7 +41,8 @@ public sealed class EditorModel
         IGamesProvider gamesProvider,
         FilesUploader filesUploader,
         IApiInterface apiInterface,
-        HttpClient httpClient
+        HttpClient httpClient,
+        ILogger<EditorModel> logger
         )
     {
         _fixesProvider = fixesProvider;
@@ -47,6 +50,7 @@ public sealed class EditorModel
         _filesUploader = filesUploader;
         _apiInterface = apiInterface;
         _httpClient = httpClient;
+        _logger = logger;
     }
 
 
@@ -146,7 +150,7 @@ public sealed class EditorModel
         {
             GameId = game.Id,
             GameName = game.Name,
-            Fixes = [new FileFixEntity(true)]
+            Fixes = [FileFixEntity.CreateBlank()]
         };
 
         _fixesList.Add(newFix);
@@ -163,7 +167,7 @@ public sealed class EditorModel
     /// <returns>New fix entity</returns>
     public FileFixEntity AddNewFix(FixesList game)
     {
-        FileFixEntity newFix = new(true);
+        var newFix = FileFixEntity.CreateBlank();
 
         game.Fixes.Add(newFix);
 
@@ -509,35 +513,48 @@ public sealed class EditorModel
             {
                 if (fix is FileFixEntity fixEntity &&
                     fixEntity.Url is not null &&
-                    (string.IsNullOrWhiteSpace(fixEntity.MD5) || fixEntity.FileSize < 1))
+                    (string.IsNullOrWhiteSpace(fixEntity.Sha256) || fixEntity.FileSize < 1))
                 {
-                    if (!fixEntity.Url.StartsWith("http"))
+                    try
                     {
-                        fixEntity.Url = CommonConstants.BucketAddress + fixEntity.Url;
+                        if (!fixEntity.Url.StartsWith("http"))
+                        {
+                            fixEntity.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3Folder}/{fixEntity.Url}";
+                        }
+
+                        using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
+
+                        ArgumentNullException.ThrowIfNull(header.Content.Headers.ContentLength);
+
+                        fixEntity.FileSize = header.Content.Headers.ContentLength;
+
+                        if (fixEntity.Url.StartsWith(CommonConstants.S3Endpoint) &&
+                            !fixEntity.IsDisabled)
+                        {
+                            var hash = header.Headers
+                                .FirstOrDefault(x => x.Key.Equals("x-amz-meta-checksum-sha256"))
+                                .Value
+                                ?.FirstOrDefault();
+
+                            if (hash is null)
+                            {
+                                throw new NullReferenceException(nameof(hash));
+                            }
+
+                            fixEntity.Sha256 = hash;
+                        }
+                        else
+                        {
+                            using var stream = header.Content.ReadAsStream();
+                            var hash = SHA256.HashData(stream);
+                            var hashSet = Convert.ToHexString(hash);
+
+                            fixEntity.Sha256 = hashSet;
+                        }
                     }
-
-                    using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
-
-                    ArgumentNullException.ThrowIfNull(header.Content.Headers.ContentLength);
-
-                    fixEntity.FileSize = header.Content.Headers.ContentLength;
-
-                    if (fixEntity.Url.StartsWith(CommonConstants.BucketAddress))
+                    catch (Exception ex)
                     {
-                        fixEntity.MD5 = header.Headers.ETag!.Tag.Replace("\"", "");
-                    }
-                    else if (header.Content.Headers.ContentMD5 is not null)
-                    {
-                        fixEntity.MD5 = Convert.ToHexString(header.Content.Headers.ContentMD5);
-                    }
-                    else
-                    {
-                        using var stream = _httpClient.GetStreamAsync(fixEntity.Url).Result;
-                        using var md5 = MD5.Create();
-
-                        byte[] hash = md5.ComputeHash(stream);
-
-                        fixEntity.MD5 = Convert.ToHexString(hash);
+                        _logger.LogCritical(ex, fixEntity.Url);
                     }
                 }
             }

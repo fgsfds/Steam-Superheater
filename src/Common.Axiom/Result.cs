@@ -138,9 +138,9 @@ public enum ResultEnum : byte
     /// </summary>
     Success,
     /// <summary>
-    /// Error while validating MD5
+    /// Error while validating hash
     /// </summary>
-    MD5Error,
+    HashError,
     /// <summary>
     /// Something not found
     /// </summary>

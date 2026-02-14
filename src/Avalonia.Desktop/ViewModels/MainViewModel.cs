@@ -965,7 +965,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, false, _cancellationTokenSource.Token).ConfigureAwait(true);
         }
 
-        if (result == ResultEnum.MD5Error)
+        if (result == ResultEnum.HashError)
         {
             var popupResult = await _popupMessage.ShowAndGetResultAsync(
                 "Warning",

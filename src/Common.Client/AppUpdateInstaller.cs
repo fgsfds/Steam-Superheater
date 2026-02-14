@@ -71,7 +71,7 @@ public sealed class AppUpdateInstaller(
             File.Delete(fileName);
         }
 
-        _ = await _filesDownloader.CheckAndDownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
+        _ = await _filesDownloader.DownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
         ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder), true);
 

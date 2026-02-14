@@ -74,11 +74,11 @@ public sealed class DatabaseTests
 
                 var url = fileFix.Url;
                 var size = fileFix.FileSize;
-                var md5 = fileFix.MD5;
+                var hash = fileFix.Sha256;
 
-                if (md5 is null)
+                if (hash is null)
                 {
-                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have MD5 in the database.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have Hash in the database.");
                 }
 
                 if (size is null)
@@ -86,7 +86,7 @@ public sealed class DatabaseTests
                     _ = sbFails.AppendLine($"[Error] File {url} doesn't have size in the database.");
                 }
 
-                if (md5 is null || size is null)
+                if (hash is null || size is null)
                 {
                     continue;
                 }
@@ -111,61 +111,41 @@ public sealed class DatabaseTests
                 //md5 of files from s3
                 if (url.StartsWith(CommonConstants.S3Endpoint))
                 {
-                    if (url.EndsWith("re4_re4hd_v1_1.zip"))
+                    var actualHash = header.Headers
+                        .FirstOrDefault(x => x.Key.Equals("x-amz-meta-checksum-sha256"))
+                        .Value
+                        ?.FirstOrDefault();
+
+                    if (actualHash is null)
                     {
-                        //nothing to do
-                        continue;
-                    }
-                    else if (header.Headers.ETag?.Tag is null)
-                    {
-                        _ = sbFails.AppendLine($"[Error] File {url} doesn't have ETag.");
+                        _ = sbFails.AppendLine($"[Error] File {url} doesn't have Hash.");
                     }
                     else
                     {
-                        var md5e = header.Headers.ETag!.Tag.Replace("\"", "");
-
-                        if (md5e.Contains('-'))
+                        if (!actualHash.Equals(hash, StringComparison.OrdinalIgnoreCase))
                         {
-                            _ = sbFails.AppendLine($"[Error] File {url} has incorrect ETag.");
-                        }
-                        else if (!md5e.Equals(md5, StringComparison.OrdinalIgnoreCase))
-                        {
-                            _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
+                            _ = sbFails.AppendLine($"[Error] File {url} has wrong Hash.");
                         }
                         else
                         {
-                            _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
+                            _ = sbSuccesses.AppendLine($"[Info] File's {url} Hash matches: {hash}.");
                         }
-                    }
-                }
-                //md5 of external files
-                else if (header.Content.Headers.ContentMD5 is not null)
-                {
-                    if (!Convert.ToHexString(header.Content.Headers.ContentMD5).Equals(md5, StringComparison.OrdinalIgnoreCase))
-                    {
-                        _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
-                    }
-                    else
-                    {
-                        _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
                     }
                 }
                 else
                 {
-                    await using var stream = await httpClient.GetStreamAsync(url);
-                    using var md5remote = MD5.Create();
+                    await using var stream = await httpClient.GetStreamAsync(url).ConfigureAwait(false);
 
-                    byte[] hash = md5remote.ComputeHash(stream);
+                    var actualHash = await SHA256.HashDataAsync(stream);
+                    var actualHashStr = Convert.ToHexString(actualHash);
 
-                    var filemd5 = Convert.ToHexString(hash);
-
-                    if (!filemd5.Equals(md5, StringComparison.OrdinalIgnoreCase))
+                    if (!actualHashStr.Equals(hash, StringComparison.OrdinalIgnoreCase))
                     {
-                        _ = sbFails.AppendLine($"[Error] File {url} has wrong MD5.");
+                        _ = sbFails.AppendLine($"[Error] File {url} has wrong Sha256.");
                     }
                     else
                     {
-                        _ = sbSuccesses.AppendLine($"[Info] File's {url} MD5 matches: {md5}.");
+                        _ = sbSuccesses.AppendLine($"[Info] File's {url} Sha256 matches: {hash}.");
                     }
                 }
             }
@@ -251,7 +231,8 @@ public sealed class DatabaseTests
             .Build();
 
         var args = new ListObjectsArgs()
-            .WithBucket("superheater")
+            .WithBucket(CommonConstants.S3Bucket)
+            .WithPrefix(prefix: "superheater/")
             .WithRecursive(true);
 
         var filesInBucket = new List<string>();
@@ -268,7 +249,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            filesInBucket.Add(CommonConstants.BucketAddress + item.Key);
+            filesInBucket.Add($"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{item.Key}");
         }
 
         var loose = filesInBucket.Except(fixesUrls);

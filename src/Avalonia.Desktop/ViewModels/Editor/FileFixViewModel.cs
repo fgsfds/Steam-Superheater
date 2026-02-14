@@ -159,12 +159,12 @@ internal sealed partial class FileFixViewModel : ObservableObject
         }
     }
 
-    public string? SelectedFixMD5
+    public string? SelectedFixHash
     {
-        get => SelectedFix.MD5;
+        get => SelectedFix.Sha256;
         set
         {
-            SelectedFix.MD5 = string.IsNullOrWhiteSpace(value) ? null : value;
+            SelectedFix.Sha256 = string.IsNullOrWhiteSpace(value) ? null : value;
             OnPropertyChanged();
         }
     }

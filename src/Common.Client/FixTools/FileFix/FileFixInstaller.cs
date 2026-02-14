@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using Api.Axiom.Interfaces;
 using Common.Axiom;
@@ -161,7 +162,7 @@ public sealed class FileFixInstaller
 
         var fileUri = new Uri(fix.Url);
 
-        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, fix.Guid, skipMD5Check ? null : fix.MD5, cancellationToken).ConfigureAwait(false);
+        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, fix.Guid, skipMD5Check ? null : fix.Sha256, cancellationToken).ConfigureAwait(false);
 
         if (!fileDownloadResult.IsSuccess)
         {
@@ -259,20 +260,11 @@ public sealed class FileFixInstaller
         {
             _logger.LogInformation($"Checking local file {pathToArchive}");
 
-            if (new FileInfo(pathToArchive).Length > 1e+9)
-            {
-                _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
-            }
-            else
-            {
-                _progressReport.OperationMessage = "Checking hash...";
-            }
-
             try
             {
-                var fileCheckResult = await CheckFileMD5Async(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
+                var fileCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
 
-                if (!fileCheckResult)
+                if (!fileCheckResult.IsSuccess)
                 {
                     _logger.LogInformation("MD5 of the local file doesn't match, removing it");
                     File.Delete(pathToArchive);
@@ -297,7 +289,7 @@ public sealed class FileFixInstaller
 
         _logger.LogInformation($"Local file {pathToArchive} not found");
 
-        var fileDownloadResult = await _filesDownloader.CheckAndDownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
+        var fileDownloadResult = await _filesDownloader.DownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
 
         if (!fileDownloadResult.IsSuccess)
         {
@@ -306,7 +298,7 @@ public sealed class FileFixInstaller
 
         if (fixMD5 is not null)
         {
-            var hashCheckResult = await _filesDownloader.CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
+            var hashCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
 
             if (!hashCheckResult.IsSuccess)
             {
@@ -434,31 +426,46 @@ public sealed class FileFixInstaller
     /// Check MD5 of the local file
     /// </summary>
     /// <param name="filePath">Full path to the file</param>
-    /// <param name="fixMD5">MD5 that the file's hash will be compared to</param>
+    /// <param name="hash">MD5 that the file's hash will be compared to</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>true if check is passed</returns>
-    private static async Task<bool> CheckFileMD5Async(
-        string filePath,
-        string? fixMD5,
-        CancellationToken cancellationToken
-        )
+    public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
     {
-        if (fixMD5 is null)
+        FileInfo fileInfo = new(filePath);
+        var contentLength = fileInfo.Length;
+
+        if (contentLength > 1e+9)
         {
-            return true;
+            _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
+        }
+        else
+        {
+            _progressReport.OperationMessage = "Checking hash...";
         }
 
-        string? hashStr;
-
-        using (var md5 = MD5.Create())
+        try
         {
             await using var stream = File.OpenRead(filePath);
+            var fileHash = Convert.ToHexString(await SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false));
 
-            var hash = await md5.ComputeHashAsync(stream, cancellationToken).ConfigureAwait(false);
-            hashStr = Convert.ToHexString(hash);
+            if (!hash.Equals(fileHash, StringComparison.OrdinalIgnoreCase))
+            {
+                return new(ResultEnum.HashError, "File's hash doesn't match the database");
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Hash checking cancelled");
+            //do nothing
+        }
+        catch (Exception ex)
+        {
+            _progressReport.OperationMessage = string.Empty;
+            return new(ResultEnum.Error, ex.ToString());
         }
 
-        return fixMD5.Equals(hashStr, StringComparison.OrdinalIgnoreCase);
+        _progressReport.OperationMessage = string.Empty;
+        return new(ResultEnum.Success, string.Empty);
     }
 
     /// <summary>

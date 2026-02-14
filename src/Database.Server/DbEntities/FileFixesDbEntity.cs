@@ -18,8 +18,8 @@ public sealed class FileFixesDbEntity
     [Column("file_size")]
     public required long? FileSize { get; set; }
 
-    [Column("file_md5")]
-    public required string? MD5 { get; set; }
+    [Column("file_hash")]
+    public required string? Hash { get; set; }
 
     [Column("install_folder")]
     public required string? InstallFolder { get; set; }

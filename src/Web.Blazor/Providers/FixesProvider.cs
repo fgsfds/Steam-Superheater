@@ -115,7 +115,7 @@ public sealed class FixesProvider
                         IsDisabled = fix.IsDisabled,
 
                         FileSize = fileFix.FileSize,
-                        MD5 = fileFix.MD5,
+                        Sha256 = fileFix.Hash,
                         Url = fileFix!.Url,
                         InstallFolder = fileFix.InstallFolder,
                         ConfigFile = fileFix.ConfigFile,
@@ -470,7 +470,7 @@ public sealed class FixesProvider
                     FixGuid = fileFix.Guid,
                     Url = fileFix.Url,
                     FileSize = fileSize,
-                    MD5 = fileMd5,
+                    Hash = fileMd5,
                     InstallFolder = fileFix.InstallFolder,
                     ConfigFile = fileFix.ConfigFile,
                     FilesToDelete = fileFix.FilesToDelete,
@@ -633,7 +633,7 @@ public sealed class FixesProvider
                 }
 
 
-                if (fix.MD5 is null)
+                if (fix.Hash is null)
                 {
                     var message = $"File doesn't have MD5 in the database: {fix.Url}";
                     _logger.LogError(message);
@@ -648,7 +648,7 @@ public sealed class FixesProvider
 
 
                 //md5 for s3 files
-                if (fix.Url.StartsWith(CommonConstants.BucketAddress))
+                if (fix.Url.StartsWith(CommonConstants.S3Endpoint))
                 {
                     if (result.Headers.ETag?.Tag is null)
                     {
@@ -670,9 +670,9 @@ public sealed class FixesProvider
                             _logger.LogError(message);
                             _ = _bot.SendMessageAsync(message);
                         }
-                        else if (!md5.Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
+                        else if (!md5.Equals(fix.Hash, StringComparison.OrdinalIgnoreCase))
                         {
-                            var message = $"File's MD5 doesn't match: {fix.Url}";
+                            var message = $"File's Hash doesn't match: {fix.Url}";
                             _logger.LogError(message);
                             _ = _bot.SendMessageAsync(message);
                         }
@@ -686,9 +686,9 @@ public sealed class FixesProvider
                     //_logger.LogError(message);
                     //_ = _bot.SendMessageAsync(message);
                 }
-                else if (!Convert.ToHexString(result.Content.Headers.ContentMD5).Equals(fix.MD5, StringComparison.OrdinalIgnoreCase))
+                else if (!Convert.ToHexString(result.Content.Headers.ContentMD5).Equals(fix.Hash, StringComparison.OrdinalIgnoreCase))
                 {
-                    var message = $"File's MD5 doesn't match: {fix.Url}";
+                    var message = $"File's Hash doesn't match: {fix.Url}";
                     _logger.LogError(message);
                     _ = _bot.SendMessageAsync(message);
                 }
@@ -810,6 +810,7 @@ public sealed class FixesProvider
     /// <param name="fixUrl">File url</param>
     /// <returns>MD5 of the fix file</returns>
     /// <exception cref="Exception">Http response error</exception>
+    //TODO FIX
     private async Task<string> GetFileMD5Async(string fixUrl)
     {
         using var response = await _httpClient.GetAsync(fixUrl, HttpCompletionOption.ResponseHeadersRead);
@@ -822,7 +823,7 @@ public sealed class FixesProvider
         {
             return Convert.ToHexString(response.Content.Headers.ContentMD5);
         }
-        else if (fixUrl.StartsWith(CommonConstants.BucketAddress) && response.Headers.ETag?.Tag is not null)
+        else if (fixUrl.StartsWith(CommonConstants.S3Endpoint) && response.Headers.ETag?.Tag is not null)
         {
             var md5fromEtag = response.Headers.ETag.Tag.Replace("\"", "");
 

@@ -64,6 +64,7 @@ public sealed partial class FileFixTests
             FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
             FilesToBackup = ["install folder\\file to backup.txt"],
             MD5 = "4E9DE15FC40592B26421E05882C2F6F7",
+            Sha256 = "C5CEA369CA01CC4A050FA573573E88F8C3CA2DAC2B98295C59C965A2207FC81D",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
@@ -77,6 +78,7 @@ public sealed partial class FileFixTests
             FilesToDelete = ["install folder\\file to delete.txt", "install folder\\subfolder\\file to delete in subfolder.txt", "file to delete in parent folder.txt"],
             FilesToBackup = ["install folder\\file to backup.txt"],
             MD5 = "4E9DE15FC40592B26421E05882C2F6F7",
+            Sha256 = "C5CEA369CA01CC4A050FA573573E88F8C3CA2DAC2B98295C59C965A2207FC81D",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
@@ -209,14 +211,15 @@ public sealed partial class FileFixTests
             Name = "test fix compromised",
             Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Url = $"{CommonConstants.BucketAddress}nointro/bsp_nointro.zip",
+            Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3Folder}/nointro/bsp_nointro.zip",
             MD5 = "badMD5",
+            Sha256 = "badHash",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
         var installResult = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, false, new()).ConfigureAwait(true);
 
-        Assert.Equal(ResultEnum.MD5Error, installResult.ResultEnum);
+        Assert.Equal(ResultEnum.HashError, installResult.ResultEnum);
     }
 
     /// <summary>

@@ -10,65 +10,6 @@ namespace Common.Axiom.Entities.Fixes.FileFix;
 /// </summary>
 public sealed class FileFixEntity : BaseFixEntity
 {
-    public FileFixEntity()
-    {
-    }
-
-    [SetsRequiredMembers]
-    public FileFixEntity(bool _)
-    {
-        Name = string.Empty;
-        Version = "1.0";
-        Guid = Guid.NewGuid();
-        Description = null;
-        Changelog = null;
-        Dependencies = null;
-        Tags = null;
-        SupportedOSes = OSEnum.Windows;
-        IsDisabled = false;
-
-        Url = null;
-        FileSize = null;
-        InstallFolder = null;
-        ConfigFile = null;
-        FilesToDelete = null;
-        FilesToBackup = null;
-        FilesToPatch = null;
-        RunAfterInstall = null;
-        MD5 = null;
-        SharedFixGuid = null;
-        SharedFix = null;
-        SharedFixInstallFolder = null;
-        WineDllOverrides = null;
-    }
-
-    [SetsRequiredMembers]
-    public FileFixEntity(BaseFixEntity fix)
-    {
-        Name = fix.Name;
-        Version = fix.Version;
-        Guid = fix.Guid;
-        Description = fix.Description;
-        Changelog = fix.Changelog;
-        Dependencies = fix.Dependencies;
-        Tags = fix.Tags;
-        SupportedOSes = fix.SupportedOSes;
-        IsDisabled = fix.IsDisabled;
-
-        Url = null;
-        FileSize = null;
-        InstallFolder = null;
-        ConfigFile = null;
-        FilesToDelete = null;
-        FilesToBackup = null;
-        RunAfterInstall = null;
-        MD5 = null;
-        SharedFixGuid = null;
-        SharedFix = null;
-        SharedFixInstallFolder = null;
-        WineDllOverrides = null;
-    }
-
     /// <summary>
     /// Download URL
     /// </summary>
@@ -141,7 +82,13 @@ public sealed class FileFixEntity : BaseFixEntity
     /// <summary>
     /// Zip archive MD5
     /// </summary>
+    [Obsolete]
     public string? MD5 { get; set; }
+
+    /// <summary>
+    /// Zip archive MD5
+    /// </summary>
+    public string? Sha256 { get; set; }
 
     /// <summary>
     /// List of files that will be backed up and patched with filename.octodiff patch
@@ -205,6 +152,73 @@ public sealed class FileFixEntity : BaseFixEntity
         }
     }
 
+
+    public FileFixEntity()
+    {
+    }
+
+
+    [SetsRequiredMembers]
+    public FileFixEntity(BaseFixEntity fix)
+    {
+        Name = fix.Name;
+        Version = fix.Version;
+        Guid = fix.Guid;
+        Description = fix.Description;
+        Changelog = fix.Changelog;
+        Dependencies = fix.Dependencies;
+        Tags = fix.Tags;
+        SupportedOSes = fix.SupportedOSes;
+        IsDisabled = fix.IsDisabled;
+
+        Url = null;
+        FileSize = null;
+        InstallFolder = null;
+        ConfigFile = null;
+        FilesToDelete = null;
+        FilesToBackup = null;
+        RunAfterInstall = null;
+        MD5 = null;
+        Sha256 = null;
+        SharedFixGuid = null;
+        SharedFix = null;
+        SharedFixInstallFolder = null;
+        WineDllOverrides = null;
+    }
+
+
+    public static FileFixEntity CreateBlank()
+    {
+        return new()
+        {
+            Name = string.Empty,
+            Version = "1.0",
+            Guid = Guid.NewGuid(),
+            Description = null,
+            Changelog = null,
+            Dependencies = null,
+            Tags = null,
+            SupportedOSes = OSEnum.Windows,
+            IsDisabled = false,
+
+            Url = null,
+            FileSize = null,
+            InstallFolder = null,
+            ConfigFile = null,
+            FilesToDelete = null,
+            FilesToBackup = null,
+            FilesToPatch = null,
+            RunAfterInstall = null,
+            MD5 = null,
+            Sha256 = null,
+            SharedFixGuid = null,
+            SharedFix = null,
+            SharedFixInstallFolder = null,
+            WineDllOverrides = null
+        };
+    }
+
+
     public FileFixEntity Clone()
     {
         return new()
@@ -213,21 +227,22 @@ public sealed class FileFixEntity : BaseFixEntity
             Version = this.Version,
             Guid = this.Guid,
             Description = this.Description,
-            Dependencies = this.Dependencies,
-            Tags = this.Tags,
+            Dependencies = this.Dependencies?.ToList(),
+            Tags = this.Tags?.ToList(),
             SupportedOSes = this.SupportedOSes,
             Url = this.Url,
             InstallFolder = this.InstallFolder,
             ConfigFile = this.ConfigFile,
-            FilesToDelete = this.FilesToDelete,
-            FilesToBackup = this.FilesToBackup,
-            FilesToPatch = this.FilesToPatch,
+            FilesToDelete = this.FilesToDelete?.ToList(),
+            FilesToBackup = this.FilesToBackup?.ToList(),
+            FilesToPatch = this.FilesToPatch?.ToList(),
             RunAfterInstall = this.RunAfterInstall,
             MD5 = this.MD5,
+            Sha256 = this.Sha256,
             SharedFixGuid = this.SharedFixGuid,
-            SharedFix = this.SharedFix,
+            SharedFix = this.SharedFix?.Clone(),
             SharedFixInstallFolder = this.SharedFixInstallFolder,
-            WineDllOverrides = this.WineDllOverrides,
+            WineDllOverrides = this.WineDllOverrides?.ToList(),
             FileSize = this.FileSize
         };
     }
