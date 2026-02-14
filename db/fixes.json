@@ -5,9 +5,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/raze_1102.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/raze_1102.zip",
         "FileSize": 17979940,
         "MD5": "9E91F8E7E0C2A632B29AF3AF30B26C09",
+        "Sha256": "0CE8B034DD09352BB2F815A573E9F1A58616D00840A48AD771989B258B4A2B70",
         "Name": "Raze Shared",
         "Guid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "Version": "1.10.2",
@@ -17,9 +18,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/xidi_420_dinput8_x86.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/xidi_420_dinput8_x86.zip",
         "FileSize": 146293,
         "MD5": "BF850AB9058E05654248D341DAB65AAB",
+        "Sha256": "271550A4B04C0B95262D215C7E17D1BDE4F2D4DE8F6528BACAB471C11A76A7F2",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -41,9 +43,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/agarest_zero_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/agarest_zero_nointro.zip",
         "FileSize": 4807,
         "MD5": "6AD373FFF818EB15768E828A2AB7BA4A",
+        "Sha256": "3C939A2762FA25C29231ED868DE96111C0482D261742173CE2D8B2FC32597DD6",
         "Name": "No Intro Fix",
         "Guid": "aad7c100-c0c5-4b34-9931-d368e577b59f",
         "Version": "1.0",
@@ -63,9 +66,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/age_of_wonders_crashfix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/age_of_wonders_crashfix.zip",
         "FileSize": 76076,
         "MD5": "32861E3B68005E799B667E3C9AD1C531",
+        "Sha256": "41C221E641D1D2A963A0CB44AC3304487D3EF8A5A6790599A1F41FE9F247F4F4",
         "Name": "Unofficial patch",
         "Guid": "ca623468-0e2d-45e2-8cc4-56248f3b3f7e",
         "Version": "22.12",
@@ -132,6 +136,7 @@
         "InstallFolder": "Binaries\\Win32",
         "ConfigFile": "Binaries\\Win32\\plugins\\MadnessPatch.ini",
         "MD5": "860B27B010CDB9F71FBFA95E482200C3",
+        "Sha256": "C387161007ED2AA30C4997FE280F3C8A55FD1F6CC2234B1EF93E05C6A5B37AA4",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -159,9 +164,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/alien_isolation_mothervr_081.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/alien_isolation_mothervr_081.zip",
         "FileSize": 6435276,
         "MD5": "BF63E254EBD08FF3DB44AC6C516C29CE",
+        "Sha256": "A448F1312B8970715221C5BA091F550A62E0EFB04ADE4AD196F65B6FC371E555",
         "Name": "MotherVR",
         "Guid": "be584cd5-fc22-4d43-a72e-90b2e74b68dd",
         "Version": "0.8.1",
@@ -177,6 +183,7 @@
         "Url": "https://github.com/ThirteenAG/AlienIsolation.SkipSaveConfirmationDialog/releases/download/AlienIsolation.SkipSaveConfirmationDialog-v1.1/AlienIsolation.SkipSaveConfirmationDialog.zip",
         "FileSize": 1086605,
         "MD5": "6E53A3C35D8B5A1DD730363D175C678E",
+        "Sha256": "C47E8F477795294A1CCDCDA47B06D1CC12F8F5B7CBF574EFB30F0115A97D7B7B",
         "Name": "Save confirmation dialog skipper",
         "Guid": "49ec2b86-08b9-4634-bfd9-54bde951347a",
         "Version": "1.1",
@@ -229,7 +236,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/aliens_colonial_marines_overhaul_v6_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/aliens_colonial_marines_overhaul_v6_2.zip",
         "FileSize": 722038024,
         "FilesToDelete": [
           "PecanGame\\CookedPCConsole\\DEFGEN_UnlocksVersus_SF.upk.uncompressed_size",
@@ -239,6 +246,7 @@
           "PecanGame\\CookedPCConsole\\Engine.upk.uncompressed_size"
         ],
         "MD5": "0CA2447847A9B17D39AD77AF34829131",
+        "Sha256": "26D5AEEAD3536AC4EF3041A189207D54D65248E612EDF901C03BBB139C90986A",
         "Name": "ACM Overhaul",
         "Guid": "53dc4964-e22b-454b-8f46-350369afb73e",
         "Version": "6.2",
@@ -253,10 +261,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/aliens_colonial_marines_teather.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/aliens_colonial_marines_teather.zip",
         "FileSize": 7958,
         "InstallFolder": "PecanGame\\Config",
         "MD5": "DD0695160A7C4F5A6A794C32D7CAD2B4",
+        "Sha256": "BAFFB11DFD4C0AC40109310FD3D4B17F00A8E77D4948D2742311D482E8180456",
         "Name": "Improved Xenomorph AI",
         "Guid": "a6527396-6489-4580-a052-2f5086add450",
         "Version": "1.0",
@@ -299,7 +308,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/anachronox_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/anachronox_widescreen.zip",
         "FileSize": 8752161,
         "Variants": [
           "1024x600",
@@ -328,6 +337,7 @@
           "5760x1200"
         ],
         "MD5": "F4D9F626DF18FA0D7E1A99535E772FA6",
+        "Sha256": "03E3969368BE017DEE16E114A990A75E0E4A8C194920C7499C5E25D47C6A4E84",
         "Name": "Widescreen Fix",
         "Guid": "80f4cae6-5979-401e-9b65-89d389217bdf",
         "Version": "1.0",
@@ -350,6 +360,7 @@
         "Url": "https://github.com/arx/ArxLibertatis/releases/download/1.2.1/arx-libertatis-1.2.1-windows.zip",
         "FileSize": 11746336,
         "MD5": "F256AD08D83B9CA1878FACEB84B5E73F",
+        "Sha256": "56C403F586CEFE7D783518850C6D151DFEA7FC51A0D11ABD8F9D509E7C93A56B",
         "Name": "Arx Libertatis",
         "Guid": "5b27cab7-3042-4bdc-bc66-32a2a30c97f0",
         "Version": "1.2.1",
@@ -370,9 +381,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ass_creed/ass_creed_1_black_bars.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ass_creed/ass_creed_1_black_bars.zip",
         "FileSize": 15170296,
         "MD5": "E0D02EED60D5D98BF04DDD59BF8CF319",
+        "Sha256": "5D5946B895D0F3F3B7F3CDEA6BFC4019423DD259C805F76661D1B395F1477DFF",
         "Name": "Black Bars Fix for Ultrawide",
         "Guid": "91b82183-b0df-42e1-87f9-92461cedcb73",
         "Version": "1.0",
@@ -385,10 +397,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ass_creed/ass_creed_1_eagle_patch.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ass_creed/ass_creed_1_eagle_patch.zip",
         "FileSize": 1109458,
         "ConfigFile": "scripts\\EaglePatchAC1.ini",
         "MD5": "664C557522C6E396E089636FED6B4FFE",
+        "Sha256": "E8E532D13373F10DAAF4C4AE9EAF9733CDF1116B66DEB0901013FDB3D7FD02C4",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -446,10 +459,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ass_creed/ass_creed_2_eagle_patch.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ass_creed/ass_creed_2_eagle_patch.zip",
         "FileSize": 1109180,
         "ConfigFile": "scripts\\EaglePatchAC2.ini",
         "MD5": "4D1C58445479AE50BDDEC4BC453DF179",
+        "Sha256": "B44A302F1C4B12EA8D04D9D089808826ADF1B1CACD5928572E9645F934E4017B",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -475,10 +489,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/batman_1_bmlauncher.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/batman_1_bmlauncher.zip",
         "FileSize": 6043005,
         "InstallFolder": "Binaries",
         "MD5": "811CA7364E3517153A32CE98753FEDEB",
+        "Sha256": "58D96B293B6DD2FE7132056A96FA24844A45B464B2756326CE32632AED3A56AF",
         "Name": "Advanced Launcher",
         "Guid": "3b4f1a10-f709-46e5-8243-7e935413072c",
         "Version": "1.0",
@@ -506,9 +521,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/batman_1_dlc.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/batman_1_dlc.zip",
         "FileSize": 368547949,
         "MD5": "230C26C2E79F9421744DF1C1AF523943",
+        "Sha256": "82E45107AC1384909A2D5A76501E5A1CD57F4D87FAEA9DB44730B7F537D9F074",
         "Name": "Official PS3 DLCs",
         "Guid": "d09ea14a-4918-4685-8642-e8fb8c98e67b",
         "Version": "1.0",
@@ -546,10 +562,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/batman_2_bmlauncher.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/batman_2_bmlauncher.zip",
         "FileSize": 10351176,
         "InstallFolder": "Binaries\\Win32",
         "MD5": "1A0F35532DFDADCE045BCCCB9AED059D",
+        "Sha256": "F78FAB9CF57C324C7A8F227EE8E0BB339171EE8175BE2486DD89433ECBE4A893",
         "Name": "Advanced Launcher",
         "Guid": "058616f2-afb7-4fb2-95d3-bcf60009cf5b",
         "Version": "1.0",
@@ -610,9 +627,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bsp_dlc_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bsp_dlc_v1.zip",
         "FileSize": 1036854694,
         "MD5": "D4C9E5F58A3A997DD14913E0B28E7A74",
+        "Sha256": "F2257CCEF566AE2CF1C93BB57892758AF4F081D2F34B5C0E85E7A44C9B988BE4",
         "Name": "DLC Pack",
         "Guid": "a46d676b-1a98-4eae-bd57-9ededc5ba3f7",
         "Version": "1.0",
@@ -625,9 +643,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bsp_steamless_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bsp_steamless_v1.zip",
         "FileSize": 1090967,
         "MD5": "942B5AC858AA88A1644B589A2A3DBED9",
+        "Sha256": "5289D07C1ACCFE1D61E5B85DDAD2EB07A671E1222A92843279771FBC2CE981DE",
         "Name": "Steamless Exe",
         "Guid": "e94c8993-3acc-4cd3-a803-643aa170f29d",
         "Version": "1.0",
@@ -640,12 +659,13 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/xliveless.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/xliveless.zip",
         "FileSize": 86442,
         "FilesToDelete": [
           "redist\\gfwlivesetup.exe"
         ],
         "MD5": "AE4C9CCA675EBC957A00DAAFBDE261AE",
+        "Sha256": "6AAB487B08B99F8940853A0192B2D81F25DE7EA5C6E187717A483C0B62641C6C",
         "WineDllOverrides": [
           "xlive"
         ],
@@ -658,10 +678,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/bsp_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/bsp_nointro.zip",
         "FileSize": 2735,
         "InstallFolder": "movies",
         "MD5": "7BDB52D64B83C72FA9D298A87960ECBA",
+        "Sha256": "B01327D622B2B6ED5133F4B65CA57312C61787340AADF14321B3B310076504EE",
         "Name": "No Intro Fix",
         "Guid": "62e82186-6163-4725-97a6-2a1c49fdab8a",
         "Version": "1.0",
@@ -703,12 +724,13 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bge_fix_v2.7z",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bge_fix_v2.7z",
         "FileSize": 101876839,
         "FilesToDelete": [
           "sally_clean.bf"
         ],
         "MD5": "E49B5BD4141647C1D2C81E21EF16B012",
+        "Sha256": "8A7799E5B5C6A0FEB2994D7A9F9F2B6087BD42D3359575D5C51FBF33F088DB3F",
         "FilesToPatch": [
           "sally_clean.bf"
         ],
@@ -725,10 +747,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bge_widescreen.7z",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bge_widescreen.7z",
         "FileSize": 71905,
         "ConfigFile": "bge.ini",
         "MD5": "660F9F0E6C0AF029E3676F967DFBA249",
+        "Sha256": "92FD38E778ACAA7CA203AAD7F4D0CA3E4233C871206BA74724BB0696F0E15117",
         "WineDllOverrides": [
           "bgew",
           "d3d9"
@@ -755,6 +778,7 @@
         "FileSize": 17780,
         "ConfigFile": "domaim.exe",
         "MD5": "E55D1855409857BFDE1A5C90ABB3EE04",
+        "Sha256": "AA2FE1CE034BC94481310FF13432A4FE41AAF9F06F1328E457D2C9B9AAEBEF1C",
         "Name": "Mouse Improvement Mod",
         "Guid": "0423d60b-1c54-43be-ac31-dc1af994c3b3",
         "Version": "0.92",
@@ -803,9 +827,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/bioshock_infinite_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/bioshock_infinite_nointro.zip",
         "FileSize": 1586,
         "MD5": "555EEFD92FA37B23B59E84482EE1F44E",
+        "Sha256": "68BA9D1315E2AE89FFA7FE2CC63E5BBCF5F1AD6631B7C8C8A7630BA62A0E596D",
         "Name": "No Intro Fix",
         "Guid": "9850c943-1842-4abf-9aad-01c8ce213097",
         "Version": "1.0",
@@ -827,6 +852,7 @@
         "Url": "https://github.com/JoeTomkinson/Biped.UI.Fixes.Plugin/releases/download/v1.1.0/BipedWideScreenFix-1.1.0-x64.zip",
         "FileSize": 657634,
         "MD5": "8BFBD0B4DCB0C7A64ED0EB41B6732D25",
+        "Sha256": "09E15942235761174678F3374F9E0CB795222B88CF5C22C470028969828AB65F",
         "WineDllOverrides": [
           "winhttp"
         ],
@@ -846,6 +872,7 @@
         "Url": "https://github.com/Lyall/BipedFix/releases/download/v1.0.2/BipedFix_v1.0.2.zip",
         "FileSize": 638061,
         "MD5": "583A87FC9F5F0EFA13D3542994AE4675",
+        "Sha256": "9A3ADE5D5BC46CF1F2AF8B7AF57F085AD7942B4DC18F1498A6DAF7C9EE4AD9D1",
         "WineDllOverrides": [
           "winhttp"
         ],
@@ -868,9 +895,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/ddraw_compat_v051.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/ddraw_compat_v051.zip",
         "FileSize": 873937,
         "MD5": "196719CEF582E0B18FC37D21C5391B42",
+        "Sha256": "5619B9EA29A43E31556533AAB30B5022D15153FB600BAA14C05EE49A744F6D1B",
         "Name": "DDrawCompat",
         "Guid": "0a5908a7-6931-4e2d-be43-9b22b6d0e256",
         "Version": "0.5.1",
@@ -913,10 +941,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/blake_stone_bstone_v1_2_16.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/blake_stone_bstone_v1_2_16.zip",
         "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Aliens of Gold",
         "MD5": "987e3711de1b482380117e6598d80ffd",
+        "Sha256": "8361BA73457EADDD4719412076786AD19822690BFE58EF6AC58B4E9E91E586EA",
         "Name": "bstone",
         "Guid": "bc8649ea-8ec2-4abe-9c61-3317c80e0c39",
         "Version": "1.2.1",
@@ -938,10 +967,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/blake_stone_bstone_v1_2_16.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/blake_stone_bstone_v1_2_16.zip",
         "FileSize": 1952295,
         "InstallFolder": "Blake Stone - Planet Strike",
         "MD5": "987e3711de1b482380117e6598d80ffd",
+        "Sha256": "8361BA73457EADDD4719412076786AD19822690BFE58EF6AC58B4E9E91E586EA",
         "Name": "bstone",
         "Guid": "5e1c6726-0263-40bd-a084-f908ed1295ae",
         "Version": "1.2.16",
@@ -963,9 +993,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/blasphemous-ultrawide-v2_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/blasphemous-ultrawide-v2_2.zip",
         "FileSize": 635945,
         "MD5": "e935bbf68d4056ffed01c65164c57f8a",
+        "Sha256": "A30A0AC879F720B0FC2B0A70E6B066936D40340F32487BD0A16E52815574C7EA",
         "WineDllOverrides": [
           "winhttp"
         ],
@@ -987,9 +1018,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/blood_2_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/blood_2_fix.zip",
         "FileSize": 3497403,
         "MD5": "17DC3D02204E7621EB838CD91DC04F06",
+        "Sha256": "4139884C7A6EC58E0114C586DA4F006385E9E857A31D6F91369B4BFB95555BA1",
         "WineDllOverrides": [
           "D3DImm",
           "DDraw",
@@ -1018,9 +1050,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lok_blood_omen_2_revamped.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lok_blood_omen_2_revamped.zip",
         "FileSize": 256353,
         "MD5": "8E3244D2E28B253A2FEF10C628A65D0E",
+        "Sha256": "42C068B11A030E784D0E42C7030C7167729EF97F3C577AD8C2E0A444FF545FD4",
         "WineDllOverrides": [
           "d3d8"
         ],
@@ -1062,10 +1095,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/blood_fs_notblood.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/blood_fs_notblood.zip",
         "FileSize": 16429746,
         "InstallFolder": "DOS",
         "MD5": "2FBC8EB1283A6A6D560553ABC33C3E84",
+        "Sha256": "28F2261134264D3524FF9E0E33D07B7A63FDA7DB8E64BE746A37DE6A87D52EAC",
         "Name": "NotBlood",
         "Guid": "8bd92099-4d55-47fb-961d-033ab3cb5570",
         "Version": "1.0",
@@ -1082,10 +1116,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/blood_fs_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/blood_fs_raze.zip",
         "FileSize": 2825,
         "InstallFolder": "DOS",
         "MD5": "E1B518332EAB63C5D9820A8DCDB74AB8",
+        "Sha256": "BFB5FCE53E6935EDB3FBD3E0C1C55F2454F2618ECDDCCB8C8AEB27041CCE37A1",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "DOS\\C\\BLOOD",
         "Name": "Raze",
@@ -1111,6 +1146,7 @@
         ],
         "RunAfterInstall": "fs_install.bat",
         "MD5": "62878EF958A2D888BEE38604A335F8FA",
+        "Sha256": "55AEDE5EAE19DF8DD9A2C14D679FB5B2B6990F7F8C33792F5106160677431FF8",
         "Name": "Voxel Pack",
         "Guid": "3290663c-19b6-4981-b933-334ad3605e1f",
         "Version": "0.96.1",
@@ -1130,9 +1166,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/blood_notblood.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/blood_notblood.zip",
         "FileSize": 87270790,
         "MD5": "7B69B926EE3F095C5F4412AF9203E05D",
+        "Sha256": "0489DBEEC26D46F59173D3D6842753F794BA2C914AFB44E96B5A8729B302CD79",
         "Name": "NotBlood",
         "Guid": "be21caea-ccab-47a6-979e-c47b73ef0a43",
         "Version": "1.0",
@@ -1149,9 +1186,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/blood_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/blood_raze.zip",
         "FileSize": 70844258,
         "MD5": "5C2543C508992B39789BDCD52D8E88A1",
+        "Sha256": "ABE43CAD519AB03BD227E5E68D83C07FA0CDFF9149F907E95709F1AA7DFD8E16",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "Name": "Raze",
         "Guid": "09d1013a-75ce-4879-b7ca-ae155df63424",
@@ -1177,6 +1215,7 @@
         "Url": "https://github.com/nipkownix/BloodRayne_tweaks/releases/download/1.7/BloodRayne_tweaks1.7.zip",
         "FileSize": 83154,
         "MD5": "57B513D045FEB5C0E107908B41995EE0",
+        "Sha256": "6F465EC8BE3B831B8E78534E071017607C8BA8379755FC0DA03367ABAD23536B",
         "WineDllOverrides": [
           "winmm"
         ],
@@ -1222,9 +1261,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bound_by_flame_ui_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bound_by_flame_ui_fix.zip",
         "FileSize": 2271963,
         "MD5": "717733E8D2A1BBA55EA0FE4F2EE304F1",
+        "Sha256": "8406BB4369099123ABC73F4E4E5D7C1A7DC8B5BF39C2936A8E22BBEBEA229CE4",
         "Name": "Yellow Visual Glitch on UI Fix (AMD GPU)",
         "Guid": "f7530b6c-3a07-4ade-acc7-6afc4305dd19",
         "Version": "2.2",
@@ -1239,10 +1279,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/boundbyflame_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/boundbyflame_nointro.zip",
         "FileSize": 10174,
         "InstallFolder": "boot\\datapc\\video",
         "MD5": "E24F7AE825C8C5790967AD1979F71C97",
+        "Sha256": "C2E3A8963D8ADE4AB1575EB4252DD32F4CB754BB41E5CB0792A35AB2FC5EE7CB",
         "Name": "No Intro Fix",
         "Guid": "85757b57-e93c-4f84-b8ab-7e0c3b3a356a",
         "Version": "1.0",
@@ -1261,9 +1302,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/broken_sword_1_font_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/broken_sword_1_font_fix.zip",
         "FileSize": 264750,
         "MD5": "7A4463946579D58245E20FE4F741B6C0",
+        "Sha256": "9E69B303B87374DEF77FA9E52DE68BA6F06021628F908EED227ED4E9584EBF4F",
         "Name": "Better In-Game Font",
         "Guid": "697159cf-2d1a-46b4-8294-061f777d715c",
         "Version": "1.0",
@@ -1297,10 +1339,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/bully_silent_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/bully_silent_v1.zip",
         "FileSize": 63567,
         "ConfigFile": "plugins\\SilentPatchBully.ini",
         "MD5": "C4AE89B39BC89C750500503C2E265582",
+        "Sha256": "921F30E3F2EADBBE6914D6DB88AF73FE7F7519DF17D5D862CFF8D1D9EA19AB26",
         "Name": "Silent Patch",
         "Guid": "270bcc84-cadb-451b-956f-e7489b154d93",
         "Version": "1.0b3",
@@ -1320,6 +1363,7 @@
         "FileSize": 1215360,
         "ConfigFile": "plugins\\Bully.WidescreenFix.ini",
         "MD5": "BEBB512D6C9997FD538C6CC0C756BC48",
+        "Sha256": "3759850EA20D86834C3BAC58F6717DC1167EB4D1E7FDD586D2A01EE7561C32EF",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -1357,9 +1401,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/caesar3_augustus_v400.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/caesar3_augustus_v400.zip",
         "FileSize": 25746273,
         "MD5": "D22179428FC1556A9652C80A4531CEA4",
+        "Sha256": "1D7F53E41920966398115F3974233F9C85EB0020088740BC1FED255ACF8F0249",
         "Name": "Augustus",
         "Guid": "4e06c271-e9b0-43bc-be81-ce92cb9b472d",
         "Version": "4.0.0",
@@ -1377,9 +1422,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/caesar3_julius_v1_8_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/caesar3_julius_v1_8_0.zip",
         "FileSize": 1741768,
         "MD5": "857b59452f99c957f3507a2bad9c9a4e",
+        "Sha256": "C57B7A430AE807C5271C4B07DBACCE6E0BE215C865CD5ABA69E5D07199699430",
         "Name": "Julius",
         "Guid": "28375a9d-a7a6-465c-b841-556a96608d14",
         "Version": "1.8.0",
@@ -1402,10 +1448,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/cod/cod2-custom-patch-v20251117.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/cod/cod2-custom-patch-v20251117.zip",
         "FileSize": 52438,
         "ConfigFile": "cod2patch.ini",
         "MD5": "084ce255a38fbea4b03e1ebe6b2a30f9",
+        "Sha256": "C2C50503E096104A67A263822DEC8DA96EE7ACC0D7A8AF040878169DE6BDB0CA",
         "Name": "Custom Patch",
         "Guid": "f92e134d-7a03-4456-b4a4-417b187a2ebd",
         "Version": "20251117",
@@ -1420,9 +1467,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/cod/cod2-ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/cod/cod2-ultrawide.zip",
         "FileSize": 740030,
         "MD5": "f7b067845fbdfbbe3df0436a4d8dc9d5",
+        "Sha256": "44BB582C8000D7B362289A1B0D866B53323C5E432BB752AA1D6394D0C982F8D4",
         "Name": "Ultrawide Fix",
         "Guid": "1817a59c-4883-4f9e-bea4-14dda84d2099",
         "Version": "1.0",
@@ -1441,10 +1489,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/cod/codwaw-custom-patch-v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/cod/codwaw-custom-patch-v1.zip",
         "FileSize": 5516992,
         "ConfigFile": "codwawpatch.ini",
         "MD5": "8e19007d0c74304a7c8e7873aa18a1dd",
+        "Sha256": "237C2400DBFC90C6A43B8AA83509683B842C1EB4179801D3B3304BA4155654CD",
         "Name": "Custom Patch",
         "Guid": "8b7b59d5-76c0-48be-ae87-87adcfa7cf65",
         "Version": "1.0",
@@ -1465,9 +1514,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/call_of_juarez_noblackbars.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/call_of_juarez_noblackbars.zip",
         "FileSize": 8547,
         "MD5": "393DD6575F80F1FB238F13750FC6E5A1",
+        "Sha256": "9E88CF7F970AA9368CD89A507235504EB9FC4AABC3BCDB4736D182F17F6989D3",
         "Name": "Black Bars Removal",
         "Guid": "1aefa8f6-5ab8-42ef-9d76-b91bdc158984",
         "Version": "1.0",
@@ -1480,13 +1530,14 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/call_of_juarez_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/call_of_juarez_ultrawide.zip",
         "FileSize": 6701424,
         "Variants": [
           "Without Black Bars",
           "With Black Bars"
         ],
         "MD5": "EFC332E221DDC9A654A9D6A3C5820FB5",
+        "Sha256": "FAABF73220EB252DAF4E35C4102FF1532E86BB5F590EF1589AFF3D4C7282253C",
         "Name": "Ultrawide Fix \u002B Black Bars Removal",
         "Guid": "f761088f-cc34-487a-9d36-df4cef6123df",
         "Version": "1.0",
@@ -1593,9 +1644,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/chantelise_drmfree.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/chantelise_drmfree.zip",
         "FileSize": 28618054,
         "MD5": "3AE0A392E9E65B56A110E87BAB9B6ACD",
+        "Sha256": "90CFB3CDDFE479040233FD0E10B143D5BA5E8FCFB211B1031EE7298EB2A1DE2D",
         "Name": "Official DRM-Free Patch",
         "Guid": "2a6ce248-5a07-4318-9110-da97324d7629",
         "Version": "1.0",
@@ -1614,9 +1666,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/openloco_v25_07.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/openloco_v25_07.zip",
         "FileSize": 3762975,
         "MD5": "993a622c97c43636dec96e108908cfd3",
+        "Sha256": "C0BFCADB19E6BD330878D9638EA3125F2F45291B8470AD76ECB6E0A6ED935078",
         "Name": "OpenLoco",
         "Guid": "e0252fda-c9ac-4c64-9d15-b2c7146d60b9",
         "Version": "25.07",
@@ -1641,6 +1694,7 @@
         "FileSize": 1193088,
         "ConfigFile": "scripts\\ColdFear.WidescreenFix.ini",
         "MD5": "99010354298B64BA640FA7EE81B521F8",
+        "Sha256": "24339A664EE356606AECBE6F46771DBD1EDE81ADCC300A55CF9351693E304A87",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -1678,9 +1732,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/red_alert_3_loading.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/red_alert_3_loading.zip",
         "FileSize": 1079290,
         "MD5": "B53D7982E13BE1ED4D4425A53E38B152",
+        "Sha256": "C3029FB29FCC28B754E42BFFF169768962B802AECD1EF6947F252CB9468A034A",
         "Name": "QuickLoader",
         "Guid": "fcca3e23-ee4b-4338-a725-fa0e79c3e1c3",
         "Version": "0.91",
@@ -1737,9 +1792,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/condemned_missing_files.7z",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/condemned_missing_files.7z",
         "FileSize": 86399217,
         "MD5": "9E4AD23DBD42DDAE3611917A5FA60AF6",
+        "Sha256": "B0C10EF40317AFAA8C6D39A9C096186A525B2FBCDC0407B5840EE1334E438CF4",
         "Name": "Missing Steam Files",
         "Guid": "85ea019e-6bfc-4e11-b337-4c6662abc554",
         "Version": "19.11",
@@ -1756,6 +1812,7 @@
         "FileSize": 5131102,
         "ConfigFile": "scripts\\Condemned.WidescreenFix.ini",
         "MD5": "AF8B8A77153C5CD69935FD590F3F0FE6",
+        "Sha256": "A17FCC1798853A66D5CC378E1A82984D0F06CAE47434A66EA4F01209042A04CA",
         "WineDllOverrides": [
           "d3d9"
         ],
@@ -1777,9 +1834,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/control_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/control_nointro.zip",
         "FileSize": 24441,
         "MD5": "7B5BB2E61DE719E24015487EB914FB2A",
+        "Sha256": "B58135641BB221380CAB94103443DE26C8119037840BB62855B24469D1BD1E8D",
         "WineDllOverrides": [
           "iphlpapi"
         ],
@@ -1795,9 +1853,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/control-patch_v1_5_1.7z",
-        "FileSize": 70622451,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/control-patch_v1_5_1.7z",
+        "FileSize": 247,
         "MD5": "65F061CBA1D6615647407B80D4C137E4",
+        "Sha256": "420C93CD37A09D03EDAA1C54DC4CD47176345D33DD0A2DEF3A6AF2B60BC21691",
         "Name": "HDR Ultrawide DLSS RT Patch",
         "Guid": "9b1ad1ba-2a82-46e1-9704-d813b46b66af",
         "Version": "1.5.1",
@@ -1820,9 +1879,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/crash_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/crash_ultrawide.zip",
         "FileSize": 11476651,
         "MD5": "AE4BB59B7B50F6CA8C63888712803FA0",
+        "Sha256": "C13ACE58D281ED46275CA5B1DD2E0FB97EF8D1E431D1FA174F11897492234E23",
         "Name": "Ultrawide Fix",
         "Guid": "fad07899-3e37-4fb8-88a5-31823a04988c",
         "Version": "1.0",
@@ -1856,9 +1916,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/crazy_taxi_megapack.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/crazy_taxi_megapack.zip",
         "FileSize": 78528307,
         "MD5": "91325c51d9e7971897ecf52c5fd14b42",
+        "Sha256": "10CD06B9F93CEE4C817E5E3EB7691E6BF5150742559BEE8C300E5A6F0A0F07C7",
         "Name": "All-In-One MEGAPACK",
         "Guid": "04007339-f58f-44e0-b250-a541580353e9",
         "Version": "1.0",
@@ -1877,6 +1938,7 @@
         "Url": "https://github.com/CookiePLMonster/SilentPatchCT/releases/download/BUILD-1/SilentPatchCT.zip",
         "FileSize": 1110565,
         "MD5": "3A2790B53ED7217A1EC07233B3484A48",
+        "Sha256": "164FBB165F80B8E9EB85E11CCE300C998D0CADA907BC211C41F4A02FE6C70087",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -1902,6 +1964,7 @@
         "Url": "https://github.com/ccomrade/c1-launcher/releases/download/v5/c1-launcher-v5-build.zip",
         "FileSize": 119980,
         "MD5": "CC0E21F8241AAB967A1BEC3312A18733",
+        "Sha256": "18BE070B9FA2612AEB592E2198B539796D8D1435AD3ED91838E34F0177AE122C",
         "Name": "C1-Launcher",
         "Guid": "5bc1ab26-9396-4b7d-a18b-29fe3ae196f8",
         "Version": "5",
@@ -1926,6 +1989,7 @@
         "Url": "https://github.com/ccomrade/c1-launcher/releases/download/v5/c1-launcher-v5-build.zip",
         "FileSize": 119980,
         "MD5": "CC0E21F8241AAB967A1BEC3312A18733",
+        "Sha256": "18BE070B9FA2612AEB592E2198B539796D8D1435AD3ED91838E34F0177AE122C",
         "Name": "C1-Launcher",
         "Guid": "bfd8ac2d-27ba-4c13-8686-803c1582a138",
         "Version": "5",
@@ -1970,10 +2034,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/cyberdimension_neptunia_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/cyberdimension_neptunia_nointro.zip",
         "FileSize": 2392,
         "InstallFolder": "CyberdimensionNeptunia4GoddessesOnline\\Content\\Sound",
         "MD5": "24A07171280BCE9724E4EB8B3D2A0C42",
+        "Sha256": "3B3472D91DFF84EC4ED400055830CA0342A7D95E07CB96402BB91229E56FD559",
         "Name": "No Intro Fix",
         "Guid": "a8109e97-70bd-433f-b649-fbd01dc3a89b",
         "Version": "1.0",
@@ -1992,10 +2057,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dark_souls_3_pc_experience_17.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dark_souls_3_pc_experience_17.zip",
         "FileSize": 102478,
         "InstallFolder": "Game",
         "MD5": "8CF024052A2F34B660E314273358A884",
+        "Sha256": "98C71B627C3F2B7D0E911657414476110EC3820AA67B0366D5EA385B590A9B57",
         "WineDllOverrides": [
           "d3d11"
         ],
@@ -2020,11 +2086,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dark_souls_dsfix_v24.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dark_souls_dsfix_v24.zip",
         "FileSize": 392119,
         "InstallFolder": "DATA",
         "ConfigFile": "DATA\\DSfix.ini",
         "MD5": "4BB6091F9244B001303B66DEDB3A847D",
+        "Sha256": "42D6C32B8539169A0A8526BAA11B6A685698A6AE415375CF23C330D7D4D39986",
         "WineDllOverrides": [
           "DINPUT8"
         ],
@@ -2041,11 +2108,12 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dark_souls_dsfixgui_v151.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dark_souls_dsfixgui_v151.zip",
         "FileSize": 29276,
         "InstallFolder": "DATA",
         "ConfigFile": "DATA\\DSFixGUI.exe",
         "MD5": "789F777AF7ABBD39D47CBCC46249087F",
+        "Sha256": "78C27107F0556AB8CB87B35CE5FF49DC5475C0A4AC09D2FFBD66F606AF62E19E",
         "Name": "DSFix GUI",
         "Guid": "174b80d6-e374-4b27-a9f5-d39b42b338dd",
         "Version": "1.5.1",
@@ -2068,9 +2136,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom_nugget_v4_4_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom_nugget_v4_4_0.zip",
         "FileSize": 24602109,
         "MD5": "4acba362de8c53c52d79cabe71f66a13",
+        "Sha256": "8FE8898ED2B36FF57A4ABA2BE6B9B1BF4ED3C69F39857FF229333EAE0E1C746F",
         "Name": "Nugget Doom",
         "Guid": "a8dd50ff-7502-47c4-a514-b325eb401410",
         "Version": "4.4.0",
@@ -2086,9 +2155,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom_nugget_midis.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom_nugget_midis.zip",
         "FileSize": 739243,
         "MD5": "B5E78DC7C3913328E4062F27D6F3BF62",
+        "Sha256": "B2D23ACD02F67E2029A65BCFD7158362B0514588BE32F0064B81317DDB4E5816",
         "Name": "Nugget Doom MIDI Packs",
         "Guid": "e0de2dd6-6e90-424f-a97a-005d6dc508dd",
         "Version": "1.0",
@@ -2104,10 +2174,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom1_crispy_v1.zip",
-        "FileSize": 8762094,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom1_crispy_v1.zip",
+        "FileSize": 247,
         "InstallFolder": "base",
         "MD5": "75D001F5BA186AD3391791D40FA44A47",
+        "Sha256": "33EA8A548316BBFC1B163522400D1B348D1B6BC11F89E339205023E1A954ECBE",
         "Name": "Crispy Doom",
         "Guid": "2568a112-e7cc-4c35-b984-7fd98ea22fac",
         "Version": "6.0",
@@ -2129,10 +2200,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom3_le_v1_5_7.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom3_le_v1_5_7.zip",
         "FileSize": 284173167,
         "ConfigFile": "d3le\\autoexec.cfg",
         "MD5": "2ca98b84e9a583e7090b70bbeae01f17",
+        "Sha256": "06AE3FCCF1FA8E486F094B918974338CA06D63917946133924AAC29DD7EA8F39",
         "Name": "The Lost Mission",
         "Guid": "ebbcf676-2401-4a8f-9058-b50a67252292",
         "Version": "1.5.7",
@@ -2148,10 +2220,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom3_dhewm_v154.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom3_dhewm_v154.zip",
         "FileSize": 27808919,
         "ConfigFile": "base\\autoexec.cfg",
         "MD5": "C638CD9AF2B14FEDD134B3EF7B2DC21B",
+        "Sha256": "111167BA38A48A217DCB50951DB2772EF8738D5BE75EE0A366F7D22793D882CD",
         "Name": "dhewm3",
         "Guid": "bc919ea0-c25f-4c98-bda4-a8ed6444c934",
         "Version": "1.5.4",
@@ -2174,11 +2247,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom3_autoexec.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom3_autoexec.zip",
         "FileSize": 224,
         "InstallFolder": "d3xp",
         "ConfigFile": "d3xp\\autoexec.cfg",
         "MD5": "C23F0C4236E08138EA1DE12F005141C6",
+        "Sha256": "4E8FD739E663E9D045BD52DB3C827AD68441DC26AE4F9A21EFB56542A82B3497",
         "Name": "Resolution Autoexec",
         "Guid": "ed424b58-a0dc-4686-babc-9ea630208deb",
         "Version": "1.0",
@@ -2198,9 +2272,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/doom2_crispy_v1.zip",
-        "FileSize": 11564923,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/doom2_crispy_v1.zip",
+        "FileSize": 247,
         "MD5": "E299A23DBA519B6AD2DB737E8403A1EF",
+        "Sha256": "F84B7BE5E5223624C7C0D250345FAB7F1FEA14009E4C3C9CA60A01E167C7FD2D",
         "Name": "Crispy Doom",
         "Guid": "90e84122-5f4e-4c78-995b-bb58c9144bde",
         "Version": "6.0",
@@ -2222,9 +2297,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/doom_dark_ages_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/doom_dark_ages_nointro.zip",
         "FileSize": 84676,
         "MD5": "2e461c003f057ce8c02b1a5d4800deaa",
+        "Sha256": "338D1AB5971A9C1DA5807EA63F8B9ED0F5D7CA38B4FCECD4590837F96E04FAA1",
         "Name": "No Intro Fix",
         "Guid": "b993e93b-827a-41bd-b0a9-86d46227c293",
         "Version": "1.0",
@@ -2243,9 +2319,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/daikatana_patch13_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/daikatana_patch13_v1.zip",
         "FileSize": 61113179,
         "MD5": "DAC606450866FEE1B095E5518B2141F1",
+        "Sha256": "87B809E1F517BA084A021EC3F924B7431A2BCCF0203A463F5D52DDCCB97B3384",
         "Name": "Patch 1.3",
         "Guid": "8a6ff69b-eaf6-4026-b735-e0be3140c347",
         "Version": "1.3",
@@ -2284,10 +2361,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/darkstar_one_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/darkstar_one_nointro.zip",
         "FileSize": 277,
         "InstallFolder": "video\\Movies\\Eng",
         "MD5": "70AF41D187306E33B3154F6FD20562B0",
+        "Sha256": "32D7519C689B050AA637305515FC64B5ED631FDF560761822CDC8F0276E8BF78",
         "Name": "No Intro Fix",
         "Guid": "99436a63-251c-4561-af61-0a3856cd040c",
         "Version": "1.0",
@@ -2306,9 +2384,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/darksiders_2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/darksiders_2_nointro.zip",
         "FileSize": 1887,
         "MD5": "AB64A2D457F23352241EA2384297E133",
+        "Sha256": "8B536DF200D03A9105A70DE98F8352C8047763287F43DB0087453ADF6766B52F",
         "Name": "No Intro Fix",
         "Guid": "469f2790-7cde-4a29-9b16-ecb2b226a755",
         "Version": "1.0",
@@ -2352,10 +2431,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dead_island_de_essential.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dead_island_de_essential.zip",
         "FileSize": 14400,
         "InstallFolder": "DI",
         "MD5": "65AA1F21EA3BE43C789CB9F74470FDA9",
+        "Sha256": "BC11E0CD13AC67AC5C74254DA6D725EAE0C54D3C15F405FF7959AC928D3012B9",
         "Name": "Essential Fix",
         "Guid": "48bb7c97-fcc7-4cf1-aa3f-e0f1dd576067",
         "Version": "1.0",
@@ -2387,10 +2467,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dead_island_de_essential.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dead_island_de_essential.zip",
         "FileSize": 14400,
         "InstallFolder": "DIR",
         "MD5": "65AA1F21EA3BE43C789CB9F74470FDA9",
+        "Sha256": "BC11E0CD13AC67AC5C74254DA6D725EAE0C54D3C15F405FF7959AC928D3012B9",
         "Name": "Essential Fix",
         "Guid": "7b93095e-a14c-4b6b-97d8-98313b6d4973",
         "Version": "1.0",
@@ -2435,9 +2516,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/dead_rising_2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/dead_rising_2_nointro.zip",
         "FileSize": 1160368,
         "MD5": "4525EF3AFFE8E03B2D01FC4D94076057",
+        "Sha256": "3413D9D5E7F8AE50B72CEBDA7EBF7A517DCDC87B9CF1D69970BDC6E694C9B39C",
         "Name": "No Intro Fix",
         "Guid": "069a91c7-5bcb-4770-a5ed-a4201d1be3af",
         "Version": "1.0",
@@ -2469,9 +2551,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/dead_rising_2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/dead_rising_2_nointro.zip",
         "FileSize": 1160368,
         "MD5": "4525EF3AFFE8E03B2D01FC4D94076057",
+        "Sha256": "3413D9D5E7F8AE50B72CEBDA7EBF7A517DCDC87B9CF1D69970BDC6E694C9B39C",
         "Name": "No Intro Fix",
         "Guid": "4f48438f-8296-46aa-a341-350b41200b5a",
         "Version": "1.0",
@@ -2490,9 +2573,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dead_space_mouse_fix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dead_space_mouse_fix_v1.zip",
         "FileSize": 226824,
         "MD5": "A36C677E1998C58E1FC2ABF5070C5B35",
+        "Sha256": "BBC042692503F029C6FB8E8E09AA61F02355DD906A99A260D6A77EC1FED77E94",
         "Name": "Mouse Fix",
         "Guid": "6f7d51bf-f87c-4cc8-8f19-b09d8cbcb60b",
         "Version": "1.0",
@@ -2512,6 +2596,7 @@
         "FileSize": 1089782,
         "ConfigFile": "MarkerPatch.ini",
         "MD5": "58335AACCE1A00849257622B42C60933",
+        "Sha256": "6D5A6555A1A19B270DA908E89F9B06C989E73E3D097BDB0985114AC1CFCAC51E",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -2530,9 +2615,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dead_space_2_mouse_fix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dead_space_2_mouse_fix_v1.zip",
         "FileSize": 364732,
         "MD5": "386319AD71703FDEEF070E80F1EAD8E1",
+        "Sha256": "3A715DE1D1CFD0DDE8358FCC7CEAF187B128CFCCEE2ECD42E65242B0C19696AF",
         "Name": "Mouse Fix",
         "Guid": "c2884e09-5746-4eed-8e41-8b8529fd8f2a",
         "Version": "1.0",
@@ -2578,9 +2664,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/deadly_premonition_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/deadly_premonition_ultrawide.zip",
         "FileSize": 439,
         "MD5": "C27D0C4EA503ED3BF678BAA6351FAC81",
+        "Sha256": "089F8A995034780FBFF897A695DFDDFCE6164CE98F99F6A9F8F46340339BBE87",
         "Name": "Ultrawide Fix",
         "Guid": "402a5bd2-a4dd-41ba-b438-d2ee9a205a74",
         "Version": "1.0",
@@ -2596,10 +2683,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/deadly_premonotion_dpfix095.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/deadly_premonotion_dpfix095.zip",
         "FileSize": 1608545,
         "ConfigFile": "DPfix.ini",
         "MD5": "FE2D788A4444C524DEF546E178C9F202",
+        "Sha256": "2AA4ED0E491DBA2A4A35561C3E82584B5D68A68EAEF23066E006CC56DA5F958C",
         "WineDllOverrides": [
           "winmm",
           "d3d9"
@@ -2650,13 +2738,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/desperados_resolutions.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/desperados_resolutions.zip",
         "FileSize": 2858460,
         "Variants": [
           "1920x1080",
           "2560x1080"
         ],
         "MD5": "7250689465FA0733DBD94EC4079F9EBC",
+        "Sha256": "AB8F202ACA9E6A70437DA24FA21083C71D362A38D782BDFE9793A37EAFDF79C2",
         "Name": "Resolution Fix",
         "Guid": "d207c355-0d68-43fd-a1ee-16a931421145",
         "Version": "1.0",
@@ -2676,10 +2765,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/deusex_deusexe_v8_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/deusex_deusexe_v8_1.zip",
         "FileSize": 122198,
         "InstallFolder": "System",
         "MD5": "AF3A1FB0C0FDB5DCFE86182ED6F1CC5C",
+        "Sha256": "490761E8F3B59AB04826C72055432A9337326AE9AC7EAD3BDA4325A527A450E1",
         "Name": "Deus Exe",
         "Guid": "4c16fb0b-81ea-4145-b2f7-97fc9a536db8",
         "Version": "8.1",
@@ -2700,9 +2790,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/deus-ex-hr-fixes.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/deus-ex-hr-fixes.zip",
         "FileSize": 4228641,
         "MD5": "E1DCE76A1F6BE6F6AC68024709A5311C",
+        "Sha256": "FA2E9C34F2AB3B4A0E04AF248AE9BA79C05BFBBCD48694F23801B462F1B47AD5",
         "Name": "Essential Fixes",
         "Guid": "19e378bc-7cf0-4353-9e4e-e995f64bca71",
         "Version": "1.0",
@@ -2719,6 +2810,7 @@
         "Url": "https://github.com/CookiePLMonster/DXHRDC-GFX/releases/latest/download/DXHRDC-GFX.zip",
         "FileSize": 1314418,
         "MD5": "2D561C55E77270F2767F30B9BB137EFE",
+        "Sha256": "01867FB741C7E63932C2C903C1C0FA754C50EE87E3BD903836EDCE75C22E59B3",
         "Name": "Gold Filter Restoration",
         "Guid": "2c7b801b-c966-47a2-8f0a-8387a40afa14",
         "Version": "1.0b4",
@@ -2738,9 +2830,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/deusex_2_visible_upgrade.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/deusex_2_visible_upgrade.zip",
         "FileSize": 10356262,
         "MD5": "122ED67EC74CB9DC4F98C4F7947785F3",
+        "Sha256": "EF8E84A8244600A99DCA3722ECB39330C1FA0A781A1728F588D8551CCECCB5E2",
         "Name": "Visible Upgrade",
         "Guid": "3f782807-0ca7-4a93-aeb1-489ba23d8fde",
         "Version": "1.2.0",
@@ -2780,9 +2873,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/disciples_glwrapper.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/disciples_glwrapper.zip",
         "FileSize": 13255009,
         "MD5": "98D9CFC19967E78540C677A6C8808A7A",
+        "Sha256": "A114A92318CB652C67344CC1C2440C937C9E05E474037FF25CDD97705BFA06BE",
         "Name": "GL Wrapper",
         "Guid": "d51c5a6e-d8ff-41f6-9b58-8273f0916d13",
         "Version": "1.89",
@@ -2803,9 +2897,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/disciples_glwrapper.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/disciples_glwrapper.zip",
         "FileSize": 13255009,
         "MD5": "98D9CFC19967E78540C677A6C8808A7A",
+        "Sha256": "A114A92318CB652C67344CC1C2440C937C9E05E474037FF25CDD97705BFA06BE",
         "Name": "GL Wrapper",
         "Guid": "d51c5a6e-d8ff-41f6-9b58-8273f0916d14",
         "Version": "1.89",
@@ -2926,10 +3021,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/divinity_2_patch_v0_97.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/divinity_2_patch_v0_97.zip",
         "FileSize": 14807879,
         "ConfigFile": "data\\globalswitches.xml",
         "MD5": "3C1C8A87382E4B20DCD53A82F0C9EC5C",
+        "Sha256": "3A0D592507D379607900E92BBA1DB2E7E2CCCADD5E46F60CDA1A202275F1BFF6",
         "Name": "Div2Patch",
         "Guid": "609d1e61-d0ea-4407-8380-f24dedc6c4c3",
         "Version": "0.97",
@@ -2994,10 +3090,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dragon_age_4gb.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dragon_age_4gb.zip",
         "FileSize": 4524866,
         "InstallFolder": "bin_ship",
         "MD5": "33FB5FEF81F896221A64DA86C485F832",
+        "Sha256": "63D8697174D8CDFEDA1B8D898797E0CD63D5ABA516522C55D826AAF5B32F9761",
         "Name": "4GB Patch",
         "Guid": "08dc922f-df42-4b2c-8ccf-89e258a8b121",
         "Version": "1.0.0.1",
@@ -3010,10 +3107,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dragon_age_patches.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dragon_age_patches.zip",
         "FileSize": 134829444,
         "InstallFolder": "{documents}\\BioWare\\Dragon Age",
         "MD5": "47CC97B307F95AD9EE0BF8A1E7FBCDFF",
+        "Sha256": "B534C6748AA9D76094D06C6B29755CDE4B2F0C199AA19329DCB4BC1677FFD73C",
         "Name": "Unofficial Patches",
         "Guid": "2939a012-1c7d-4650-ad68-2883b8dac250",
         "Version": "1.0",
@@ -3032,9 +3130,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/duke_nukem_2_rigel_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/duke_nukem_2_rigel_v1.zip",
         "FileSize": 2364010,
         "MD5": "303344CFCDE824F22A4E1BAD716BBF91",
+        "Sha256": "2BFCE096E3D8D6C229D7EB77D805FAE4EC9D0617D50FB0F9EC3854F471CB4166",
         "Name": "Rigel Engine",
         "Guid": "ab4bba28-8e93-415a-96f8-c9a1e1dd3989",
         "Version": "0.9.1",
@@ -3056,10 +3155,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/duke3d_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/duke3d_raze.zip",
         "FileSize": 2818,
         "InstallFolder": "Duke Nukem 3D",
         "MD5": "61A144B1B1BD840E9D2DD5C61D802189",
+        "Sha256": "2D3C2577BD3BEEA160C95936C9D5B770ACE9AA4EF39263CF62F9975096743628",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "Duke Nukem 3D",
         "Name": "Raze",
@@ -3108,9 +3208,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/duke_nukem_mp_enhanced.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/duke_nukem_mp_enhanced.zip",
         "FileSize": 3954993,
         "MD5": "F6F0861871265B21CDE0416F64599FD6",
+        "Sha256": "49ED7F991EE271F7055A4EB96E972F5EE81CDAE09AB4C6B91FC254E33AA6E51F",
         "Name": "Enhanced Edition",
         "Guid": "bcbd7a3c-d6f6-4b43-9967-f69e34e1c065",
         "Version": "1.0",
@@ -3132,9 +3233,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/dungeon-keeper-keeperfx_v1_2_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/dungeon-keeper-keeperfx_v1_2_0.zip",
         "FileSize": 428095907,
         "MD5": "278cdef0d01c0ffce1294f04acede825",
+        "Sha256": "D620C71CF61E151EA43BE93CC260CBDB8962B4283CE5831BAF277AD0084794CE",
         "Name": "KeeperFX",
         "Guid": "c0079c87-84c4-4e9f-8839-f8232d4fa8f7",
         "Version": "1.2.0",
@@ -3208,9 +3310,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/earth_2140_patch_v1_3_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/earth_2140_patch_v1_3_0.zip",
         "FileSize": 396900,
         "MD5": "ce579cfd539fe2e42beafd35f5f82f08",
+        "Sha256": "F15E4CB0C46EF4ED66B46D05C00889A395A055A98F536037E47C25A86C0DAACC",
         "Name": "Unofficial Patch",
         "Guid": "dc232085-a112-4a9f-9b7a-236479f81c92",
         "Version": "1.3.0",
@@ -3253,9 +3356,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/enclave_wizard_armor_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/enclave_wizard_armor_fix.zip",
         "FileSize": 3924,
         "MD5": "220AAC293B4C2F3BF8B147C573E19D02",
+        "Sha256": "72F3C0F7202CD10819D5D89ADA781267F38671A2BB08A6E06622C85D0450958C",
         "Name": "Wizard Armor Bug Fix",
         "Guid": "f8f0235c-ef10-4ace-9510-7cf699ef0f51",
         "Version": "1.0",
@@ -3268,10 +3372,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/enclave_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/enclave_nointro.zip",
         "FileSize": 693,
         "InstallFolder": "Sbz1\\Videos",
         "MD5": "CF9ECF1F748B4E110303620EFD602AE0",
+        "Sha256": "144E0D124B64CB8A5D281F7155D1FE697551A5EB156A5371D759BC61F7632AB8",
         "Name": "No Intro Fix",
         "Guid": "3046596c-0d55-4dbd-a2de-f32dd9855f00",
         "Version": "1.0",
@@ -3302,9 +3407,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/eternal_senia_emperium_mod_v1_66.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/eternal_senia_emperium_mod_v1_66.zip",
         "FileSize": 80489596,
         "MD5": "B0EBAFCAED17DC539DA868CEAFBBC6A6",
+        "Sha256": "2EA671FCBDCBB6929B1B545D64DA17026F96E6ED85A4A28C1A039A6EEE4DF90E",
         "Name": "Emperium Mod",
         "Guid": "01c277cd-b69b-4620-9705-919f55f55f92",
         "Version": "1.66",
@@ -3376,6 +3482,7 @@
         "FileSize": 2533375,
         "ConfigFile": "EchoPatch.ini",
         "MD5": "33778F5457EE1DE465495E301E0C9798",
+        "Sha256": "3C54985A413714D8EE8CE75966E6C5F48F2B3695DA88070B505105D9809CDA10",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -3394,9 +3501,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fear_dinput_fps_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fear_dinput_fps_fix.zip",
         "FileSize": 252158,
         "MD5": "6FBE656CA7895CE47AE216022CEB4130",
+        "Sha256": "7751627DC7A510D81DD706CDC2DC3ECADD8E2360BFB8C417BEF835C0F199227E",
         "Name": "DirectInput FPS Fix",
         "Guid": "4781fdc4-4c09-41df-b5e0-a873228efaec",
         "Version": "1.0",
@@ -3412,7 +3520,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fear_hud_scaling.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fear_hud_scaling.zip",
         "FileSize": 86561,
         "Variants": [
           "1080p",
@@ -3420,6 +3528,7 @@
           "4k (Base Game Only)"
         ],
         "MD5": "B114D751B6262A083C39502C27E8C01B",
+        "Sha256": "C7EFFE823B2F311468D4EFD32C627E099B89EBD8367C42EC39F2B9A74D50756A",
         "Name": "HUD and Subtitles Scaling Patch",
         "Guid": "814b58f1-3e31-40b7-a81c-c796b3127378",
         "Version": "1.0",
@@ -3439,9 +3548,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ffx_launcher_v20.7z",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ffx_launcher_v20.7z",
         "FileSize": 100591514,
         "MD5": "99B3C1E7303C709D1C28EA6FE8A1C899",
+        "Sha256": "F6F14BFEAFAD79E5E76A1F0A10E82C31B4461FEF4CDCD797F04014620629CDBB",
         "Name": "Final Fantasy X/X-2 Launcher\u002B",
         "Guid": "fdd56330-3952-4757-abc7-4deb3a457bd1",
         "Version": "2.0",
@@ -3461,11 +3571,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ff13_fix_164.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ff13_fix_164.zip",
         "FileSize": 128835,
         "InstallFolder": "white_data\\prog\\win\\bin",
         "ConfigFile": "white_data\\prog\\win\\bin\\FF13Fix.ini",
         "MD5": "4670BF0B83675E75AD2770D5E48DC005",
+        "Sha256": "B08274075AE3B6751E2E84811FC686A5F6ABC44EA9FD1EAC767E7196A4B8D58D",
         "Name": "FF13Fix",
         "Guid": "81c98dd3-4ea9-4851-b0de-ea58a2894ffd",
         "Version": "1.6.4",
@@ -3486,11 +3597,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/ff13_fix_164.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/ff13_fix_164.zip",
         "FileSize": 128835,
         "InstallFolder": "alba_data\\prog\\win\\bin",
         "ConfigFile": "alba_data\\prog\\win\\bin\\FF13Fix.ini",
         "MD5": "4670BF0B83675E75AD2770D5E48DC005",
+        "Sha256": "B08274075AE3B6751E2E84811FC686A5F6ABC44EA9FD1EAC767E7196A4B8D58D",
         "Name": "FF13Fix",
         "Guid": "81c98dd3-4ea9-4851-b0de-ea58a2894ff1",
         "Version": "1.6.4",
@@ -3511,10 +3623,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/fable_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/fable_nointro.zip",
         "FileSize": 2299,
         "InstallFolder": "data\\Video",
         "MD5": "BD16680513C44E02D1264F810127FC6E",
+        "Sha256": "008F13A58C9FBCBD361C5F847FAD52E0E9CFF1F581DE22C80218C806036FD53E",
         "Name": "No Intro Fix",
         "Guid": "7d17c43e-3acc-458e-96c6-8618061b49c6",
         "Version": "1.0",
@@ -3533,9 +3646,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/faery_official_patch.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/faery_official_patch.zip",
         "FileSize": 12516684,
         "MD5": "CA53000E14207748BF8FAFC569A28EA0",
+        "Sha256": "DF363554B20805DFA30EE999CDB19B6604C8BB9F412318CD94F1535AFC38C264",
         "Name": "Official Patch",
         "Guid": "9ae9d839-055e-492e-aca8-d60c4be49310",
         "Version": "1.1",
@@ -3578,9 +3692,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout1_censorship_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout1_censorship_v1.zip",
         "FileSize": 820092,
         "MD5": "1D58B4C7687C6BC1C4D9E0732ADD2053",
+        "Sha256": "B5DCDDC62B722ACAF19CDDCC6D951C4CEB730937B2FE625A242E0CD58AD13A27",
         "Name": "Censorship Fix",
         "Guid": "e21ec5b7-e51f-4101-83e8-16145dfb4a6a",
         "Version": "1.3",
@@ -3593,7 +3708,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout1-ettu-v1_13_3643.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout1-ettu-v1_13_3643.zip",
         "FileSize": 1084912024,
         "ConfigFile": "config\\fo1_settings.ini",
         "FilesToDelete": [
@@ -3604,6 +3719,7 @@
           "DATA\\TEXT"
         ],
         "MD5": "fed67e188678a583c7fa83cb3f2d539c",
+        "Sha256": "59285DF886AE0419ECFA2B81767F8A7834FE048284DB4FA9945FCCC218484424",
         "Name": "Fallout Et Tu",
         "Guid": "c59d1026-191a-4763-aea8-634ef1b68ee1",
         "Version": "1.13.3643",
@@ -3618,9 +3734,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout1_fixt.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout1_fixt.zip",
         "FileSize": 70623679,
         "MD5": "9DC98C291FA12F39CA8FA850C696A370",
+        "Sha256": "AC5FFFAF6A07A300DFCA596D0F00AE67DAC271DFEA885053B3952A9A2CFF860D",
         "Name": "Fixt Vanilla",
         "Guid": "4f969951-a992-471b-990a-f3255c019c70",
         "Version": "0.81a",
@@ -3642,9 +3759,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout2_censorship.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout2_censorship.zip",
         "FileSize": 4274222,
         "MD5": "4AC8398F370D8A6FD530AC1197C4BCD9",
+        "Sha256": "DD05E14D724081D0224AC2E5911E52B7FF56B885C48F72E8D912783E01964B8C",
         "Name": "Censorship Fix",
         "Guid": "66f35c99-445c-4269-9ff6-1e5dd3f0d750",
         "Version": "1.0",
@@ -3657,7 +3775,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout2-rp-v2_4_33.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout2-rp-v2_4_33.zip",
         "FileSize": 866938748,
         "FilesToDelete": [
           "data\\art\\tiles\\grid000.FRM",
@@ -3667,6 +3785,7 @@
           "patch000.dat"
         ],
         "MD5": "c5a3f9d2e940fd89f8447f0366d88f7a",
+        "Sha256": "6BE2446D2E7987E13F3E7A1C6EF1C36C965E40234ADDC15ADFF3BF0DB48CC6D3",
         "Name": "Restoration Project",
         "Guid": "18c827ca-9d30-4f6f-acf0-d50fe588a8ce",
         "Version": "2.4.33",
@@ -3682,7 +3801,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/fallout/fallout2-up-v1_02_33.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/fallout/fallout2-up-v1_02_33.zip",
         "FileSize": 56815304,
         "FilesToDelete": [
           "data\\art\\tiles\\grid000.FRM",
@@ -3691,6 +3810,7 @@
           "patch000.dat"
         ],
         "MD5": "1fbebac703e0571678736077f4641a38",
+        "Sha256": "336F3096F22E018ED0B30F07A9A96EE52DB95F63269AFD4560933C5D2736A688",
         "Name": "Unofficial Patch",
         "Guid": "fdd24add-a7c0-4730-a29c-21cf71e07bb0",
         "Version": "1.02.33",
@@ -3710,9 +3830,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/farcry1_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/farcry1_fix.zip",
         "FileSize": 1027898179,
         "MD5": "4BF8E2BCF7ADCB424F0095CE43F48AA6",
+        "Sha256": "9BCF5B7A68491EBE1F4342A8493D63BE0038001C786158DA3FF56C3B394F3DD7",
         "Name": "Far Cry Fix",
         "Guid": "d648cb75-e839-4ebc-97d6-4cf874f15ec1",
         "Version": "1.0",
@@ -3751,10 +3872,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/blood_dragon_noserver.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/blood_dragon_noserver.zip",
         "FileSize": 27619637,
         "InstallFolder": "bin",
         "MD5": "DA2787DF106481D709BA2209628488D6",
+        "Sha256": "2A879F08714521D607E98771159428BE09B7EBD5B424CB6A73FB5D2A99B6533F",
         "Name": "Service Not Available Fix",
         "Guid": "c75c2fde-c1cf-4405-9bbe-cb466d960103",
         "Version": "1.0",
@@ -3773,10 +3895,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/flatout_1_ZPatchFO1_v1.5.zip",
-        "FileSize": 2743482,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/flatout_1_ZPatchFO1_v1.5.zip",
+        "FileSize": 247,
         "ConfigFile": "ZPatchFO1.ini",
         "MD5": "CE729C46BF7BDBD41473BD41BFCC15C5",
+        "Sha256": "0E5BB204B81E094B2C598CEB938C964A17391208286566C59FD9B6445A5A1C6C",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -3801,10 +3924,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/flatout_2_ZPatchFO2_v2.4.zip",
-        "FileSize": 2681145,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/flatout_2_ZPatchFO2_v2.4.zip",
+        "FileSize": 247,
         "ConfigFile": "ZPatchFO2.ini",
         "MD5": "0A6A1FC1F1716CF77A8342B56338AA22",
+        "Sha256": "71F5B199090F2BBC2F10581E9FAB86228D627159719883D2A969A0BF8CA350AC",
         "WineDllOverrides": [
           "winmm"
         ],
@@ -3833,6 +3957,7 @@
         "Url": "https://github.com/narzoul/DDrawCompat/releases/download/v0.4.0/DDrawCompat-v0.4.0.zip",
         "FileSize": 785877,
         "MD5": "9E9CC4DBA3DB793517C728EE0507D8B9",
+        "Sha256": "C9448FAA48EC06C1D7CFF3334DA056B4535A6B4B180C8B2AB33C2CF42C4969FB",
         "Name": "Performance Fix",
         "Guid": "e43f3767-80ae-4ad9-9bb2-a9d40ba4f0a2",
         "Version": "0.4.0",
@@ -3851,9 +3976,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/freedom_force_mouse_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/freedom_force_mouse_fix.zip",
         "FileSize": 1417002,
         "MD5": "4E2B53B9E87E847FA5B5AE6850FDC961",
+        "Sha256": "01B6337062EFC6D900DE1C58DF579415BCCA0B26987D64CD077C8FE0EAC248DE",
         "Name": "Cursor fix",
         "Guid": "b041bccf-5637-481f-b6a8-ac51e53c089b",
         "Version": "1.0",
@@ -3866,9 +3992,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/freedom_force_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/freedom_force_widescreen.zip",
         "FileSize": 1330975,
         "MD5": "9BA59F8863E6DD32EAF2EE9013FB28A1",
+        "Sha256": "62FB277979D41FE416640F9DA8B03F2B8D413F3BCA89B918AB4E53E4BC8728F5",
         "Name": "Universal Widescreen Fix",
         "Guid": "12dd8560-a94e-4868-a109-66ff460f44d3",
         "Version": "1.0",
@@ -3888,9 +4015,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/freedom_force_2_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/freedom_force_2_widescreen.zip",
         "FileSize": 1330970,
         "MD5": "71ECD95FAFFE412075E596E27DF4A0A4",
+        "Sha256": "BB32B89C181AFCACA130427F91642D2435007EF1BF370CD04464569383F7F0C2",
         "Name": "Universal Widescreen Fix",
         "Guid": "b813e025-f955-4e57-9c48-89914dfc453b",
         "Version": "1.0",
@@ -3914,6 +4042,7 @@
         "FileSize": 1191701,
         "ConfigFile": "scripts\\Gun.WidescreenFix.ini",
         "MD5": "2AEA0D3DE4DE52B4384C4EA5EB3E5A6F",
+        "Sha256": "68C01344F8114EC7CA2A2EA2E714B81522F306F84D7ADBBFC76E4C25F82A1F85",
         "WineDllOverrides": [
           "d3d9"
         ],
@@ -4043,9 +4172,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nopssdk_v1_0_3.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nopssdk_v1_0_3.zip",
         "FileSize": 1708992,
         "MD5": "F04DEB578FE52298B624798CFA490F0E",
+        "Sha256": "8B7BA972FF0EFA40282A8C11A24CC83DF413989A8E01A7B9E7BA3F608A71682D",
         "Name": "NoPSSDK",
         "Guid": "7d8cd535-b68e-4988-82df-b7165332a142",
         "Version": "1.0.3",
@@ -4087,10 +4217,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta3-essential_v1_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta3-essential_v1_2.zip",
         "FileSize": 5201457,
         "ConfigFile": "scripts\\GTA3.WidescreenFix.ini",
         "MD5": "22995A32CD578DF4079F5EDA2D0BAD74",
+        "Sha256": "AD24B89FCE4A6B4D4EFD91E31C59BF160A5C295990C559524DB38B97B42665A8",
         "WineDllOverrides": [
           "d3d8",
           "ddraw"
@@ -4113,9 +4244,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta3-leftovers_v16_12.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta3-leftovers_v16_12.zip",
         "FileSize": 55154214,
         "MD5": "0564580D7B4DE6C930B059B2CACDED13",
+        "Sha256": "013AC89270AF4D36B658BD852180C37B92BC35DF4CC75AC7D51D6C212BCE8DFD",
         "Name": "Leftovers Fix",
         "Guid": "68ad2ce4-4259-4607-8052-326d054b6f7f",
         "Version": "16.12",
@@ -4136,6 +4268,7 @@
         "FileSize": 359581,
         "InstallFolder": "scripts",
         "MD5": "D6D1E3656EF914C71F6A3C2293CFA33B",
+        "Sha256": "979CF5D944AE893D151B7922A6651B3329FE1E8B168220CF0ADA580FCC58D798",
         "Name": "Project2DFX",
         "Guid": "24250f74-7113-4356-a8e0-7a52fc3e8498",
         "Version": "24.11",
@@ -4151,10 +4284,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/gta3vssa_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/gta3vssa_nointro.zip",
         "FileSize": 1630,
         "InstallFolder": "movies",
         "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
+        "Sha256": "D7AD7F27DB8AC59FED519E1AB1D9983C81A788053789DA037417A78FAB4B51BD",
         "Name": "No Intro Fix",
         "Guid": "002bf5eb-7b99-4519-895c-4592f4512228",
         "Version": "1.0",
@@ -4168,9 +4302,10 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gta3/GTA3.WidescreenFix.zip",
-        "FileSize": 1095886,
+        "FileSize": 1126732,
         "ConfigFile": "scripts\\GTA3.WidescreenFix.ini",
         "MD5": "BE00DCA5F8A7D50711335C470572AE6B",
+        "Sha256": "38BDEB3B901A4953F1F635685FBD91342DCD3BA4C5A70C621B37AB6F017889E1",
         "WineDllOverrides": [
           "d3d8"
         ],
@@ -4187,10 +4322,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta3-vigilante_v22_08.zip",
-        "FileSize": 133560,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta3-vigilante_v22_08.zip",
+        "FileSize": 247,
         "InstallFolder": "scripts",
         "MD5": "141AF4CA5FDD608AE39703092BB964B0",
+        "Sha256": "B0C8B3ADEC9BDFE2C1180C7501C99F529B82F3EFC068FA03904FE24BEC5C9DF7",
         "Name": "Framerate Vigilante",
         "Guid": "348acbb1-4a8b-434b-83a1-c700143230fe",
         "Version": "22.8",
@@ -4203,10 +4339,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta3_ginput_v1.zip",
-        "FileSize": 154506,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta3_ginput_v1.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\GInputIII.ini",
         "MD5": "EBFB086988D95AA52C26F7B2ECCC5F02",
+        "Sha256": "9133348F4729BE88DFEF9B1CC6663C6901F22B6DBF3222D39AF4B41389B271AD",
         "Name": "GInput",
         "Guid": "cb9380c0-2c61-4f3d-b100-832304b0d694",
         "Version": "1.11",
@@ -4222,10 +4359,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta3-silent_v1_1_b9.zip",
-        "FileSize": 161172,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta3-silent_v1_1_b9.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\SilentPatchIII.ini",
         "MD5": "607CEA58347514CFB289695A911EE567",
+        "Sha256": "9D39D823072F9B3ACEF6195B6FAD94C9947B5D73B6A66C0319BC778AE778390E",
         "WineDllOverrides": [
           "ddraw"
         ],
@@ -4255,6 +4393,7 @@
         "FileSize": 61499,
         "InstallFolder": "GTAIV\\plugins",
         "MD5": "E1B074D567919A8E002B7E6F6AF749E0",
+        "Sha256": "9FDA27FA00E2FD7B4C23214703B32A961E9C94A06232CB98F9E070B006CB4B57",
         "Name": "ColAccel",
         "Guid": "38a898bc-d88f-4a15-9876-b3b84a8549f0",
         "Version": "1.5",
@@ -4275,6 +4414,7 @@
         "InstallFolder": "GTAIV",
         "ConfigFile": "GTAIV\\plugins\\GTAIV.EFLC.FusionFix.ini",
         "MD5": "49360EFB47DF9EF2D3CE3E5EB9578558",
+        "Sha256": "19B8199D5153F5A29E16A0B0C323392BB145552866AA765B4F8F3940C87E42D2",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -4293,10 +4433,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta4_limit_removal.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta4_limit_removal.zip",
         "FileSize": 179,
         "InstallFolder": "GTAIV",
         "MD5": "C6EE04E2BE811F0765B0039472C1D05F",
+        "Sha256": "2F616F65C6E7D4AF111B60CA7B92C14D022DBBA43C1E5DBA1A1B7B97095D332B",
         "Name": "Graphics Restrictions Removal",
         "Guid": "a922bab6-e3a4-4864-8cfa-48fda187b941",
         "Version": "1.0",
@@ -4309,10 +4450,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta4-music-plus_v1_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta4-music-plus_v1_0.zip",
         "FileSize": 634822,
         "InstallFolder": "GTAIV",
         "MD5": "93295AE8B3DC9DF701BE96E94D2BF678",
+        "Sha256": "4425EE3279A941D8A1D36E45E1959FC1E447355E6D81221E50711F8D655E806D",
         "Name": "Music Plus",
         "Guid": "f454de6e-7bfd-44f8-badd-4014ec6992e0",
         "Version": "1.0",
@@ -4328,10 +4470,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta4-music-restore_v1_90.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta4-music-restore_v1_90.zip",
         "FileSize": 1498986280,
         "InstallFolder": "GTAIV",
         "MD5": "FB324BEFD9351E885AF377911A8D41AA",
+        "Sha256": "85954468B48CF3BA2541BF05121DA5381E4008EE6F2856A88E0FB94B9B40D6F1",
         "Name": "Music Restoration",
         "Guid": "16ec1dd4-e1c0-43ab-836d-bab15bc2ba95",
         "Version": "1.90",
@@ -4347,10 +4490,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gta4-various-fixes_v2_0_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gta4-various-fixes_v2_0_1.zip",
         "FileSize": 1563737041,
         "InstallFolder": "GTAIV",
         "MD5": "05E1E49BF1A1A46AF10E84B31B336334",
+        "Sha256": "2953E8451AF132CA4E264F69593F3120970422D79381349DF61203B05427DE9D",
         "Name": "Various Fixes",
         "Guid": "d7ccf59f-50d6-4d2c-a85b-4e1bb9c9164e",
         "Version": "2.0.1",
@@ -4363,10 +4507,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/dxvk_x32.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/dxvk_x32.zip",
         "FileSize": 4173602,
         "InstallFolder": "GTAIV",
         "MD5": "D98254EF3D3910C818449F5C6A483998",
+        "Sha256": "7613C0D06FB8C6AB1B85800CA1344394DDEAC3E037EF45CED1AEB0C272E6D3EE",
         "WineDllOverrides": [
           "d3d9",
           "d3d10core",
@@ -4391,10 +4536,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-essential_v1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-essential_v1_1.zip",
         "FileSize": 9974758,
         "ConfigFile": "scripts\\GTASA.WidescreenFix.ini",
         "MD5": "56931C7F2BD2AB924708ECAA1DB6EF2E",
+        "Sha256": "07D92ADAFDEB2EEAC92CA38DEF0C8C64831EE8EF623DCD8C5B9716C6A6C15C8E",
         "WineDllOverrides": [
           "vorbisFile"
         ],
@@ -4420,6 +4566,7 @@
         "FileSize": 337769,
         "InstallFolder": "scripts",
         "MD5": "AEA893E26AE4DB3F41E8CF150C8A0495",
+        "Sha256": "2D065728D1648C14A65368A7359713D2135640AE104F1E3845DB4E44F4D3539E",
         "Name": "Project2DFX",
         "Guid": "fc0104dc-ce35-43ac-a457-ddbabc8308db",
         "Version": "24.11",
@@ -4435,9 +4582,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-proper_v1_5.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-proper_v1_5.zip",
         "FileSize": 808995467,
         "MD5": "a3d6e3be0bed37fa3c913133a724669a",
+        "Sha256": "FD46117AA9AE5CF03BD8C1926F54F79CC83687038CDEA3D26E77B36696163FF0",
         "Name": "Proper Fixes",
         "Guid": "8ef81959-f22c-43e3-bc40-ce4446c41da1",
         "Version": "1.5.0",
@@ -4454,9 +4602,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-skygfx_v1_7.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-skygfx_v1_7.zip",
         "FileSize": 644131,
         "MD5": "0B85C221EFB99DAA25B9D1D285169CBD",
+        "Sha256": "A2E59227BF44593D5BF263F41A3DDAE9A9C811B0F50834AD7A6536A098A801B9",
         "Name": "SkyGfx",
         "Guid": "d2022c57-edbc-4c22-8fad-56838e1340ab",
         "Version": "1.7",
@@ -4472,10 +4621,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/gta3vssa_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/gta3vssa_nointro.zip",
         "FileSize": 1630,
         "InstallFolder": "movies",
         "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
+        "Sha256": "D7AD7F27DB8AC59FED519E1AB1D9983C81A788053789DA037417A78FAB4B51BD",
         "Name": "No Intro Fix",
         "Guid": "ceb00db5-ecb9-41f4-a843-e5c586769d9e",
         "Version": "1.0",
@@ -4488,10 +4638,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-essential_v1.zip",
-        "FileSize": 9396693,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-essential_v1.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\GTASA.WidescreenFix.ini",
         "MD5": "1F4BA4D4544FCEE1668714AD51858DD0",
+        "Sha256": "802829B731A47757CD54B71DF5218BB430056F160E8E17FD1247DD92A8B75F82",
         "WineDllOverrides": [
           "vorbisFile"
         ],
@@ -4508,10 +4659,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-vigilante_v22_8.zip",
-        "FileSize": 133301,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-vigilante_v22_8.zip",
+        "FileSize": 247,
         "InstallFolder": "scripts",
         "MD5": "B33DB6CD8A8A36039441E6F92B5362A3",
+        "Sha256": "D53B776657586433CFD432F3BA2F9ED6DF52F1D59C6BC2FA923C97171C7A505F",
         "Name": "Framerate Vigilante",
         "Guid": "25135180-2fce-429e-bd8c-885071f6a351",
         "Version": "22.8",
@@ -4524,10 +4676,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa_ginput_v1.zip",
-        "FileSize": 166987,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa_ginput_v1.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\GInputSA.ini",
         "MD5": "416176AB85C77D1C84A2B57C200ACCAB",
+        "Sha256": "047974DBB7C9A98665256BC9B89891E2E5F85E3EF640268E5B89E76C47B69C6E",
         "Name": "GInput",
         "Guid": "5af511ba-373b-4a76-ac56-26404c143242",
         "Version": "1.11",
@@ -4543,11 +4696,12 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtasa-silent_v1_1_b33.zip",
-        "FileSize": 212746,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtasa-silent_v1_1_b33.zip",
+        "FileSize": 247,
         "InstallFolder": "scripts",
         "ConfigFile": "scripts\\SilentPatchSA.ini",
         "MD5": "B9040BBF0890F27A41B18E57FB61793E",
+        "Sha256": "6A1CDC8AC6D40C36FD96C66556538E52482DD3670F26DBCFB9BA5C0EF522A064",
         "Name": "Silent Patch",
         "Guid": "3bcf4b1a-8471-4ba7-8117-8745e7885152",
         "Version": "1.1b33",
@@ -4570,10 +4724,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtavc-essential_v1_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtavc-essential_v1_2.zip",
         "FileSize": 5588196,
         "ConfigFile": "scripts\\GTAVC.WidescreenFix.ini",
         "MD5": "1E74E50C7EBE2652301FDAE4A2ADBC53",
+        "Sha256": "231BE0621CF38789B37617545105A87F5C754EEDBA372287A14259B972D71432",
         "WineDllOverrides": [
           "d3d8",
           "ddraw"
@@ -4596,9 +4751,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtavc-leftovers_v16_07.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtavc-leftovers_v16_07.zip",
         "FileSize": 65842730,
         "MD5": "245766A276D17ADABAE8B6C4DEBA5B14",
+        "Sha256": "FD798B59C39312B29743BCA5F9C7895F881568AB9C8AB39B784074646B164E87",
         "Name": "Leftovers Fix",
         "Guid": "d74631cd-6377-414a-84da-0496640ce897",
         "Version": "16.07",
@@ -4619,6 +4775,7 @@
         "FileSize": 365559,
         "InstallFolder": "scripts",
         "MD5": "09893F0AEE21681B2BE55DD807BA0F76",
+        "Sha256": "8D119B47E3DE5A513BF31DDC4D94B356C92540A0534A68A5B8B91EAEC2D94C55",
         "Name": "Project2DFX",
         "Guid": "1728749b-a7fb-4a21-9961-b525d0a4161e",
         "Version": "24.11",
@@ -4634,10 +4791,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/gta3vssa_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/gta3vssa_nointro.zip",
         "FileSize": 1630,
         "InstallFolder": "movies",
         "MD5": "29B7A2F603BA99E85A8BF39AE7E5EAB2",
+        "Sha256": "D7AD7F27DB8AC59FED519E1AB1D9983C81A788053789DA037417A78FAB4B51BD",
         "Name": "No Intro Fix",
         "Guid": "1af29817-a7cb-439a-8989-fad6b54f1696",
         "Version": "1.0",
@@ -4651,9 +4809,10 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/gtavc/GTAVC.WidescreenFix.zip",
-        "FileSize": 1099077,
+        "FileSize": 1099076,
         "ConfigFile": "scripts\\GTAVC.WidescreenFix.ini",
         "MD5": "879AB5425120A878EC48CCB975C78750",
+        "Sha256": "2A8C8B46F6B50BFAEA063D3BE4C2C13ACAC0066385FFEC4D51BFE5812AF0F5E3",
         "WineDllOverrides": [
           "d3d8"
         ],
@@ -4670,10 +4829,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtavc_ginput_v1.zip",
-        "FileSize": 163957,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtavc_ginput_v1.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\GInputVC.ini",
         "MD5": "C87CCF56D520F3F6A4FDE20EC6173E47",
+        "Sha256": "4BBEFBC515F700CCA9A092C2C43552779CD0F87BDAAF690A98B4C9A8E47222BC",
         "Name": "GInput",
         "Guid": "0bc6acef-d261-49a7-af02-88265125467b",
         "Version": "1.11a",
@@ -4689,9 +4849,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtavc_quicksave_v1_0.zip",
-        "FileSize": 103411,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtavc_quicksave_v1_0.zip",
+        "FileSize": 247,
         "MD5": "09D8F92A73480095DF0D5A4408FB9827",
+        "Sha256": "A7BDEB5ABA7BDBA3824C1958267B35E21BB2DFFD6FBDED79F36D837238FAE686",
         "Name": "Quick Save",
         "Guid": "26857856-e71f-43c7-a407-f7fb379c978d",
         "Version": "1.0",
@@ -4707,10 +4868,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/gta/gtavc-silent_v1_1_b11.zip",
-        "FileSize": 235287,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/gta/gtavc-silent_v1_1_b11.zip",
+        "FileSize": 247,
         "ConfigFile": "scripts\\SilentPatchVC.ini",
         "MD5": "62AF8C580427EA7446772A1AF48782EF",
+        "Sha256": "3CC9E13D681AAED4FF88F2444A8C311B8E7EB5DC900F6E8AF29026A287EB0765",
         "WineDllOverrides": [
           "ddraw"
         ],
@@ -4785,10 +4947,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/heretic_crispy_v7.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/heretic_crispy_v7.zip",
         "FileSize": 8350270,
         "InstallFolder": "base",
         "MD5": "F2673F057D67D11BBB5D27CD13FF8095",
+        "Sha256": "CF00AF6B28872CC84C26A097CC55B91CB57BB05345C068F2E879A0D1C0B49518",
         "Name": "Crispy Heretic \u002B Widescreen Sprites",
         "Guid": "f6432821-49c7-49c4-9db1-5380c846ae27",
         "Version": "7.0",
@@ -4810,9 +4973,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/homm3-hota_v1_7_3.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/homm3-hota_v1_7_3.zip",
         "FileSize": 1300862141,
         "MD5": "3f360a85d566f955d0a7d494aae7cb0a",
+        "Sha256": "0AD39FA2F3AF24FA582DED05E71FFA099E69B8FB3815607964827848522F723D",
         "Name": "Complete Edition \u002B Horn of the Abyss",
         "Guid": "a3c21d0d-30e7-4f35-b416-338390ec5d2b",
         "Version": "1.7.3",
@@ -4831,10 +4995,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/hexen_crispy_v7.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/hexen_crispy_v7.zip",
         "FileSize": 8592867,
         "InstallFolder": "base",
         "MD5": "F752B8EEA97B4C19E4AB6E0FC5CA9A22",
+        "Sha256": "2FD5FCC09049B671308B07CCC6C08EE745D3573549DB6C3DED9F99B77F73916B",
         "Name": "Crispy Hexen \u002B Widescreen Sprites",
         "Guid": "8309af69-08b9-419e-87bb-85665444efb7",
         "Version": "7.0",
@@ -4856,10 +5021,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/hexendd_crispy_v7.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/hexendd_crispy_v7.zip",
         "FileSize": 9008055,
         "InstallFolder": "base",
         "MD5": "806EFB8C2867FD6221E7E60ABF8D2187",
+        "Sha256": "7ABBD3F926E846678A50EA27AA851F65BE32607C35F0B0570C16F74EED5B2439",
         "Name": "Crispy Hexen \u002B Widescreen Sprites",
         "Guid": "8fd5cf5a-30c3-4582-9c1d-9f2d81dfe4f2",
         "Version": "7.0",
@@ -4881,9 +5047,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hitman/hitman2_censorship.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hitman/hitman2_censorship.zip",
         "FileSize": 451591575,
         "MD5": "D1573CBFD186D2C7101C49EAA2D90B23",
+        "Sha256": "8EAC212E31848D67A924F94B030BA0E260E7C898ABAAE2BD21ED09CDC7594D1F",
         "Name": "Censorship Fix",
         "Guid": "e36c6ada-fec3-4e4a-8f27-deb6be8b007e",
         "Version": "1.01",
@@ -4896,10 +5063,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hitman/hitman2_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hitman/hitman2_widescreen.zip",
         "FileSize": 2542451,
         "ConfigFile": "scripts\\h2.ini",
         "MD5": "AC673E478BBDB13A2A4F16E112C6EF23",
+        "Sha256": "00D017E577F1F2ED7A8804875EF7804F3F3DBEB4EB074ECDF39A902BD6C82D4A",
         "Name": "Widescreen Fix",
         "Guid": "bce7d1ed-3bb7-4562-9cb7-0e802f74cd7d",
         "Version": "1.0",
@@ -4913,9 +5081,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/hitman2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/hitman2_nointro.zip",
         "FileSize": 585,
         "MD5": "60758D75B77B9393F6F6F34CC20710EB",
+        "Sha256": "81AEF579A1B28BA0F715CAE2CF60A85F922D84416BD9EF8BB6C1039C4F9C54B2",
         "Name": "No Intro Fix",
         "Guid": "db7af868-27cb-46f6-bcf3-4e98fe43c5d4",
         "Version": "1.0",
@@ -4937,10 +5106,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hitman/hitman4_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hitman/hitman4_widescreen.zip",
         "FileSize": 59136,
         "ConfigFile": "h4.ini",
         "MD5": "E5CFF3BB2616BD410F2738DEF9DAD74D",
+        "Sha256": "792C69B8E078D027291BE5DD8CB27D57DF3E8B4D753FC556DB2F1F19F486E9BC",
         "Name": "Widescreen Fix",
         "Guid": "e9ef6cd0-abe4-40c3-be2e-470778cb4d8d",
         "Version": "1.2",
@@ -4954,9 +5124,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/hitman4_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/hitman4_nointro.zip",
         "FileSize": 1252,
         "MD5": "A043DC91CD302E877D90F7306BE1D204",
+        "Sha256": "652F7F4DD600C266D80C0B7150C725BFC9897E6E233D62BE5047E5918567DBBE",
         "Name": "No Intro Fix",
         "Guid": "d48343a8-89a2-49f5-83b0-f155e2c9f678",
         "Version": "1.0",
@@ -4975,10 +5146,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hitman/hitman1_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hitman/hitman1_widescreen.zip",
         "FileSize": 2338700,
         "ConfigFile": "scripts\\h47.ini",
         "MD5": "25583D860EDA97D75F3FAE4F69A4386E",
+        "Sha256": "D14D0E2E3342EA0F90992FE7388BB919AB58CBF8B8CC2F264BCB7C813AD3BF2F",
         "Name": "Widescreen Fix",
         "Guid": "fb71e454-0ff4-4b4e-99c8-db081fd05763",
         "Version": "1.0",
@@ -4992,10 +5164,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/hitman1_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/hitman1_nointro.zip",
         "FileSize": 221619,
         "InstallFolder": "Cutscenes\\Intro",
         "MD5": "9D542E56522716B32D7CD515FC9BA3A6",
+        "Sha256": "11107D3B70B874FD84604FE7CC803725195F3C67C5EA31DED35738FF547932A3",
         "Name": "No Intro Fix",
         "Guid": "23866353-a694-4668-87b6-65b7b8c85e81",
         "Version": "1.0",
@@ -5014,10 +5187,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hitman/hitman3_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hitman/hitman3_widescreen.zip",
         "FileSize": 2484585,
         "ConfigFile": "scripts\\h3.ini",
         "MD5": "B76071F61B85EA43990CE0867DC0B40E",
+        "Sha256": "00540FC81E529A25F75B8698E4960FB6F56E9BF5ED1B4E7141C2CB6A6D6477F4",
         "Name": "Widescreen Fix",
         "Guid": "7c9cf11a-e529-4a4e-a8c8-a517f6ead308",
         "Version": "1.0",
@@ -5031,9 +5205,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/hitman3_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/hitman3_nointro.zip",
         "FileSize": 584,
         "MD5": "B5C942B36A3A8FD09224138A847DA480",
+        "Sha256": "0CDC704EBF2869F18A43540A277F42E8899DC66F33D42ED084FCA0E6A1BC3C5C",
         "Name": "No Intro Fix",
         "Guid": "8a324a28-498a-4af9-bdec-fddf7cf33e9a",
         "Version": "1.0",
@@ -5055,9 +5230,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hollow_knight_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hollow_knight_ultrawide.zip",
         "FileSize": 989675,
         "MD5": "CA23DB23F9E8566125AB32FC1E718DAF",
+        "Sha256": "3F324A4679A7AAEAAF6302E71618B5935052352A49C7CB0315A25F9923A8A62B",
         "Name": "Ultrawide Fix",
         "Guid": "8adb8784-4109-4814-9d25-dbc50666c731",
         "Version": "1.0",
@@ -5076,12 +5252,13 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/homefront_custom_patch_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/homefront_custom_patch_v1.zip",
         "FileSize": 3989919,
         "FilesToDelete": [
           "redist\\PhysX_9.09.1112.exe"
         ],
         "MD5": "e97b72fd09182e237c4ed2badcc008a8",
+        "Sha256": "C4F21909F0A82394D466598E1E3433FCA62AA604D68C7ECEA56E8B204D7E5C25",
         "Name": "Custom Patch",
         "Guid": "20cf78a1-af6d-465f-9117-84d804bdf804",
         "Version": "1.0",
@@ -5095,9 +5272,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/homefront_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/homefront_nointro.zip",
         "FileSize": 3694,
         "MD5": "C262B0823673EF964AFF52F14DC63CD8",
+        "Sha256": "A95193C9A622E76F084793A2F6C0AC8B2D2B445358C8A1E9AB11217B8D2D8A82",
         "Name": "No Intro Fix",
         "Guid": "4b094679-e66f-45de-9447-79e348832f57",
         "Version": "1.0",
@@ -5111,12 +5289,13 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/homefront_physx_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/homefront_physx_fix.zip",
         "FileSize": 1962649,
         "FilesToDelete": [
           "redist\\PhysX_9.09.1112.exe"
         ],
         "MD5": "F7E32E23688391DA94F1B45F9FDC56B6",
+        "Sha256": "195111AA6DAADC42F5670D6FD2C67340B193699E92E7CC8A7B6865AE750FEF49",
         "Name": "PhysX Fix",
         "Guid": "236a2581-46e4-40a8-bc80-dd17a4f2b753",
         "Version": "1.0",
@@ -5166,9 +5345,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/hydrophobia_graphics_cleanup_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/hydrophobia_graphics_cleanup_v1.zip",
         "FileSize": 867940,
         "MD5": "27DD31FBE0E72A42DA5550FF26C61BF6",
+        "Sha256": "5165F5FA93AF835CA465DE775E61CB2097E3A9B61BD23534E680948B5E6D059C",
         "Name": "Graphics Cleanup Mod",
         "Guid": "d6dd24fd-f6d3-428f-a87f-90292d83763e",
         "Version": "1.0",
@@ -5193,6 +5373,7 @@
         "FileSize": 56976,
         "ConfigFile": "nep.ini",
         "MD5": "57744D02F7A0F28D0834F586A7ED6380",
+        "Sha256": "52BDD4ACB6873A3739A4920368F44E9AB67C9D991D78A3A6985B70C7EB19F92E",
         "Name": "Neptastic Mod",
         "Guid": "7fc5eefe-7436-42f3-af33-b7747817c333",
         "Version": "1.1.9",
@@ -5218,6 +5399,7 @@
         "FileSize": 56976,
         "ConfigFile": "nep.ini",
         "MD5": "57744D02F7A0F28D0834F586A7ED6380",
+        "Sha256": "52BDD4ACB6873A3739A4920368F44E9AB67C9D991D78A3A6985B70C7EB19F92E",
         "Name": "Neptastic Mod",
         "Guid": "9c338265-1f5c-4618-a6df-36601eca069e",
         "Version": "1.1.9",
@@ -5244,6 +5426,7 @@
         "InstallFolder": "Birth3",
         "ConfigFile": "Birth3\\nep.ini",
         "MD5": "57744D02F7A0F28D0834F586A7ED6380",
+        "Sha256": "52BDD4ACB6873A3739A4920368F44E9AB67C9D991D78A3A6985B70C7EB19F92E",
         "Name": "Neptastic Mod",
         "Guid": "a8544f69-d32a-4912-b8d1-e72883a2d0c3",
         "Version": "1.1.9",
@@ -5264,9 +5447,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/incoming_forces_startup_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/incoming_forces_startup_fix.zip",
         "FileSize": 16062,
         "MD5": "DFD77DF9CAF62FD70BA77C6C5792481A",
+        "Sha256": "EB74F6EB7748EBB0A877B5B0F0EF19295250A265187DFC843D165419B5277F8A",
         "Name": "Start-Up Fix",
         "Guid": "69277c79-e563-41ef-8113-94aa2348e062",
         "Version": "1.2",
@@ -5286,9 +5470,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/jet-set-radio-launcher.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/jet-set-radio-launcher.zip",
         "FileSize": 100732,
         "MD5": "B83A062796CC658F7302C4B91D9721A5",
+        "Sha256": "1C01F53C227CDD8D863551365E21065AEA395B4D9454CA1327265B9357A3811C",
         "Name": "Original Launcher",
         "Guid": "39b3b45a-6c9c-4198-bcb6-660952c14893",
         "Version": "1.0",
@@ -5302,9 +5487,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/jet-set-radio-nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/jet-set-radio-nointro.zip",
         "FileSize": 5910,
         "MD5": "F8C235FA0C8E83CC0C883073B446382B",
+        "Sha256": "2217E6D815336B681606629D6FB962E8241FD69DD2501276A7B0D261302A85CB",
         "Name": "No Intro Fix",
         "Guid": "6f9c7c84-ceaa-4cc9-b2e2-59cbd41b68cb",
         "Version": "1.0",
@@ -5328,6 +5514,7 @@
         "FileSize": 1192758,
         "ConfigFile": "scripts\\JustCause.WidescreenFix.ini",
         "MD5": "5DFA343F78C0F38DBD569247868A4C50",
+        "Sha256": "86890D20CBA895601D8789751040E6FC20FDC5A32977BB3241361F0ACC79D821",
         "Name": "Widescreen Fix",
         "Guid": "b8f1ba1c-8dec-4050-bbd1-c340fdf04935",
         "Version": "20.05",
@@ -5347,10 +5534,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/kanelynch_fov_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/kanelynch_fov_v1.zip",
         "FileSize": 1149176,
         "ConfigFile": "eASIer.txt",
         "MD5": "BCC424CB8A31DF31314AECA0E0190FC0",
+        "Sha256": "33F15548BB6AA3A2ED1B66B76AD893DFCD605486098C80FCEAB86BFF5A277DCB",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -5369,9 +5557,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/kanelynch_219_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/kanelynch_219_v1.zip",
         "FileSize": 3240732,
         "MD5": "D80FB17DBD91E1962CB2555779289654",
+        "Sha256": "0E97F9A59AE403F42A68AB42A839CD00DAAEDE5E8C68FB2F3D00E260043FF27C",
         "Name": "Ultrawide Fix",
         "Guid": "d03ce0f1-aa61-44f2-9a84-27b2fa605820",
         "Version": "1.0.0",
@@ -5384,12 +5573,13 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/xliveless.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/xliveless.zip",
         "FileSize": 86442,
         "FilesToDelete": [
           "XLiveRedist\\XLiveRedist01.02.0241.00.msi"
         ],
         "MD5": "AE4C9CCA675EBC957A00DAAFBDE261AE",
+        "Sha256": "6AAB487B08B99F8940853A0192B2D81F25DE7EA5C6E187717A483C0B62641C6C",
         "WineDllOverrides": [
           "xlive"
         ],
@@ -5432,9 +5622,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/killing_time_community_31.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/killing_time_community_31.zip",
         "FileSize": 25921971,
         "MD5": "70C4BC4AA391657FDB7503DA8899186B",
+        "Sha256": "DC5A9FA9B1FA69B50183F01D2CCF0866B2C6B3E11B6BCFD957E9CB3B259D90A9",
         "Name": "Community Patch",
         "Guid": "df1a0632-b66b-42e7-8e12-4c4790c0715e",
         "Version": "3.1",
@@ -5494,9 +5685,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/kingpin_patch_v11_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/kingpin_patch_v11_2.zip",
         "FileSize": 98730,
         "MD5": "948B9D39515AB0E115BD2F03FB12DD6C",
+        "Sha256": "A204C6FF3CCB1719D3CC86230FA561580B7771CED497A44B1A55E182BD2A3097",
         "Name": "Unofficial Patch",
         "Guid": "8a719a2f-031b-4b0c-b264-b666c55acc96",
         "Version": "11.2",
@@ -5518,9 +5710,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/konung_2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/konung_2_nointro.zip",
         "FileSize": 371,
         "MD5": "8050DC0169DAE0D7EC0495CA02CBFEBC",
+        "Sha256": "197B5DF4B4E362422527BA955A5D10CB1081260127B711639C9175860C015F77",
         "Name": "No Intro Fix",
         "Guid": "e388b204-3aeb-44a3-980a-15ef7edc83fd",
         "Version": "1.0",
@@ -5539,10 +5732,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lollipop_chainsaw_music_v1_3.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lollipop_chainsaw_music_v1_3.zip",
         "FileSize": 241962872,
         "InstallFolder": "lollipop\\Content\\Paks",
         "MD5": "87a30be275d6b25241f51c40384f42c5",
+        "Sha256": "8E5955CE67BFE9E8A5FAD55039462FE4048CA38768F5C3E6C3FFBB88D45EFCB5",
         "Name": "Music Restoration Mod",
         "Guid": "1174ed36-5739-4de9-81a3-379b6e79536e",
         "Version": "1.3",
@@ -5582,9 +5776,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/layers-of-fear-2016-launcher-bypass.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/layers-of-fear-2016-launcher-bypass.zip",
         "FileSize": 332,
         "MD5": "7beba1d15c141186db08b38d1a36d231",
+        "Sha256": "37096F5750C925A5D6E8B7DB813993A665BB2E9B839A3ADB0EF7BEF58025B0C6",
         "Name": "Launcher Bypass ",
         "Guid": "44a9cb73-afa3-416e-8cd0-385a788602a7",
         "Version": "1.0",
@@ -5603,10 +5798,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lok_defiance_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lok_defiance_widescreen.zip",
         "FileSize": 58764,
         "ConfigFile": "sr3.ini",
         "MD5": "B0152C0C21408CF355B90E480BAA929A",
+        "Sha256": "999CA68F08E55C8DFC53C21AE94AD993E9BF96C428248E0C2BC1A6EEFFA1327C",
         "WineDllOverrides": [
           "d3d9",
           "sr3w"
@@ -5646,9 +5842,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lok_soul_reaver_sr1patch.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lok_soul_reaver_sr1patch.zip",
         "FileSize": 216259648,
         "MD5": "EC5A0E16D32458A299F352CAC19F8430",
+        "Sha256": "B70772F631916AF2318EB04387193EA4FB58960487A835CC589B5CFC55DF929E",
         "WineDllOverrides": [
           "winplay",
           "fmod"
@@ -5690,9 +5887,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lok_soul_reaver_2_enhancer.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lok_soul_reaver_2_enhancer.zip",
         "FileSize": 4905,
         "MD5": "2415FA08A67735D9A2A9C5DA7C8D75B4",
+        "Sha256": "1193EA3978D975427C9CFF6DB5165914E1B1DE57F3CC9CE941F170D79610AEA7",
         "WineDllOverrides": [
           "dinput"
         ],
@@ -5708,9 +5906,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/lok_soul_reaver_2_fixer.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/lok_soul_reaver_2_fixer.zip",
         "FileSize": 240267,
         "MD5": "27CFF8D039AEA1E97C088FC028530123",
+        "Sha256": "AFC222829EA7EDA6C62C01E38F6A5D4A7326753944D107565F2672CE1CC02A62",
         "WineDllOverrides": [
           "d3d8"
         ],
@@ -5756,10 +5955,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/mgrr-fix-v1_9_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/mgrr-fix-v1_9_2.zip",
         "FileSize": 159355,
         "ConfigFile": "Metal_Gear_Rising_Revengeance_PCFix.ini",
         "MD5": "3ec972826894884dc4cd4edf9e7944ef",
+        "Sha256": "26AB0FAA9534AD6DF433670BC7EC12F3CC403D13E69DF1F8D00777240C47126E",
         "Name": "PC Fix",
         "Guid": "19ae8862-6183-416b-b250-224e23d8a388",
         "Version": "1.9.2",
@@ -5785,6 +5985,7 @@
         "InstallFolder": "Mafia",
         "ConfigFile": "Mafia\\scripts\\Mafia.WidescreenFix.ini",
         "MD5": "2CBE8F68B839E40E26484724E662A535",
+        "Sha256": "D21EC233DDE68FDAC919A07202FA3CBB7E287FCE2C47F3929AFBECB84DB4C004",
         "WineDllOverrides": [
           "d3d8"
         ],
@@ -5826,9 +6027,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/magicka_fix_v1_4.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/magicka_fix_v1_4.zip",
         "FileSize": 1498193,
         "MD5": "6E8F3A7DF941A020F8912F606BB9C9E9",
+        "Sha256": "0065E5745E4381351DA5660D7EF4092462B2F32ABE4CDFCFBDD7744131BF2E1E",
         "Name": "Magicka Fix",
         "Guid": "8518d6a0-cac2-4a57-8418-7c5f887efa44",
         "Version": "1.4",
@@ -5850,10 +6052,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/manhunt_fixer_v2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/manhunt_fixer_v2.zip",
         "FileSize": 9939474,
         "ConfigFile": "d3d8.ini",
         "MD5": "9157640FB85A86C148E1D66122F65710",
+        "Sha256": "7A2C1DE1069AA72B24E70E0A51F652006D35062E43887ACDF4C5D68AAAEE8567",
         "WineDllOverrides": [
           "d3d8",
           "dinput8"
@@ -5878,6 +6081,7 @@
         "InstallFolder": "scripts",
         "ConfigFile": "scripts\\MHP.ini",
         "MD5": "79EFB8FABA25C06EBB3D3E975C024787",
+        "Sha256": "972AF0E1ED94C861911E57F4612577ED6664510D02BE0736E42D5A2A98428231",
         "Name": "MHP",
         "Guid": "3cc82ef8-0b6d-481f-834b-3d67ae81d956",
         "Version": "1.2a",
@@ -5921,9 +6125,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/mars_war_logs_yellow_artifacts_fix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/mars_war_logs_yellow_artifacts_fix_v1.zip",
         "FileSize": 1418303,
         "MD5": "DC1DF0F30CC95071E6A8C161DB3FA087",
+        "Sha256": "7B9C8F14F73B44326CDD462412567BA01975A8371052EECE4D625711F4C7A112",
         "Name": "Yellow Artifacts Fix (for AMD GPU)",
         "Guid": "b4e8ac27-809e-4c21-9509-458425929a64",
         "Version": "2.4.1",
@@ -5938,10 +6143,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/mars_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/mars_nointro.zip",
         "FileSize": 3246,
         "InstallFolder": "boot\\datapc\\video",
         "MD5": "D1A57D76B044B68036D19513E6A018F7",
+        "Sha256": "FC0E1268C4B496AA4DBB4355D8C1252A9D4D6D3B1ABA34F3FF7C973D4813BA80",
         "Name": "No Intro Fix",
         "Guid": "29d58c48-f1fe-4c4b-a646-c413a6b1ad9f",
         "Version": "1.0",
@@ -6027,9 +6233,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/max_payne_jpeg_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/max_payne_jpeg_v1.zip",
         "FileSize": 103873,
         "MD5": "D7E7F47902CD3302E32FDEE8BB5C6F5C",
+        "Sha256": "3F9B543AD12BA8D5C33849086F7EF2AF86CEC05E6DD3E247D878966C65FD6D63",
         "Name": "Corrupt JPEG data Fix",
         "Guid": "0a78381e-87eb-4196-b657-2a56b18e7bda",
         "Version": "1.0",
@@ -6042,9 +6249,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/max_payne_indirectsound_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/max_payne_indirectsound_v1.zip",
         "FileSize": 189577,
         "MD5": "EB9A02CB0AECBC9B524E2354C423553A",
+        "Sha256": "02292D88FC6A190C24A3C560AB9947FC29E14B7A3B372DF04B4D339D0A4D192E",
         "Name": "IndirectSound",
         "Guid": "429410a0-e119-49fa-bee0-4746462afd8d",
         "Version": "0.20",
@@ -6058,6 +6266,7 @@
         "FileSize": 1228310,
         "ConfigFile": "scripts\\MaxPayne.WidescreenFix.ini",
         "MD5": "AE2A3BCA2820B44DAD1059D9F2042B33",
+        "Sha256": "1A4AC24593CB4BB08681C19C105A74C69ECEE2FF14A5EA9E1B5D6C1DE14A5795",
         "Name": "Widescreen Fix",
         "Guid": "b5106584-27a2-4bc9-b79c-80b244352a71",
         "Version": "20.05",
@@ -6081,6 +6290,7 @@
         "FileSize": 1226774,
         "ConfigFile": "scripts\\MaxPayne2.WidescreenFix.ini",
         "MD5": "4FDC08E228E7AF789E7C178FCC75588B",
+        "Sha256": "5E0066E87023D2B8C3BB880AFC77E2759C5EEBEB0FDCF79428A3AFA4F8E442FC",
         "Name": "Widescreen Fix",
         "Guid": "12ccb6bc-100c-4fdb-8d2f-642f0fcb21aa",
         "Version": "20.05",
@@ -6105,6 +6315,7 @@
         "InstallFolder": "Max Payne 3",
         "ConfigFile": "Max Payne 3\\plugins\\MaxPayne3.FusionFix.ini",
         "MD5": "0CB42EA0F0BF2D8642673040F79F6C8F",
+        "Sha256": "26715416CCE3F1527836E552779683E7AC548742453355F231133A9ABBE3CF57",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -6122,10 +6333,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/max_payne_3_uwfix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/max_payne_3_uwfix_v1.zip",
         "FileSize": 24705,
         "ConfigFile": "Max Payne 3\\plugins\\MaxPayne3Fix.ini",
         "MD5": "494A500A329CF3D27406C7F9282D184A",
+        "Sha256": "D4D8A41C1D588DF67802D0B8A2B24B2E489EC851EC535CA04793AC9F141B648E",
         "Name": "Ultrawide Fix",
         "Guid": "6bb2e8f6-416a-4068-a190-e6dc7a335a14",
         "Version": "1.0",
@@ -6141,10 +6353,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/asi_loader_640.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/asi_loader_640.zip",
         "FileSize": 1083519,
         "InstallFolder": "Max Payne 3",
         "MD5": "70DC92A460350E4D5E74138E3D39736F",
+        "Sha256": "E1B87682FB3EBC2E1298AEF74DEEEF514D56AFBD0EE041CF4EC2AAACCCF65D19",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -6163,10 +6376,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/neptune_vs_zombies_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/neptune_vs_zombies_nointro.zip",
         "FileSize": 245,
         "InstallFolder": "data\\ui\\logo",
         "MD5": "6CA4348087F22F5A17CDE48C2E61A379",
+        "Sha256": "793A1658D31D8410B4B5AA39471755E740EFDE8E28AA25A22BA93B0E2453EEFF",
         "Name": "No Intro Fix",
         "Guid": "e8e1ce0d-c4cc-4215-b770-16efa84fe942",
         "Version": "1.0",
@@ -6185,10 +6399,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/neptasm-mod-v1_0_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/neptasm-mod-v1_0_0.zip",
         "FileSize": 2587,
         "ConfigFile": "nep.ini",
         "MD5": "07ddb0db68ad633689b160052ddef771",
+        "Sha256": "36F7FF91D089ACC31DDC50770C405239783D3EB73F59452932F758E36C2A7688",
         "Name": "Neptasm Mod",
         "Guid": "f605a926-69ee-47b6-938c-75621eda13a8",
         "Version": "1.0",
@@ -6274,9 +6489,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/nam_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/nam_raze.zip",
         "FileSize": 3023,
         "MD5": "D7611A1F80A605CBAE5D90D382429914",
+        "Sha256": "171BAA04586A9FD6483A25D585949B4B7FB794B06F21578F8741C3C01614DBEC",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "NAM",
         "Name": "Raze",
@@ -6300,10 +6516,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/necrovision_launcher.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/necrovision_launcher.zip",
         "FileSize": 401566,
         "InstallFolder": "Bin",
         "MD5": "834D6E48718CDC82077D269A27B58987",
+        "Sha256": "55AB1920B042AE06697FD73684DC7E8E352FFC0451212EDE181F7006A0917CF3",
         "Name": "Launcher Removal",
         "Guid": "fb5e9d75-a4b8-424b-84d4-e423e6ff7587",
         "Version": "1.0",
@@ -6361,10 +6578,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nier_automata_naiom.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nier_automata_naiom.zip",
         "FileSize": 1381951,
         "ConfigFile": "NAIOM-GUI.exe",
         "MD5": "1434115BD225E5FB337D50A7D1F0DC85",
+        "Sha256": "EC16BD8D2789520521BC68347E7C81B911618B618645909D1FFFE6F7D7EDCBD3",
         "Name": "NAIOM",
         "Guid": "e282fbfb-9046-420d-800a-6f8998bad914",
         "Version": "1.4.0",
@@ -6383,7 +6601,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nosferatu_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nosferatu_widescreen.zip",
         "FileSize": 13409356,
         "Variants": [
           "1024x640",
@@ -6410,6 +6628,7 @@
           "5760x1200"
         ],
         "MD5": "0B21EF6317A7BCBF8E7422CDB0A9DEF1",
+        "Sha256": "F1CB9BEA84CADE6682E184B28E0BA54D296C89B0581248B9431DAA1A7A0C69EA",
         "Name": "Widescreen Fix",
         "Guid": "f5f2e4b5-db0c-4e0a-aacb-51d49a86e938",
         "Version": "1.0",
@@ -6429,9 +6648,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/obscure_proton_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/obscure_proton_fix.zip",
         "FileSize": 1532666713,
         "MD5": "5EE45E75B9D0C13F7B935FA0833C5D0F",
+        "Sha256": "97ACFE5FF44372F201B794AF83A00DCF3D9D7B0A690CD662EC5910E4D62613E1",
         "Name": "Proton Fix",
         "Guid": "d6cd4c28-11ac-41b5-8b05-db581aac8c12",
         "Version": "1.0",
@@ -6445,9 +6665,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/obscure_widescreen_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/obscure_widescreen_v1.zip",
         "FileSize": 1201580,
         "MD5": "DE6AC315F1B5D30289D76005DDF661F2",
+        "Sha256": "DEC6C004F49D6FFD6A7CBF8AD389C51BC1015999511107D6407EC0ED76E831EB",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -6471,9 +6692,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/obscure-2-widescreen-v1_0_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/obscure-2-widescreen-v1_0_0.zip",
         "FileSize": 121026,
         "MD5": "e14900a4c5d79870fc9b6d161999805b",
+        "Sha256": "6B652E95FC48AEAAEED79E0095110B784E783A83639046548BB17DD68C1A26A5",
         "Name": "Widescreen Patch",
         "Guid": "165f5677-af13-4c25-af97-557b61783f47",
         "Version": "1.0",
@@ -6492,9 +6714,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/oddworld-2-relive_v25_01.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/oddworld-2-relive_v25_01.zip",
         "FileSize": 3306805,
         "MD5": "5a85102ddbcababee3cb2368e3165908",
+        "Sha256": "89F875A43F2A014FCE9F9E2583CDC2EAF8A0417F18E229684ED53662530D20FD",
         "Name": "R.E.L.I.V.E.",
         "Guid": "b284183a-abf1-44f3-ba2e-ebbbbcee4547",
         "Version": "25.01",
@@ -6534,9 +6757,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/oddworld-1-relive_v25_01.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/oddworld-1-relive_v25_01.zip",
         "FileSize": 3306803,
         "MD5": "85a0612031ed2d7df76dc83f41300fa4",
+        "Sha256": "8C98F297E5FF764BA650BF5D588675846A976A5BE73D834338D28634A98C5965",
         "Name": "R.E.L.I.V.E.",
         "Guid": "4e9aeae8-14dd-4a6c-bcbe-88d87c18d96b",
         "Version": "25.01",
@@ -6575,9 +6799,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/of_orcs_and_men_yellow_artifacts_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/of_orcs_and_men_yellow_artifacts_fix.zip",
         "FileSize": 1418303,
         "MD5": "DC1DF0F30CC95071E6A8C161DB3FA087",
+        "Sha256": "7B9C8F14F73B44326CDD462412567BA01975A8371052EECE4D625711F4C7A112",
         "Name": "Yellow Artifacts Fix (for AMD GPU)",
         "Guid": "4af9b54b-9270-433b-8806-40797505fcf2",
         "Version": "2.4.1",
@@ -6592,10 +6817,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/of_orcs_and_men_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/of_orcs_and_men_nointro.zip",
         "FileSize": 9732,
         "InstallFolder": "boot\\datapc\\video",
         "MD5": "74D80904E25510F0990FE00D0BBFF0AA",
+        "Sha256": "D4C6A1FAD0D6BF3AD233BAFE9990C67211122011B5764AF8B5887F83CE1CF17D",
         "Name": "No Intro Fix",
         "Guid": "04892c08-61b3-4a03-96fe-74565e678517",
         "Version": "1.0",
@@ -6635,9 +6861,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/postal1_fan_patch.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/postal1_fan_patch.zip",
         "FileSize": 11038024,
         "MD5": "9976B3933504258DA7882EC364280A55",
+        "Sha256": "81B50121E2AFFF9633D40A077F76525DACBBF68C04E624CE747FDDF91F5E4CDA",
         "Name": "Fan Patch",
         "Guid": "e68e8aa4-f0fe-4832-9bf7-1f0fda6fc8b4",
         "Version": "1.0",
@@ -6678,10 +6905,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/prototype2fix_v1_6.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/prototype2fix_v1_6.zip",
         "FileSize": 1396319,
         "ConfigFile": "prototype_fix.ini",
         "MD5": "54D8F01D8333D8E91338A1C56B175F98",
+        "Sha256": "F993AF8AE511F566D413B47E718E46B0DC34932CA24AD1984D00206BFEB29C17",
         "Name": "Prototype2Fix",
         "Guid": "a0f8bfa0-baaa-4cc0-97c9-75a273e3d8db",
         "Version": "1.6",
@@ -6703,7 +6931,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/parkan2_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/parkan2_widescreen.zip",
         "FileSize": 1086446,
         "Variants": [
           "16x9",
@@ -6713,6 +6941,7 @@
           "48x10"
         ],
         "MD5": "1A035DA405104FD2E72389EC87AE96D2",
+        "Sha256": "14D4018973F8E6CC8F509C5383050C43782194E211DABFDE4FDE9C1C482DF77B",
         "Name": "Widescreen Fix",
         "Guid": "b8b5e944-2bfe-4553-9d82-b12c0771e0d2",
         "Version": "1.0",
@@ -6749,9 +6978,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/pathologic_classic_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/pathologic_classic_nointro.zip",
         "FileSize": 6599,
         "MD5": "C764355B64F415092913502D81EAEABA",
+        "Sha256": "5AE9D5190A0E4C87025F2966C6CD688CCADA74A9D6B6F05E51535AC4BA7B5E5A",
         "Name": "No Intro Fix",
         "Guid": "7170d0d2-a225-49c7-88e6-4a7ad2fa7e02",
         "Version": "1.0",
@@ -6826,7 +7056,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/patrician_3_resolutions_v1_1b.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/patrician_3_resolutions_v1_1b.zip",
         "FileSize": 36175408,
         "Variants": [
           "1152x864",
@@ -6846,6 +7076,7 @@
           "2560x1440"
         ],
         "MD5": "BF2E0907DD20951522567F10C5F77282",
+        "Sha256": "57D9B12F0249D337A5C8C0BC7A14C8AE7221D3B68E6AAD59E0E0A9D12635F239",
         "Name": "Widescreen Fix",
         "Guid": "57b9e661-ec18-43ca-9f08-0a4b84f499bb",
         "Version": "1.1b",
@@ -6887,9 +7118,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/platypusII_sound_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/platypusII_sound_fix.zip",
         "FileSize": 622805,
         "MD5": "B994E9C2DCACF5CA979446C8F63A3A5E",
+        "Sha256": "7FCD2DA09F0F1804E2D2B0C6339E97DF087B7A06B835E619F3631A3733CBB92B",
         "Name": "Deaf left ear fix",
         "Guid": "1eb82153-6bba-4df4-ac3c-9c354997c2f0",
         "Version": "1.0",
@@ -6908,9 +7140,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/port_royale_2_easy_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/port_royale_2_easy_fix.zip",
         "FileSize": 689586,
         "MD5": "B1BD1A1E4CE1C976F4925441C06268D4",
+        "Sha256": "A971BE5FCE3F713910CE6364D3889D2AE50C3B4BE7E6B92E69BEBF4CFB0940EA",
         "Name": "Easy Fix",
         "Guid": "e6b1f79d-2f4d-4ec6-be3d-492e8ed7933a",
         "Version": "1.0",
@@ -6947,9 +7180,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/powerslavedos_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/powerslavedos_raze.zip",
         "FileSize": 3025,
         "MD5": "F504E1EFC134A6496B2FA0BA81FF82B2",
+        "Sha256": "276431CD39DDE72AC2C1B0238B2F5B08A5444882481979BCDFA786DE8D08F8CC",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "PWRSLAVE",
         "Name": "Raze",
@@ -6973,9 +7207,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/powerslave_kex_fixes.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/powerslave_kex_fixes.zip",
         "FileSize": 54339,
         "MD5": "C08C87C13F408EBCF74305C398329E61",
+        "Sha256": "60313AF9449E9272CB0243D8F1FFD16E2F3EA23B70BC31F5AE26786A3A3D1A37",
         "Name": "Fixes Collection",
         "Guid": "b80cfac0-b5e2-4ba3-95ea-280d5193b80d",
         "Version": "1.0",
@@ -7022,11 +7257,12 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/prey_graphics.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/prey_graphics.zip",
         "FileSize": 483,
         "InstallFolder": "base",
         "ConfigFile": "base\\autoexec.cfg",
         "MD5": "A881991DB82CBB7D8BB4D40E57CE83E6",
+        "Sha256": "8F79CAAC3F2DECEAE712A15BD1E6D73529F6540E91491739A10E9F1DF172463A",
         "Name": "Ultra Graphics Fix",
         "Guid": "4ad94f2e-d728-493f-90ac-28ff1fed5a4e",
         "Version": "1.0",
@@ -7039,11 +7275,12 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/prey_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/prey_ultrawide.zip",
         "FileSize": 4885475,
         "InstallFolder": "base",
         "ConfigFile": "base\\autoexec.cfg",
         "MD5": "FA0B6547919A369C409453398B380D49",
+        "Sha256": "E86B2D95574594690230F94D93AD77A3CD0239CCDDA931E4FE63CA645588AF93",
         "Name": "Ultrawide Fix",
         "Guid": "6d41d064-1676-4bfe-b892-c7a85825029e",
         "Version": "1.0",
@@ -7062,10 +7299,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/pop_sot_patch_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/pop_sot_patch_v1.zip",
         "FileSize": 54321,
         "ConfigFile": "pop.ini",
         "MD5": "3FD332D672612283797F3B5D4A205D23",
+        "Sha256": "E4F9F42158563CFA9B674FBE3E9A9A9DF343575B87F612742B155E4BE7E8AB9B",
         "WineDllOverrides": [
           "d3d9"
         ],
@@ -7137,10 +7375,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/pop_tt_patch_v2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/pop_tt_patch_v2.zip",
         "FileSize": 3083744,
         "ConfigFile": "patch.ini",
         "MD5": "D3542A5EEB41A672793154950771556B",
+        "Sha256": "4EF616DE93D7AEECEF9926786374D4B1636EE6F181FC7CAF52F879D49D2E0880",
         "FilesToPatch": [
           "pop3.bf"
         ],
@@ -7216,10 +7455,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/pop_ww_patch_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/pop_ww_patch_v1.zip",
         "FileSize": 2628346,
         "ConfigFile": "pop2.ini",
         "MD5": "F18FB3A539A380401126C69263D9CBEA",
+        "Sha256": "1A261A8BD7BD3B26E551FBAFE4108D2E0E468A6E810EC376951350F7F0C7CCFD",
         "WineDllOverrides": [
           "d3d9",
           "pop2w"
@@ -7276,10 +7516,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/snowblind_widescreen_fix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/snowblind_widescreen_fix_v1.zip",
         "FileSize": 9391,
         "ConfigFile": "snowblind-widescreen.ini",
         "MD5": "BDE59B415C1B526F06F3F71BBB01EDEB",
+        "Sha256": "CAF908B4B14879BBD9B7590D581C1C1F72C3A15200547563F95D739F3C6DEFC1",
         "Name": "Widescreen Fix",
         "Guid": "9db7fb4f-b472-4b91-ac0c-5b4e6dac50e2",
         "Version": "1.0",
@@ -7299,10 +7540,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/prototype-fix-v1_8b.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/prototype-fix-v1_8b.zip",
         "FileSize": 8264108,
         "ConfigFile": "prototype_fix.ini",
         "MD5": "3ac54191a5d7b0915dd7a3fd7e633c1c",
+        "Sha256": "314380257E62F552BB1CF902E632958C6303DC929D778C75F8CE1A5CCE7C201F",
         "Name": "PrototypeFix",
         "Guid": "fddc65cd-8a1d-4d61-afaa-c42d108617b5",
         "Version": "1.8b",
@@ -7318,9 +7560,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/prototype_wide.zip",
-        "FileSize": 6179008,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/prototype_wide.zip",
+        "FileSize": 247,
         "MD5": "4508332F32242F1FFB21C8A1B48CFC4C",
+        "Sha256": "EAF8C2B963010B93B2ADD038945925CC6A5B8C804680F2D6D63F26143DC5AF0B",
         "Name": "Ultimate Fix",
         "Guid": "a41eb1c7-b5f6-46ee-b4c6-7ddf769f7a45",
         "Version": "1.0",
@@ -7336,9 +7579,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/prototype_amd.zip",
-        "FileSize": 6175394,
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/prototype_amd.zip",
+        "FileSize": 247,
         "MD5": "9267AB6FA2E244DC556180927CB12B78",
+        "Sha256": "90334A520AB41DC86CB86836C48AFD4F408F6A8058703A6D0D62A7CA36FA7A0E",
         "Name": "Ultimate Fix for AMD",
         "Guid": "e7a6b004-dde1-4027-a444-4999824b82ee",
         "Version": "1.0",
@@ -7365,6 +7609,7 @@
         "FileSize": 1217889,
         "ConfigFile": "scripts\\Psychonauts.WidescreenFix.ini",
         "MD5": "0195ECDF52EB87D1390998AC2CC1575E",
+        "Sha256": "1F8D42756E3F3FEAD049046FC22301EC6470BDC1320C238F5240A03143A812EF",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7403,10 +7648,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/quake-4-tweaker_v1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/quake-4-tweaker_v1_1.zip",
         "FileSize": 1176597,
         "ConfigFile": "Quake4TweakerGUI.exe",
         "MD5": "A2316BE2A06F1A7BF3C0448281059C2E",
+        "Sha256": "6375282A61DF2DD02D6C234A0B83F094224EF9DD9FE340A54669566C622F6D59",
         "Name": "Tweaker",
         "Guid": "3e58dfa2-0601-44a2-bed2-4d270bfbf2b3",
         "Version": "1.1",
@@ -7421,11 +7667,12 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/quake4_graphics.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/quake4_graphics.zip",
         "FileSize": 435,
         "InstallFolder": "q4base",
         "ConfigFile": "q4base\\autoexec.cfg",
         "MD5": "E5739F658F91F78618E772C1747560A8",
+        "Sha256": "3545756CB398CEA0ADB264F58F7DD33CE5B0DEA5D5B7E7EA6A04BAD889963FD1",
         "Name": "Ultra Graphics Fix",
         "Guid": "5a8e9e4a-acba-44a6-8f53-3bd355863a10",
         "Version": "1.0",
@@ -7435,11 +7682,12 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/quake4_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/quake4_ultrawide.zip",
         "FileSize": 12152746,
         "InstallFolder": "q4base",
         "ConfigFile": "q4base\\autoexec.cfg",
         "MD5": "35A17E5A8DB8E90560F2F691423AA91E",
+        "Sha256": "B95471B2AF21DF34A28D52DAF58686195B715937D39E8CE6B6613946C62DF2CC",
         "Name": "Ultrawide Fix",
         "Guid": "9b697aa5-c325-44f2-93a4-7c0d0a83d017",
         "Version": "1.0",
@@ -7481,10 +7729,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/realms_of_the_haunting_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/realms_of_the_haunting_nointro.zip",
         "FileSize": 216,
         "InstallFolder": "DATA\\GDV",
         "MD5": "1C8E077928FD34AC1503C5B9AD3D9B99",
+        "Sha256": "D64CC75F09ACC76D711EEA2C35B29BC9F051EE0835372CDFFA4385C58841EA37",
         "Name": "No Intro Fix",
         "Guid": "0a6ad766-f256-46f9-9350-e0dd76d1af0d",
         "Version": "1.0",
@@ -7503,9 +7752,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/recettear_drmfree.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/recettear_drmfree.zip",
         "FileSize": 3310334,
         "MD5": "7AE83426EDE6AF22269193E9C68C9200",
+        "Sha256": "4FECE744BAA609D10D7BCD2ECF374942B3A4EBD099182C7B50379BD1ED26F71E",
         "Name": "Official DRM-Free Patch",
         "Guid": "30f36266-e18c-4864-a340-168c164a5b63",
         "Version": "1.0",
@@ -7527,6 +7777,7 @@
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rdr/RedDeadRedemption.FusionMod.zip",
         "FileSize": 677881,
         "MD5": "E6572C38FE4E7810C3540B67BE50C6E0",
+        "Sha256": "5D1F09B53FBA1C71BE32D54BEE68925EEB5D145E481D608EBABB8639CC72C4A7",
         "Name": "Fusion Mod",
         "Guid": "7f90b809-191c-4ddb-802a-1ca2dc9fe2d3",
         "Version": "1.0",
@@ -7545,9 +7796,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/rdr2_no_black_bars_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/rdr2_no_black_bars_v1.zip",
         "FileSize": 265586,
         "MD5": "84CD8AD2AA63E7EF5301C634F35954B1",
+        "Sha256": "E8FA30973D475B01E1D66AD31143CEAE1956108189CA527DF121B318D6A9BC98",
         "Name": "No Black Bars",
         "Guid": "03cd34f5-ba0e-42de-86f9-b05b63064574",
         "Version": "1.01",
@@ -7566,9 +7818,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/red_faction_dashfaction_v180.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/red_faction_dashfaction_v180.zip",
         "FileSize": 4323341,
         "MD5": "F3420F957A8B8BDC21BE62B10C0482F8",
+        "Sha256": "DB60F6FD85BBAA832023FEE47A5446DF4CD581AE9064B8550ED028E9C554BE2C",
         "Name": "Dash Faction",
         "Guid": "e63a5a27-5a2b-4031-87a0-b97b64615051",
         "Version": "1.8.0",
@@ -7639,9 +7892,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/redneck_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/redneck_raze.zip",
         "FileSize": 63012282,
         "MD5": "9E613EA32F99C418B2F0394339E7E6B7",
+        "Sha256": "BECAE6B478C112792D71FAFB3BE7DFB10193CF2B2449C81E630B034595C9EB1A",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "Redneck",
         "Name": "Raze \u002B Route 66",
@@ -7666,9 +7920,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/redneckra_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/redneckra_raze.zip",
         "FileSize": 37421278,
         "MD5": "92E801E169301CFA76CC578426554E01",
+        "Sha256": "31126B52046B548173E22F51458F6CF762113961EDD947E0F16BD2F95F21D5B7",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "AGAIN",
         "Name": "Raze",
@@ -7716,9 +7971,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re1_elevator_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re1_elevator_fix.zip",
         "FileSize": 15559561,
         "MD5": "49692F3609CDA921B5E32B468C119724",
+        "Sha256": "954D33C082618F4D4C5F0232CE5FFD9D466FFE7AAD325C04123F760F4F6B0692",
         "Name": "Elevator animations fix",
         "Guid": "2e27c715-f7be-4ee0-b3a1-588a4c9ba508",
         "Version": "1.0",
@@ -7731,9 +7987,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re1_bgm_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re1_bgm_fix.zip",
         "FileSize": 93906271,
         "MD5": "BAA5E94A1EE7DB1BC32A79D1C58376F0",
+        "Sha256": "C200BBCFBABF740EB6BC39953C70F6FF0A65B4883CF6155B39FBCBFE7B34E9EA",
         "Name": "Fixed background music",
         "Guid": "9eecbb51-e82b-4831-a9f0-04ac7568c76a",
         "Version": "1.0",
@@ -7750,6 +8007,7 @@
         "FileSize": 1141521,
         "ConfigFile": "scripts\\ResidentEvil.FusionFix.ini",
         "MD5": "8071E5F34D0775CB8E3E115161FC4CDC",
+        "Sha256": "69990C92046C0A0C407E45205EC057CF3790707D80D6D96DEEA928479BB5A541",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7776,6 +8034,7 @@
         "FileSize": 1241502,
         "ConfigFile": "scripts\\ResidentEvil0.FusionFix.ini",
         "MD5": "73B2B9286FE1E7E6A547F27E54AE3574",
+        "Sha256": "F0A4B1D4A58AB01E6F8D8086EF4B949A5E19E0D2BC4F3C8B2DC6FB6CD2CB85D9",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7806,6 +8065,7 @@
           "Bin32\\bio4.exe"
         ],
         "MD5": "B5644F93ECE7D1B442D05C193E76BAEF",
+        "Sha256": "0F46EC7622532C4FDE76C6932543528F57D65CD375AF01EAA52D6E6D8171D1C7",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7823,9 +8083,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re4_re4hd_v1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re4_re4hd_v1_1.zip",
         "FileSize": 40421047241,
         "MD5": "2C1CCD9BDE27C6CD4D6EB59922FFAEB6",
+        "Sha256": "dfbc2f47c121c9ee5a995fdfc22a78fda46aac4d1f8564222767ebab3313df70",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7844,10 +8105,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re5_fix_v1_0_4.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re5_fix_v1_0_4.zip",
         "FileSize": 17656,
         "ConfigFile": "RE5Fix.ini",
         "MD5": "AA3EEF19CB9DC0AE169AD0C88FA302F0",
+        "Sha256": "9D41F053CD2B13E0759B1C7639C0965D212984DD3538183A273380CF2ABA001B",
         "WineDllOverrides": [
           "xinput1_3"
         ],
@@ -7876,6 +8138,7 @@
         "FileSize": 1221944,
         "ConfigFile": "scripts\\ResidentEvil6.FusionFix.ini",
         "MD5": "8DE3F4C6F4043A7255937117532B1888",
+        "Sha256": "E45DC74FED6365A81C0C21D8EADDC98AF0F5FFAB011AE187EF9D335FC1C9861F",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7899,9 +8162,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re7_ethan_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re7_ethan_v1.zip",
         "FileSize": 438275,
         "MD5": "b1b7e365c6651bcf7efb3c28f6e710a7",
+        "Sha256": "CE40BA2EAB627E3D16A3B7037C752FC0E49695C3B04F5E0BF9147E37E2A68E11",
         "Name": "Project Ethan (Ultrawide mod)",
         "Guid": "c19657e0-4b7c-4b79-ba2e-0c81a50554a2",
         "Version": "1.0",
@@ -7914,9 +8178,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re7_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re7_ultrawide.zip",
         "FileSize": 4052582,
         "MD5": "217833B8E1B043767AF10F8F683DA12E",
+        "Sha256": "62FDCD17437D3FAFD422E685E4E68322391DA4BDFABB85C5CBF8B1F58DFFEE64",
         "Name": "Ultrawide Fix",
         "Guid": "93b3856d-b4f8-4365-ab52-a50cb77a851d",
         "Version": "1.5.2",
@@ -7939,6 +8204,7 @@
         "FileSize": 1149011,
         "ConfigFile": "scripts\\ResidentEvilRevelations.FusionFix.ini",
         "MD5": "3E792E69F5A429174D7C543E4FFDC651",
+        "Sha256": "20292659A487477E5AD717B091876089E4C5B48608CDCDFDFE2311A8B80B91E3",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -7956,10 +8222,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/rer_fix_v1_0_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/rer_fix_v1_0_0.zip",
         "FileSize": 16812,
         "ConfigFile": "RERevFix.ini",
         "MD5": "18f81473223b83ba35c315fae83eb780",
+        "Sha256": "7EF6B2CEADE6DD8DB86B7283EBB4A59EB076AF376AF475EC294A6C64982D854B",
         "Name": "RERevFix",
         "Guid": "60728c70-6503-49f3-8d7f-8c9d07f7e8c9",
         "Version": "1.0",
@@ -7984,6 +8251,7 @@
         "FileSize": 1127346,
         "ConfigFile": "scripts\\ResidentEvilRevelations2.FusionFix.ini",
         "MD5": "C08140D60DE13C72211A3DC1D655FA09",
+        "Sha256": "4A62D6B23A2B0228612DD32415C21B092BAA3FD2B3B58A14248533716B145CA5",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -8002,9 +8270,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/rer2_raw_mouse_v1_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/rer2_raw_mouse_v1_0.zip",
         "FileSize": 9869,
         "MD5": "6d9265637112b2991ad65a9b32b68db3",
+        "Sha256": "BA4D9EEC3F796D6A3302D5E4019490230D62E893007E14115375B32C08657642",
         "Name": "Raw Mouse Input Fix",
         "Guid": "1b7c5a9d-8831-42e5-b826-aaf13e2796ec",
         "Version": "1.0",
@@ -8026,9 +8295,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/resident_evil/re8_ultrawide.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/resident_evil/re8_ultrawide.zip",
         "FileSize": 4066149,
         "MD5": "7E7D7529FE86E9BF977CBCE29638E131",
+        "Sha256": "9CA4F068421FDB92F09C796539D210217FA743CDC9ACBDB758C1373197FCD2C4",
         "Name": "Ultrawide Fix",
         "Guid": "fd9ffc39-4416-423f-9f79-4138fe442da6",
         "Version": "1.5.2",
@@ -8044,9 +8314,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/rtcw_patch_142d.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/rtcw_patch_142d.zip",
         "FileSize": 1654787,
         "MD5": "482BE194A3EBF4D0C1EB9CA664834838",
+        "Sha256": "2838F1D43EFFC1448F1B225CE392D639F4A4F476FD845CD7004701785910D789",
         "Name": "Unofficial Patch",
         "Guid": "744976d0-1b6b-4528-be77-026da7adefb5",
         "Version": "1.42d",
@@ -8093,9 +8364,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/rott_le_fixes.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/rott_le_fixes.zip",
         "FileSize": 417488,
         "MD5": "8CE7B6C7F6111D4578570A4ECD557121",
+        "Sha256": "B064425167B810163A5E4998C8DDF195DEAAC1ED1A331B48C289A8FD9E0B518D",
         "Name": "Minor Sprite Fixing Project and Misc Improvements",
         "Guid": "308859fe-b4d5-4a75-8ddb-5db7f1b5a338",
         "Version": "1.0",
@@ -8109,10 +8381,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/rott_le_return.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/rott_le_return.zip",
         "FileSize": 62164201,
         "InstallFolder": "return",
         "MD5": "68F43CBA4427395F22C29FC928D35AC6",
+        "Sha256": "EE30567586052506C363F21DDB903C0D859A4E051A81C06D22271EAB01224645",
         "Name": "Return of the Triad Overhaul",
         "Guid": "090c695c-b3aa-4ad7-9868-82840e8229b0",
         "Version": "1.0",
@@ -8217,6 +8490,7 @@
         "FileSize": 239873,
         "InstallFolder": "Game\\Binaries\\Win64",
         "MD5": "FB92C517BB6C3063835EFFF96F65286A",
+        "Sha256": "FA0D63E64EC28096F78053D3A6CD760027074A5085D92A655C08E05516AE9B1B",
         "Name": "Ultrawide Fix",
         "Guid": "09e2a990-7c80-429b-a6e4-066ccb2e53e8",
         "Version": "1.3",
@@ -8252,10 +8526,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_ocean_4_SO4Fix_v0_9_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_ocean_4_SO4Fix_v0_9_0.zip",
         "FileSize": 636255,
         "ConfigFile": "SO4Fix.ini",
         "MD5": "80A8F1DF8BD70424EB913FF67EB63B25",
+        "Sha256": "AB514B79D8D553BE4F2970627ABB375406E7B4ABD2A8F11B57831BA2539B646E",
         "WineDllOverrides": [
           "winmm.dll"
         ],
@@ -8280,10 +8555,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/sw_jedi_outcast_academy_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/sw_jedi_outcast_academy_nointro.zip",
         "FileSize": 372,
         "InstallFolder": "GameData\\base",
         "MD5": "312C455392AE87079CA7A298ED17BD8F",
+        "Sha256": "7D94430B34B450DCEE2BA0236A6253E1809A71D28D4C625C5B7D6A89919ADBA1",
         "Name": "No Intro Fix",
         "Guid": "d2ce2937-c876-4e8a-9474-0c65cbcb8d56",
         "Version": "1.0",
@@ -8302,9 +8578,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/dark_forces_2_ojkdf2_v091.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/dark_forces_2_ojkdf2_v091.zip",
         "FileSize": 25696463,
         "MD5": "5376C542ADE2532A5A6DDD814B62BB35",
+        "Sha256": "D07CEDFED0618B94B9220D9BF0C1725B3C2A9D816AD770CA47549A0A69707702",
         "Name": "OpenJKDF2",
         "Guid": "9daf8fec-8f48-4ce8-8bc8-999e625aa47c",
         "Version": "0.9.1",
@@ -8320,10 +8597,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/sw_jedi_outcast_academy_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/sw_jedi_outcast_academy_nointro.zip",
         "FileSize": 372,
         "InstallFolder": "GameData\\base",
         "MD5": "312C455392AE87079CA7A298ED17BD8F",
+        "Sha256": "7D94430B34B450DCEE2BA0236A6253E1809A71D28D4C625C5B7D6A89919ADBA1",
         "Name": "No Intro Fix",
         "Guid": "36aa8f17-0f7d-41b8-9eda-a73d23608c98",
         "Version": "1.0",
@@ -8342,9 +8620,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/dark_forces_2_ojkdf2_v091.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/dark_forces_2_ojkdf2_v091.zip",
         "FileSize": 25696463,
         "MD5": "5376C542ADE2532A5A6DDD814B62BB35",
+        "Sha256": "D07CEDFED0618B94B9220D9BF0C1725B3C2A9D816AD770CA47549A0A69707702",
         "Name": "OpenJKDF2",
         "Guid": "4a22b011-711b-42b8-8d27-00b9e84bd7e6",
         "Version": "0.9.1",
@@ -8360,9 +8639,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_unofficial_patch_v110.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_unofficial_patch_v110.zip",
         "FileSize": 733115799,
         "MD5": "DC1ED2B1AB6969E848B76A3D6FB596BF",
+        "Sha256": "86EF60394F42F8269536ED86B58E9EA5703F6511CB551A4A3B0047F7BAD3B754",
         "Name": "Community Patch",
         "Guid": "cfe99c56-64e2-4b5d-bf84-b844dc48695b",
         "Version": "1.10.0",
@@ -8375,7 +8655,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_16_10_menus.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_16_10_menus.zip",
         "FileSize": 4714852,
         "Variants": [
           "1024x640",
@@ -8393,6 +8673,7 @@
         ],
         "InstallFolder": "Override",
         "MD5": "5B3F36926F75FFD205B4855FF158AAC5",
+        "Sha256": "DBADFFBF7E045E51914DF2CB24105D52E897123B14F053F62B42A75A483FBEBB",
         "Name": "High Resolution Menus 16:10",
         "Guid": "62df89ba-9dee-418e-82aa-9e4e3e2349e2",
         "Version": "1.5",
@@ -8408,7 +8689,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_16_9_menus.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_16_9_menus.zip",
         "FileSize": 5896662,
         "Variants": [
           "1024x576",
@@ -8429,6 +8710,7 @@
         ],
         "InstallFolder": "Override",
         "MD5": "FDCF378DD08AF6D10D225A5310EDF627",
+        "Sha256": "F2B66D644BBBE57590A430D37F156C7B920204CA8D8AE93CA026B302245FE811",
         "Name": "High Resolution Menus 16:9",
         "Guid": "6c522c8a-7d3b-497b-8cee-0dc4a7a6cdb0",
         "Version": "1.5",
@@ -8444,7 +8726,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_21_9_menus.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_21_9_menus.zip",
         "FileSize": 2360413,
         "Variants": [
           "1280x1080",
@@ -8456,6 +8738,7 @@
         ],
         "InstallFolder": "Override",
         "MD5": "3256472BC48D798ADF674EB544F4651D",
+        "Sha256": "8C7EC2A58CE915B1813D09058A4ABA3C13668671C1FF34903B0E7E4E7B769898",
         "Name": "High Resolution Menus 21:9",
         "Guid": "e65643b8-b519-4ddd-ac13-7c66bbff6559",
         "Version": "1.5",
@@ -8471,7 +8754,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_32_9_menus.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_32_9_menus.zip",
         "FileSize": 1572979,
         "Variants": [
           "1920x540",
@@ -8481,6 +8764,7 @@
         ],
         "InstallFolder": "Override",
         "MD5": "C4CC704BA51C54ADFFA386DA59293FEB",
+        "Sha256": "4CA4C08E5C0AA7FD44FDC3349D0EF3C72CF223F73D8DC3F88B6B3DB158EABAA5",
         "Name": "High Resolution Menus 32:9",
         "Guid": "99991af2-a099-4135-8854-e3ceab165f40",
         "Version": "1.5",
@@ -8496,7 +8780,7 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_4_3_menus.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_4_3_menus.zip",
         "FileSize": 4710340,
         "Variants": [
           "800x600",
@@ -8514,6 +8798,7 @@
         ],
         "InstallFolder": "Override",
         "MD5": "5C5CDD85C4E854A7A5E40ECE369EE694",
+        "Sha256": "993620A8373764233921425E9D0BDA11F18BB2AA272FE1FC3DECA12D3BF962E9",
         "Name": "High Resolution Menus 4:3",
         "Guid": "f9f78c34-f668-475b-9941-f95d33b64af7",
         "Version": "1.5",
@@ -8529,9 +8814,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor-spikes_v1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor-spikes_v1_1.zip",
         "FileSize": 11007,
         "MD5": "4DC21B24F5DF0656AC55EE218146FC46",
+        "Sha256": "F07E5BBBE042BD879C651FE3E34CFD9841AEEFEFC391F9A59A63CDF1A0D5762B",
         "Name": "JC\u0027s Security Spikes Fix",
         "Guid": "32eda047-0f0e-4319-b59f-776486301a76",
         "Version": "1.1",
@@ -8547,9 +8833,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor-restore_v0_8.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor-restore_v0_8.zip",
         "FileSize": 9722134,
         "MD5": "FD007EA4402FEC62104CD8226A2F2D77",
+        "Sha256": "54F52363D3F8487A50431BA91D8418B8F9CE198B301015EB0DE7AC3B8AA3C0A8",
         "Name": "Restored Content",
         "Guid": "e0c4d348-81aa-4e2d-9583-4716a525dd97",
         "Version": "0.8.0",
@@ -8565,10 +8852,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/swkotor_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/swkotor_widescreen.zip",
         "FileSize": 3210040,
         "ConfigFile": "SUWSF.ini",
         "MD5": "4839C637F847523021C29C923E0AC59A",
+        "Sha256": "31D6B2BB5F57C2C6FF6B37066992FFAB3B5800EEC7F3DA5A92979B14AB36CBB3",
         "Name": "Widescreen Fix",
         "Guid": "7d5a3a00-f930-4a84-92f1-34fd2ce23a00",
         "Version": "1.0",
@@ -8629,9 +8917,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/star_wars/dark-forces-fengine_v1_22_3.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/star_wars/dark-forces-fengine_v1_22_3.zip",
         "FileSize": 10277393,
         "MD5": "b6b8618af59a5c616b6322602908c4c1",
+        "Sha256": "DB951B50B8564BFC9FE370570172F576B80D8EDFC0FEB0133393F3B5A7C5543F",
         "Name": "The Force Engine",
         "Guid": "65572422-e300-4e54-b960-423c900d1028",
         "Version": "1.22.3",
@@ -8715,9 +9004,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/saints-row-3-launcher_v1_3_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/saints-row-3-launcher_v1_3_2.zip",
         "FileSize": 612246,
         "MD5": "4FAAE71724339D20CD47702A1998F935",
+        "Sha256": "842E78D8ABC771CAC6F8444041DB655C4F5DF437AB0DE55D1D403F866EDF9C17",
         "Name": "Advanced Launcher",
         "Guid": "94906269-8321-4120-8f49-3ce131f6fc8a",
         "Version": "1.3.2",
@@ -8745,9 +9035,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/saints_row_3_zpatch_v10.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/saints_row_3_zpatch_v10.zip",
         "FileSize": 1197260,
         "MD5": "DA61E839C4A1B121CD004D4A490A47CB",
+        "Sha256": "742D607BB8F5F75A80825B91D7BBE9683060037B81D5B95459FEB19AFB7BE70A",
         "Name": "ZPatch",
         "Guid": "bce46a62-a707-47de-b9c9-d32631ddef17",
         "Version": "1.0",
@@ -8787,6 +9078,7 @@
         "FileSize": 1208955,
         "ConfigFile": "scripts\\SecondSight.WidescreenFix.ini",
         "MD5": "2AC049BA5EF4EB57CA145598D089294C",
+        "Sha256": "691BA2F9E730817DFBA00564E30A79949528947B7E7DD7B0514BA587BD51C706",
         "WineDllOverrides": [
           "dinput8"
         ],
@@ -8827,10 +9119,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/septerra_core_sr_v1.04.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/septerra_core_sr_v1.04.zip",
         "FileSize": 6029428,
         "ConfigFile": "Septerra.cfg",
         "MD5": "839BD152BE70BC9B7486498FE8212947",
+        "Sha256": "9661AD440329DF8084BA2E215DC37150ED1A835DB0B39D8F8A732D006A8403AB",
         "Name": "SR",
         "Guid": "4d5a2314-6716-4374-a92f-8bed0573eecd",
         "Version": "1.04.0.10",
@@ -8852,9 +9145,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/sw_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/sw_raze.zip",
         "FileSize": 25459009,
         "MD5": "113743B6938DFF6E96DC5CAF0CB4254E",
+        "Sha256": "B8B7B2D28CB145ED0D01D6423AE2A070849C51205A8A972EA54AB5DE62D8B7AA",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "Shadow Warrior",
         "Name": "Raze \u002B Addons",
@@ -8879,9 +9173,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/build/sw_classic_97_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/build/sw_classic_97_raze.zip",
         "FileSize": 25471198,
         "MD5": "230e10ca4fd4d5840cd0f4cb44ddedc3",
+        "Sha256": "0A611DEC73D29BD90DB6050DE5B8320E770857048ECFAB3E12FBD7EE3FEE64BD",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "Name": "Raze \u002B Addons",
         "Guid": "d102388a-5b9d-4e64-9485-34e82189fcb1",
@@ -8905,9 +9200,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/sin-dominatrix_v1_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/sin-dominatrix_v1_2.zip",
         "FileSize": 8824931,
         "MD5": "eea7e16c0093669521d4b1a243b3bdbd",
+        "Sha256": "09D90A4ECFF03CA0AC5ADD5ACB46D08E1786C2EE70EA3F72FDE85E1E70FCA766",
         "Name": "Dominatrix",
         "Guid": "1e571587-253f-42a4-b9b1-7a988e7f4a75",
         "Version": "1.2",
@@ -8975,6 +9271,7 @@
         "FileSize": 1191433,
         "ConfigFile": "scripts\\SniperElite.WidescreenFix.ini",
         "MD5": "1D0BC9635F1D6B8F42A647AC7457081E",
+        "Sha256": "1845148D25EBC3B3A32B9AB8E6E01EE8260720803CF35CAA6AA125EC2C469494",
         "Name": "Widescreen Fix",
         "Guid": "14ecc28b-10d9-4943-a675-dd5691c7fbb0",
         "Version": "20.05",
@@ -8994,10 +9291,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/sonic_cd_decompilation_v1_3_2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/sonic_cd_decompilation_v1_3_2.zip",
         "FileSize": 1430703,
         "ConfigFile": "settings.ini",
         "MD5": "097D270111E7B08BFDF2393E85C23B91",
+        "Sha256": "0A4DAC3FD85C07C4D50DEAF06351D24A31863410C28648AD5B0D8B17CE4DBADC",
         "Name": "Decompilation Port",
         "Guid": "4ad74d10-1705-41b5-a5c2-4079007cd2da",
         "Version": "1.3.2",
@@ -9020,9 +9318,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/spec_ops_the_line_custom_v2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/spec_ops_the_line_custom_v2.zip",
         "FileSize": 2144941,
         "MD5": "a91b7918f8a000678f304bf33a75c851",
+        "Sha256": "0EE8C828EE19A5A277F961DDA62E2CDE8487516D821D810CEDD950DA1B54B376",
         "Name": "Custom Patch",
         "Guid": "84971bf0-0c39-471a-9d3d-788f63ae650b",
         "Version": "1.0",
@@ -9057,10 +9356,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/spec_ops_tl_remove_update_check.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/spec_ops_tl_remove_update_check.zip",
         "FileSize": 86798,
         "InstallFolder": "{documents}\\My Games\\SpecOps-TheLine\\SRGame\\Config",
         "MD5": "A12EE3636560BE1A7313FC90AB4CE465",
+        "Sha256": "FC1B11AC19F3BBCD4CF9A760847523D6C956778D03F912320EAA3B1ECCC9EC91",
         "Name": "Remove Update Check",
         "Guid": "7146680d-4dc1-449e-ab03-b17aaf3ebcf9",
         "Version": "1.0",
@@ -9082,6 +9382,7 @@
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/spyro/SpyroReignitedTrilogy.WidescreenFix.zip",
         "FileSize": 499556,
         "MD5": "27A3FC8C97C6A8B504A28CE3533E2C14",
+        "Sha256": "4AD290D7F428B619A0559487EDE4659375C998A176764F296A1299BADCFE92D9",
         "Name": "Ultrawide Fix",
         "Guid": "07a79c35-d5e4-4cd0-8780-33915f2fc43c",
         "Version": "23.10",
@@ -9167,7 +9468,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/startopia_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/startopia_widescreen.zip",
         "FileSize": 15411901,
         "Variants": [
           "16x9",
@@ -9180,6 +9481,7 @@
           "3840x1600"
         ],
         "MD5": "AA9F3DCE2223F77CE4351D5CB1AB45A4",
+        "Sha256": "7CC5E748BA8D3219EF59D92DA77CC27DA209031DC11BC3F8583FBE42D17A0CD7",
         "Name": "(Ultra)Widescreen Fix",
         "Guid": "e94083ac-c3b1-48e9-b88b-8496310a3053",
         "Version": "1.0",
@@ -9238,10 +9540,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/neptune_vs_sega_resolution_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/neptune_vs_sega_resolution_fix.zip",
         "FileSize": 163244,
         "ConfigFile": "nep_config.txt",
         "MD5": "5F1C2B91B3B42C155ED413F2F8678542",
+        "Sha256": "88FC955F4DE90F0CC3435791B1ABBDC20715DD18F539EAB54B497D932F59B30B",
         "Name": "Resolution Unlock Mod",
         "Guid": "9e75d6ac-1cc3-478e-8e7c-3bd161d0ebad",
         "Version": "3.0",
@@ -9261,9 +9564,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/common/ddraw_compat_v054.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/common/ddraw_compat_v054.zip",
         "FileSize": 899716,
         "MD5": "5C465F40E3CCB84E1E0D8A3AA33BFBF6",
+        "Sha256": "569C7E0095DE0909D31107F370CBD30A904E53C765333E2AFF172BAC82438137",
         "Name": "DDrawCompat",
         "Guid": "dee96211-6f8b-4adf-bc0b-9af654e7cb30",
         "Version": "0.5.4",
@@ -9277,9 +9581,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/syberia_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/syberia_nointro.zip",
         "FileSize": 709,
         "MD5": "B7D63561A6CDFAC98607D05557A686E7",
+        "Sha256": "F107AEA97D6956C5DF34B725117A5AAFEBDC9B61A276DB72478496F22DD72752",
         "Name": "No Intro Fix",
         "Guid": "83ad7d53-865a-4b47-87a5-a58977e735f5",
         "Version": "1.0",
@@ -9298,9 +9603,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/syberia_2_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/syberia_2_nointro.zip",
         "FileSize": 460,
         "MD5": "BB16D79E29804CE46DB9CEEAAD25E011",
+        "Sha256": "4E43A30FF4FBF4ACFE217B8D2E6AE1A28C61CF1E27FA31BA42D428A2B85E6B7B",
         "Name": "No Intro Fix",
         "Guid": "ab3c795e-3997-4e20-9da8-4fd0568bee57",
         "Version": "1.0",
@@ -9426,9 +9732,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/daggerfall-unity_v1_1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/daggerfall-unity_v1_1_1.zip",
         "FileSize": 50255661,
         "MD5": "5af120ec4cc544c01b13c4956a23756e",
+        "Sha256": "7A9AB036AC43E5F6155E61306EFBF50538CFAA3122ECC315DFC2CBFADD160072",
         "Name": "Daggerfall Unity",
         "Guid": "deeed117-4849-421b-81e2-41d07e9f9a1a",
         "Version": "1.1.1",
@@ -9451,10 +9758,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/morrowind_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/morrowind_nointro.zip",
         "FileSize": 492,
         "InstallFolder": "Data Files\\Video",
         "MD5": "3D739F2331C907383F8D3962FFBF5D62",
+        "Sha256": "C476F41DFC6DCF7213242191D940DC5CA8E719B54C92654B99A4427CB9DDD8CB",
         "Name": "No Intro Fix",
         "Guid": "1e81f2a7-d3e2-404b-8e29-c2741607e893",
         "Version": "1.0",
@@ -9538,9 +9846,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tlj_scummvm_v271.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tlj_scummvm_v271.zip",
         "FileSize": 84930817,
         "MD5": "5F3ECA4F67CD5BDC0E87D286C761EC3E",
+        "Sha256": "D367396C4449474E2054F0F869E88ACA8CA88121FB00CF56BBA81033D573A57D",
         "Name": "ScummVM",
         "Guid": "0d8dc7ba-0216-4189-af2d-804cf128d9b1",
         "Version": "2.7.1",
@@ -9582,10 +9891,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/technomancer_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/technomancer_nointro.zip",
         "FileSize": 2820,
         "InstallFolder": "boot\\data\\video",
         "MD5": "4A0846F9B541B78884FBE18ECCEBE544",
+        "Sha256": "2FAC009776086698CD83924E3E806F1BB3C963F51885E901F216DD2046503852",
         "Name": "No Intro Fix",
         "Guid": "0777a751-0b6a-4cff-9933-53541cd192a2",
         "Version": "1.0",
@@ -9604,9 +9914,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/thief/thief_1_tfix_127.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/thief/thief_1_tfix_127.zip",
         "FileSize": 85828839,
         "MD5": "CE4F12E5815C1325EF93D5F42F0CB5F1",
+        "Sha256": "EA3FC6A00F9CC6BFD098E335B5653081DC1303CA6EB51BDF05B48A04F5675A4C",
         "Name": "TFix",
         "Guid": "6e177dbc-854c-45ac-b384-73c8fc4e27a2",
         "Version": "1.27",
@@ -9631,10 +9942,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/thief/thief_3_sneaky.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/thief/thief_3_sneaky.zip",
         "FileSize": 558086948,
         "ConfigFile": "System\\SneakyTweaker.exe",
         "MD5": "480603B97E799A1B7B2BB90B0287E6E1",
+        "Sha256": "3D64AFB24984DFC45DA0C261032431DDFAC65C110C841BE385E36D1CA69DF851",
         "Name": "Sneaky Upgrade",
         "Guid": "08aafbb8-e8e8-400d-88c7-41ad16b17d31",
         "Version": "1.1.11",
@@ -9659,9 +9971,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/thief/thief_2_tfix_127.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/thief/thief_2_tfix_127.zip",
         "FileSize": 472274109,
         "MD5": "31392B722E8DCD4AFCD033EDFC3A863A",
+        "Sha256": "BA6D415B4E2D3AD4C82E772CDBBBB6D3C926C3D9379ADCB98992B30522D25446",
         "Name": "T2Fix",
         "Guid": "b63dfbc3-f678-4348-9f14-a4cbbd2946ac",
         "Version": "1.27e",
@@ -9686,9 +9999,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/timeshift_crashfix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/timeshift_crashfix.zip",
         "FileSize": 4683471,
         "MD5": "AD7C62A1DBE8CDFEFB61D1CC8092C7A7",
+        "Sha256": "F21AB26BDF2E10F823A103B835505ED66E480970A08063785DDD8C9FB5EFFA84",
         "Name": "Crash Fix",
         "Guid": "0a2babb9-0bea-4d2e-b11b-ff7dc154a76b",
         "Version": "1.0",
@@ -9724,9 +10038,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/splinter_cell/sc_loading_screens_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/splinter_cell/sc_loading_screens_v1.zip",
         "FileSize": 3585989,
         "MD5": "CD29724E420BEABC04D52A202008D7FD",
+        "Sha256": "59A079626560195EE16A392A73E02FDE97F240EA79227AAF4064A47F4099D84B",
         "Name": "Improved Loading Screens",
         "Guid": "0ee10d29-aada-4156-b922-43e1eb5ad0d7",
         "Version": "1.0",
@@ -9736,9 +10051,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/splinter_cell/sc_textures_fix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/splinter_cell/sc_textures_fix_v1.zip",
         "FileSize": 5799044,
         "MD5": "544E12E2E250DD2ED77F5A824B8FEF25",
+        "Sha256": "A49A0BC5B63E7B191DC5E4BD78454622307A024EAD6D117780C716A7C1B8FB0A",
         "Name": "Texture Shader Fixes",
         "Guid": "e637be0c-be3a-45cc-9cc2-146f6e83e91d",
         "Version": "1.0",
@@ -9755,6 +10071,7 @@
         "FileSize": 3999298,
         "ConfigFile": "system\\scripts\\SplinterCell.WidescreenFix.ini",
         "MD5": "CE7F252051C9EBD2A5843080CA29C194",
+        "Sha256": "DDB485971FD2DB443FFA926AF75E1D559E94EE82479221C476D8D31323E3BF1B",
         "Name": "Widescreen Fix",
         "Guid": "9da1a9db-2049-46ac-a6ce-b956999e7806",
         "Version": "26.01.16",
@@ -9768,9 +10085,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/sc_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/sc_nointro.zip",
         "FileSize": 1741,
         "MD5": "CF82E60031D5E0610D00B579EED0C16E",
+        "Sha256": "7DD0FB46B15C3065F063F7967611E6107403C88B587514C481CB01CD7F51147F",
         "Name": "No Intro Fix",
         "Guid": "ffc5c3d3-adc1-48c8-85e6-29687e6e9356",
         "Version": "1.0",
@@ -9793,6 +10111,7 @@
         "FileSize": 1156419,
         "ConfigFile": "src\\system\\scripts\\SplinterCellBlacklist.FusionMod.ini",
         "MD5": "06D4F064C05A43BB6C89C114C5C13913",
+        "Sha256": "656AF5FD8E1FFA92F2C12D8ED84D8C440A3C649B8356A64CF2CC6188BCB4631E",
         "Name": "Fusion Mod",
         "Guid": "0717a8a0-2900-4248-9b2c-d0c0f5fe32b7",
         "Version": "24.10",
@@ -9817,6 +10136,7 @@
         "FileSize": 1966344,
         "ConfigFile": "System\\scripts\\SplinterCellChaosTheory.WidescreenFix.ini",
         "MD5": "789EBFC7B226D799131B56518708FF5B",
+        "Sha256": "61711A606283DB2FC10E96FF970759A8E2118FF35D87C1043F2AA453D5BFEAC0",
         "Name": "Widescreen Fix",
         "Guid": "d2797d6c-e7c0-48d9-9cf9-ff3210a26df8",
         "Version": "24.07",
@@ -9830,9 +10150,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/scct_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/scct_nointro.zip",
         "FileSize": 1973,
         "MD5": "B0383754971502D7E4902B6C82A7CA6F",
+        "Sha256": "D55A59815EE1FA1105BDEE1C16D7940ECB126E4CD567B7A32F3B18262FC6B1AD",
         "Name": "No Intro Fix",
         "Guid": "5957032c-24ff-4035-a994-c06076431899",
         "Version": "1.0",
@@ -9852,9 +10173,10 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scc/SplinterCellConviction.FusionMod.zip",
-        "FileSize": 1621646,
+        "FileSize": 1778042,
         "ConfigFile": "src\\system\\d3d9.ini",
         "MD5": "5BB3A28FD2F7A5C11F2CB25FD4FA236A",
+        "Sha256": "7C0B1EA0F216DDFFB17102B88904E09745534598820EDCBDDCAC7E1932C2BAF8",
         "Name": "Fusion Mod",
         "Guid": "98720cc1-8924-46e7-b87a-a58499c65fb9",
         "Version": "25.12.15",
@@ -9878,6 +10200,7 @@
         "FileSize": 3022720,
         "ConfigFile": "SCDA-Offline\\System\\scripts\\SplinterCellDoubleAgent.WidescreenFix.ini",
         "MD5": "9369D574739321D794147A2AD0F55AA5",
+        "Sha256": "8FED52CFA21D5B2C9CC1DF06428128F66FEF187C608EE7A0AA230482E4288C99",
         "Name": "Widescreen Fix",
         "Guid": "89de542e-bc87-49a6-904a-6c2360340e5d",
         "Version": "24.01",
@@ -9897,12 +10220,13 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/splinter_cell/sc-pandora-no-drm.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/splinter_cell/sc-pandora-no-drm.zip",
         "FileSize": 3611682,
         "FilesToDelete": [
           "UbisoftConnectInstaller.exe"
         ],
         "MD5": "be7ed9faa57b029bad55ba4f1e5eafb8",
+        "Sha256": "13AA1F1203D579AB766176A946D6813747F14A24BD43BD8CE064F337649F5365",
         "Name": "Ubisoft Connect Bypass",
         "Guid": "b62d72d8-f631-48b9-a252-f04bd354dbb4",
         "Version": "1.0",
@@ -9915,10 +10239,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/splinter_cell/sc-pandora-widescreen-v25_01_13.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/splinter_cell/sc-pandora-widescreen-v25_01_13.zip",
         "FileSize": 2287449,
         "ConfigFile": "system\\scripts\\SplinterCellPandoraTomorrow.WidescreenFix.ini",
         "MD5": "a9a99fcf6fe9c791ba0c9bb11a1b70d3",
+        "Sha256": "6C506483235D45FE792BEE7434B9070B068D24F24EFF8156610F1C6BBFC82492",
         "Name": "Widescreen Fix",
         "Guid": "ecef27bc-9d92-40f5-bdb8-f8b194d246a5",
         "Version": "25.01.13",
@@ -9941,9 +10266,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tomb-raider-6-restoration_v1_4_0.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tomb-raider-6-restoration_v1_4_0.zip",
         "FileSize": 4395853656,
         "MD5": "9C0291775CAB756247FD6F2351B21010",
+        "Sha256": "C0C4369EE30CFE7FD77A0903440ADE3A85DCCA6F15CCCB21FD0B4FFE08A1F566",
         "Name": "Restoration Project",
         "Guid": "05d3651e-2a4d-4fe5-9ec1-384eacb0113b",
         "Version": "1.4",
@@ -9957,10 +10283,11 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/tomb_raider_6_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/tomb_raider_6_nointro.zip",
         "FileSize": 833,
         "InstallFolder": "data\\FMV",
         "MD5": "822DD88DA8C737A5C23250052F40E64E",
+        "Sha256": "2BA8C0778D40C8C768E4E989A2153119F4B8FC9760486A6B90FC3BE55C88828C",
         "Name": "No Intro Fix",
         "Guid": "3be06cfe-f21f-4e5f-9621-6b0e6fb5df62",
         "Version": "1.0",
@@ -9979,10 +10306,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tomb-raider-1-tr1x_v4_6_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tomb-raider-1-tr1x_v4_6_1.zip",
         "FileSize": 309324998,
         "ConfigFile": "TR1X_ConfigTool.exe",
         "MD5": "19b699525fd2913557b08092259b2c61",
+        "Sha256": "0E48DBCC59BD60665260997C3E855004A74B4B9A8A9A61DCD6206E42368DCE93",
         "Name": "TR1X \u002B Unfinished Business",
         "Guid": "174629fa-0e1c-4d6a-9184-5c16923a202c",
         "Version": "4.6.1",
@@ -10052,10 +10380,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tr2_tr2main_v090.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tr2_tr2main_v090.zip",
         "FileSize": 96943643,
         "ConfigFile": "config.exe",
         "MD5": "9FA9D3CBABE2A2D4A822FB13B30329A4",
+        "Sha256": "28435F0553C0C729BB1E9D0CBDA0C2533E7ED5E64551A30AC198A77DFE347E5F",
         "Name": "TR2Main \u002B Golden Mask",
         "Guid": "b157b957-9e42-4442-b780-8a73479b9766",
         "Version": "0.9.0",
@@ -10096,10 +10425,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tr3_tomb3_v202.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tr3_tomb3_v202.zip",
         "FileSize": 67186154,
         "ConfigFile": "tomb3_ConfigTool.exe",
         "MD5": "66F7DC196BF416916E17C04C19F1BF05",
+        "Sha256": "04889BD06C5034B8537EB3C4530BD827DB9BC27EB01BCDFF1883526598D67C37",
         "Name": "tomb3 \u002B The Lost Artefact",
         "Guid": "912df2c1-6ab9-4cd6-ad76-8ba2f81094c5",
         "Version": "2.0.2",
@@ -10139,9 +10469,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tra_ultrawide_v2.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tra_ultrawide_v2.zip",
         "FileSize": 1330792,
         "MD5": "B695BC8E77D6478608CEE31BA9393E39",
+        "Sha256": "3F9A5DD11DCEC4CB5760757960D604AD190743A9877924E619CF32110DEA5B67",
         "Name": "Ultrawide Fix",
         "Guid": "f62bb511-f826-4cae-8f95-6a456baf2791",
         "Version": "1.0",
@@ -10177,9 +10508,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tr5_tomb5_v320.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tr5_tomb5_v320.zip",
         "FileSize": 1746538,
         "MD5": "449863BE0ADE52F4E5222F134088AE31",
+        "Sha256": "0D0CFC98213E2129EEE6CDC92E0CE345E8B4508D4AE23C90BDA23F6863C2C5CA",
         "Name": "tomb5",
         "Guid": "961faa6b-e4da-44d9-b001-fb0b5aadf942",
         "Version": "3.2.0",
@@ -10219,9 +10551,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/trl_crashfix_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/trl_crashfix_v1.zip",
         "FileSize": 1957547,
         "MD5": "E076306E6237950945427BD3AEEB1881",
+        "Sha256": "D32B4073CF8E9F8C9E1DAD70B00BA804863AD2383DF03B902BB6A5E6DB2EF594",
         "Name": "Crash Fix",
         "Guid": "17689082-a5d1-419a-abc7-b72a88fb3909",
         "Version": "1.0",
@@ -10234,9 +10567,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/trl_ultrawide_v3.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/trl_ultrawide_v3.zip",
         "FileSize": 1330830,
         "MD5": "5F6913CA21F897BFC2C7A152666825B2",
+        "Sha256": "159AE58543F2C5BB28C98E9F9985804C82435993464848614C8C7EAB4FE07E2A",
         "Name": "Ultrawide Fix",
         "Guid": "dc159632-2156-4d81-b3b5-b4c253ac3391",
         "Version": "1.0",
@@ -10271,9 +10605,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tomb_raider/tr4_tomb4_v221.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tomb_raider/tr4_tomb4_v221.zip",
         "FileSize": 87316211,
         "MD5": "17DE369F768900C4B1BA74ACA1540A4C",
+        "Sha256": "7C1E5A092DD09FE9EC0156002314DAFFA69B69A0F35E11EFF7BE94CACA1C5EEF",
         "Name": "tomb4 \u002B The Times Exclusive Level",
         "Guid": "76150313-3255-401a-b316-17556e8e80c3",
         "Version": "2.2.1",
@@ -10338,9 +10673,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tffoc_black_screen_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tffoc_black_screen_v1.zip",
         "FileSize": 402800,
         "MD5": "17A63B857A9F6F934840210C8C7D4C7A",
+        "Sha256": "08A2981E1EA9DEC1350A898783126B2889159702FEECD47F99BA46E91737F799",
         "Name": "Black Screen Fix",
         "Guid": "5c68e172-e3e5-422f-a28b-7da315dbdb2c",
         "Version": "1.0",
@@ -10353,9 +10689,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/tffoc_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/tffoc_nointro.zip",
         "FileSize": 3225,
         "MD5": "3AB19E74C46D8D63F71AA5CAB2ECE02D",
+        "Sha256": "0FF13FD124188B21972D349305952EC6AC537798098880C61D5DB4895ABE1D3C",
         "Name": "No Intro Fix",
         "Guid": "1a02b1c2-8422-4588-b88f-e6fd37ad3e03",
         "Version": "1.0",
@@ -10374,9 +10711,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/tropico_3_drmfree.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/tropico_3_drmfree.zip",
         "FileSize": 2445999,
         "MD5": "49EC9D4D3751C103115A890D625F07ED",
+        "Sha256": "E007F5A885B60FD75E061C6894021C866A020AC818E4AFBED637DECDA6F207A6",
         "Name": "Official DRM-Free Patch",
         "Guid": "3910c5b1-3caa-4ef5-96a2-76c9e1ec0f1e",
         "Version": "1.0",
@@ -10456,9 +10794,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/unreal_227j.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/unreal_227j.zip",
         "FileSize": 343755838,
         "MD5": "0E8CDC8A01E55A85706BFF9E24339E0B",
+        "Sha256": "A9F7C187B7736AA36C33504BB988E2B8FAB557C37B6A8F0B390BC12D913407BD",
         "Name": "227j Patch",
         "Guid": "d5f480c5-815e-4627-b00e-09594492da92",
         "Version": "227j",
@@ -10478,9 +10817,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/vtmb/vtmb-essential_v11_5_20.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/vtmb/vtmb-essential_v11_5_20.zip",
         "FileSize": 8301435,
         "MD5": "88968bfe1ece1f57f4d1b1106250d237",
+        "Sha256": "02C89F6129F2EEF89D6D46061592F03F66A4781D467E298CAA962604BAD5C1B6",
         "Name": "Essential Fixes",
         "Guid": "5b94fa25-0954-4dbc-94de-f9232cba1ea8",
         "Version": "11.5.20",
@@ -10495,9 +10835,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/vtmb/vtmb-up_v11_5_20.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/vtmb/vtmb-up_v11_5_20.zip",
         "FileSize": 525721263,
         "MD5": "61254c0c32920b295414b12bfe4d7573",
+        "Sha256": "4B58FE4BE3CB71733E0F940CBDC7A38D3D24F1BAC3C1EBD364EAE3065755FA93",
         "Name": "Unofficial Patch Basic",
         "Guid": "9cb964f2-66e5-4c1e-9a21-b53171092684",
         "Version": "11.5.20",
@@ -10513,9 +10854,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/vtmb/vtmb-upp_v11_5_20.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/vtmb/vtmb-upp_v11_5_20.zip",
         "FileSize": 199246077,
         "MD5": "05ff778a3834758cd7534d2bdaee0b45",
+        "Sha256": "704290751DC98B75D74EE4E7926235440451C508B5D6F9780031878FBF21D52B",
         "Name": "Unofficial Patch Plus",
         "Guid": "81715538-a4b8-4a04-a92e-e2e11b7b9e98",
         "Version": "11.5.20",
@@ -10579,9 +10921,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/viking_gfx_mod_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/viking_gfx_mod_v1.zip",
         "FileSize": 17583941,
         "MD5": "6EF1A7E26487E61B0073E7CA200FD842",
+        "Sha256": "803C9DE016CAB8D48CD76FC1039E6676F8EE144AB7B23030E6B61EF6FF2AA436",
         "Name": "FOV and Other Graphical Improvements",
         "Guid": "a9b47af6-23b1-489b-842f-c4ba81b1200a",
         "Version": "1.0",
@@ -10602,9 +10945,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/wrath-launcher-bypass.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/wrath-launcher-bypass.zip",
         "FileSize": 45396,
         "MD5": "353ed0bcb65100cedfff8af11ee67564",
+        "Sha256": "DDD7F05112EA61FECE4AC8F8045C49DB8E44F2D54B1C31E3BBAD4BD665195636",
         "Name": "Launcher Bypass",
         "Guid": "abcf4d19-d63d-4fd7-8a91-eb259fb1ba36",
         "Version": "1.0",
@@ -10620,9 +10964,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/warhammer/dawn_of_war_camerazoom.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/warhammer/dawn_of_war_camerazoom.zip",
         "FileSize": 7544,
         "MD5": "9A28BD5A612C32D13F51662D9A96599D",
+        "Sha256": "A888B7E978BDFCC740345711C3AC01BBEE25A685DFA555044BEC7F3F06B342D2",
         "Name": "Camera Zoom Mod",
         "Guid": "13a51fb2-eb42-49c8-8904-1dbd8e4ba654",
         "Version": "1.2",
@@ -10641,7 +10986,7 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/warhammer/dawn_of_war_widescreen.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/warhammer/dawn_of_war_widescreen.zip",
         "FileSize": 21500386,
         "Variants": [
           "16x9",
@@ -10649,6 +10994,7 @@
           "21x9"
         ],
         "MD5": "6F207D0D0138F7142E5E64B6D8ED917B",
+        "Sha256": "198082F34F6387F30DF435121DC0EAE5FD073B94EB782F9B68B045B6AEAA2ABA",
         "Name": "(Ultra)Widescreen Resolution Fix",
         "Guid": "21e6f100-d7f8-46ab-b1e7-7a9634cd455f",
         "Version": "1.0",
@@ -10662,9 +11008,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/warhammer/dawn_of_war_config.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/warhammer/dawn_of_war_config.zip",
         "FileSize": 1266284,
         "MD5": "1731C477AEA1DE8A42C286669387EFCF",
+        "Sha256": "EFE42F8749336C80805426FA4D81837AFDB7FCA1D48EB6F1102A59A5CC56D21E",
         "Name": "Config Utility",
         "Guid": "3a2d0917-ba1a-4a16-a307-8021c60cfa4f",
         "Version": "1.0",
@@ -10683,9 +11030,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/warhammer/dawn_of_war_camerazoom.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/warhammer/dawn_of_war_camerazoom.zip",
         "FileSize": 7544,
         "MD5": "9A28BD5A612C32D13F51662D9A96599D",
+        "Sha256": "A888B7E978BDFCC740345711C3AC01BBEE25A685DFA555044BEC7F3F06B342D2",
         "Name": "Camera Zoom Mod",
         "Guid": "f10e5924-d1ea-440b-a4e8-04af23faddcc",
         "Version": "1.2",
@@ -10704,9 +11052,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/warhammer/space_marine_cpu_fix.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/warhammer/space_marine_cpu_fix.zip",
         "FileSize": 13422,
         "MD5": "F82BA4D0C80850479160CB38959614BF",
+        "Sha256": "78CB90986F1D6EBB499CA2F404600B2CAC6EF8E41A8873383172DB2427D21A71",
         "Name": "Core Fix",
         "Guid": "13df8d35-6b29-43a9-9c09-60503af89807",
         "Version": "1.0.1",
@@ -10725,9 +11074,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/wasteland_2_unofficial_patch_v0_9_4_112.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/wasteland_2_unofficial_patch_v0_9_4_112.zip",
         "FileSize": 5155505,
         "MD5": "9536F4D96CDFD82C29F64CF468792958",
+        "Sha256": "E1EBBBEF0F40960ACB4E46EF3D47A154F413DA0A1C61CE3E854CAAEC7BF821E8",
         "Name": "Unofficial Patch",
         "Guid": "612b7d1f-2b92-4298-a47d-94e4e9bb0162",
         "Version": "0.9.4.112",
@@ -10750,10 +11100,11 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/white_day_suis_hack_v1_1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/white_day_suis_hack_v1_1.zip",
         "FileSize": 647296,
         "ConfigFile": "BepInEx\\config\\SuisHack.cfg",
         "MD5": "94502199D0036B257917704595B1A801",
+        "Sha256": "9A8CD900C8B1F2015081029C20D68A795EC085E4E7936F4FC47D8467D810E91D",
         "Name": "Sui\u0027s Hack",
         "Guid": "e6f2685b-ab17-465d-9941-bd925d0795ba",
         "Version": "1.1",
@@ -10775,9 +11126,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/id/wolf3d_ecwolf_v141.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/id/wolf3d_ecwolf_v141.zip",
         "FileSize": 2068180,
         "MD5": "49FA8C627A16DA7B48D404A01ED1EEA4",
+        "Sha256": "23489B87AD5E214AE3C7885D834FF5AC74375AD45462B696B1691B91EE8FC1E6",
         "Name": "ECWolf",
         "Guid": "15655624-45f8-4f31-926c-e5fd14b6d902",
         "Version": "1.4.1",
@@ -10820,9 +11172,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/wwiigi_raze.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/wwiigi_raze.zip",
         "FileSize": 3025,
         "MD5": "642FFF9089E60BBC0B34F190DAE5B1C0",
+        "Sha256": "C65B689224848ED376AEACB4232786F22BF12DE7CDED15C8299EF11F59B31DFF",
         "SharedFixGuid": "e2cfbadc-fe21-4898-bf47-e6a9c7f784d4",
         "SharedFixInstallFolder": "WW2GI",
         "Name": "Raze",
@@ -10869,13 +11222,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/xiii_uw_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/xiii_uw_v1.zip",
         "FileSize": 4899,
         "FilesToDelete": [
           "system\\User.ini",
           "system\\XIII.ini"
         ],
         "MD5": "F0F97747409270E4A5780B8D6B67B1B2",
+        "Sha256": "087D8CB29AC6F6F828F664D4DD44900526678E9C719A10A567DA13F95B9E44A6",
         "Name": "2560x1080 Resolution",
         "Guid": "4eca8ab9-949c-4851-80d9-64e3265e1aef",
         "Version": "1.0",
@@ -10891,13 +11245,14 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/xiii_patch_v1.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/xiii_patch_v1.zip",
         "FileSize": 37890878,
         "FilesToDelete": [
           "system\\User.ini",
           "system\\XIII.ini"
         ],
         "MD5": "683C30E518AA54D3AAE8D33FE6FAE434",
+        "Sha256": "40741772D037BD729C8B487F87DF9BCB27F411E8F5B822E4D97691358109CE3E",
         "Name": "Unofficial Patch 1.4",
         "Guid": "af07b5e1-e803-4740-984d-ff3c407caaf2",
         "Version": "1.4.2.1",
@@ -10918,9 +11273,10 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/yakuza/yakuza_0_hd.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/yakuza/yakuza_0_hd.zip",
         "FileSize": 46654219,
         "MD5": "7065BD18993528C25E92192CA83DEA0A",
+        "Sha256": "502DB8E5D6587E81D61CDB7D8DC1E0075C4777E31BA77AA728FF35DE5F3F82D7",
         "Name": "4K Font and Title Screen Mod",
         "Guid": "c9bd9f71-8c25-4391-82d5-505f5d00abef",
         "Version": "2.1",
@@ -10933,9 +11289,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/yakuza/yakuza_0_noborders.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/yakuza/yakuza_0_noborders.zip",
         "FileSize": 672181,
         "MD5": "82E287D788C49D75CAE0AD40F21A598C",
+        "Sha256": "A9EE7BE8B2F388906E3819CC38E8A95E403D927864C11A23AE14916C6B18A9D3",
         "Name": "Remove Letterbox Artworks Mod",
         "Guid": "e09f927f-e301-4869-b0d1-1e7aa994f15b",
         "Version": "1.0",
@@ -10948,9 +11305,10 @@
       },
       {
         "$type": "FileFix",
-        "Url": "https://s3.firstvds.ru/superheater/nointro/yakuza_0_nointro.zip",
+        "Url": "https://s3-nl.hostkey.com/b8743306-fgsfds/superheater/nointro/yakuza_0_nointro.zip",
         "FileSize": 58493,
         "MD5": "DB5B6F319C5506085629CD68F610AA5D",
+        "Sha256": "63F925F6F1F85170724DB5C38E11356DCFC65D0668EBF18E9E5B606930CE9AE7",
         "Name": "No Intro Fix",
         "Guid": "08e4e512-ca97-4a22-aba2-81b24e0b159d",
         "Version": "1.0",
@@ -10972,6 +11330,7 @@
         "Url": "https://github.com/CookiePLMonster/SilentPatchYRC/releases/download/BUILD-2/SilentPatchYRC.zip",
         "FileSize": 171007,
         "MD5": "D025B2A538E8EEAE3F0B6C005F15B884",
+        "Sha256": "8DD0B23B2FAE2E7A585AD7F404378521F93A0EB0A1A9F4DFBF87A071A7E8A5BB",
         "WineDllOverrides": [
           "dinput8.dll"
         ],
@@ -10993,6 +11352,7 @@
         "Url": "https://github.com/CookiePLMonster/SilentPatchYRC/releases/download/BUILD-2/SilentPatchYRC.zip",
         "FileSize": 171007,
         "MD5": "D025B2A538E8EEAE3F0B6C005F15B884",
+        "Sha256": "8DD0B23B2FAE2E7A585AD7F404378521F93A0EB0A1A9F4DFBF87A071A7E8A5BB",
         "WineDllOverrides": [
           "dinput8.dll"
         ],
@@ -11015,6 +11375,7 @@
         "FileSize": 171007,
         "InstallFolder": "main",
         "MD5": "D025B2A538E8EEAE3F0B6C005F15B884",
+        "Sha256": "8DD0B23B2FAE2E7A585AD7F404378521F93A0EB0A1A9F4DFBF87A071A7E8A5BB",
         "WineDllOverrides": [
           "dinput8.dll"
         ],
@@ -11036,6 +11397,7 @@
         "Url": "https://github.com/CookiePLMonster/SilentPatchYK2/releases/download/BUILD-2/SilentPatchYK2.zip",
         "FileSize": 296866,
         "MD5": "5A31794C31A9ECEFF40F13C0DB66C21D",
+        "Sha256": "D973F41D620314B9180288EA0AC8B5E72F4937A1078528EE4A0D45BB82A8BE09",
         "WineDllOverrides": [
           "dinput8.dll"
         ],
