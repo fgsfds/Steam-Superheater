@@ -1,12 +1,18 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Api.Client;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
 using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Helpers;
+using Common.Axiom.Providers;
+using Common.Client;
+using Common.Client.FilesTools;
+using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
+using Moq;
 using Xunit.Abstractions;
 
 namespace Tests;
@@ -232,7 +238,7 @@ public sealed class DatabaseTests
 
         var args = new ListObjectsArgs()
             .WithBucket(CommonConstants.S3Bucket)
-            .WithPrefix(prefix: "superheater/")
+            .WithPrefix(prefix: CommonConstants.S3Folder + '/')
             .WithRecursive(true);
 
         var filesInBucket = new List<string>();
@@ -263,5 +269,36 @@ public sealed class DatabaseTests
 
         _output.WriteLine(sb.ToString());
         Assert.True(sb.Length < 1, sb.ToString());
+    }
+
+
+
+    [Fact, Trait("Category", "Database")]
+    public async Task UploadFixTest()
+    {
+        if (!OperatingSystem.IsWindows())
+        {
+            return;
+        }
+
+        ClientProperties.IsOfflineMode = true;
+
+        using HttpClient httpClient = new();
+        var logger = new Mock<ILogger>().Object;
+        ProgressReport progressReport = new();
+        AppReleasesProvider releasesProvider = new(logger, httpClient);
+        GitHubApiInterface api = new(releasesProvider, httpClient, logger);
+        FilesUploader uploader = new(logger, api, progressReport);
+
+        await uploader.UploadFilesAsync("test", [Path.Combine("resources", "test_fix.zip")], CancellationToken.None);
+
+        var url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/uploads/{CommonConstants.S3Folder}/test/test_fix.zip";
+
+        using var resp = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
+
+        Assert.True(resp.IsSuccessStatusCode);
+
+        var timespan = DateTime.Now - resp.Content.Headers.LastModified;
+        Assert.True(timespan < TimeSpan.FromSeconds(5));
     }
 }

@@ -10133,13 +10133,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scct/SplinterCellChaosTheory.WidescreenFix.zip",
-        "FileSize": 1966344,
+        "FileSize": 2700691,
         "ConfigFile": "System\\scripts\\SplinterCellChaosTheory.WidescreenFix.ini",
         "MD5": "789EBFC7B226D799131B56518708FF5B",
-        "Sha256": "61711A606283DB2FC10E96FF970759A8E2118FF35D87C1043F2AA453D5BFEAC0",
+        "Sha256": "F5CBDE216BB0735236EE9AD1201CA8DB795A3D3E926420382B6D1E0D08C4E821",
         "Name": "Widescreen Fix",
         "Guid": "d2797d6c-e7c0-48d9-9cf9-ff3210a26df8",
-        "Version": "24.07",
+        "Version": "26.02.15",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scct\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs\n- Added an option to change goggles\u0027 light color",
         "Tags": [

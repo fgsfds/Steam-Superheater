@@ -168,7 +168,7 @@ public sealed class GitHubApiInterface : IApiInterface
 
         if (ClientProperties.IsOfflineMode)
         {
-            data = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "fixes.json"));
+            data = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "data.json"));
         }
         else
         {

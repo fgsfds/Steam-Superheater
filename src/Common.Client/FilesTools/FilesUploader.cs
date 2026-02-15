@@ -24,24 +24,6 @@ public sealed class FilesUploader
 
 
     /// <summary>
-    /// Upload single file to S3
-    /// </summary>
-    /// <param name="folder">Destination folder in the bucket</param>
-    /// <param name="filePath">Path to file to upload</param>
-    /// <param name="remoteFileName">File name on the s3 server</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>True if successfully uploaded</returns>
-    public async Task<Result> UploadFilesToFtpAsync(
-        string folder,
-        string filePath,
-        string remoteFileName,
-        CancellationToken cancellationToken
-        )
-    {
-        return await UploadFilesAsync(folder, [filePath], cancellationToken, remoteFileName).ConfigureAwait(false);
-    }
-
-    /// <summary>
     /// Upload multiple files to S3
     /// </summary>
     /// <param name="folder">Destination folder in the bucket</param>
