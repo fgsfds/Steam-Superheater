@@ -25,7 +25,7 @@
                     Margin="0,0,0,3"
                     HorizontalAlignment="Left"
                     HorizontalContentAlignment="Center">
-                <i:Icon Value="fa-angle-right" />
+                <i:Icon Value="fa7-angle-right" />
             </Button>
 
             <Button Grid.Column="0"
@@ -33,7 +33,7 @@
                     Margin="0,0,0,3"
                     HorizontalAlignment="Left"
                     HorizontalContentAlignment="Center">
-                <i:Icon Value="fa-angle-left" />
+                <i:Icon Value="fa7-angle-left" />
             </Button>
 
             <StackPanel Orientation="Horizontal"
@@ -62,7 +62,7 @@
                     Margin="0,0,0,3"
                     Background="{DynamicResource SystemAccentColor}"
                     HorizontalContentAlignment="Center">
-                <i:Icon Value="fa-plus" />
+                <i:Icon Value="fa7-plus" />
             </Button>
 
             <Button Grid.Column="3"
@@ -71,7 +71,7 @@
                     Margin="0"
                     Background="Red"
                     HorizontalContentAlignment="Center">
-                <i:Icon Value="fa-xmark" />
+                <i:Icon Value="fa7-xmark" />
             </Button>
 
         </StackPanel>

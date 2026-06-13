@@ -6,7 +6,7 @@ public static class CommonConstants
 
     public const string S3Bucket = "b8743306-fgsfds";
 
-    public const string S3Folder = "superheater";
+    public const string S3SubFolder = "superheater";
 
     public const string FixesJsonUrl = "https://raw.githubusercontent.com/fgsfds/Steam-Superheater/refs/heads/master/db/fixes.json";
 

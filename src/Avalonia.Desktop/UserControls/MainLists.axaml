@@ -1,110 +1,124 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="Avalonia.Desktop.UserControls.MainLists"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:mdxaml="https://github.com/whistyun/Markdown.Avalonia"
-             xmlns:i="https://github.com/projektanker/icons.avalonia"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:md="https://github.com/whistyun/Markdown.Avalonia.Tight"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
              x:DataType="vm:MainViewModel"
-             x:Class="Avalonia.Desktop.UserControls.MainLists">
+             mc:Ignorable="d">
 
     <UserControl.Resources>
-        <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter"/>
+        <helpers:ImagePathToBitmapConverter x:Key="ImagePathToBitmapConverter" />
     </UserControl.Resources>
 
     <Grid>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="1.5*"></ColumnDefinition>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="1.5*" />
         </Grid.ColumnDefinitions>
 
         <!--Games list-->
         <ListBox x:Name="GamesListBox"
-                 ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
-                 SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
-                 SelectionChanged="ListBox_SelectionChanged"
                  Grid.Column="0"
                  Margin="0,0,3,0"
                  Padding="5"
+                 ItemsSource="{Binding FilteredGamesList, Mode=OneWay}"
+                 ScrollViewer.AllowAutoHide="True"
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                 ScrollViewer.AllowAutoHide="True">
+                 SelectedItem="{Binding SelectedGame, Mode=TwoWay}"
+                 SelectionChanged="ListBox_SelectionChanged">
 
             <ListBox.ItemTemplate>
 
                 <DataTemplate>
 
-                    <Grid RowDefinitions="*,auto"
-                          ColumnDefinitions="auto,auto"
+                    <Grid Margin="5"
                           Background="Transparent"
-                          Margin="5">
+                          ColumnDefinitions="auto,auto"
+                          RowDefinitions="*,auto">
 
                         <Grid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Margin="5" Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameButtonText}" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameCommand}"/>
-                                <MenuItem Margin="5" Header="Open game folder..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenGameFolderCommand}"/>
-                                <Separator/>
-                                <MenuItem Margin="5" Header="Open on Steam client..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamClientCommand}"/>
-                                <MenuItem Margin="5" Header="Open on Steam store..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamStoreCommand}"/>
-                                <MenuItem Margin="5" Header="Open PCGamingWiki page..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenPCGamingWikiCommand}"/>
-                                <MenuItem Margin="5" Header="Open SteamDB page..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamDBCommand}"/>
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameCommand}"
+                                          Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).LaunchGameButtonText}" />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenGameFolderCommand}"
+                                          Header="Open game folder..." />
+                                <Separator />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamClientCommand}"
+                                          Header="Open on Steam client..." />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamStoreCommand}"
+                                          Header="Open on Steam store..." />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenPCGamingWikiCommand}"
+                                          Header="Open PCGamingWiki page..." />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenSteamDBCommand}"
+                                          Header="Open SteamDB page..." />
                             </ContextMenu>
                         </Grid.ContextMenu>
 
-                        <Border BorderBrush="Black"
-                                Background="Black"
-                                BorderThickness="1"
-                                CornerRadius="4"
-                                Height="36"
-                                Width="36"
-                                Grid.Row="0"
+                        <Border Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Grid.Column="0"
+                                Width="36"
+                                Height="36"
+                                Background="Black"
+                                BorderBrush="Black"
+                                BorderThickness="1"
+                                CornerRadius="4"
                                 IsVisible="{Binding IsGameInstalled}">
-                            <Image Source="{Binding Game.Icon, Converter={StaticResource ImagePathToBitmapConverter}}"
-                                   Width="32"
+                            <Image Width="32"
                                    Height="32"
+                                   Source="{Binding Game.Icon, Converter={StaticResource ImagePathToBitmapConverter}}"
                                    Stretch="Fill" />
                         </Border>
 
-                        <TextBlock Text="{Binding GameName}"
-                                   Grid.Row="0"
+                        <TextBlock Grid.Row="0"
                                    Grid.Column="1"
+                                   Classes.IsGameUninstalled="{Binding !IsGameInstalled}"
                                    Classes.IsInstalled="{Binding HasInstalledFixes}"
-                                   Classes.IsGameUninstalled="{Binding !IsGameInstalled}">
+                                   Text="{Binding GameName}">
 
                             <TextBlock.Styles>
                                 <Style Selector="TextBlock.IsGameUninstalled">
                                     <Style.Setters>
-                                        <Setter Property="Foreground" Value="Gray"/>
+                                        <Setter Property="Foreground" Value="Gray" />
                                     </Style.Setters>
                                 </Style>
                                 <Style Selector="TextBlock.IsInstalled">
                                     <Style.Setters>
-                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontWeight" Value="Bold" />
                                     </Style.Setters>
                                 </Style>
                                 <Style Selector="TextBlock">
                                     <Style.Setters>
-                                        <Setter Property="Margin" Value="5,2"/>
-                                        <Setter Property="VerticalAlignment" Value="Center"/>
+                                        <Setter Property="Margin" Value="5,2" />
+                                        <Setter Property="VerticalAlignment" Value="Center" />
                                     </Style.Setters>
                                 </Style>
                             </TextBlock.Styles>
 
                         </TextBlock>
 
-                        <TextBlock Margin="5,2"
-                                   Text="Attention required"
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Margin="5,2"
                                    VerticalAlignment="Center"
-                                   IsVisible="{Binding HasUpdates}"
                                    FontWeight="Bold"
                                    Foreground="{DynamicResource SystemAccentColor}"
-                                   Grid.Row="1"
-                                   Grid.Column="1"/>
+                                   IsVisible="{Binding HasUpdates}"
+                                   Text="Attention required" />
 
                     </Grid>
 
@@ -114,104 +128,110 @@
         </ListBox>
 
         <!--Fixes list-->
-        <ListBox ItemsSource="{Binding SelectedGameFixesList}"
-                 SelectedItem="{Binding SelectedFix, Mode=TwoWay}"
+        <ListBox Name="FixesList"
                  Grid.Column="1"
                  Margin="0,0,3,0"
                  Padding="5"
-                 Name="FixesList">
+                 ItemsSource="{Binding SelectedGameFixesList}"
+                 SelectedItem="{Binding SelectedFix, Mode=TwoWay}">
 
             <ListBox.ItemTemplate>
                 <DataTemplate>
 
-                    <Grid RowDefinitions="auto,auto,auto,auto,auto"
+                    <Grid Margin="10"
                           ColumnDefinitions="auto,*"
-                          Margin="10">
+                          RowDefinitions="auto,auto,auto,auto,auto">
 
                         <Grid.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Margin="5" Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallButtonText}" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallUpdateFixCommand}"/>
-                                <MenuItem Margin="5" Header="Uninstall" Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"/>
-                                <MenuItem Margin="5" Header="Open config..." Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"/>
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallUpdateFixCommand}"
+                                          Header="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).InstallButtonText}" />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).UninstallFixCommand}"
+                                          Header="Uninstall" />
+                                <MenuItem Margin="5"
+                                          Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).OpenConfigCommand}"
+                                          Header="Open config..." />
                             </ContextMenu>
                         </Grid.ContextMenu>
 
                         <Border Grid.RowSpan="4"
                                 Grid.ColumnSpan="2"
-                                Background="Transparent"
                                 HorizontalAlignment="Stretch"
-                                VerticalAlignment="Stretch"/>
+                                VerticalAlignment="Stretch"
+                                Background="Transparent" />
 
-                        <TextBlock Text="{Binding SortedSymbol}"
-                                   Grid.Row="0"
+                        <TextBlock Grid.Row="0"
                                    Grid.Column="0"
-                                   VerticalAlignment="Center"/>
+                                   VerticalAlignment="Center"
+                                   Text="{Binding SortedSymbol}" />
 
-                        <TextBlock Text="{Binding Name}"
-                                   Grid.Row="0"
+                        <TextBlock Grid.Row="0"
                                    Grid.Column="1"
                                    VerticalAlignment="Center"
-                                   Classes.IsInstalled="{Binding IsInstalled}">
+                                   Classes.IsInstalled="{Binding IsInstalled}"
+                                   Text="{Binding Name}">
 
                             <TextBlock.Styles>
                                 <Style Selector="TextBlock.IsInstalled">
                                     <Style.Setters>
-                                        <Setter Property="FontWeight" Value="Bold"/>
+                                        <Setter Property="FontWeight" Value="Bold" />
                                     </Style.Setters>
                                 </Style>
                             </TextBlock.Styles>
 
                         </TextBlock>
 
-                        <StackPanel Orientation="Horizontal"
-                                    Grid.Row="1"
+                        <StackPanel Grid.Row="1"
                                     Grid.Column="1"
-                                    VerticalAlignment="Center">
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
 
                             <TextBlock Margin="0"
-                                       Text="Installed"
+                                       IsVisible="{Binding IsInstalled}"
                                        Opacity="80"
-                                       IsVisible="{Binding IsInstalled}"/>
+                                       Text="Installed" />
 
                             <TextBlock Margin="3,0,0,0"
-                                       Text="v"
+                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                        Opacity="80"
-                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                       Text="v" />
 
                             <TextBlock Margin="0"
-                                       Text="{Binding InstalledVersionStr}"
+                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
                                        Opacity="80"
-                                       IsVisible="{Binding InstalledVersionStr, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                                       Text="{Binding InstalledVersionStr}" />
 
                         </StackPanel>
 
-                        <TextBlock Margin="0"
-                                   Grid.Row="2"
+                        <TextBlock Grid.Row="2"
                                    Grid.Column="1"
-                                   Text="Update available"
-                                   Foreground="{DynamicResource SystemAccentColor}"
+                                   Margin="0"
                                    VerticalAlignment="Center"
                                    FontWeight="Bold"
-                                   IsVisible="{Binding IsOutdated}"/>
-
-                        <TextBlock Margin="0"
-                                   Grid.Row="3"
-                                   Grid.Column="1"
-                                   Text="Needs reinstall"
-                                   ToolTip.Tip="The game has been updated since the fix was installed. It's recommended to unintall the fix, check files integrity on Steam, and install it again."
                                    Foreground="{DynamicResource SystemAccentColor}"
-                                   VerticalAlignment="Center"
-                                   IsVisible="{Binding MaybeOverwritten}"
-                                   FontWeight="Bold"/>
+                                   IsVisible="{Binding IsOutdated}"
+                                   Text="Update available" />
 
-                        <TextBlock Margin="0"
-                                   Grid.Row="4"
+                        <TextBlock Grid.Row="3"
                                    Grid.Column="1"
-                                   Text="Deprecated, can only be uninstalled"
+                                   Margin="0"
                                    VerticalAlignment="Center"
-                                   IsVisible="{Binding IsDisabled}"
+                                   FontWeight="Bold"
+                                   Foreground="{DynamicResource SystemAccentColor}"
+                                   IsVisible="{Binding MaybeOverwritten}"
+                                   Text="Needs reinstall"
+                                   ToolTip.Tip="The game has been updated since the fix was installed. It's recommended to unintall the fix, check files integrity on Steam, and install it again." />
+
+                        <TextBlock Grid.Row="4"
+                                   Grid.Column="1"
+                                   Margin="0"
+                                   VerticalAlignment="Center"
+                                   FontStyle="Italic"
                                    FontWeight="Thin"
-                                   FontStyle="Italic"/>
+                                   IsVisible="{Binding IsDisabled}"
+                                   Text="Deprecated, can only be uninstalled" />
 
                     </Grid>
 
@@ -228,41 +248,42 @@
                 <TabControl.Styles>
 
                     <Style Selector="TabControl">
-                        <Setter Property="Background"/>
-                        <Setter Property="Padding" Value="3"/>
+                        <Setter Property="Padding" Value="3" />
                     </Style>
 
                     <Style Selector="TabItem">
-                        <Setter Property="FontSize" Value="16"/>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Padding" Value="0"/>
-                        <Setter Property="Margin" Value="10 3"/>
-                        <Setter Property="BorderThickness" Value="0"/>
+                        <Setter Property="FontSize" Value="16" />
+                        <Setter Property="VerticalAlignment" Value="Center" />
+                        <Setter Property="Padding" Value="0" />
+                        <Setter Property="Margin" Value="10 3" />
+                        <Setter Property="BorderThickness" Value="0" />
 
                         <Style Selector="^:selected">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="10 3"/>
-                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="10 3" />
+                            <Setter Property="BorderThickness" Value="0" />
                         </Style>
 
                         <Style Selector="^:selected /template/ Border#PART_SelectedPipe">
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="10 3"/>
-                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="Margin" Value="10 3" />
+                            <Setter Property="BorderThickness" Value="0" />
                         </Style>
 
                     </Style>
                 </TabControl.Styles>
 
-                <TabItem Header="Description" IsSelected="{Binding IsDescriptionSelected}" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <TabItem Header="Description"
+                         IsSelected="{Binding IsDescriptionSelected}"
+                         IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <mdxaml:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}"/>
+                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}" />
 
                 </TabItem>
 
                 <TabItem Header="Changelog" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <mdxaml:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}"/>
+                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}" />
 
                 </TabItem>
 
@@ -270,39 +291,43 @@
 
             <!--Requirements-->
 
-            <Grid ColumnDefinitions="auto,*,auto"
-                  RowDefinitions="auto,auto"
-                  Grid.Row="1">
+            <Grid Grid.Row="1"
+                  ColumnDefinitions="auto,*,auto"
+                  RowDefinitions="auto,auto">
 
-                <TextBlock FontWeight="Bold"
+                <TextBlock Grid.Row="0"
                            Grid.Column="0"
-                           Grid.Row="0"
                            Margin="0,6,0,0"
+                           FontWeight="Bold"
                            IsVisible="{Binding SelectedFixRequirements, Converter={x:Static ObjectConverters.IsNotNull}}">
                     Requires:
                 </TextBlock>
 
-                <TextBlock FontWeight="Bold"
+                <TextBlock Grid.Row="0"
                            Grid.Column="2"
-                           Grid.Row="0"
                            Margin="0,6,0,0"
                            HorizontalAlignment="Right"
+                           FontWeight="Bold"
                            IsVisible="{Binding SelectedFixDependencies, Converter={x:Static ObjectConverters.IsNotNull}}">
                     Required by:
                 </TextBlock>
 
-                <ItemsControl ItemsSource="{Binding SelectedFixRequirements}" Grid.Column="0" Grid.Row="1">
+                <ItemsControl Grid.Row="1"
+                              Grid.Column="0"
+                              ItemsSource="{Binding SelectedFixRequirements}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" HorizontalAlignment="Left"/>
+                            <TextBlock HorizontalAlignment="Left" Text="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
 
-                <ItemsControl ItemsSource="{Binding SelectedFixDependencies}" Grid.Column="2" Grid.Row="1">
+                <ItemsControl Grid.Row="1"
+                              Grid.Column="2"
+                              ItemsSource="{Binding SelectedFixDependencies}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <TextBlock Text="{Binding}" HorizontalAlignment="Right"/>
+                            <TextBlock HorizontalAlignment="Right" Text="{Binding}" />
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
@@ -310,21 +335,21 @@
             </Grid>
 
             <!--Tags-->
-            <Grid ColumnDefinitions="auto,*"
-                  Grid.Row="2"
+            <Grid Grid.Row="2"
                   Margin="3,6,3,0"
+                  ColumnDefinitions="auto,*"
                   IsVisible="{Binding SelectedFixTags, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
                 <TextBlock Grid.Column="0"
-                           VerticalAlignment="Center"
-                           Margin="0,0,5,0">
+                           Margin="0,0,5,0"
+                           VerticalAlignment="Center">
                     Tags:
                 </TextBlock>
 
                 <ListBox Grid.Column="1"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                          Padding="2"
-                         ItemsSource="{Binding SelectedFixTags}">
+                         ItemsSource="{Binding SelectedFixTags}"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
 
                     <ListBox.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -334,22 +359,21 @@
 
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0">
+                            <StackPanel Margin="0" Orientation="Horizontal">
 
-                                <TextBlock Text="{Binding}"
+                                <TextBlock Margin="5"
                                            VerticalAlignment="Center"
-                                           Margin="5"/>
+                                           Text="{Binding}" />
 
-                                <Button Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:MainViewModel)DataContext).HideTagCommand}"
-                                        CommandParameter="{Binding}"
+                                <Button Width="{Binding $self.Bounds.Height}"
                                         Margin="0"
-                                        Width="{Binding $self.Bounds.Height}"
                                         HorizontalContentAlignment="Center"
                                         VerticalContentAlignment="Center"
+                                        Command="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=((vm:MainViewModel)DataContext).HideTagCommand}"
+                                        CommandParameter="{Binding}"
                                         IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                         ToolTip.Tip="Hide tag">
-                                    <i:Icon Value="fa-minus" />
+                                    <i:Icon Value="fa7-minus" />
                                 </Button>
 
                             </StackPanel>
@@ -365,53 +389,53 @@
                   IsVisible="False">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
-                    <ColumnDefinition Width="*"></ColumnDefinition>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
 
                 <!--Installs-->
                 <TextBlock Grid.Column="0"
                            Margin="3"
-                           VerticalAlignment="Center"
                            HorizontalAlignment="Left"
-                           Text="{Binding SelectedFixNumberOfInstalls}"/>
+                           VerticalAlignment="Center"
+                           Text="{Binding SelectedFixNumberOfInstalls}" />
 
                 <!--Score-->
                 <StackPanel Grid.Column="1"
-                            IsVisible="{Binding IsStatsVisible}"
                             HorizontalAlignment="Center"
+                            IsVisible="{Binding IsStatsVisible}"
                             Orientation="Horizontal">
 
-                    <Button Classes.IsUpvoted="{Binding IsSelectedFixUpvoted}"
-                            Margin="3"
+                    <Button Margin="3"
                             Padding="7"
+                            Classes.IsUpvoted="{Binding IsSelectedFixUpvoted}"
                             Command="{Binding UpvoteCommand}">
 
                         <Button.Styles>
                             <Style Selector="Button.IsUpvoted">
-                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
                             </Style>
                         </Button.Styles>
 
-                        <i:Icon Value="fa-thumbs-up" />
+                        <i:Icon Value="fa7-thumbs-up" />
 
                     </Button>
 
                     <TextBlock Margin="3"
-                               Text="{Binding SelectedFixScore}"
-                               VerticalAlignment="Center"/>
+                               VerticalAlignment="Center"
+                               Text="{Binding SelectedFixScore}" />
 
-                    <Button Classes.IsDownvoted="{Binding IsSelectedFixDownvoted}"
-                            Margin="3"
+                    <Button Margin="3"
                             Padding="7"
+                            Classes.IsDownvoted="{Binding IsSelectedFixDownvoted}"
                             Command="{Binding DownvoteCommand}">
 
-                        <i:Icon Value="fa-thumbs-down" />
+                        <i:Icon Value="fa7-thumbs-down" />
 
                         <Button.Styles>
                             <Style Selector="Button.IsDownvoted">
-                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+                                <Setter Property="Background" Value="{DynamicResource SystemAccentColor}" />
                             </Style>
                         </Button.Styles>
 
@@ -421,12 +445,12 @@
 
                 <!--Report-->
                 <Button Grid.Column="2"
-                        IsVisible="{Binding IsStatsVisible}"
-                        HorizontalAlignment="Right"
                         Margin="3"
                         Padding="7"
-                        Command="{Binding ReportFixCommand}">
-                    <i:Icon Value="fa-flag" />
+                        HorizontalAlignment="Right"
+                        Command="{Binding ReportFixCommand}"
+                        IsVisible="{Binding IsStatsVisible}">
+                    <i:Icon Value="fa7-flag" />
                 </Button>
 
             </Grid>

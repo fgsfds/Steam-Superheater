@@ -211,7 +211,7 @@ public sealed partial class FileFixTests
             Name = "test fix compromised",
             Version = "1.0",
             Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3Folder}/nointro/bsp_nointro.zip",
+            Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3SubFolder}/nointro/bsp_nointro.zip",
             MD5 = "badMD5",
             Sha256 = "badHash",
             SupportedOSes = OSEnum.Windows | OSEnum.Linux

@@ -519,7 +519,7 @@ public sealed class EditorModel
                     {
                         if (!fixEntity.Url.StartsWith("http"))
                         {
-                            fixEntity.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3Folder}/{fixEntity.Url}";
+                            fixEntity.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3SubFolder}/{fixEntity.Url}";
                         }
 
                         using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;

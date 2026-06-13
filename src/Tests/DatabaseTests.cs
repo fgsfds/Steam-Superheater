@@ -13,7 +13,6 @@ using Microsoft.Extensions.Logging;
 using Minio;
 using Minio.DataModel.Args;
 using Moq;
-using Xunit.Abstractions;
 
 namespace Tests;
 
@@ -82,17 +81,21 @@ public sealed class DatabaseTests
                 var size = fileFix.FileSize;
                 var hash = fileFix.Sha256;
 
-                if (hash is null)
+                var needToSkip = false;
+
+                if (string.IsNullOrWhiteSpace(hash))
                 {
-                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have Hash in the database.");
+                    _ = sbFails.AppendLine($"[Error] File {url} doesn't have hash in the database.");
+                    needToSkip = true;
                 }
 
-                if (size is null)
+                if (!size.HasValue)
                 {
                     _ = sbFails.AppendLine($"[Error] File {url} doesn't have size in the database.");
+                    needToSkip = true;
                 }
 
-                if (hash is null || size is null)
+                if (needToSkip)
                 {
                     continue;
                 }
@@ -114,7 +117,7 @@ public sealed class DatabaseTests
                     _ = sbFails.AppendLine($"[Error] File {url} size doesn't match. Expected {size} got {header.Content.Headers.ContentLength}.");
                 }
 
-                //md5 of files from s3
+                //hash of files from my storage
                 if (url.StartsWith(CommonConstants.S3Endpoint))
                 {
                     var actualHash = header.Headers
@@ -238,7 +241,7 @@ public sealed class DatabaseTests
 
         var args = new ListObjectsArgs()
             .WithBucket(CommonConstants.S3Bucket)
-            .WithPrefix(prefix: CommonConstants.S3Folder + '/')
+            .WithPrefix(CommonConstants.S3SubFolder + '/')
             .WithRecursive(true);
 
         var filesInBucket = new List<string>();
@@ -250,7 +253,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            if (item.Key.Contains("metadata"))
+            if (item.Key.Contains("metadata", StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
@@ -268,9 +271,8 @@ public sealed class DatabaseTests
         }
 
         _output.WriteLine(sb.ToString());
-        Assert.True(sb.Length < 1, sb.ToString());
+        Assert.True(sb.Length < 1);
     }
-
 
 
     [Fact, Trait("Category", "Database")]
@@ -292,7 +294,7 @@ public sealed class DatabaseTests
 
         await uploader.UploadFilesAsync("test", [Path.Combine("resources", "test_fix.zip")], CancellationToken.None);
 
-        var url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/uploads/{CommonConstants.S3Folder}/test/test_fix.zip";
+        var url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/uploads/{CommonConstants.S3SubFolder}/test/test_fix.zip";
 
         using var resp = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 

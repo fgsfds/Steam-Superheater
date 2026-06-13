@@ -128,7 +128,7 @@ public sealed class GitHubApiInterface : IApiInterface
 
             _ = _data!.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ? uploadFolder : null;
 
-            var url = uploadFolder + path;
+            var url = Path.Combine(uploadFolder, path);
 
             return new Result<string?>(ResultEnum.Success, url, string.Empty);
         }

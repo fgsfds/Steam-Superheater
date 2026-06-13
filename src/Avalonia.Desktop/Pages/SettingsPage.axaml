@@ -129,7 +129,7 @@
                                         VerticalContentAlignment="Center"
                                         IsVisible="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
                                         ToolTip.Tip="Unhide tag">
-                                    <i:Icon Value="fa-xmark" />
+                                    <i:Icon Value="fa7-xmark" />
                                 </Button>
 
                             </StackPanel>

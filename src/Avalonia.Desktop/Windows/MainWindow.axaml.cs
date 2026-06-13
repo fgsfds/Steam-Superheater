@@ -11,10 +11,6 @@ public sealed partial class MainWindow : Window
     {
         RenderOptions.SetBitmapInterpolationMode(this, BitmapInterpolationMode.HighQuality);
 
-#if DEBUG
-        this.AttachDevTools();
-#endif
-
         InitializeComponent();
 
         ((IPopup)PopupEditor.DataContext!).PopupShownEvent += Popup_IsShown;

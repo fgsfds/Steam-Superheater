@@ -1,83 +1,86 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+<UserControl x:Class="Avalonia.Desktop.UserControls.Editor.EditorButtons"
+             xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="100"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
              xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
-             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             d:DesignHeight="100"
+             d:DesignWidth="1000"
              x:DataType="vme:EditorViewModel"
-             x:Class="Avalonia.Desktop.UserControls.Editor.EditorButtons">
+             mc:Ignorable="d">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="auto" />
         </Grid.ColumnDefinitions>
 
-        <StackPanel Orientation="Horizontal"
+        <StackPanel Grid.Column="0"
                     HorizontalAlignment="Left"
-                    Grid.Column="0">
+                    Orientation="Horizontal">
 
             <ComboBox Name="GamesComboBox"
-                      Margin="0,0,3,0"
                       Width="200"
+                      Height="{Binding #HowToSubmitButton.Bounds.Height}"
+                      Margin="0,0,3,0"
                       Padding="8"
                       VerticalAlignment="Center"
-                      Height="{Binding #HowToSubmitButton.Bounds.Height}"
+                      IsEnabled="{Binding !IsEmpty}"
                       ItemsSource="{Binding AvailableGamesList}"
-                      SelectedItem="{Binding SelectedAvailableGame}"
-                      IsEnabled="{Binding !IsEmpty}"/>
+                      SelectedItem="{Binding SelectedAvailableGame}" />
 
-            <Button Height="{Binding #HowToSubmitButton.Bounds.Height}"
-                    Width="{Binding $self.Bounds.Height}"
+            <Button Width="{Binding $self.Bounds.Height}"
+                    Height="{Binding #HowToSubmitButton.Bounds.Height}"
                     Margin="3,0"
                     Padding="8"
                     HorizontalContentAlignment="Center"
                     Command="{Binding AddNewGameCommand}">
-                <i:Icon Value="fa-plus" />
+                <i:Icon Value="fa7-plus" />
             </Button>
 
-            <Button Height="{Binding #HowToSubmitButton.Bounds.Height}"
-                    Width="{Binding $self.Bounds.Height}"
+            <Button Width="{Binding $self.Bounds.Height}"
+                    Height="{Binding #HowToSubmitButton.Bounds.Height}"
                     Margin="3,0"
                     Padding="8"
                     Command="{Binding UpdateGamesCommand}">
                 <Grid>
-                    <i:Icon Value="fa-sync" Animation="Spin" IsVisible="{Binding IsInProgress}" />
-                    <i:Icon Value="fa-sync" IsVisible="{Binding !IsInProgress}" />
+                    <i:Icon Animation="Spin"
+                            IsVisible="{Binding IsInProgress}"
+                            Value="fa7-rotate" />
+                    <i:Icon IsVisible="{Binding !IsInProgress}" Value="fa7-rotate" />
                 </Grid>
             </Button>
 
-            <TextBlock
-                Margin="3,0"
-                Padding="8"
-                VerticalAlignment="Center"
-                IsVisible="{Binding IsEmpty}"
-                FontWeight="Bold">
+            <TextBlock Margin="3,0"
+                       Padding="8"
+                       VerticalAlignment="Center"
+                       FontWeight="Bold"
+                       IsVisible="{Binding IsEmpty}">
                 &lt;- Press to start
             </TextBlock>
 
         </StackPanel>
 
-        <StackPanel Orientation="Horizontal"
+        <StackPanel Grid.Column="2"
                     HorizontalAlignment="Right"
-                    Grid.Column="2">
+                    Orientation="Horizontal">
 
             <Button Name="CancelButton"
-                    Command="{Binding CancelCommand}"
                     Margin="3,0"
-                    Background="{DynamicResource SystemAccentColor}"
-                    Content="Cancel"
                     Padding="8"
-                    IsVisible="{Binding LockButtons}"/>
+                    Background="{DynamicResource SystemAccentColor}"
+                    Command="{Binding CancelCommand}"
+                    Content="Cancel"
+                    IsVisible="{Binding LockButtons}" />
 
             <Button Name="HowToSubmitButton"
                     Margin="3,0"
                     Padding="8"
-                    Click="HowToSubmitButtonClick"
-                    Background="{DynamicResource SystemAccentColor}">
+                    Background="{DynamicResource SystemAccentColor}"
+                    Click="HowToSubmitButtonClick">
                 How to submit fixes...
             </Button>
 

@@ -4,6 +4,7 @@ using Api.Axiom.Interfaces;
 using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
+using Avalonia.Input.Platform;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;

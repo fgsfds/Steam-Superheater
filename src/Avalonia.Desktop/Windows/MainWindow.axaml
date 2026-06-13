@@ -1,41 +1,51 @@
-<Window xmlns="https://github.com/avaloniaui"
+<Window x:Class="Avalonia.Desktop.Windows.MainWindow"
+        xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:Avalonia.Desktop.UserControls"
+        xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:pages="clr-namespace:Avalonia.Desktop.Pages"
-        xmlns:controls="clr-namespace:Avalonia.Desktop.UserControls"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
         xmlns:vmp="clr-namespace:Avalonia.Desktop.ViewModels.Popups"
-        xmlns:cp="clr-namespace:Common.Client;assembly=Superheater.Common.Client"
-        xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
-        x:DataType="vm:MainWindowViewModel"
-        x:Class="Avalonia.Desktop.Windows.MainWindow"
-        Icon="/Assets/icon.ico"
         Title="Steam Superheater"
-        MinHeight="600"
+        Width="1200"
         Height="800"
         MinWidth="1000"
-        Width="1200"
-        WindowStartupLocation="CenterScreen"
+        MinHeight="600"
+        d:DesignHeight="450"
+        d:DesignWidth="800"
+        x:DataType="vm:MainWindowViewModel"
+        Background="{DynamicResource Background}"
         CanResize="True"
         ExtendClientAreaToDecorationsHint="True"
-        Background="{DynamicResource Background}"
-        WindowState="Maximized">
+        Icon="/Assets/icon.ico"
+        WindowStartupLocation="CenterScreen"
+        WindowState="Maximized"
+        mc:Ignorable="d">
+
+    <Window.Styles>
+        <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel TextBlock">
+            <Setter Property="IsVisible" Value="False" />
+        </Style>
+        <Style Selector="WindowDrawnDecorations /template/ Button#PART_FullScreenButton">
+            <Setter Property="IsVisible" Value="False" />
+            <Setter Property="Width" Value="0" />
+        </Style>
+    </Window.Styles>
 
     <Window.Resources>
         <ResourceDictionary>
-
-            <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
-
+            <helpers:ReverseBoolConverter x:Key="ReverseBoolConverter" />
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source='/Styles/ThemedResources.axaml'/>
+                <ResourceInclude Source="/Styles/ThemedResources.axaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Window.Resources>
 
-    <Border BorderThickness="1"
-            BorderBrush="{DynamicResource WindowBorder}"
+    <Border BorderBrush="{DynamicResource WindowBorder}"
+            BorderThickness="1"
             IsHitTestVisible="True">
 
         <Grid RowDefinitions="25,*,25">
@@ -43,52 +53,56 @@
             <TextBlock Margin="10,5,0,0"
                        Foreground="{DynamicResource SystemAccentColor}"
                        IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
-                       Text="{Binding RepositoryMessage}"/>
+                       Text="{Binding RepositoryMessage}" />
 
-            <TabControl x:Name="Tabs" Grid.Row="1" Grid.RowSpan="2" Margin="5">
-                <TabItem Name="MainTab" Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}" Margin="10,0,10,10">
-                    <pages:MainPage Margin="0" x:Name="MainPageTab" />
+            <TabControl x:Name="Tabs"
+                        Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Margin="5">
+                <TabItem Name="MainTab"
+                         Margin="10,0,10,10"
+                         Header="{Binding ElementName=MainPageTab, Path=((vm:MainViewModel)DataContext).MainTabHeader}">
+                    <pages:MainPage x:Name="MainPageTab" Margin="0" />
                 </TabItem>
-                <TabItem Header="Sources"
-                         IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}"
-                         Margin="0,0,10,10">
-                    <pages:SourcesPage Margin="0" x:Name="SourcesPageTab" />
+                <TabItem Margin="0,0,10,10"
+                         Header="Sources"
+                         IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}}">
+                    <pages:SourcesPage x:Name="SourcesPageTab" Margin="0" />
                 </TabItem>
-                <TabItem Header="Editor"
-                         IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}"
-                         Margin="0,0,10,10">
-                    <pages:EditorPage Margin="0" x:Name="EditorPageTab" />
+                <TabItem Margin="0,0,10,10"
+                         Header="Editor"
+                         IsVisible="{Binding Source={x:Static cp:ClientProperties.IsInSteamDeckGameMode}, Converter={StaticResource ReverseBoolConverter}}">
+                    <pages:EditorPage x:Name="EditorPageTab" Margin="0" />
                 </TabItem>
-                <TabItem Header="{Binding ElementName=NewsPageTab, Path=((vm:NewsViewModel)DataContext).NewsTabHeader}" Margin="0,0,10,10">
-                    <pages:NewsPage Margin="0" x:Name="NewsPageTab" />
+                <TabItem Margin="0,0,10,10" Header="{Binding ElementName=NewsPageTab, Path=((vm:NewsViewModel)DataContext).NewsTabHeader}">
+                    <pages:NewsPage x:Name="NewsPageTab" Margin="0" />
                 </TabItem>
-                <TabItem Header="Settings" Margin="0,0,10,10">
-                    <pages:SettingsPage Margin="0" x:Name="SettingsPageTab"/>
+                <TabItem Margin="0,0,10,10" Header="Settings">
+                    <pages:SettingsPage x:Name="SettingsPageTab" Margin="0" />
                 </TabItem>
-                <TabItem Header="{Binding ElementName=AboutPageTab, Path=((vm:AboutViewModel)DataContext).AboutTabHeader}" Margin="0,0,0,10">
-                    <pages:AboutPage Margin="0" x:Name="AboutPageTab"/>
+                <TabItem Margin="0,0,0,10" Header="{Binding ElementName=AboutPageTab, Path=((vm:AboutViewModel)DataContext).AboutTabHeader}">
+                    <pages:AboutPage x:Name="AboutPageTab" Margin="0" />
                 </TabItem>
             </TabControl>
 
-            <Grid Margin="30" RowDefinitions="10,*,10" Grid.Row="1" >
+            <Grid Grid.Row="1"
+                  Margin="30"
+                  RowDefinitions="10,*,10">
 
-                <controls:PopupMessage
-                    VerticalAlignment="Center"
-                    Grid.Row="1"
-                    x:Name="PopupMessage"
-                    IsVisible="{Binding ElementName=PopupMessage, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
+                <controls:PopupMessage x:Name="PopupMessage"
+                                       Grid.Row="1"
+                                       VerticalAlignment="Center"
+                                       IsVisible="{Binding ElementName=PopupMessage, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}" />
 
-                <controls:PopupEditor
-                    VerticalAlignment="Center"
-                    Grid.Row="1"
-                    x:Name="PopupEditor"
-                    IsVisible="{Binding ElementName=PopupEditor, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
+                <controls:PopupEditor x:Name="PopupEditor"
+                                      Grid.Row="1"
+                                      VerticalAlignment="Center"
+                                      IsVisible="{Binding ElementName=PopupEditor, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}" />
 
-                <controls:PopupStack
-                    VerticalAlignment="Center"
-                    Grid.Row="1"
-                    x:Name="PopupStack"
-                    IsVisible="{Binding ElementName=PopupStack, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}"/>
+                <controls:PopupStack x:Name="PopupStack"
+                                     Grid.Row="1"
+                                     VerticalAlignment="Center"
+                                     IsVisible="{Binding ElementName=PopupStack, Path=((vmp:IPopup)DataContext).IsVisible, FallbackValue='False'}" />
 
             </Grid>
         </Grid>

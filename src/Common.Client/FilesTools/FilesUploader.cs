@@ -48,7 +48,7 @@ public sealed class FilesUploader
             foreach (var file in files)
             {
                 var fileName = remoteFileName ?? Path.GetFileName(file);
-                var result = await _apiInterface.GetSignedUrlAsync("/" + folder + "/" + fileName).ConfigureAwait(false);
+                var result = await _apiInterface.GetSignedUrlAsync(Path.Combine(folder, fileName)).ConfigureAwait(false);
 
                 if (!result.IsSuccess)
                 {
@@ -58,7 +58,7 @@ public sealed class FilesUploader
                 await using var fileStream = File.OpenRead(file);
                 using StreamContent content = new(fileStream);
 
-                new Task(() => { TrackProgress(fileStream, progress); }).Start();
+                _ = Task.Run(() => { TrackProgress(fileStream, progress); });
 
                 using HttpClient httpClient = new() { Timeout = Timeout.InfiniteTimeSpan };
 

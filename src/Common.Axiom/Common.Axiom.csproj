@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="Markdig" />
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" />

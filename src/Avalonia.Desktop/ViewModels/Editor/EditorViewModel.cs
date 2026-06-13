@@ -4,6 +4,7 @@ using Avalonia.Controls.Notifications;
 using Avalonia.Desktop.Helpers;
 using Avalonia.Desktop.ViewModels.Popups;
 using Avalonia.Desktop.Windows;
+using Avalonia.Input.Platform;
 using Avalonia.Layout;
 using Avalonia.Platform.Storage;
 using Common.Axiom;
