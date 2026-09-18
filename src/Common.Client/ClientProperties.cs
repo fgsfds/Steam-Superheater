@@ -138,18 +138,23 @@ public static class ClientProperties
     /// <returns>The resolved path, or null when the file does not exist.</returns>
     private static string? GetLocalDbFilePath(string fileName)
     {
-        var repoPath = Path.Combine(WorkingFolder, "..", "..", "..", "..", "db", fileName);
+        var roots = new[] { WorkingFolder, Directory.GetCurrentDirectory() };
 
-        if (File.Exists(repoPath))
+        foreach (var root in roots)
         {
-            return repoPath;
-        }
+            var current = root;
 
-        var localPath = Path.Combine(WorkingFolder, "db", fileName);
+            for (var depth = 0; depth < 8 && current is not null; depth++)
+            {
+                var candidate = Path.Combine(current, "db", fileName);
 
-        if (File.Exists(localPath))
-        {
-            return localPath;
+                if (File.Exists(candidate))
+                {
+                    return candidate;
+                }
+
+                current = Path.GetDirectoryName(current);
+            }
         }
 
         return null;

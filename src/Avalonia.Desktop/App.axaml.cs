@@ -11,6 +11,8 @@ using Common.Axiom;
 using Common.Axiom.Enums;
 using Common.Client;
 using Common.Client.DI;
+using Database.Client;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -60,6 +62,11 @@ public sealed class App : Application
 
         //run after setting _logger but before initializing anything else!
         Cleanup();
+
+        using (var dbContext = _services.GetRequiredService<IDbContextFactory<DatabaseContext>>().CreateDbContext())
+        {
+            dbContext.Database.Migrate();
+        }
 
         var config = _services.GetRequiredService<IConfigProvider>();
         var viewModelsFactory = _services.GetRequiredService<IViewModelsFactory>();
@@ -143,7 +150,9 @@ public sealed class App : Application
     {
         ServiceCollection services = new();
 
+        _ = services.WithLogging(Design.IsDesignMode);
         _ = services.WithCommon();
+        _ = services.WithDatabase();
         _ = services.WithProviders(Design.IsDesignMode);
         _ = services.WithModels();
         _ = services.WithViewModels();

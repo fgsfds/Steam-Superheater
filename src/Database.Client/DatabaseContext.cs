@@ -13,8 +13,23 @@ public sealed class DatabaseContext : DbContext
     public DbSet<UpvotesDbEntity> Upvotes { get; set; }
     public DbSet<SourcesDbEntity> Sources { get; set; }
 
+
+    public DatabaseContext()
+    {
+    }
+
+    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
+    {
+    }
+
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
+        if (optionsBuilder.IsConfigured)
+        {
+            return;
+        }
+
         _ = optionsBuilder.ConfigureWarnings(x =>
             x.Ignore(RelationalEventId.PendingModelChangesWarning));
         _ = optionsBuilder.UseSqlite("Data Source=Superheater.db");

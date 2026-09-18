@@ -7,8 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.Extensions.Logging" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="System.IO.Hashing" />
   </ItemGroup>
 

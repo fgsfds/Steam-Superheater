@@ -5,6 +5,7 @@ using Common.Client;
 using Common.Client.FilesTools.Interfaces;
 using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
+using Database.Client;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -25,7 +26,10 @@ public sealed class ApiTests
 
         //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
         IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
-        FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, new());
+
+        DatabaseContextFactory dbContextFactory = new();
+
+        FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, dbContextFactory);
 
         var fixes = await fixesProvider.GetFixesListAsync(false, false).ConfigureAwait(true);
 

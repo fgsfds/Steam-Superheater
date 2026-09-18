@@ -1,6 +1,4 @@
-using Api.Axiom.Interfaces;
 using Common.Axiom;
-using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
 using Common.Client.FilesTools.Interfaces;
 using Common.Client.FixTools;
@@ -8,7 +6,6 @@ using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 namespace Common.Client.DI;
 
@@ -24,8 +21,6 @@ public static class CommonBindings
     /// <returns>The updated service collection.</returns>
     public static IServiceCollection WithCommon(this IServiceCollection container)
     {
-        _ = container.AddSingleton<ILogger>(CreateLogger);
-
         _ = container.AddTransient<AppUpdateInstaller>();
 
         _ = container.AddTransient<FileFixInstaller>();
@@ -60,11 +55,4 @@ public static class CommonBindings
 
         return container;
     }
-
-    /// <summary>
-    /// Creates the file logger instance.
-    /// </summary>
-    /// <param name="_">The service provider.</param>
-    /// <returns>The logger instance.</returns>
-    private static ILogger CreateLogger(IServiceProvider _) => FileLoggerFactory.Create(ClientProperties.PathToLogFile);
 }
