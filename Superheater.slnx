@@ -6,6 +6,29 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
+  <Folder Name="/.files/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="opencode.json" />
+    <File Path="publish.ps1" />
+    <File Path="README.md" />
+    <File Path="agent.md" />
+  </Folder>
+  <Folder Name="/.files/db/">
+    <File Path="db/fixes.json" />
+    <File Path="db/news.json" />
+    <File Path="db/data.json" />
+    <File Path="db/fixes.md" />
+  </Folder>
+  <Folder Name="/.files/GitHub/">
+    <File Path=".github/workflows/test.yml" />
+    <File Path=".github/workflows/release.yml" />
+  </Folder>
   <Folder Name="/.start/">
     <Project Path="src/Avalonia.Desktop/Avalonia.Desktop.csproj" />
   </Folder>
@@ -22,5 +45,7 @@
       <BuildType Solution="Debug-Linux|*" Project="Debug" />
     </Project>
   </Folder>
-  <Project Path="src/Tests/Tests.csproj" />
+  <Folder Name="/Tests/">
+    <Project Path="src/Tests/Tests.csproj" />
+  </Folder>
 </Solution>

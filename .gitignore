@@ -459,3 +459,15 @@ $RECYCLE.BIN/
 /config.db
 /config.db-shm
 /config.db-wal
+
+# Test results
+[Tt]est[Rr]esult*/
+/TestResults/
+ScreenshotsActual/
+ScreenshotsFails/
+
+# Rider / user-specific
+/src/Avalonia.Desktop/Properties/launchSettings.json
+
+# Crash logs
+*.crashlog

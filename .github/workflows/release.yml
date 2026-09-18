@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write 
+  contents: write
 
 jobs:
 
@@ -22,10 +22,10 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
@@ -48,12 +48,12 @@ jobs:
 
       - name: Upload unsigned Windows artifact
         id: upload-unsigned-artifact
-        uses: actions/upload-artifact@v4
-        with: 
+        uses: actions/upload-artifact@v7
+        with:
           path: publish/Superheater.exe
 
       - name: Signing
-        uses: signpath/github-action-submit-signing-request@v1
+        uses: signpath/github-action-submit-signing-request@v2
         with:
           api-token: '${{ secrets.SIGNPATH_API_TOKEN }}'
           organization-id: 'ff1c1d90-ad84-4e5e-9b3e-41ea2f786aae'
@@ -75,7 +75,7 @@ jobs:
           Write-Host "Created $dest"
 
       - name: Upload signed Windows artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: superheater-win
           path: publish/signed/superheater_${{ steps.get_version.outputs.version_nodots }}_win-x64.zip
@@ -89,10 +89,10 @@ jobs:
     steps:
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 10.0.x
 
@@ -111,15 +111,11 @@ jobs:
           fi
           DEST="./publish/superheater_${VERSION}_linux-x64.zip"
           rm -f "$DEST"
-          if [ -d "./publish/Superheater" ]; then
-            (cd publish && zip -r "../publish/superheater_${VERSION}_linux-x64.zip" "Superheater")
-          else
-            (cd publish && zip -r "../publish/superheater_${VERSION}_linux-x64.zip" "Superheater")
-          fi
+          (cd publish && zip -r "../publish/superheater_${VERSION}_linux-x64.zip" "Superheater")
           echo "Created $DEST"
 
       - name: Upload Linux artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: superheater-linux
           path: publish/superheater_${{ needs.build-windows.outputs.version_nodots }}_linux-x64.zip
@@ -133,13 +129,13 @@ jobs:
     if: ${{ github.event_name == 'push' && contains(github.event.head_commit.message, '[release]') }}
     steps:
       - name: Download Windows artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: superheater-win
           path: publish/signed
 
       - name: Download Linux artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: superheater-linux
           path: publish
