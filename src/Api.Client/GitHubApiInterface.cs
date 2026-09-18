@@ -126,7 +126,12 @@ public sealed class GitHubApiInterface : IApiInterface
                 await InitData().ConfigureAwait(false);
             }
 
-            _ = _data!.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ? uploadFolder : null;
+            if (_data is null ||
+                !_data.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ||
+                string.IsNullOrWhiteSpace(uploadFolder))
+            {
+                return new Result<string?>(ResultEnum.Error, null, "Error while getting upload folder from GitHub");
+            }
 
             var url = Path.Combine(uploadFolder, path);
 
@@ -168,7 +173,10 @@ public sealed class GitHubApiInterface : IApiInterface
 
         if (ClientProperties.IsOfflineMode)
         {
-            data = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "data.json"));
+            var localDataPath = ClientProperties.PathToLocalDataJson
+                ?? throw new FileNotFoundException("Can't find local data.json.");
+
+            data = File.ReadAllText(localDataPath);
         }
         else
         {

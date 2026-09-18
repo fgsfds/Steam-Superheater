@@ -67,11 +67,27 @@ public sealed class AppReleasesProvider
             }
         }
 
-        _logger.LogInformation($"Found Windows release {windowsRelease!.Version}");
+        if (windowsRelease is null)
+        {
+            _logger.LogWarning("Windows release not found");
+        }
+        else
+        {
+            _logger.LogInformation($"Found Windows release {windowsRelease.Version}");
+        }
+
         WindowsRelease = windowsRelease;
 
-        _logger.LogInformation($"Found Linux release {linuxRelease!.Version}");
-        LinuxRelease = linuxRelease!;
+        if (linuxRelease is null)
+        {
+            _logger.LogWarning("Linux release not found");
+        }
+        else
+        {
+            _logger.LogInformation($"Found Linux release {linuxRelease.Version}");
+        }
+
+        LinuxRelease = linuxRelease;
     }
 
     private AppReleaseEntity? GetRelease(GitHubReleaseEntity release, string osPostfix)

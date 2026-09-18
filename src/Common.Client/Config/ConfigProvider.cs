@@ -43,7 +43,7 @@ public sealed class ConfigProvider : IConfigProvider
                     return null;
                 }
 
-                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+                return new SourceEntity() { Name = uri.Host, Url = uri, IsEnabled = x.IsEnabled };
             })
             .Where(x => x is not null)];
     }
@@ -305,7 +305,7 @@ public sealed class ConfigProvider : IConfigProvider
                     return null;
                 }
 
-                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+                return new SourceEntity() { Name = uri.Host, Url = uri, IsEnabled = x.IsEnabled };
             })
             .Where(x => x is not null)];
 
@@ -339,7 +339,7 @@ public sealed class ConfigProvider : IConfigProvider
                     return null;
                 }
 
-                return new SourceEntity() { Name = "123", Url = uri, IsEnabled = x.IsEnabled };
+                return new SourceEntity() { Name = uri.Host, Url = uri, IsEnabled = x.IsEnabled };
             })
             .Where(x => x is not null)];
 

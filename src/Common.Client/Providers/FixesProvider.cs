@@ -198,7 +198,10 @@ public sealed class FixesProvider : IFixesProvider
 
         if (ClientProperties.IsOfflineMode)
         {
-            var newFixesList = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "fixes.json"));
+            var localFixesPath = ClientProperties.PathToLocalFixesJson
+                ?? throw new FileNotFoundException("Can't find local fixes.json.");
+
+            var newFixesList = File.ReadAllText(localFixesPath);
             currentFixesList = JsonSerializer.Deserialize(newFixesList, FixesListContext.Default.ListFixesList)!;
         }
         else if (!localFixesOnly)

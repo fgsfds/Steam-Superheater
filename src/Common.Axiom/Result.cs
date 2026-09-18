@@ -34,15 +34,12 @@ public readonly struct Result
 
     public override bool Equals(object? obj)
     {
-        switch (obj)
+        return obj switch
         {
-            case Result result:
-                return ResultEnum == result.ResultEnum;
-            case ResultEnum resultE:
-                return ResultEnum == resultE;
-            default:
-                throw new ArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
-        }
+            Result result => ResultEnum == result.ResultEnum,
+            ResultEnum resultE => ResultEnum == resultE,
+            _ => false
+        };
     }
 
     public static bool operator ==(Result obj1, ResultEnum obj2)
@@ -57,7 +54,7 @@ public readonly struct Result
 
     public override int GetHashCode()
     {
-        throw new NotSupportedException(string.Empty);
+        return ResultEnum.GetHashCode();
     }
 }
 
@@ -103,15 +100,12 @@ public readonly struct Result<T>
 
     public override bool Equals(object? obj)
     {
-        switch (obj)
+        return obj switch
         {
-            case Result<T> result:
-                return ResultEnum == result.ResultEnum;
-            case ResultEnum resultE:
-                return ResultEnum == resultE;
-            default:
-                throw new ArgumentOutOfRangeException($"Can't compare Result to {obj?.GetType()}");
-        }
+            Result<T> result => ResultEnum == result.ResultEnum,
+            ResultEnum resultE => ResultEnum == resultE,
+            _ => false
+        };
     }
 
     public static bool operator ==(Result<T> obj1, ResultEnum obj2)
@@ -126,7 +120,7 @@ public readonly struct Result<T>
 
     public override int GetHashCode()
     {
-        throw new NotSupportedException(string.Empty);
+        return ResultEnum.GetHashCode();
     }
 }
 

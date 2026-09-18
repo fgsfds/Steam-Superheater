@@ -40,16 +40,15 @@ public sealed class FilesDownloader : IFilesDownloader
 
         _progressReport.OperationMessage = "Downloading...";
 
-
         using var httpClient = _httpClientFactory.CreateClient();
         using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
         if (!response.IsSuccessStatusCode)
         {
-            throw new Exception($"Error while downloading {url}, error: {response.StatusCode}");
+            _logger.LogError($"Error while downloading {url}, error: {response.StatusCode}");
+            return new(ResultEnum.ConnectionError, $"Error while downloading {url}, error: {response.StatusCode}");
         }
 
-        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
         var contentLength = response.Content.Headers.ContentLength;
 
         _logger.LogInformation($"File length is {contentLength}");
@@ -58,6 +57,8 @@ public sealed class FilesDownloader : IFilesDownloader
 
         try
         {
+            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
             if (!contentLength.HasValue)
             {
                 await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
@@ -75,21 +76,41 @@ public sealed class FilesDownloader : IFilesDownloader
 
                     var res = totalBytesRead / (long)contentLength * 100;
 
-                    _progressReport.OperationMessage = $"Downloading...";
+                    _progressReport.OperationMessage = "Downloading...";
                     ((IProgress<float>)_progressReport.Progress).Report(res);
                 }
             }
-
-            fileStream.Dispose();
-            _logger.LogInformation("Downloading finished, renaming temp file");
-            File.Move(tempFile, filePath, true);
         }
         catch (HttpIOException)
         {
-            await ContinueDownload(url, contentLength, fileStream!, cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException)
+            {
+                fileStream.Dispose();
+
+                if (File.Exists(tempFile))
+                {
+                    File.Delete(tempFile);
+                }
+
+                return new(ResultEnum.Cancelled, "Downloading cancelled");
+            }
+            catch (Exception ex)
+            {
+                fileStream.Dispose();
+
+                _logger.LogError(ex, $"Error while continuing downloading {url}");
+
+                return new(ResultEnum.Error, ex.ToString());
+            }
         }
         catch (OperationCanceledException)
         {
+            fileStream.Dispose();
+
             if (File.Exists(tempFile))
             {
                 File.Delete(tempFile);
@@ -99,14 +120,22 @@ public sealed class FilesDownloader : IFilesDownloader
         }
         catch (Exception ex)
         {
+            fileStream.Dispose();
+
+            _logger.LogError(ex, $"Error while downloading {url}");
+
             return new(ResultEnum.Error, ex.ToString());
         }
         finally
         {
             ((IProgress<float>)_progressReport.Progress).Report(0);
             _progressReport.OperationMessage = string.Empty;
-            fileStream.Dispose();
         }
+
+        fileStream.Dispose();
+
+        _logger.LogInformation("Downloading finished, renaming temp file");
+        File.Move(tempFile, filePath, true);
 
         return new(ResultEnum.Success, string.Empty);
     }
@@ -149,6 +178,8 @@ public sealed class FilesDownloader : IFilesDownloader
             await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
 
             await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+
+            await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (HttpIOException)
         {

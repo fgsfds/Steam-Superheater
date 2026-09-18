@@ -57,7 +57,10 @@ public sealed class NewsProvider : INewsProvider
 
         if (ClientProperties.IsOfflineMode)
         {
-            var newNewsList = File.ReadAllText(Path.Combine("..", "..", "..", "..", "db", "news.json"));
+            var localNewsPath = ClientProperties.PathToLocalNewsJson
+                ?? throw new FileNotFoundException("Can't find local news.json.");
+
+            var newNewsList = File.ReadAllText(localNewsPath);
             currentNewsList = JsonSerializer.Deserialize(newNewsList, NewsListEntityContext.Default.ListNewsEntity)!;
         }
         else

@@ -110,5 +110,48 @@ public static class ClientProperties
         return _isSteamDeckGameMode.Value;
     }
 
+    /// <summary>
+    /// Path to the local fixes.json file, if it is present next to the app or in the repo.
+    /// </summary>
+    public static string? PathToLocalFixesJson => GetLocalDbFilePath("fixes.json");
+
+    /// <summary>
+    /// Path to the local news.json file, if it is present next to the app or in the repo.
+    /// </summary>
+    public static string? PathToLocalNewsJson => GetLocalDbFilePath("news.json");
+
+    /// <summary>
+    /// Path to the local data.json file, if it is present next to the app or in the repo.
+    /// </summary>
+    public static string? PathToLocalDataJson => GetLocalDbFilePath("data.json");
+
+    /// <summary>
+    /// Path to the log file.
+    /// </summary>
     public static string PathToLogFile => Path.Combine(WorkingFolder, "Superheater.log");
+
+
+    /// <summary>
+    /// Resolves a file from the local db folder, looking both next to the app and in the repository layout.
+    /// </summary>
+    /// <param name="fileName">File name inside the db folder.</param>
+    /// <returns>The resolved path, or null when the file does not exist.</returns>
+    private static string? GetLocalDbFilePath(string fileName)
+    {
+        var repoPath = Path.Combine(WorkingFolder, "..", "..", "..", "..", "db", fileName);
+
+        if (File.Exists(repoPath))
+        {
+            return repoPath;
+        }
+
+        var localPath = Path.Combine(WorkingFolder, "db", fileName);
+
+        if (File.Exists(localPath))
+        {
+            return localPath;
+        }
+
+        return null;
+    }
 }
