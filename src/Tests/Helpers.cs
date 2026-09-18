@@ -1,4 +1,7 @@
 ﻿using System.Reflection;
+using System.Text.Json;
+using Common.Axiom.Entities;
+using Common.Client;
 
 namespace Tests;
 
@@ -25,5 +28,18 @@ public static class Helpers
 
             return "/";
         }
+    }
+
+
+    /// <summary>
+    /// Loads the local data.json database.
+    /// </summary>
+    /// <returns>The parsed data.json values.</returns>
+    public static Dictionary<string, string> GetDataJson()
+    {
+        var path = ClientProperties.PathToLocalDataJson ?? throw new FileNotFoundException("Can't find data.json.");
+
+        return JsonSerializer.Deserialize(File.ReadAllText(path), DataJsonModelContext.Default.DictionaryStringString)
+            ?? throw new InvalidDataException("Can't deserialize data.json.");
     }
 }

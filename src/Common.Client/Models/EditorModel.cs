@@ -13,6 +13,7 @@ using Common.Axiom.Entities.Fixes.TextFix;
 using Common.Axiom.Enums;
 using Common.Axiom.Helpers;
 using Common.Client.FilesTools;
+using Common.Client.Providers;
 using Common.Client.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -26,6 +27,7 @@ public sealed class EditorModel
     private readonly IApiInterface _apiInterface;
     private readonly HttpClient _httpClient;
     private readonly ILogger<EditorModel> _logger;
+    private readonly S3Provider _s3Provider;
 
     private List<FixesList> _fixesList = [];
     private List<GameEntity> _availableGamesList = [];
@@ -42,6 +44,7 @@ public sealed class EditorModel
         FilesUploader filesUploader,
         IApiInterface apiInterface,
         HttpClient httpClient,
+        S3Provider s3Provider,
         ILogger<EditorModel> logger
         )
     {
@@ -50,6 +53,7 @@ public sealed class EditorModel
         _filesUploader = filesUploader;
         _apiInterface = apiInterface;
         _httpClient = httpClient;
+        _s3Provider = s3Provider;
         _logger = logger;
     }
 
@@ -494,7 +498,7 @@ public sealed class EditorModel
         }
     }
 
-    public void SaveFixesJson(string file)
+    public async Task SaveFixesJsonAsync(string file)
     {
         var sortedFixesList = _fixesList.OrderBy(x => x.GameName).ToList();
 
@@ -519,7 +523,7 @@ public sealed class EditorModel
                     {
                         if (!fixEntity.Url.StartsWith("http"))
                         {
-                            fixEntity.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3SubFolder}/{fixEntity.Url}";
+                            fixEntity.Url = await _s3Provider.GetFileUrlAsync(fixEntity.Url).ConfigureAwait(false);
                         }
 
                         using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
@@ -528,7 +532,7 @@ public sealed class EditorModel
 
                         fixEntity.FileSize = header.Content.Headers.ContentLength;
 
-                        if (fixEntity.Url.StartsWith(CommonConstants.S3Endpoint) &&
+                        if (await _s3Provider.IsS3UrlAsync(fixEntity.Url).ConfigureAwait(false) &&
                             !fixEntity.IsDisabled)
                         {
                             var hash = header.Headers

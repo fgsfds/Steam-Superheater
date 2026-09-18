@@ -115,7 +115,7 @@ public sealed class GitHubApiInterface : IApiInterface
         }
     }
 
-    public async Task<Result<string?>> GetSignedUrlAsync(string path)
+    public async Task<Result<IReadOnlyDictionary<string, string>?>> GetDataJsonAsync()
     {
         await _semaphore.WaitAsync().ConfigureAwait(false);
 
@@ -126,26 +126,35 @@ public sealed class GitHubApiInterface : IApiInterface
                 await InitData().ConfigureAwait(false);
             }
 
-            if (_data is null ||
-                !_data.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ||
-                string.IsNullOrWhiteSpace(uploadFolder))
-            {
-                return new Result<string?>(ResultEnum.Error, null, "Error while getting upload folder from GitHub");
-            }
-
-            var url = Path.Combine(uploadFolder, path);
-
-            return new Result<string?>(ResultEnum.Success, url, string.Empty);
+            return new(ResultEnum.Success, _data, string.Empty);
         }
         catch (Exception ex)
         {
-            _logger.LogCritical(ex, "=== Error while getting upload folder from GitHub ===");
-            return new Result<string?>(ResultEnum.Error, null, "Error while getting upload folder from GitHub");
+            _logger.LogCritical(ex, "=== Error while getting data from GitHub ===");
+
+            return new(ResultEnum.Error, null, "Error while getting data from GitHub");
         }
         finally
         {
             _ = _semaphore.Release();
         }
+    }
+
+    public async Task<Result<string?>> GetSignedUrlAsync(string path)
+    {
+        var dataResult = await GetDataJsonAsync().ConfigureAwait(false);
+
+        if (!dataResult.IsSuccess ||
+            dataResult.ResultObject is null ||
+            !dataResult.ResultObject.TryGetValue(DataJson.UploadFolder, out var uploadFolder) ||
+            string.IsNullOrWhiteSpace(uploadFolder))
+        {
+            return new Result<string?>(ResultEnum.Error, null, "Error while getting upload folder from GitHub");
+        }
+
+        var url = Path.Combine(uploadFolder, path);
+
+        return new Result<string?>(ResultEnum.Success, url, string.Empty);
     }
 
 

@@ -15,6 +15,7 @@ public interface IApiInterface
     Task<Result> ChangeNewsAsync(DateTime date, string content);
     Task<Result<int?>> ChangeScoreAsync(Guid guid, sbyte increment);
     Task<Result<string?>> CheckIfFixExistsAsync(Guid guid);
+    Task<Result<IReadOnlyDictionary<string, string>?>> GetDataJsonAsync();
     Task<Result<GetFixesOutMessage?>> GetFixesListAsync(int tableVersion, Version appVersion);
     Task<Result<GetFixesStatsOutMessage>> GetFixesStats();
     Task<Result<AppReleaseEntity?>> GetLatestAppReleaseAsync(OSEnum osEnum);

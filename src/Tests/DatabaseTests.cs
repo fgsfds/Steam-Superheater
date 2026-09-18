@@ -57,6 +57,8 @@ public sealed class DatabaseTests
 
         Assert.NotNull(fixesJson);
 
+        var endpoint = Helpers.GetDataJson()[DataJson.S3Endpoint];
+
         StringBuilder sbFails = new();
         StringBuilder sbSuccesses = new();
 
@@ -118,7 +120,7 @@ public sealed class DatabaseTests
                 }
 
                 //hash of files from my storage
-                if (url.StartsWith(CommonConstants.S3Endpoint))
+                if (url.StartsWith(endpoint, StringComparison.OrdinalIgnoreCase))
                 {
                     var actualHash = header.Headers
                         .FirstOrDefault(x => x.Key.Equals("x-amz-meta-checksum-sha256"))
@@ -213,13 +215,18 @@ public sealed class DatabaseTests
 
         Assert.NotNull(fixesJson);
 
+        var data = Helpers.GetDataJson();
+        var endpoint = data[DataJson.S3Endpoint];
+        var bucket = data[DataJson.S3Bucket];
+        var subFolder = data[DataJson.S3SubFolder];
+
         List<string>? fixesUrls = [];
 
         foreach (var a in fixesJson)
         {
             foreach (var b in a.Fixes.OfType<FileFixEntity>())
             {
-                if (b.Url?.StartsWith(CommonConstants.S3Endpoint) == true)
+                if (b.Url?.StartsWith(endpoint, StringComparison.OrdinalIgnoreCase) == true)
                 {
                     fixesUrls.Add(b.Url);
                 }
@@ -234,14 +241,14 @@ public sealed class DatabaseTests
 
         using var minioClient = new MinioClient();
         using var iMinioClient = minioClient
-            .WithEndpoint(CommonConstants.S3Endpoint.Split("//").Last())
+            .WithEndpoint(endpoint.Split("//").Last())
             .WithCredentials(access, secret)
             .WithSSL(false)
             .Build();
 
         var args = new ListObjectsArgs()
-            .WithBucket(CommonConstants.S3Bucket)
-            .WithPrefix(CommonConstants.S3SubFolder + '/')
+            .WithBucket(bucket)
+            .WithPrefix(subFolder + '/')
             .WithRecursive(true);
 
         var filesInBucket = new List<string>();
@@ -258,7 +265,7 @@ public sealed class DatabaseTests
                 continue;
             }
 
-            filesInBucket.Add($"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{item.Key}");
+            filesInBucket.Add($"{endpoint}/{bucket}/{item.Key}");
         }
 
         var loose = filesInBucket.Except(fixesUrls);
@@ -285,11 +292,7 @@ public sealed class DatabaseTests
 
         ClientProperties.IsOfflineMode = true;
 
-        var dataJsonPath = ClientProperties.PathToLocalDataJson;
-        Assert.NotNull(dataJsonPath);
-
-        var dataJson = JsonSerializer.Deserialize(File.ReadAllText(dataJsonPath), DataJsonModelContext.Default.DictionaryStringString);
-        Assert.NotNull(dataJson);
+        var dataJson = Helpers.GetDataJson();
         Assert.True(dataJson.TryGetValue(DataJson.UploadFolder, out var uploadFolder));
         Assert.False(string.IsNullOrWhiteSpace(uploadFolder));
 

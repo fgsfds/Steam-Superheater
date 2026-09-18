@@ -5,6 +5,7 @@ using Common.Client.FixTools;
 using Common.Client.FixTools.FileFix;
 using Common.Client.FixTools.HostsFix;
 using Common.Client.FixTools.RegistryFix;
+using Common.Client.Providers;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Client.DI;
@@ -43,6 +44,7 @@ public static class CommonBindings
         _ = container.AddSingleton<FilesUploader>();
         _ = container.AddSingleton<ProgressReport>();
         _ = container.AddSingleton<ISteamTools, SteamTools>();
+        _ = container.AddSingleton<S3Provider>();
 
         _ = container.AddHttpClient(string.Empty)
             .ConfigureHttpClient((serviceProvider, client) =>

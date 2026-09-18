@@ -1,3 +1,6 @@
 {
-  "UploadFolder": "https://s3-nl.hostkey.com/b8743306-fgsfds/uploads/superheater"
+  "UploadFolder": "https://s3-nl.hostkey.com/b8743306-fgsfds/uploads/superheater",
+  "S3Endpoint": "https://s3-nl.hostkey.com",
+  "S3Bucket": "b8743306-fgsfds",
+  "S3SubFolder": "superheater"
 }

@@ -16,6 +16,7 @@ public sealed class FixesProvider : IFixesProvider
     private readonly IGamesProvider _gamesProvider;
     private readonly IInstalledFixesProvider _installedFixesProvider;
     private readonly DatabaseContextFactory _dbContextFactory;
+    private readonly S3Provider _s3Provider;
     private readonly SemaphoreSlim _semaphore = new(1);
 
     private List<FixesList>? _cache;
@@ -29,13 +30,15 @@ public sealed class FixesProvider : IFixesProvider
         IApiInterface apiInterface,
         IGamesProvider gamesProvider,
         IInstalledFixesProvider installedFixesProvider,
-        DatabaseContextFactory dbContextFactory
+        DatabaseContextFactory dbContextFactory,
+        S3Provider s3Provider
         )
     {
         _apiInterface = apiInterface;
         _gamesProvider = gamesProvider;
         _installedFixesProvider = installedFixesProvider;
         _dbContextFactory = dbContextFactory;
+        _s3Provider = s3Provider;
     }
 
 
@@ -150,7 +153,7 @@ public sealed class FixesProvider : IFixesProvider
     /// <inheritdoc/>
     public async Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix)
     {
-        var fileFixResult = PrepareFixes(fix);
+        var fileFixResult = await PrepareFixesAsync(fix).ConfigureAwait(false);
 
         if (fileFixResult != ResultEnum.Success)
         {
@@ -272,7 +275,7 @@ public sealed class FixesProvider : IFixesProvider
         return new(result, message);
     }
 
-    private Result PrepareFixes(BaseFixEntity fix)
+    private async Task<Result> PrepareFixesAsync(BaseFixEntity fix)
     {
         if (string.IsNullOrEmpty(fix.Name) ||
             string.IsNullOrEmpty(fix.Version))
@@ -282,7 +285,7 @@ public sealed class FixesProvider : IFixesProvider
 
         if (fix is FileFixEntity fileFix)
         {
-            var result = PrepareFileFixes(fileFix);
+            var result = await PrepareFileFixesAsync(fileFix).ConfigureAwait(false);
 
             if (!result.IsSuccess)
             {
@@ -314,13 +317,13 @@ public sealed class FixesProvider : IFixesProvider
         return new Result(ResultEnum.Success, string.Empty);
     }
 
-    private Result PrepareFileFixes(FileFixEntity fileFix)
+    private async Task<Result> PrepareFileFixesAsync(FileFixEntity fileFix)
     {
         if (!string.IsNullOrEmpty(fileFix.Url))
         {
             if (!fileFix.Url.StartsWith("http"))
             {
-                fileFix.Url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/{CommonConstants.S3SubFolder}/{fileFix.Url}";
+                fileFix.Url = await _s3Provider.GetFileUrlAsync(fileFix.Url).ConfigureAwait(false);
             }
         }
 

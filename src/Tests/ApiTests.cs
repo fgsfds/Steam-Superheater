@@ -29,8 +29,9 @@ public sealed class ApiTests
         IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
 
         DatabaseContextFactory dbContextFactory = new();
+        S3Provider s3Provider = new(apiInterface);
 
-        FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, dbContextFactory);
+        FixesProvider fixesProvider = new(apiInterface, gamesProviderMock.Object, installedMock.Object, dbContextFactory, s3Provider);
 
         var fixes = await fixesProvider.GetFixesListAsync(false, false).ConfigureAwait(true);
 

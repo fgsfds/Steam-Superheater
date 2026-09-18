@@ -839,7 +839,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                 return;
             }
 
-            _editorModel.SaveFixesJson(file.Path.AbsolutePath);
+            await _editorModel.SaveFixesJsonAsync(file.Path.AbsolutePath).ConfigureAwait(true);
         }
         catch (Exception ex)
         {

@@ -1,10 +1,12 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Web;
 using Api.Axiom.Interfaces;
 using Api.Axiom.Messages;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Enums;
+using Common.Client;
 
 namespace Api.Client.ServerApiInterface;
 
@@ -22,6 +24,29 @@ public sealed partial class ServerApiInterface : IApiInterface
     {
         _configProvider = configProvider;
         _httpClient = httpClient;
+    }
+
+    public async Task<Result<IReadOnlyDictionary<string, string>?>> GetDataJsonAsync()
+    {
+        var path = ClientProperties.PathToLocalDataJson;
+
+        if (path is null)
+        {
+            return new(ResultEnum.NotFound, null, "data.json not found");
+        }
+
+        try
+        {
+            await using var stream = File.OpenRead(path);
+
+            var data = await JsonSerializer.DeserializeAsync(stream, DataJsonModelContext.Default.DictionaryStringString).ConfigureAwait(false);
+
+            return new(ResultEnum.Success, data, string.Empty);
+        }
+        catch (Exception ex)
+        {
+            return new(ResultEnum.Error, null, ex.Message);
+        }
     }
 
     public async Task<Result<string?>> GetSignedUrlAsync(string path)
