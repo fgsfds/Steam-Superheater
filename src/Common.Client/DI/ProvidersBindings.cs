@@ -9,9 +9,18 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Common.Client.DI;
 
+/// <summary>
+/// Registers the client providers.
+/// </summary>
 public static class ProvidersBindings
 {
-    public static void Load(ServiceCollection container, bool isDesigner)
+    /// <summary>
+    /// Registers the client providers, using fakes when running in the designer.
+    /// </summary>
+    /// <param name="container">The service collection.</param>
+    /// <param name="isDesigner">Whether the app is running in the Avalonia designer.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection WithProviders(this IServiceCollection container, bool isDesigner)
     {
         if (isDesigner)
         {
@@ -22,7 +31,7 @@ public static class ProvidersBindings
             _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProviderFake>();
             _ = container.AddSingleton<DatabaseContextFactory>();
 
-            return;
+            return container;
         }
 
         _ = container.AddSingleton<IConfigProvider, ConfigProvider>();
@@ -32,6 +41,7 @@ public static class ProvidersBindings
         _ = container.AddSingleton<IInstalledFixesProvider, InstalledFixesProvider>();
         _ = container.AddSingleton<DatabaseContextFactory>();
         _ = container.AddSingleton<AppReleasesProvider>();
+
+        return container;
     }
 }
-

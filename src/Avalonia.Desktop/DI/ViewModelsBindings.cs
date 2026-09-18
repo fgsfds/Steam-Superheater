@@ -5,9 +5,17 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Avalonia.Desktop.DI;
 
+/// <summary>
+/// Registers the desktop view models.
+/// </summary>
 public static class ViewModelsBindings
 {
-    public static void Load(ServiceCollection container)
+    /// <summary>
+    /// Registers the desktop view models and the view models factory.
+    /// </summary>
+    /// <param name="container">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection WithViewModels(this IServiceCollection container)
     {
         _ = container.AddSingleton<MainWindowViewModel>();
         _ = container.AddSingleton<MainViewModel>();
@@ -20,6 +28,9 @@ public static class ViewModelsBindings
         _ = container.AddSingleton<PopupEditorViewModel>();
         _ = container.AddSingleton<PopupMessageViewModel>();
         _ = container.AddSingleton<PopupStackViewModel>();
+
+        _ = container.AddSingleton<IViewModelsFactory, ViewModelsFactory>();
+
+        return container;
     }
 }
-

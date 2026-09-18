@@ -12,14 +12,19 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Client.DI;
 
+/// <summary>
+/// Registers the common client services.
+/// </summary>
 public static class CommonBindings
 {
-    public static void Load(ServiceCollection container, bool isDesigner)
+    /// <summary>
+    /// Registers the core client services, fix tools and HTTP client.
+    /// </summary>
+    /// <param name="container">The service collection.</param>
+    /// <returns>The updated service collection.</returns>
+    public static IServiceCollection WithCommon(this IServiceCollection container)
     {
-        if (!isDesigner)
-        {
-            _ = container.AddSingleton<ILogger>(CreateLogger);
-        }
+        _ = container.AddSingleton<ILogger>(CreateLogger);
 
         _ = container.AddTransient<AppUpdateInstaller>();
 
@@ -52,7 +57,14 @@ public static class CommonBindings
                 client.Timeout = TimeSpan.FromSeconds(30);
             })
             .RemoveAllLoggers();
+
+        return container;
     }
 
-    private static ILogger CreateLogger(IServiceProvider service) => FileLoggerFactory.Create(ClientProperties.PathToLogFile);
+    /// <summary>
+    /// Creates the file logger instance.
+    /// </summary>
+    /// <param name="_">The service provider.</param>
+    /// <returns>The logger instance.</returns>
+    private static ILogger CreateLogger(IServiceProvider _) => FileLoggerFactory.Create(ClientProperties.PathToLogFile);
 }

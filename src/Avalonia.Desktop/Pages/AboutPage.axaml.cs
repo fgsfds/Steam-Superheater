@@ -1,9 +1,6 @@
 using System.Diagnostics;
 using Avalonia.Controls;
-using Avalonia.Desktop.ViewModels;
 using Avalonia.Interactivity;
-using Common.Client.DI;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Avalonia.Desktop.Pages;
 
@@ -11,13 +8,7 @@ public sealed partial class AboutPage : UserControl
 {
     public AboutPage()
     {
-        var vm = BindingsManager.Provider.GetRequiredService<AboutViewModel>();
-
-        DataContext = vm;
-
         InitializeComponent();
-
-        vm.InitializeCommand.Execute(null);
     }
 
     private void PatreonClick(object sender, RoutedEventArgs e)

@@ -16,23 +16,33 @@ using Microsoft.Extensions.Logging;
 
 namespace Avalonia.Desktop;
 
+/// <summary>
+/// Application entry point and service configuration.
+/// </summary>
 public sealed class App : Application
 {
     private static readonly Mutex _mutex = new(false, "Superheater");
     private static ILogger _logger = null!;
     private static App _app = null!;
+    private static ServiceProvider _services = null!;
 
+    /// <inheritdoc />
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
 
-#if DEBUG
+        #if DEBUG
         this.AttachDeveloperTools();
-#endif
+        #endif
 
         _app = this;
     }
 
+    /// <summary>
+    /// Runs the application with the specified AppBuilder.
+    /// </summary>
+    /// <param name="builder">The application builder.</param>
+    /// <returns>The application exit code.</returns>
     public static int Run(AppBuilder builder)
     {
         int code;
@@ -46,18 +56,18 @@ public sealed class App : Application
 
         LoadBindings();
 
-        _logger = BindingsManager.Provider.GetRequiredService<ILogger>();
+        _logger = _services.GetRequiredService<ILogger>();
 
         //run after setting _logger but before initializing anything else!
         Cleanup();
 
-        var config = BindingsManager.Provider.GetRequiredService<IConfigProvider>();
-        var mainViewModel = BindingsManager.Provider.GetRequiredService<MainWindowViewModel>();
+        var config = _services.GetRequiredService<IConfigProvider>();
+        var viewModelsFactory = _services.GetRequiredService<IViewModelsFactory>();
 
         SetTheme(config.Theme);
 
-        lifetime.MainWindow = new MainWindow();
-        lifetime.MainWindow.DataContext = mainViewModel;
+        lifetime.MainWindow = new MainWindow(viewModelsFactory);
+        lifetime.MainWindow.DataContext = viewModelsFactory.GetMainWindowViewModel();
 
         //initialize
         _ = NotificationsHelper.NotificationManager;
@@ -127,17 +137,26 @@ public sealed class App : Application
     }
 
     /// <summary>
-    /// Load DI bindings
+    /// Builds the service provider and loads the DI bindings.
     /// </summary>
     public static void LoadBindings()
     {
-        var container = BindingsManager.Instance;
+        ServiceCollection services = new();
 
-        ModelsBindings.Load(container);
-        ViewModelsBindings.Load(container);
-        CommonBindings.Load(container, Design.IsDesignMode);
-        ProvidersBindings.Load(container, Design.IsDesignMode);
-        ApiBindings.Load(container);
+        _ = services.WithCommon();
+        _ = services.WithProviders(Design.IsDesignMode);
+        _ = services.WithModels();
+        _ = services.WithViewModels();
+        _ = services.WithApi();
+
+        _services?.Dispose();
+
+        _services = services.BuildServiceProvider(
+            new ServiceProviderOptions
+            {
+                ValidateOnBuild = true,
+                ValidateScopes = true
+            });
     }
 
     /// <summary>
