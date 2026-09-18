@@ -285,6 +285,14 @@ public sealed class DatabaseTests
 
         ClientProperties.IsOfflineMode = true;
 
+        var dataJsonPath = ClientProperties.PathToLocalDataJson;
+        Assert.NotNull(dataJsonPath);
+
+        var dataJson = JsonSerializer.Deserialize(File.ReadAllText(dataJsonPath), DataJsonModelContext.Default.DictionaryStringString);
+        Assert.NotNull(dataJson);
+        Assert.True(dataJson.TryGetValue(DataJson.UploadFolder, out var uploadFolder));
+        Assert.False(string.IsNullOrWhiteSpace(uploadFolder));
+
         using HttpClient httpClient = new();
         var logger = new Mock<ILogger>().Object;
         ProgressReport progressReport = new();
@@ -294,7 +302,7 @@ public sealed class DatabaseTests
 
         await uploader.UploadFilesAsync("test", [Path.Combine("resources", "test_fix.zip")], CancellationToken.None);
 
-        var url = $"{CommonConstants.S3Endpoint}/{CommonConstants.S3Bucket}/uploads/{CommonConstants.S3SubFolder}/test/test_fix.zip";
+        var url = $"{uploadFolder!.TrimEnd('/')}/test/test_fix.zip";
 
         using var resp = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
 

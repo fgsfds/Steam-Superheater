@@ -15,6 +15,7 @@ namespace Tests;
 /// Tests that use instance data and should be run in a single thread
 /// </summary>
 [Collection("Sync")]
+[Trait("Category", "Database")]
 public sealed class HostsFixTests : IDisposable
 {
     private readonly string _hostsFilePath;

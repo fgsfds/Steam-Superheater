@@ -45,11 +45,12 @@ dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Ca
 dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-trait "Category=Database"
 ```
 
-- `Tests` is the only test project currently in the solution. `Tests.UI` exists on disk
-  but is **not** in `Superheater.slnx` and does not currently build (stale packages /
-  icon provider); do not add it to the solution until it has been repaired.
-- Database tests hit real external services and are expected to fail without the MinIO
-  secrets; CI runs them separately (on push only).
+- `Tests` is the only test project. Pure unit tests run in the normal pass; tests that
+  touch external services, the network, or the real Windows hosts file are marked
+  `[Trait("Category", "Database")]` and run separately.
+- The `Category=Database` tests hit real external services (GitHub/S3) or require an
+  elevated shell, so they are expected to fail without the MinIO secrets / admin rights;
+  CI runs them separately (on push only).
 - Always build and run the affected test project after a change. There is no separate
   lint command: analyzers run on build.
 
@@ -66,7 +67,6 @@ src/
   Database.Client   EF Core DatabaseContext + DbEntities + Migrations.
   Avalonia.Desktop  App entry point, DI composition root, views, view models, styles.
   Tests             xunit v3 test project.
-  Tests.UI          Avalonia headless UI tests (orphaned, see above).
 db/                 fixes/news/data JSON databases shipped with the app.
 ```
 

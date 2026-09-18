@@ -17,13 +17,10 @@ runs under the **Microsoft.Testing.Platform** runner (selected by `global.json`)
 - **Pure unit tests** are the default. They must not touch the network, the filesystem,
   shared static state, or the Avalonia UI. Use fakes (`ConfigProviderFake`,
   `*ProviderFake`, `Moq`, in-memory stubs) and keep them isolated.
-- **External / service-backed tests** (they hit GitHub/S3/MinIO or need elevated
-  permissions) must be marked `[Trait("Category", "Database")]`. CI runs these separately
-  with `--filter-trait "Category=Database"` and the MinIO secrets, and skips them
-  elsewhere.
-- `Tests.UI` exists on disk but is **not** part of `Superheater.slnx` and does not build
-  (stale packages + icon provider). Do not add tests to it or add it to the solution
-  until the coordinator says it has been repaired.
+- **External / service-backed tests** (they hit GitHub/S3/MinIO, edit the real hosts file,
+  or need elevated permissions) must be marked `[Trait("Category", "Database")]` at the
+  class or method level. CI runs these separately with
+  `--filter-trait "Category=Database"` and the MinIO secrets, and skips them elsewhere.
 
 Add new tests to the existing `Tests` project; do not create a new test project without
 coordinator approval.

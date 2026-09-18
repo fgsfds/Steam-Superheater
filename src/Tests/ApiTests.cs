@@ -12,6 +12,7 @@ using Moq;
 namespace Tests;
 
 [Collection("Sync")]
+[Trait("Category", "Database")]
 public sealed class ApiTests
 {
     [Fact]
