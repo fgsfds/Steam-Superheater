@@ -1,45 +1,32 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-        <PackageVersion Include="Avalonia" Version="12.0.4" />
-        <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
-        <PackageVersion Include="Avalonia.Desktop" Version="12.0.4" />
-        <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.0.4" />
-        <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.0.4" />
-        <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.2" />
-        <PackageVersion Include="AWSSDK.S3" Version="4.0.24.4" />
-        <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-        <PackageVersion Include="Markdown.Avalonia.Tight" Version="12.0.0-a3" />
-        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
-        <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-            <PrivateAssets>all</PrivateAssets>
-        </PackageVersion>
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.9" />
-        <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.9" />
-        <PackageVersion Include="Minio" Version="7.0.0" />
-        <PackageVersion Include="Moq" Version="4.20.72" />
-        <PackageVersion Include="Optris.Icons.Avalonia.FontAwesome7" Version="12.0.6" />
-        <PackageVersion Include="SharpCompress" Version="0.49.1" />
-        <PackageVersion Include="coverlet.collector" Version="10.0.1" />
-        <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.6.0" />
-        <PackageVersion Include="System.Security.Cryptography.ProtectedData" Version="10.0.9" />
-        <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="12.0.0.1" />
-        <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-        <PackageVersion Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
-        <PackageVersion Include="xunit.v3" Version="3.2.2" />
-        <PackageVersion Include="NReco.Logging.File" Version="1.3.1" />
-        <PackageVersion Include="System.IO.Hashing" Version="10.0.9" />
-        <PackageVersion Include="Octopus.Octodiff" Version="2.0.549" />
-    </ItemGroup>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+    <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
+    <PackageVersion Include="Markdown.Avalonia.Tight" Version="12.0.0-a3" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+    <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageVersion>
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.12" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="10.0.12" />
+    <PackageVersion Include="Minio" Version="7.0.0" />
+    <PackageVersion Include="Moq" Version="4.20.72" />
+    <PackageVersion Include="Optris.Icons.Avalonia.FontAwesome7" Version="12.0.7" />
+    <PackageVersion Include="SharpCompress" Version="1.0.0" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="xunit.v3" Version="3.2.2" />
+    <PackageVersion Include="System.IO.Hashing" Version="10.0.12" />
+    <PackageVersion Include="Octopus.Octodiff" Version="2.0.549" />
+  </ItemGroup>
 </Project>

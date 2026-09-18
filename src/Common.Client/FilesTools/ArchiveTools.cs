@@ -31,7 +31,7 @@ public sealed class ArchiveTools
         IProgress<float> progress = _progressReport.Progress;
         _progressReport.OperationMessage = "Unpacking...";
 
-        using var archive = ArchiveFactory.OpenArchive(pathToArchive);
+        using var archive = ArchiveFactory.Open(pathToArchive);
 
         var entriesCount = variant is null
         ? archive.Entries.Count()
@@ -93,7 +93,7 @@ public sealed class ArchiveTools
         string? variant
         )
     {
-        using var archive = ArchiveFactory.OpenArchive(pathToArchive);
+        using var archive = ArchiveFactory.Open(pathToArchive);
         var count = archive.Entries.Count();
 
         Dictionary<string, long?> files = new(archive.Entries.Count() + 1);
