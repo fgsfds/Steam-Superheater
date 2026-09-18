@@ -5,7 +5,7 @@
              xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia.Tight"
+             xmlns:mdv="clr-namespace:Avalonia.Desktop.UserControls"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
              d:DesignHeight="450"
              d:DesignWidth="800"
@@ -277,13 +277,13 @@
                          IsSelected="{Binding IsDescriptionSelected}"
                          IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixDescription}" />
+                    <mdv:MarkdownViewer Markdown="{Binding SelectedFixDescription}" />
 
                 </TabItem>
 
                 <TabItem Header="Changelog" IsVisible="{Binding SelectedFixChangelog, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
 
-                    <md:MarkdownScrollViewer Markdown="{Binding SelectedFixChangelog}" />
+                    <mdv:MarkdownViewer Markdown="{Binding SelectedFixChangelog}" />
 
                 </TabItem>
 

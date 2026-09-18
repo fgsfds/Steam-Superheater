@@ -4,7 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="https://github.com/projektanker/icons.avalonia"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:md="https://github.com/whistyun/Markdown.Avalonia.Tight"
+             xmlns:mdv="clr-namespace:Avalonia.Desktop.UserControls"
              xmlns:vm="clr-namespace:Avalonia.Desktop.ViewModels"
              xmlns:vme="clr-namespace:Avalonia.Desktop.ViewModels.Editor"
              d:DesignHeight="1000"
@@ -309,7 +309,7 @@
                                  Text="{Binding SelectedFixDescription, Mode=TwoWay}"
                                  TextWrapping="Wrap" />
 
-                        <md:MarkdownScrollViewer IsVisible="{Binding IsChecked, ElementName=MdToggle}" Markdown="{Binding SelectedFixDescription}" />
+                        <mdv:MarkdownViewer IsVisible="{Binding IsChecked, ElementName=MdToggle}" Markdown="{Binding SelectedFixDescription}" />
 
                     </Panel>
                 </TabItem>
@@ -320,7 +320,7 @@
                                  Text="{Binding SelectedFixChangelog, Mode=TwoWay}"
                                  TextWrapping="Wrap" />
 
-                        <md:MarkdownScrollViewer IsVisible="{Binding IsChecked, ElementName=MdToggle}" Markdown="{Binding SelectedFixChangelog}" />
+                        <mdv:MarkdownViewer IsVisible="{Binding IsChecked, ElementName=MdToggle}" Markdown="{Binding SelectedFixChangelog}" />
 
                     </Panel>
                 </TabItem>

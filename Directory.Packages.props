@@ -9,7 +9,8 @@
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.2" />
     <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.2" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
-    <PackageVersion Include="Markdown.Avalonia.Tight" Version="12.0.0-a3" />
+    <PackageVersion Include="ClassIsland.Markdown.Avalonia.Html" Version="12.0.0" />
+    <PackageVersion Include="ClassIsland.Markdown.Avalonia.Tight" Version="12.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.2" />
     <PackageVersion Include="IDisposableAnalyzers" Version="4.0.8" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12">

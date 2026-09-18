@@ -37,7 +37,8 @@
     <PackageReference Include="Avalonia.Fonts.Inter" />
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="Markdown.Avalonia.Tight" />
+    <PackageReference Include="ClassIsland.Markdown.Avalonia.Html" />
+    <PackageReference Include="ClassIsland.Markdown.Avalonia.Tight" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Optris.Icons.Avalonia.FontAwesome7" />
