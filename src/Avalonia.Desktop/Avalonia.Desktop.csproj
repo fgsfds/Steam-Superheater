@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Avalonia" TreatAsUsed="true" />
     <PackageReference Include="Avalonia.Controls.DataGrid" />
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
@@ -37,6 +38,8 @@
     <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Markdown.Avalonia.Tight" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Optris.Icons.Avalonia.FontAwesome7" />
     <PackageReference Include="AvaloniaUI.DiagnosticsSupport" />
   </ItemGroup>

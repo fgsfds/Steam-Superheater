@@ -6,8 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Api.Axiom\Api.Axiom.csproj" />
     <ProjectReference Include="..\Common.Client\Common.Client.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Superheater.Tests" />
   </ItemGroup>
 
 </Project>

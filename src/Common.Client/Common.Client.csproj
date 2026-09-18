@@ -7,7 +7,9 @@
 
     <ItemGroup>
         <PackageReference Include="IDisposableAnalyzers" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
         <PackageReference Include="Microsoft.Extensions.Http" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
         <PackageReference Include="Octopus.Octodiff" />
         <PackageReference Include="SharpCompress" />
   </ItemGroup>
@@ -16,6 +18,10 @@
       <ProjectReference Include="..\Api.Axiom\Api.Axiom.csproj" />
       <ProjectReference Include="..\Common.Axiom\Common.Axiom.csproj" />
       <ProjectReference Include="..\Database.Client\Database.Client.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <InternalsVisibleTo Include="Superheater.Tests" />
     </ItemGroup>
 
 </Project>
