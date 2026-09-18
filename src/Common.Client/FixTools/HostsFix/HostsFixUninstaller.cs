@@ -21,7 +21,10 @@ public sealed class HostsFixUninstaller
             throw new PlatformNotSupportedException(string.Empty);
         }
 
-        Guard2.IsOfType<HostsInstalledFixEntity>(installedFix, out var installedHostsFix);
+        if (installedFix is not HostsInstalledFixEntity installedHostsFix)
+        {
+            throw new ArgumentException("Installed fix is not a hosts fix.", nameof(installedFix));
+        }
 
         if (!ClientProperties.IsAdmin)
         {

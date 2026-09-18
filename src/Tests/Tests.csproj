@@ -5,6 +5,7 @@
     <IsTestProject>true</IsTestProject>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
     <AssemblyName>Superheater.$(MSBuildProjectName)</AssemblyName>
+    <NoWarn>$(NoWarn);CA2007;CS1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

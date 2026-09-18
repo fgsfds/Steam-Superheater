@@ -19,7 +19,10 @@ public sealed class RegistryFixUninstaller
             throw new PlatformNotSupportedException(string.Empty);
         }
 
-        Guard2.IsOfType<RegistryInstalledFixEntity>(installedFix, out var installedRegFix);
+        if (installedFix is not RegistryInstalledFixEntity installedRegFix)
+        {
+            throw new ArgumentException("Installed fix is not a registry fix.", nameof(installedFix));
+        }
 
         if (installedFix.DoesRequireAdminRights && !ClientProperties.IsAdmin)
         {

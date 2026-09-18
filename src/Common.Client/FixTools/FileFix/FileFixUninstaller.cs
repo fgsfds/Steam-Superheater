@@ -17,7 +17,10 @@ public sealed class FileFixUninstaller
         BaseInstalledFixEntity installedFix
         )
     {
-        Guard2.IsOfType<FileInstalledFixEntity>(installedFix, out var installedFileFix);
+        if (installedFix is not FileInstalledFixEntity installedFileFix)
+        {
+            throw new ArgumentException("Installed fix is not a file fix.", nameof(installedFix));
+        }
 
         if (installedFileFix.InstalledSharedFix is not null)
         {

@@ -189,7 +189,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenFilePickerCanExecute))]
     private async Task OpenFilePickerAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var topLevel = AvaloniaProperties.TopLevel;
 
@@ -223,7 +226,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenFilesToDeleteEditorCanExecute))]
     private async Task OpenFilesToDeleteEditorAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Files to delete", fileFix.FilesToDelete ?? []).ConfigureAwait(true);
 
@@ -242,7 +248,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenFilesToBackupEditorCanExecute))]
     private async Task OpenFilesToBackupEditorAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Files to backup", fileFix.FilesToBackup ?? []).ConfigureAwait(true);
 
@@ -261,7 +270,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenFilesToPatchEditorCanExecute))]
     private async Task OpenFilesToPatchEditorAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Files to patch", fileFix.FilesToPatch ?? []).ConfigureAwait(true);
 
@@ -280,7 +292,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenWineDllsOverridesEditorCanExecute))]
     private async Task OpenWineDllsOverridesEditorAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Wine DLL overrides", fileFix.WineDllOverrides ?? []).ConfigureAwait(true);
 
@@ -299,7 +314,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(OpenVariantsEditorCanExecute))]
     private async Task OpenVariantsEditorAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Fix variants", fileFix.Variants ?? []).ConfigureAwait(true);
 
@@ -318,7 +336,10 @@ internal sealed partial class FileFixViewModel : ObservableObject
     [RelayCommand(CanExecute = nameof(ResetSelectedSharedFixCanExecute))]
     private void ResetSelectedSharedFix()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
 
         SelectedSharedFix = null;
         fileFix.SharedFixInstallFolder = null;

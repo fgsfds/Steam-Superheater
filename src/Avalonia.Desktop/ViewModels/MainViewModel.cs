@@ -500,7 +500,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [RelayCommand(CanExecute = nameof(CheckHashCanExecute))]
     private async Task CheckHashAsync()
     {
-        Guard2.IsOfType<FileFixEntity>(SelectedFix, out var fileFix);
+        if (SelectedFix is not FileFixEntity fileFix)
+        {
+            throw new ArgumentException("Selected fix is not a file fix.", nameof(SelectedFix));
+        }
+
         ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
         var fixUninstallResult = await _fixManager.CheckFixAsync(SelectedGame.Game, fileFix).ConfigureAwait(true);
@@ -1091,7 +1095,11 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     {
         try
         {
-            Guard2.IsOfType<FileFixEntity>(fix, out var fileFix);
+            if (fix is not FileFixEntity fileFix)
+            {
+                throw new ArgumentException("Fix is not a file fix.", nameof(fix));
+            }
+
             ArgumentNullException.ThrowIfNull(fileFix.ConfigFile);
             ArgumentNullException.ThrowIfNull(game);
 

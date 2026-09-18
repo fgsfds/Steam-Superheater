@@ -13,8 +13,15 @@ public sealed partial class NewsPage : UserControl
 
     private void ScrollViewer_ScrollChanged(object? sender, ScrollChangedEventArgs e)
     {
-        Guard2.IsOfType<ScrollViewer>(sender, out var scrollViewer);
-        Guard2.IsOfType<NewsViewModel>(DataContext, out var newsViewModel);
+        if (sender is not ScrollViewer scrollViewer)
+        {
+            throw new ArgumentException("Sender is not a scroll viewer.", nameof(sender));
+        }
+
+        if (DataContext is not NewsViewModel newsViewModel)
+        {
+            throw new ArgumentException("Data context is not a news view model.", nameof(DataContext));
+        }
 
         var offset = scrollViewer.Offset.Y;
         var ext = scrollViewer.Extent.Height - scrollViewer.Bounds.Height;

@@ -127,7 +127,10 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             : string.Empty;
         set
         {
-            Guard2.IsOfType<HostsFixEntity>(SelectedFix, out var hostsFix);
+            if (SelectedFix is not HostsFixEntity hostsFix)
+            {
+                throw new ArgumentException("Selected fix is not a hosts fix.", nameof(SelectedFix));
+            }
 
             hostsFix.Entries = value.SplitSemicolonSeparatedString() ?? [];
         }
@@ -613,7 +616,10 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(OpenHostsEditorCanExecute))]
     private async Task OpenHostsEditorAsync()
     {
-        Guard2.IsOfType<HostsFixEntity>(SelectedFix, out var hostsFix);
+        if (SelectedFix is not HostsFixEntity hostsFix)
+        {
+            throw new ArgumentException("Selected fix is not a hosts fix.", nameof(SelectedFix));
+        }
 
         var result = await _popupEditor.ShowAndGetResultAsync("Hosts entries", hostsFix.Entries).ConfigureAwait(true);
 

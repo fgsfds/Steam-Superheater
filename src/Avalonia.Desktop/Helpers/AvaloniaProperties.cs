@@ -13,7 +13,10 @@ public static class AvaloniaProperties
         {
             var window = (Application.Current?.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
 
-            Guard2.IsOfType<MainWindow>(window, out var mainWindow);
+            if (window is not MainWindow mainWindow)
+            {
+                throw new ArgumentException("Main window is not available.", nameof(window));
+            }
 
             return mainWindow;
         }
