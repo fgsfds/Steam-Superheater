@@ -73,7 +73,7 @@ public sealed class App : Application
 
         SetTheme(config.Theme);
 
-        lifetime.MainWindow = new MainWindow(viewModelsFactory);
+        lifetime.MainWindow = new MainWindow(viewModelsFactory, config);
         lifetime.MainWindow.DataContext = viewModelsFactory.GetMainWindowViewModel();
 
         //initialize

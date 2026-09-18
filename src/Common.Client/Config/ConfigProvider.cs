@@ -28,6 +28,7 @@ public sealed class ConfigProvider : IConfigProvider
         _deleteZipsAfterInstall = bool.TryParse(dbContext.Settings.Find([nameof(DeleteZipsAfterInstall)])?.Value, out var result4) && result4;
         _openConfigAfterInstall = bool.TryParse(dbContext.Settings.Find([nameof(OpenConfigAfterInstall)])?.Value, out var result5) && result5;
         _useLocalApiAndRepo = bool.TryParse(dbContext.Settings.Find([nameof(UseLocalApiAndRepo)])?.Value, out var result6) && result6;
+        _useMica = !bool.TryParse(dbContext.Settings.Find([nameof(UseMica)])?.Value, out var useMica) || useMica;
         _localRepoPath = dbContext.Settings.Find([nameof(LocalRepoPath)])?.Value ?? string.Empty;
         _apiPassword = dbContext.Settings.Find([nameof(ApiPassword)])?.Value ?? string.Empty;
         _lastReadNewsDate = DateTime.TryParse(dbContext.Settings.Find([nameof(LastReadNewsDate)])?.Value, out var time) ? time : DateTime.MinValue;
@@ -132,6 +133,20 @@ public sealed class ConfigProvider : IConfigProvider
         set
         {
             _useLocalApiAndRepo = value;
+            SetSettingsDbValue(value.ToString());
+        }
+    }
+
+    private bool _useMica;
+    public bool UseMica
+    {
+        get
+        {
+            return _useMica;
+        }
+        set
+        {
+            _useMica = value;
             SetSettingsDbValue(value.ToString());
         }
     }

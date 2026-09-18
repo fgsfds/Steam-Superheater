@@ -12,6 +12,7 @@ public sealed class ConfigProviderFake : IConfigProvider
     public bool ShowUninstalledGames { get; set; } = false;
     public bool ShowUnsupportedFixes { get; set; } = false;
     public bool UseLocalApiAndRepo { get; set; } = false;
+    public bool UseMica { get; set; } = true;
     public string ApiPassword { get; set; } = string.Empty;
     public string LocalRepoPath { get; set; } = string.Empty;
     public HashSet<string> HiddenTags { get; set; } = [];

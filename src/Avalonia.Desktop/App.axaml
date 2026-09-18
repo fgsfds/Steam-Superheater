@@ -6,6 +6,9 @@
         <FluentTheme DensityStyle="Compact" />
         <StyleInclude Source="/Styles/Notification.axaml" />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        <Style Selector="ListBox">
+            <Setter Property="Background" Value="{DynamicResource SurfaceRaised}" />
+        </Style>
     </Application.Styles>
 
 </Application>

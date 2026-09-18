@@ -4,11 +4,18 @@
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key='Dark'>
             <SolidColorBrush x:Key='Background'>#202020</SolidColorBrush>
+            <SolidColorBrush x:Key='BackdropBackground'>#1A202020</SolidColorBrush>
+            <SolidColorBrush x:Key='SurfaceRaised'>#04FFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key='TitleBarBackgroundBrush'>Transparent</SolidColorBrush>
             <SolidColorBrush x:Key='PopupBackground'>Black</SolidColorBrush>
             <SolidColorBrush x:Key='WindowBorder'>Black</SolidColorBrush>
             <BoxShadows x:Key='Shadow'>0 0 5 Black</BoxShadows>
         </ResourceDictionary>
         <ResourceDictionary x:Key='Light'>
+            <SolidColorBrush x:Key='Background'>White</SolidColorBrush>
+            <SolidColorBrush x:Key='BackdropBackground'>#1AFFFFFF</SolidColorBrush>
+            <SolidColorBrush x:Key='SurfaceRaised'>#08000000</SolidColorBrush>
+            <SolidColorBrush x:Key='TitleBarBackgroundBrush'>Transparent</SolidColorBrush>
             <SolidColorBrush x:Key='PopupBackground'>DarkGray</SolidColorBrush>
             <SolidColorBrush x:Key='WindowBorder'>DarkGray</SolidColorBrush>
             <BoxShadows x:Key='Shadow'>0 0 5 DarkGray</BoxShadows>

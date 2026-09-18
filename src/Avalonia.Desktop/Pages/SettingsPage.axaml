@@ -171,6 +171,13 @@
                         Dark
                     </RadioButton>
 
+                    <CheckBox Margin="20,5"
+                              VerticalAlignment="Center"
+                              IsChecked="{Binding UseMicaCheckbox}"
+                              IsVisible="{Binding IsMicaSupported}">
+                        Mica effect
+                    </CheckBox>
+
                 </StackPanel>
 
             </Grid>

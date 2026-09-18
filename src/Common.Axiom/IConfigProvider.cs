@@ -17,6 +17,7 @@ public interface IConfigProvider
     Dictionary<Guid, bool> Upvotes { get; }
     List<SourceEntity> Sources { get; }
     bool UseLocalApiAndRepo { get; set; }
+    bool UseMica { get; set; }
     bool AllowEventsInvoking { get; set; }
     bool IsConsented { get; set; }
 

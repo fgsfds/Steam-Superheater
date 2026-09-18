@@ -17,8 +17,8 @@
         d:DesignHeight="450"
         d:DesignWidth="800"
         x:DataType="vm:MainWindowViewModel"
-        Background="{DynamicResource Background}"
         CanResize="True"
+        ClipToBounds="True"
         ExtendClientAreaToDecorationsHint="True"
         Icon="/Assets/icon.ico"
         WindowStartupLocation="CenterScreen"
@@ -26,6 +26,12 @@
         mc:Ignorable="d">
 
     <Window.Styles>
+        <Style Selector="Window:not(.mica)">
+            <Setter Property="Background" Value="{DynamicResource Background}" />
+        </Style>
+        <Style Selector="Window.mica">
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
         <Style Selector="WindowDrawnDecorations /template/ Panel#PART_TitleTextPanel TextBlock">
             <Setter Property="IsVisible" Value="False" />
         </Style>
@@ -49,6 +55,11 @@
             IsHitTestVisible="True">
 
         <Grid RowDefinitions="25,*,25">
+
+            <Border Grid.Row="0"
+                    Grid.RowSpan="3"
+                    Background="{DynamicResource BackdropBackground}"
+                    IsHitTestVisible="False" />
 
             <TextBlock Margin="10,5,0,0"
                        Foreground="{DynamicResource SystemAccentColor}"

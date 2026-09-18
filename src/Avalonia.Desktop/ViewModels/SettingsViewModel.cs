@@ -31,6 +31,8 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
 
     public bool IsDarkTheme => _config.Theme is ThemeEnum.Dark;
 
+    public bool IsMicaSupported => OperatingSystem.IsWindows();
+
     public int? ZipFilesCount
     {
         get
@@ -101,6 +103,13 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
     }
 
     [ObservableProperty]
+    private bool _useMicaCheckbox;
+    partial void OnUseMicaCheckboxChanged(bool value)
+    {
+        _config.UseMica = value;
+    }
+
+    [ObservableProperty]
     private string _pathToLocalRepoTextBox;
     partial void OnPathToLocalRepoTextBoxChanged(string value)
     {
@@ -151,6 +160,7 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
         PathToLocalRepoTextBox = _config.LocalRepoPath;
         ShowUninstalledGamesCheckbox = _config.ShowUninstalledGames;
         ShowUnsupportedFixesCheckbox = _config.ShowUnsupportedFixes;
+        UseMicaCheckbox = _config.UseMica;
         ApiPasswordTextBox = _config.ApiPassword;
 
         _config.ParameterChangedEvent += OnParameterChangedEvent;
