@@ -26,7 +26,8 @@
     <File Path="db/fixes.md" />
   </Folder>
   <Folder Name="/.files/GitHub/">
-    <File Path=".github/workflows/test.yml" />
+    <File Path=".github/workflows/build-and-test.yml" />
+    <File Path=".github/workflows/db-tests.yml" />
     <File Path=".github/workflows/release.yml" />
   </Folder>
   <Folder Name="/.start/">
