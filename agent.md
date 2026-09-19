@@ -180,4 +180,6 @@ errors and unexpected states, and log user-facing failures through `ILogger`.
   updater/uninstaller, and `FixManager` dispatch; do not special-case logic in view models.
 - Prefer editing existing files and following neighboring patterns over creating new
   abstractions.
-- Do not commit, push, or open pull requests unless explicitly asked.
+- Never commit, amend, push, or open pull requests unless the user explicitly asks.
+- Commit messages start with a capital letter and use `Fixed` / `Added` / `Updated`
+  rather than `Fix` / `Add` / `Update`.
