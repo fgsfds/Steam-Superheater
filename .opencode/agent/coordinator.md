@@ -31,6 +31,9 @@ slices to subagents, then review and verify their output.
       `axaml-writer`.
     - **XML documentation** only (backfilling or repairing `<summary>`/`<param>`/etc.,
       with no behavior change) → `xmldocs-writer`.
+    - **Content database JSON** (`db/fixes.json`, `db/news.json`, `db/data.json`) and
+      verification of the remote files those entries reference (existence, size, SHA-256,
+      upload date/version, renamed assets) → `json-writer`.
       When tasks are independent, launch subagents in parallel. Do not delegate two agents
       to the same file at the same time.
 4. **Integrate.** Review each subagent's diff before accepting it. Resolve overlaps,
