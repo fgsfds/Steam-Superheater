@@ -175,7 +175,11 @@
 
                 <StackPanel Orientation="Horizontal">
 
-                    <Image Height="48" Source="avares://Superheater/Assets/signpath.png" />
+                    <Path Width="48"
+                          Height="48"
+                          Data="M133.4 22.8H62.6L27.1 84.2l35.4 61.4h70.9l35.4-61.4zm1.7 68.6c-.7 1.6-2.3 2.6-4.1 2.6H94.2c-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5H121l-10.5-11.9a4.43 4.43 0 0 1 0-5.9L121 55.3H76.7v71.2c0 2.5-2 4.5-4.5 4.5s-4.5-2-4.5-4.5V41.7c0-2.5 2-4.5 4.5-4.5s4.5 2 4.5 4.5v4.6H131c1.8 0 3.4 1 4.1 2.6.7 1.6.4 3.5-.7 4.8L120 70.1l14.4 16.4c1.1 1.4 1.4 3.3.7 4.9z"
+                          Fill="{Binding $parent[Button].Foreground}"
+                          Stretch="Uniform" />
 
                     <StackPanel VerticalAlignment="Center" Orientation="Vertical">
                         <TextBlock Margin="10,0"
