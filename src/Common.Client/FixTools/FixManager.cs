@@ -94,19 +94,32 @@ public sealed class FixManager
 
         Result<BaseInstalledFixEntity> installedFix;
 
-        switch (fix)
+        try
         {
-            case FileFixEntity fileFix:
-                installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-                break;
-            case RegistryFixEntity registryFix:
-                installedFix = _registryFixInstaller.InstallFix(game, registryFix);
-                break;
-            case HostsFixEntity hostsFix:
-                installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
-                break;
-            default:
-                throw new NotSupportedException("Installer for this fix type is not implemented");
+            switch (fix)
+            {
+                case FileFixEntity fileFix:
+                    installedFix = await _fileFixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+                    break;
+                case RegistryFixEntity registryFix:
+                    installedFix = _registryFixInstaller.InstallFix(game, registryFix);
+                    break;
+                case HostsFixEntity hostsFix:
+                    installedFix = _hostsFixInstaller.InstallFix(game, hostsFix, hostsFile);
+                    break;
+                default:
+                    throw new NotSupportedException("Installer for this fix type is not implemented");
+            }
+        }
+        catch (IOException ex)
+        {
+            _logger.LogCritical(ex, "IO error while installing fix");
+            return new(ResultEnum.FileAccessError, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error while installing fix");
+            return new(ResultEnum.Error, ex.Message);
         }
 
         if (!installedFix.IsSuccess)
@@ -231,19 +244,32 @@ public sealed class FixManager
 
         Result<BaseInstalledFixEntity> installedFix;
 
-        switch (fix)
+        try
         {
-            case FileFixEntity fileFix:
-                installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-                break;
-            case RegistryFixEntity registryFix:
-                installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
-                break;
-            case HostsFixEntity hostsFix:
-                installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
-                break;
-            default:
-                throw new NotSupportedException("Updater for this fix type is not implemented");
+            switch (fix)
+            {
+                case FileFixEntity fileFix:
+                    installedFix = await _fileFixUpdater.UpdateFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+                    break;
+                case RegistryFixEntity registryFix:
+                    installedFix = _registryFixUpdater.UpdateFix(game, registryFix);
+                    break;
+                case HostsFixEntity hostsFix:
+                    installedFix = _hostsFixUpdater.UpdateFix(game, hostsFix, hostsFile);
+                    break;
+                default:
+                    throw new NotSupportedException("Updater for this fix type is not implemented");
+            }
+        }
+        catch (IOException ex)
+        {
+            _logger.LogCritical(ex, "IO error while updating fix");
+            return new(ResultEnum.FileAccessError, ex.Message);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error while updating fix");
+            return new(ResultEnum.Error, ex.Message);
         }
 
         if (!installedFix.IsSuccess)
