@@ -103,7 +103,17 @@ public sealed partial class AboutViewModel : ObservableObject
     {
         IsInProgress = true;
 
-        await _updateInstaller.DownloadAndUnpackLatestRelease(new()).ConfigureAwait(true);
+        var result = await _updateInstaller.DownloadAndUnpackLatestRelease(new()).ConfigureAwait(true);
+
+        if (!result.IsSuccess)
+        {
+            _logger.LogError(result.Message);
+
+            CheckForUpdatesButtonText = result.Message;
+            IsInProgress = false;
+
+            return;
+        }
 
         AppUpdateInstaller.InstallUpdate();
     }

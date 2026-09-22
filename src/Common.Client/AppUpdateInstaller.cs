@@ -56,7 +56,9 @@ public sealed class AppUpdateInstaller(
     /// <summary>
     /// Download latest release from Github and create update lock file
     /// </summary>
-    public async Task DownloadAndUnpackLatestRelease(CancellationToken cancellationToken)
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>Result of the operation</returns>
+    public async Task<Result> DownloadAndUnpackLatestRelease(CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(_update);
 
@@ -71,13 +73,31 @@ public sealed class AppUpdateInstaller(
             File.Delete(fileName);
         }
 
-        _ = await _filesDownloader.DownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
+        var downloadResult = await _filesDownloader.DownloadFileAsync(updateUrl, fileName, cancellationToken).ConfigureAwait(false);
 
-        ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder), true);
+        if (!downloadResult.IsSuccess)
+        {
+            _logger.LogError($"Error while downloading app update: {downloadResult.Message}");
 
-        File.Delete(fileName);
+            return downloadResult;
+        }
 
-        await File.Create(ClientConstants.UpdateFile).DisposeAsync().ConfigureAwait(false);
+        try
+        {
+            ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder), true);
+
+            File.Delete(fileName);
+
+            await File.Create(ClientConstants.UpdateFile).DisposeAsync().ConfigureAwait(false);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogCritical(ex, "Error while unpacking app update");
+
+            return new(ResultEnum.Error, "Error while unpacking app update");
+        }
+
+        return new(ResultEnum.Success, string.Empty);
     }
 
     /// <summary>
@@ -101,17 +121,15 @@ public sealed class AppUpdateInstaller(
         File.Delete(Path.Combine(dir, ClientConstants.UpdateFile));
         Directory.Delete(Path.Combine(dir, ClientConstants.UpdateFolder), true);
 
-        if (OperatingSystem.IsWindows())
-        {
-            //starting new version of the app
-            _ = System.Diagnostics.Process.Start(oldExe);
-        }
-        else if (OperatingSystem.IsLinux())
+        if (OperatingSystem.IsLinux())
         {
             //setting execute permission for user, otherwise the app won't run from game mode
             var attributes = File.GetUnixFileMode(oldExe);
             File.SetUnixFileMode(oldExe, attributes | UnixFileMode.UserExecute);
         }
+
+        //starting new version of the app
+        _ = System.Diagnostics.Process.Start(oldExe);
 
         Environment.Exit(0);
     }
