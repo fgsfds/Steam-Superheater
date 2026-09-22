@@ -1360,16 +1360,16 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/bully/Bully.WidescreenFix.zip",
-        "FileSize": 1215360,
+        "FileSize": 6431136,
         "ConfigFile": "plugins\\Bully.WidescreenFix.ini",
         "MD5": "BEBB512D6C9997FD538C6CC0C756BC48",
-        "Sha256": "3759850EA20D86834C3BAC58F6717DC1167EB4D1E7FDD586D2A01EE7561C32EF",
+        "Sha256": "B3364D93BFD805F2FC6081400E98BB146E5866F17649ABBDE4C3E671E915E24A",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Widescreen Fix",
         "Guid": "9c129caf-ec64-4b87-9d9f-373b41fe7fff",
-        "Version": "20.16",
+        "Version": "26.09",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Bully: Scholarship Edition Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/bully\n\n- Fixed Resolution (Ultra-Wide)\n- Fixed Aspect Ratio (Ultra-Wide)\n- Fixed HUD (Ultra-Wide)\n- Fixed Field of View (Ultra-Wide)\n- Fixed FMVs\n- Unlocked all resolutions supported by the OS\n- Fixed an issue when last selected resolution is reset upon startup\n- Adjustable FOV via ini",
         "Tags": [
@@ -1809,16 +1809,16 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/condemned/Condemned.WidescreenFix.zip",
-        "FileSize": 5131102,
+        "FileSize": 10430752,
         "ConfigFile": "scripts\\Condemned.WidescreenFix.ini",
         "MD5": "AF8B8A77153C5CD69935FD590F3F0FE6",
-        "Sha256": "A17FCC1798853A66D5CC378E1A82984D0F06CAE47434A66EA4F01209042A04CA",
+        "Sha256": "D7E4D487621898A9C97C60E05ED8877DA6B06F2FCF7619513A40A3920EEB34E3",
         "WineDllOverrides": [
           "d3d9"
         ],
         "Name": "Widescreen Fix",
         "Guid": "ac84995d-e902-44be-bc80-bf6ffc9f8f38",
-        "Version": "23.10",
+        "Version": "26.06",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Condemned: Criminal Origins Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/condemned\n\n- Fixed Resolution (Config.exe)\n- Fixed Aspect Ratio (Ultra-Wide)\n- Fixed HUD (Ultra-Wide)\r\n- Added gamepad support (via Xidi)\n- Added an option to fix stretched menu\n- Added an option to fix low framerate\n- Added an option to fix issue when controls aren\u0027t saved\n- Added an option to make windowed mode borderless",
         "Tags": [
@@ -4265,13 +4265,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gta3/III.Project2DFX.zip",
-        "FileSize": 359581,
+        "FileSize": 3113948,
         "InstallFolder": "scripts",
         "MD5": "D6D1E3656EF914C71F6A3C2293CFA33B",
-        "Sha256": "979CF5D944AE893D151B7922A6651B3329FE1E8B168220CF0ADA580FCC58D798",
+        "Sha256": "4C48DA5CF3F6D3ED5A74D0C19D9AAD19B0154A25AEE806639B82C6CE335A6C4F",
         "Name": "Project2DFX",
         "Guid": "24250f74-7113-4356-a8e0-7a52fc3e8498",
-        "Version": "24.11",
+        "Version": "26.09",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "19368ff4-62aa-4c48-8216-c551f463a176"
@@ -4563,13 +4563,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gtasa/SA.Project2DFX.zip",
-        "FileSize": 337769,
+        "FileSize": 3181458,
         "InstallFolder": "scripts",
         "MD5": "AEA893E26AE4DB3F41E8CF150C8A0495",
-        "Sha256": "2D065728D1648C14A65368A7359713D2135640AE104F1E3845DB4E44F4D3539E",
+        "Sha256": "C565EF9EDD2E2146FDDB1AAEA85F10B910FDC5B5ECA1DE830EFA8F889FDB57A6",
         "Name": "Project2DFX",
         "Guid": "fc0104dc-ce35-43ac-a457-ddbabc8308db",
-        "Version": "24.11",
+        "Version": "26.09",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "7a9c50d0-f82a-4b3a-8cd3-e15d5810a245"
@@ -4772,13 +4772,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/III.VC.SA.IV.Project2DFX/releases/download/gtavc/VC.Project2DFX.zip",
-        "FileSize": 365559,
+        "FileSize": 3110283,
         "InstallFolder": "scripts",
         "MD5": "09893F0AEE21681B2BE55DD807BA0F76",
-        "Sha256": "8D119B47E3DE5A513BF31DDC4D94B356C92540A0534A68A5B8B91EAEC2D94C55",
+        "Sha256": "AD82978D9DFBC02F388A12C192CCB0DE07B76D800361D6566F8FEF2BF03236E9",
         "Name": "Project2DFX",
         "Guid": "1728749b-a7fb-4a21-9961-b525d0a4161e",
-        "Version": "24.11",
+        "Version": "26.09",
         "SupportedOSes": "Windows, Linux",
         "Dependencies": [
           "7764507d-277e-418d-bde8-dd29c9300995"
@@ -5981,17 +5981,17 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/mafia/Mafia.WidescreenFix.zip",
-        "FileSize": 1429548,
+        "FileSize": 6330058,
         "InstallFolder": "Mafia",
         "ConfigFile": "Mafia\\scripts\\Mafia.WidescreenFix.ini",
         "MD5": "2CBE8F68B839E40E26484724E662A535",
-        "Sha256": "D21EC233DDE68FDAC919A07202FA3CBB7E287FCE2C47F3929AFBECB84DB4C004",
+        "Sha256": "B4C7CF6CF999E6D517CC5F7EA17D32D1F7DA7B21D62C75FA185EB22118963233",
         "WineDllOverrides": [
           "d3d8"
         ],
         "Name": "Widescreen Fix",
         "Guid": "f02cb30d-1101-4890-a55f-cd53d0a7942f",
-        "Version": "20.05",
+        "Version": "26.09",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Mafia Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/mafia\n\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs\n- Added an option to increase draw distance\n- Added an option to change fps limit\n- Added an option to fix issue with settings\n- Added an option to make windowed mode borderless\n- Added an option to set deadzone for left stick and right stick on gamepad (otherwise camera just spins on its own)",
         "Tags": [
@@ -7774,13 +7774,13 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rdr/RedDeadRedemption.FusionMod.zip",
-        "FileSize": 677881,
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/rdr/RedDeadRedemption.FusionFix.zip",
+        "FileSize": 908419,
         "MD5": "E6572C38FE4E7810C3540B67BE50C6E0",
-        "Sha256": "5D1F09B53FBA1C71BE32D54BEE68925EEB5D145E481D608EBABB8639CC72C4A7",
+        "Sha256": "CFE520A01BC668D74F8A930755B8B63FE38A6765417E591F73ED661F3BD87E12",
         "Name": "Fusion Mod",
         "Guid": "7f90b809-191c-4ddb-802a-1ca2dc9fe2d3",
-        "Version": "1.0",
+        "Version": "26.03",
         "SupportedOSes": "Windows",
         "Description": "## Red Dead Redemption Fusion Mod\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/rdr\n\n- Skips intro and legal screens",
         "Tags": [
@@ -8031,16 +8031,16 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/re0/ResidentEvil0.FusionFix.zip",
-        "FileSize": 1241502,
+        "FileSize": 1298700,
         "ConfigFile": "scripts\\ResidentEvil0.FusionFix.ini",
         "MD5": "73B2B9286FE1E7E6A547F27E54AE3574",
-        "Sha256": "F0A4B1D4A58AB01E6F8D8086EF4B949A5E19E0D2BC4F3C8B2DC6FB6CD2CB85D9",
+        "Sha256": "838CFBFDA11DD90139B98C0638848D794C5C426275C1E8B5814EC4FEAA8FC377",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "c6a7ce64-d334-4b39-a6f8-15f3081bbd93",
-        "Version": "25.09",
+        "Version": "26.02",
         "SupportedOSes": "Windows, Linux",
         "Description": "## Resident Evil 0 Fusion Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re0\n\n- Added an option to hide the mouse cursor after a set interval\n- Added an option to enable door skip\n- Added an option to enable borderless windowed mode\n- Added an option to disable color correction\n- Added an option to disable noise filter\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting",
         "Tags": [
@@ -8135,16 +8135,16 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/re6/ResidentEvil6.FusionFix.zip",
-        "FileSize": 1221944,
+        "FileSize": 1311688,
         "ConfigFile": "scripts\\ResidentEvil6.FusionFix.ini",
         "MD5": "8DE3F4C6F4043A7255937117532B1888",
-        "Sha256": "E45DC74FED6365A81C0C21D8EADDC98AF0F5FFAB011AE187EF9D335FC1C9861F",
+        "Sha256": "AB2D83996EFACDC614FA4AC1CA9D22BB21DC262BD5B31EA33C2E19AD7027604E",
         "WineDllOverrides": [
           "dinput8"
         ],
         "Name": "Fusion Fix",
         "Guid": "1e2c81fb-cb4d-47a6-bbdf-25be71e259ac",
-        "Version": "23.11",
+        "Version": "26.03",
         "SupportedOSes": "Windows",
         "Description": "## Resident Evil 6 Fusion Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/re6\n\n- Makes local split-screen coop mode fullscreen\n- Added UltraWide support\n- Some on-screen effects will be disabled in coop and UltraWide (damage, blood etc)\n- Unlocks FPS when FRAME RATE option is set to VARIABLE\n- Added an option to skip intro\n- Added an option to enable borderless windowed mode\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting\n\n**Warning**\n\nThis game uses Valve Anti Cheat for raid mode in multiplayer.\n\nIt is recommended NOT to play this mode with this fix installed.",
         "Tags": [
@@ -10068,13 +10068,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/sc/SplinterCell.WidescreenFix.zip",
-        "FileSize": 3999298,
+        "FileSize": 20690663,
         "ConfigFile": "system\\scripts\\SplinterCell.WidescreenFix.ini",
         "MD5": "CE7F252051C9EBD2A5843080CA29C194",
-        "Sha256": "DDB485971FD2DB443FFA926AF75E1D559E94EE82479221C476D8D31323E3BF1B",
+        "Sha256": "0CBFF4EAC59698F1BADB7FE37D4FE17226C2DCDDF88915F6C49736CDE6B99BE1",
         "Name": "Widescreen Fix",
         "Guid": "9da1a9db-2049-46ac-a6ce-b956999e7806",
-        "Version": "26.01.16",
+        "Version": "26.08",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/sc\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs",
         "Tags": [
@@ -10107,14 +10107,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scb/SplinterCellBlacklist.FusionMod.zip",
-        "FileSize": 1156419,
-        "ConfigFile": "src\\system\\scripts\\SplinterCellBlacklist.FusionMod.ini",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scb/SplinterCellBlacklist.FusionFix.zip",
+        "FileSize": 1348213,
+        "ConfigFile": "src\\SYSTEM\\scripts\\SplinterCellBlacklist.FusionFix.ini",
         "MD5": "06D4F064C05A43BB6C89C114C5C13913",
-        "Sha256": "656AF5FD8E1FFA92F2C12D8ED84D8C440A3C649B8356A64CF2CC6188BCB4631E",
+        "Sha256": "B807D01B849CA7AEAD6C04A43EAA2924809D0741E7007B907E00DA868F33A7FF",
         "Name": "Fusion Mod",
         "Guid": "0717a8a0-2900-4248-9b2c-d0c0f5fe32b7",
-        "Version": "24.10",
+        "Version": "26.03",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Blacklist Fusion Mod\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scb\n\n- Added an option to skip intro\n- Added an option to skip press any key screen\n- Added an option to switch the game to fullscreen mode on startup\n- Added an option to disable negative mouse acceleration\n- Added an option to enable ultrawide support\n- Added an option to change FOV\n- Added an option to change Screen Cull Bias, for better draw distance\n- Added an option to unlock DLC content that\u0027s unavailable after servers shut down\n- Added an option to unlock all missions from the start\n- Added an option to load packed files from disk\n- Added an option to enable Logitech G LIGHTSYNC RGB Lighting\n- Difficulty tweaks: Mark and Execute enabled on Perfectionist, unlimited ammo disabled on Rookie. To go back to original behavior, delete update/difficultyconfiguration.ini\n- Added an option to be able to run during forced walking sections",
         "Tags": [
@@ -10133,13 +10133,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scct/SplinterCellChaosTheory.WidescreenFix.zip",
-        "FileSize": 2700691,
+        "FileSize": 13990106,
         "ConfigFile": "System\\scripts\\SplinterCellChaosTheory.WidescreenFix.ini",
         "MD5": "789EBFC7B226D799131B56518708FF5B",
-        "Sha256": "F5CBDE216BB0735236EE9AD1201CA8DB795A3D3E926420382B6D1E0D08C4E821",
+        "Sha256": "FFFC1AC025EEF78155A5B0D6912C1D25CB4A34F8104FAFC5FCF1476CA619A1B5",
         "Name": "Widescreen Fix",
         "Guid": "d2797d6c-e7c0-48d9-9cf9-ff3210a26df8",
-        "Version": "26.02.15",
+        "Version": "26.08",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scct\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs\n- Added an option to change goggles\u0027 light color",
         "Tags": [
@@ -10172,14 +10172,14 @@
     "Fixes": [
       {
         "$type": "FileFix",
-        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scc/SplinterCellConviction.FusionMod.zip",
-        "FileSize": 1778042,
-        "ConfigFile": "src\\system\\d3d9.ini",
+        "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scc/SplinterCellConviction.FusionFix.zip",
+        "FileSize": 7495033,
+        "ConfigFile": "src\\system\\scripts\\SplinterCellConviction.FusionFix.ini",
         "MD5": "5BB3A28FD2F7A5C11F2CB25FD4FA236A",
-        "Sha256": "7C0B1EA0F216DDFFB17102B88904E09745534598820EDCBDDCAC7E1932C2BAF8",
+        "Sha256": "797A0229BB75C75D42326B9EB2221C392067DD8267A79685F121FDF5D0B98EB3",
         "Name": "Fusion Mod",
         "Guid": "98720cc1-8924-46e7-b87a-a58499c65fb9",
-        "Version": "25.12.15",
+        "Version": "26.06",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Conviction Fusion Mod\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scc\n\n- Option to skip intro\n- Option to skip system detection errors on startup\n- Option to disable depth of field effect\n- Option to disable black and white filter\n- Option to enable enhanced sonar vision\n- Option to disable character lighting",
         "Tags": [
@@ -10197,13 +10197,13 @@
       {
         "$type": "FileFix",
         "Url": "https://github.com/ThirteenAG/WidescreenFixesPack/releases/download/scda/SplinterCellDoubleAgent.WidescreenFix.zip",
-        "FileSize": 3022720,
+        "FileSize": 17292647,
         "ConfigFile": "SCDA-Offline\\System\\scripts\\SplinterCellDoubleAgent.WidescreenFix.ini",
         "MD5": "9369D574739321D794147A2AD0F55AA5",
-        "Sha256": "8FED52CFA21D5B2C9CC1DF06428128F66FEF187C608EE7A0AA230482E4288C99",
+        "Sha256": "EB30CD05E2713C93E3394779DF5E0BBFEEB0001C1E5695A81FAD0D68339FBF7C",
         "Name": "Widescreen Fix",
         "Guid": "89de542e-bc87-49a6-904a-6c2360340e5d",
-        "Version": "24.01",
+        "Version": "26.08",
         "SupportedOSes": "Windows",
         "Description": "## Splinter Cell Splinter Cell Double Agent Widescreen Fix\n*by ThirteenAG*\n\nhttps://github.com/ThirteenAG/WidescreenFixesPack/releases/tag/scda\n\n- Fixed Resolution\n- Fixed Aspect Ratio\n- Fixed HUD\n- Fixed Field of View\n- Fixed FMVs\n- Added an option to change goggles\u0027 light color",
         "Tags": [
