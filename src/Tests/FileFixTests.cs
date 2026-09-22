@@ -201,6 +201,30 @@ public sealed partial class FileFixTests
     }
 
     /// <summary>
+    /// Integrity check passes for an intact fix and fails for modified or missing files
+    /// </summary>
+    [Fact]
+    public async Task CheckFixIntegrity()
+    {
+        await InstallFixAsync(fixEntity: _fileFixEntity, variant: null, new()).ConfigureAwait(true);
+
+        var intactResult = await _fixManager.CheckFixAsync(_gameEntity, _fileFixEntity).ConfigureAwait(true);
+        Assert.Equal(ResultEnum.Success, intactResult.ResultEnum);
+
+        var installedFilePath = Path.Combine(_gameEntity.InstallDir, "install folder", "start game.exe");
+        File.WriteAllText(installedFilePath, "tampered");
+
+        var tamperedResult = await _fixManager.CheckFixAsync(_gameEntity, _fileFixEntity).ConfigureAwait(true);
+        Assert.Equal(ResultEnum.Error, tamperedResult.ResultEnum);
+
+        File.WriteAllText(installedFilePath, "fix_v1");
+        File.Delete(Path.Combine(_gameEntity.InstallDir, "install folder", "subfolder", "file.txt"));
+
+        var missingResult = await _fixManager.CheckFixAsync(_gameEntity, _fileFixEntity).ConfigureAwait(true);
+        Assert.Equal(ResultEnum.Error, missingResult.ResultEnum);
+    }
+
+    /// <summary>
     /// Install fix with incorrect MD5
     /// </summary>
     [Fact]

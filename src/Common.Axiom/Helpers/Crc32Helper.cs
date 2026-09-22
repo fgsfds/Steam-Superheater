@@ -2,9 +2,17 @@
 
 namespace Common.Axiom.Helpers;
 
+/// <summary>
+/// Calculates CRC32 checksums of files.
+/// </summary>
 public static class Crc32Helper
 {
-    public static async Task<string> GetCrc32Async(string path, bool isHex)
+    /// <summary>
+    /// Calculate the CRC32 checksum of a file.
+    /// </summary>
+    /// <param name="path">Path to the file.</param>
+    /// <returns>CRC32 checksum value.</returns>
+    public static async Task<uint> GetCrc32Async(string path)
     {
         const int BufferSize = 1 << 20; // 1 MiB
 
@@ -18,19 +26,15 @@ public static class Crc32Helper
         );
 
         var hasher = new Crc32();
-        var buffer = new byte[BufferSize].AsMemory();
+        var buffer = new byte[BufferSize];
         int bytesRead;
 
         while ((bytesRead = await fs.ReadAsync(buffer).ConfigureAwait(false)) > 0)
         {
-            hasher.Append(buffer.Span);
+            hasher.Append(buffer.AsSpan(0, bytesRead));
         }
 
         var hash = hasher.GetCurrentHash();
-        var crc = BitConverter.ToUInt32(hash, 0);
-
-        return isHex
-            ? $"0x{crc:X8}"
-            : crc.ToString();
+        return BitConverter.ToUInt32(hash, 0);
     }
 }

@@ -5,8 +5,17 @@ using Common.Axiom.Helpers;
 
 namespace Common.Client.FixTools.FileFix;
 
+/// <summary>
+/// Verifies installed file fixes against the checksums recorded during installation.
+/// </summary>
 public sealed class FileFixChecker
 {
+    /// <summary>
+    /// Check that every file of an installed file fix is present and unmodified.
+    /// </summary>
+    /// <param name="game">Game the fix is installed for.</param>
+    /// <param name="installedFix">Installed fix state.</param>
+    /// <returns><see langword="true"/> when every file with a recorded checksum matches; otherwise <see langword="false"/>.</returns>
     public async Task<bool> CheckFixHashAsync(GameEntity game, BaseInstalledFixEntity installedFix)
     {
         if (installedFix is not FileInstalledFixEntity installedFileFix)
@@ -29,9 +38,9 @@ public sealed class FileFixChecker
                 return false;
             }
 
-            var crc = await Crc32Helper.GetCrc32Async(path, false).ConfigureAwait(false);
+            var crc = await Crc32Helper.GetCrc32Async(path).ConfigureAwait(false);
 
-            if (crc.Equals(file.Value))
+            if (crc != file.Value)
             {
                 return false;
             }
@@ -40,4 +49,3 @@ public sealed class FileFixChecker
         return true;
     }
 }
-
