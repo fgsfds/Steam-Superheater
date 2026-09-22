@@ -5,6 +5,9 @@ using Common.Axiom.Helpers;
 
 namespace Common.Client.FixTools.FileFix;
 
+/// <summary>
+/// Uninstalls file fixes: deletes installed files and restores backups.
+/// </summary>
 public sealed class FileFixUninstaller
 {
     /// <summary>
@@ -52,9 +55,29 @@ public sealed class FileFixUninstaller
 
         var file = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
 
+        RemoveWineDllOverridesFromFile(file, dllList);
+    }
+
+    /// <summary>
+    /// Remove the added dll override lines from a Wine user.reg file
+    /// </summary>
+    /// <param name="file">Path to the user.reg file</param>
+    /// <param name="dllList">Lines to remove</param>
+    internal static void RemoveWineDllOverridesFromFile(string file, List<string> dllList)
+    {
+        if (!File.Exists(file))
+        {
+            return;
+        }
+
         var linesList = File.ReadAllLines(file).ToList();
 
         var startIndex = linesList.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
+
+        if (startIndex < 0)
+        {
+            return;
+        }
 
         List<int> indexes = new(dllList.Count);
 
