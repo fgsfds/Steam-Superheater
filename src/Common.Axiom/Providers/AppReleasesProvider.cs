@@ -22,72 +22,88 @@ public sealed class AppReleasesProvider
     }
 
     /// <summary>
-    /// Return the latest new release or null if there's no newer releases
+    /// Look for the latest Windows and Linux app releases
     /// </summary>
-    public async Task GetLatestVersionAsync()
+    /// <returns>Result of the operation</returns>
+    public async Task<Result> GetLatestVersionAsync()
     {
         _logger.LogInformation("Looking for new releases");
 
-        using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
+        try
         {
-            _logger.LogError("Error while getting releases" + Environment.NewLine + response.StatusCode);
-            return;
-        }
+            using var response = await _httpClient.GetAsync("https://api.github.com/repos/fgsfds/Steam-Superheater/releases", HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
-        var releasesJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-        var releases =
-            JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
-            ?? throw new InvalidDataException("Error while deserializing GitHub releases");
-
-        releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
-
-        AppReleaseEntity? windowsRelease = null;
-        AppReleaseEntity? linuxRelease = null;
-
-        foreach (var release in releases)
-        {
-            windowsRelease = GetRelease(release, "win-x64.zip");
-
-            if (windowsRelease is not null)
+            if (!response.IsSuccessStatusCode)
             {
-                break;
+                _logger.LogError("Error while getting releases" + Environment.NewLine + response.StatusCode);
+                return new(ResultEnum.ConnectionError, "Error while getting releases");
             }
-        }
 
-        foreach (var release in releases)
-        {
-            linuxRelease = GetRelease(release, "linux-x64.zip");
+            var releasesJson = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            if (linuxRelease is not null)
+            var releases =
+                JsonSerializer.Deserialize(releasesJson, GitHubReleaseEntityContext.Default.ListGitHubReleaseEntity)
+                ?? throw new InvalidDataException("Error while deserializing GitHub releases");
+
+            releases = [.. releases.Where(static x => x.IsDraft is false && x.IsPrerelease is false).OrderByDescending(static x => new Version(x.TagName))];
+
+            AppReleaseEntity? windowsRelease = null;
+            AppReleaseEntity? linuxRelease = null;
+
+            foreach (var release in releases)
             {
-                break;
+                windowsRelease = GetRelease(release, "win-x64.zip");
+
+                if (windowsRelease is not null)
+                {
+                    break;
+                }
             }
-        }
 
-        if (windowsRelease is null)
-        {
-            _logger.LogWarning("Windows release not found");
-        }
-        else
-        {
-            _logger.LogInformation($"Found Windows release {windowsRelease.Version}");
-        }
+            foreach (var release in releases)
+            {
+                linuxRelease = GetRelease(release, "linux-x64.zip");
 
-        WindowsRelease = windowsRelease;
+                if (linuxRelease is not null)
+                {
+                    break;
+                }
+            }
 
-        if (linuxRelease is null)
-        {
-            _logger.LogWarning("Linux release not found");
-        }
-        else
-        {
-            _logger.LogInformation($"Found Linux release {linuxRelease.Version}");
-        }
+            if (windowsRelease is null)
+            {
+                _logger.LogWarning("Windows release not found");
+            }
+            else
+            {
+                _logger.LogInformation($"Found Windows release {windowsRelease.Version}");
+            }
 
-        LinuxRelease = linuxRelease;
+            WindowsRelease = windowsRelease;
+
+            if (linuxRelease is null)
+            {
+                _logger.LogWarning("Linux release not found");
+            }
+            else
+            {
+                _logger.LogInformation($"Found Linux release {linuxRelease.Version}");
+            }
+
+            LinuxRelease = linuxRelease;
+
+            return new(ResultEnum.Success, string.Empty);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
+        {
+            _logger.LogError(ex, "GitHub is not responding");
+            return new(ResultEnum.ConnectionError, "GitHub is not responding");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while getting releases");
+            return new(ResultEnum.Error, "Error while getting releases");
+        }
     }
 
     private AppReleaseEntity? GetRelease(GitHubReleaseEntity release, string osPostfix)

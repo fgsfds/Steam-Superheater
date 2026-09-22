@@ -98,21 +98,26 @@ public sealed class GitHubApiInterface : IApiInterface
 
     public async Task<Result<AppReleaseEntity?>> GetLatestAppReleaseAsync(OSEnum osEnum)
     {
-        try
-        {
-            await _appReleasesProvider.GetLatestVersionAsync().ConfigureAwait(false);
+        var releasesResult = await _appReleasesProvider.GetLatestVersionAsync().ConfigureAwait(false);
 
-            return osEnum switch
-            {
-                OSEnum.Windows => new(ResultEnum.Success, _appReleasesProvider.WindowsRelease, string.Empty),
-                OSEnum.Linux => new(ResultEnum.Success, _appReleasesProvider.LinuxRelease, string.Empty),
-                _ => throw new NotImplementedException()
-            };
-        }
-        catch
+        if (!releasesResult.IsSuccess)
         {
-            return new(ResultEnum.ConnectionError, null, "Error while getting latest app release");
+            return new(releasesResult.ResultEnum, null, releasesResult.Message);
         }
+
+        var release = osEnum switch
+        {
+            OSEnum.Windows => _appReleasesProvider.WindowsRelease,
+            OSEnum.Linux => _appReleasesProvider.LinuxRelease,
+            _ => throw new NotImplementedException()
+        };
+
+        if (release is null)
+        {
+            return new(ResultEnum.NotFound, null, $"No release found for {osEnum}");
+        }
+
+        return new(ResultEnum.Success, release, string.Empty);
     }
 
     public async Task<Result<IReadOnlyDictionary<string, string>?>> GetDataJsonAsync()

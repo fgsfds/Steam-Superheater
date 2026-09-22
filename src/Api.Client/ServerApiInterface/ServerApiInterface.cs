@@ -89,7 +89,12 @@ public sealed partial class ServerApiInterface : IApiInterface
 
             var releases = await response.Content.ReadFromJsonAsync(GetReleasesOutMessageContext.Default.GetReleasesOutMessage).ConfigureAwait(false);
 
-            return new(ResultEnum.Success, releases!.Releases[osEnum], string.Empty);
+            if (releases is null || !releases.Releases.TryGetValue(osEnum, out var release))
+            {
+                return new(ResultEnum.NotFound, null, "Release not found");
+            }
+
+            return new(ResultEnum.Success, release, string.Empty);
         }
         catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
         {
