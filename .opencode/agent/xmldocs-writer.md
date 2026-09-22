@@ -12,8 +12,9 @@ instead of making it.
 
 ## Format (copy existing files exactly)
 
-- `/// <summary>` on **every** member, public and private, including fields, properties,
-  constructors, methods, enums, and enum values.
+- `/// <summary>` on **every public member** (missing docs surface as CS1591 warnings),
+  including fields, properties, constructors, methods, enums, and enum values. Also
+  document private members when the file already documents them.
 - Constructors and methods with parameters: `<param name="x">...</param>` for each.
 - Generic types/members: `<typeparam name="T">...</typeparam>`.
 - Non-void methods: `<returns>...</returns>`.

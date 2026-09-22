@@ -14,9 +14,10 @@ highlights the points most often missed.
 There is a single test project, **`src/Tests/Tests.csproj`**, with namespace `Tests`. It
 runs under the **Microsoft.Testing.Platform** runner (selected by `global.json`).
 
-- **Pure unit tests** are the default. They must not touch the network, the filesystem,
-  shared static state, or the Avalonia UI. Use fakes (`ConfigProviderFake`,
-  `*ProviderFake`, `Moq`, in-memory stubs) and keep them isolated.
+- **Pure unit tests** are the default. They must not touch the network, external services,
+  the real Windows hosts file/registry, shared static state, or the Avalonia UI. Local temp
+  folders are fine — the existing file/archive tests use them. Use fakes
+  (`ConfigProviderFake`, `*ProviderFake`, `Moq`, stubs) and keep tests isolated.
 - **External / service-backed tests** (they hit GitHub/S3/MinIO, edit the real hosts file,
   or need elevated permissions) must be marked `[Trait("Category", "Database")]` at the
   class or method level. CI runs these separately with
@@ -36,7 +37,9 @@ coordinator approval.
   the existing fakes first.
 - Test observable behavior through public APIs; do not test private members. Assert on
   outcomes, not implementation details.
-- Name tests `Method_Scenario_ExpectedResult`.
+- Name test classes `<Type>Tests`; test methods use a short descriptive PascalCase
+  sentence (e.g. `InstallUninstallFix`, `CheckFixIntegrity`). Match the neighboring files —
+  this repo does not use a `Method_Scenario_Expected` suffix scheme.
 - Follow the production C# checklist too: `var`, file-scoped namespaces, Allman braces,
   4-space indent, CRLF, no inline comments, no hard-coded package versions.
 
@@ -46,7 +49,7 @@ Build, then run the tests you added (excluding the external database set):
 
 ```pwsh
 dotnet build Superheater.slnx
-dotnet test --project ./src/Tests/Tests.csproj --filter-not-trait "Category=Database"
+dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Category=Database"
 ```
 
 All non-database tests in the project must pass. The hosts-fix tests require an elevated

@@ -14,21 +14,23 @@ highlights the points most often missed.
 - Read the target file and at least one neighboring file in the same project. Match
   their structure, ordering (fields, ctor, public members, private helpers), and naming.
 - Confirm the change respects the project reference direction in `agent.md` — never
-  introduce a reference that creates a cycle. In particular: `Common.Axiom` and
-  `Api.Axiom` are leaf/shared layers with no project references, and `Common.Client` must
-  not reference `Api.Client`.
-- Identify the owning `*Bindings.Load` DI helper (`ModelsBindings`, `ViewModelsBindings`,
-  `CommonBindings`, `ProvidersBindings`, `ApiBindings`). New services are registered there,
-  not in `App.axaml.cs` or another layer's helper.
+  introduce a reference that creates a cycle. In particular: `Common.Axiom` is a leaf with
+  no project references, `Api.Axiom` references only `Common.Axiom`, and `Common.Client`
+  must not reference `Api.Client`.
+- Identify the owning `With*()` DI helper (`ModelsBindings`, `ViewModelsBindings`,
+  `CommonBindings`, `ProvidersBindings`, `ApiBindings`, `DatabaseBindings`,
+  `LoggingBindings`). New services are registered there, not in `App.axaml.cs` or another
+  layer's helper.
 
 ## Mandatory conventions checklist
 
 - **`sealed` by default.** Every class you add is `sealed` unless it is genuinely a base
   type meant for inheritance. If you edit a non-inherited class that is unsealed, seal it.
-- **XML documentation on every member**, public and private: `<summary>`, plus
-  `<param>`/`<typeparam>`/`<returns>` as applicable. Overrides and interface
-  implementations use `<inheritdoc />`. The XML-doc format is in `agent.md` and every
-  existing file — copy it exactly.
+- **XML documentation on public members** (missing docs surface as CS1591 warnings):
+  `<summary>`, plus `<param>`/`<typeparam>`/`<returns>` as applicable. Overrides and
+  interface implementations use `<inheritdoc />`. Document private members where the
+  neighboring files do. The XML-doc format is in `agent.md` and every existing file — copy
+  it exactly.
 - **`_ =` for intentionally-unused results** (e.g. `_ = services.AddSingleton(...);`,
   `_ = sb.Append(x);`, `_ = dbContext.SaveChanges();`). Never `_ =` a value that matters.
 - Use `var` everywhere; file-scoped namespaces matching folder structure; Allman braces;

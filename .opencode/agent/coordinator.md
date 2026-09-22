@@ -48,8 +48,8 @@ A subagent starts fresh with no context. Every `task` you send must be self-cont
 - The concrete goal and the exact file path (s) to change.
 - The relevant existing types/members and how they are used.
 - Constraints from `agent.md` that apply (sealed, XML docs, `_ =`, `ConfigureAwait(false)`,
-  `Result` pattern, DI registration via the owning `*Bindings.Load` helper, no
-  cycle-breaking references, etc.).
+  `Result` pattern, DI registration via the owning `With*()` helper, no cycle-breaking
+  references, etc.).
 - How to verify (which project builds, which tests run).
 - What to return: files touched, a summary, and any uncertainty — not a restatement of
   your brief.

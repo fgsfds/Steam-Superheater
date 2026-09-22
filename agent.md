@@ -14,14 +14,15 @@ file). It also ships an editor for user-submitted fixes.
 - UI: **Avalonia** desktop app, MVVM via **CommunityToolkit.Mvvm**.
 - Runtime: **.NET 10**, nullable enabled, implicit usings, file-scoped namespaces.
 - Persistence: **SQLite** via EF Core (`Superheater.db`).
-- Networking: `HttpClient` against GitHub raw JSON and S3; fixes archives are downloaded
-  with SHA-256/MD5 verification.
+- Networking: `HttpClient` against GitHub raw JSON and S3; fixes archives are verified
+  with SHA-256 (the legacy `MD5` field is obsolete).
 - Content DB: versioned JSON files under `db/` (`fixes.json`, `news.json`, `data.json`).
 
 ## Build, run, test
 
-.NET SDK is pinned to the `10.0.x` band. Central package management is on
-(`Directory.Packages.props`); never hard-code package versions in a `.csproj`.
+The projects target **.NET 10** (`net10.0`); CI installs the `10.0.x` SDK. Central package
+management is on (`Directory.Packages.props`); never hard-code package versions in a
+`.csproj`.
 
 ```pwsh
 dotnet restore
@@ -63,7 +64,7 @@ src/
   Common.Axiom      Domain entities, enums, Result/Result<T>, JSON contexts, helpers,
                     release provider. Shared layer, no dependency on the UI.
   Common.Client     Config, file/archive/download/upload tools, fix tools
-                    (installer/updater/uninstaller/checker), providers, bindings.
+                    (installer/updater/uninstaller/checker), providers, DI helpers.
   Database.Client   EF Core DatabaseContext + DbEntities + Migrations.
   Avalonia.Desktop  App entry point, DI composition root, views, view models, styles.
   Tests             xunit v3 test project.
@@ -73,10 +74,10 @@ db/                 fixes/news/data JSON databases shipped with the app.
 Project references:
 
 ```
-Api.Axiom          -> (none)
+Api.Axiom          -> Common.Axiom
 Common.Axiom       -> (none)
 Database.Client    -> Common.Axiom
-Api.Client         -> Api.Axiom, Common.Axiom, Common.Client
+Api.Client         -> Api.Axiom, Common.Client
 Common.Client      -> Api.Axiom, Common.Axiom, Database.Client
 Avalonia.Desktop   -> Api.Client, Common.Client
 Tests              -> Api.Client, Common.Client
@@ -88,19 +89,20 @@ Do not introduce a cycle that reverses these.
 
 ### Composition root and DI
 
-`src/Avalonia.Desktop/App.axaml.cs` is the entry point. `App.LoadBindings()` populates a
-`ServiceCollection` through the `Load(container, isDesigner)` helpers
-(`ModelsBindings`, `ViewModelsBindings`, `CommonBindings`, `ProvidersBindings`,
-`ApiBindings`) and resolves everything through the static `BindingsManager.Provider`.
+`src/Avalonia.Desktop/App.axaml.cs` is the entry point. `App.LoadBindings()` builds a
+`ServiceCollection` through the `With*()` extension-method helpers
+(`WithLogging`, `WithCommon`, `WithDatabase`, `WithProviders`, `WithModels`,
+`WithViewModels`, `WithApi`) and resolves services from the built `ServiceProvider`.
+Views receive their view models through `IViewModelsFactory`
+(`src/Avalonia.Desktop/ViewModels/ViewModelsFactory.cs`) instead of a service locator.
 
-- Register new services in the owning `*Bindings.Load` helper, not in `App`.
-- Design mode swaps in `ConfigProviderFake` and the `*ProviderFake` implementations.
+- Register new services in the owning `With*()` helper — the `*Bindings` classes
+  (`ModelsBindings`, `ViewModelsBindings`, `CommonBindings`, `ProvidersBindings`,
+  `ApiBindings`, `DatabaseBindings`, `LoggingBindings`) — not in `App`.
+- Design mode swaps in `ConfigProviderFake` and the `*ProviderFake` implementations via
+  `WithProviders(Design.IsDesignMode)`.
 - `--dev`, `--offline`, and `--deck` are the runtime modes selected in `Program.Main`.
   Keep every branch working.
-
-> NOTE: replacing the static `BindingsManager` service locator with `With*()` extension
-> methods and instance-based view models is planned; until then, follow the existing
-> `BindingsManager` pattern when adding services.
 
 ### Domain model
 
@@ -139,7 +141,7 @@ errors and unexpected states, and log user-facing failures through `ILogger`.
 
 - **XML documentation** on public members follows the existing style (`<summary>`,
   `<param>`, `<returns>`, `<inheritdoc />`). `GenerateDocumentationFile` is on.
-- **Discard intentionally-unused results** with `_ =`, e.g. `_ = services.WithConfig();`,
+- **Discard intentionally-unused results** with `_ =`, e.g. `_ = services.WithCommon();`,
   `_ = sb.Append(...)`, `_ = cache.Remove(x);`.
 - Use `var` everywhere; never spell out the type when it is apparent.
 - File-scoped namespaces only, matching folder structure.
@@ -166,8 +168,9 @@ errors and unexpected states, and log user-facing failures through `ILogger`.
 - Use xunit `[Fact]`/`[Theory]`, `[InlineData]`, and `Moq` for dependencies.
 - Mark tests that touch external services/network with `[Trait("Category", "Database")]`.
 - Test observable behavior through public APIs; avoid testing private members.
-- Do not add network/disk-dependent tests to the non-database set; isolate with fakes
-  (`ConfigProviderFake`, `*ProviderFake`, stubs).
+- Do not add tests that touch the network, external services, the real Windows hosts
+  file/registry, or shared static state to the non-database set; isolate with fakes
+  (`ConfigProviderFake`, `*ProviderFake`, stubs) and local temp folders.
 
 ## Guardrails
 

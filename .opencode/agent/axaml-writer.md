@@ -35,7 +35,8 @@ You write Avalonia UI for the **Superheater** repository (`src/Avalonia.Desktop`
   - `xmlns:controls="clr-namespace:Avalonia.Desktop.UserControls"`,
   - `xmlns:helpers="clr-namespace:Avalonia.Desktop.Helpers"`,
   - `xmlns:i="https://github.com/projektanker/icons.avalonia"` for icons,
-  - `xmlns:md="https://github.com/whistyun/Markdown.Avalonia.Tight"` for markdown.
+  - `xmlns:mdv="clr-namespace:Avalonia.Desktop.UserControls"` for the project's own
+    `MarkdownViewer` control (markdown is rendered through it, not a third-party namespace).
 - Prefer `{DynamicResource ...}` for theme-aware brushes/colors (theme is switchable at
   runtime). Assets use `avares://Superheater/Assets/...`.
 - Keep all logic and state in the view model. Code-behind is allowed only for view-only
@@ -49,10 +50,14 @@ You write Avalonia UI for the **Superheater** repository (`src/Avalonia.Desktop`
 
 ## Design-time and DI
 
-View models are resolved through `BindingsManager.Provider` in code-behind, and design
+Views receive their runtime view models through `IViewModelsFactory`
+(`src/Avalonia.Desktop/ViewModels/ViewModelsFactory.cs`), which is injected into
+code-behind (e.g. `MainWindow`). The parameterless designer constructor may set a
+`DataContext` for preview when `Design.IsDesignMode` is true (as the popup controls do).
+Services are registered through the `With*()` helpers in `App.LoadBindings()`, and design
 mode swaps in `ConfigProviderFake` / the `*ProviderFake` implementations via
-`ProvidersBindings`. Do not introduce design-time-only types that also get constructed at
-runtime; keep the preview working.
+`WithProviders(Design.IsDesignMode)`. Do not introduce design-time-only types that also get
+constructed at runtime; keep the preview working.
 
 ## Verify before returning
 
