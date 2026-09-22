@@ -1057,29 +1057,35 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private async Task UpdateAsync(bool localFixesOnly, bool dropFixesCache, bool dropGamesCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
-        IsInProgress = true;
-        ProgressBarText = "Updating...";
 
-        var result = await _mainModel.UpdateGamesListAsync(localFixesOnly, dropFixesCache, dropGamesCache).ConfigureAwait(true);
-
-        await FillGamesListAsync().ConfigureAwait(true);
-
-        if (!result.IsSuccess)
+        try
         {
-            NotificationsHelper.Show(
-                result.Message,
-                NotificationType.Error
-                );
+            IsInProgress = true;
+            ProgressBarText = "Updating...";
+
+            var result = await _mainModel.UpdateGamesListAsync(localFixesOnly, dropFixesCache, dropGamesCache).ConfigureAwait(true);
+
+            await FillGamesListAsync().ConfigureAwait(true);
+
+            if (!result.IsSuccess)
+            {
+                NotificationsHelper.Show(
+                    result.Message,
+                    NotificationType.Error
+                    );
+            }
+
+            OnPropertyChanged(nameof(TagsComboboxList));
+            UpvoteCommand.NotifyCanExecuteChanged();
+            DownvoteCommand.NotifyCanExecuteChanged();
         }
+        finally
+        {
+            IsInProgress = false;
+            ProgressBarText = string.Empty;
 
-        OnPropertyChanged(nameof(TagsComboboxList));
-        UpvoteCommand.NotifyCanExecuteChanged();
-        DownvoteCommand.NotifyCanExecuteChanged();
-
-        IsInProgress = false;
-        ProgressBarText = string.Empty;
-
-        _ = _locker.Release();
+            _ = _locker.Release();
+        }
     }
 
     /// <summary>

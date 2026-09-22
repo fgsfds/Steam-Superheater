@@ -86,26 +86,31 @@ public static class ClientProperties
 
         _semaphore.Wait();
 
-        ProcessStartInfo processInfo = new()
+        try
         {
-            FileName = "bash",
-            Arguments = "-c \"echo $DESKTOP_SESSION\"",
-            RedirectStandardOutput = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
+            ProcessStartInfo processInfo = new()
+            {
+                FileName = "bash",
+                Arguments = "-c \"echo $DESKTOP_SESSION\"",
+                RedirectStandardOutput = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
 
-        using var proc = Process.Start(processInfo);
+            using var proc = Process.Start(processInfo);
 
-        ArgumentNullException.ThrowIfNull(proc);
+            ArgumentNullException.ThrowIfNull(proc);
 
-        var result = proc.StandardOutput.ReadToEnd().Trim();
+            var result = proc.StandardOutput.ReadToEnd().Trim();
 
-        proc.WaitForExit();
+            proc.WaitForExit();
 
-        _isSteamDeckGameMode = result.StartsWith("gamescope-wayland");
-
-        _ = _semaphore.Release();
+            _isSteamDeckGameMode = result.StartsWith("gamescope-wayland");
+        }
+        finally
+        {
+            _ = _semaphore.Release();
+        }
 
         return _isSteamDeckGameMode.Value;
     }

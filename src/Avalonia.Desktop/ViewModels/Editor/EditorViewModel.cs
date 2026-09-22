@@ -868,24 +868,30 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private async Task UpdateAsync(bool dropCache)
     {
         await _locker.WaitAsync().ConfigureAwait(true);
-        IsInProgress = true;
 
-        var result = await _editorModel.UpdateListsAsync(dropCache).ConfigureAwait(true);
-
-        FillGamesList();
-
-        if (!result.IsSuccess)
+        try
         {
-            NotificationsHelper.Show(
-                result.Message,
-                NotificationType.Error
-                );
+            IsInProgress = true;
+
+            var result = await _editorModel.UpdateListsAsync(dropCache).ConfigureAwait(true);
+
+            FillGamesList();
+
+            if (!result.IsSuccess)
+            {
+                NotificationsHelper.Show(
+                    result.Message,
+                    NotificationType.Error
+                    );
+            }
+
+            OnPropertyChanged(nameof(IsEmpty));
         }
-
-        OnPropertyChanged(nameof(IsEmpty));
-
-        IsInProgress = false;
-        _ = _locker.Release();
+        finally
+        {
+            IsInProgress = false;
+            _ = _locker.Release();
+        }
     }
 
     /// <summary>

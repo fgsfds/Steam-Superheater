@@ -202,19 +202,24 @@ internal sealed partial class NewsViewModel : ObservableObject
     {
         await _locker.WaitAsync().ConfigureAwait(true);
 
-        var result = await _newsProvider.UpdateNewsListAsync().ConfigureAwait(true);
-
-        if (!result.IsSuccess)
+        try
         {
-            NotificationsHelper.Show(
-                result.Message,
-                NotificationType.Error
-            );
+            var result = await _newsProvider.UpdateNewsListAsync().ConfigureAwait(true);
+
+            if (!result.IsSuccess)
+            {
+                NotificationsHelper.Show(
+                    result.Message,
+                    NotificationType.Error
+                );
+            }
+
+            ResetNewsList();
         }
-
-        ResetNewsList();
-
-        _ = _locker.Release();
+        finally
+        {
+            _ = _locker.Release();
+        }
     }
 
     /// <summary>
