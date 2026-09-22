@@ -7,6 +7,8 @@ namespace Common.Client.FilesTools;
 
 public sealed class FilesDownloader : IFilesDownloader
 {
+    private const int MaxContinueDownloadAttempts = 5;
+
     private readonly ProgressReport _progressReport;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger _logger;
@@ -155,35 +157,44 @@ public sealed class FilesDownloader : IFilesDownloader
         CancellationToken cancellationToken
         )
     {
-        _logger.LogInformation("Trying to continue downloading after failing");
+        Exception? lastException = null;
 
-        try
+        for (var attempt = 0; attempt < MaxContinueDownloadAttempts; attempt++)
         {
-            using HttpRequestMessage request = new()
+            _logger.LogInformation($"Trying to continue downloading after failing, attempt {attempt + 1}");
+
+            try
             {
-                RequestUri = url,
-                Method = HttpMethod.Get
-            };
+                using HttpRequestMessage request = new()
+                {
+                    RequestUri = url,
+                    Method = HttpMethod.Get
+                };
 
-            request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
+                request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
 
-            using var httpClient = _httpClientFactory.CreateClient();
-            using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                using var httpClient = _httpClientFactory.CreateClient();
+                using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
 
-            if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
-            {
-                throw new InvalidOperationException("Error while downloading a file: " + response.StatusCode);
+                if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
+                {
+                    throw new InvalidOperationException("Error while downloading a file: " + response.StatusCode);
+                }
+
+                await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+
+                await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
+
+                await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+
+                return;
             }
-
-            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-            await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
-
-            await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+            catch (HttpIOException ex)
+            {
+                lastException = ex;
+            }
         }
-        catch (HttpIOException)
-        {
-            await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
-        }
+
+        throw new InvalidOperationException($"Failed to continue downloading {url} after {MaxContinueDownloadAttempts} attempts", lastException);
     }
 }
