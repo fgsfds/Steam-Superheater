@@ -526,7 +526,7 @@ public sealed class EditorModel
                             fixEntity.Url = await _s3Provider.GetFileUrlAsync(fixEntity.Url).ConfigureAwait(false);
                         }
 
-                        using var header = _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).Result;
+                        using var header = await _httpClient.GetAsync(fixEntity.Url, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
 
                         ArgumentNullException.ThrowIfNull(header.Content.Headers.ContentLength);
 
@@ -549,8 +549,8 @@ public sealed class EditorModel
                         }
                         else
                         {
-                            using var stream = header.Content.ReadAsStream();
-                            var hash = SHA256.HashData(stream);
+                            using var stream = await header.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                            var hash = await SHA256.HashDataAsync(stream).ConfigureAwait(false);
                             var hashSet = Convert.ToHexString(hash);
 
                             fixEntity.Sha256 = hashSet;
