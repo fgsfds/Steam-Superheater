@@ -3,11 +3,11 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Avalonia" Version="12.1.2" />
+    <PackageVersion Include="Avalonia" Version="12.1.3" />
     <PackageVersion Include="Avalonia.Controls.DataGrid" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Desktop" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.2" />
-    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.2" />
+    <PackageVersion Include="Avalonia.Desktop" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="12.1.3" />
+    <PackageVersion Include="Avalonia.Fonts.Inter" Version="12.1.3" />
     <PackageVersion Include="AvaloniaUI.DiagnosticsSupport" Version="2.2.3" />
     <PackageVersion Include="ClassIsland.Markdown.Avalonia.Html" Version="12.0.0" />
     <PackageVersion Include="ClassIsland.Markdown.Avalonia.Tight" Version="12.0.0" />
