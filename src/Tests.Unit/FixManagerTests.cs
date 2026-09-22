@@ -7,7 +7,7 @@ using Common.Client.FixTools.RegistryFix;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit;
 
 /// <summary>
 /// Tests for <see cref="FixManager"/>

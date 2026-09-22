@@ -9,11 +9,14 @@ jobs:
 
     runs-on: windows-latest
 
+    permissions:
+      contents: read
+
     steps:
     - uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
@@ -24,17 +27,25 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Unit tests
-      run: dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Category=Database" --verbosity normal
+      run: dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build --verbosity normal
+
+    - name: Unit tests (sequential)
+      run: dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build --verbosity normal
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build-and-test-linux:
 
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
     - uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
@@ -45,4 +56,9 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Unit tests
-      run: dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Category=Database" --verbosity normal
+      run: dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build --verbosity normal
+
+    - name: Unit tests (sequential)
+      run: dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build --verbosity normal
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

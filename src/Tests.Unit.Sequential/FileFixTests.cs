@@ -14,12 +14,11 @@ using Common.Client.Providers.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests that use instance data and should be run in a single thread
 /// </summary>
-[Collection("Sync")]
 public sealed partial class FileFixTests
 {
     private readonly string _testFixZip = Path.Combine(Helpers.RootFolder, "Resources", "test_fix.zip");

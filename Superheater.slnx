@@ -47,6 +47,9 @@
     </Project>
   </Folder>
   <Folder Name="/Tests/">
-    <Project Path="src/Tests/Tests.csproj" />
+    <Project Path="src/Tests.Core/Tests.Core.csproj" />
+    <Project Path="src/Tests.Database/Tests.Database.csproj" />
+    <Project Path="src/Tests.Unit/Tests.Unit.csproj" />
+    <Project Path="src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj" />
   </Folder>
 </Solution>

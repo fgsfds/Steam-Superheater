@@ -5,7 +5,7 @@ using Common.Client.FilesTools;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests for <see cref="FilesDownloader"/>

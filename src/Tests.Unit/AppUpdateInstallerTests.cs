@@ -7,7 +7,7 @@ using Common.Client.FilesTools.Interfaces;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit;
 
 /// <summary>
 /// Tests for <see cref="AppUpdateInstaller"/>

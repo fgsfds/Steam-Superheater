@@ -1,6 +1,6 @@
-﻿using Common.Axiom.Helpers;
+using Common.Axiom.Helpers;
 
-namespace Tests;
+namespace Tests.Unit;
 
 public sealed class VersionCompareTests
 {

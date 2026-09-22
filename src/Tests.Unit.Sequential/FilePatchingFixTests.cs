@@ -2,7 +2,7 @@ using Common.Axiom.Entities.Fixes.FileFix;
 using Common.Axiom.Enums;
 using Common.Client;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests that use instance data and should be run in a single thread

@@ -1,9 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using System.Text.Json;
 using Common.Axiom.Entities;
 using Common.Client;
 
-namespace Tests;
+namespace Tests.Core;
 
 public static class Helpers
 {

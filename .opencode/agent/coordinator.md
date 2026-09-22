@@ -25,8 +25,8 @@ slices to subagents, then review and verify their output.
 3. **Delegate.** Route work to the right subagent with a self-contained brief (see below):
     - **Production C# logic** (domain types, providers, fix tools, services, view models,
       DI registration, installers) → `csharp-writer`.
-    - **Tests** (xunit v3 facts/theories, Moq, `Trait("Category", "Database")` placement)
-      → `tests-writer`.
+    - **Tests** (xunit v3 facts/theories, Moq, and placing the test in the right project:
+      `Tests.Unit` / `Tests.Unit.Sequential` / `Tests.Database`) → `tests-writer`.
     - **Avalonia UI** (`.axaml` pages, user controls, styles, code-behind) →
       `axaml-writer`.
     - **XML documentation** only (backfilling or repairing `<summary>`/`<param>`/etc.,

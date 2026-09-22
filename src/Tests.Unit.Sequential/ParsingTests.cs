@@ -7,12 +7,11 @@ using Common.Client.Providers;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests that can be run in parallel
 /// </summary>
-[Collection("Sync")]
 public sealed class ParsingTests
 {
     [Fact]
@@ -43,7 +42,6 @@ public sealed class ParsingTests
 /// <summary>
 /// Tests that can be run in parallel
 /// </summary>
-[Collection("Sync")]
 public sealed class InstalledFileFixBackwardsCompatibilityTest
 {
     [Fact]

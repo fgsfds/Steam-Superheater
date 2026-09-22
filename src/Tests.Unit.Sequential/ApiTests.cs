@@ -9,10 +9,8 @@ using Database.Client;
 using Microsoft.Extensions.Logging;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
-[Collection("Sync")]
-[Trait("Category", "Database")]
 public sealed class ApiTests
 {
     [Fact]
@@ -22,8 +20,7 @@ public sealed class ApiTests
         Mock<IInstalledFixesProvider> installedMock = new();
         Mock<IConfigProvider> configMock = new();
         Mock<ILogger> logger = new();
-        using HttpClient httpClient = new();
-        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+        using HttpClient httpClient = CreateHttpClient();
 
         //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
         IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
@@ -49,8 +46,7 @@ public sealed class ApiTests
         Mock<ILogger> loggerMock = new();
         Mock<IConfigProvider> configMock = new();
         Mock<ILogger> logger = new();
-        using HttpClient httpClient = new();
-        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+        using HttpClient httpClient = CreateHttpClient();
 
         //IApiInterface apiInterface = new ServerApiInterface(httpClient, configMock.Object);
         IApiInterface apiInterface = new GitHubApiInterface(new(logger.Object, httpClient), httpClient, logger.Object);
@@ -60,5 +56,23 @@ public sealed class ApiTests
 
         Assert.True(release.IsSuccess);
     }
-}
 
+    /// <summary>
+    /// Creates an HTTP client that authenticates with GitHub when a token is available so that CI runs are not
+    /// throttled by the unauthenticated rate limit.
+    /// </summary>
+    private static HttpClient CreateHttpClient()
+    {
+        HttpClient httpClient = new();
+        httpClient.DefaultRequestHeaders.Add("User-Agent", "Superheater");
+
+        var token = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
+
+        if (!string.IsNullOrWhiteSpace(token))
+        {
+            httpClient.DefaultRequestHeaders.Authorization = new("Bearer", token);
+        }
+
+        return httpClient;
+    }
+}

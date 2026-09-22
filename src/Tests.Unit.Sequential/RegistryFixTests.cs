@@ -11,12 +11,11 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
 using Moq;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests that use instance data and should be run in a single thread
 /// </summary>
-[Collection("Sync")]
 public sealed class RegistryFixTests : IDisposable
 {
     private readonly FixManager _fixManager;

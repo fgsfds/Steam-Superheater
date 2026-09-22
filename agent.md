@@ -31,27 +31,24 @@ dotnet run --project src/Avalonia.Desktop
 ```
 
 `global.json` selects the **Microsoft.Testing.Platform** runner, so use the
-`--project` form (not a bare project path):
+`--project` form (not a bare project path). Tests are split into projects by category,
+with shared fixtures in `Tests.Core`:
 
 ```pwsh
-dotnet test --project ./src/Tests/Tests.csproj --no-build
+# pure unit tests — no real filesystem/network/OS (Windows + Linux CI)
+dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build
+# tests that touch real storage/network/OS and must run sequentially (Windows + Linux CI)
+dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build
+# database integrity + MinIO (needs MINIO_ACCESS_KEY / MINIO_SECRET_KEY)
+dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build
 ```
 
-Test filtering uses MTP/xunit v3 trait syntax (not the VSTest `--filter "Category~…"`):
-
-```pwsh
-# everything except the database-integrity tests
-dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Category=Database"
-# only the database-integrity tests (needs MINIO_ACCESS_KEY / MINIO_SECRET_KEY)
-dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-trait "Category=Database"
-```
-
-- `Tests` is the only test project. Pure unit tests run in the normal pass; tests that
-  touch external services, the network, or the real Windows hosts file are marked
-  `[Trait("Category", "Database")]` and run separately.
-- The `Category=Database` tests hit real external services (GitHub/S3) or require an
-  elevated shell, so they are expected to fail without the MinIO secrets / admin rights;
-  CI runs them separately (on push only).
+- `Tests.Unit` and `Tests.Unit.Sequential` run in the normal CI pass on Windows and Linux.
+- `Tests.Database` hits real external services (GitHub/S3/MinIO) or requires an elevated
+  shell, so it is expected to fail without the MinIO secrets / admin rights; CI runs it
+  separately (on `db/**` changes).
+- `Tests.Core` is a non-test library holding the shared `Helpers` and test resources; the
+  test projects reference it.
 - Always build and run the affected test project after a change. There is no separate
   lint command: analyzers run on build.
 
@@ -67,7 +64,10 @@ src/
                     (installer/updater/uninstaller/checker), providers, DI helpers.
   Database.Client   EF Core DatabaseContext + DbEntities + Migrations.
   Avalonia.Desktop  App entry point, DI composition root, views, view models, styles.
-  Tests             xunit v3 test project.
+  Tests.Core        Shared test helpers and resources (non-test library).
+  Tests.Unit        xunit v3 pure unit tests.
+  Tests.Unit.Sequential  xunit v3 tests that touch real storage/network/OS.
+  Tests.Database    xunit v3 database-integrity and MinIO tests.
 db/                 fixes/news/data JSON databases shipped with the app.
 ```
 
@@ -80,7 +80,10 @@ Database.Client    -> Common.Axiom
 Api.Client         -> Api.Axiom, Common.Client
 Common.Client      -> Api.Axiom, Common.Axiom, Database.Client
 Avalonia.Desktop   -> Api.Client, Common.Client
-Tests              -> Api.Client, Common.Client
+Tests.Core         -> Common.Client
+Tests.Unit         -> Tests.Core, Api.Client, Common.Client
+Tests.Unit.Sequential -> Tests.Core, Api.Client, Common.Client
+Tests.Database     -> Tests.Core, Api.Client, Common.Client
 ```
 
 Do not introduce a cycle that reverses these.
@@ -164,13 +167,29 @@ errors and unexpected states, and log user-facing failures through `ILogger`.
 
 ## Testing conventions
 
-- One test class per subject, `sealed`, named `<Type>Tests`, namespace `Tests`.
+Tests are split into projects by category, with shared fixtures in `Tests.Core`:
+
+- `src/Tests.Core` — non-test library with the shared `Helpers` and test resources
+  (`Resources/`). Referenced by every test project; do not add tests here.
+- `src/Tests.Unit` — pure unit tests that do not touch the real filesystem, network, OS
+  state (hosts/registry), or MinIO. Use fakes (`ConfigProviderFake`, `*ProviderFake`,
+  `Moq`, stubs). Runs in the normal CI pass on Windows and Linux.
+- `src/Tests.Unit.Sequential` — tests that touch real storage/network/OS (install/uninstall
+  against a game folder, temp files, the real hosts file/registry, GitHub/S3) and must run
+  sequentially (`xunit.runner.json` sets `parallelizeTestCollections: false`). Runs in the
+  normal CI pass.
+- `src/Tests.Database` — database-integrity and MinIO tests; needs
+  `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY`. Runs separately (on `db/**` changes).
+
+- One test class per subject, `sealed`, named `<Type>Tests`, namespace matching the project
+  (`Tests.Unit`, `Tests.Unit.Sequential`, `Tests.Database`).
 - Use xunit `[Fact]`/`[Theory]`, `[InlineData]`, and `Moq` for dependencies.
-- Mark tests that touch external services/network with `[Trait("Category", "Database")]`.
 - Test observable behavior through public APIs; avoid testing private members.
-- Do not add tests that touch the network, external services, the real Windows hosts
-  file/registry, or shared static state to the non-database set; isolate with fakes
-  (`ConfigProviderFake`, `*ProviderFake`, stubs) and local temp folders.
+- Put a test in the lowest category that can run it: prefer `Tests.Unit`; use
+  `Tests.Unit.Sequential` when it touches real storage/network/OS; use `Tests.Database`
+  only when it needs MinIO or validates `db/*.json`.
+- Do not use `[Collection("Sync")]`; the sequential project serializes via
+  `xunit.runner.json`.
 
 ## Guardrails
 

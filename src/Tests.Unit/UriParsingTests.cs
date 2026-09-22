@@ -1,8 +1,6 @@
-﻿using Common.Axiom.Helpers;
+using Common.Axiom.Helpers;
 
-namespace Tests;
-
-[Collection("Sync")]
+namespace Tests.Unit;
 
 public sealed class UriParsingTests
 {

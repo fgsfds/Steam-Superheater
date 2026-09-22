@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Configurations>Debug;Release;Debug-Linux</Configurations>
@@ -16,7 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="Superheater.Tests" />
+    <InternalsVisibleTo Include="Superheater.Tests.Unit" />
+    <InternalsVisibleTo Include="Superheater.Tests.Unit.Sequential" />
+    <InternalsVisibleTo Include="Superheater.Tests.Database" />
   </ItemGroup>
 
 </Project>

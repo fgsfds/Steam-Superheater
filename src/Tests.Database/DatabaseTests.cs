@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Api.Client;
@@ -14,7 +14,7 @@ using Minio;
 using Minio.DataModel.Args;
 using Moq;
 
-namespace Tests;
+namespace Tests.Database;
 
 public sealed class DatabaseTests
 {
@@ -25,7 +25,7 @@ public sealed class DatabaseTests
         _output = output;
     }
 
-    [Fact, Trait("Category", "Database")]
+    [Fact]
     public async Task DatabaseFilesIntegrityTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -167,7 +167,7 @@ public sealed class DatabaseTests
     }
 
 
-    [Fact, Trait("Category", "Database")]
+    [Fact]
     public void DatabaseNewsIntegrityTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -202,7 +202,7 @@ public sealed class DatabaseTests
 
 
 
-    [Fact, Trait("Category", "Database")]
+    [Fact]
     public async Task LooseFilesTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -282,7 +282,7 @@ public sealed class DatabaseTests
     }
 
 
-    [Fact, Trait("Category", "Database")]
+    [Fact]
     public async Task UploadFixTest()
     {
         if (!OperatingSystem.IsWindows())
@@ -303,7 +303,7 @@ public sealed class DatabaseTests
         GitHubApiInterface api = new(releasesProvider, httpClient, logger);
         FilesUploader uploader = new(logger, api, progressReport);
 
-        await uploader.UploadFilesAsync("test", [Path.Combine("resources", "test_fix.zip")], CancellationToken.None);
+        await uploader.UploadFilesAsync("test", [Path.Combine("Resources", "test_fix.zip")], CancellationToken.None);
 
         var url = $"{uploadFolder!.TrimEnd('/')}/test/test_fix.zip";
 

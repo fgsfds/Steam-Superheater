@@ -11,25 +11,35 @@ highlights the points most often missed.
 
 ## Test layout
 
-There is a single test project, **`src/Tests/Tests.csproj`**, with namespace `Tests`. It
-runs under the **Microsoft.Testing.Platform** runner (selected by `global.json`).
+Tests are split into projects by category, all under the **Microsoft.Testing.Platform**
+runner (selected by `global.json`), with shared fixtures in `Tests.Core`:
 
-- **Pure unit tests** are the default. They must not touch the network, external services,
-  the real Windows hosts file/registry, shared static state, or the Avalonia UI. Local temp
-  folders are fine — the existing file/archive tests use them. Use fakes
-  (`ConfigProviderFake`, `*ProviderFake`, `Moq`, stubs) and keep tests isolated.
-- **External / service-backed tests** (they hit GitHub/S3/MinIO, edit the real hosts file,
-  or need elevated permissions) must be marked `[Trait("Category", "Database")]` at the
-  class or method level. CI runs these separately with
-  `--filter-trait "Category=Database"` and the MinIO secrets, and skips them elsewhere.
+- **`src/Tests.Core`** (namespace `Tests.Core`) — non-test library with the shared
+  `Helpers` and test resources (`Resources/`). Referenced by every test project; do not add
+  tests here.
+- **`src/Tests.Unit`** (namespace `Tests.Unit`) — pure unit tests that do not touch the
+  real filesystem, network, OS state (hosts/registry), or MinIO. Use fakes
+  (`ConfigProviderFake`, `*ProviderFake`, `Moq`, stubs). Runs in the normal CI pass on
+  Windows and Linux.
+- **`src/Tests.Unit.Sequential`** (namespace `Tests.Unit.Sequential`) — tests that touch
+  real storage/network/OS (install/uninstall against a game folder, temp files, the real
+  hosts file/registry, GitHub/S3) and must run sequentially (`xunit.runner.json` sets
+  `parallelizeTestCollections: false`). Runs in the normal CI pass.
+- **`src/Tests.Database`** (namespace `Tests.Database`) — database-integrity and MinIO
+  tests; needs `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY`. Runs separately (on `db/**`
+  changes).
 
-Add new tests to the existing `Tests` project; do not create a new test project without
-coordinator approval.
+Put a test in the lowest category that can run it: prefer `Tests.Unit`; use
+`Tests.Unit.Sequential` when it touches real storage/network/OS; use `Tests.Database` only
+when it needs MinIO or validates `db/*.json`. Do not use `[Collection("Sync")]` — the
+sequential project serializes via `xunit.runner.json`. Do not create a new test project
+without coordinator approval.
 
 ## Conventions
 
-- One test class per subject, `sealed`, named `<Type>Tests`, namespace `Tests`. Mirror
-  production naming and structure.
+- One test class per subject, `sealed`, named `<Type>Tests`, namespace matching the project
+  (`Tests.Unit`, `Tests.Unit.Sequential`, `Tests.Database`). Mirror production naming and
+  structure.
 - Mirror the XML-doc style of the neighboring test files. Where they document members,
   add a `<summary>` describing the behavior under test and `<param>` entries for theory
   parameters.
@@ -49,11 +59,12 @@ Build, then run the tests you added (excluding the external database set):
 
 ```pwsh
 dotnet build Superheater.slnx
-dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-not-trait "Category=Database"
+dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build
+dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build
 ```
 
-All non-database tests in the project must pass. The hosts-fix tests require an elevated
-shell; a failure there is environmental — call it out rather than "fixing" the test. If a
-test exposes a real product bug, do not weaken the test — report the bug to the
+All unit and external tests must pass. The hosts/registry tests require Windows and an
+elevated shell; a failure there is environmental — call it out rather than "fixing" the
+test. If a test exposes a real product bug, do not weaken the test — report the bug to the
 coordinator. Return the files touched, the tests added/changed, the run result, and
 anything uncertain.

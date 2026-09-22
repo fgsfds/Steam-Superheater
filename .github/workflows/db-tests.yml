@@ -23,7 +23,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Setup .NET
-      uses: actions/setup-dotnet@v5
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
 
@@ -37,4 +37,4 @@ jobs:
       env:
         MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
         MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
-      run: dotnet test --project ./src/Tests/Tests.csproj --no-build --filter-trait "Category=Database" --verbosity normal
+      run: dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build --verbosity normal

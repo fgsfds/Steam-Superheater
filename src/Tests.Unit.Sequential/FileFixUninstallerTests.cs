@@ -1,6 +1,6 @@
 using Common.Client.FixTools.FileFix;
 
-namespace Tests;
+namespace Tests.Unit.Sequential;
 
 /// <summary>
 /// Tests for <see cref="FileFixUninstaller"/>
