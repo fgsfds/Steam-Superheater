@@ -238,7 +238,14 @@ internal sealed partial class NewsViewModel : ObservableObject
     {
         if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
         {
-            await UpdateAsync().ConfigureAwait(true);
+            try
+            {
+                await UpdateAsync().ConfigureAwait(true);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while updating news");
+            }
         }
     }
 }

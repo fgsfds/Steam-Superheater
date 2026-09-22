@@ -327,13 +327,30 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         _selectedTagFilter = value;
 #pragma warning restore MVVMTK0034 // Direct field reference to [ObservableProperty] backing field
 
-        await FillGamesListAsync().ConfigureAwait(true);
+        try
+        {
+            await FillGamesListAsync().ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while filtering games list");
+        }
     }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(ClearSearchCommand))]
     private string _searchBarText;
-    async partial void OnSearchBarTextChanged(string value) => await FillGamesListAsync().ConfigureAwait(true);
+    async partial void OnSearchBarTextChanged(string value)
+    {
+        try
+        {
+            await FillGamesListAsync().ConfigureAwait(true);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error while filtering games list");
+        }
+    }
 
     [ObservableProperty]
     [NotifyCanExecuteChangedFor(nameof(UpdateGamesCommand))]
@@ -428,21 +445,18 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// Install selected fix
     /// </summary>
     [RelayCommand(CanExecute = nameof(InstallUpdateFixCanExecute))]
-    private void InstallUpdateFix()
+    private async Task InstallUpdateFixAsync()
     {
         ArgumentNullException.ThrowIfNull(SelectedGame);
         ArgumentNullException.ThrowIfNull(SelectedFix);
 
-        try
+        if (DoesFixRequireAdminRights)
         {
             try
             {
-                if (DoesFixRequireAdminRights)
-                {
-                    using var _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
+                using var _ = Process.Start(new ProcessStartInfo { FileName = Environment.ProcessPath, UseShellExecute = true, Verb = "runas" });
 
-                    Environment.Exit(0);
-                }
+                Environment.Exit(0);
             }
             catch (Exception)
             {
@@ -453,12 +467,15 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
                 return;
             }
+        }
 
-            _ = InstallUpdateFixAsync(
+        try
+        {
+            _ = await InstallUpdateFixAsync(
                 SelectedGame,
                 SelectedFix,
                 SelectedFixVariant,
-                false);
+                false).ConfigureAwait(true);
         }
         catch (Exception ex)
         {
@@ -1196,16 +1213,23 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
 
     private async void OnParameterChangedEvent(string parameterName)
     {
-        if (parameterName.Equals(nameof(_config.ShowUninstalledGames)) ||
-            parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
-            parameterName.Equals(nameof(_config.HiddenTags)))
+        try
         {
-            await FillGamesListAsync().ConfigureAwait(true);
-        }
+            if (parameterName.Equals(nameof(_config.ShowUninstalledGames)) ||
+                parameterName.Equals(nameof(_config.ShowUnsupportedFixes)) ||
+                parameterName.Equals(nameof(_config.HiddenTags)))
+            {
+                await FillGamesListAsync().ConfigureAwait(true);
+            }
 
-        if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
+            if (parameterName.Equals(nameof(_config.UseLocalApiAndRepo)))
+            {
+                await UpdateAsync(false, true, false).ConfigureAwait(true);
+            }
+        }
+        catch (Exception ex)
         {
-            await UpdateAsync(false, true, false).ConfigureAwait(true);
+            _logger.LogError(ex, "Error while handling parameter change");
         }
     }
 }
