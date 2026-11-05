@@ -189,6 +189,53 @@ public sealed class FileFixVerificationTests : IDisposable
         Assert.Equal(ResultEnum.Cancelled, result.ResultEnum);
         Assert.Equal(string.Empty, _progress.OperationMessage);
     }
+    [Fact]
+    public async Task PatchFailureRollsBackParentAndSharedFiles()
+    {
+        var fix = CreateFix(new Uri(_archive).AbsoluteUri, _hash);
+        fix.FilesToPatch = ["missing-patch-target"];
+        fix.SharedFix = CreateFix(new Uri(_archive).AbsoluteUri, _hash);
+        fix.SharedFix.FilesToDelete = null;
+        fix.SharedFixInstallFolder = "shared";
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => _installer.InstallFixAsync(_game, fix, null, false, CancellationToken.None));
+        AssertOriginalUnchanged();
+        Assert.False(Directory.Exists(Path.Combine(_game.InstallDir, "shared")));
+    }
+
+    [Fact]
+    public async Task FailedMetadataSaveRollsBackAllFileMutations()
+    {
+        var fix = CreateFix(new Uri(_archive).AbsoluteUri, _hash);
+        var result = await _installer.ExecuteAsync(_game, fix, null, false, CancellationToken.None, false,
+            _ => new Result(ResultEnum.Error, "metadata failure"));
+        Assert.Equal(ResultEnum.Error, result.ResultEnum);
+        AssertOriginalUnchanged();
+    }
+
+    [Fact]
+    public async Task CancellationDuringBackupRestoresOriginals()
+    {
+        using var cancellation = new CancellationTokenSource();
+        _progress.NotifyOperationMessageChanged += message =>
+        {
+            if (message.StartsWith("Backing up", StringComparison.Ordinal)) { cancellation.Cancel(); }
+        };
+        var result = await _installer.InstallFixAsync(_game, CreateFix(new Uri(_archive).AbsoluteUri, _hash), null, false, cancellation.Token);
+        Assert.Equal(ResultEnum.Cancelled, result.ResultEnum);
+        AssertOriginalUnchanged();
+    }
+
+    [Fact]
+    public async Task UpdateFailureRestoresPreviouslyInstalledFilesAndRecord()
+    {
+        var fix = CreateFix(new Uri(_archive).AbsoluteUri, _hash);
+        fix.FilesToPatch = ["missing-patch-target"];
+        fix.InstalledFix = new FileInstalledFixEntity { GameId = _game.Id, Guid = fix.Guid, Version = "old", FilesList = new() { ["original.txt"] = 0 } };
+        var updater = new FileFixUpdater(_installer, new FileFixUninstaller());
+        _ = await Assert.ThrowsAsync<InvalidDataException>(() => updater.UpdateFixAsync(_game, fix, null, false, CancellationToken.None));
+        AssertOriginalUnchanged();
+        Assert.Equal("old", fix.InstalledFix.Version);
+    }
     private static FileFixEntity CreateFix(string url, string? hash)
     {
         var fix = FileFixEntity.CreateBlank();

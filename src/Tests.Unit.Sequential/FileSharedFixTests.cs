@@ -96,7 +96,7 @@ public sealed partial class FileFixTests : IDisposable
         var installedExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe": 446523244,
     "install folder{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
@@ -141,7 +141,7 @@ public sealed partial class FileFixTests : IDisposable
         var installedExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe": 2207528662
   },
@@ -191,7 +191,7 @@ public sealed partial class FileFixTests : IDisposable
         var installedExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe": 446523244,
     "install folder{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
@@ -233,4 +233,3 @@ public sealed partial class FileFixTests : IDisposable
         Assert.False(File.Exists(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json")));
     }
 }
-

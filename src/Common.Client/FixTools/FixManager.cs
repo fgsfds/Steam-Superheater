@@ -92,6 +92,23 @@ public sealed class FixManager
                     """);
         }
 
+        if (fix is FileFixEntity transactionalFix)
+        {
+            try
+            {
+                var outcome = await _fileFixInstaller.ExecuteAsync(game, transactionalFix, variant, skipMD5Check, cancellationToken, false,
+                    installed => _installedFixesProvider.CreateInstalledJson(game, installed)).ConfigureAwait(false);
+                if (outcome.IsSuccess) { fix.InstalledFix = outcome.ResultObject; }
+                else { _installedFixesProvider.InvalidateCache(); }
+                return new(outcome.ResultEnum, outcome.Message);
+            }
+            catch (Exception ex)
+            {
+                _installedFixesProvider.InvalidateCache();
+                _logger.LogError(ex, "File-fix operation failed; recovery journal is preserved if rollback could not finish.");
+                return new(ResultEnum.Error, ex.Message);
+            }
+        }
         Result<BaseInstalledFixEntity> installedFix;
 
         try
@@ -242,6 +259,23 @@ public sealed class FixManager
             return new(ResultEnum.NotFound, $"Game folder not found: {Environment.NewLine + Environment.NewLine + game.InstallDir}");
         }
 
+        if (fix is FileFixEntity transactionalFix)
+        {
+            try
+            {
+                var outcome = await _fileFixInstaller.ExecuteAsync(game, transactionalFix, variant, skipMD5Check, cancellationToken, true,
+                    installed => _installedFixesProvider.CreateInstalledJson(game, installed)).ConfigureAwait(false);
+                if (outcome.IsSuccess) { fix.InstalledFix = outcome.ResultObject; }
+                else { _installedFixesProvider.InvalidateCache(); }
+                return new(outcome.ResultEnum, outcome.Message);
+            }
+            catch (Exception ex)
+            {
+                _installedFixesProvider.InvalidateCache();
+                _logger.LogError(ex, "File-fix operation failed; recovery journal is preserved if rollback could not finish.");
+                return new(ResultEnum.Error, ex.Message);
+            }
+        }
         Result<BaseInstalledFixEntity> installedFix;
 
         try

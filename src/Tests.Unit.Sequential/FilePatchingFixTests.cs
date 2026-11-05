@@ -34,7 +34,7 @@ public sealed partial class FileFixTests
         var installedExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix_with_patch",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe.octodiff": 2690676073
   },
@@ -56,4 +56,3 @@ public sealed partial class FileFixTests
         UninstallFix(fixEntity);
     }
 }
-

@@ -105,6 +105,7 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider, IDisposabl
         var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
         foreach (var gameDirectory in games.Select(x => x.InstallDir).Distinct())
         {
+            Common.Client.FixTools.FileFix.FileInstallTransaction.Recover(gameDirectory);
             var directory = Path.Combine(gameDirectory, ClientConstants.BackupFolder);
             if (!Directory.Exists(directory))
             {
@@ -197,6 +198,14 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider, IDisposabl
                 File.Delete(temporary);
             }
         }
+    }
+
+    /// <inheritdoc />
+    public void InvalidateCache()
+    {
+        _semaphore.Wait();
+        try { _cache = null; }
+        finally { _ = _semaphore.Release(); }
     }
 
     /// <inheritdoc />

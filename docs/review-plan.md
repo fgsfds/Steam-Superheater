@@ -60,6 +60,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 3. P1 — Stage installations and preserve recovery data (L)
 
+**Status:** Implemented staged extraction of the full shared-fix tree before mutation, per-game operation serialization, GUID-based backups that are never silently overwritten, and a flushed before-image journal covering affected paths, existing backups, Proton registries and installed JSON. File installs/updates commit only after metadata persistence; cancellation/failure restores previous state. Startup catalog discovery and retry replay unfinished journals. Post-install launches happen only after commit and are not reversible. Tests inject patch, metadata, cancellation and update failures, and simulate restart recovery/committed journals. Existing external files are now refused rather than overwritten without a valid backup mapping.
+
 **Evidence:** [FileFixInstaller](../src/Common.Client/FixTools/FileFix/FileFixInstaller.cs), `InstallFixAsync`, moves/deletes original files before download and verification complete. `CreateAndGetBackupFolder` deletes an existing backup directory named from the fix name. Shared fixes are installed before the parent finishes. [FixManager](../src/Common.Client/FixTools/FixManager.cs) persists installed state only after installation.
 
 **Impact:** A network/hash/patch failure can leave a game partially modified without a completed installed record; retrying can destroy the previous backup.

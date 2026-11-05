@@ -556,7 +556,7 @@ public sealed partial class FileFixTests
         var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(fileToBackupExists);
 
-        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
+        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}c0650f19f6704f8a854570f6c5171fa5{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(backedUpFileExists);
 
         //check installed.xml
@@ -564,7 +564,7 @@ public sealed partial class FileFixTests
         var textExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe": 446523244,
     "install folder{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
@@ -610,7 +610,7 @@ public sealed partial class FileFixTests
         var fileToBackupExists = File.Exists($"game{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(fileToBackupExists);
 
-        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}test_fix{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
+        var backedUpFileExists = File.Exists($"game{Path.DirectorySeparatorChar}{ClientConstants.BackupFolder}{Path.DirectorySeparatorChar}c0650f19f6704f8a854570f6c5171fa5{Path.DirectorySeparatorChar}install folder{Path.DirectorySeparatorChar}file to backup.txt");
         Assert.True(backedUpFileExists);
 
         //check installed.xml
@@ -618,7 +618,7 @@ public sealed partial class FileFixTests
         var textExpected = $$"""
 {
   "$type": "FileFix",
-  "BackupFolder": "test_fix",
+  "BackupFolder": "c0650f19f6704f8a854570f6c5171fa5",
   "FilesList": {
     "install folder{{Helpers.SeparatorForJson}}start game.exe": 2207528662
   },
@@ -645,4 +645,3 @@ public sealed partial class FileFixTests
 
     #endregion Private Methods
 }
-
