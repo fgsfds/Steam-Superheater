@@ -56,6 +56,7 @@ Local, cached and downloaded archives require a valid SHA-256 unless you explici
 | --- | --- |
 | No games | Steam libraries, mounted drives and filters. |
 | Missing Proton registry | Run the game once and mount its library; look for `pfx/user.reg`. |
+| Documents folder unavailable | Configure the OS Documents folder before installing a fix that uses `{documents}`; an absent folder is rejected instead of resolving against the filesystem root. |
 | Cannot install | Close the game and check app/game permissions. Some Windows fixes need elevation. |
 | Missing offline catalog | Put all three JSON files under `db/`; archives are separate. |
 | Recovery fails | Preserve both recovery directories and the log; do not delete backups to retry. |

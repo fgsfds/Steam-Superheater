@@ -9,6 +9,14 @@ public sealed class DocumentPathTests
     public void DocumentsPlaceholderResolvesWithoutGamePrefix()
     {
         var relative = Path.Combine("{documents}", "example", "file.txt");
-        Assert.Equal(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "example", "file.txt"), ClientHelpers.GetFullPath(Helpers.GameDir, relative));
+        var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        if (string.IsNullOrEmpty(documents))
+        {
+            _ = Assert.Throws<DirectoryNotFoundException>(() => ClientHelpers.GetFullPath(Helpers.GameDir, relative));
+        }
+        else
+        {
+            Assert.Equal(Path.Combine(documents, "example", "file.txt"), ClientHelpers.GetFullPath(Helpers.GameDir, relative));
+        }
     }
 }
