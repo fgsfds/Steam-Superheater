@@ -92,6 +92,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 6. P2 — Unify storage paths and make self-update recoverable (M)
 
+**Status:** Implemented stable portable database paths and SQLite backup-based import of a legacy launch-directory database (source retained; existing portable DB wins). Update markers use absolute paths and a staged-file checksum; executable/header/checksum checks precede swapping, and failed replacement/launch restores the old executable. Restart preserves arguments and releases startup ownership first. The staged checksum detects local corruption, not publisher authenticity; release signatures remain separate.
+
 **Evidence:** [DatabaseBindings](../src/Common.Client/DI/DatabaseBindings.cs) and [DatabaseContext](../src/Database.Client/DatabaseContext.cs) use a relative SQLite path. [AppUpdateInstaller](../src/Common.Client/AppUpdateInstaller.cs) creates `.update` relative to the current directory, while [Program](../src/Avalonia.Desktop/Program.cs) checks beside the executable. `InstallUpdate` moves away the old executable before checking/replacing the staged executable, with no rollback.
 
 **Plan:** Centralize app paths, define portable-mode storage explicitly, and migrate/discover existing databases without silently losing settings. Validate the staged executable and integrity metadata before swapping; restore the old executable on failure. Preserve launch flags and working directory across restart.

@@ -19,7 +19,7 @@ public sealed partial class Program
 
             if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
             {
-                AppUpdateInstaller.InstallUpdate();
+                AppUpdateInstaller.InstallUpdate(args, startup.Dispose);
                 return 0;
             }
 
@@ -38,9 +38,15 @@ public sealed partial class Program
                 ClientProperties.IsOfflineMode = true;
             }
 
+            Database.Client.PortableDatabase.ImportLegacyIfNeeded(ClientProperties.WorkingFolder, Directory.GetCurrentDirectory());
             var builder = BuildAvaloniaApp();
 
-            return App.Run(builder);
+            var result = App.Run(builder);
+            if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
+            {
+                AppUpdateInstaller.InstallUpdate(args, startup.Dispose);
+            }
+            return result;
         }
         catch (Exception ex)
         {

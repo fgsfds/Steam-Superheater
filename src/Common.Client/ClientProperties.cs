@@ -12,7 +12,7 @@ public static class ClientProperties
 
     static ClientProperties()
     {
-        WorkingFolder = Path.GetDirectoryName(Environment.ProcessPath)!;
+        WorkingFolder = Common.Axiom.Helpers.AppStorage.DirectoryPath;
         IsInSteamDeckGameMode = CheckDeckGameMode();
     }
 

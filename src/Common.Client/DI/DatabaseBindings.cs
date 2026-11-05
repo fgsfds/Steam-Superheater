@@ -17,7 +17,7 @@ public static class DatabaseBindings
     public static IServiceCollection WithDatabase(this IServiceCollection container)
     {
         _ = container.AddDbContextFactory<DatabaseContext>(options =>
-            options.UseSqlite("Data Source=Superheater.db"));
+            options.UseSqlite(PortableDatabase.ConnectionString));
 
         _ = container.AddSingleton<DatabaseContextFactory>();
 

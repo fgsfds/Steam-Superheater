@@ -115,10 +115,12 @@ public sealed partial class AboutViewModel : ObservableObject
             return;
         }
 
-        AppUpdateInstaller.InstallUpdate();
+        if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.Shutdown();
+        }
     }
     private bool DownloadAndInstallCanExecute() => IsUpdateAvailable;
 
     #endregion Relay Commands
 }
-

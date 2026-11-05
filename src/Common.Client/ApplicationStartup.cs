@@ -6,6 +6,7 @@ namespace Common.Client;
 public sealed class ApplicationStartup : IDisposable
 {
     private readonly Mutex _mutex;
+    private bool _disposed;
     private ApplicationStartup(Mutex mutex) => _mutex = mutex;
 
     /// <summary>
@@ -68,6 +69,8 @@ public sealed class ApplicationStartup : IDisposable
     /// <inheritdoc />
     public void Dispose()
     {
+        if (_disposed) { return; }
+        _disposed = true;
         _mutex.ReleaseMutex();
         _mutex.Dispose();
     }

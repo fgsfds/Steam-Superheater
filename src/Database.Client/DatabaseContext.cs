@@ -32,6 +32,6 @@ public sealed class DatabaseContext : DbContext
 
         _ = optionsBuilder.ConfigureWarnings(x =>
             x.Ignore(RelationalEventId.PendingModelChangesWarning));
-        _ = optionsBuilder.UseSqlite("Data Source=Superheater.db");
+        _ = optionsBuilder.UseSqlite(PortableDatabase.ConnectionString);
     }
 }
