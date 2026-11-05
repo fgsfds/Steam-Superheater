@@ -54,7 +54,7 @@ Superheater does not ask for Steam credentials. Downloaded fix archives can be c
 
 Archive paths are validated before new-install backups and extraction; rooted/traversing paths, links, and conflicting destinations are rejected. This does not make archives from untrusted sources safe to run.
 
-Hash verification currently has exceptions: local file URLs bypass verification, a hash mismatch can be overridden, and cancelling a hash check can report success. Some UI text still calls the SHA-256 check “MD5.” These are documented defects in the [review plan](review-plan.md), not security guarantees. Prefer a verified archive and investigate unexpected mismatches before installing.
+Local, cached, and downloaded archives now require a valid SHA-256 hash unless you explicitly choose to install without verification. Missing or malformed hashes and mismatches report a verification error; cancelling verification stops the installation. Updates validate the replacement archive before removing the existing fix. An explicit override still permits unverified content: investigate unexpected mismatches before using it. Full rollback after extraction or patching failures remains planned.
 
 ## Troubleshooting
 

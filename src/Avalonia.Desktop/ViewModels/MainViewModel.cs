@@ -992,18 +992,20 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             var popupResult = await _popupMessage.ShowAndGetResultAsync(
                 "Warning",
                 """
-                MD5 hash of the downloaded file doesn't match the one from the database.
+                SHA-256 verification failed or the catalog does not contain a valid hash.
                 
                 This file may have been stealth-updated by the original author and wasn't yet verified by the maintainers.
 
-                Do you still want to install the fix?
+                Do you still want to install the fix without verification?
                 """,
                 PopupMessageType.YesNo
                 ).ConfigureAwait(true);
 
             if (popupResult)
             {
-                result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
+                result = isUpdate
+                    ? await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true)
+                    : await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
             }
         }
 

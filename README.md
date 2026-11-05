@@ -78,7 +78,7 @@ Submissions require maintainer review before inclusion in the public database. U
 
 Superheater is standalone and doesn't require Steam credentials or any other sensitive information to work.
 
-Downloaded fix archives can be checked against the catalog's SHA-256 hash to detect changed content. A hash check is not a malware scan or a guarantee of safety. Verification currently has bypass and cancellation limitations; see the <a href="docs/usage.md#integrity-and-trust">integrity and trust notes</a> before installing an unexpected replacement.
+Downloaded fix archives can be checked against the catalog's SHA-256 hash to detect changed content. A hash check is not a malware scan or a guarantee of safety. Verification can be explicitly bypassed; see the <a href="docs/usage.md#integrity-and-trust">integrity and trust notes</a> before installing an unexpected replacement.
 
 </td>
 </tr>

@@ -31,6 +31,12 @@ public sealed class FileFixUpdater
     {
         ArgumentNullException.ThrowIfNull(fileFix.InstalledFix);
 
+        var validation = await _fixInstaller.ValidateArchiveAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+        if (!validation.IsSuccess)
+        {
+            return new(validation.ResultEnum, null, validation.Message);
+        }
+
         _fixUninstaller.UninstallFix(game, fileFix.InstalledFix);
 
         var result = await _fixInstaller.InstallFixAsync(game, fileFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);

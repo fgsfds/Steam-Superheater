@@ -50,6 +50,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 2. P1 — Make verification cancellation fail closed (S–M)
 
+**Status:** Implemented cancellation/error propagation and required SHA-256 checks for local, cached, and downloaded archives. Only an explicit bypass skips verification, including for cached files. Missing/malformed hashes return a hash error; hash failures preserve their diagnostic. Update preflight runs before uninstall, and the UI keeps the update path when retrying with a bypass. Regression tests cover cancelled checks (before and after verification starts), unchanged originals, local/cache policy, downloads, missing files, and update failures. Legacy parameter renaming is deferred as a mechanical cleanup; the user-facing warning now says SHA-256.
+
 **Evidence:** [FileFixInstaller](../src/Common.Client/FixTools/FileFix/FileFixInstaller.cs), `CheckFileHashAsync`, catches `OperationCanceledException` and returns success. `CheckAndDownloadFileAsync` immediately accepts local file URLs; a downloaded hash failure returns the download result's message instead of the hash error. Existing cached files can be checked with a null expected hash when the skip flag is used.
 
 **Plan:** Distinguish verified, cancelled, missing-hash, and explicitly bypassed verification. Return `Cancelled` on cancellation and propagate the hash error message. Apply an explicit policy to local files and absent hashes; remove accidental null-hash behavior. Rename legacy MD5 parameters/UI copy in a separate mechanical step after behavioral tests.
@@ -139,6 +141,12 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 **Plan:** Isolate fixtures under unique temporary directories; split pure catalog validation, read-only service checks, and explicit upload tests. Add PR build/test coverage. Make manual release semantics deliberate and test both event paths. Consider explicit package sources and dependency automation. Reduce analyzer warnings by category, beginning with disposal and async correctness, then XML docs and deprecated Avalonia APIs; do not broadly suppress them.
 
 **Acceptance:** Normal tests need no production service writes or arbitrary disk paths. Fork PRs build without secrets. Release dry runs show intended jobs for each trigger. Warning counts fall without changing analyzer policy.
+
+## Current implementation validation
+
+- Items 1–2 have separate commits, each including tests and documentation.
+- The sequential suite currently reports 52 passed and 1 explicit symlink-privilege skip, excluding the original hard-coded-path hosts fixture.
+- Items 3–12 remain open; initial archive preflight is not a transaction or protection against concurrent local filesystem changes.
 
 ## Implementation sequence
 

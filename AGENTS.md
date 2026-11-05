@@ -15,8 +15,9 @@ file). Text fixes provide manual instructions. It also ships an editor for user-
 - Runtime: **.NET 10**, nullable enabled, implicit usings, file-scoped namespaces.
 - Persistence: **SQLite** via EF Core (`Superheater.db`).
 - Networking: `HttpClient` against GitHub raw JSON and S3; fixes archives are verified
-  with SHA-256 when verification completes (the legacy `MD5` field is obsolete). See
-  `docs/review-plan.md` for current bypass/cancellation defects.
+  with SHA-256, including local archives. Cancellation fails closed; missing/invalid
+  hashes require an explicit bypass. The legacy `MD5` field and some parameter names
+  remain for compatibility; see `docs/review-plan.md` for implementation status.
 - Content DB: versioned JSON files under `db/` (`fixes.json`, `news.json`, `data.json`).
 
 ## Build, run, test

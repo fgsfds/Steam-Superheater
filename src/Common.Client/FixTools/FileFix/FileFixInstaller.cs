@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using Api.Axiom.Interfaces;
 using Common.Axiom;
@@ -63,6 +62,11 @@ public sealed class FileFixInstaller
         CancellationToken cancellationToken
         )
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(ResultEnum.Cancelled, null, "Installation cancelled");
+        }
+
         //checking if compdata folder exists
         //compdata contains proton settings required for wine dll overrides
         if (fix.WineDllOverrides is not null && OperatingSystem.IsLinux())
@@ -84,6 +88,11 @@ public sealed class FileFixInstaller
         if (!preparedArchive.IsSuccess)
         {
             return new(preparedArchive.ResultEnum, null, preparedArchive.Message);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(ResultEnum.Cancelled, null, "Installation cancelled");
         }
 
         var sharedFixInstallResult = await InstallSharedFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
@@ -150,6 +159,22 @@ public sealed class FileFixInstaller
         return installedSharedFix;
     }
 
+    /// <summary>
+    /// Checks an update archive before the currently installed fix is removed.
+    /// </summary>
+    internal async Task<Result> ValidateArchiveAsync(
+        GameEntity game, FileFixEntity fix, string? variant, bool skipHashCheck, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(ResultEnum.Cancelled, "Verification cancelled");
+        }
+
+        var prepared = await PrepareArchiveAsync(game, fix, variant, skipHashCheck, cancellationToken).ConfigureAwait(false);
+        return cancellationToken.IsCancellationRequested
+            ? new(ResultEnum.Cancelled, "Verification cancelled")
+            : new(prepared.ResultEnum, prepared.Message);
+    }
     private sealed record PreparedArchive(string Path, string Destination, Dictionary<string, long?> Files);
 
     private async Task<Result<PreparedArchive?>> PrepareArchiveAsync(
@@ -161,7 +186,7 @@ public sealed class FileFixInstaller
         }
 
         var destination = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
-        var download = await CheckAndDownloadFileAsync(new Uri(fix.Url), fix.Guid, skipMD5Check ? null : fix.Sha256, cancellationToken).ConfigureAwait(false);
+        var download = await CheckAndDownloadFileAsync(new Uri(fix.Url), fix.Guid, fix.Sha256, skipMD5Check, cancellationToken).ConfigureAwait(false);
         if (!download.IsSuccess)
         {
             return new(download.ResultEnum, null, download.Message);
@@ -228,97 +253,78 @@ public sealed class FileFixInstaller
         return addedLines;
     }
 
-    /// <summary>
-    /// Reuse or download the archive and check its SHA-256 hash when configured.
-    /// </summary>
-    /// <param name="fixUrl">Url to the file</param>
-    /// <param name="fixGuid">Fix GUID</param>
-    /// <param name="fixMD5">Expected SHA-256 hash (legacy parameter name).</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <exception cref="Exception">Error while downloading file</exception>
     private async Task<Result<string>> CheckAndDownloadFileAsync(
-        Uri fixUrl,
-        Guid fixGuid,
-        string? fixMD5,
-        CancellationToken cancellationToken
-        )
+        Uri fixUrl, Guid fixGuid, string? expectedHash, bool skipHashCheck, CancellationToken cancellationToken)
     {
-        string pathToArchive;
-
-        if (fixUrl.IsFile && File.Exists(fixUrl.LocalPath))
+        if (cancellationToken.IsCancellationRequested)
         {
-            return new(ResultEnum.Success, fixUrl.LocalPath, "Using local file");
+            return new(ResultEnum.Cancelled, null, "Verification cancelled");
         }
-        else if (fixUrl.IsAbsoluteUri)
+
+        if (!skipHashCheck && !IsSha256Hash(expectedHash))
         {
-            pathToArchive = _configEntity.UseLocalApiAndRepo
+            return new(ResultEnum.HashError, null, "The fix does not have a valid SHA-256 hash. Verification cannot proceed.");
+        }
+
+        var pathToArchive = fixUrl.IsFile
+            ? fixUrl.LocalPath
+            : _configEntity.UseLocalApiAndRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl.LocalPath))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl.LocalPath));
+
+        if (File.Exists(pathToArchive))
+        {
+            if (skipHashCheck)
+            {
+                _logger.LogWarning("Archive verification explicitly bypassed for {Archive}", pathToArchive);
+                return new(ResultEnum.Success, pathToArchive, "Using local file without verification");
+            }
+
+            var check = await CheckFileHashAsync(pathToArchive, expectedHash, cancellationToken).ConfigureAwait(false);
+            if (check.IsSuccess)
+            {
+                return new(ResultEnum.Success, pathToArchive, "Using verified local file");
+            }
+
+            if (fixUrl.IsFile || check.ResultEnum != ResultEnum.HashError)
+            {
+                return new(check.ResultEnum, null, check.Message);
+            }
+
+            File.Delete(pathToArchive);
+        }
+        else if (fixUrl.IsFile)
+        {
+            return new(ResultEnum.NotFound, null, "The local archive does not exist.");
+        }
+
+        var download = await _filesDownloader.DownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
+        if (!download.IsSuccess)
+        {
+            return new(download.ResultEnum, null, download.Message);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(ResultEnum.Cancelled, null, "Verification cancelled");
+        }
+
+        if (!skipHashCheck)
+        {
+            var check = await CheckFileHashAsync(pathToArchive, expectedHash, cancellationToken).ConfigureAwait(false);
+            if (!check.IsSuccess)
+            {
+                return new(check.ResultEnum, null, check.Message);
+            }
         }
         else
         {
-            throw new ArgumentOutOfRangeException(nameof(fixUrl));
+            _logger.LogWarning("Archive verification explicitly bypassed for {Archive}", pathToArchive);
         }
 
-
-        //checking md5 of the existing file
-        if (File.Exists(pathToArchive))
-        {
-            _logger.LogInformation($"Checking local file {pathToArchive}");
-
-            try
-            {
-                var fileCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
-
-                if (!fileCheckResult.IsSuccess)
-                {
-                    _logger.LogInformation("MD5 of the local file doesn't match, removing it");
-                    File.Delete(pathToArchive);
-                }
-                else
-                {
-                    _progressReport.OperationMessage = string.Empty;
-                    return new(ResultEnum.Success, pathToArchive, "Using local file");
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("Hash checking cancelled");
-                _progressReport.OperationMessage = string.Empty;
-                return new(ResultEnum.Success, pathToArchive, "Using local file");
-            }
-            finally
-            {
-                _progressReport.OperationMessage = string.Empty;
-            }
-        }
-
-        _logger.LogInformation($"Local file {pathToArchive} not found");
-
-        var fileDownloadResult = await _filesDownloader.DownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
-
-        if (!fileDownloadResult.IsSuccess)
-        {
-            return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
-        }
-
-        if (fixMD5 is not null)
-        {
-            var hashCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
-
-            if (!hashCheckResult.IsSuccess)
-            {
-                return new(hashCheckResult.ResultEnum, null, fileDownloadResult.Message);
-            }
-        }
-
-        //Increasing downloads count
         if (!ClientProperties.IsDeveloperMode)
         {
-            var result = await _apiInterface.AddNumberOfInstallsAsync(
-                fixGuid,
-                ClientProperties.CurrentVersion).ConfigureAwait(false);
-
+            var result = await _apiInterface.AddNumberOfInstallsAsync(fixGuid, ClientProperties.CurrentVersion).ConfigureAwait(false);
             if (result.IsSuccess && _fixesProvider.Installs is not null)
             {
                 _fixesProvider.Installs[fixGuid] = result.ResultObject.Value;
@@ -328,6 +334,7 @@ public sealed class FileFixInstaller
         return new(ResultEnum.Success, pathToArchive, "File downloaded successfully");
     }
 
+    private static bool IsSha256Hash(string? hash) => hash is { Length: 64 } && hash.All(Uri.IsHexDigit);
     /// <summary>
     /// Get path to backup folder and create if it doesn't exist
     /// </summary>
@@ -429,51 +436,44 @@ public sealed class FileFixInstaller
     }
 
     /// <summary>
-    /// Check the SHA-256 hash of the local file.
+    /// Verifies the SHA-256 hash of a local archive without treating cancellation as success.
     /// </summary>
-    /// <param name="filePath">Full path to the file</param>
-    /// <param name="hash">Expected SHA-256 hash</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>The verification result. Cancellation currently returns success; see docs/review-plan.md.</returns>
-    public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
+    /// <param name="filePath">Archive path.</param>
+    /// <param name="hash">Expected SHA-256 hash.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Success only after verification completes; otherwise a cancellation, hash, or IO error.</returns>
+    public async Task<Result> CheckFileHashAsync(string filePath, string? hash, CancellationToken cancellationToken)
     {
-        FileInfo fileInfo = new(filePath);
-        var contentLength = fileInfo.Length;
-
-        if (contentLength > 1e+9)
-        {
-            _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
-        }
-        else
-        {
-            _progressReport.OperationMessage = "Checking hash...";
-        }
-
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!IsSha256Hash(hash))
+            {
+                return new(ResultEnum.HashError, "The fix does not have a valid SHA-256 hash. Verification cannot proceed.");
+            }
+
+            _progressReport.OperationMessage = "Checking SHA-256 hash...";
             await using var stream = File.OpenRead(filePath);
             var fileHash = Convert.ToHexString(await SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false));
-
-            if (!hash.Equals(fileHash, StringComparison.OrdinalIgnoreCase))
-            {
-                return new(ResultEnum.HashError, "File's hash doesn't match the database");
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            return string.Equals(hash, fileHash, StringComparison.OrdinalIgnoreCase)
+                ? new(ResultEnum.Success, string.Empty)
+                : new(ResultEnum.HashError, "File's SHA-256 hash doesn't match the database");
         }
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Hash checking cancelled");
-            //do nothing
+            return new(ResultEnum.Cancelled, "Verification cancelled");
         }
         catch (Exception ex)
         {
-            _progressReport.OperationMessage = string.Empty;
-            return new(ResultEnum.Error, ex.ToString());
+            return new(ResultEnum.Error, ex.Message);
         }
-
-        _progressReport.OperationMessage = string.Empty;
-        return new(ResultEnum.Success, string.Empty);
+        finally
+        {
+            _progressReport.OperationMessage = string.Empty;
+        }
     }
-
     /// <summary>
     /// Run or open whatever is in RunAfterInstall parameter
     /// </summary>
