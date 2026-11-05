@@ -102,6 +102,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 7. P2 — Make operation cleanup exception-safe in view models (M)
 
+**Status:** Implemented disposable operation scopes shared by install/dependency work and editor upload; early returns/exceptions now release progress handlers, reset controls, and dispose cancellation. Recursive dependencies reuse the outer operation. Settings watcher notifications dispatch to the UI thread and config subscriptions are removed on disposal. Unit tests cover failure/return cleanup, repeated operations and cancellation lifetime.
+
 **Evidence:** [MainViewModel](../src/Avalonia.Desktop/ViewModels/MainViewModel.cs), the installation helper, subscribes progress and sets `LockButtons` before dependency dialogs/operations, but cleanup occurs only on the normal path. [EditorViewModel](../src/Avalonia.Desktop/ViewModels/Editor/EditorViewModel.cs), `UploadFixAsync`, also subscribes before validation and can return without unsubscribing. Cancellation-token sources are replaced without disposal.
 
 **Plan:** Put lock/progress/subscription cleanup in `finally`; create and dispose a per-operation cancellation source before exposing Cancel. Extract a small operation coordinator only where it removes duplication. Marshal filesystem-watcher notifications to the UI thread and unsubscribe configuration events during disposal in `SettingsViewModel`.
