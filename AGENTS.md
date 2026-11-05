@@ -1,4 +1,4 @@
-# agent.md
+# AGENTS.md
 
 Instructions for AI coding agents working in the **Superheater** repository.
 
@@ -9,13 +9,14 @@ installs and manages must-have fixes and patches for Steam games: (ultra)widescr
 fixes, crash workarounds, unofficial patches, source ports, and no-intro fixes. Fixes
 come in three flavours: file fixes (replace/delete/patch files in the game folder),
 registry fixes (add/change registry values), and hosts fixes (edit the Windows hosts
-file). It also ships an editor for user-submitted fixes.
+file). Text fixes provide manual instructions. It also ships an editor for user-submitted fixes.
 
 - UI: **Avalonia** desktop app, MVVM via **CommunityToolkit.Mvvm**.
 - Runtime: **.NET 10**, nullable enabled, implicit usings, file-scoped namespaces.
 - Persistence: **SQLite** via EF Core (`Superheater.db`).
 - Networking: `HttpClient` against GitHub raw JSON and S3; fixes archives are verified
-  with SHA-256 (the legacy `MD5` field is obsolete).
+  with SHA-256 when verification completes (the legacy `MD5` field is obsolete). See
+  `docs/review-plan.md` for current bypass/cancellation defects.
 - Content DB: versioned JSON files under `db/` (`fixes.json`, `news.json`, `data.json`).
 
 ## Build, run, test
@@ -27,7 +28,7 @@ management is on (`Directory.Packages.props`); never hard-code package versions 
 ```pwsh
 dotnet restore
 dotnet build                          # builds Superheater.slnx
-dotnet run --project src/Avalonia.Desktop
+dotnet run --project src/Avalonia.Desktop # on Linux, add -c Debug-Linux
 ```
 
 `global.json` selects the **Microsoft.Testing.Platform** runner, so use the
@@ -38,15 +39,18 @@ with shared fixtures in `Tests.Core`:
 # pure unit tests — no real filesystem/network/OS (Windows + Linux CI)
 dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build
 # tests that touch real storage/network/OS and must run sequentially (Windows + Linux CI)
-dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build
-# database integrity + MinIO (needs MINIO_ACCESS_KEY / MINIO_SECRET_KEY)
+dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build --filter-not-class Tests.Unit.Sequential.HostsFixTests
+# external-service suite, including a real upload; review destinations first
 dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build
 ```
 
 - `Tests.Unit` and `Tests.Unit.Sequential` run in the normal CI pass on Windows and Linux.
-- `Tests.Database` hits real external services (GitHub/S3/MinIO) or requires an elevated
-  shell, so it is expected to fail without the MinIO secrets / admin rights; CI runs it
-  separately (on `db/**` changes).
+- `HostsFixTests` uses a copied hosts fixture but writes game metadata under a hard-coded
+  `C:\games\test game\` path. The local command excludes it; use a disposable environment
+  for the full suite until this fixture is isolated.
+- `Tests.Database` hits external services (GitHub/S3/MinIO) and includes a real upload.
+  `LooseFilesTest` needs MinIO secrets; administrator rights are not a general requirement.
+  CI runs it separately on `db/**` changes or manual dispatch.
 - `Tests.Core` is a non-test library holding the shared `Helpers` and test resources; the
   test projects reference it.
 - Always build and run the affected test project after a change. There is no separate
@@ -132,7 +136,9 @@ network boundary. Offline mode currently branches inside providers/API on
 - Migrations live in `src/Database.Client/Migrations` and are applied on startup.
   Add migrations with EF Core tooling; never edit an already-applied migration.
 - Startup cleanup in `App.Cleanup()` deletes `*.old`, `*.temp`, `.update`, the `update/`
-  folder, and stale `*.db-wal` / `*.db-shm` files.
+  folder, and matching `*.db-wal` / `*.db-shm` files. This currently runs before the mutex
+  check and is unsafe for recovery/concurrent access; see `docs/review-plan.md`. The
+  relative `.update` comparison also does not match enumerated absolute filenames.
 
 ### Error handling
 
@@ -175,7 +181,7 @@ Tests are split into projects by category, with shared fixtures in `Tests.Core`:
   state (hosts/registry), or MinIO. Use fakes (`ConfigProviderFake`, `*ProviderFake`,
   `Moq`, stubs). Runs in the normal CI pass on Windows and Linux.
 - `src/Tests.Unit.Sequential` — tests that touch real storage/network/OS (install/uninstall
-  against a game folder, temp files, the real hosts file/registry, GitHub/S3) and must run
+  against a game folder, temp files, a copied hosts fixture/test registry key, GitHub/S3) and must run
   sequentially (`xunit.runner.json` sets `parallelizeTestCollections: false`). Runs in the
   normal CI pass.
 - `src/Tests.Database` — database-integrity and MinIO tests; needs
@@ -205,3 +211,8 @@ Tests are split into projects by category, with shared fixtures in `Tests.Core`:
 - Never commit, amend, push, or open pull requests unless the user explicitly asks.
 - Commit messages start with a capital letter and use `Fixed` / `Added` / `Updated`
   rather than `Fix` / `Add` / `Update`.
+
+## Maintained documentation
+
+See [usage](docs/usage.md), [development](docs/development.md), and the
+[review plan](docs/review-plan.md) for current behavior, validation limits, and proposed fixes.

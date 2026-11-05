@@ -52,7 +52,7 @@ public sealed class FileFixInstaller
     /// <param name="game">Game entity</param>
     /// <param name="fix">Fix entity</param>
     /// <param name="variant">Fix variant</param>
-    /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
+    /// <param name="skipMD5Check">Skip archive SHA-256 verification</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="Exception">Error while downloading file</exception>
     public async Task<Result<BaseInstalledFixEntity>> InstallFixAsync(
@@ -223,11 +223,11 @@ public sealed class FileFixInstaller
     }
 
     /// <summary>
-    /// Check file's MD5 and download if MD5 is correct
+    /// Reuse or download the archive and check its SHA-256 hash when configured.
     /// </summary>
     /// <param name="fixUrl">Url to the file</param>
     /// <param name="fixGuid">Fix GUID</param>
-    /// <param name="fixMD5">MD5 of the file</param>
+    /// <param name="fixMD5">Expected SHA-256 hash (legacy parameter name).</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="Exception">Error while downloading file</exception>
     private async Task<Result<string>> CheckAndDownloadFileAsync(
@@ -423,12 +423,12 @@ public sealed class FileFixInstaller
     }
 
     /// <summary>
-    /// Check MD5 of the local file
+    /// Check the SHA-256 hash of the local file.
     /// </summary>
     /// <param name="filePath">Full path to the file</param>
-    /// <param name="hash">MD5 that the file's hash will be compared to</param>
+    /// <param name="hash">Expected SHA-256 hash</param>
     /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>true if check is passed</returns>
+    /// <returns>The verification result. Cancellation currently returns success; see docs/review-plan.md.</returns>
     public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
     {
         FileInfo fileInfo = new(filePath);

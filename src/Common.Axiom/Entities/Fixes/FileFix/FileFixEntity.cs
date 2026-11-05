@@ -86,7 +86,7 @@ public sealed class FileFixEntity : BaseFixEntity
     public string? MD5 { get; set; }
 
     /// <summary>
-    /// Zip archive MD5
+    /// SHA-256 hash of the fix archive.
     /// </summary>
     public string? Sha256 { get; set; }
 
