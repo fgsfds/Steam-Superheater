@@ -180,7 +180,7 @@ internal sealed partial class NewsViewModel : ObservableObject
             }
 
             var jsonString = JsonSerializer.Serialize([.. NewsList.OrderByDescending(x => x.Date)], NewsListEntityContext.Default.ListNewsEntity);
-            File.WriteAllText(file.Path.AbsolutePath, jsonString);
+            File.WriteAllText(Common.Axiom.Helpers.UriHelper.GetLocalFilePath(file.Path), jsonString);
         }
         catch (Exception ex)
         {
@@ -254,4 +254,3 @@ internal sealed partial class NewsViewModel : ObservableObject
         }
     }
 }
-

@@ -112,6 +112,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 9. P2 — Fix file-picker URI conversion and editor cloning (S)
 
+**Status:** Implemented checked local-file URI conversion for both exports and complete editable metadata cloning, including nested shared fixes. Unit tests cover encoded spaces/Unicode, rejected remote/relative URIs, and independent clone collections.
+
 **Evidence:** [EditorViewModel](../src/Avalonia.Desktop/ViewModels/Editor/EditorViewModel.cs) and [NewsViewModel](../src/Avalonia.Desktop/ViewModels/NewsViewModel.cs) pass `file.Path.AbsolutePath` to filesystem APIs. Encoded spaces and Windows drive paths need native-path conversion. [FileFixEntity.Clone](../src/Common.Axiom/Entities/Fixes/FileFix/FileFixEntity.cs) omits `Changelog` and `IsDisabled`.
 
 **Plan:** Prefer Avalonia storage streams, or a checked native local path when the operation also generates sibling files. Preserve all editable clone fields and independent collections.

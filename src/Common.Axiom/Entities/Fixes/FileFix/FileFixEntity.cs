@@ -227,6 +227,9 @@ public sealed class FileFixEntity : BaseFixEntity
             Version = this.Version,
             Guid = this.Guid,
             Description = this.Description,
+            Changelog = this.Changelog,
+            Notes = this.Notes,
+            IsDisabled = this.IsDisabled,
             Dependencies = this.Dependencies?.ToList(),
             Tags = this.Tags?.ToList(),
             SupportedOSes = this.SupportedOSes,
@@ -247,4 +250,3 @@ public sealed class FileFixEntity : BaseFixEntity
         };
     }
 }
-
