@@ -80,6 +80,12 @@ public sealed class FileFixInstaller
             }
         }
 
+        var preparedArchive = await PrepareArchiveAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
+        if (!preparedArchive.IsSuccess)
+        {
+            return new(preparedArchive.ResultEnum, null, preparedArchive.Message);
+        }
+
         var sharedFixInstallResult = await InstallSharedFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
 
         if (!sharedFixInstallResult.IsSuccess)
@@ -93,7 +99,7 @@ public sealed class FileFixInstaller
         BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
         BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
 
-        var filesUnpackResult = await DownloadAndUnpackArchiveAsync(game, fix, variant, skipMD5Check, backupFolderPath, cancellationToken).ConfigureAwait(false);
+        var filesUnpackResult = await UnpackPreparedArchiveAsync(game, variant, backupFolderPath, preparedArchive.ResultObject).ConfigureAwait(false);
 
         if (!filesUnpackResult.IsSuccess)
         {
@@ -144,47 +150,47 @@ public sealed class FileFixInstaller
         return installedSharedFix;
     }
 
-    private async Task<Result<Dictionary<string, long?>?>> DownloadAndUnpackArchiveAsync(
-        GameEntity game,
-        FileFixEntity fix,
-        string? variant,
-        bool skipMD5Check,
-        string backupFolderPath,
-        CancellationToken cancellationToken
-        )
+    private sealed record PreparedArchive(string Path, string Destination, Dictionary<string, long?> Files);
+
+    private async Task<Result<PreparedArchive?>> PrepareArchiveAsync(
+        GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
     {
         if (fix.Url is null)
+        {
+            return new(ResultEnum.Success, null, string.Empty);
+        }
+
+        var destination = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
+        var download = await CheckAndDownloadFileAsync(new Uri(fix.Url), fix.Guid, skipMD5Check ? null : fix.Sha256, cancellationToken).ConfigureAwait(false);
+        if (!download.IsSuccess)
+        {
+            return new(download.ResultEnum, null, download.Message);
+        }
+
+        var files = _archiveTools.GetListOfFilesInArchive(download.ResultObject, destination, fix.InstallFolder, variant);
+        return new(ResultEnum.Success, new PreparedArchive(download.ResultObject, destination, files), string.Empty);
+    }
+
+    private async Task<Result<Dictionary<string, long?>?>> UnpackPreparedArchiveAsync(
+        GameEntity game, string? variant, string backupFolderPath, PreparedArchive? archive)
+    {
+        if (archive is null)
         {
             return new(ResultEnum.Success, null, "Fix doesn't have downloadable file");
         }
 
-        var unpackToPath = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
-
-        var fileUri = new Uri(fix.Url);
-
-        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, fix.Guid, skipMD5Check ? null : fix.Sha256, cancellationToken).ConfigureAwait(false);
-
-        if (!fileDownloadResult.IsSuccess)
-        {
-            return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
-        }
-
-        var filesInArchive = _archiveTools.GetListOfFilesInArchive(fileDownloadResult.ResultObject, unpackToPath, fix.InstallFolder, variant);
-
-        BackupFiles([.. filesInArchive.Keys], game.InstallDir, backupFolderPath, true);
-
-        await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
+        BackupFiles([.. archive.Files.Keys], game.InstallDir, backupFolderPath, true);
+        await _archiveTools.UnpackArchiveAsync(archive.Path, archive.Destination, variant).ConfigureAwait(false);
 
         if (_configEntity.DeleteZipsAfterInstall &&
             !_configEntity.UseLocalApiAndRepo &&
-            fileDownloadResult.ResultObject?.StartsWith(ClientProperties.WorkingFolder) == true)
+            archive.Path.StartsWith(ClientProperties.WorkingFolder, StringComparison.Ordinal))
         {
-            File.Delete(fileDownloadResult.ResultObject);
+            File.Delete(archive.Path);
         }
 
-        return new(ResultEnum.Success, filesInArchive, string.Empty);
+        return new(ResultEnum.Success, archive.Files, string.Empty);
     }
-
     /// <summary>
     /// Add dll overrides to the registry
     /// </summary>

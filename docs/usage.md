@@ -52,7 +52,9 @@ Offline catalog browsing does not supply fix archives. A missing archive can sti
 
 Superheater does not ask for Steam credentials. Downloaded fix archives can be checked against the catalog's SHA-256 hash. This detects a mismatch when verification completes; it is not a malware scan, signature, or guarantee that the catalog or fix is trustworthy.
 
-The current implementation has exceptions: local file URLs bypass verification, a hash mismatch can be overridden, and cancelling a hash check can report success. Some UI text still calls the SHA-256 check “MD5.” These are documented defects in the [review plan](review-plan.md), not security guarantees. Prefer a verified archive and investigate unexpected mismatches before installing.
+Archive paths are validated before new-install backups and extraction; rooted/traversing paths, links, and conflicting destinations are rejected. This does not make archives from untrusted sources safe to run.
+
+Hash verification currently has exceptions: local file URLs bypass verification, a hash mismatch can be overridden, and cancelling a hash check can report success. Some UI text still calls the SHA-256 check “MD5.” These are documented defects in the [review plan](review-plan.md), not security guarantees. Prefer a verified archive and investigate unexpected mismatches before installing.
 
 ## Troubleshooting
 

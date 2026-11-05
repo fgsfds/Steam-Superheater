@@ -1,6 +1,6 @@
 # App review and improvement plan
 
-Reviewed 2026-11-05. This is a source/configuration review plus dependency build/test validation, not an interactive UI or Linux runtime audit. Findings below describe the reviewed implementation; proposed behavior is not implemented by this dependency/documentation refresh.
+Reviewed 2026-11-05. This is a source/configuration review plus dependency build/test validation, not an interactive UI or Linux runtime audit. Findings below describe the original review. Status notes identify implemented work; other proposals remain open.
 
 ## Completed dependency refresh
 
@@ -37,6 +37,8 @@ Warnings include missing XML documentation, disposable ownership, and an obsolet
 Priorities: P1 = integrity, security, or recovery work to do first; P2 = correctness/reliability; P3 = maintenance. Effort is relative (S/M/L), not a delivery estimate. Source links identify methods; line numbers are intentionally omitted so the plan survives edits.
 
 ### 1. P1 — Validate archive destinations before any mutation (M)
+
+**Status:** Archive inventory and extraction now share preflight validation for relative paths, containment, links, duplicate destinations, and file/directory conflicts. Variant removal uses an ordinal leading-prefix slice. New installations prepare the archive before moving originals or removing backups. ZIP/7z and installer regression tests cover these paths. Filesystem symlink coverage runs where link creation is permitted; it is explicitly skipped otherwise. Full update rollback and protection from concurrent filesystem/archive replacement remain part of items 3 and 6.
 
 **Evidence:** [ArchiveTools](../src/Common.Client/FilesTools/ArchiveTools.cs), `UnpackArchiveAsync` and `GetListOfFilesInArchive`, combine archive entry names with output paths without a canonical containment check. The resulting inventory also feeds backup operations. Variant selection uses prefix matching, while removal uses `Replace`, which can strip repeated directory segments beyond the leading prefix.
 
