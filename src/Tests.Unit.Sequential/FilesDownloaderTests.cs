@@ -70,6 +70,11 @@ public sealed class FilesDownloaderTests
 #pragma warning restore IDISP004
 
             response.Content.Headers.ContentLength = 100;
+            response.Headers.ETag = new System.Net.Http.Headers.EntityTagHeaderValue("\"same\"");
+            if (status == HttpStatusCode.PartialContent)
+            {
+                response.Content.Headers.ContentRange = new System.Net.Http.Headers.ContentRangeHeaderValue(0, 99, 100);
+            }
 
             return Task.FromResult(response);
         }

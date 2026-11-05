@@ -108,6 +108,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 8. P2 — Harden download resume and early-failure handling (M)
 
+**Status:** Implemented bounded download retries, open-ended ranges with If-Range identity, Content-Range/length validation, deliberate restart on HTTP 200, integer byte accounting, and cleanup covering initial failures/cancellation. Tests cover interrupted streams, range/ETag mismatches, ignored ranges, 416, and preservation of existing destination files.
+
 **Evidence:** [FilesDownloader](../src/Common.Client/FilesTools/FilesDownloader.cs) constructs the resume range with `contentLength` as an inclusive end (the last byte is length minus one), and does not validate the returned `Content-Range` or final file length. Initial HTTP access and temp-file creation occur before the cleanup/error-handling block.
 
 **Plan:** Request an open-ended resume range or the correct inclusive endpoint; validate start, total length, and resource identity before appending. Handle ignored ranges deliberately. Cover the entire operation with cancellation/error cleanup and reset progress on every exit. Use integer byte counts for accounting.
