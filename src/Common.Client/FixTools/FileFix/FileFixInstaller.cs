@@ -71,7 +71,7 @@ public sealed class FileFixInstaller
         //compdata contains proton settings required for wine dll overrides
         if (fix.WineDllOverrides is not null && OperatingSystem.IsLinux())
         {
-            if (!File.Exists($"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
+            if (ProtonTools.FindUserRegistry(game.InstallDir, game.Id) is null)
             {
                 return new(
                     ResultEnum.Error,
@@ -120,7 +120,7 @@ public sealed class FileFixInstaller
 
         await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath).ConfigureAwait(false);
 
-        var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides).ConfigureAwait(false);
+        var dllOverrides = await ApplyWineDllOverridesAsync(game, fix.WineDllOverrides).ConfigureAwait(false);
 
         RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
 
@@ -132,6 +132,7 @@ public sealed class FileFixInstaller
             BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
             InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
             WineDllOverrides = dllOverrides,
+            WineRegistryPath = dllOverrides is null ? null : ProtonTools.FindUserRegistry(game.InstallDir, game.Id),
             FilesList = filesUnpackResult.ResultObject,
             BuildId = game.BuildId,
         };
@@ -219,40 +220,16 @@ public sealed class FileFixInstaller
     /// <summary>
     /// Add dll overrides to the registry
     /// </summary>
-    /// <param name="gameId">Game id</param>
+    /// <param name="game">Game installation.</param>
     /// <param name="dllList">List of DLLs to add</param>
     /// <returns>List of added lines</returns>
-    private async Task<List<string>?> ApplyWineDllOverridesAsync(
-        int gameId,
-        List<string>? dllList
-        )
+    private static async Task<List<string>?> ApplyWineDllOverridesAsync(GameEntity game, List<string>? dllList)
     {
-        if (dllList is null || !OperatingSystem.IsLinux())
-        {
-            return null;
-        }
-
-        var userRegFile = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
-
-        var userRegLines = (await File.ReadAllLinesAsync(userRegFile).ConfigureAwait(false)).ToList();
-
-        var startIndex = userRegLines.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
-
-        List<string> addedLines = new(dllList.Count);
-
-        foreach (var dll in dllList)
-        {
-            var line = @$"""{dll}""=""native,builtin""";
-
-            addedLines.Add(line);
-        }
-
-        userRegLines.InsertRange(startIndex + 1, addedLines);
-        await File.WriteAllLinesAsync(userRegFile, userRegLines).ConfigureAwait(false);
-
-        return addedLines;
+        if (dllList is null || !OperatingSystem.IsLinux()) { return null; }
+        var path = ProtonTools.FindUserRegistry(game.InstallDir, game.Id)
+            ?? throw new FileNotFoundException("Run the game once to create its Proton prefix.");
+        return await ProtonTools.AddOverridesAsync(path, dllList).ConfigureAwait(false);
     }
-
     private async Task<Result<string>> CheckAndDownloadFileAsync(
         Uri fixUrl, Guid fixGuid, string? expectedHash, bool skipHashCheck, CancellationToken cancellationToken)
     {
@@ -551,4 +528,3 @@ public sealed class FileFixInstaller
         }
     }
 }
-

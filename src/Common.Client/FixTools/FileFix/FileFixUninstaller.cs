@@ -34,7 +34,7 @@ public sealed class FileFixUninstaller
 
         RestoreBackup(game.InstallDir, installedFileFix);
 
-        RemoveWineDllOverrides(game.Id, installedFileFix.WineDllOverrides);
+        RemoveWineDllOverrides(game, installedFileFix.WineDllOverrides, installedFileFix.WineRegistryPath);
     }
 
     /// <summary>
@@ -43,8 +43,8 @@ public sealed class FileFixUninstaller
     /// <param name="gameId">Game id</param>
     /// <param name="dllList">List of added lines</param>
     private void RemoveWineDllOverrides(
-        int gameId,
-        List<string>? dllList
+        GameEntity game,
+        List<string>? dllList, string? registryPath
         )
     {
         if (dllList is null ||
@@ -53,7 +53,8 @@ public sealed class FileFixUninstaller
             return;
         }
 
-        var file = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
+        var file = registryPath ?? ProtonTools.FindUserRegistry(game.InstallDir, game.Id);
+        if (file is null) { return; }
 
         RemoveWineDllOverridesFromFile(file, dllList);
     }

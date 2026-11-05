@@ -128,6 +128,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 10. P2 — Resolve Proton prefixes through the discovered Steam libraries (M)
 
+**Status:** Implemented prefix lookup using the game library before default/native/Flatpak/Snap layouts; installed records retain the chosen registry for uninstall. Missing override sections are created, duplicate keys are avoided, and existing user overrides are preserved. Unavailable libraries are skipped with diagnostics. Fixture coverage passes; a physical Steam Deck smoke test remains a release validation step.
+
 **Evidence:** [SteamTools](../src/Common.Client/SteamTools.cs) discovers several Steam layouts, but [FileFixInstaller](../src/Common.Client/FixTools/FileFix/FileFixInstaller.cs) hard-codes `~/.local/share/Steam/steamapps/compatdata/<id>/pfx/user.reg`. Wine override insertion assumes the section exists. `GetAcfsList` assumes every listed library has a readable `steamapps` directory.
 
 **Plan:** Resolve compatibility data from actual library/game metadata and account for supported package layouts. Handle missing DLL-override sections and duplicate values explicitly. Skip unavailable libraries with useful diagnostics rather than failing the whole scan.
