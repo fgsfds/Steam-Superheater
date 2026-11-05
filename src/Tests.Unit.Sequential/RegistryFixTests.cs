@@ -19,6 +19,7 @@ namespace Tests.Unit.Sequential;
 public sealed class RegistryFixTests : IDisposable
 {
     private readonly FixManager _fixManager;
+    private readonly InstalledFixesProvider? _installedFixesProvider;
 
     private readonly GameEntity _gameEntity = new()
     {
@@ -61,8 +62,8 @@ public sealed class RegistryFixTests : IDisposable
         _ = Directory.CreateDirectory(Helpers.TestFolder);
         Directory.SetCurrentDirectory(Helpers.TestFolder);
 
-        InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
-        _ = installedFixesProvider.GetInstalledFixesListAsync();
+        _installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
+        _ = _installedFixesProvider.GetInstalledFixesListAsync();
 
         RegistryFixInstaller registryFixInstaller = new(new Mock<ILogger>().Object);
         RegistryFixUninstaller registryFixUninstaller = new();
@@ -78,13 +79,14 @@ public sealed class RegistryFixTests : IDisposable
             null!,
             null!,
             null!,
-            installedFixesProvider,
+            _installedFixesProvider,
             new Mock<ILogger>().Object
             );
     }
 
     public void Dispose()
     {
+        _installedFixesProvider?.Dispose();
         if (!OperatingSystem.IsWindows())
         {
             return;
@@ -115,6 +117,7 @@ public sealed class RegistryFixTests : IDisposable
     [Fact]
     public async Task InstallUninstallFixTest()
     {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "Windows registry fix.");
         if (!OperatingSystem.IsWindows())
         {
             return;
@@ -175,6 +178,7 @@ public sealed class RegistryFixTests : IDisposable
     [Fact]
     public async Task InstallUninstallReplaceFixTest()
     {
+        Assert.SkipUnless(OperatingSystem.IsWindows(), "Windows registry fix.");
         if (!OperatingSystem.IsWindows())
         {
             return;

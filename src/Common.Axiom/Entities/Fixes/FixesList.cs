@@ -61,6 +61,6 @@ public sealed class FixesList
     DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
     Converters = [typeof(JsonStringEnumConverter<OSEnum>), typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)]
 )]
+/// <summary>Source-generated JSON metadata for FixesListContext.</summary>
 [JsonSerializable(typeof(List<FixesList>))]
 public sealed partial class FixesListContext : JsonSerializerContext;
-

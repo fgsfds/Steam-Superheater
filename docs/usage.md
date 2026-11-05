@@ -1,71 +1,64 @@
 # Using Superheater
 
-Superheater installs community fixes for Steam games on Windows and Linux, including Steam Deck. File fixes can replace, remove, or patch files; registry and hosts fixes modify Windows settings. Text fixes provide instructions instead of an automatic installation.
+Superheater installs community fixes for Steam games on Windows and Linux, including Steam Deck. File fixes replace, remove, or patch files; registry and hosts fixes modify Windows settings. Text fixes provide manual instructions.
 
 ## Install and launch
 
-1. Download the matching `win-x64` or `linux-x64` archive from the [release page](https://github.com/fgsfds/Steam-Superheater/releases).
-2. Extract it into a dedicated folder that you can write to. Avoid sharing this folder with unrelated archives or temporary files: the app has cleanup commands that operate on files in its folder.
-3. On Windows, run `Superheater.exe`. On Linux, make `Superheater` executable if necessary (`chmod u+x Superheater`), then run `./Superheater` from its folder.
-4. Select an installed game and a fix. Read the description, supported platforms, dependencies, and any variant choices before installing.
-5. Close the game, install the fix, and launch the game through Steam as usual.
+1. Download the matching archive from the [release page](https://github.com/fgsfds/Steam-Superheater/releases).
+2. Extract it into a dedicated writable folder. Published builds are self-contained.
+3. Run `Superheater.exe` on Windows, or make `Superheater` executable and run it on Linux.
+4. Select a game and fix. Read its description, platforms, dependencies and variants.
+5. Close the game before installing, then launch it through Steam.
 
-Published builds are self-contained; building from source requires the .NET SDK. Steam must already be installed. Registry and hosts fixes are Windows-specific; some fixes require administrator rights. Run normally unless the selected fix requires elevation.
+Steam must already be installed. Registry and hosts fixes are Windows-specific; run elevated only when the selected fix requires it. Steam Deck setup starts in Desktop Mode. Run a Proton game once before installing DLL overrides. Prefix discovery checks the game's library before native, Flatpak and Snap locations. Existing user overrides are preserved; uninstall removes only newly added entries. See the [Deck guide](https://github.com/fgsfds/Steam-Superheater/wiki/Deck-install-guide).
 
-For Steam Deck, start in Desktop Mode to extract and configure the app. Launch a Proton game at least once before installing a fix that needs Wine DLL overrides. The current override implementation expects the default Steam compatibility-data location; alternate libraries and Flatpak installations need particular care. See the existing [Deck installation guide](https://github.com/fgsfds/Steam-Superheater/wiki/Deck-install-guide) for the launcher workflow.
+## Installation and recovery
 
-## Backups, updates, and removal
+Keep `<game>/.superheater` while fixes are installed: it contains originals and installed records needed for uninstall. New backups use fix GUIDs; legacy records remain readable. Game updates and other mods can overwrite installed fixes, so check integrity after a game update.
 
-Superheater stores original files and installed-fix metadata under `.superheater` inside the game's installation folder. Keep this directory while any fixes are installed. Uninstalling uses that metadata and those backups to remove the fix and restore original files.
+File installs and updates stage the full archive/shared-fix tree before changing the game. A durable before-image journal covers affected files, backups, Proton registries and installed metadata. Cancellation or failure restores those snapshots. Unfinished journals are replayed on game discovery or retry. If recovery reports an error, preserve `.superheater`, `.superheater-transactions` and the log for investigation. Concurrent edits by other programs are outside this recovery guarantee. Post-install programs run after commit and their effects cannot be undone automatically.
 
-Game updates, Steam file verification, and other mods may overwrite patched files. Check the selected fix after a game update and use the available update or reinstall workflow as appropriate. Backups are not a transaction journal: a failed installation can leave partial changes. Preserve the game folder's `.superheater` directory and the log before attempting recovery.
+Existing external files are refused rather than overwritten without an external backup mapping. New external destinations remain supported. Registry/hosts operations do not use the file-install journal.
 
-An app update is downloaded into the app folder and staged under `update/`; a subsequent launch applies it. For now, launch from the app's own folder: the update marker and SQLite database use relative paths in some code paths. If an update fails, keep the existing executable and any `.old` copy until you have a working installation.
+App updates stage under `update/` beside the executable. The app closes, checks the staged executable header/checksum, swaps it and restarts with the same arguments. Replacement or launch failures restore the old executable; its `.old` backup is removed on a later startup. The staging checksum detects local corruption, not publisher authenticity.
 
-## Data and file locations
+## Data locations
 
-| Data | Current location |
+| Data | Location |
 | --- | --- |
-| Log | `Superheater.log` beside the executable |
-| Crash log | Timestamped `.crashlog` beside the executable, when a log is available |
-| Settings, catalog cache, hidden tags, votes, sources | `Superheater.db` in the process working directory |
-| Installed-fix records | `<game>/.superheater/<fix-guid>.json` |
-| Original-file backups | Subfolders of `<game>/.superheater/` |
-| Downloaded fix archives | Normally beside the app; local repository mode uses its configured `fixes` folder |
-| Local catalog | `db/fixes.json`, `db/news.json`, and `db/data.json` |
+| Log and crash logs | Beside the executable |
+| Settings/catalog SQLite database | `Superheater.db` beside the executable |
+| Installed records | `<game>/.superheater/<fix-guid>.json` |
+| Original files | Subfolders of `<game>/.superheater/` |
+| Pending rollback journals | `<game>/.superheater-transactions/` |
+| Fix downloads | Normally beside the app; repository mode uses its configured `fixes` folder |
+| Offline catalog | `db/fixes.json`, `db/news.json`, `db/data.json` |
 
-The process working directory and executable directory can differ, especially with shortcuts or `dotnet run`. This is a known issue tracked in the [review plan](review-plan.md). Close the app before copying its database, and preserve SQLite sidecar files with it when present. Do not delete the database as a first troubleshooting step: it also contains settings.
+Storage is independent of the launch directory. If the portable database does not exist, startup imports a legacy launch-directory database using SQLite backup and retains the original. An existing portable database takes precedence. Close the app before copying its database and preserve SQLite sidecars; startup cleanup does not delete them. Corrupt installed JSON is quarantined, and legacy migration retains the original record.
 
-## Launch options and offline use
+## Launch options
 
 | Option | Behavior |
 | --- | --- |
-| `--offline` | Loads local catalog data and disables app-update checks. It does not guarantee that all operations avoid the network. |
-| `--deck` | Forces Steam Deck game-mode behavior; Linux also attempts automatic detection. |
-| `--dev` | Enables developer behavior, including suppressing installation-count reporting. This is not a dry-run or a sandbox. |
+| `--offline` | Uses local catalogs, disables app-update checks and service mutations. Archive downloads may still use the network. |
+| `--deck` | Forces Deck game-mode behavior; Linux also attempts detection. |
+| `--dev` | Developer behavior, including suppressed installation counts. It is not a sandbox. |
 
-For a portable offline catalog, copy the repository's `db` directory next to the executable. The app also searches parent directories of the executable and current directory, up to eight levels, to support running from source. Release archives currently package the executable, not the catalog.
+Copy the repository's `db` folder beside the executable for an offline catalog. Source builds also search parent directories. Release archives package the executable without the catalog. Catalog browsing does not supply archives.
 
-Offline catalog browsing does not supply fix archives. A missing archive can still cause an attempted download; prepare the required files separately. Uploads and other service-backed features require their services. The default GitHub API implementation does not implement voting, reporting, statistics, or direct database changes; those operations currently return errors.
+Backend capabilities control commands: the default GitHub backend supports uploads separately from direct catalog editing. Unsupported voting, reporting and catalog/news changes are disabled with explanations. Export entries for maintainer review when direct publishing is unavailable.
 
-## Integrity and trust
+## Integrity and troubleshooting
 
-Superheater does not ask for Steam credentials. Downloaded fix archives can be checked against the catalog's SHA-256 hash. This detects a mismatch when verification completes; it is not a malware scan, signature, or guarantee that the catalog or fix is trustworthy.
+Local, cached and downloaded archives require a valid SHA-256 unless you explicitly bypass verification. Missing hashes and mismatches fail; cancellation stops installation. Archive validation rejects traversal, rooted entries, links and conflicting destinations. Hashes are not malware scans or publisher signatures; review unexpected mismatches before bypassing them.
 
-Archive paths are validated before new-install backups and extraction; rooted/traversing paths, links, and conflicting destinations are rejected. This does not make archives from untrusted sources safe to run.
-
-Local, cached, and downloaded archives now require a valid SHA-256 hash unless you explicitly choose to install without verification. Missing or malformed hashes and mismatches report a verification error; cancelling verification stops the installation. Updates validate the replacement archive before removing the existing fix. An explicit override still permits unverified content: investigate unexpected mismatches before using it. Full rollback after extraction or patching failures remains planned.
-
-## Troubleshooting
-
-| Symptom | What to check |
+| Symptom | Check |
 | --- | --- |
-| No games found | Steam installation and library availability; mounted external drives; game/tag/platform filters. |
-| Missing Proton compatibility data | Run the game once; confirm the default Steam prefix exists. Alternate-library prefix resolution is a known limitation. |
-| Hash mismatch | The upstream archive may have changed. Report the game, fix version, and log rather than assuming the replacement is safe. |
-| Cannot write or install | Close the game and check permissions for both the app folder and game folder. Some Windows fix types require elevation. |
-| Catalog unavailable offline | Put all three JSON files under `db/` beside the executable. Fix archives are separate. |
-| Controls remain disabled after an error | Save the log and restart the app. Exception-safe operation cleanup is planned. Preserve backups before retrying installation. |
-| Settings appear to reset between launches | Check whether the launcher changed the working directory and therefore selected another `Superheater.db`. |
+| No games | Steam libraries, mounted drives and filters. |
+| Missing Proton registry | Run the game once and mount its library; look for `pfx/user.reg`. |
+| Cannot install | Close the game and check app/game permissions. Some Windows fixes need elevation. |
+| Missing offline catalog | Put all three JSON files under `db/`; archives are separate. |
+| Recovery fails | Preserve both recovery directories and the log; do not delete backups to retry. |
+| Settings seem missing | Check the database beside the executable and the retained legacy database. |
 
-For a bug report, include the app version, OS, Steam installation type, game App ID, fix name/version, exact steps, and `Superheater.log`. Review logs for personal paths or other private data before sharing. Include a crash log if one was created.
+Report app version, OS, Steam installation type, game App ID, fix/version, reproduction steps and the log. Review logs for personal paths before sharing.

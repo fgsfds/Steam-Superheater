@@ -25,7 +25,7 @@ public sealed class NewsEntity
 }
 
 
+/// <summary>Source-generated JSON metadata for NewsListEntityContext.</summary>
 [JsonSourceGenerationOptions(WriteIndented = true)]
 [JsonSerializable(typeof(List<NewsEntity>))]
 public sealed partial class NewsListEntityContext : JsonSerializerContext;
-

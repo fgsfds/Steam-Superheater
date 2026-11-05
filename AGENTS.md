@@ -40,18 +40,17 @@ with shared fixtures in `Tests.Core`:
 # pure unit tests — no real filesystem/network/OS (Windows + Linux CI)
 dotnet test --project ./src/Tests.Unit/Tests.Unit.csproj --no-build
 # tests that touch real storage/network/OS and must run sequentially (Windows + Linux CI)
-dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build --filter-not-class Tests.Unit.Sequential.HostsFixTests
-# external-service suite, including a real upload; review destinations first
-dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build
+dotnet test --project ./src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build
+# read-only service checks; review destinations and MinIO credentials
+dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build --filter-trait Category=ServiceRead
 ```
 
 - `Tests.Unit` and `Tests.Unit.Sequential` run in the normal CI pass on Windows and Linux.
-- `HostsFixTests` uses a copied hosts fixture but writes game metadata under a hard-coded
-  `C:\games\test game\` path. The local command excludes it; use a disposable environment
-  for the full suite until this fixture is isolated.
-- `Tests.Database` hits external services (GitHub/S3/MinIO) and includes a real upload.
-  `LooseFilesTest` needs MinIO secrets; administrator rights are not a general requirement.
-  CI runs it separately on `db/**` changes or manual dispatch.
+- Fixtures use unique temporary roots. Hosts tests edit a copy and explicitly skip without
+  Windows administrator rights; symlink tests skip when link creation is unavailable.
+- Local catalog validation runs in the sequential suite. External checks use ServiceRead
+  and ServiceWrite traits. Uploads require SUPERHEATER_ALLOW_SERVICE_WRITES=1 and do not
+  run in normal CI. Secret-dependent service checks skip PR events.
 - `Tests.Core` is a non-test library holding the shared `Helpers` and test resources; the
   test projects reference it.
 - Always build and run the affected test project after a change. There is no separate

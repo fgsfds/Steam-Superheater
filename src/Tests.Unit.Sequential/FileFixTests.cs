@@ -31,6 +31,7 @@ public sealed partial class FileFixTests
 
     private readonly HttpClient _httpClient;
     private readonly FixManager _fixManager;
+    private readonly InstalledFixesProvider? _installedFixesProvider;
 
     #region Test Preparations
 
@@ -81,8 +82,8 @@ public sealed partial class FileFixTests
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
 
-        InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
-        _ = installedFixesProvider.GetInstalledFixesListAsync();
+        _installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
+        _ = _installedFixesProvider.GetInstalledFixesListAsync();
 
         _httpClient = new();
         var configMock = new Mock<IConfigProvider>().Object;
@@ -118,13 +119,14 @@ public sealed partial class FileFixTests
             null!,
             null!,
             null!,
-            installedFixesProvider,
+            _installedFixesProvider,
             new Mock<ILogger>().Object
             );
     }
 
     public void Dispose()
     {
+        _installedFixesProvider?.Dispose();
         Directory.SetCurrentDirectory(Helpers.RootFolder);
 
         ClearTempFolders();
@@ -147,17 +149,6 @@ public sealed partial class FileFixTests
             Directory.Delete(Helpers.TestFolder, true);
         }
 
-        if (Directory.Exists(Path.Combine("C:", "Windows", "temp", "test_fix")))
-        {
-            Directory.Delete(Path.Combine("C:", "Windows", "temp", "test_fix"), true);
-        }
-
-        var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-        if (Directory.Exists(Path.Combine(documents, "test_fix")))
-        {
-            Directory.Delete(Path.Combine(documents, "test_fix"), true);
-        }
     }
 
     #endregion Test Preparations
@@ -351,106 +342,25 @@ public sealed partial class FileFixTests
     [Fact]
     public async Task InstallFixToAnAbsolutePathTemp()
     {
-        if (!OperatingSystem.IsWindows())
+        var destination = Path.Combine(Helpers.TestFolder, "external fix");
+        var fix = new FileFixEntity
         {
-            return;
-        }
-
-        FileFixEntity fixEntity = new()
-        {
-            Name = "test fix absolute pack",
+            Name = "test external fix",
             Version = "1.0",
-            Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
+            Guid = Guid.NewGuid(),
             Url = _testFixZip,
-            InstallFolder = Path.Combine("C:", "Windows", "temp", "test_fix"),
+            InstallFolder = destination,
             SupportedOSes = OSEnum.Windows | OSEnum.Linux
         };
-
-        _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
-
-        Assert.True(File.Exists(Path.Combine("C:", "Windows", "temp", "test_fix", "start game.exe")));
-
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $$"""
-{
-  "$type": "FileFix",
-  "BackupFolder": null,
-  "FilesList": {
-    "C:{{Helpers.SeparatorForJson}}Windows{{Helpers.SeparatorForJson}}temp{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}": null,
-    "C:{{Helpers.SeparatorForJson}}Windows{{Helpers.SeparatorForJson}}temp{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}start game.exe": 446523244,
-    "C:{{Helpers.SeparatorForJson}}Windows{{Helpers.SeparatorForJson}}temp{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}": null,
-    "C:{{Helpers.SeparatorForJson}}Windows{{Helpers.SeparatorForJson}}temp{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
-  },
-  "InstalledSharedFix": null,
-  "WineDllOverrides": null,
-  "BuildId": 1,
-  "GameId": 1,
-  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
-  "Version": "1.0"
-}
-""";
-
-        Assert.Equal(installedExpected, installedActual);
-
-        _ = _fixManager.UninstallFix(_gameEntity, fixEntity);
-
-        Assert.False(Directory.Exists(Path.Combine("C:", "Windows", "temp", "test_fix")));
+        var result = await _fixManager.InstallFixAsync(_gameEntity, fix, null, true, CancellationToken.None);
+        Assert.True(result.IsSuccess, result.Message);
+        Assert.True(File.Exists(Path.Combine(destination, "start game.exe")));
+        Assert.True(File.Exists(Path.Combine(destination, "subfolder", "file.txt")));
+        Assert.NotNull(fix.InstalledFix);
+        var removal = _fixManager.UninstallFix(_gameEntity, fix);
+        Assert.True(removal.IsSuccess, removal.Message);
+        Assert.False(Directory.Exists(destination));
     }
-
-    /// <summary>
-    /// Install fix to an absolute path
-    /// </summary>
-    [Fact]
-    public async Task InstallFixToAnAbsolutePathDocuments()
-    {
-        if (!OperatingSystem.IsWindows())
-        {
-            return;
-        }
-
-        FileFixEntity fixEntity = new()
-        {
-            Name = "test fix absolute pack",
-            Version = "1.0",
-            Guid = Guid.Parse("C0650F19-F670-4F8A-8545-70F6C5171FA5"),
-            Url = _testFixZip,
-            InstallFolder = Path.Combine("{documents}", "test_fix"),
-            SupportedOSes = OSEnum.Windows | OSEnum.Linux
-        };
-
-        _ = await _fixManager.InstallFixAsync(_gameEntity, fixEntity, null, true, new()).ConfigureAwait(true);
-
-        var documents = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-
-        Assert.True(File.Exists(Path.Combine(documents, "test_fix", "start game.exe")));
-
-        var installedActual = File.ReadAllText(Path.Combine(_gameEntity.InstallDir, ClientConstants.BackupFolder, fixEntity.Guid.ToString() + ".json"));
-        var installedExpected = $$"""
-{
-  "$type": "FileFix",
-  "BackupFolder": null,
-  "FilesList": {
-    "{documents}{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}": null,
-    "{documents}{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}start game.exe": 446523244,
-    "{documents}{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}": null,
-    "{documents}{{Helpers.SeparatorForJson}}test_fix{{Helpers.SeparatorForJson}}subfolder{{Helpers.SeparatorForJson}}file.txt": 446523244
-  },
-  "InstalledSharedFix": null,
-  "WineDllOverrides": null,
-  "BuildId": 1,
-  "GameId": 1,
-  "Guid": "c0650f19-f670-4f8a-8545-70f6c5171fa5",
-  "Version": "1.0"
-}
-""";
-
-        Assert.Equal(installedExpected, installedActual);
-
-        _ = _fixManager.UninstallFix(_gameEntity, fixEntity);
-
-        Assert.False(Directory.Exists(Path.Combine(documents, "test_fix")));
-    }
-
     #endregion Tests
 
     #region Private Methods

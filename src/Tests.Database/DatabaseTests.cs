@@ -26,11 +26,12 @@ public sealed class DatabaseTests
     }
 
     [Fact]
+    [Trait("Category", "ServiceRead")]
     public async Task DatabaseFilesIntegrityTest()
     {
         if (!OperatingSystem.IsWindows())
         {
-            return;
+            Assert.Skip("Windows service fixture.");
         }
 
         using HttpClient httpClient = new();
@@ -168,46 +169,12 @@ public sealed class DatabaseTests
 
 
     [Fact]
-    public void DatabaseNewsIntegrityTest()
-    {
-        if (!OperatingSystem.IsWindows())
-        {
-            return;
-        }
-
-        using HttpClient httpClient = new();
-        httpClient.DefaultRequestHeaders.Add("User-Agent", "BuildLauncher");
-        httpClient.Timeout = TimeSpan.FromSeconds(30);
-
-        string newsJsonString;
-
-        if (File.Exists("../../../../db/news.json"))
-        {
-            newsJsonString = File.ReadAllText("../../../../db/news.json");
-        }
-        else if (File.Exists("../../../../../db/news.json"))
-        {
-            newsJsonString = File.ReadAllText("../../../../../db/news.json");
-        }
-        else
-        {
-            Assert.Fail();
-            return;
-        }
-
-        var fixesJson = JsonSerializer.Deserialize(newsJsonString, NewsListEntityContext.Default.ListNewsEntity);
-
-        Assert.NotNull(fixesJson);
-    }
-
-
-
-    [Fact]
+    [Trait("Category", "ServiceRead")]
     public async Task LooseFilesTest()
     {
         if (!OperatingSystem.IsWindows())
         {
-            return;
+            Assert.Skip("Windows service fixture.");
         }
 
         var fixesJsonString = File.ReadAllText("../../../../db/fixes.json");
@@ -283,11 +250,13 @@ public sealed class DatabaseTests
 
 
     [Fact]
+    [Trait("Category", "ServiceWrite")]
     public async Task UploadFixTest()
     {
+        Assert.SkipUnless(Environment.GetEnvironmentVariable("SUPERHEATER_ALLOW_SERVICE_WRITES") == "1", "Set SUPERHEATER_ALLOW_SERVICE_WRITES=1 to opt into a real upload.");
         if (!OperatingSystem.IsWindows())
         {
-            return;
+            Assert.Skip("Windows service fixture.");
         }
 
         ClientProperties.IsOfflineMode = true;

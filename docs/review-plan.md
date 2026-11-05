@@ -1,6 +1,6 @@
 # App review and improvement plan
 
-Reviewed 2026-11-05. This is a source/configuration review plus dependency build/test validation, not an interactive UI or Linux runtime audit. Findings below describe the original review. Status notes identify implemented work; other proposals remain open.
+Reviewed 2026-11-05. This is a source/configuration review plus dependency build/test validation, not an interactive UI or Linux runtime audit. Findings below describe the original review. All twelve items have implementation commits and regression coverage. Evidence sections preserve the original findings; status notes describe current behavior. Physical Deck, Linux runtime, interactive UI and hosted release checks remain release validation tasks.
 
 ## Completed dependency refresh
 
@@ -38,7 +38,7 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 1. P1 — Validate archive destinations before any mutation (M)
 
-**Status:** Archive inventory and extraction now share preflight validation for relative paths, containment, links, duplicate destinations, and file/directory conflicts. Variant removal uses an ordinal leading-prefix slice. New installations prepare the archive before moving originals or removing backups. ZIP/7z and installer regression tests cover these paths. Filesystem symlink coverage runs where link creation is permitted; it is explicitly skipped otherwise. Full update rollback and protection from concurrent filesystem/archive replacement remain part of items 3 and 6.
+**Status:** Archive inventory and extraction now share preflight validation for relative paths, containment, links, duplicate destinations, and file/directory conflicts. Variant removal uses an ordinal leading-prefix slice. New installations prepare the archive before moving originals or removing backups. ZIP/7z and installer regression tests cover these paths. Filesystem symlink coverage runs where link creation is permitted; it is explicitly skipped otherwise. Item 3 adds staged extraction and update rollback; concurrent external filesystem changes are outside the transaction guarantee.
 
 **Evidence:** [ArchiveTools](../src/Common.Client/FilesTools/ArchiveTools.cs), `UnpackArchiveAsync` and `GetListOfFilesInArchive`, combine archive entry names with output paths without a canonical containment check. The resulting inventory also feeds backup operations. Variant selection uses prefix matching, while removal uses `Replace`, which can strip repeated directory segments beyond the leading prefix.
 
@@ -154,6 +154,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 12. P3 — Make builds, tests, and releases easier to maintain (M)
 
+**Status:** Implemented unique temporary fixtures, non-writing documents-path coverage, explicit platform/privilege skips, local catalog validation in normal CI, read-only service traits and environment-gated uploads. PR builds use read permissions; secret-dependent service tests skip PR events. Manual release runs on master, as does a push marked [release]. Added explicit NuGet sources and weekly dependency automation; fixed deprecated UI API, fixture disposal, and serialization documentation without suppressing analyzers. Release event conditions are checked locally; signing/publishing and Linux/Deck runtime validation remain release-environment checks.
+
 **Evidence:** [HostsFixTests](../src/Tests.Unit.Sequential/HostsFixTests.cs) has a hard-coded game path; [DatabaseTests](../src/Tests.Database/DatabaseTests.cs) mixes read-only validation with upload behavior and uses early platform returns. [release.yml](../.github/workflows/release.yml) declares manual dispatch but gates all jobs on push. [build-and-test.yml](../.github/workflows/build-and-test.yml) only triggers on push. [nuget.config](../nuget.config) inherits machine sources.
 
 **Plan:** Isolate fixtures under unique temporary directories; split pure catalog validation, read-only service checks, and explicit upload tests. Add PR build/test coverage. Make manual release semantics deliberate and test both event paths. Consider explicit package sources and dependency automation. Reduce analyzer warnings by category, beginning with disposal and async correctness, then XML docs and deprecated Avalonia APIs; do not broadly suppress them.
@@ -162,9 +164,13 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ## Current implementation validation
 
-- Items 1–2 have separate commits, each including tests and documentation.
-- The sequential suite currently reports 52 passed and 1 explicit symlink-privilege skip, excluding the original hard-coded-path hosts fixture.
-- Items 3–12 remain open; initial archive preflight is not a transaction or protection against concurrent local filesystem changes.
+- Items 1–12 have separate implementation commits with tests and documentation.
+- Clean Windows build: zero errors, 648 warnings (original baseline: 653).
+- Unit suite: 63 passed. Full sequential suite: 85 passed, two explicit privilege skips (hosts and symbolic links).
+- Local catalog checks run without network access. Upload opt-in guard verified without sending an upload; live service checks not run.
+- Windows and Linux publish profiles are validated on Windows. Linux/Deck runtime and interactive UI checks require their target environments.
+- Transaction fixtures cover cancellation, patch/metadata/update failures, shared fixes, preserved backups and restart recovery. External concurrent edits and post-install program effects are outside rollback guarantees.
+- Release conditions checked for manual master, release-marked master pushes, ordinary pushes and other branches; hosted signing/publishing not invoked.
 
 ## Implementation sequence
 

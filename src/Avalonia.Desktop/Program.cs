@@ -13,9 +13,10 @@ public sealed partial class Program
     [STAThread]
     public static int Main(string[] args)
     {
+        ApplicationStartup? startup = null;
         try
         {
-            using var startup = ApplicationStartup.Acquire(ClientProperties.WorkingFolder);
+            startup = ApplicationStartup.Acquire(ClientProperties.WorkingFolder);
 
             if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
             {
@@ -58,12 +59,16 @@ public sealed partial class Program
                     );
             }
 
-            if (File.Exists(ClientProperties.PathToLogFile))
+            if (startup is not null && File.Exists(ClientProperties.PathToLogFile))
             {
                 File.Copy(ClientProperties.PathToLogFile, Path.Combine(ClientProperties.WorkingFolder, $"{DateTime.Now:dd_MM_yy_HH_mm}.crashlog"));
             }
 
             return -1;
+        }
+        finally
+        {
+            startup?.Dispose();
         }
     }
 

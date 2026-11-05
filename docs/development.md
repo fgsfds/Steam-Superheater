@@ -28,26 +28,30 @@ Build before using `--no-build`. With the runner selected in `global.json`, use 
 
 ```powershell
 dotnet test --project src/Tests.Unit/Tests.Unit.csproj --no-build
-dotnet test --project src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build --filter-not-class Tests.Unit.Sequential.HostsFixTests
+dotnet test --project src/Tests.Unit.Sequential/Tests.Unit.Sequential.csproj --no-build
 ```
 
 | Project | Scope and side effects |
 | --- | --- |
 | `Tests.Core` | Shared fixtures/resources; not a test suite. |
-| `Tests.Unit` | Fake-backed unit tests; 49 passed during this refresh. |
+| `Tests.Unit` | Fake-backed unit tests; 63 passed in final validation. |
 | `Tests.Unit.Sequential` | Filesystem, registry, parsing, downloads, and API integration tests; collections are serialized. Tests can use network services and a dedicated HKCU `Layers_test` registry key. |
 | `Tests.Database` | Live catalog/archive checks, MinIO listing, and a real remote upload. Not a hermetic unit suite. |
 
-`HostsFixTests` uses a copied hosts fixture, **not** the Windows hosts file, but its game directory is hard-coded to `C:\games\test game\`. The filtered command above avoids that write on a developer machine; 22 tests passed with this exclusion. Run the full project in a disposable Windows environment until the fixture is isolated. CI currently runs the full sequential project on Windows and Linux. Platform guards sometimes return early instead of reporting a skipped test, so a green Linux run does not establish Windows registry/hosts coverage.
+Fixtures use unique temporary roots. Hosts tests edit a copy and explicitly skip without Windows administrator rights; symbolic-link tests skip without link privileges. Documents-placeholder coverage does not write user documents. Registry tests use the dedicated HKCU `Layers_test` key. The full sequential suite reports 85 passed and two privilege skips on the validation host. Local catalog schema and GUID checks run without network access.
 
-The database suite runs separately for `db/**` changes and manual dispatch. `LooseFilesTest` needs `MINIO_ACCESS_KEY` and `MINIO_SECRET_KEY`; `UploadFixTest` uploads `Resources/test_fix.zip` to the configured service even though it sets offline mode. Only run it against an intentionally selected service environment. The suite is Windows-gated; administrator access is not a blanket prerequisite for its current tests.
+External tests have `ServiceRead` and `ServiceWrite` traits. The database workflow selects read-only checks on trusted pushes or manual dispatch, skips PR events, and uses MinIO secrets for listing. Normal PR CI validates local catalogs without those secrets. Upload tests require `SUPERHEATER_ALLOW_SERVICE_WRITES=1` and never run in normal CI. Review `db/data.json` destinations before opting in:
 
 ```powershell
-# External-service suite; review destinations and credentials first.
-dotnet test --project src/Tests.Database/Tests.Database.csproj --no-build
+# Read-only service checks can download large archives and need MinIO credentials.
+dotnet test --project src/Tests.Database/Tests.Database.csproj --no-build --filter-trait Category=ServiceRead
+# An intentional real upload requires both this variable and test selection.
+$env:SUPERHEATER_ALLOW_SERVICE_WRITES = '1'
+dotnet test --project src/Tests.Database/Tests.Database.csproj --no-build --filter-trait Category=ServiceWrite
+Remove-Item Env:SUPERHEATER_ALLOW_SERVICE_WRITES
 ```
 
-Build analyzers are enabled; there is no separate lint command. The refresh build succeeded with 653 warnings. Treat this as a baseline to reduce, not a reason to disable analyzers globally.
+The upload guard was verified without sending an upload. Final clean build: zero errors, 648 warnings versus the original 653-warning baseline. Deprecated UI API, fixture ownership and serialization documentation were addressed without broad analyzer suppression; further warning cleanup remains incremental maintenance.
 
 ## Publish
 
@@ -62,7 +66,7 @@ After publishing a different runtime, run `dotnet restore` again before a defaul
 
 The Windows profile also enables ReadyToRun. Local publishing does not perform SignPath signing. `publish.ps1` is a convenience script using shared output paths; the release workflow signs Windows output and packages the executables into platform-specific ZIP files.
 
-The release workflow currently requires a push to `master` whose head commit message contains `[release]`. Although `workflow_dispatch` is declared, its jobs require a push event and therefore skip manual dispatch. Releases are created as prereleases. See the [review plan](review-plan.md) before changing this behavior.
+Release jobs run on master for either manual dispatch or a push whose head message contains `[release]`. Other branches and ordinary pushes skip. Both accepted paths sign Windows builds and publish a prerelease: manual dispatch is a real release, not a dry run. Local condition checks do not validate hosted signing credentials.
 
 ## Dependency maintenance
 
@@ -73,7 +77,7 @@ dotnet list package --vulnerable --include-transitive
 
 Edit central versions, restore, build, run the affected test suites, and publish both targets when runtime/UI dependencies change. Keep related Microsoft and Avalonia core packages aligned. Independent packages such as Avalonia DataGrid need not share the core package version. Do not enable prerelease updates implicitly.
 
-`nuget.config` adds nuget.org but does not clear inherited sources. Machine-level feeds may therefore appear in package reports. Reproducible source configuration and CI coverage are follow-up work in the review plan. NuGet vulnerability reports describe known advisories at query time, not a complete security assessment.
+`nuget.config` clears inherited feeds and selects nuget.org. Dependabot checks NuGet and GitHub Actions weekly. Windows/Linux PR jobs have read-only repository permissions. Vulnerability reports describe known advisories at query time, not a complete security assessment.
 
 ## Architecture
 
@@ -88,11 +92,11 @@ Edit central versions, restore, build, run the affected test suites, and publish
 
 `App.LoadBindings()` registers services through the `With*` extensions and builds the container with scope/build validation. `IViewModelsFactory` supplies view models to views. `ApiBindings.WithApi()` currently selects `GitHubApiInterface`; having `ServerApiInterface` in the tree does not make it the active backend.
 
-A typical installation flows from `MainViewModel` through `FixManager` into a per-type installer. File installations download/check archives, back up affected paths, extract or patch files, and optionally apply Wine overrides or run a post-install file. `InstalledFixesProvider` persists the resulting record in the game's `.superheater` folder. That installed state is separate from the SQLite catalog/settings cache.
+A typical installation flows from `MainViewModel` through `FixManager` into a per-type installer. File installations stage the complete shared-fix tree, then journal affected files and metadata before mutation. Per-game locking serializes operations; failures restore snapshots and unfinished journals recover on discovery/retry. Post-install programs run after commit. `InstalledFixesProvider` persists the resulting record in the game's `.superheater` folder. That installed state is separate from the SQLite catalog/settings cache.
 
-Providers coordinate catalog/game state and cache access. Preserve their synchronization when changing them; installed-state writes are not currently transactional. Offline catalog branches live in providers and the API's data loader. `Result` and `Result<T>` carry expected failures across layers, although several operations still allow exceptions to escape.
+Providers coordinate catalog/game state and cache access. Preserve their synchronization when changing them; installed-state writes flush temporary records before replacement and cache publication; corrupt records are quarantined, and legacy originals are retained. Offline catalog branches live in providers and the API's data loader. `Result` and `Result<T>` carry expected failures across layers, although several operations still allow exceptions to escape.
 
-SQLite migrations live under `src/Database.Client/Migrations`. Add new migrations with compatible EF Core tooling; do not rewrite applied migrations. Both default context configuration and DI currently use the relative connection string `Data Source=Superheater.db`.
+SQLite migrations live under `src/Database.Client/Migrations`. Add new migrations with compatible EF Core tooling; do not rewrite applied migrations. Context and DI use `PortableDatabase.ConnectionString`, an absolute path beside the executable. Startup acquires ownership before mutations, imports a legacy launch-directory database only when the portable database is absent, and leaves SQLite sidecars intact.
 
 ## Contributing catalog entries
 
