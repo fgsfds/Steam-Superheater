@@ -1,3 +1,5 @@
+using Api.Axiom.Interfaces;
+using Common.Client;
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using Avalonia.Controls.Notifications;
@@ -16,6 +18,9 @@ namespace Avalonia.Desktop.ViewModels;
 
 internal sealed partial class NewsViewModel : ObservableObject
 {
+    private readonly IApiInterface _api;
+    public string BackendMessage => ApiFeaturePolicy.Explanation(ClientProperties.IsOfflineMode);
+    private bool CanWriteNews() => ApiFeaturePolicy.Allows(_api.Capabilities, ClientProperties.IsOfflineMode, ApiCapabilities.CatalogWrite);
     private readonly INewsProvider _newsProvider;
     private readonly IConfigProvider _config;
     private readonly PopupEditorViewModel _popupEditor;
@@ -40,12 +45,13 @@ internal sealed partial class NewsViewModel : ObservableObject
 
 
     public NewsViewModel(
-        INewsProvider newsProvider,
+        INewsProvider newsProvider, IApiInterface api,
         IConfigProvider configProvider,
         PopupEditorViewModel popupEditor,
         ILogger logger
         )
     {
+        _api = api;
         _newsProvider = newsProvider;
         _config = configProvider;
         _popupEditor = popupEditor;
@@ -79,7 +85,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     /// <summary>
     /// Add news
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanWriteNews))]
     private async Task AddNews()
     {
         var newContent = await _popupEditor.ShowAndGetResultAsync("Add news entry", string.Empty).ConfigureAwait(true);
@@ -105,7 +111,7 @@ internal sealed partial class NewsViewModel : ObservableObject
     /// <summary>
     /// Edit current news content
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanWriteNews))]
     private async Task EditNews(DateTime date)
     {
         var news = NewsList.FirstOrDefault(x => x.Date == date);

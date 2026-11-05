@@ -21,6 +21,11 @@ namespace Common.Client.Models;
 
 public sealed class EditorModel
 {
+    /// <summary>Whether submission upload is available.</summary>
+    public bool CanUpload => ApiFeaturePolicy.Allows(_apiInterface.Capabilities, ClientProperties.IsOfflineMode, ApiCapabilities.Upload);
+    /// <summary>Whether direct catalog mutation is available.</summary>
+    public bool CanWriteCatalog => ApiFeaturePolicy.Allows(_apiInterface.Capabilities, ClientProperties.IsOfflineMode, ApiCapabilities.CatalogWrite);
+
     private readonly IFixesProvider _fixesProvider;
     private readonly IGamesProvider _gamesProvider;
     private readonly FilesUploader _filesUploader;
@@ -631,4 +636,3 @@ public sealed class EditorModel
         File.WriteAllText(Path.Combine(folder, "fixes.md"), result);
     }
 }
-

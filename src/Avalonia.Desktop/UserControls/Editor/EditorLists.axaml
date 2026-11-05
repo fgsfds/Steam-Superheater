@@ -115,7 +115,7 @@
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding UploadFixCommand}"
+                    ToolTip.Tip="{Binding BackendMessage}" Command="{Binding UploadFixCommand}"
                     Background="{DynamicResource SystemAccentColor}"
                     IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}, Converter={StaticResource ReverseBoolConverter}}"
                     IsEnabled="{Binding !LockButtons}">
@@ -129,7 +129,7 @@
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
                     Background="{DynamicResource SystemAccentColor}"
-                    Command="{Binding AddFixToDbCommand}"
+                    ToolTip.Tip="{Binding BackendMessage}" Command="{Binding AddFixToDbCommand}"
                     IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}">
                 Add fix to DB
             </Button>
@@ -152,7 +152,7 @@
                     Padding="4"
                     HorizontalAlignment="Stretch"
                     HorizontalContentAlignment="Center"
-                    Command="{Binding DisableFixCommand}"
+                    ToolTip.Tip="{Binding BackendMessage}" Command="{Binding DisableFixCommand}"
                     IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"/>
 
             <Button Grid.Column="0"

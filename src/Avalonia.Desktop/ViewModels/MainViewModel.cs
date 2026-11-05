@@ -297,6 +297,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ReportFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(DownvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(CheckHashCommand))]
@@ -817,7 +818,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
-    private bool UpvoteCanExecute() => _fixesProvider.Scores is not null;
+    private bool UpvoteCanExecute() => CanUseCommunity && SelectedFix is not null && _fixesProvider.Scores is not null;
 
 
     /// <summary>
@@ -833,13 +834,17 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
-    private bool DownvoteCanExecute() => _fixesProvider.Scores is not null;
+    private bool DownvoteCanExecute() => UpvoteCanExecute();
 
+
+    public string BackendMessage => ApiFeaturePolicy.Explanation(ClientProperties.IsOfflineMode);
+    private bool CanUseCommunity => ApiFeaturePolicy.Allows(_apiInterface.Capabilities, ClientProperties.IsOfflineMode, ApiCapabilities.Community);
+    private bool ReportFixCanExecute() => CanUseCommunity && SelectedFix is not null;
 
     /// <summary>
     /// Report fix
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ReportFixCanExecute))]
     private async Task ReportFix()
     {
         ArgumentNullException.ThrowIfNull(SelectedFix);

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using Api.Axiom.Interfaces;
 using Api.Axiom.Messages;
 using Common.Axiom;
@@ -14,6 +14,9 @@ namespace Api.Client;
 
 public sealed class GitHubApiInterface : IApiInterface
 {
+    /// <inheritdoc />
+    public ApiCapabilities Capabilities => ApiCapabilities.Upload;
+
     private readonly AppReleasesProvider _appReleasesProvider;
     private readonly HttpClient _httpClient;
     private readonly SemaphoreSlim _semaphore = new(1);
@@ -163,23 +166,23 @@ public sealed class GitHubApiInterface : IApiInterface
     }
 
 
-    public Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+    public Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix) => Task.FromResult(new Result(ResultEnum.Error, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result> AddNewsAsync(string content) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+    public Task<Result> AddNewsAsync(string content) => Task.FromResult(new Result(ResultEnum.Error, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion) => Task.FromResult(new Result<int?>(ResultEnum.Error, null, string.Empty));
+    public Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion) => Task.FromResult(new Result<int?>(ResultEnum.Error, null, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result> ChangeFixStateAsync(Guid guid, bool isDisabled) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+    public Task<Result> ChangeFixStateAsync(Guid guid, bool isDisabled) => Task.FromResult(new Result(ResultEnum.Error, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result> ChangeNewsAsync(DateTime date, string content) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+    public Task<Result> ChangeNewsAsync(DateTime date, string content) => Task.FromResult(new Result(ResultEnum.Error, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result<int?>> ChangeScoreAsync(Guid guid, sbyte increment) => Task.FromResult(new Result<int?>(ResultEnum.Error, null, string.Empty));
+    public Task<Result<int?>> ChangeScoreAsync(Guid guid, sbyte increment) => Task.FromResult(new Result<int?>(ResultEnum.Error, null, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result<string?>> CheckIfFixExistsAsync(Guid guid) => Task.FromResult(new Result<string?>(ResultEnum.Error, null, string.Empty));
+    public Task<Result<string?>> CheckIfFixExistsAsync(Guid guid) => Task.FromResult(new Result<string?>(ResultEnum.Error, null, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result<GetFixesStatsOutMessage>> GetFixesStats() => Task.FromResult(new Result<GetFixesStatsOutMessage>(ResultEnum.Error, null, string.Empty));
+    public Task<Result<GetFixesStatsOutMessage>> GetFixesStats() => Task.FromResult(new Result<GetFixesStatsOutMessage>(ResultEnum.Error, null, "This operation is unavailable with the GitHub catalog backend."));
 
-    public Task<Result> ReportFixAsync(Guid guid, string text) => Task.FromResult(new Result(ResultEnum.Error, string.Empty));
+    public Task<Result> ReportFixAsync(Guid guid, string text) => Task.FromResult(new Result(ResultEnum.Error, "This operation is unavailable with the GitHub catalog backend."));
 
     private async Task InitData()
     {

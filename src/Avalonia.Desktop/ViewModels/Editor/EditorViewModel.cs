@@ -27,6 +27,8 @@ namespace Avalonia.Desktop.ViewModels.Editor;
 
 internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
 {
+    public string BackendMessage => Api.Axiom.Interfaces.ApiFeaturePolicy.Explanation(ClientProperties.IsOfflineMode);
+
     private readonly EditorModel _editorModel;
     private readonly MainViewModel _mainViewModel;
     private readonly IFixesProvider _fixesProvider;
@@ -437,7 +439,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
-    private bool AddFixToDbCanExecute() => SelectedFix is not null;
+    private bool AddFixToDbCanExecute() => _editorModel.CanWriteCatalog && SelectedFix is not null;
 
 
     /// <summary>
@@ -458,7 +460,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
-    private bool DisableFixCanExecute() => SelectedFix is not null;
+    private bool DisableFixCanExecute() => _editorModel.CanWriteCatalog && SelectedFix is not null;
 
 
     /// <summary>
@@ -594,7 +596,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
 
     }
-    private bool UploadFixCanExecute() => SelectedFix is not null && !LockButtons;
+    private bool UploadFixCanExecute() => _editorModel.CanUpload && SelectedFix is not null && !LockButtons;
 
 
     /// <summary>

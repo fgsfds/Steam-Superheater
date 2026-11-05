@@ -142,6 +142,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 11. P2 — Align UI actions with backend capabilities (M)
 
+**Status:** Implemented explicit backend capability flags, shared mode policy, disabled unsupported vote/report/catalog/news/upload commands and explanatory tooltips. GitHub unsupported operations now return meaningful errors; uploads remain distinct from direct catalog writes. Offline is explicitly catalog-only, with service mutations disabled rather than a global network sandbox. Capability combinations and unsupported API behavior are unit-tested.
+
 **Evidence:** [GitHubApiInterface](../src/Api.Client/GitHubApiInterface.cs) returns empty-message errors for votes, reports, statistics, and direct database mutations; it is the backend selected in [ApiBindings](../src/Api.Client/DI/ApiBindings.cs). Offline mode is distributed across providers and does not block all networking.
 
 **Plan:** Expose backend capabilities, disable unavailable actions with an explanation, and define whether offline means catalog-only or strict no-network mode. Keep upload capability separate from catalog editing. Provide actionable errors instead of empty notifications.

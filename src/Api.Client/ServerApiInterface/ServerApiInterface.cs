@@ -12,6 +12,9 @@ namespace Api.Client.ServerApiInterface;
 
 public sealed partial class ServerApiInterface : IApiInterface
 {
+    /// <inheritdoc />
+    public ApiCapabilities Capabilities => ApiCapabilities.All;
+
     private readonly HttpClient _httpClient;
     private readonly IConfigProvider _configProvider;
 
