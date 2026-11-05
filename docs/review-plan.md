@@ -80,6 +80,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 5. P1 — Persist installed state atomically and preserve corrupt records (M)
 
+**Status:** Implemented serialized reads/writes, flushed temporary-file replacement before cache publication, failure-safe removal, and structured legacy migration with preserved originals. Corrupt records are quarantined rather than deleted. Tests cover failed writes/removal, migration, corruption, and concurrent snapshots.
+
 **Evidence:** [InstalledFixesProvider](../src/Common.Client/Providers/InstalledFixesProvider.cs) mutates `_cache` before disk writes/deletes succeed. `UpdateCacheAsync` deletes JSON that still fails deserialization after legacy rewriting. Read initialization uses a semaphore, but writes and cached snapshots do not share that protection.
 
 **Plan:** Write to a temporary record and atomically replace it, then update the cache under consistent synchronization. Commit cache removal only after successful deletion. Quarantine unreadable records with diagnostics instead of deleting uninstall evidence. Make legacy migration structured and preserve the original.
