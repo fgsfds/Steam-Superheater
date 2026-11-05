@@ -13,29 +13,31 @@ public sealed partial class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
-        {
-            AppUpdateInstaller.InstallUpdate();
-            return 0;
-        }
-
-        if (args.Contains("--dev"))
-        {
-            ClientProperties.IsDeveloperMode = true;
-        }
-
-        if (args.Contains("--deck"))
-        {
-            ClientProperties.IsInSteamDeckGameMode = true;
-        }
-
-        if (args.Contains("--offline"))
-        {
-            ClientProperties.IsOfflineMode = true;
-        }
-
         try
         {
+            using var startup = ApplicationStartup.Acquire(ClientProperties.WorkingFolder);
+
+            if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
+            {
+                AppUpdateInstaller.InstallUpdate();
+                return 0;
+            }
+
+            if (args.Contains("--dev"))
+            {
+                ClientProperties.IsDeveloperMode = true;
+            }
+
+            if (args.Contains("--deck"))
+            {
+                ClientProperties.IsInSteamDeckGameMode = true;
+            }
+
+            if (args.Contains("--offline"))
+            {
+                ClientProperties.IsOfflineMode = true;
+            }
+
             var builder = BuildAvaloniaApp();
 
             return App.Run(builder);

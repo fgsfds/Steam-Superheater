@@ -70,6 +70,8 @@ Priorities: P1 = integrity, security, or recovery work to do first; P2 = correct
 
 ### 4. P1 — Acquire startup ownership before cleanup and SQLite access (M)
 
+**Status:** Implemented ownership and writable-folder checks before update, logging, cleanup or migrations. Cleanup now targets only the known executable backup and leaves SQLite recovery sidecars/unrelated files intact. Tests cover competing ownership, failed write probes, release/reacquisition, and scoped cleanup.
+
 **Evidence:** [App](../src/Avalonia.Desktop/App.axaml.cs), `Run`, calls `Cleanup` and migrates the database before checking write access or acquiring the mutex. `Cleanup` deletes all matching `.old`, `.temp`, `.db-wal`, and `.db-shm` files in the executable directory. It compares an absolute enumerated filename with the relative `.update` marker.
 
 **Impact:** A second launch can touch files owned by the first; SQLite recovery sidecars and unrelated files can be removed. The intended marker match is ineffective for a full path.

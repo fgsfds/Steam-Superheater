@@ -136,10 +136,8 @@ network boundary. Offline mode currently branches inside providers/API on
 - The DB file is `Superheater.db`. `DatabaseContext.OnConfiguring` configures SQLite.
 - Migrations live in `src/Database.Client/Migrations` and are applied on startup.
   Add migrations with EF Core tooling; never edit an already-applied migration.
-- Startup cleanup in `App.Cleanup()` deletes `*.old`, `*.temp`, `.update`, the `update/`
-  folder, and matching `*.db-wal` / `*.db-shm` files. This currently runs before the mutex
-  check and is unsafe for recovery/concurrent access; see `docs/review-plan.md`. The
-  relative `.update` comparison also does not match enumerated absolute filenames.
+- Startup acquires single-instance ownership and checks write access before mutation.
+- Cleanup removes only the known executable backup; SQLite sidecars are preserved.
 
 ### Error handling
 
