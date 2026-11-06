@@ -33,6 +33,6 @@ public abstract class BaseInstalledFixEntity
 [JsonSourceGenerationOptions(
     WriteIndented = true,
     Converters = [typeof(JsonStringEnumConverter<RegistryValueTypeEnum>)])]
+/// <summary>Source-generated JSON metadata for InstalledFixesListContext.</summary>
 [JsonSerializable(typeof(List<BaseInstalledFixEntity>))]
 public sealed partial class InstalledFixesListContext : JsonSerializerContext;
-

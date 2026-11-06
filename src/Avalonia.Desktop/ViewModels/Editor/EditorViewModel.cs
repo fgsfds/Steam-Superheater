@@ -27,6 +27,8 @@ namespace Avalonia.Desktop.ViewModels.Editor;
 
 internal sealed partial class EditorViewModel : ObservableObject, ISearchBarViewModel, IProgressBarViewModel
 {
+    public string BackendMessage => Api.Axiom.Interfaces.ApiFeaturePolicy.Explanation(ClientProperties.IsOfflineMode);
+
     private readonly EditorModel _editorModel;
     private readonly MainViewModel _mainViewModel;
     private readonly IFixesProvider _fixesProvider;
@@ -39,7 +41,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     private readonly ILogger _logger;
     private readonly SemaphoreSlim _locker = new(1);
 
-    private CancellationTokenSource? _cancellationTokenSource;
+    private ProgressOperation? _operation;
 
 
     #region Binding Properties
@@ -437,7 +439,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
-    private bool AddFixToDbCanExecute() => SelectedFix is not null;
+    private bool AddFixToDbCanExecute() => _editorModel.CanWriteCatalog && SelectedFix is not null;
 
 
     /// <summary>
@@ -458,7 +460,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
             result.IsSuccess ? NotificationType.Success : NotificationType.Error
             );
     }
-    private bool DisableFixCanExecute() => SelectedFix is not null;
+    private bool DisableFixCanExecute() => _editorModel.CanWriteCatalog && SelectedFix is not null;
 
 
     /// <summary>
@@ -527,13 +529,27 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
     [RelayCommand(CanExecute = nameof(UploadFixCanExecute))]
     private async Task UploadFixAsync()
     {
+        _operation = new ProgressOperation(_progressReport, ProgressChanged, OperationMessageChanged, () =>
+        {
+            LockButtons = false;
+            ProgressBarValue = 0;
+            ProgressBarText = string.Empty;
+        });
+        LockButtons = true;
+        CancelCommand.NotifyCanExecuteChanged();
+        try { await UploadFixCoreAsync().ConfigureAwait(true); }
+        finally { _operation.Dispose(); _operation = null; }
+    }
+
+    private async Task UploadFixCoreAsync()
+    {
         ArgumentNullException.ThrowIfNull(SelectedGame);
         ArgumentNullException.ThrowIfNull(SelectedFix);
 
-        _progressReport.Progress.ProgressChanged += ProgressChanged;
-        _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
 
-        LockButtons = true;
+
+
+
 
         var canUpload = await _editorModel.CheckFixBeforeUploadAsync(SelectedFix).ConfigureAwait(true);
 
@@ -544,20 +560,20 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                 NotificationType.Error
                 );
 
-            LockButtons = false;
+
             return;
         }
 
-        _cancellationTokenSource = new();
 
-        var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, _cancellationTokenSource.Token).ConfigureAwait(true);
 
-        _progressReport.Progress.ProgressChanged -= ProgressChanged;
-        _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
+        var result = await _editorModel.UploadFixAsync(SelectedGame, SelectedFix, _operation!.Token).ConfigureAwait(true);
 
-        ProgressBarValue = 0;
-        ProgressBarText = string.Empty;
-        LockButtons = false;
+
+
+
+
+
+
 
         if (result.IsSuccess)
         {
@@ -580,15 +596,15 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
         }
 
     }
-    private bool UploadFixCanExecute() => SelectedFix is not null;
+    private bool UploadFixCanExecute() => _editorModel.CanUpload && SelectedFix is not null && !LockButtons;
 
 
     /// <summary>
     /// Cancel ongoing task
     /// </summary>
     [RelayCommand(CanExecute = nameof(CancelCanExecute))]
-    private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
-    private bool CancelCanExecute() => LockButtons;
+    private Task CancelAsync() => _operation?.CancelAsync() ?? Task.CompletedTask;
+    private bool CancelCanExecute() => _operation is not null && LockButtons;
 
 
     /// <summary>
@@ -845,7 +861,7 @@ internal sealed partial class EditorViewModel : ObservableObject, ISearchBarView
                 return;
             }
 
-            await _editorModel.SaveFixesJsonAsync(file.Path.AbsolutePath).ConfigureAwait(true);
+            await _editorModel.SaveFixesJsonAsync(Common.Axiom.Helpers.UriHelper.GetLocalFilePath(file.Path)).ConfigureAwait(true);
         }
         catch (Exception ex)
         {

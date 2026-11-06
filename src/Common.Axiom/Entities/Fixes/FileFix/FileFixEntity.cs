@@ -86,7 +86,7 @@ public sealed class FileFixEntity : BaseFixEntity
     public string? MD5 { get; set; }
 
     /// <summary>
-    /// Zip archive MD5
+    /// SHA-256 hash of the fix archive.
     /// </summary>
     public string? Sha256 { get; set; }
 
@@ -227,6 +227,9 @@ public sealed class FileFixEntity : BaseFixEntity
             Version = this.Version,
             Guid = this.Guid,
             Description = this.Description,
+            Changelog = this.Changelog,
+            Notes = this.Notes,
+            IsDisabled = this.IsDisabled,
             Dependencies = this.Dependencies?.ToList(),
             Tags = this.Tags?.ToList(),
             SupportedOSes = this.SupportedOSes,
@@ -247,4 +250,3 @@ public sealed class FileFixEntity : BaseFixEntity
         };
     }
 }
-

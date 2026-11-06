@@ -20,6 +20,10 @@ public sealed class FileInstalledFixEntity : BaseInstalledFixEntity
 
     public List<string>? WineDllOverrides { get; init; }
 
+    /// <summary>Registry used for this installation's Proton overrides.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? WineRegistryPath { get; init; }
+
     public uint? BuildId { get; init; }
 }
 

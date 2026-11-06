@@ -299,8 +299,12 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
             return;
         }
 
-        OnPropertyChanged(nameof(ZipFilesCount));
-        OnPropertyChanged(nameof(DeleteButtonText));
+        Avalonia.Threading.Dispatcher.UIThread.Post(() =>
+        {
+            if (_disposed) { return; }
+            OnPropertyChanged(nameof(ZipFilesCount));
+            OnPropertyChanged(nameof(DeleteButtonText));
+        });
     }
 
     public void Dispose()
@@ -310,8 +314,8 @@ internal sealed partial class SettingsViewModel : ObservableObject, IDisposable
             return;
         }
 
+        _config.ParameterChangedEvent -= OnParameterChangedEvent;
         _watcher.Dispose();
         _disposed = true;
     }
 }
-

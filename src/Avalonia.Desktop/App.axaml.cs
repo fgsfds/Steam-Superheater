@@ -23,7 +23,6 @@ namespace Avalonia.Desktop;
 /// </summary>
 public sealed class App : Application
 {
-    private static readonly Mutex _mutex = new(false, "Superheater");
     private static ILogger _logger = null!;
     private static App _app = null!;
     private static ServiceProvider _services = null!;
@@ -98,28 +97,6 @@ public sealed class App : Application
         _logger.LogInformation($"Operating system: {Environment.OSVersion}");
         _logger.LogInformation($"Working folder is {ClientProperties.WorkingFolder}");
 
-        if (!Design.IsDesignMode)
-        {
-            if (!DoesHaveWriteAccess(ClientProperties.WorkingFolder))
-            {
-                var messageBox = new MessageBox($"""
-                Superheater doesn't have write access to
-                {ClientProperties.WorkingFolder}
-                and can't be launched. 
-                Move it to the folder where you have write access.
-                """);
-                messageBox.Show();
-                return -1;
-            }
-
-            if (!_mutex.WaitOne(1000, false))
-            {
-                var messageBox = new MessageBox("You can't launch multiple instances of Superheater");
-                messageBox.Show();
-                return -1;
-            }
-        }
-
         try
         {
             code = lifetime.Start();
@@ -184,56 +161,11 @@ public sealed class App : Application
         _app.RequestedThemeVariant = themeEnum;
     }
 
-    /// <summary>
-    /// Check if you can write to the current directory
-    /// </summary>
-    private static bool DoesHaveWriteAccess(string folderPath)
-    {
-        try
-        {
-            using var fs = File.Create(Path.Combine(folderPath, Path.GetRandomFileName()));
-            fs.Close();
-            File.Delete(fs.Name);
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    /// <summary>
-    /// Remove update leftovers
-    /// </summary>
     private static void Cleanup()
     {
-        if (Design.IsDesignMode)
+        if (!Design.IsDesignMode)
         {
-            return;
-        }
-
-        _logger?.LogInformation("Starting cleanup");
-
-        var files = Directory.GetFiles(ClientProperties.WorkingFolder);
-
-        foreach (var file in files)
-        {
-            if (file.EndsWith(".old", StringComparison.OrdinalIgnoreCase)
-                || file.EndsWith(".temp", StringComparison.OrdinalIgnoreCase)
-                || file.Equals(ClientConstants.UpdateFile, StringComparison.OrdinalIgnoreCase)
-                || file.EndsWith(".db-wal", StringComparison.OrdinalIgnoreCase)
-                || file.EndsWith(".db-shm", StringComparison.OrdinalIgnoreCase))
-            {
-                File.Delete(file);
-            }
-        }
-
-        var updateDir = Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder);
-
-        if (Directory.Exists(updateDir))
-        {
-            Directory.Delete(updateDir, true);
+            ApplicationStartup.Cleanup(ClientProperties.WorkingFolder, ClientProperties.ExecutableName);
         }
     }
 }

@@ -11,7 +11,7 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 **Logs**
-Add `superheater.log` file.
+Attach `Superheater.log` from beside the executable, and a `.crashlog` if available. Review logs for private data before sharing.
 
 **Steps to Reproduce**
 Steps to reproduce the behavior:
@@ -22,3 +22,12 @@ Steps to reproduce the behavior:
 
 **Additional context**
 Add any other context about the problem here.
+
+**Environment**
+- Superheater version:
+- OS/version (and Steam Deck Desktop/Game Mode, if relevant):
+- Steam installation type (native/Flatpak/Snap):
+- Game App ID and fix name/version:
+- Launch options and working directory:
+- Expected behavior:
+- Actual behavior:

@@ -20,5 +20,6 @@ public sealed class AppReleaseEntity
     public required Uri DownloadUrl { get; init; }
 }
 
+/// <summary>Source-generated JSON metadata for AppReleaseEntityContext.</summary>
 [JsonSerializable(typeof(List<AppReleaseEntity>))]
 public sealed partial class AppReleaseEntityContext : JsonSerializerContext;

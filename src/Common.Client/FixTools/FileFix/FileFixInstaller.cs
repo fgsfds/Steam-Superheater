@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Runtime.Intrinsics.Arm;
 using System.Security.Cryptography;
 using Api.Axiom.Interfaces;
 using Common.Axiom;
@@ -52,267 +51,265 @@ public sealed class FileFixInstaller
     /// <param name="game">Game entity</param>
     /// <param name="fix">Fix entity</param>
     /// <param name="variant">Fix variant</param>
-    /// <param name="skipMD5Check">Don't check file against fix's MD5 hash</param>
+    /// <param name="skipMD5Check">Skip archive SHA-256 verification</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <exception cref="Exception">Error while downloading file</exception>
-    public async Task<Result<BaseInstalledFixEntity>> InstallFixAsync(
-        GameEntity game,
-        FileFixEntity fix,
-        string? variant,
-        bool skipMD5Check,
-        CancellationToken cancellationToken
-        )
+    public Task<Result<BaseInstalledFixEntity>> InstallFixAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipMD5Check, CancellationToken cancellationToken)
+        => ExecuteAsync(game, fix, variant, skipMD5Check, cancellationToken, false, null);
+
+    internal async Task<Result<BaseInstalledFixEntity>> ExecuteAsync(
+        GameEntity game, FileFixEntity fix, string? variant, bool skipHashCheck, CancellationToken cancellationToken,
+        bool update, Func<BaseInstalledFixEntity, Result>? persist)
     {
-        //checking if compdata folder exists
-        //compdata contains proton settings required for wine dll overrides
+        var staging = Path.Combine(Path.GetTempPath(), "superheater-stage-" + Guid.NewGuid().ToString("N"));
+        try
+        {
+            if (cancellationToken.IsCancellationRequested) { return new(ResultEnum.Cancelled, null, "Installation cancelled"); }
+            using var ownership = await FileInstallTransaction.AcquireAsync(game.InstallDir, cancellationToken).ConfigureAwait(false);
+            FileInstallTransaction.Recover(game.InstallDir, true);
+            var prepared = await PrepareTreeAsync(game, fix, variant, skipHashCheck, staging, new HashSet<Guid>(), cancellationToken).ConfigureAwait(false);
+            if (!prepared.IsSuccess) { return new(prepared.ResultEnum, null, prepared.Message); }
+            cancellationToken.ThrowIfCancellationRequested();
+            var paths = GetAffectedPaths(game, prepared.ResultObject).ToList();
+            paths.Add(Path.Combine(game.InstallDir, ClientConstants.BackupFolder));
+            if (fix.InstalledFix is FileInstalledFixEntity installed) { paths.AddRange(GetInstalledPaths(game, installed)); }
+            FileInstalledFixEntity result;
+            using (var transaction = FileInstallTransaction.Begin(game.InstallDir, fix.Guid, paths))
+            {
+                if (update)
+                {
+                    ArgumentNullException.ThrowIfNull(fix.InstalledFix);
+                    new FileFixUninstaller().UninstallFix(game, fix.InstalledFix);
+                }
+                result = await ApplyPreparedAsync(game, prepared.ResultObject, cancellationToken).ConfigureAwait(false);
+                if (persist is not null)
+                {
+                    var saved = persist(result);
+                    if (!saved.IsSuccess) { return new(saved.ResultEnum, null, saved.Message); }
+                }
+                transaction.Commit();
+            }
+            try { CleanupDownloads(prepared.ResultObject); RunPostInstallActions(game, prepared.ResultObject); }
+            catch (Exception ex) { _logger.LogWarning(ex, "Fix installed, but a post-install action could not be started."); }
+            return new(ResultEnum.Success, result, "Fix installed successfully.");
+        }
+        catch (OperationCanceledException)
+        {
+            return new(ResultEnum.Cancelled, null, "Installation cancelled; previous files restored.");
+        }
+        finally
+        {
+            _progressReport.OperationMessage = string.Empty;
+            if (Directory.Exists(staging)) { Directory.Delete(staging, true); }
+        }
+    }
+
+    private void CleanupDownloads(PreparedFix prepared)
+    {
+        if (prepared.Shared is not null) { CleanupDownloads(prepared.Shared); }
+        if (_configEntity.DeleteZipsAfterInstall && !_configEntity.UseLocalApiAndRepo && prepared.ArchivePath is not null &&
+            prepared.Fix.Url is not null && !new Uri(prepared.Fix.Url).IsFile &&
+            Path.GetDirectoryName(prepared.ArchivePath) == Path.TrimEndingDirectorySeparator(AppContext.BaseDirectory))
+        {
+            File.Delete(prepared.ArchivePath);
+        }
+    }
+
+    private static void RunPostInstallActions(GameEntity game, PreparedFix prepared)
+    {
+        if (prepared.Shared is not null) { RunPostInstallActions(game, prepared.Shared); }
+        RunAfterInstall(game.InstallDir, prepared.Fix.RunAfterInstall);
+    }
+
+    private sealed record PreparedFix(FileFixEntity Fix, string? Stage, Dictionary<string, long?>? Files, PreparedFix? Shared, string? Registry, string? ArchivePath);
+
+    private async Task<Result<PreparedFix>> PrepareTreeAsync(GameEntity game, FileFixEntity fix, string? variant, bool skipHashCheck, string staging, HashSet<Guid> visited, CancellationToken cancellationToken)
+    {
+        if (!visited.Add(fix.Guid)) { throw new InvalidDataException("Cyclic shared-fix dependency."); }
+        cancellationToken.ThrowIfCancellationRequested();
+        string? registry = null;
         if (fix.WineDllOverrides is not null && OperatingSystem.IsLinux())
         {
-            if (!File.Exists($"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{game.Id}/pfx/user.reg"))
+            registry = ProtonTools.FindUserRegistry(game.InstallDir, game.Id);
+            if (registry is null) { return new(ResultEnum.NotFound, null, "Run the game once to create its Proton prefix."); }
+        }
+        Dictionary<string, long?>? files = null;
+        string? stage = null;
+        string? archivePath = null;
+        if (fix.Url is not null)
+        {
+            var download = await CheckAndDownloadFileAsync(new Uri(fix.Url), fix.Guid, fix.Sha256, skipHashCheck, cancellationToken).ConfigureAwait(false);
+            if (!download.IsSuccess) { return new(download.ResultEnum, null, download.Message); }
+            archivePath = download.ResultObject;
+            files = _archiveTools.GetListOfFilesInArchive(download.ResultObject, ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder), fix.InstallFolder, variant);
+            stage = Path.Combine(staging, fix.Guid.ToString("N"));
+            await _archiveTools.UnpackArchiveAsync(download.ResultObject, stage, variant).ConfigureAwait(false);
+        }
+        PreparedFix? shared = null;
+        if (fix.SharedFix is not null)
+        {
+            var sharedDefinition = fix.SharedFix.Clone();
+            sharedDefinition.InstallFolder = fix.SharedFixInstallFolder;
+            var sharedResult = await PrepareTreeAsync(game, sharedDefinition, variant, skipHashCheck, staging, visited, cancellationToken).ConfigureAwait(false);
+            if (!sharedResult.IsSuccess) { return sharedResult; }
+            shared = sharedResult.ResultObject;
+        }
+        _ = visited.Remove(fix.Guid);
+        return new(ResultEnum.Success, new PreparedFix(fix, stage, files, shared, registry, archivePath), string.Empty);
+    }
+
+    private static IEnumerable<string> GetAffectedPaths(GameEntity game, PreparedFix prepared)
+    {
+        var fix = prepared.Fix;
+        foreach (var path in (fix.FilesToDelete ?? []).Concat(fix.FilesToBackup ?? []).Concat(fix.FilesToPatch ?? []).Concat(prepared.Files?.Keys.AsEnumerable() ?? []))
+        {
+            yield return ClientHelpers.GetFullPath(game.InstallDir, path);
+        }
+        if (prepared.Registry is not null) { yield return prepared.Registry; }
+        if (prepared.Shared is not null) { foreach (var path in GetAffectedPaths(game, prepared.Shared)) { yield return path; } }
+    }
+
+    private static IEnumerable<string> GetInstalledPaths(GameEntity game, FileInstalledFixEntity installed)
+    {
+        foreach (var path in installed.FilesList?.Keys.AsEnumerable() ?? []) { yield return ClientHelpers.GetFullPath(game.InstallDir, path); }
+        if (installed.BackupFolder is not null)
+        {
+            var backup = Path.Combine(game.InstallDir, ClientConstants.BackupFolder, installed.BackupFolder);
+            if (Directory.Exists(backup))
             {
-                return new(
-                    ResultEnum.Error,
-                    null,
-                    """
-                        Can't find 'compatdata' folder.
-                        
-                        Run the game at least once before installing this fix.
-                        """);
+                foreach (var entry in Directory.EnumerateFileSystemEntries(backup))
+                {
+                    yield return Path.Combine(game.InstallDir, Path.GetFileName(entry));
+                }
             }
         }
+        var registry = installed.WineRegistryPath ?? (installed.WineDllOverrides is null ? null : ProtonTools.FindUserRegistry(game.InstallDir, game.Id));
+        if (registry is not null) { yield return registry; }
+        if (installed.InstalledSharedFix is not null) { foreach (var path in GetInstalledPaths(game, installed.InstalledSharedFix)) { yield return path; } }
+    }
 
-        var sharedFixInstallResult = await InstallSharedFixAsync(game, fix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-
-        if (!sharedFixInstallResult.IsSuccess)
+    private async Task<FileInstalledFixEntity> ApplyPreparedAsync(GameEntity game, PreparedFix prepared, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var shared = prepared.Shared is null ? null : await ApplyPreparedAsync(game, prepared.Shared, cancellationToken).ConfigureAwait(false);
+        var fix = prepared.Fix;
+        if (prepared.Stage is not null && prepared.Files is not null)
         {
-            return sharedFixInstallResult;
+            var destination = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
+            var refreshed = new Dictionary<string, long?>();
+            if (fix.InstallFolder is not null && !Directory.Exists(destination))
+            {
+                refreshed.TryAdd(fix.InstallFolder + Path.DirectorySeparatorChar, null);
+            }
+            foreach (var pair in prepared.Files)
+            {
+                if (pair.Value.HasValue || !Directory.Exists(ClientHelpers.GetFullPath(game.InstallDir, pair.Key)))
+                {
+                    _ = refreshed.TryAdd(pair.Key, pair.Value);
+                }
+            }
+            foreach (var directory in Directory.GetDirectories(prepared.Stage, "*", SearchOption.AllDirectories))
+            {
+                var relative = Path.GetRelativePath(prepared.Stage, directory);
+                if (!Directory.Exists(Path.Combine(destination, relative)))
+                {
+                    refreshed.TryAdd(Path.Combine(fix.InstallFolder ?? string.Empty, relative) + Path.DirectorySeparatorChar, null);
+                }
+            }
+            prepared = prepared with { Files = refreshed };
         }
-
-        var backupFolderPath = CreateAndGetBackupFolder(game.InstallDir, fix.Name);
-
-        BackupFiles(fix.FilesToDelete, game.InstallDir, backupFolderPath, true);
-        BackupFiles(fix.FilesToBackup, game.InstallDir, backupFolderPath, false);
-        BackupFiles(fix.FilesToPatch, game.InstallDir, backupFolderPath, true);
-
-        var filesUnpackResult = await DownloadAndUnpackArchiveAsync(game, fix, variant, skipMD5Check, backupFolderPath, cancellationToken).ConfigureAwait(false);
-
-        if (!filesUnpackResult.IsSuccess)
+        var backup = CreateAndGetBackupFolder(game.InstallDir, fix.Guid.ToString("N"));
+        BackupFiles(fix.FilesToDelete, game.InstallDir, backup, true);
+        BackupFiles(fix.FilesToBackup, game.InstallDir, backup, false);
+        BackupFiles(fix.FilesToPatch, game.InstallDir, backup, true);
+        if (prepared.Stage is not null)
         {
-            return new(
-                filesUnpackResult.ResultEnum,
-                null,
-                filesUnpackResult.Message);
+            BackupFiles([.. prepared.Files!.Keys], game.InstallDir, backup, true);
+            FileInstallTransaction.CopyPath(prepared.Stage, ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder));
         }
-
-        await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backupFolderPath).ConfigureAwait(false);
-
-        var dllOverrides = await ApplyWineDllOverridesAsync(game.Id, fix.WineDllOverrides).ConfigureAwait(false);
-
-        RunAfterInstall(game.InstallDir, fix.RunAfterInstall);
-
-        FileInstalledFixEntity installedFix = new()
+        cancellationToken.ThrowIfCancellationRequested();
+        await PatchFilesAsync(fix.FilesToPatch, game.InstallDir, backup).ConfigureAwait(false);
+        var overrides = prepared.Registry is null ? null : await ProtonTools.AddOverridesAsync(prepared.Registry, fix.WineDllOverrides!).ConfigureAwait(false);
+        cancellationToken.ThrowIfCancellationRequested();
+        return new FileInstalledFixEntity
         {
-            GameId = game.Id,
-            Guid = fix.Guid,
-            Version = fix.Version,
-            BackupFolder = Directory.Exists(backupFolderPath) ? new DirectoryInfo(backupFolderPath).Name : null,
-            InstalledSharedFix = (FileInstalledFixEntity)sharedFixInstallResult.ResultObject,
-            WineDllOverrides = dllOverrides,
-            FilesList = filesUnpackResult.ResultObject,
-            BuildId = game.BuildId,
+            GameId = game.Id, Guid = fix.Guid, Version = fix.Version, BuildId = game.BuildId,
+            BackupFolder = Directory.Exists(backup) ? new DirectoryInfo(backup).Name : null,
+            FilesList = prepared.Files, InstalledSharedFix = shared, WineDllOverrides = overrides, WineRegistryPath = prepared.Registry
         };
-
-        return new(ResultEnum.Success, installedFix, "Successfully installed fix");
     }
-
-    private async Task<Result<BaseInstalledFixEntity>> InstallSharedFixAsync(
-        GameEntity game,
-        FileFixEntity fix,
-        string? variant,
-        bool skipMD5Check,
-        CancellationToken cancellationToken
-        )
-    {
-        if (fix.SharedFix is null)
-        {
-            return new(ResultEnum.Success, null, "No shared fixes");
-        }
-
-        fix.SharedFix.InstallFolder = fix.SharedFixInstallFolder;
-
-        var installedSharedFix = await InstallFixAsync(game, fix.SharedFix, variant, skipMD5Check, cancellationToken).ConfigureAwait(false);
-
-        return installedSharedFix;
-    }
-
-    private async Task<Result<Dictionary<string, long?>?>> DownloadAndUnpackArchiveAsync(
-        GameEntity game,
-        FileFixEntity fix,
-        string? variant,
-        bool skipMD5Check,
-        string backupFolderPath,
-        CancellationToken cancellationToken
-        )
-    {
-        if (fix.Url is null)
-        {
-            return new(ResultEnum.Success, null, "Fix doesn't have downloadable file");
-        }
-
-        var unpackToPath = ClientHelpers.GetFullPath(game.InstallDir, fix.InstallFolder);
-
-        var fileUri = new Uri(fix.Url);
-
-        var fileDownloadResult = await CheckAndDownloadFileAsync(fileUri, fix.Guid, skipMD5Check ? null : fix.Sha256, cancellationToken).ConfigureAwait(false);
-
-        if (!fileDownloadResult.IsSuccess)
-        {
-            return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
-        }
-
-        var filesInArchive = _archiveTools.GetListOfFilesInArchive(fileDownloadResult.ResultObject, unpackToPath, fix.InstallFolder, variant);
-
-        BackupFiles([.. filesInArchive.Keys], game.InstallDir, backupFolderPath, true);
-
-        await _archiveTools.UnpackArchiveAsync(fileDownloadResult.ResultObject, unpackToPath, variant).ConfigureAwait(false);
-
-        if (_configEntity.DeleteZipsAfterInstall &&
-            !_configEntity.UseLocalApiAndRepo &&
-            fileDownloadResult.ResultObject?.StartsWith(ClientProperties.WorkingFolder) == true)
-        {
-            File.Delete(fileDownloadResult.ResultObject);
-        }
-
-        return new(ResultEnum.Success, filesInArchive, string.Empty);
-    }
-
-    /// <summary>
-    /// Add dll overrides to the registry
-    /// </summary>
-    /// <param name="gameId">Game id</param>
-    /// <param name="dllList">List of DLLs to add</param>
-    /// <returns>List of added lines</returns>
-    private async Task<List<string>?> ApplyWineDllOverridesAsync(
-        int gameId,
-        List<string>? dllList
-        )
-    {
-        if (dllList is null || !OperatingSystem.IsLinux())
-        {
-            return null;
-        }
-
-        var userRegFile = $"{Environment.GetEnvironmentVariable("HOME")}/.local/share/Steam/steamapps/compatdata/{gameId}/pfx/user.reg";
-
-        var userRegLines = (await File.ReadAllLinesAsync(userRegFile).ConfigureAwait(false)).ToList();
-
-        var startIndex = userRegLines.FindIndex(static x => x.Contains(@"[Software\\Wine\\DllOverrides]"));
-
-        List<string> addedLines = new(dllList.Count);
-
-        foreach (var dll in dllList)
-        {
-            var line = @$"""{dll}""=""native,builtin""";
-
-            addedLines.Add(line);
-        }
-
-        userRegLines.InsertRange(startIndex + 1, addedLines);
-        await File.WriteAllLinesAsync(userRegFile, userRegLines).ConfigureAwait(false);
-
-        return addedLines;
-    }
-
-    /// <summary>
-    /// Check file's MD5 and download if MD5 is correct
-    /// </summary>
-    /// <param name="fixUrl">Url to the file</param>
-    /// <param name="fixGuid">Fix GUID</param>
-    /// <param name="fixMD5">MD5 of the file</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <exception cref="Exception">Error while downloading file</exception>
     private async Task<Result<string>> CheckAndDownloadFileAsync(
-        Uri fixUrl,
-        Guid fixGuid,
-        string? fixMD5,
-        CancellationToken cancellationToken
-        )
+        Uri fixUrl, Guid fixGuid, string? expectedHash, bool skipHashCheck, CancellationToken cancellationToken)
     {
-        string pathToArchive;
-
-        if (fixUrl.IsFile && File.Exists(fixUrl.LocalPath))
+        if (cancellationToken.IsCancellationRequested)
         {
-            return new(ResultEnum.Success, fixUrl.LocalPath, "Using local file");
+            return new(ResultEnum.Cancelled, null, "Verification cancelled");
         }
-        else if (fixUrl.IsAbsoluteUri)
+
+        if (!skipHashCheck && !IsSha256Hash(expectedHash))
         {
-            pathToArchive = _configEntity.UseLocalApiAndRepo
+            return new(ResultEnum.HashError, null, "The fix does not have a valid SHA-256 hash. Verification cannot proceed.");
+        }
+
+        var pathToArchive = fixUrl.IsFile
+            ? fixUrl.LocalPath
+            : _configEntity.UseLocalApiAndRepo
                 ? Path.Combine(_configEntity.LocalRepoPath, "fixes", Path.GetFileName(fixUrl.LocalPath))
                 : Path.Combine(AppDomain.CurrentDomain.BaseDirectory, Path.GetFileName(fixUrl.LocalPath));
+
+        if (File.Exists(pathToArchive))
+        {
+            if (skipHashCheck)
+            {
+                _logger.LogWarning("Archive verification explicitly bypassed for {Archive}", pathToArchive);
+                return new(ResultEnum.Success, pathToArchive, "Using local file without verification");
+            }
+
+            var check = await CheckFileHashAsync(pathToArchive, expectedHash, cancellationToken).ConfigureAwait(false);
+            if (check.IsSuccess)
+            {
+                return new(ResultEnum.Success, pathToArchive, "Using verified local file");
+            }
+
+            if (fixUrl.IsFile || check.ResultEnum != ResultEnum.HashError)
+            {
+                return new(check.ResultEnum, null, check.Message);
+            }
+
+            File.Delete(pathToArchive);
+        }
+        else if (fixUrl.IsFile)
+        {
+            return new(ResultEnum.NotFound, null, "The local archive does not exist.");
+        }
+
+        var download = await _filesDownloader.DownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
+        if (!download.IsSuccess)
+        {
+            return new(download.ResultEnum, null, download.Message);
+        }
+
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(ResultEnum.Cancelled, null, "Verification cancelled");
+        }
+
+        if (!skipHashCheck)
+        {
+            var check = await CheckFileHashAsync(pathToArchive, expectedHash, cancellationToken).ConfigureAwait(false);
+            if (!check.IsSuccess)
+            {
+                return new(check.ResultEnum, null, check.Message);
+            }
         }
         else
         {
-            throw new ArgumentOutOfRangeException(nameof(fixUrl));
+            _logger.LogWarning("Archive verification explicitly bypassed for {Archive}", pathToArchive);
         }
 
-
-        //checking md5 of the existing file
-        if (File.Exists(pathToArchive))
-        {
-            _logger.LogInformation($"Checking local file {pathToArchive}");
-
-            try
-            {
-                var fileCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
-
-                if (!fileCheckResult.IsSuccess)
-                {
-                    _logger.LogInformation("MD5 of the local file doesn't match, removing it");
-                    File.Delete(pathToArchive);
-                }
-                else
-                {
-                    _progressReport.OperationMessage = string.Empty;
-                    return new(ResultEnum.Success, pathToArchive, "Using local file");
-                }
-            }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("Hash checking cancelled");
-                _progressReport.OperationMessage = string.Empty;
-                return new(ResultEnum.Success, pathToArchive, "Using local file");
-            }
-            finally
-            {
-                _progressReport.OperationMessage = string.Empty;
-            }
-        }
-
-        _logger.LogInformation($"Local file {pathToArchive} not found");
-
-        var fileDownloadResult = await _filesDownloader.DownloadFileAsync(fixUrl, pathToArchive, cancellationToken).ConfigureAwait(false);
-
-        if (!fileDownloadResult.IsSuccess)
-        {
-            return new(fileDownloadResult.ResultEnum, null, fileDownloadResult.Message);
-        }
-
-        if (fixMD5 is not null)
-        {
-            var hashCheckResult = await CheckFileHashAsync(pathToArchive, fixMD5, cancellationToken).ConfigureAwait(false);
-
-            if (!hashCheckResult.IsSuccess)
-            {
-                return new(hashCheckResult.ResultEnum, null, fileDownloadResult.Message);
-            }
-        }
-
-        //Increasing downloads count
         if (!ClientProperties.IsDeveloperMode)
         {
-            var result = await _apiInterface.AddNumberOfInstallsAsync(
-                fixGuid,
-                ClientProperties.CurrentVersion).ConfigureAwait(false);
-
+            var result = await _apiInterface.AddNumberOfInstallsAsync(fixGuid, ClientProperties.CurrentVersion).ConfigureAwait(false);
             if (result.IsSuccess && _fixesProvider.Installs is not null)
             {
                 _fixesProvider.Installs[fixGuid] = result.ResultObject.Value;
@@ -322,6 +319,7 @@ public sealed class FileFixInstaller
         return new(ResultEnum.Success, pathToArchive, "File downloaded successfully");
     }
 
+    private static bool IsSha256Hash(string? hash) => hash is { Length: 64 } && hash.All(Uri.IsHexDigit);
     /// <summary>
     /// Get path to backup folder and create if it doesn't exist
     /// </summary>
@@ -338,7 +336,7 @@ public sealed class FileFixInstaller
 
         if (Directory.Exists(backupFolderPath))
         {
-            Directory.Delete(backupFolderPath, true);
+            throw new IOException("A previous backup exists for this fix. Uninstall it or recover the interrupted operation before retrying.");
         }
 
         return backupFolderPath;
@@ -370,6 +368,10 @@ public sealed class FileFixInstaller
             _progressReport.OperationMessage = $"Backing up file {i + 1} of {paths.Count}.";
 
             var fullFilePath = ClientHelpers.GetFullPath(gameDir, paths[i]);
+            if ((Path.IsPathRooted(paths[i]) || paths[i].StartsWith("{documents}", StringComparison.OrdinalIgnoreCase)) && File.Exists(fullFilePath))
+            {
+                throw new IOException("Replacing existing files outside the game folder requires an explicit backup mapping and is not supported.");
+            }
 
             if (fullFilePath.EndsWith('\\'))
             {
@@ -423,51 +425,44 @@ public sealed class FileFixInstaller
     }
 
     /// <summary>
-    /// Check MD5 of the local file
+    /// Verifies the SHA-256 hash of a local archive without treating cancellation as success.
     /// </summary>
-    /// <param name="filePath">Full path to the file</param>
-    /// <param name="hash">MD5 that the file's hash will be compared to</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>true if check is passed</returns>
-    public async Task<Result> CheckFileHashAsync(string filePath, string hash, CancellationToken cancellationToken)
+    /// <param name="filePath">Archive path.</param>
+    /// <param name="hash">Expected SHA-256 hash.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Success only after verification completes; otherwise a cancellation, hash, or IO error.</returns>
+    public async Task<Result> CheckFileHashAsync(string filePath, string? hash, CancellationToken cancellationToken)
     {
-        FileInfo fileInfo = new(filePath);
-        var contentLength = fileInfo.Length;
-
-        if (contentLength > 1e+9)
-        {
-            _progressReport.OperationMessage = "Checking hash... This may take a while. Press Cancel to skip.";
-        }
-        else
-        {
-            _progressReport.OperationMessage = "Checking hash...";
-        }
-
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (!IsSha256Hash(hash))
+            {
+                return new(ResultEnum.HashError, "The fix does not have a valid SHA-256 hash. Verification cannot proceed.");
+            }
+
+            _progressReport.OperationMessage = "Checking SHA-256 hash...";
             await using var stream = File.OpenRead(filePath);
             var fileHash = Convert.ToHexString(await SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false));
-
-            if (!hash.Equals(fileHash, StringComparison.OrdinalIgnoreCase))
-            {
-                return new(ResultEnum.HashError, "File's hash doesn't match the database");
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            return string.Equals(hash, fileHash, StringComparison.OrdinalIgnoreCase)
+                ? new(ResultEnum.Success, string.Empty)
+                : new(ResultEnum.HashError, "File's SHA-256 hash doesn't match the database");
         }
         catch (OperationCanceledException)
         {
             _logger.LogInformation("Hash checking cancelled");
-            //do nothing
+            return new(ResultEnum.Cancelled, "Verification cancelled");
         }
         catch (Exception ex)
         {
-            _progressReport.OperationMessage = string.Empty;
-            return new(ResultEnum.Error, ex.ToString());
+            return new(ResultEnum.Error, ex.Message);
         }
-
-        _progressReport.OperationMessage = string.Empty;
-        return new(ResultEnum.Success, string.Empty);
+        finally
+        {
+            _progressReport.OperationMessage = string.Empty;
+        }
     }
-
     /// <summary>
     /// Run or open whatever is in RunAfterInstall parameter
     /// </summary>
@@ -545,4 +540,3 @@ public sealed class FileFixInstaller
         }
     }
 }
-

@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using Common.Axiom;
 using Common.Client.FilesTools.Interfaces;
@@ -5,196 +6,119 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Client.FilesTools;
 
-public sealed class FilesDownloader : IFilesDownloader
+/// <summary>
+/// Downloads to a temporary file and validates resumed responses before appending.
+/// </summary>
+public sealed class FilesDownloader(ProgressReport progressReport, IHttpClientFactory httpClientFactory, ILogger logger) : IFilesDownloader
 {
     private const int MaxContinueDownloadAttempts = 5;
 
-    private readonly ProgressReport _progressReport;
-    private readonly IHttpClientFactory _httpClientFactory;
-    private readonly ILogger _logger;
-
-    public FilesDownloader(
-        ProgressReport progressReport,
-        IHttpClientFactory httpClientFactory,
-        ILogger logger
-        )
+    /// <inheritdoc />
+    public async Task<Result> DownloadFileAsync(Uri url, string filePath, CancellationToken cancellationToken)
     {
-        _progressReport = progressReport;
-        _httpClientFactory = httpClientFactory;
-        _logger = logger;
-    }
-
-    /// <inheritdoc/>
-    public async Task<Result> DownloadFileAsync(
-        Uri url,
-        string filePath,
-        CancellationToken cancellationToken
-        )
-    {
-        _logger.LogInformation($"Started downloading file {url}");
-
-        var tempFile = filePath + ".temp";
-
-        if (File.Exists(tempFile))
-        {
-            File.Delete(tempFile);
-        }
-
-        _progressReport.OperationMessage = "Downloading...";
-
-        using var httpClient = _httpClientFactory.CreateClient();
-        using var response = await httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            _logger.LogError($"Error while downloading {url}, error: {response.StatusCode}");
-            return new(ResultEnum.ConnectionError, $"Error while downloading {url}, error: {response.StatusCode}");
-        }
-
-        var contentLength = response.Content.Headers.ContentLength;
-
-        _logger.LogInformation($"File length is {contentLength}");
-
-        FileStream fileStream = new(tempFile, FileMode.Create, FileAccess.Write, FileShare.None);
-
+        var temporary = filePath + ".temp";
         try
         {
-            await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-            if (!contentLength.HasValue)
+            cancellationToken.ThrowIfCancellationRequested();
+            progressReport.OperationMessage = "Downloading...";
+            using var client = httpClientFactory.CreateClient();
+            await using (var file = new FileStream(temporary, FileMode.Create, FileAccess.Write, FileShare.None))
             {
-                await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
-            }
-            else
-            {
-                var buffer = new byte[81920];
-                var totalBytesRead = 0f;
-                int bytesRead;
-
-                while ((bytesRead = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) != 0)
+                long? expectedLength = null;
+                EntityTagHeaderValue? etag = null;
+                DateTimeOffset? modified = null;
+                for (var attempt = 0; ; attempt++)
                 {
-                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken).ConfigureAwait(false);
-                    totalBytesRead += bytesRead;
+                    var offset = file.Position;
+                    var resume = attempt > 0 && expectedLength.HasValue && (etag is { IsWeak: false } || modified.HasValue);
+                    using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                    if (resume)
+                    {
+                        request.Headers.Range = new RangeHeaderValue(offset, null);
+                        request.Headers.IfRange = etag is { IsWeak: false }
+                            ? new RangeConditionHeaderValue(etag)
+                            : new RangeConditionHeaderValue(modified!.Value);
+                    }
 
-                    var res = totalBytesRead / (long)contentLength * 100;
+                    try
+                    {
+                        using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                        if (response.StatusCode == HttpStatusCode.PartialContent)
+                        {
+                            var range = response.Content.Headers.ContentRange;
+                            if (!resume || range?.Unit != "bytes" || range.From != offset || range.Length != expectedLength ||
+                                range.To != expectedLength - 1 ||
+                                (etag is { IsWeak: false } && !etag.Equals(response.Headers.ETag)) ||
+                                (etag is not { IsWeak: false } && response.Content.Headers.LastModified != modified))
+                            {
+                                return new(ResultEnum.Error, "The resumed download does not match the requested file and byte range.");
+                            }
+                        }
+                        else if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            file.SetLength(0);
+                            file.Position = 0;
+                            expectedLength = response.Content.Headers.ContentLength;
+                            etag = response.Headers.ETag;
+                            modified = response.Content.Headers.LastModified;
+                        }
+                        else
+                        {
+                            return new(ResultEnum.ConnectionError, $"Download failed: {response.StatusCode}");
+                        }
 
-                    _progressReport.OperationMessage = "Downloading...";
-                    ((IProgress<float>)_progressReport.Progress).Report(res);
+                        await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+                        var buffer = new byte[81920];
+                        int read;
+                        while ((read = await source.ReadAsync(buffer, cancellationToken).ConfigureAwait(false)) != 0)
+                        {
+                            await file.WriteAsync(buffer.AsMemory(0, read), cancellationToken).ConfigureAwait(false);
+                            if (expectedLength is > 0)
+                            {
+                                ((IProgress<float>)progressReport.Progress).Report((float)((double)file.Position / expectedLength.Value * 100));
+                            }
+                        }
+
+                        if (expectedLength.HasValue && file.Length != expectedLength)
+                        {
+                            throw new HttpIOException(HttpRequestError.ResponseEnded, "The downloaded file has an unexpected length.");
+                        }
+
+                        await file.FlushAsync(cancellationToken).ConfigureAwait(false);
+                        break;
+                    }
+                    catch (HttpIOException) when (attempt < MaxContinueDownloadAttempts)
+                    {
+                        logger.LogInformation("Retrying interrupted download, attempt {Attempt}", attempt + 1);
+                    }
                 }
             }
-        }
-        catch (HttpIOException)
-        {
-            try
-            {
-                await ContinueDownload(url, contentLength, fileStream, cancellationToken).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException)
-            {
-                fileStream.Dispose();
 
-                if (File.Exists(tempFile))
-                {
-                    File.Delete(tempFile);
-                }
-
-                return new(ResultEnum.Cancelled, "Downloading cancelled");
-            }
-            catch (Exception ex)
-            {
-                fileStream.Dispose();
-
-                _logger.LogError(ex, $"Error while continuing downloading {url}");
-
-                return new(ResultEnum.Error, ex.ToString());
-            }
+            cancellationToken.ThrowIfCancellationRequested();
+            File.Move(temporary, filePath, true);
+            return new(ResultEnum.Success, string.Empty);
         }
         catch (OperationCanceledException)
         {
-            fileStream.Dispose();
-
-            if (File.Exists(tempFile))
-            {
-                File.Delete(tempFile);
-            }
-
             return new(ResultEnum.Cancelled, "Downloading cancelled");
         }
         catch (Exception ex)
         {
-            fileStream.Dispose();
-
-            _logger.LogError(ex, $"Error while downloading {url}");
-
-            return new(ResultEnum.Error, ex.ToString());
+            logger.LogError(ex, "Download failed");
+            return new(ResultEnum.Error, ex.Message);
         }
         finally
         {
-            ((IProgress<float>)_progressReport.Progress).Report(0);
-            _progressReport.OperationMessage = string.Empty;
-        }
-
-        fileStream.Dispose();
-
-        _logger.LogInformation("Downloading finished, renaming temp file");
-        File.Move(tempFile, filePath, true);
-
-        return new(ResultEnum.Success, string.Empty);
-    }
-
-
-    /// <summary>
-    /// Continue download after network error
-    /// </summary>
-    /// <param name="url">Url to the file</param>
-    /// <param name="contentLength">Total content length</param>
-    /// <param name="fileStream">File stream to write to</param>
-    /// <param name="cancellationToken">Cancellation token</param>
-    private async Task ContinueDownload(
-        Uri url,
-        long? contentLength,
-        FileStream fileStream,
-        CancellationToken cancellationToken
-        )
-    {
-        Exception? lastException = null;
-
-        for (var attempt = 0; attempt < MaxContinueDownloadAttempts; attempt++)
-        {
-            _logger.LogInformation($"Trying to continue downloading after failing, attempt {attempt + 1}");
-
+            ((IProgress<float>)progressReport.Progress).Report(0);
+            progressReport.OperationMessage = string.Empty;
             try
             {
-                using HttpRequestMessage request = new()
-                {
-                    RequestUri = url,
-                    Method = HttpMethod.Get
-                };
-
-                request.Headers.Range = new RangeHeaderValue(fileStream.Position, contentLength);
-
-                using var httpClient = _httpClientFactory.CreateClient();
-                using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-
-                if (response.StatusCode is not System.Net.HttpStatusCode.PartialContent)
-                {
-                    throw new InvalidOperationException("Error while downloading a file: " + response.StatusCode);
-                }
-
-                await using var source = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-                await source.CopyToAsync(fileStream, cancellationToken).ConfigureAwait(false);
-
-                await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
-
-                return;
+                if (File.Exists(temporary)) { File.Delete(temporary); }
             }
-            catch (HttpIOException ex)
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                lastException = ex;
+                logger.LogWarning(ex, "Unable to remove partial download {Path}", temporary);
             }
         }
-
-        throw new InvalidOperationException($"Failed to continue downloading {url} after {MaxContinueDownloadAttempts} attempts", lastException);
     }
 }

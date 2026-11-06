@@ -19,12 +19,13 @@ public sealed class HostsFixTests : IDisposable
     private readonly string _hostsFilePath;
 
     private readonly FixManager _fixManager;
+    private readonly InstalledFixesProvider? _installedFixesProvider;
 
     private readonly GameEntity _gameEntity = new()
     {
         Id = 1,
         Name = "test game",
-        InstallDir = "C:\\games\\test game\\",
+        InstallDir = Helpers.GameDir,
         Icon = string.Empty,
         BuildId = 1,
         TargetBuildId = 1,
@@ -68,8 +69,8 @@ public sealed class HostsFixTests : IDisposable
 
         HostsFixInstaller hostsFixInstaller = new();
         HostsFixUninstaller hostsFixUninstaller = new();
-        InstalledFixesProvider installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
-        _ = installedFixesProvider.GetInstalledFixesListAsync();
+        _installedFixesProvider = new(new Mock<IGamesProvider>().Object, new Mock<ILogger>().Object);
+        _ = _installedFixesProvider.GetInstalledFixesListAsync();
 
         _fixManager = new(
         null!,
@@ -82,13 +83,14 @@ public sealed class HostsFixTests : IDisposable
             hostsFixInstaller,
             hostsFixUninstaller,
             null!,
-            installedFixesProvider,
+            _installedFixesProvider,
             new Mock<ILogger>().Object
             );
     }
 
     public void Dispose()
     {
+        _installedFixesProvider?.Dispose();
         if (!OperatingSystem.IsWindows())
         {
             return;
@@ -109,6 +111,7 @@ public sealed class HostsFixTests : IDisposable
     [Fact]
     public async Task InstallUninstallHostsFixTest()
     {
+        Assert.SkipUnless(OperatingSystem.IsWindows() && ClientProperties.IsAdmin, "Hosts installer requires Windows administrator rights, even for a copied fixture.");
         if (!OperatingSystem.IsWindows())
         {
             return;
@@ -117,7 +120,7 @@ public sealed class HostsFixTests : IDisposable
         //Install Fix
         var installResult = await _fixManager.InstallFixAsync(_gameEntity, _fixEntity, null, true, new(), _hostsFilePath).ConfigureAwait(true);
 
-        Assert.True(installResult.IsSuccess);
+        Assert.True(installResult.IsSuccess, installResult.Message);
 
         CheckInstalled(_fixEntity.Guid.ToString());
 

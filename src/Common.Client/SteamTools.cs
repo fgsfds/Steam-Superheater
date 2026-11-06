@@ -27,9 +27,14 @@ public sealed class SteamTools : ISteamTools
         {
             var path = Path.Combine(lib, "steamapps");
 
-            var files = Directory.GetFiles(path, "*.acf");
-
-            result.AddRange(files);
+            try
+            {
+                result.AddRange(Directory.GetFiles(path, "*.acf"));
+            }
+            catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+            {
+                _logger.LogWarning(ex, "Skipping unavailable Steam library {Path}", path);
+            }
         }
 
         return result;
@@ -202,4 +207,3 @@ public sealed class SteamTools : ISteamTools
         return result;
     }
 }
-

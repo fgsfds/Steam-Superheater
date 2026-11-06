@@ -1,4 +1,4 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
@@ -7,6 +7,9 @@ namespace Common.Client.Providers.Interfaces;
 
 public interface IInstalledFixesProvider
 {
+    /// <summary>Reload disk state after transaction recovery.</summary>
+    void InvalidateCache() { }
+
     /// <summary>
     /// Add installed fix to cache and create json
     /// </summary>

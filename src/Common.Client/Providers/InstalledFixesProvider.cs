@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
@@ -8,40 +9,35 @@ using Microsoft.Extensions.Logging;
 
 namespace Common.Client.Providers;
 
-public sealed class InstalledFixesProvider : IInstalledFixesProvider
+/// <summary>
+/// Persists installed records before publishing synchronized cache changes.
+/// </summary>
+public sealed class InstalledFixesProvider : IInstalledFixesProvider, IDisposable
 {
     private readonly ILogger _logger;
     private readonly IGamesProvider _gamesProvider;
     private readonly SemaphoreSlim _semaphore = new(1);
-
     private List<BaseInstalledFixEntity>? _cache;
 
-
-    public InstalledFixesProvider(
-        IGamesProvider gamesProvider,
-        ILogger logger
-        )
+    /// <summary>
+    /// Creates the provider for the discovered game installations.
+    /// </summary>
+    public InstalledFixesProvider(IGamesProvider gamesProvider, ILogger logger)
     {
         _gamesProvider = gamesProvider;
         _logger = logger;
     }
 
-
-    /// <inheritdoc/>
+    /// <inheritdoc />
     public async ValueTask<ImmutableList<BaseInstalledFixEntity>> GetInstalledFixesListAsync()
     {
-        if (_cache is not null)
-        {
-            return [.. _cache];
-        }
-
+        await _semaphore.WaitAsync().ConfigureAwait(false);
         try
         {
-            await _semaphore.WaitAsync().ConfigureAwait(false);
-
-            await UpdateCacheAsync().ConfigureAwait(false);
-
-            ArgumentNullException.ThrowIfNull(_cache);
+            if (_cache is null)
+            {
+                _cache = await LoadRecordsAsync().ConfigureAwait(false);
+            }
 
             return [.. _cache];
         }
@@ -51,164 +47,176 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider
         }
     }
 
-    /// <inheritdoc/>
-    public Result CreateInstalledJson(
-        GameEntity game,
-        BaseInstalledFixEntity installedFix
-        )
+    /// <inheritdoc />
+    public Result CreateInstalledJson(GameEntity game, BaseInstalledFixEntity installedFix)
     {
-        ArgumentNullException.ThrowIfNull(_cache);
-
-        _cache.Add(installedFix);
-
+        _semaphore.Wait();
         try
         {
-            if (!Directory.Exists(Path.Combine(game.InstallDir, ClientConstants.BackupFolder)))
+            var path = Path.Combine(game.InstallDir, ClientConstants.BackupFolder, installedFix.Guid + ".json");
+            WriteRecord(path, installedFix);
+            if (_cache is not null)
             {
-                _ = Directory.CreateDirectory(Path.Combine(game.InstallDir, ClientConstants.BackupFolder));
+                _ = _cache.RemoveAll(x => x.GameId == game.Id && x.Guid == installedFix.Guid);
+                _cache.Add(installedFix);
             }
 
-            var jsonText = JsonSerializer.Serialize(installedFix, InstalledFixesListContext.Default.BaseInstalledFixEntity);
-
-            File.WriteAllText(Path.Combine(game.InstallDir, ClientConstants.BackupFolder, installedFix.Guid.ToString() + ".json"), jsonText);
+            return new(ResultEnum.Success, string.Empty);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Unable to save installed fix {Fix}", installedFix.Guid);
             return new(ResultEnum.Error, ex.Message);
         }
-
-        return new(ResultEnum.Success, string.Empty);
+        finally
+        {
+            _ = _semaphore.Release();
+        }
     }
 
-    /// <inheritdoc/>
-    public Result RemoveInstalledJson(
-        GameEntity game,
-        Guid fixGuid
-        )
+    /// <inheritdoc />
+    public Result RemoveInstalledJson(GameEntity game, Guid fixGuid)
     {
-        ArgumentNullException.ThrowIfNull(_cache);
-
-        var toRemove = _cache.First(x => x.GameId == game.Id && x.Guid == fixGuid);
-        _ = _cache.Remove(toRemove);
-
+        _semaphore.Wait();
         try
         {
-            File.Delete(Path.Combine(game.InstallDir, ClientConstants.BackupFolder, fixGuid.ToString() + ".json"));
+            File.Delete(Path.Combine(game.InstallDir, ClientConstants.BackupFolder, fixGuid + ".json"));
+            if (_cache is not null)
+            {
+                _ = _cache.RemoveAll(x => x.GameId == game.Id && x.Guid == fixGuid);
+            }
+
+            return new(ResultEnum.Success, string.Empty);
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Unable to remove installed fix {Fix}", fixGuid);
             return new(ResultEnum.Error, ex.Message);
         }
-
-        return new(ResultEnum.Success, string.Empty);
+        finally
+        {
+            _ = _semaphore.Release();
+        }
     }
 
-
-    /// <summary>
-    /// Update installed fixes cache
-    /// </summary>
-    private async Task UpdateCacheAsync()
+    private async Task<List<BaseInstalledFixEntity>> LoadRecordsAsync()
     {
-        _logger.LogInformation("Requesting installed fixes");
-
-        _cache = [];
-
+        var records = new List<BaseInstalledFixEntity>();
         var games = await _gamesProvider.GetGamesListAsync(false).ConfigureAwait(false);
-
-        foreach (var gameInstallDir in games.Select(static x => x.InstallDir).Distinct())
+        foreach (var gameDirectory in games.Select(x => x.InstallDir).Distinct())
         {
-            var superheaterFolder = Path.Combine(gameInstallDir, ClientConstants.BackupFolder);
-
-            if (!Directory.Exists(superheaterFolder))
+            Common.Client.FixTools.FileFix.FileInstallTransaction.Recover(gameDirectory);
+            var directory = Path.Combine(gameDirectory, ClientConstants.BackupFolder);
+            if (!Directory.Exists(directory))
             {
                 continue;
             }
 
-            var jsons = Directory.GetFiles(superheaterFolder, "*.json", SearchOption.TopDirectoryOnly);
-
-            foreach (var json in jsons)
+            foreach (var path in Directory.GetFiles(directory, "*.json"))
             {
-                var jsonText = File.ReadAllText(json);
-
-                BaseInstalledFixEntity? installedFixes;
-
                 try
                 {
-                    installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
-                }
-                catch
-                {
-                    var jsonLines = File.ReadAllLines(json);
-
-                    if (jsonText.Contains("VersionStr"))
-                    {
-                        for (var i = 0; i < jsonLines.Length; i++)
-                        {
-                            var line = jsonLines[i];
-                            if (line.Contains(@"""Version"":"))
-                            {
-                                jsonLines[i] = string.Empty;
-                            }
-                        }
-
-                        for (var i = 0; i < jsonLines.Length; i++)
-                        {
-                            if (jsonLines[i].Contains(@"""VersionStr"":"))
-                            {
-                                if (jsonLines[i].Contains("null"))
-                                {
-                                    jsonLines[i] = jsonLines[i].Replace(@"""VersionStr"": null", @"""Version"": ""1.0""");
-                                }
-                                else
-                                {
-                                    jsonLines[i] = jsonLines[i].Replace("VersionStr", "Version");
-                                }
-                            }
-                        }
-
-                        jsonText = string.Join(Environment.NewLine, jsonLines);
-                    }
-                    else
-                    {
-                        for (var i = 0; i < jsonLines.Length; i++)
-                        {
-                            var line = jsonLines[i];
-                            if (line.Contains(@"""Version"":"))
-                            {
-                                jsonLines[i] = @"""Version"": ""1.0""";
-                            }
-                        }
-
-                        jsonText = string.Join(Environment.NewLine, jsonLines);
-                    }
-
-                    if (jsonText.Contains("RegistryFixV2"))
-                    {
-                        jsonText = jsonText.Replace("RegistryFixV2", "RegistryFix");
-                    }
-
+                    var text = await File.ReadAllTextAsync(path).ConfigureAwait(false);
+                    BaseInstalledFixEntity record;
                     try
                     {
-                        installedFixes = JsonSerializer.Deserialize(jsonText, InstalledFixesListContext.Default.BaseInstalledFixEntity);
-
-                        var instStr = JsonSerializer.Serialize(installedFixes!, InstalledFixesListContext.Default.BaseInstalledFixEntity);
-                        File.WriteAllText(json, instStr);
+                        record = JsonSerializer.Deserialize(text, InstalledFixesListContext.Default.BaseInstalledFixEntity)
+                            ?? throw new JsonException("Installed record is null.");
                     }
-                    catch
+                    catch (JsonException)
                     {
-                        File.Delete(json);
-                        installedFixes = null;
+                        record = ReadLegacyRecord(text);
+                        File.Copy(path, path + ".legacy-" + Guid.NewGuid().ToString("N"));
+                        WriteRecord(path, record);
+                    }
+
+                    records.Add(record);
+                }
+                catch (JsonException ex)
+                {
+                    _logger.LogError(ex, "Quarantining unreadable installed record {Path}", path);
+                    try
+                    {
+                        File.Move(path, path + ".corrupt-" + Guid.NewGuid().ToString("N"));
+                    }
+                    catch (IOException moveError)
+                    {
+                        _logger.LogError(moveError, "Keeping unreadable record at {Path}", path);
                     }
                 }
-
-                if (installedFixes is null)
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
                 {
-                    continue;
+                    _logger.LogError(ex, "Preserving inaccessible installed record {Path}", path);
                 }
+            }
+        }
 
-                _cache.Add(installedFixes);
+        return records;
+    }
+
+    private static BaseInstalledFixEntity ReadLegacyRecord(string text)
+    {
+        var node = JsonNode.Parse(text) as JsonObject ?? throw new JsonException("Expected installed record object.");
+        MigrateLegacyRecord(node);
+        return node.Deserialize(InstalledFixesListContext.Default.BaseInstalledFixEntity)
+            ?? throw new JsonException("Installed record is null.");
+    }
+
+    private static void MigrateLegacyRecord(JsonObject node)
+    {
+        if (node["VersionStr"] is not null)
+        {
+            node["Version"] = node["VersionStr"]!.DeepClone();
+            _ = node.Remove("VersionStr");
+        }
+        else if (node["Version"] is not JsonValue value || !value.TryGetValue<string>(out _))
+        {
+            node["Version"] = "1.0";
+            _ = node.Remove("VersionStr");
+        }
+
+        if (node["$type"]?.GetValue<string>() == "RegistryFixV2")
+        {
+            node["$type"] = "RegistryFix";
+        }
+
+        if (node["InstalledSharedFix"] is JsonObject sharedFix)
+        {
+            MigrateLegacyRecord(sharedFix);
+        }
+    }
+
+    internal static void WriteRecord(string path, BaseInstalledFixEntity record)
+    {
+        _ = Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        var temporary = path + ".tmp-" + Guid.NewGuid().ToString("N");
+        try
+        {
+            using (var stream = new FileStream(temporary, FileMode.CreateNew, FileAccess.Write, FileShare.None))
+            {
+                JsonSerializer.Serialize(stream, record, InstalledFixesListContext.Default.BaseInstalledFixEntity);
+                stream.Flush(true);
+            }
+
+            File.Move(temporary, path, true);
+        }
+        finally
+        {
+            if (File.Exists(temporary))
+            {
+                File.Delete(temporary);
             }
         }
     }
-}
 
+    /// <inheritdoc />
+    public void InvalidateCache()
+    {
+        _semaphore.Wait();
+        try { _cache = null; }
+        finally { _ = _semaphore.Release(); }
+    }
+
+    /// <inheritdoc />
+    public void Dispose() => _semaphore.Dispose();
+}

@@ -35,7 +35,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     private readonly ILogger _logger;
     private readonly SemaphoreSlim _locker = new(1);
 
-    private CancellationTokenSource? _cancellationTokenSource;
+    private ProgressOperation? _operation;
     private FixesList? _additionalFix;
 
     #region Binding Properties
@@ -297,6 +297,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     [NotifyCanExecuteChangedFor(nameof(UninstallFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(OpenConfigCommand))]
     [NotifyCanExecuteChangedFor(nameof(LaunchGameCommand))]
+    [NotifyCanExecuteChangedFor(nameof(ReportFixCommand))]
     [NotifyCanExecuteChangedFor(nameof(UpvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(DownvoteCommand))]
     [NotifyCanExecuteChangedFor(nameof(CheckHashCommand))]
@@ -508,8 +509,8 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// Cancel ongoing task
     /// </summary>
     [RelayCommand(CanExecute = nameof(CancelCanExecute))]
-    private async Task CancelAsync() => await _cancellationTokenSource!.CancelAsync().ConfigureAwait(true);
-    private bool CancelCanExecute() => LockButtons;
+    private Task CancelAsync() => _operation?.CancelAsync() ?? Task.CompletedTask;
+    private bool CancelCanExecute() => _operation is not null && LockButtons;
 
     /// <summary>
     /// Cancel ongoing task
@@ -817,7 +818,7 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
-    private bool UpvoteCanExecute() => _fixesProvider.Scores is not null;
+    private bool UpvoteCanExecute() => CanUseCommunity && SelectedFix is not null && _fixesProvider.Scores is not null;
 
 
     /// <summary>
@@ -833,13 +834,17 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         OnPropertyChanged(nameof(IsSelectedFixUpvoted));
         OnPropertyChanged(nameof(IsSelectedFixDownvoted));
     }
-    private bool DownvoteCanExecute() => _fixesProvider.Scores is not null;
+    private bool DownvoteCanExecute() => UpvoteCanExecute();
 
+
+    public string BackendMessage => ApiFeaturePolicy.Explanation(ClientProperties.IsOfflineMode);
+    private bool CanUseCommunity => ApiFeaturePolicy.Allows(_apiInterface.Capabilities, ClientProperties.IsOfflineMode, ApiCapabilities.Community);
+    private bool ReportFixCanExecute() => CanUseCommunity && SelectedFix is not null;
 
     /// <summary>
     /// Report fix
     /// </summary>
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ReportFixCanExecute))]
     private async Task ReportFix()
     {
         ArgumentNullException.ThrowIfNull(SelectedFix);
@@ -912,13 +917,38 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
     /// <param name="skipDependencies">Don't install or update dependencies</param>
     private async Task<Result> InstallUpdateFixAsync(FixesList fixesList, BaseFixEntity fix, string? fixVariant, bool skipDependencies)
     {
+        if (_operation is not null)
+        {
+            return await InstallUpdateFixCoreAsync(fixesList, fix, fixVariant, skipDependencies).ConfigureAwait(true);
+        }
+        _operation = new ProgressOperation(_progressReport, ProgressChanged, OperationMessageChanged, () =>
+        {
+            LockButtons = false;
+            ProgressBarValue = 0;
+            ProgressBarText = string.Empty;
+        });
+        LockButtons = true;
+        CancelCommand.NotifyCanExecuteChanged();
+        try
+        {
+            return await InstallUpdateFixCoreAsync(fixesList, fix, fixVariant, skipDependencies).ConfigureAwait(true);
+        }
+        finally
+        {
+            _operation.Dispose();
+            _operation = null;
+        }
+    }
+
+    private async Task<Result> InstallUpdateFixCoreAsync(FixesList fixesList, BaseFixEntity fix, string? fixVariant, bool skipDependencies)
+    {
         ArgumentNullException.ThrowIfNull(fixesList.Game);
         ArgumentNullException.ThrowIfNull(SelectedGame?.Game);
 
-        LockButtons = true;
 
-        _progressReport.Progress.ProgressChanged += ProgressChanged;
-        _progressReport.NotifyOperationMessageChanged += OperationMessageChanged;
+
+
+
 
         var isUpdate = fix.IsInstalled;
 
@@ -974,17 +1004,17 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             }
         }
 
-        _cancellationTokenSource = new();
+
 
         Result result;
 
         if (isUpdate)
         {
-            result = await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, false, _cancellationTokenSource.Token).ConfigureAwait(true);
+            result = await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, false, _operation!.Token).ConfigureAwait(true);
         }
         else
         {
-            result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, false, _cancellationTokenSource.Token).ConfigureAwait(true);
+            result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, false, _operation!.Token).ConfigureAwait(true);
         }
 
         if (result == ResultEnum.HashError)
@@ -992,28 +1022,30 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
             var popupResult = await _popupMessage.ShowAndGetResultAsync(
                 "Warning",
                 """
-                MD5 hash of the downloaded file doesn't match the one from the database.
-                
+                SHA-256 verification failed or the catalog does not contain a valid hash.
+
                 This file may have been stealth-updated by the original author and wasn't yet verified by the maintainers.
 
-                Do you still want to install the fix?
+                Do you still want to install the fix without verification?
                 """,
                 PopupMessageType.YesNo
                 ).ConfigureAwait(true);
 
             if (popupResult)
             {
-                result = await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _cancellationTokenSource.Token).ConfigureAwait(true);
+                result = isUpdate
+                    ? await _fixManager.UpdateFixAsync(fixesList.Game, fix, fixVariant, true, _operation!.Token).ConfigureAwait(true)
+                    : await _fixManager.InstallFixAsync(fixesList.Game, fix, fixVariant, true, _operation!.Token).ConfigureAwait(true);
             }
         }
 
-        LockButtons = false;
 
-        _progressReport.Progress.ProgressChanged -= ProgressChanged;
-        _progressReport.NotifyOperationMessageChanged -= OperationMessageChanged;
 
-        ProgressBarValue = 0;
-        ProgressBarText = string.Empty;
+
+
+
+
+
 
         if (!result.IsSuccess)
         {
@@ -1239,4 +1271,3 @@ internal sealed partial class MainViewModel : ObservableObject, ISearchBarViewMo
         }
     }
 }
-

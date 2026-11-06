@@ -1,9 +1,23 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Common.Axiom.Helpers;
 
 public static class UriHelper
 {
+    /// <summary>
+    /// Converts a local file URI into a decoded native filesystem path.
+    /// </summary>
+    public static string GetLocalFilePath(Uri uri)
+    {
+        ArgumentNullException.ThrowIfNull(uri);
+        if (!uri.IsAbsoluteUri || !uri.IsFile)
+        {
+            throw new ArgumentException("Choose a local file location for this export.", nameof(uri));
+        }
+
+        return uri.LocalPath;
+    }
+
     public static bool TryParseUri(string input, [NotNullWhen(true)] out Uri? result)
     {
         result = null;

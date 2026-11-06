@@ -34,6 +34,6 @@ public sealed class GitHubReleaseAsset
 }
 
 
+/// <summary>Source-generated JSON metadata for GitHubReleaseEntityContext.</summary>
 [JsonSerializable(typeof(List<GitHubReleaseEntity>))]
 public sealed partial class GitHubReleaseEntityContext : JsonSerializerContext;
-

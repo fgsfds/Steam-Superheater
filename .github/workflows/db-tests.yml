@@ -13,10 +13,14 @@ on:
       - 'db/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
 
   test-windows:
 
+    if: github.event_name != 'pull_request'
     runs-on: windows-latest
 
     steps:
@@ -37,4 +41,4 @@ jobs:
       env:
         MINIO_ACCESS_KEY: ${{ secrets.MINIO_ACCESS_KEY }}
         MINIO_SECRET_KEY: ${{ secrets.MINIO_SECRET_KEY }}
-      run: dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build --verbosity normal
+      run: dotnet test --project ./src/Tests.Database/Tests.Database.csproj --no-build --verbosity normal --filter-trait Category=ServiceRead

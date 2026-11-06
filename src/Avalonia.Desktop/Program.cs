@@ -13,32 +13,41 @@ public sealed partial class Program
     [STAThread]
     public static int Main(string[] args)
     {
-        if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
-        {
-            AppUpdateInstaller.InstallUpdate();
-            return 0;
-        }
-
-        if (args.Contains("--dev"))
-        {
-            ClientProperties.IsDeveloperMode = true;
-        }
-
-        if (args.Contains("--deck"))
-        {
-            ClientProperties.IsInSteamDeckGameMode = true;
-        }
-
-        if (args.Contains("--offline"))
-        {
-            ClientProperties.IsOfflineMode = true;
-        }
-
+        ApplicationStartup? startup = null;
         try
         {
+            startup = ApplicationStartup.Acquire(ClientProperties.WorkingFolder);
+
+            if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
+            {
+                AppUpdateInstaller.InstallUpdate(args, startup.Dispose);
+                return 0;
+            }
+
+            if (args.Contains("--dev"))
+            {
+                ClientProperties.IsDeveloperMode = true;
+            }
+
+            if (args.Contains("--deck"))
+            {
+                ClientProperties.IsInSteamDeckGameMode = true;
+            }
+
+            if (args.Contains("--offline"))
+            {
+                ClientProperties.IsOfflineMode = true;
+            }
+
+            Database.Client.PortableDatabase.ImportLegacyIfNeeded(ClientProperties.WorkingFolder, Directory.GetCurrentDirectory());
             var builder = BuildAvaloniaApp();
 
-            return App.Run(builder);
+            var result = App.Run(builder);
+            if (File.Exists(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile)))
+            {
+                AppUpdateInstaller.InstallUpdate(args, startup.Dispose);
+            }
+            return result;
         }
         catch (Exception ex)
         {
@@ -50,12 +59,16 @@ public sealed partial class Program
                     );
             }
 
-            if (File.Exists(ClientProperties.PathToLogFile))
+            if (startup is not null && File.Exists(ClientProperties.PathToLogFile))
             {
                 File.Copy(ClientProperties.PathToLogFile, Path.Combine(ClientProperties.WorkingFolder, $"{DateTime.Now:dd_MM_yy_HH_mm}.crashlog"));
             }
 
             return -1;
+        }
+        finally
+        {
+            startup?.Dispose();
         }
     }
 

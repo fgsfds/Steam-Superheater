@@ -410,7 +410,7 @@
                     <Button Margin="3"
                             Padding="7"
                             Classes.IsUpvoted="{Binding IsSelectedFixUpvoted}"
-                            Command="{Binding UpvoteCommand}">
+                            ToolTip.Tip="{Binding BackendMessage}" Command="{Binding UpvoteCommand}">
 
                         <Button.Styles>
                             <Style Selector="Button.IsUpvoted">
@@ -429,7 +429,7 @@
                     <Button Margin="3"
                             Padding="7"
                             Classes.IsDownvoted="{Binding IsSelectedFixDownvoted}"
-                            Command="{Binding DownvoteCommand}">
+                            ToolTip.Tip="{Binding BackendMessage}" Command="{Binding DownvoteCommand}">
 
                         <i:Icon Value="fa7-thumbs-down" />
 
@@ -448,7 +448,7 @@
                         Margin="3"
                         Padding="7"
                         HorizontalAlignment="Right"
-                        Command="{Binding ReportFixCommand}"
+                        ToolTip.Tip="{Binding BackendMessage}" Command="{Binding ReportFixCommand}"
                         IsVisible="{Binding IsStatsVisible}">
                     <i:Icon Value="fa7-flag" />
                 </Button>

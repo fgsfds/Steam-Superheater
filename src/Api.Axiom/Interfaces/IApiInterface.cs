@@ -1,4 +1,4 @@
-﻿using Api.Axiom.Messages;
+using Api.Axiom.Messages;
 using Common.Axiom;
 using Common.Axiom.Entities;
 using Common.Axiom.Entities.Fixes;
@@ -8,6 +8,8 @@ namespace Api.Axiom.Interfaces;
 
 public interface IApiInterface
 {
+    /// <summary>Optional backend operations.</summary>
+    ApiCapabilities Capabilities => ApiCapabilities.None;
     Task<Result> AddFixToDbAsync(int gameId, string gameName, BaseFixEntity fix);
     Task<Result> AddNewsAsync(string content);
     Task<Result<int?>> AddNumberOfInstallsAsync(Guid guid, Version appVersion);

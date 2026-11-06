@@ -45,7 +45,7 @@
                  Padding="5"
                  TextWrapping="NoWrap"
                  VerticalAlignment="Center"
-                 Watermark="Search by game name"/>
+                 PlaceholderText="Search by game name"/>
 
         <!--Clear search-->
         <Button x:Name="ClearSearchButton"

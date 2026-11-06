@@ -123,7 +123,7 @@
         <Button Grid.Row="4"
                 Margin="5"
                 Padding="8"
-                Command="{Binding AddNewsCommand}"
+                ToolTip.Tip="{Binding BackendMessage}" Command="{Binding AddNewsCommand}"
                 IsVisible="{Binding Source={x:Static cp:ClientProperties.IsDeveloperMode}}"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Center">

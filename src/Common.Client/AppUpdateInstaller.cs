@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Security.Cryptography;
 using System.IO.Compression;
 using Api.Axiom.Interfaces;
 using Common.Axiom;
@@ -84,11 +86,7 @@ public sealed class AppUpdateInstaller(
 
         try
         {
-            ZipFile.ExtractToDirectory(fileName, Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder), true);
-
-            File.Delete(fileName);
-
-            await File.Create(ClientConstants.UpdateFile).DisposeAsync().ConfigureAwait(false);
+            await StageUpdateAsync(fileName, ClientProperties.WorkingFolder, ClientProperties.ExecutableName, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -100,38 +98,76 @@ public sealed class AppUpdateInstaller(
         return new(ResultEnum.Success, string.Empty);
     }
 
-    /// <summary>
-    /// Install update
-    /// </summary>
-    public static void InstallUpdate()
+    internal static async Task StageUpdateAsync(string fileName, string directory, string executableName, CancellationToken cancellationToken)
     {
-        //_logger.Info("Starting app update");
-
-        var dir = ClientProperties.WorkingFolder;
-        var updateDir = Path.Combine(dir, ClientConstants.UpdateFolder);
-        var oldExe = Path.Combine(dir, ClientProperties.ExecutableName);
-        var newExe = Path.Combine(updateDir, ClientProperties.ExecutableName);
-
-        //renaming old file
-        File.Move(oldExe, oldExe + ".old", true);
-
-        //moving new file
-        File.Move(newExe, oldExe, true);
-
-        File.Delete(Path.Combine(dir, ClientConstants.UpdateFile));
-        Directory.Delete(Path.Combine(dir, ClientConstants.UpdateFolder), true);
-
-        if (OperatingSystem.IsLinux())
+        var staging = Path.Combine(directory, ClientConstants.UpdateFolder);
+        _ = Directory.CreateDirectory(staging);
+        var executable = Path.Combine(staging, executableName);
+        using (var zip = ZipFile.OpenRead(fileName))
         {
-            //setting execute permission for user, otherwise the app won't run from game mode
-            var attributes = File.GetUnixFileMode(oldExe);
-            File.SetUnixFileMode(oldExe, attributes | UnixFileMode.UserExecute);
+            var entry = zip.GetEntry(executableName)
+                ?? throw new InvalidDataException("Update archive does not contain the application executable.");
+            entry.ExtractToFile(executable, true);
         }
+        ValidateExecutable(executable);
+        var checksum = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(executable)));
+        await File.WriteAllTextAsync(Path.Combine(directory, ClientConstants.UpdateFile), checksum, cancellationToken).ConfigureAwait(false);
+        File.Delete(fileName);
+    }
 
-        //starting new version of the app
-        _ = System.Diagnostics.Process.Start(oldExe);
+    /// <summary>Applies the staged update and restarts with the original launch arguments.</summary>
+    public static void InstallUpdate(string[] arguments, Action releaseOwnership)
+    {
+        ApplyStagedUpdate(ClientProperties.WorkingFolder, ClientProperties.ExecutableName, path =>
+        {
+            var start = new ProcessStartInfo(path) { WorkingDirectory = ClientProperties.WorkingFolder, UseShellExecute = false };
+            foreach (var argument in arguments) { start.ArgumentList.Add(argument); }
+            releaseOwnership();
+            using var process = Process.Start(start) ?? throw new IOException("Unable to start the updated application.");
+        });
+    }
 
-        Environment.Exit(0);
+    internal static void ApplyStagedUpdate(string directory, string executable, Action<string> launch)
+    {
+        var current = Path.Combine(directory, executable);
+        var staged = Path.Combine(directory, ClientConstants.UpdateFolder, executable);
+        var marker = Path.Combine(directory, ClientConstants.UpdateFile);
+        var checksum = File.ReadAllText(marker).Trim();
+        ValidateExecutable(staged);
+        if (!checksum.Equals(Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(staged))), StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidDataException("Staged update checksum does not match. Download the update again.");
+        }
+        if (OperatingSystem.IsLinux()) { File.SetUnixFileMode(staged, File.GetUnixFileMode(staged) | UnixFileMode.UserExecute); }
+        var backup = current + ".old";
+        var moved = false;
+        try
+        {
+            File.Move(current, backup);
+            moved = true;
+            File.Move(staged, current);
+            File.Delete(marker);
+            launch(current);
+        }
+        catch
+        {
+            if (moved)
+            {
+                if (File.Exists(current)) { File.Move(current, staged, true); }
+                File.Move(backup, current);
+                File.WriteAllText(marker, checksum);
+            }
+            throw;
+        }
+    }
+
+    private static void ValidateExecutable(string path)
+    {
+        using var stream = File.OpenRead(path);
+        Span<byte> header = stackalloc byte[4];
+        if (stream.Read(header) != 4 || !(header[..2].SequenceEqual("MZ"u8) || header.SequenceEqual(new byte[] { 0x7f, (byte)'E', (byte)'L', (byte)'F' })))
+        {
+            throw new InvalidDataException("The staged application is not a supported executable.");
+        }
     }
 }
-
