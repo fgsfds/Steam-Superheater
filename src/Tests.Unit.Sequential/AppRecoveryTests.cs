@@ -1,3 +1,4 @@
+using System.IO.Compression;
 using System.Security.Cryptography;
 using Common.Client;
 using Database.Client;
@@ -9,6 +10,30 @@ public sealed class AppRecoveryTests : IDisposable
 {
     private readonly string _root = Path.Combine(Path.GetTempPath(), "superheater-update-" + Guid.NewGuid().ToString("N"));
     public AppRecoveryTests() => Directory.CreateDirectory(_root);
+
+    /// <summary>Staging closes the downloaded archive before removing it.</summary>
+    [Fact]
+    public async Task StagingDeletesArchiveAndProducesApplicableUpdate()
+    {
+        var archive = Path.Combine(_root, "release.zip");
+        using (var zip = ZipFile.Open(archive, ZipArchiveMode.Create))
+        {
+            using var writer = new StreamWriter(zip.CreateEntry("app").Open());
+            writer.Write("MZnew");
+        }
+        await File.WriteAllTextAsync(Path.Combine(_root, "app"), "old");
+
+        await AppUpdateInstaller.StageUpdateAsync(archive, _root, "app", CancellationToken.None);
+
+        Assert.False(File.Exists(archive));
+        var staged = Path.Combine(_root, "update", "app");
+        Assert.Equal("MZnew", await File.ReadAllTextAsync(staged));
+        Assert.Equal(Convert.ToHexString(SHA256.HashData(await File.ReadAllBytesAsync(staged))),
+            await File.ReadAllTextAsync(Path.Combine(_root, ".update")));
+        AppUpdateInstaller.ApplyStagedUpdate(_root, "app", path => Assert.Equal("MZnew", File.ReadAllText(path)));
+        Assert.Equal("old", await File.ReadAllTextAsync(Path.Combine(_root, "app.old")));
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

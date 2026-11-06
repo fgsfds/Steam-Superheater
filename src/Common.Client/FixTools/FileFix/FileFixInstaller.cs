@@ -201,7 +201,13 @@ public sealed class FileFixInstaller
             {
                 refreshed.TryAdd(fix.InstallFolder + Path.DirectorySeparatorChar, null);
             }
-            foreach (var pair in prepared.Files) { refreshed.TryAdd(pair.Key, pair.Value); }
+            foreach (var pair in prepared.Files)
+            {
+                if (pair.Value.HasValue || !Directory.Exists(ClientHelpers.GetFullPath(game.InstallDir, pair.Key)))
+                {
+                    _ = refreshed.TryAdd(pair.Key, pair.Value);
+                }
+            }
             foreach (var directory in Directory.GetDirectories(prepared.Stage, "*", SearchOption.AllDirectories))
             {
                 var relative = Path.GetRelativePath(prepared.Stage, directory);

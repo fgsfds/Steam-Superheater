@@ -86,20 +86,7 @@ public sealed class AppUpdateInstaller(
 
         try
         {
-            var staging = Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFolder);
-            _ = Directory.CreateDirectory(staging);
-            using var zip = ZipFile.OpenRead(fileName);
-            var entry = zip.GetEntry(ClientProperties.ExecutableName)
-                ?? throw new InvalidDataException("Update archive does not contain the application executable.");
-            var executable = Path.Combine(staging, ClientProperties.ExecutableName);
-            entry.ExtractToFile(executable, true);
-            ValidateExecutable(executable);
-            var checksum = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(executable)));
-            await File.WriteAllTextAsync(Path.Combine(ClientProperties.WorkingFolder, ClientConstants.UpdateFile), checksum, cancellationToken).ConfigureAwait(false);
-
-            File.Delete(fileName);
-
-
+            await StageUpdateAsync(fileName, ClientProperties.WorkingFolder, ClientProperties.ExecutableName, cancellationToken).ConfigureAwait(false);
         }
         catch (Exception ex)
         {
@@ -109,6 +96,23 @@ public sealed class AppUpdateInstaller(
         }
 
         return new(ResultEnum.Success, string.Empty);
+    }
+
+    internal static async Task StageUpdateAsync(string fileName, string directory, string executableName, CancellationToken cancellationToken)
+    {
+        var staging = Path.Combine(directory, ClientConstants.UpdateFolder);
+        _ = Directory.CreateDirectory(staging);
+        var executable = Path.Combine(staging, executableName);
+        using (var zip = ZipFile.OpenRead(fileName))
+        {
+            var entry = zip.GetEntry(executableName)
+                ?? throw new InvalidDataException("Update archive does not contain the application executable.");
+            entry.ExtractToFile(executable, true);
+        }
+        ValidateExecutable(executable);
+        var checksum = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(executable)));
+        await File.WriteAllTextAsync(Path.Combine(directory, ClientConstants.UpdateFile), checksum, cancellationToken).ConfigureAwait(false);
+        File.Delete(fileName);
     }
 
     /// <summary>Applies the staged update and restarts with the original launch arguments.</summary>

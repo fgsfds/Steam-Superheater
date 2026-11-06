@@ -157,6 +157,13 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider, IDisposabl
     private static BaseInstalledFixEntity ReadLegacyRecord(string text)
     {
         var node = JsonNode.Parse(text) as JsonObject ?? throw new JsonException("Expected installed record object.");
+        MigrateLegacyRecord(node);
+        return node.Deserialize(InstalledFixesListContext.Default.BaseInstalledFixEntity)
+            ?? throw new JsonException("Installed record is null.");
+    }
+
+    private static void MigrateLegacyRecord(JsonObject node)
+    {
         if (node["VersionStr"] is not null)
         {
             node["Version"] = node["VersionStr"]!.DeepClone();
@@ -173,8 +180,10 @@ public sealed class InstalledFixesProvider : IInstalledFixesProvider, IDisposabl
             node["$type"] = "RegistryFix";
         }
 
-        return node.Deserialize(InstalledFixesListContext.Default.BaseInstalledFixEntity)
-            ?? throw new JsonException("Installed record is null.");
+        if (node["InstalledSharedFix"] is JsonObject sharedFix)
+        {
+            MigrateLegacyRecord(sharedFix);
+        }
     }
 
     internal static void WriteRecord(string path, BaseInstalledFixEntity record)

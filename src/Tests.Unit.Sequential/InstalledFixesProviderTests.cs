@@ -74,6 +74,51 @@ public sealed class InstalledFixesProviderTests : IDisposable
         Assert.Equal(text, await File.ReadAllTextAsync(Directory.GetFiles(Path.GetDirectoryName(path)!, "*.legacy-*").Single()));
     }
 
+    /// <summary>Legacy migration handles every shared-fix level and preserves the original record.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LegacyMigrationIncludesNestedSharedFixes(bool modernParent)
+    {
+        var guid = Guid.NewGuid();
+        var sharedGuid = Guid.NewGuid();
+        var nestedGuid = Guid.NewGuid();
+        var path = RecordPath(guid);
+        var version = modernParent ? "\"Version\":\"2.3\"" : "\"Version\":1,\"VersionStr\":\"2.3\"";
+        var text = $$"""
+            {
+              "$type":"FileFix", "GameId":1, "Guid":"{{guid}}", {{version}},
+              "InstalledSharedFix": {
+                "GameId":1, "Guid":"{{sharedGuid}}", "Version":1, "VersionStr":"4.5",
+                "BackupFolder":"shared-backup", "FilesList":{"shared.txt":42},
+                "InstalledSharedFix": {
+                  "GameId":1, "Guid":"{{nestedGuid}}", "Version":1, "VersionStr":null
+                }
+              }
+            }
+            """;
+        await File.WriteAllTextAsync(path, text);
+
+        var record = Assert.IsType<FileInstalledFixEntity>(Assert.Single(await _provider.GetInstalledFixesListAsync()));
+
+        Assert.Equal("2.3", record.Version);
+        Assert.NotNull(record.InstalledSharedFix);
+        Assert.Equal("4.5", record.InstalledSharedFix.Version);
+        Assert.Equal(sharedGuid, record.InstalledSharedFix.Guid);
+        Assert.Equal("shared-backup", record.InstalledSharedFix.BackupFolder);
+        Assert.Equal(42, record.InstalledSharedFix.FilesList!["shared.txt"]);
+        Assert.NotNull(record.InstalledSharedFix.InstalledSharedFix);
+        Assert.Equal("1.0", record.InstalledSharedFix.InstalledSharedFix.Version);
+        Assert.Equal(nestedGuid, record.InstalledSharedFix.InstalledSharedFix.Guid);
+        Assert.Equal(text, await File.ReadAllTextAsync(Directory.GetFiles(Path.GetDirectoryName(path)!, "*.legacy-*").Single()));
+        Assert.Empty(Directory.GetFiles(Path.GetDirectoryName(path)!, "*.corrupt-*"));
+        _provider.InvalidateCache();
+        var reloaded = Assert.IsType<FileInstalledFixEntity>(Assert.Single(await _provider.GetInstalledFixesListAsync()));
+        Assert.Equal("4.5", reloaded.InstalledSharedFix!.Version);
+        Assert.Equal("1.0", reloaded.InstalledSharedFix.InstalledSharedFix!.Version);
+        Assert.Single(Directory.GetFiles(Path.GetDirectoryName(path)!, "*.legacy-*"));
+    }
+
     [Fact]
     public async Task ConcurrentWritesAndSnapshotsDoNotLoseRecords()
     {

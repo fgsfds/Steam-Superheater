@@ -236,6 +236,46 @@ public sealed class FileFixVerificationTests : IDisposable
         AssertOriginalUnchanged();
         Assert.Equal("old", fix.InstalledFix.Version);
     }
+    /// <summary>Shared files survive parent installation when both create the same directory.</summary>
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ParentInstallationPreservesSharedPayload(bool explicitSubdirectory)
+    {
+        var destination = Path.Combine(_game.InstallDir, "plugins");
+        if (explicitSubdirectory)
+        {
+            _ = Directory.CreateDirectory(destination);
+        }
+        var parentArchive = Path.Combine(_root, "parent.zip");
+        using (var zip = ZipFile.Open(parentArchive, ZipArchiveMode.Create))
+        {
+            if (explicitSubdirectory)
+            {
+                _ = zip.CreateEntry("nested/");
+            }
+            using var writer = new StreamWriter(zip.CreateEntry(explicitSubdirectory ? "nested/parent.txt" : "parent.txt").Open());
+            writer.Write("parent payload");
+        }
+        var fix = CreateFix(new Uri(parentArchive).AbsoluteUri, Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(parentArchive))));
+        fix.FilesToDelete = null;
+        fix.InstallFolder = "plugins";
+        fix.SharedFix = CreateFix(new Uri(_archive).AbsoluteUri, _hash);
+        fix.SharedFix.FilesToDelete = null;
+        fix.SharedFixInstallFolder = explicitSubdirectory ? Path.Combine("plugins", "nested") : "plugins";
+
+        var result = await _installer.InstallFixAsync(_game, fix, null, false, CancellationToken.None);
+
+        Assert.True(result.IsSuccess, result.Message);
+        var payloadDirectory = explicitSubdirectory ? Path.Combine(destination, "nested") : destination;
+        Assert.Equal("payload", await File.ReadAllTextAsync(Path.Combine(payloadDirectory, "installed.txt")));
+        Assert.Equal("parent payload", await File.ReadAllTextAsync(Path.Combine(payloadDirectory, "parent.txt")));
+        new FileFixUninstaller().UninstallFix(_game, result.ResultObject!);
+        Assert.False(File.Exists(Path.Combine(payloadDirectory, "installed.txt")));
+        Assert.False(File.Exists(Path.Combine(payloadDirectory, "parent.txt")));
+        Assert.Equal("original", await File.ReadAllTextAsync(Path.Combine(_game.InstallDir, "original.txt")));
+    }
+
     private static FileFixEntity CreateFix(string url, string? hash)
     {
         var fix = FileFixEntity.CreateBlank();
